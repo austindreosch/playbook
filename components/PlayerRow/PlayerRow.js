@@ -1,86 +1,93 @@
-// 'use client'
+'use client';
 
-// import React, { useState } from 'react'
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { useState } from 'react';
 
-// function PlayerRow({ player, index }) {
-//   const [isOpen, setIsOpen] = useState(false)
-//   const toggleAccordion = () => setIsOpen(!isOpen)
+const PlayerRow = ({ player, sport }) => {
+    const [expanded, setExpanded] = useState(false);
 
-//   return (
-//     <div className="border border-gray-200 rounded-md my-1 bg-white shadow-sm">
-//       {/* Header Row */}
-//       <div
-//         className="grid grid-cols-[30px_40px_2fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-1 px-2 py-1 cursor-pointer items-center hover:bg-gray-50"
-//         onClick={toggleAccordion}
-//       >
-//         <span className="text-xs text-gray-400">{index + 1}</span>
-//         <div className="h-8 w-8">
-//           {/* <img
-//             className="rounded-md"
-//             src={player.img || '/placeholder.png'}
-//             alt="player"
-//           /> */}
-//         </div>
-//         <div className="text-sm font-medium">
-//           <div>Player</div>
-//           <div className="text-xs text-gray-400">player.position</div>
-//         </div>
-//         <div className="text-center text-xs">player.stats?.ptsPerGame</div>
-//         <div className="text-center text-xs">player.stats?.rebPerGame</div>
-//         <div className="text-center text-xs">player.stats?.astPerGame</div>
-//         <div className="text-center text-xs">player.stats?.stlPerGame</div>
-//         <div className="text-center text-xs">player.stats?.blkPerGame</div>
-//         <div className="text-center text-xs">player.stats?.fg3PtMadePerGame</div>
-//         <div className="text-center text-xs">player.stats?.toPerGame</div>
-//         <div className="text-center text-xs">player.stats?.fgPct</div>
-//         <div className="text-center text-xs">player.stats?.ftPct</div>
-//       </div>
+    // Set up the sortable hook
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: player.id });
 
-//       {/* Expanded Row */}
-//       {isOpen && (
-//         <div className="p-2 bg-gray-50 border-t border-gray-200 grid grid-cols-[2fr_3fr_4fr_3fr] gap-2 text-xs">
-//           {/* Format Ranks Placeholder */}
-//           <div className="border rounded p-2">
-//             <h4 className="font-semibold mb-1">Ranks</h4>
-//             <p>Standard: #</p>
-//             <p>Redraft: #</p>
-//             <p>Consensus: #</p>
-//           </div>
+    // Apply styles for dragging
+    const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, };
 
-//           {/* Playbook Score Placeholder */}
-//           <div className="border rounded p-2">
-//             <h4 className="font-semibold mb-1">Playbook Score</h4>
-//             <p className="text-2xl font-bold text-yellow-500">
-//               92
-//             </p>
-//           </div>
+    // Get the appropriate panel components based on the sport
+    const getDetailPanel = () => {
+        switch (sport) {
+            case 'NBA':
+                // You would import and use the actual component
+                return <div className="detail-panel">NBA Detail Panel</div>;
+            case 'MLB':
+                return <div className="detail-panel">MLB Detail Panel</div>;
+            case 'NFL':
+                return <div className="detail-panel">NFL Detail Panel</div>;
+            default:
+                return <div className="detail-panel">Detail Panel</div>;
+        }
+    };
 
-//           {/* Matchup Insights Placeholder */}
-//           <div className="border rounded p-2">
-//             <h4 className="font-semibold mb-1">Next 5 Games</h4>
-//             <ul className="space-y-1">
-//               {['@BOS', 'vs IND', '@CHA', 'vs PHX', '@SAS'].map((opponent, i) => (
-//                 <li key={i} className="flex justify-between">
-//                   <span>opponent</span>
-//                   <span className="text-green-600">🛡️ 18th</span>
-//                 </li>
-//               ))}
-//             </ul>
-//           </div>
+    const getInsightPanel = () => {
+        switch (sport) {
+            case 'NBA':
+                return <div className="insight-panel">NBA Insight Panel</div>;
+            case 'MLB':
+                return <div className="insight-panel">MLB Insight Panel</div>;
+            case 'NFL':
+                return <div className="insight-panel">NFL Insight Panel</div>;
+            default:
+                return <div className="insight-panel">Insight Panel</div>;
+        }
+    };
 
-//           {/* Last 30 Stats Placeholder */}
-//           <div className="border rounded p-2">
-//             <h4 className="font-semibold mb-1">Last 30</h4>
-//             <ul className="space-y-1">
-//               <li>PTS: 25.8 <span className="text-green-500">▲ 12%</span></li>
-//               <li>REB: 4.1 <span className="text-gray-500">—</span></li>
-//               <li>AST: 5.2 <span className="text-red-500">▼ 5%</span></li>
-//             </ul>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   )
-// }
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={`player-row border rounded-md overflow-hidden mb-2 shadow-sm ${isDragging ? 'z-10' : ''}`}
+        >
+            {/* Basic player info row - always visible */}
+            <div
+                className="flex items-center h-12 bg-white hover:bg-gray-50"
+                onClick={() => setExpanded(!expanded)}
+            >
+                {/* Drag handle */}
+                <div
+                    className=" cursor-move text-gray-400"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                    </svg>
+                </div>
 
-// export default PlayerRow
+                {/* Player name/info would go here */}
+                <div className="flex-grow px-3">
+                    {player.name || 'Player Name'}
+                </div>
+
+                {/* Expand/Collapse indicator */}
+                <div className="px-3 text-gray-500">
+                    {expanded ? '▼' : '▶'}
+                </div>
+            </div>
+
+            {/* Expanded content - only visible when expanded */}
+            {expanded && (
+                <div className="expanded-content border-t">
+                    <div className="p-4">
+                        {/* Render appropriate detail and insight panels */}
+                        {/* {getDetailPanel()}
+                        {getInsightPanel()} */}
+
+
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default PlayerRow;

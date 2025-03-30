@@ -1,38 +1,76 @@
 'use client';
 
-import PlayerRow from '@/components/PlayerRow/PlayerRow';
-import StatTableHeader from '@/components/PlayerRow/StatTableHeader';
-import React, { useEffect, useState } from 'react';
+import PlayerListContainer from '@/components/PlayerRow/PlayerListContainer';
+import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
+
+// Example dummy data
+const dummyPlayers = [
+  {
+    id: 1,
+    name: 'Donovan Mitchell',
+    position: 'SG',
+    team: 'CLE',
+    stats: {
+      // You can add actual stats here when needed
+    }
+  },
+  {
+    id: 2,
+    name: 'Victor Wembanyama',
+    position: 'C',
+    team: 'SAS',
+    stats: {
+      // You can add actual stats here when needed
+    }
+  },
+  {
+    id: 3,
+    name: 'LeBron James',
+    position: 'SF',
+    team: 'LAL',
+    stats: {
+      // You can add actual stats here when needed
+    }
+  },
+  {
+    id: 4,
+    name: 'Luka Dončić',
+    position: 'PG',
+    team: 'DAL',
+    stats: {
+      // You can add actual stats here when needed
+    }
+  },
+  {
+    id: 5,
+    name: 'Joel Embiid',
+    position: 'C',
+    team: 'PHI',
+    stats: {
+      // You can add actual stats here when needed
+    }
+  }
+];
 
 export default function RankingsPage() {
-  const [rankings, setRankings] = useState([]);
-
-  useEffect(() => {1
-    async function fetchRankings() {
-      const res = await fetch('/api/fetch/NBA/GetNBADynastyRankings');
-      const json = await res.json();
-      setRankings(json.rankings || []);
-    }
-
-    fetchRankings();
-  }, []);
-
   return (
-    <div className="p-4 max-w-7xl mx-auto overflow-x-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">Fantasy 9-Cat Rankings</h2>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Customized Rankings</h1>
 
-      {/* <StatTableHeader />
-      <PlayerRow/> */}
+      <div className="flex gap-6">
+        {/* Main content area */}
+        <div className="flex-1">
+          <PlayerListContainer
+            dataset={dummyPlayers}
+            sport="NBA"
+          />
+        </div>
 
-      
-      {/* {rankings.map((player, index) => (
-        <PlayerRow
-          key={index}
-          index={index}
-          player={player}
-        />
-      ))} */}
-
+        {/* Side panel - fixed width */}
+        <div className="w-80">
+          <RankingsSidePanel />
+        </div>
+      </div>
     </div>
   );
 }
