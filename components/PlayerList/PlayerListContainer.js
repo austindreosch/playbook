@@ -5,7 +5,7 @@ import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, 
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useState } from 'react';
 
-import PlayerRow from '@/components/PlayerRow/PlayerRow';
+import PlayerRow from '@/components/PlayerList/PlayerRow';
 
 const PlayerListContainer = ({ dataset, sport = 'NBA' }) => {
     // Initialize state with players

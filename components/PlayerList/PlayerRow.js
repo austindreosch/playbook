@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState } from 'react';
 
-const PlayerRow = ({ player, sport }) => {
+const PlayerRow = ({ player, sport, categories }) => {
     const [expanded, setExpanded] = useState(false);
 
     // Set up the sortable hook
@@ -47,9 +47,11 @@ const PlayerRow = ({ player, sport }) => {
             style={style}
             className={`player-row border rounded-md overflow-hidden mb-2 shadow-sm ${isDragging ? 'z-10' : ''}`}
         >
+            {/* -------------------------------------- */}
             {/* Basic player info row - always visible */}
+            {/* -------------------------------------- */}
             <div
-                className="flex items-center h-12 bg-white hover:bg-gray-50"
+                className="flex items-center h-10 bg-white hover:bg-gray-50"
                 onClick={() => setExpanded(!expanded)}
             >
                 {/* Drag handle */}
@@ -63,15 +65,28 @@ const PlayerRow = ({ player, sport }) => {
                     </svg>
                 </div>
 
-                {/* Player name/info would go here */}
-                <div className="flex-grow px-3">
-                    {player.name || 'Player Name'}
+
+                {/* Rank number */}
+                <div className="w-8 text-center">{player.id}</div>
+
+                {/* Player name and position */}
+                <div className="flex items-center gap-2 w-48">
+                    <div className="font-bold">{player.name || 'Player Name'}</div>
+                    <div className="text-gray-500 text-xs">{player.position}</div>
                 </div>
 
-                {/* Expand/Collapse indicator */}
-                <div className="px-3 text-gray-500">
-                    {expanded ? '▼' : '▶'}
+                {/* Stats - each in its own column with fixed width */}
+                <div className="flex flex-1 items-center justify-between px-4">
+                    <div className="w-16 text-center">{player.stats.season.fieldGoalPercentage}</div>
+                    <div className="w-16 text-center">{player.stats.season.threePointsMadePerGame}</div>
+                    <div className="w-16 text-center">{player.stats.season.freeThrowPercentage}</div>
+                    <div className="w-16 text-center">{player.stats.season.pointsPerGame}</div>
+                    <div className="w-16 text-center">{player.stats.season.assistsPerGame}</div>
+                    <div className="w-16 text-center">{player.stats.season.reboundsPerGame}</div>
+                    <div className="w-16 text-center">{player.stats.season.stealsPerGame}</div>
+                    <div className="w-16 text-center">{player.stats.season.blocksPerGame}</div>
                 </div>
+
             </div>
 
             {/* Expanded content - only visible when expanded */}
@@ -79,8 +94,6 @@ const PlayerRow = ({ player, sport }) => {
                 <div className="expanded-content border-t">
                     <div className="p-4">
                         {/* Render appropriate detail and insight panels */}
-                        {/* {getDetailPanel()}
-                        {getInsightPanel()} */}
 
 
                     </div>

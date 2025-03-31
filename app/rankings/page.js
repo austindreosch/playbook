@@ -1,56 +1,8 @@
 'use client';
 
-import PlayerListContainer from '@/components/PlayerRow/PlayerListContainer';
+import PlayerListContainer from '@/components/PlayerList/PlayerListContainer';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
-
-// Example dummy data
-const dummyPlayers = [
-  {
-    id: 1,
-    name: 'Donovan Mitchell',
-    position: 'SG',
-    team: 'CLE',
-    stats: {
-      // You can add actual stats here when needed
-    }
-  },
-  {
-    id: 2,
-    name: 'Victor Wembanyama',
-    position: 'C',
-    team: 'SAS',
-    stats: {
-      // You can add actual stats here when needed
-    }
-  },
-  {
-    id: 3,
-    name: 'LeBron James',
-    position: 'SF',
-    team: 'LAL',
-    stats: {
-      // You can add actual stats here when needed
-    }
-  },
-  {
-    id: 4,
-    name: 'Luka Dončić',
-    position: 'PG',
-    team: 'DAL',
-    stats: {
-      // You can add actual stats here when needed
-    }
-  },
-  {
-    id: 5,
-    name: 'Joel Embiid',
-    position: 'C',
-    team: 'PHI',
-    stats: {
-      // You can add actual stats here when needed
-    }
-  }
-];
+import { PlayerListDummyData } from '@/utilities/dummyData/PlayerListDummyData';
 
 export default function RankingsPage() {
   return (
@@ -61,13 +13,13 @@ export default function RankingsPage() {
         {/* Main content area */}
         <div className="flex-1">
           <PlayerListContainer
-            dataset={dummyPlayers}
+            dataset={PlayerListDummyData}
             sport="NBA"
           />
         </div>
 
         {/* Side panel - fixed width */}
-        <div className="w-80">
+        <div className="w-72">
           <RankingsSidePanel />
         </div>
       </div>
