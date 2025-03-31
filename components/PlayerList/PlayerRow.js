@@ -41,6 +41,39 @@ const PlayerRow = ({ player, sport, categories }) => {
         }
     };
 
+    const leagueAverages = {
+        fieldGoalPercentage: 47.5,
+        threePointsMadePerGame: 2.5,
+        freeThrowPercentage: 80.0,
+        pointsPerGame: 45.0,
+        assistsPerGame: 5.0,
+        reboundsPerGame: 7.5,
+        stealsPerGame: 1.2,
+        blocksPerGame: 1.5,
+        turnoversPerGame: 2.8
+    };
+
+    const getStatColor = (statValue, leagueAverage, statName) => {
+        const isHigherBetter = statName !== 'turnoversPerGame';
+        const percentDiff = ((statValue - leagueAverage) / leagueAverage) * 100;
+        const adjustedDiff = isHigherBetter ? percentDiff : -percentDiff;
+
+        // More granular steps, all using your theme colors
+        if (adjustedDiff >= 30) return 'bg-pb_green';
+        if (adjustedDiff >= 20) return 'bg-pb_green/90';
+        if (adjustedDiff >= 15) return 'bg-pb_green/80';
+        if (adjustedDiff >= 10) return 'bg-pb_green/70';
+        if (adjustedDiff >= 5) return 'bg-pb_green/60';
+        if (adjustedDiff >= 0) return 'bg-pb_green/50';
+        if (adjustedDiff >= -5) return 'bg-pb_red/50';
+        if (adjustedDiff >= -10) return 'bg-pb_red/60';
+        if (adjustedDiff >= -15) return 'bg-pb_red/70';
+        if (adjustedDiff >= -20) return 'bg-pb_red/80';
+        if (adjustedDiff >= -30) return 'bg-pb_red/90';
+        return 'bg-pb_red';
+    };
+
+
     return (
         <div
             ref={setNodeRef}
@@ -51,42 +84,79 @@ const PlayerRow = ({ player, sport, categories }) => {
             {/* Basic player info row - always visible */}
             {/* -------------------------------------- */}
             <div
-                className="flex items-center h-10 bg-white hover:bg-gray-50"
+                className="flex h-9 items-center bg-white hover:bg-gray-50"
                 onClick={() => setExpanded(!expanded)}
             >
-                {/* Drag handle */}
-                <div
-                    className=" cursor-move text-gray-400"
-                    {...attributes}
-                    {...listeners}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                    </svg>
+                {/* Left section with fixed widths */}
+                <div className="flex items-center w-[40%]">
+                    {/* Drag handle */}
+                    <div
+                        className="px-2 cursor-move text-gray-400"
+                        {...attributes}
+                        {...listeners}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                        </svg>
+                    </div>
+
+                    {/* Rank number */}
+                    <div className="w-8 text-center">{player.id}</div>
+
+                    {/* Player name and position */}
+                    <div className="flex items-center gap-2">
+                        <div className="font-bold">{player.name || 'Player Name'}</div>
+                        <div className="text-gray-500 text-xs">{player.position}</div>
+                    </div>
                 </div>
 
+                {/* Stats section - flexible width */}
+                <div className="flex w-[60%] h-full gap-1"> {/* Added h-full here */}
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.fieldGoalPercentage, leagueAverages.fieldGoalPercentage, 'fieldGoalPercentage')
+                        }`}>
+                        {player.stats.season.fieldGoalPercentage}
+                    </div>
 
-                {/* Rank number */}
-                <div className="w-8 text-center">{player.id}</div>
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.threePointsMadePerGame, leagueAverages.threePointsMadePerGame, 'threePointsMadePerGame')
+                        }`}>
+                        {player.stats.season.threePointsMadePerGame}
+                    </div>
 
-                {/* Player name and position */}
-                <div className="flex items-center gap-2 w-48">
-                    <div className="font-bold">{player.name || 'Player Name'}</div>
-                    <div className="text-gray-500 text-xs">{player.position}</div>
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.freeThrowPercentage, leagueAverages.freeThrowPercentage, 'freeThrowPercentage')
+                        }`}>
+                        {player.stats.season.freeThrowPercentage}
+                    </div>
+
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.pointsPerGame, leagueAverages.pointsPerGame, 'pointsPerGame')
+                        }`}>
+                        {player.stats.season.pointsPerGame}
+                    </div>
+
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.assistsPerGame, leagueAverages.assistsPerGame, 'assistsPerGame')
+                        }`}>
+                        {player.stats.season.assistsPerGame}
+                    </div>
+
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.reboundsPerGame, leagueAverages.reboundsPerGame, 'reboundsPerGame')
+                        }`}>
+                        {player.stats.season.reboundsPerGame}
+                    </div>
+
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.stealsPerGame, leagueAverages.stealsPerGame, 'stealsPerGame')
+                        }`}>
+                        {player.stats.season.stealsPerGame}
+                    </div>
+
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.blocksPerGame, leagueAverages.blocksPerGame, 'blocksPerGame')
+                        }`}>
+                        {player.stats.season.blocksPerGame}
+                    </div>
+
+                    <div className={`flex-1 text-center h-full flex items-center justify-center ${getStatColor(player.stats.season.turnoversPerGame, leagueAverages.turnoversPerGame, 'turnoversPerGame')
+                        }`}>
+                        {player.stats.season.turnoversPerGame}
+                    </div>
                 </div>
-
-                {/* Stats - each in its own column with fixed width */}
-                <div className="flex flex-1 items-center justify-between px-4">
-                    <div className="w-16 text-center">{player.stats.season.fieldGoalPercentage}</div>
-                    <div className="w-16 text-center">{player.stats.season.threePointsMadePerGame}</div>
-                    <div className="w-16 text-center">{player.stats.season.freeThrowPercentage}</div>
-                    <div className="w-16 text-center">{player.stats.season.pointsPerGame}</div>
-                    <div className="w-16 text-center">{player.stats.season.assistsPerGame}</div>
-                    <div className="w-16 text-center">{player.stats.season.reboundsPerGame}</div>
-                    <div className="w-16 text-center">{player.stats.season.stealsPerGame}</div>
-                    <div className="w-16 text-center">{player.stats.season.blocksPerGame}</div>
-                </div>
-
             </div>
 
             {/* Expanded content - only visible when expanded */}

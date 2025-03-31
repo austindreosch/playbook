@@ -22,20 +22,9 @@ const SimpleRankingsSelector = ({ activeSheet = 'NBA_Dynasty', onSelectSheet }) 
     return (
         <div className="rankings-selector max-w-24 rounded-lg">
 
-            {/* Add New Button */}
-            <div className="p-3 bg-gray-100 rounded-md mb-2 border border-gray-200">
-                <button className="w-full p-3 bg-white rounded-md border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-                    </svg>
-                </button>
-            </div>
-
             {/* Sheets List */}
             <div className="space-y-1">
-
                 {sheets.map(sheet => (
-
                     <div
                         key={sheet.id}
                         className={`
