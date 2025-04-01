@@ -82,6 +82,7 @@ module.exports = {
         mydarktext: '#222222',
         pb_orange: '#fac05e',
         pb_blue: '#3fa7d6',
+        pb_darkblue: '#2f80b4',
         pb_darkgray: '#383838',
         pb_midgray: '#848484',
         pb_lightgray: '#e2e2e2',

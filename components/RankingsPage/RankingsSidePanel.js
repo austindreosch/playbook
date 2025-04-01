@@ -30,8 +30,8 @@ const SimpleRankingsSelector = ({ activeSheet = 'NBA_Dynasty', onSelectSheet }) 
                         className={`
                         grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer
                         ${activeSheet === sheet.id
-                                ? 'bg-pb_blue text-white'
-                                : 'bg-pb_lightergray hover:bg-gray-100 border border-gray-100'
+                                ? 'bg-pb_blue text-white shadow-sm'
+                                : 'bg-white hover:bg-gray-100 border border-pb_lightgray shadow-sm'
                             }
                         `}
                         onClick={() => handleSelectSheet(sheet.id)}

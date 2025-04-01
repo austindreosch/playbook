@@ -3,11 +3,13 @@
 import { BarsIcon } from '@/components/icons/BarsIcon';
 import { HistoryIcon } from '@/components/icons/HistoryIcon';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useMemo, useState } from 'react';
 
 
 
-const PlayerListRankingHeader = ({ sport, onCategoryToggle, onSortChange, userRankings }) => {
+const PlayerListRankingHeader = ({ sport, onCategoryToggle, onSortChange, userRankings, availableCategories }) => {
     const [expanded, setExpanded] = useState(false);
     const [sortConfig, setSortConfig] = useState({
         field: null,
@@ -46,6 +48,14 @@ const PlayerListRankingHeader = ({ sport, onCategoryToggle, onSortChange, userRa
         // Call parent component's sort change handler
         onSortChange?.(field, sortConfig.direction === 'asc' ? 'desc' : 'asc');
     };
+
+
+    const onMultiplierChange = (key, value) => {
+        // Update the multiplier for the selected category
+        onCategoryToggle(key, true, { multiplier: value });
+    };
+
+    console.log('availableCategories:', availableCategories);
 
     return (
         <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
@@ -93,7 +103,7 @@ const PlayerListRankingHeader = ({ sport, onCategoryToggle, onSortChange, userRa
                             {isSaving ? (
                                 <ButtonLoading />
                             ) : (
-                                <Button onClick={handleSave} className='bg-pb_blue text-white'>Save Changes</Button>
+                                <Button onClick={handleSave} className='bg-pb_blue text-white shadow-md hover:bg-pb_darkblue'>Save Changes</Button>
                             )}
                             <div className='text-2xs py-2 px-1'>
                                 Last Updated:  {activeRankingList?.details?.dateUpdated}
@@ -106,9 +116,45 @@ const PlayerListRankingHeader = ({ sport, onCategoryToggle, onSortChange, userRa
                     <div className="text-pb_darkgray border h-full col-span-1">
 
                     </div>
-                    {/* Stat Boxes */}
-                    <div className="text-pb_darkgray border h-full col-span-5">
 
+                    {/* Stat Boxes */}
+                    <div className="text-pb_darkgray h-full col-span-5">
+                        <div className='grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
+                            {availableCategories?.NBA && Object.values(availableCategories.NBA).map((category) => (
+                                <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex flex-wrap items-center w-full gap-1">
+                                        <div className="flex items-center min-w-fit">
+                                            <div className="flex items-center justify-center">
+                                                <Switch
+                                                    checked={category.enabled}
+                                                    onCheckedChange={(checked) => onCategoryToggle(category.key, checked)}
+                                                    className="flex-shrink-0 mr-2"
+                                                />
+                                                <span className="text-sm font-medium whitespace-normal flex-1 text-center">{category.name}</span>
+                                            </div>
+                                        </div>
+                                        <div className="ml-auto">
+                                            <Select
+                                                value={(category.multiplier || 1).toString()}
+                                                onValueChange={(value) => onMultiplierChange(category.key, parseFloat(value))}
+                                                className='w-full text-xs'
+                                            >
+                                                <SelectTrigger className="w-full h-7">
+                                                    <SelectValue className='text-xs' placeholder={`x${category.multiplier || 1}`} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="0.5">x0.5</SelectItem>
+                                                    <SelectItem value="1">x1</SelectItem>
+                                                    <SelectItem value="1.5">x1.5</SelectItem>
+                                                    <SelectItem value="2">x2</SelectItem>
+                                                    <SelectItem value="2.5">x2.5</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
