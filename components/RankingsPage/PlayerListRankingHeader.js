@@ -119,28 +119,26 @@ const PlayerListRankingHeader = ({ sport, onCategoryToggle, onSortChange, userRa
 
                     {/* Stat Boxes */}
                     <div className="text-pb_darkgray h-full col-span-5">
-                        <div className='grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
+                        <div className='grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 p-2'>
                             {availableCategories?.NBA && Object.values(availableCategories.NBA).map((category) => (
-                                <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex flex-wrap items-center w-full gap-1">
-                                        <div className="flex items-center min-w-fit">
-                                            <div className="flex items-center justify-center">
+                                <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
+                                    <div className="flex flex-col w-full gap-2">
+                                        <div className="flex items-center justify-between w-full">
+                                            <div className="flex items-center">
                                                 <Switch
                                                     checked={category.enabled}
                                                     onCheckedChange={(checked) => onCategoryToggle(category.key, checked)}
                                                     className="flex-shrink-0 mr-2"
                                                 />
-                                                <span className="text-sm font-medium whitespace-normal flex-1 text-center">{category.name}</span>
+                                                <span className="text-sm font-medium pr-4">{category.name}</span>
                                             </div>
-                                        </div>
-                                        <div className="ml-auto">
                                             <Select
                                                 value={(category.multiplier || 1).toString()}
                                                 onValueChange={(value) => onMultiplierChange(category.key, parseFloat(value))}
-                                                className='w-full text-xs'
+                                                className="w-[52px]"
                                             >
-                                                <SelectTrigger className="w-full h-7">
-                                                    <SelectValue className='text-xs' placeholder={`x${category.multiplier || 1}`} />
+                                                <SelectTrigger className="h-7">
+                                                    <SelectValue className='text-xs text-center' placeholder={`x${category.multiplier || 1}`} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="0.5">x0.5</SelectItem>
