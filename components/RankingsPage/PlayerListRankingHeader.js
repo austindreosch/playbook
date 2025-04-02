@@ -134,7 +134,7 @@ const PlayerListRankingHeader = ({
                     </div>
 
                     {/* Source Boxes */}
-                    <div className="text-pb_darkgray h-full col-span-2 space-y-2 p-2 flex flex-col justify-center">
+                    <div className="text-pb_darkgray h-full col-span-2 space-y-2 p-2 flex flex-col justify-start">
                         <div className="space-y-1">
                             <h3 className='text-sm font-bold text-center'>Data View</h3>
                             <DataViewSelector

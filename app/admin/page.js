@@ -1,10 +1,10 @@
 'use client';
 
+import AllPlayersBox from '@/components/admin/AllPlayersBox';
+import UpdateNBADynastyRankingsButton from '@/components/admin/UpdateNBADynastyRank';
+import UpdateStatsButton from '@/components/admin/UpdateNBAStatsButton';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
-import AllPlayersBox from '/components/Admin/AllPlayersBox';
-import UpdateNBADynastyRankingsButton from '/components/Admin/UpdateNBADynastyRankingsButton';
-import UpdateStatsButton from '/components/Admin/UpdateNBAStatsButton';
 
 export default function AdminPage() {
   const { user, isLoading } = useUser();
@@ -42,9 +42,9 @@ export default function AdminPage() {
     <div className="min-h-screen bg-white px-6 py-12">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-      <UpdateStatsButton/>
-      <AllPlayersBox/>
-      <UpdateNBADynastyRankingsButton/>
+      <UpdateStatsButton />
+      <AllPlayersBox />
+      <UpdateNBADynastyRankingsButton />
 
       {message && <pre className="mt-6 text-sm text-gray-700 whitespace-pre-wrap">{message}</pre>}
     </div>
