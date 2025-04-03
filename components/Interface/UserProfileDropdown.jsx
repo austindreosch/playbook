@@ -12,8 +12,10 @@ import { CreditCard, LogOut, Settings, User, UserPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-
 const UserProfileDropdown = ({ user }) => {
+    const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
+    const isAdmin = user && user.sub === adminSub;
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
@@ -34,6 +36,17 @@ const UserProfileDropdown = ({ user }) => {
                     <CreditCard className="h-4 w-4" />
                     <span>Imports</span>
                 </DropdownMenuItem>
+
+                {isAdmin && (
+                    <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                        <Link href="/admin" className="flex items-center gap-2 w-full">
+                            <UserPlus className="h-4 w-4" />
+                            <span>Admin Panel</span>
+                            <span className="ml-auto text-xs text-gray-500">Ctrl + A</span>
+                        </Link>
+                    </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                     <Settings className="h-4 w-4" />
                     <span>Settings</span>

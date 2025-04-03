@@ -67,7 +67,11 @@ export default async function handler(req, res) {
             name,
             scoring,
             source,
-            rankings,
+            rankings: rankings.map(player => ({
+                playerId: player.playerId,
+                name: player.name,
+                rank: player.rank
+            })),
             positions,
             categories,
             details: {

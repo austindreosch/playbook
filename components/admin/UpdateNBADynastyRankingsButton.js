@@ -6,11 +6,12 @@ import React, { useState } from 'react';
 function UpdateNBADynastyRankingsButton() {
   const { user } = useUser();
   const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
-  const isAdmin = user && user.sub === adminSub;
+  const isAdmin = user && (user.sub === adminSub || user.isAdmin);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
 
   const areRankingsIdentical = (listA, listB) => {
+    if (!listA || !listB) return false;
     if (listA.length !== listB.length) return false;
 
     return listA.every((playerA) => {
@@ -29,36 +30,85 @@ function UpdateNBADynastyRankingsButton() {
         method: 'POST',
       });
       const fetchData = await fetchResponse.json();
+      console.log('📥 Fetch response:', fetchData);
 
       if (!fetchResponse.ok) {
         throw new Error(fetchData.error || 'Failed to fetch rankings');
       }
 
+      // Get the stored rankings from the rankings collection
+      const rankingsResponse = await fetch('/api/fetch/NBA/GetNBADynastyRankings');
+      const rankingsData = await rankingsResponse.json();
+      console.log('📥 Rankings data:', rankingsData);
+      console.log('📥 First player structure:', rankingsData.rankings[0]);
+
+      if (!rankingsResponse.ok) {
+        throw new Error(rankingsData.error || 'Failed to fetch stored rankings');
+      }
+
       // Get the latest version to compare
       const latestVersionResponse = await fetch('/api/rankings/latest?sport=NBA&format=Dynasty');
       const latestVersionData = await latestVersionResponse.json();
+      console.log('📥 Latest version data:', latestVersionData);
 
-      // Check if the new rankings are different from the current version
-      if (latestVersionData.version && areRankingsIdentical(latestVersionData.rankings, fetchData.rankings)) {
-        setError('No changes detected in rankings. Skipping update.');
-        return;
+      // If we get a 404, it means no rankings exist yet, so we should proceed with creating
+      if (latestVersionResponse.status === 404) {
+        // Continue with creating new version
+      } else if (!latestVersionResponse.ok) {
+        throw new Error(latestVersionData.error || 'Failed to fetch latest rankings');
+      } else {
+        // Compare the new rankings with the latest version
+        const areIdentical = areRankingsIdentical(latestVersionData.rankings, rankingsData.rankings);
+        console.log('🔍 Rankings comparison:', areIdentical ? 'Identical' : 'Different');
+
+        if (areIdentical) {
+          setError('No changes detected in rankings. Skipping update.');
+          setIsUpdating(false);
+          return;
+        }
       }
 
       // Then, create a new version with the fetched data
+      const requestBody = {
+        name: "NBA Dynasty Rankings",
+        sport: "NBA",
+        format: "Dynasty",
+        version: new Date().toISOString().split('T')[0].replace(/-/g, '.'), // e.g., "2024.03.21"
+        rankings: rankingsData.rankings.map(player => {
+          console.log('Processing player:', player);
+          // Ensure we have the required fields and they are of the correct type
+          if (!player.playerId || !player.name || typeof player.rank !== 'number') {
+            console.error('Invalid player data:', player);
+            throw new Error(`Invalid player data for ${player.name || 'unknown player'}`);
+          }
+          return {
+            playerId: player.playerId,
+            name: player.name,
+            rank: player.rank
+          };
+        }),
+        isLatest: true,
+        publishedAt: new Date().toISOString(),
+        details: {
+          createdBy: user.sub,
+          source: 'CSV Import',
+          notes: 'Automatically imported from CSV',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      };
+      console.log('📤 Request body rankings:', JSON.stringify(requestBody.rankings, null, 2));
+
       const versionResponse = await fetch('/api/rankings/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          sport: 'NBA',
-          format: 'Dynasty',
-          version: new Date().toISOString().split('T')[0].replace(/-/g, '.'), // e.g., "2024.03.21"
-          rankings: fetchData.rankings || []
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const versionData = await versionResponse.json();
+      console.log('📥 Version response:', versionData);
 
       if (!versionResponse.ok) {
         throw new Error(versionData.error || 'Failed to create new version');

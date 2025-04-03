@@ -16,13 +16,21 @@ export default async function handler(req, res) {
   const enrichedRankings = rankings.map(r => {
     const player = allPlayers.find(p => p.info?.id === r.playerId);
 
+    // Ensure we have the required fields
+    if (!r.playerId || !r.name || typeof r.rank !== 'number') {
+      console.error('Invalid ranking data:', r);
+      return null;
+    }
+
     return {
-      ...r,
+      playerId: r.playerId,
+      name: r.name,
+      rank: r.rank,
       position: player?.info?.pos || '—',
       team: player?.info?.team || '—',
       stats: player?.stats || {},
     };
-  });
+  }).filter(Boolean); // Remove any null entries
 
   res.status(200).json({ rankings: enrichedRankings });
 }
