@@ -1,7 +1,7 @@
 'use client';
 
 import AllPlayersBox from '@/components/admin/AllPlayersBox';
-import UpdateNBADynastyRankingsButton from '@/components/admin/UpdateNBADynastyRank';
+import UpdateNBADynastyRankingsButton from '@/components/admin/UpdateNBADynastyRankingsButton';
 import UpdateStatsButton from '@/components/admin/UpdateNBAStatsButton';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
