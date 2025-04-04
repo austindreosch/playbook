@@ -41,7 +41,7 @@ export default async function handler(req, res) {
             .toArray();
 
         console.log(`Found ${userRankings.length} rankings for user`);
-        res.status(200).json({ rankings: userRankings });
+        return res.status(200).json(userRankings);
     } catch (error) {
         console.error('Error details:', {
             message: error.message,

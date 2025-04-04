@@ -48,13 +48,13 @@ const PlayerListContainer = ({ dataset, sport = 'NBA' }) => {
             onDragEnd={handleDragEnd}
         >
             <SortableContext
-                items={players.map(player => player.id)}
+                items={players.map(player => player.playerId)}
                 strategy={verticalListSortingStrategy}
             >
                 <div className="player-list-container">
                     {players.map(player => (
                         <PlayerRow
-                            key={player.id}
+                            key={player.playerId}
                             player={player}
                             sport={sport}
                         />

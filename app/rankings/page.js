@@ -51,7 +51,7 @@ export default function RankingsPage() {
           throw new Error(`Failed to fetch user rankings: ${response.status}`);
         }
         const data = await response.json();
-        setUserRankings(data.rankings);
+        setUserRankings(data);
         setError(null);
       } catch (err) {
         console.error('Error fetching user rankings:', err);
@@ -95,7 +95,6 @@ export default function RankingsPage() {
       ) : (
         <div className="flex gap-6">
           {/* Main content area */}
-
           {/* <div className="flex-1 space-y-2">
             <PlayerListRankingHeader
               sport="NBA"
