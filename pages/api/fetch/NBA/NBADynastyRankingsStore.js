@@ -69,12 +69,24 @@ export default async function handler(req, res) {
     }
 
     await db.collection('rankings').updateOne(
-      { name: 'NBADynastyRankings' },
+      {
+        name: 'NBA Dynasty Rankings',
+        sport: 'NBA',
+        format: 'Dynasty'
+      },
       {
         $set: {
           rankings: results,
           importedAt: new Date(),
-        },
+          isLatest: true,
+          publishedAt: new Date().toISOString(),
+          details: {
+            source: 'CSV Import',
+            notes: 'Automatically imported from CSV',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        }
       },
       { upsert: true }
     );

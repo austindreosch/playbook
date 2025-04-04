@@ -1,7 +1,8 @@
 'use client';
 
 import AllPlayersBox from '@/components/admin/AllPlayersBox';
-import UpdateNBADynastyRankingsButton from '@/components/admin/UpdateNBADynastyRankingsButton';
+import CleanupRankingsButton from '@/components/admin/CleanupRankingsButton';
+import UpdateNBADynastyRankingsButton from '@/components/admin/UpdateNBADynastyCatsRankingsButton';
 import UpdateStatsButton from '@/components/admin/UpdateNBAStatsButton';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
@@ -44,7 +45,10 @@ export default function AdminPage() {
 
       <UpdateStatsButton />
       <AllPlayersBox />
-      <UpdateNBADynastyRankingsButton />
+      <div className="flex gap-2">
+        <UpdateNBADynastyRankingsButton />
+        {/* <CleanupRankingsButton /> */}
+      </div>
 
       {message && <pre className="mt-6 text-sm text-gray-700 whitespace-pre-wrap">{message}</pre>}
     </div>

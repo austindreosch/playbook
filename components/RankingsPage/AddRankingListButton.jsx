@@ -41,7 +41,7 @@ const AddRankingListButton = ({ rankings }) => {
 
     const handleSubmit = async () => {
         if (!formData.name.trim()) {
-            setError("Please enter a name for your rankings list");
+            setError("Please enter a name for your rankings.");
             return;
         }
 
@@ -105,7 +105,9 @@ const AddRankingListButton = ({ rankings }) => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to save rankings');
+                // Try to get more detailed error information
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Failed to save rankings (${response.status})`);
             }
 
             // Close the dialog and reset form
@@ -132,17 +134,15 @@ const AddRankingListButton = ({ rankings }) => {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline">
-                    {rankings ? 'Save Rankings' : 'Create New Rankings'}
+                    Create New Rankings
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{rankings ? 'Save Your Rankings' : 'Build Your Custom Rankings'}</DialogTitle>
+                    <DialogTitle>Build Your Customizable Rankings</DialogTitle>
                     <DialogDescription>
-                        {rankings
-                            ? 'Save your current rankings list with a custom name.'
-                            : 'Tailor your perfect rankings list with just a few clicks. Choose your sport, format, scoring below to generate a customized rankings sheet for your fantasy league.'
-                        }
+                        Tailor your perfect rankings list with just a few clicks. Choose your sport, format, scoring below to
+                        generate a customized rankings sheet for your fantasy league.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -231,10 +231,7 @@ const AddRankingListButton = ({ rankings }) => {
                         disabled={isSubmitting || !formData.name.trim()}
                         className="w-full sm:w-auto bg-pb_blue text-white shadow-md hover:bg-pb_darkblue"
                     >
-                        {isSubmitting
-                            ? 'Saving...'
-                            : (rankings ? 'Save Rankings' : 'Create New Rankings')
-                        }
+                        {isSubmitting ? 'Creating...' : 'Create Rankings List'}
                     </Button>
                 </DialogFooter>
             </DialogContent>

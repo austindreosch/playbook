@@ -1,6 +1,72 @@
 import { getSession } from '@auth0/nextjs-auth0';
 import { MongoClient } from 'mongodb';
 
+const sportConfigs = {
+    NBA: {
+        positions: ['All', 'PG', 'SG', 'SF', 'PF', 'C', 'G', 'F'],
+        categories: {
+            'FG%': true,
+            'FT%': true,
+            '3PM': true,
+            'PTS': true,
+            'REB': true,
+            'AST': true,
+            'STL': true,
+            'BLK': true,
+            'TO': true,
+            'FGM': false,
+            'FTM': false,
+            '3P%': false,
+            'A/TO': false,
+            'DREB': false,
+            'OREB': false,
+            'STL': false,
+            'DD': false,
+            'TD': false,
+        }
+    },
+    MLB: {
+        positions: ['All', 'SP', 'RP', 'P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'UT', 'CI', 'MI', 'INF'],
+        categories: {
+            hitting: {
+                'AVG': true,
+                'HR': true,
+                'RBI': true,
+                'R': true,
+                'SB': true,
+                'OBP': false,
+                'SLG': false,
+                'OPS': false,
+                'H': false,
+                '2B': false,
+                '3B': false,
+                'TB': false,
+
+            },
+            pitching: {
+                'ERA': true,
+                'WHIP': true,
+                'W': true,
+                'SV': true,
+                'K': true,
+                'SVHLD': false,
+                'HLD': false,
+                'K/BB': false,
+                'K/9': false,
+                'BB/9': false,
+                'QS': false,
+                'IP': false,
+                'L': false,
+            }
+        }
+    },
+    NFL: {
+        positions: ['All', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'],
+    }
+};
+
+//
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -16,7 +82,6 @@ export default async function handler(req, res) {
         userId,
         sport,
         format,
-        rankings,
         name,
         scoring,
         source,
@@ -51,15 +116,43 @@ export default async function handler(req, res) {
                 {
                     sport,
                     format,
+                    scoring,
                     isLatest: true
                 },
                 {
-                    sort: { publishedAt: -1 },
-                    projection: { _id: 1 }  // Only get the ID
+                    sort: { publishedAt: -1 }
                 }
             );
 
-        // Create the new user rankings list with the expert rankings ID
+        if (!latestRankings) {
+            return res.status(404).json({
+                error: 'No expert rankings found for the specified sport, format, and scoring type'
+            });
+        }
+
+        // Validate the rankings data structure
+        if (!Array.isArray(latestRankings.rankings)) {
+            return res.status(500).json({
+                error: 'Invalid rankings data structure in expert rankings'
+            });
+        }
+
+        // Validate each player in the rankings
+        const validRankings = latestRankings.rankings.filter(player => {
+            // Basic validation
+            if (!player.playerId || !player.name || typeof player.rank !== 'number') {
+                return false;
+            }
+            return true;
+        });
+
+        if (validRankings.length === 0) {
+            return res.status(500).json({
+                error: 'No valid player rankings found in expert rankings'
+            });
+        }
+
+        // Create the new user rankings list with the expert rankings data
         const newRankingsList = {
             userId,
             sport,
@@ -67,20 +160,25 @@ export default async function handler(req, res) {
             name,
             scoring,
             source,
-            rankings: rankings.map(player => ({
+            rankings: validRankings.map(player => ({
                 playerId: player.playerId,
                 name: player.name,
-                rank: player.rank
+                rank: player.rank,
+                position: player.position,
+                stats: player.stats || {},
+                notes: '',
+                tags: []
             })),
-            positions,
-            categories,
+            positions: sportConfigs[sport]?.positions || [],
+            categories: sportConfigs[sport]?.categories || {},
             details: {
                 ...details,
                 dateCreated: new Date(),
                 dateUpdated: new Date(),
                 originRankings: {
                     source,
-                    rankingsId: latestRankings?._id || null
+                    rankingsId: latestRankings._id,
+                    version: latestRankings.version
                 }
             }
         };
@@ -102,3 +200,7 @@ export default async function handler(req, res) {
         await client.close();
     }
 }
+
+
+
+
