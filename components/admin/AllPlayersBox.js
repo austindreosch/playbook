@@ -15,13 +15,18 @@ export default function AllPlayersBox() {
     fetchPlayers();
   }, []);
 
+
+
+
+
+
   return (
     <div className="border rounded-lg p-4 w-full max-w-md h-96 overflow-y-auto bg-white shadow">
-      <h2 className="text-lg font-semibold mb-3">Players in DB</h2>
+      <h2 className="text-lg font-semibold mb-3">Players in DB </h2>
       <ul className="space-y-1 text-sm text-gray-700">
         {players.map((p, i) => (
           <li key={i}>
-            {p.info.fullName} <span className="text-gray-400">({p.info.team}, {p.info.pos})</span> - ID: {p.info.id} - {p.info.pos}
+            {p.info.fullName} <span className="text-gray-400">({p.info.team}, {p.info.pos})</span> - ID: {p.info.id}
           </li>
         ))}
       </ul>
