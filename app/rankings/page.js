@@ -65,9 +65,27 @@ export default function RankingsPage() {
     fetchUserRankings();
   }, []);
 
-  const handleRankingSelect = (rankingId) => {
+  const handleRankingSelect = async (rankingId) => {
     setActiveRankingId(rankingId);
-    // TODO: Load the selected ranking's data
+
+    try {
+      // Fetch the specific ranking data
+      const response = await fetch(`/api/user-rankings/${rankingId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch ranking');
+      }
+      const rankingData = await response.json();
+
+      // Update the UI with this ranking's data
+      // This depends on how you want to display it - could be:
+      // - Updating the player list with this ranking
+      // - Showing a comparison view
+      // - Displaying historical changes
+
+    } catch (error) {
+      console.error('Error loading ranking:', error);
+      // Handle error (maybe show an error message to user)
+    }
   };
 
   if (isLoading) {

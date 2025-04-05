@@ -40,17 +40,54 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white px-6 py-12">
-      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="mt-2 text-sm text-gray-600">Manage NBA stats and rankings</p>
+        </div>
 
-      <UpdateStatsButton />
-      <AllPlayersBox />
-      <div className="flex gap-2">
-        <UpdateNBADynastyRankingsButton />
-        {/* <CleanupRankingsButton /> */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">NBA Stats</h2>
+              <div className="space-y-4">
+                <UpdateStatsButton />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Dynasty Rankings</h2>
+              <div className="space-y-4">
+                <UpdateNBADynastyRankingsButton />
+                {/* <CleanupRankingsButton /> */}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">All Players</h2>
+              <AllPlayersBox />
+            </div>
+          </div>
+        </div>
+
+        {message && (
+          <div className="mt-8 bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Status Messages</h2>
+              <pre className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 rounded-lg p-4 overflow-auto">
+                {message}
+              </pre>
+            </div>
+          </div>
+        )}
       </div>
-
-      {message && <pre className="mt-6 text-sm text-gray-700 whitespace-pre-wrap">{message}</pre>}
     </div>
   );
 }

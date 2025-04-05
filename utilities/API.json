@@ -1,0 +1,111 @@
+// DETAILED Players
+//https://api.mysportsfeeds.com/v2.1/pull/nba/players.json
+{
+    "player": {
+        "id": 27843,
+        "firstName": "Precious",
+        "lastName": "Achiuwa",
+        "primaryPosition": "PF",
+        "alternatePositions": [],
+        "jerseyNumber": 5,
+        "currentTeam": {
+            "id": 83,
+            "abbreviation": "NYK"
+        },
+        "currentRosterStatus": "ROSTER",
+        "currentInjury": null,
+        "height": "6'8\"",
+        "weight": 244,
+        "birthDate": "1999-09-19",
+        "age": 25,
+        "birthCity": "Port Harcourt",
+        "birthCountry": "Nigeria",
+        "rookie": true,
+        "highSchool": null,
+        "college": "Memphis",
+        "handedness": {
+            "shoots": null
+        },
+        "officialImageSrc": "https://cdn.nba.com/headshots/nba/latest/1040x760/1630173.png",
+        "socialMediaAccounts": [],
+        "currentContractYear": {
+            "seasonStartYear": 2024,
+            "baseSalary": 0,
+            "minorsSalary": 0,
+            "signingBonus": 0,
+            "otherBonuses": 0,
+            "capHit": 0,
+            "fullNoTradeClause": false,
+            "modifiedNoTradeClause": false,
+            "noMovementClause": false,
+            "overallContract": {
+                "signingTeam": {
+                    "id": 92,
+                    "abbreviation": "MIA"
+                },
+                "signedOn": "2020-11-25T10:00:00.000Z",
+                "totalYears": 5,
+                "totalSalary": 12513127,
+                "totalBonuses": 0,
+                "expiryStatus": "RFA",
+                "annualAverageSalary": 2502625
+            }
+        },
+        "drafted": {
+            "year": 2020,
+            "team": {
+                "id": 92,
+                "abbreviation": "MIA"
+            },
+            "pickTeam": {
+                "id": 92,
+                "abbreviation": "MIA"
+            },
+            "round": 1,
+            "roundPick": 20,
+            "overallPick": 20
+        },
+        "externalMappings": [
+            {
+                "source": "FanDuel",
+                "id": 145314
+            },
+            {
+                "source": "NBA.com",
+                "id": 1630173
+            },
+            {
+                "source": "DraftKings",
+                "id": 1175124
+            },
+            {
+                "source": "Rotowire",
+                "id": "precious-achiuwa-5249"
+            },
+            {
+                "source": "RealGM",
+                "id": 107977
+            },
+            {
+                "source": "spotrac",
+                "id": 70662
+            },
+            {
+                "source": "RotoGrinders",
+                "id": 2439312
+            },
+            {
+                "source": "Gracenote Sports",
+                "id": "/sport/basketball/player:790829"
+            },
+            {
+                "source": "Yahoo",
+                "id": "nba.p.6412"
+            }
+        ]
+    },
+    "teamAsOfDate": {
+        "id": 83,
+        "abbreviation": "NYK"
+    }
+},
