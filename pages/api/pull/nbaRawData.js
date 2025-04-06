@@ -299,7 +299,7 @@ export default async function handler(req, res) {
         }
 
         //=============================================================================
-        //                    5. STORE DATA
+        //                    5. STORE DATA FOR 4 COLLECTIONS
         //=============================================================================
 
         // console.log('Processing and storing data...');
