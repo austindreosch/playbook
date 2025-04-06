@@ -56,24 +56,28 @@ function delay(ms) {
 // Helper function to fetch data with error handling
 async function fetchWithAuth(url, endpoint) {
     try {
-        await delay(100); // 100ms delay between calls
+        await delay(100);
+        console.log(`Fetching ${endpoint}:`, url); // Log the URL we're hitting
+
         const response = await fetch(url, {
             headers: {
                 "Authorization": `Basic ${Buffer.from(`${process.env.MYSPORTSFEEDS_API_KEY}:MYSPORTSFEEDS`).toString('base64')}`
             }
         });
 
+        console.log(`${endpoint} response status:`, response.status);
+
         if (!response.ok) {
+            const text = await response.text();
+            console.log(`${endpoint} error response:`, text);
             throw new Error(`API returned ${response.status}: ${response.statusText}`);
         }
 
-        try {
-            return await response.json();
-        } catch (e) {
-            throw new Error(`Failed to parse JSON: ${e.message}`);
-        }
+        const data = await response.json();
+        console.log(`${endpoint} data received:`, Object.keys(data).length > 0 ? 'yes' : 'no');
+        return data;
     } catch (error) {
-        console.error(`Failed to fetch ${endpoint}: ${error.message}`);
+        console.error(`Failed to fetch ${endpoint}:`, error.message);
         return null;
     }
 }
@@ -131,17 +135,37 @@ export default async function handler(req, res) {
         const db = client.db('playbook');
         const statsCollection = db.collection('stats');
 
-        // Initialize the consolidated NBA data structure
-        const nbaData = {
+        const errors = [];
+        const updateResults = {};
+
+        // Initialize the data structures
+        const nbaCore = {
             sport: 'nba',
+            type: 'core',
             lastUpdated: new Date(),
-            core: {},
-            stats: {},
-            detailed: {},
-            projections: {}
+            data: {}
         };
 
-        const errors = [];
+        const nbaStats = {
+            sport: 'nba',
+            type: 'stats',
+            lastUpdated: new Date(),
+            data: {}
+        };
+
+        const nbaDetailed = {
+            sport: 'nba',
+            type: 'detailed',
+            lastUpdated: new Date(),
+            data: {}
+        };
+
+        const nbaProjections = {
+            sport: 'nba',
+            type: 'projections',
+            lastUpdated: new Date(),
+            data: {}
+        };
 
         //=============================================================================
         //                    1. FETCH CORE DATA
@@ -150,33 +174,33 @@ export default async function handler(req, res) {
         console.log('Fetching CORE data...');
 
         // Seasonal games
-        const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/v2.1/pull/nba/${process.env.MYSPORTSFEEDS_API_VERSION}/${process.env.MYSPORTSFEEDS_SEASON}/games.json`, 'seasonalGames');
+        const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/games.json`, 'seasonalGames');
         if (seasonalGames && validateData(seasonalGames, 'seasonalGames')) {
-            nbaData.core.seasonalGames = seasonalGames;
+            nbaCore.data.seasonalGames = seasonalGames;
         }
 
         // Daily games
         const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
         if (dailyGames && validateData(dailyGames, 'dailyGames')) {
-            nbaData.core.dailyGames = dailyGames;
+            nbaCore.data.dailyGames = dailyGames;
         }
 
         // Current season
         const currentSeason = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/current_season.json`, 'currentSeason');
         if (currentSeason && validateData(currentSeason, 'currentSeason')) {
-            nbaData.core.currentSeason = currentSeason;
+            nbaCore.data.currentSeason = currentSeason;
         }
 
         // Latest updates
         const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/latest_updates.json`, 'latestUpdates');
         if (latestUpdates && validateData(latestUpdates, 'latestUpdates')) {
-            nbaData.core.latestUpdates = latestUpdates;
+            nbaCore.data.latestUpdates = latestUpdates;
         }
 
         // Seasonal venues
         const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/venues.json`, 'seasonalVenues');
         if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues')) {
-            nbaData.core.seasonalVenues = seasonalVenues;
+            nbaCore.data.seasonalVenues = seasonalVenues;
         }
 
         //=============================================================================
@@ -188,31 +212,31 @@ export default async function handler(req, res) {
         // Daily player gamelogs
         const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
         if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs')) {
-            nbaData.stats.dailyPlayerGamelogs = dailyPlayerGamelogs;
+            nbaStats.data.dailyPlayerGamelogs = dailyPlayerGamelogs;
         }
 
         // Daily team gamelogs
         const dailyTeamGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/team_gamelogs.json`, 'dailyTeamGamelogs');
         if (dailyTeamGamelogs && validateData(dailyTeamGamelogs, 'dailyTeamGamelogs')) {
-            nbaData.stats.dailyTeamGamelogs = dailyTeamGamelogs;
+            nbaStats.data.dailyTeamGamelogs = dailyTeamGamelogs;
         }
 
         // Seasonal team stats
         const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
         if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats')) {
-            nbaData.stats.seasonalTeamStats = seasonalTeamStats;
+            nbaStats.data.seasonalTeamStats = seasonalTeamStats;
         }
 
         // Seasonal player stats
         const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
         if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats')) {
-            nbaData.stats.seasonalPlayerStats = seasonalPlayerStats;
+            nbaStats.data.seasonalPlayerStats = seasonalPlayerStats;
         }
 
         // Seasonal standings
         const seasonalStandings = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/standings.json`, 'seasonalStandings');
         if (seasonalStandings && validateData(seasonalStandings, 'seasonalStandings')) {
-            nbaData.stats.seasonalStandings = seasonalStandings;
+            nbaStats.data.seasonalStandings = seasonalStandings;
         }
 
         //=============================================================================
@@ -233,21 +257,21 @@ export default async function handler(req, res) {
         // https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/games/${formatGameId(new Date(), 'LAL', 'MIL')}/lineup.json
 
         // Players
-        const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/players.json`, 'players');
+        const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/players.json`, 'players');
         if (players && validateData(players, 'players')) {
-            nbaData.detailed.players = players;
+            nbaDetailed.data.players = players;
         }
 
         // Injuries
         const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/injuries.json`, 'injuries');
         if (injuries && validateData(injuries, 'injuries')) {
-            nbaData.detailed.playerInjuries = injuries;
+            nbaDetailed.data.playerInjuries = injuries;
         }
 
         // Injury history
         const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/injury_history.json`, 'injuryHistory');
         if (injuryHistory && validateData(injuryHistory, 'injuryHistory')) {
-            nbaData.detailed.injuryHistory = injuryHistory;
+            nbaDetailed.data.injuryHistory = injuryHistory;
         }
 
         //=============================================================================
@@ -259,43 +283,77 @@ export default async function handler(req, res) {
         // Daily player gamelogs projections
         const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
         if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections')) {
-            nbaData.projections.dailyPlayerGamelogsProjections = dailyPlayerGamelogsProjections;
+            nbaProjections.data.dailyPlayerGamelogsProjections = dailyPlayerGamelogsProjections;
         }
 
         // Daily dfs projections
         const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
         if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections')) {
-            nbaData.projections.dailyDfsProjections = dailyDfsProjections;
+            nbaProjections.data.dailyDfsProjections = dailyDfsProjections;
         }
 
         // Seasonal player stats projections
         const seasonalPlayerStatsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/player_stats_totals_projections.json`, 'seasonalPlayerStatsProjections');
         if (seasonalPlayerStatsProjections && validateData(seasonalPlayerStatsProjections, 'seasonalPlayerStatsProjections')) {
-            nbaData.projections.seasonalPlayerStatsProjections = seasonalPlayerStatsProjections;
+            nbaProjections.data.seasonalPlayerStatsProjections = seasonalPlayerStatsProjections;
         }
 
         //=============================================================================
         //                    5. STORE DATA
         //=============================================================================
 
-        console.log('Processing and storing data...');
+        // console.log('Processing and storing data...');
+        console.log('Data to store:', {
+            core: Object.keys(nbaCore.data).length > 0 ? Object.keys(nbaCore.data) : 'empty',
+            stats: Object.keys(nbaStats.data).length > 0 ? Object.keys(nbaStats.data) : 'empty',
+            detailed: Object.keys(nbaDetailed.data).length > 0 ? Object.keys(nbaDetailed.data) : 'empty',
+            projections: Object.keys(nbaProjections.data).length > 0 ? Object.keys(nbaProjections.data) : 'empty'
+        });
 
-        // Update the database with the consolidated data
-        const result = await statsCollection.updateOne(
-            { sport: 'nba' },
-            { $set: nbaData },
-            { upsert: true }
-        );
+        // Update each document separately
+        const updateDocument = async (data, type) => {
+            try {
+                console.log(`Attempting to store ${type} data...`);
+                const result = await statsCollection.updateOne(
+                    { sport: 'nba', type: type },
+                    { $set: data },
+                    { upsert: true }
+                );
+                console.log(`${type} update result:`, result);
+                return result;
+            } catch (error) {
+                console.error(`Error updating ${type} data:`, error);
+                errors.push({ type, error: error.message });
+                return null;
+            }
+        };
 
-        console.log('Data consolidation complete');
+        // Update all documents
+        const [coreResult, statsResult, detailedResult, projectionsResult] = await Promise.all([
+            updateDocument(nbaCore, 'core'),
+            updateDocument(nbaStats, 'stats'),
+            updateDocument(nbaDetailed, 'detailed'),
+            updateDocument(nbaProjections, 'projections')
+        ]);
+
+        console.log('MongoDB update results:', {
+            core: coreResult,
+            stats: statsResult,
+            detailed: detailedResult,
+            projections: projectionsResult
+        });
 
         res.status(200).json({
             success: true,
             message: errors.length > 0
                 ? `NBA data consolidated with ${errors.length} errors`
                 : 'NBA data consolidated successfully',
-            modifiedCount: result.modifiedCount,
-            upsertedCount: result.upsertedCount,
+            updates: {
+                core: coreResult?.modifiedCount || coreResult?.upsertedCount,
+                stats: statsResult?.modifiedCount || statsResult?.upsertedCount,
+                detailed: detailedResult?.modifiedCount || detailedResult?.upsertedCount,
+                projections: projectionsResult?.modifiedCount || projectionsResult?.upsertedCount
+            },
             errors: errors.length > 0 ? errors : undefined
         });
 
