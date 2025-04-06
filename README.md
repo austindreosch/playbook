@@ -1,10 +1,10 @@
-![image](https://github.com/austindreosch/playbook-ai/assets/83053022/939359d5-12bc-4e06-b85f-645eb6e60afc)
+![image](https://github.com/austindreosch/playbook/assets/83053022/939359d5-12bc-4e06-b85f-645eb6e60afc)
 
-![screely-1694968333254](https://github.com/austindreosch/playbook-ai/assets/83053022/34ebe95b-9a61-4a0a-952f-43f59dbab886)
+![screely-1694968333254](https://github.com/austindreosch/playbook/assets/83053022/34ebe95b-9a61-4a0a-952f-43f59dbab886)
 
 
 ## Documentation
-Playbook AI is fantasy sports toolkit build with Next.js, MongoDB, auth0, and Tailwind CSS.
+Playbook is fantasy sports toolkit build with Next.js, MongoDB, auth0, and Tailwind CSS.
 
 Users can import their fantasy leagues using their unique league identifier from their fantasy provider, but currently only Fantrax basketball leagues are supported. When the league identifier is entered - we make a two-part call to the Fantrax private access API which first returns the league information including scoring system, matchup schedule data, and team names and IDs - which then follows with a second API route call that returns an array of players belonging to each team. This player data only includes name, position, and team, so another service must be used for stats. All of this data gets entered in the MongoDB database using custom data structure to help facilitate the next step. 
 
