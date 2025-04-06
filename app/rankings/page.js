@@ -4,6 +4,7 @@ import PlayerListContainer from '@/components/PlayerList/PlayerListContainer';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import PlayerListRankingHeader from '@/components/RankingsPage/PlayerListRankingHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
+import MasterDataset from '@/stores/MasterDataset';
 import { availableCategories } from '@/utilities/dummyData/AvailableCategoriesDummyData';
 import { useEffect, useState } from 'react';
 
@@ -13,6 +14,7 @@ export default function RankingsPage() {
   const [activeRankingId, setActiveRankingId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { nba, fetchNbaData, isLoading: masterDatasetLoading, error: masterDatasetError } = MasterDataset();
 
   // Fetch expert rankings
   useEffect(() => {
@@ -64,6 +66,13 @@ export default function RankingsPage() {
 
     fetchUserRankings();
   }, []);
+
+  useEffect(() => {
+    console.log('Fetching NBA data...');
+    fetchNbaData();
+  }, []);
+
+  // console.log('Current NBA state:', nba);
 
   const handleRankingSelect = async (rankingId) => {
     setActiveRankingId(rankingId);
@@ -136,6 +145,23 @@ export default function RankingsPage() {
           </div>
         </div>
       )}
+
+      <div className="p-4">
+        <h2>Debug View</h2>
+        {masterDatasetLoading && <div>Loading...</div>}
+        {masterDatasetError && <div className="text-red-500">Error: {masterDatasetError}</div>}
+        <div className="mt-4">
+          <h3>Regular Stats (First 3 players):</h3>
+          <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96">
+            {JSON.stringify(nba.players.slice(0, 3), null, 2)}
+          </pre>
+
+          <h3 className="mt-4">Projections (First 3 players):</h3>
+          <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-96">
+            {JSON.stringify(nba.projections.slice(0, 3), null, 2)}
+          </pre>
+        </div>
+      </div>
     </div>
   );
 }
