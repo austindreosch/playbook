@@ -38,7 +38,7 @@ const MasterDataset = create((set, get) => ({
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
 
-            Q
+
             // Process regular season stats
             const players = data.nbaStats?.playerStatsTotals?.map(playerStats => {
                 const teamAbbreviation = playerStats.team?.abbreviation ||
