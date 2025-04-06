@@ -82,10 +82,8 @@ async function fetchWithAuth(url, endpoint) {
     }
 }
 
-let errors = [];
-
 // Helper function to validate data
-function validateData(data, endpoint) {
+function validateData(data, endpoint, errors) {
     switch (endpoint) {
         case 'seasonalGames':
             if (!data?.games) {
@@ -102,6 +100,34 @@ function validateData(data, endpoint) {
         // Add more validations as needed
     }
     return true;
+}
+
+// Helper function to update a single endpoint in the database
+async function updateEndpoint(collection, sport, addon, endpoint, data, errors) {
+    try {
+        console.log(`Attempting to store ${sport}.${addon}.${endpoint} data...`);
+
+        const document = {
+            sport: sport,
+            addon: addon,
+            endpoint: endpoint,
+            lastUpdated: new Date(),
+            data: data
+        };
+
+        const result = await collection.updateOne(
+            { sport: sport, addon: addon, endpoint: endpoint },
+            { $set: document },
+            { upsert: true }
+        );
+
+        console.log(`${sport}.${addon}.${endpoint} update result:`, result);
+        return result;
+    } catch (error) {
+        console.error(`Error updating ${sport}.${addon}.${endpoint} data:`, error);
+        errors.push({ sport, addon, endpoint, error: error.message });
+        return null;
+    }
 }
 
 //=============================================================================
@@ -136,7 +162,6 @@ export default async function handler(req, res) {
         const statsCollection = db.collection('stats');
 
         const errors = [];
-        const updateResults = {};
 
         //=============================================================================
         //                    1. FETCH AND STORE CORE DATA
@@ -146,32 +171,32 @@ export default async function handler(req, res) {
 
         // Seasonal games
         const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/games.json`, 'seasonalGames');
-        if (seasonalGames && validateData(seasonalGames, 'seasonalGames')) {
-            await updateEndpoint(statsCollection, 'nba', 'core', 'seasonalGames', seasonalGames);
+        if (seasonalGames && validateData(seasonalGames, 'seasonalGames', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'core', 'seasonalGames', seasonalGames, errors);
         }
 
         // Daily games
         const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
-        if (dailyGames && validateData(dailyGames, 'dailyGames')) {
-            await updateEndpoint(statsCollection, 'nba', 'core', 'dailyGames', dailyGames);
+        if (dailyGames && validateData(dailyGames, 'dailyGames', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'core', 'dailyGames', dailyGames, errors);
         }
 
         // Current season
         const currentSeason = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/current_season.json`, 'currentSeason');
-        if (currentSeason && validateData(currentSeason, 'currentSeason')) {
-            await updateEndpoint(statsCollection, 'nba', 'core', 'currentSeason', currentSeason);
+        if (currentSeason && validateData(currentSeason, 'currentSeason', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'core', 'currentSeason', currentSeason, errors);
         }
 
         // Latest updates
         const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/latest_updates.json`, 'latestUpdates');
-        if (latestUpdates && validateData(latestUpdates, 'latestUpdates')) {
-            await updateEndpoint(statsCollection, 'nba', 'core', 'latestUpdates', latestUpdates);
+        if (latestUpdates && validateData(latestUpdates, 'latestUpdates', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'core', 'latestUpdates', latestUpdates, errors);
         }
 
         // Seasonal venues
         const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/venues.json`, 'seasonalVenues');
-        if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues')) {
-            await updateEndpoint(statsCollection, 'nba', 'core', 'seasonalVenues', seasonalVenues);
+        if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'core', 'seasonalVenues', seasonalVenues, errors);
         }
 
         //=============================================================================
@@ -182,32 +207,32 @@ export default async function handler(req, res) {
 
         // Daily player gamelogs
         const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
-        if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs')) {
-            await updateEndpoint(statsCollection, 'nba', 'stats', 'dailyPlayerGamelogs', dailyPlayerGamelogs);
+        if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'stats', 'dailyPlayerGamelogs', dailyPlayerGamelogs, errors);
         }
 
         // Daily team gamelogs
         const dailyTeamGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/team_gamelogs.json`, 'dailyTeamGamelogs');
-        if (dailyTeamGamelogs && validateData(dailyTeamGamelogs, 'dailyTeamGamelogs')) {
-            await updateEndpoint(statsCollection, 'nba', 'stats', 'dailyTeamGamelogs', dailyTeamGamelogs);
+        if (dailyTeamGamelogs && validateData(dailyTeamGamelogs, 'dailyTeamGamelogs', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'stats', 'dailyTeamGamelogs', dailyTeamGamelogs, errors);
         }
 
         // Seasonal team stats
         const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
-        if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats')) {
-            await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalTeamStats', seasonalTeamStats);
+        if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalTeamStats', seasonalTeamStats, errors);
         }
 
         // Seasonal player stats
         const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
-        if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats')) {
-            await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalPlayerStats', seasonalPlayerStats);
+        if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
         }
 
         // Seasonal standings
         const seasonalStandings = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/standings.json`, 'seasonalStandings');
-        if (seasonalStandings && validateData(seasonalStandings, 'seasonalStandings')) {
-            await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalStandings', seasonalStandings);
+        if (seasonalStandings && validateData(seasonalStandings, 'seasonalStandings', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalStandings', seasonalStandings, errors);
         }
 
         //=============================================================================
@@ -229,20 +254,20 @@ export default async function handler(req, res) {
 
         // Players
         const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/players.json`, 'players');
-        if (players && validateData(players, 'players')) {
-            await updateEndpoint(statsCollection, 'nba', 'detailed', 'players', players);
+        if (players && validateData(players, 'players', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'detailed', 'players', players, errors);
         }
 
         // Injuries
         const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/injuries.json`, 'injuries');
-        if (injuries && validateData(injuries, 'injuries')) {
-            await updateEndpoint(statsCollection, 'nba', 'detailed', 'playerInjuries', injuries);
+        if (injuries && validateData(injuries, 'injuries', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'detailed', 'playerInjuries', injuries, errors);
         }
 
         // Injury history
         const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/injury_history.json`, 'injuryHistory');
-        if (injuryHistory && validateData(injuryHistory, 'injuryHistory')) {
-            await updateEndpoint(statsCollection, 'nba', 'detailed', 'injuryHistory', injuryHistory);
+        if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'detailed', 'injuryHistory', injuryHistory, errors);
         }
 
         //=============================================================================
@@ -253,20 +278,20 @@ export default async function handler(req, res) {
 
         // Daily player gamelogs projections
         const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
-        if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections')) {
-            await updateEndpoint(statsCollection, 'nba', 'projections', 'dailyPlayerGamelogsProjections', dailyPlayerGamelogsProjections);
+        if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'projections', 'dailyPlayerGamelogsProjections', dailyPlayerGamelogsProjections, errors);
         }
 
         // Daily dfs projections
         const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
-        if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections')) {
-            await updateEndpoint(statsCollection, 'nba', 'projections', 'dailyDfsProjections', dailyDfsProjections);
+        if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'projections', 'dailyDfsProjections', dailyDfsProjections, errors);
         }
 
         // Seasonal player stats projections
         const seasonalPlayerStatsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/player_stats_totals_projections.json`, 'seasonalPlayerStatsProjections');
-        if (seasonalPlayerStatsProjections && validateData(seasonalPlayerStatsProjections, 'seasonalPlayerStatsProjections')) {
-            await updateEndpoint(statsCollection, 'nba', 'projections', 'seasonalPlayerStatsProjections', seasonalPlayerStatsProjections);
+        if (seasonalPlayerStatsProjections && validateData(seasonalPlayerStatsProjections, 'seasonalPlayerStatsProjections', errors)) {
+            await updateEndpoint(statsCollection, 'nba', 'projections', 'seasonalPlayerStatsProjections', seasonalPlayerStatsProjections, errors);
         }
 
         //=============================================================================
@@ -291,33 +316,5 @@ export default async function handler(req, res) {
             await client.close();
             console.log('MongoDB connection closed');
         }
-    }
-}
-
-// Helper function to update a single endpoint in the database
-async function updateEndpoint(collection, sport, category, endpoint, data) {
-    try {
-        console.log(`Attempting to store ${sport}.${category}.${endpoint} data...`);
-
-        const document = {
-            sport: sport,
-            category: category,
-            endpoint: endpoint,
-            lastUpdated: new Date(),
-            data: data
-        };
-
-        const result = await collection.updateOne(
-            { sport: sport, category: category, endpoint: endpoint },
-            { $set: document },
-            { upsert: true }
-        );
-
-        console.log(`${sport}.${category}.${endpoint} update result:`, result);
-        return result;
-    } catch (error) {
-        console.error(`Error updating ${sport}.${category}.${endpoint} data:`, error);
-        errors.push({ sport, category, endpoint, error: error.message });
-        return null;
     }
 }

@@ -3,31 +3,32 @@ import { MongoClient } from 'mongodb';
 
 const mongoUri = process.env.MONGODB_URI;
 
-// We can add more queries here as needed
+// Updated queries to match new DB structure
 const dataQueries = {
     nbaStats: {
         collection: 'stats',
-        query: { sport: 'nba', type: 'stats' },
-        fields: { 'data.seasonalPlayerStats': 1 }
+        queries: [
+            {
+                sport: 'nba',
+                endpoint: 'seasonalPlayerStats'
+            },
+            {
+                sport: 'nba',
+                endpoint: 'seasonalPlayerStatsProjections'
+            }
+        ]
     }
-    // MLB Queries
+    // MLB Queries (future)
     // mlbStats: {
     //     collection: 'stats',
-    //     query: { sport: 'mlb', type: 'stats' },
-    //     fields: { 'data.seasonalPlayerStats': 1 }
+    //     query: { sport: 'mlb', endpoint: 'seasonalPlayerStats' }
     // },
-    // NFL Queries
+    // NFL Queries (future)
     // nflStats: {
     //     collection: 'stats',
-    //     query: { sport: 'nfl', type: 'stats' },
-    //     fields: { 'data.seasonalPlayerStats': 1 }
+    //     query: { sport: 'nfl', endpoint: 'seasonalPlayerStats' }
     // }
 };
-
-
-/*
-IM GOING TO REDO THIS AFTER I CHANGE WAY THE DB GETS ITS MYSPORTSFEED DATA
-*/
 
 
 
@@ -42,41 +43,32 @@ export default async function handler(req, res) {
         await client.connect();
         const db = client.db('playbook');
 
-        // Get NBA player stats
-        const nbaStats = await db.collection(dataQueries.nbaStats.collection)
-            .findOne(
-                dataQueries.nbaStats.query,
-                { projection: dataQueries.nbaStats.fields }
-            );
+        // Simpler query using $or with the existing queries
+        const nbaData = await db.collection(dataQueries.nbaStats.collection)
+            .find({ $or: dataQueries.nbaStats.queries })
+            .toArray();
 
-        // MLB Stats Query (future)
-        // const mlbStats = await db.collection(dataQueries.mlbStats.collection)
-        //     .findOne(
-        //         dataQueries.mlbStats.query,
-        //         { projection: dataQueries.mlbStats.fields }
-        //     );
-
-        // NFL Stats Query (future)
-        // const nflStats = await db.collection(dataQueries.nflStats.collection)
-        //     .findOne(
-        //         dataQueries.nflStats.query,
-        //         { projection: dataQueries.nflStats.fields }
-        //     );
+        // Convert array to object by endpoint
+        const nbaStats = nbaData.reduce((acc, doc) => {
+            acc[doc.endpoint] = doc.data || { players: [] };
+            return acc;
+        }, {});
 
         res.status(200).json({
             nbaStats: {
                 stats: {
-                    seasonalPlayerStats: nbaStats?.data?.seasonalPlayerStats || { players: [] }
+                    seasonalPlayerStats: nbaStats.seasonalPlayerStats || { players: [] },
+                    seasonalPlayerStatsProjections: nbaStats.seasonalPlayerStatsProjections || { players: [] }
                 }
             }
             // mlbStats: {
             //     stats: {
-            //         seasonalPlayerStats: mlbStats?.data?.seasonalPlayerStats || { players: [] }
+            //         seasonalPlayerStats: mlbStats?.data || { players: [] }
             //     }
             // },
-            // nfl: {
+            // nflStats: {
             //     stats: {
-            //         seasonalPlayerStats: nflStats?.data?.seasonalPlayerStats || { players: [] }
+            //         seasonalPlayerStats: nflStats?.data || { players: [] }
             //     }
             // }
         });
