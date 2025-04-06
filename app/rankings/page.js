@@ -72,7 +72,7 @@ export default function RankingsPage() {
     fetchNbaData();
   }, []);
 
-  console.log('Current NBA state:', nba);
+  // console.log('Current NBA state:', nba);
 
   const handleRankingSelect = async (rankingId) => {
     setActiveRankingId(rankingId);

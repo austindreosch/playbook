@@ -1,6 +1,12 @@
 // stores/MasterDataset.js
 import { create } from 'zustand';
 
+const getObjectSize = (obj) => {
+    const size = new TextEncoder().encode(JSON.stringify(obj)).length;
+    const kiloBytes = size / 1024;
+    const megaBytes = kiloBytes / 1024;
+    return megaBytes < 1 ? `${kiloBytes.toFixed(2)} KB` : `${megaBytes.toFixed(2)} MB`;
+};
 
 const MasterDataset = create((set, get) => ({
     nba: {
@@ -23,7 +29,7 @@ const MasterDataset = create((set, get) => ({
     },
     isLoading: false,  // Just one simple loading state
     error: null,       // Just one simple error state
-
+    stateSize: '0 KB',
 
     // Fetch NBA data
     fetchNbaData: async () => {
@@ -32,23 +38,20 @@ const MasterDataset = create((set, get) => ({
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
 
-            console.log('Raw API response:', data);
-            console.log('nbaStats structure:', data.nbaStats);
-            console.log('playerStatsTotals:', data.nbaStats?.playerStatsTotals?.length, 'items');
-            console.log('playerStatsProjectedTotals:', data.nbaStats?.playerStatsProjectedTotals?.length, 'items');
-
+            Q
             // Process regular season stats
             const players = data.nbaStats?.playerStatsTotals?.map(playerStats => {
-                console.log('Processing player:', playerStats.player.firstName, playerStats.player.lastName);
+                const teamAbbreviation = playerStats.team?.abbreviation ||
+                    playerStats.player?.currentTeam?.abbreviation ||
+                    'FA';
                 return {
                     info: {
                         playerId: playerStats.player.id,
                         firstName: playerStats.player.firstName,
                         lastName: playerStats.player.lastName,
                         position: playerStats.player.primaryPosition,
-                        team: playerStats.team?.abbreviation ||
-                            playerStats.player?.currentTeam?.abbreviation ||
-                            'FA',
+                        team: teamAbbreviation,
+                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
                         height: playerStats.player.height,
                         weight: playerStats.player.weight,
                         jerseyNumber: playerStats.player.jerseyNumber,
@@ -73,22 +76,19 @@ const MasterDataset = create((set, get) => ({
                 };
             }) || [];
 
-            console.log('Processed players:', players.length);
 
             // Process projections
             const projections = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
-                console.log('Processing projection:', playerStats.player.firstName, playerStats.player.lastName);
                 const teamAbbreviation = playerStats.team?.abbreviation ||
                     playerStats.player?.currentTeam?.abbreviation ||
-                    'FA';  // FA for Free Agent if no team found
-
+                    'FA';
                 return {
                     info: {
                         playerId: playerStats.player.id,
                         firstName: playerStats.player.firstName,
                         lastName: playerStats.player.lastName,
                         position: playerStats.player.primaryPosition,
-                        team: teamAbbreviation,  // Use our safely accessed team abbreviation
+                        team: teamAbbreviation,
                         teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
                         height: playerStats.player.height,
                         weight: playerStats.player.weight,
@@ -114,16 +114,8 @@ const MasterDataset = create((set, get) => ({
                 };
             }) || [];
 
-            console.log('Processed projections:', projections.length);
 
-            // Before setting state
-            console.log('Setting state with:', {
-                players: players.length,
-                projections: projections.length,
-                lastUpdated: new Date()
-            });
-
-            set({
+            const newState = {
                 nba: {
                     players,
                     projections,
@@ -131,6 +123,15 @@ const MasterDataset = create((set, get) => ({
                     lastUpdated: new Date()
                 },
                 isLoading: false
+            };
+
+            // Calculate state size before setting
+            const stateSize = getObjectSize(newState);
+            console.log('State size:', stateSize);
+
+            set({
+                ...newState,
+                stateSize
             });
         } catch (error) {
             console.error('Error in fetchNbaData:', error);

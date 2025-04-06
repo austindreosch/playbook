@@ -1,5 +1,6 @@
 'use client';
 
+import { useMasterDataset } from '@/stores/MasterDataset';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import React, { useState } from 'react';
 
@@ -9,6 +10,12 @@ function UpdateNBAStatsButton() {
   const isAdmin = user && (user.sub === adminSub || user.isAdmin);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
+
+  const formatLastUpdated = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    return `(Last: ${d.toLocaleDateString()} ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+  };
 
   const handleUpdateClick = async () => {
     setIsUpdating(true);
@@ -20,9 +27,6 @@ function UpdateNBAStatsButton() {
       });
 
       const json = await response.json();
-      console.log('Response Status:', response.status);
-      console.log('📦 Response:', json);
-      console.dir(json, { depth: null });
 
       if (!response.ok) {
         throw new Error(json.error || 'Failed to update NBA data');
@@ -68,7 +72,9 @@ function UpdateNBAStatsButton() {
               <path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" />
               <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
             </svg>
-            Update NBA Stats
+            <span>
+              Update NBA Stats
+            </span>
           </>
         )}
       </button>

@@ -3,16 +3,18 @@ import { BullseyeIcon } from '@/components/icons/BullseyeIcon';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
-
-
-
-
 
 function NavBar() {
     const { user } = useUser();
-    console.log('User: ', user);
+
+    // Only log user changes if needed for debugging
+    useEffect(() => {
+        if (process.env.NODE_ENV === 'development') {
+            // console.log('User state changed:', user);
+        }
+    }, [user]);
 
     return (
         <nav className="bg-pb_orange shadow-md ">
@@ -64,7 +66,7 @@ function NavBar() {
     );
 }
 
-export default NavBar; ``
+export default NavBar;
 
 
 
