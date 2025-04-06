@@ -40,26 +40,54 @@ export default async function handler(req, res) {
     const client = new MongoClient(mongoUri);
 
     try {
+        console.log('1. Attempting to connect to MongoDB...');
         await client.connect();
+        console.log('2. Successfully connected to MongoDB');
+
         const db = client.db('playbook');
 
-        // Simpler query using $or with the existing queries
+        // List all collections to verify our database structure
+        console.log('3. Available collections:');
+        const collections = await db.listCollections().toArray();
+        console.log(collections.map(c => c.name));
+
+        // Check the query we're using
+        console.log('4. Query being executed:', {
+            collection: dataQueries.nbaStats.collection,
+            query: { $or: dataQueries.nbaStats.queries }
+        });
+
+        // Get count of matching documents
+        const count = await db.collection(dataQueries.nbaStats.collection)
+            .countDocuments({ $or: dataQueries.nbaStats.queries });
+        console.log('5. Number of matching documents:', count);
+
+        // Execute the query
         const nbaData = await db.collection(dataQueries.nbaStats.collection)
             .find({ $or: dataQueries.nbaStats.queries })
             .toArray();
 
-        // Convert array to object by endpoint
+        console.log('6. Raw NBA data retrieved:', {
+            numberOfDocuments: nbaData.length,
+            documentEndpoints: nbaData.map(doc => doc.endpoint),
+            sampleDoc: nbaData[0] ? {
+                endpoint: nbaData[0].endpoint,
+                hasData: !!nbaData[0].data,
+                dataKeys: nbaData[0].data ? Object.keys(nbaData[0].data) : []
+            } : 'No documents found'
+        });
+
         const nbaStats = nbaData.reduce((acc, doc) => {
             acc[doc.endpoint] = doc.data || { players: [] };
             return acc;
         }, {});
 
+        console.log('Processed nbaStats:', nbaStats); // See what we're sending
+
         res.status(200).json({
             nbaStats: {
-                stats: {
-                    seasonalPlayerStats: nbaStats.seasonalPlayerStats || { players: [] },
-                    seasonalPlayerStatsProjections: nbaStats.seasonalPlayerStatsProjections || { players: [] }
-                }
+                playerStatsTotals: nbaStats.seasonalPlayerStats?.playerStatsTotals || [],
+                playerStatsProjectedTotals: nbaStats.seasonalPlayerStatsProjections?.playerStatsProjectedTotals || []
             }
             // mlbStats: {
             //     stats: {
@@ -74,7 +102,11 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('Error fetching sports data:', error);
+        console.error('Error with details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        });
         res.status(500).json({ error: 'Failed to fetch sports data' });
     } finally {
         if (client.topology?.isConnected()) {

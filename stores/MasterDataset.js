@@ -32,78 +32,96 @@ const MasterDataset = create((set, get) => ({
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.error || 'Failed to fetch NBA data');
+            console.log('Raw API response:', data);
+            console.log('nbaStats structure:', data.nbaStats);
+            console.log('playerStatsTotals:', data.nbaStats?.playerStatsTotals?.length, 'items');
+            console.log('playerStatsProjectedTotals:', data.nbaStats?.playerStatsProjectedTotals?.length, 'items');
 
             // Process regular season stats
-            const players = data.nbaStats.stats.seasonalPlayerStats?.players?.map(playerStats => ({
-                info: {
-                    playerId: playerStats.player.id,
-                    firstName: playerStats.player.firstName,
-                    lastName: playerStats.player.lastName,
-                    fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                    age: playerStats.player.age,
-                    height: playerStats.player.height,
-                    weight: playerStats.player.weight,
-                    team: playerStats.team.abbreviation,
-                    teamId: playerStats.team.id,
-                    img: playerStats.player.officialImageSrc,
-                    position: playerStats.player.primaryPosition,
-                    injuryStatus: playerStats.player.currentInjury,
-                },
-                stats: {
-                    gamesPlayed: playerStats.stats.gamesPlayed,
-                    minPerGame: parseFloat((playerStats.stats.miscellaneous.minSecondsPerGame / 60).toFixed(1)),
-                    foulsPerGame: playerStats.stats.miscellaneous.foulsPerGame,
-                    //
-                    fieldGoalPercentage: playerStats.stats.fieldGoals.fgPct,
-                    threePointsMadePerGame: playerStats.stats.fieldGoals.fg3PtMadePerGame,
-                    freeThrowPercentage: playerStats.stats.freeThrows.ftPct,
-                    pointsPerGame: playerStats.stats.offense.ptsPerGame,
-                    reboundsPerGame: playerStats.stats.rebounds.rebPerGame,
-                    assistsPerGame: playerStats.stats.offense.astPerGame,
-                    stealsPerGame: playerStats.stats.defense.stlPerGame,
-                    blocksPerGame: playerStats.stats.defense.blkPerGame,
-                    turnoversPerGame: playerStats.stats.defense.tovPerGame,
-                    foulsPerGame: playerStats.stats.fouls.foulsPerGame,
-                    threePointPercentage: playerStats.stats.fieldGoals.fg3PtPct,
-                    trueShootingPercentage: (playerStats.stats.offense.ptsPerGame / (2 * (playerStats.stats.fieldGoals.fgAtt + 0.44 * playerStats.stats.freeThrows.ftAtt)) * 100).toFixed(1),
-                    assistToTurnoverRatio: (playerStats.stats.offense.astPerGame / Math.max(playerStats.stats.defense.tovPerGame, 0.1)).toFixed(1),
-                    // dd
-                    // td
-                }
-            })) || [];
+            const players = data.nbaStats?.playerStatsTotals?.map(playerStats => {
+                console.log('Processing player:', playerStats.player.firstName, playerStats.player.lastName);
+                return {
+                    info: {
+                        playerId: playerStats.player.id,
+                        firstName: playerStats.player.firstName,
+                        lastName: playerStats.player.lastName,
+                        position: playerStats.player.primaryPosition,
+                        team: playerStats.team?.abbreviation ||
+                            playerStats.player?.currentTeam?.abbreviation ||
+                            'FA',
+                        height: playerStats.player.height,
+                        weight: playerStats.player.weight,
+                        jerseyNumber: playerStats.player.jerseyNumber,
+                        officialImageSrc: playerStats.player.officialImageSrc
+                    },
+                    stats: {
+                        gamesPlayed: playerStats.stats.gamesPlayed,
+                        points: playerStats.stats.offense.pts,
+                        pointsPerGame: playerStats.stats.offense.ptsPerGame,
+                        rebounds: playerStats.stats.rebounds.reb,
+                        reboundsPerGame: playerStats.stats.rebounds.rebPerGame,
+                        assists: playerStats.stats.offense.ast,
+                        assistsPerGame: playerStats.stats.offense.astPerGame,
+                        steals: playerStats.stats.defense.stl,
+                        stealsPerGame: playerStats.stats.defense.stlPerGame,
+                        blocks: playerStats.stats.defense.blk,
+                        blocksPerGame: playerStats.stats.defense.blkPerGame,
+                        fieldGoalPercentage: playerStats.stats.fieldGoals.fgPct,
+                        freeThrowPercentage: playerStats.stats.freeThrows.ftPct,
+                        minutesPerGame: Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60)
+                    }
+                };
+            }) || [];
+
+            console.log('Processed players:', players.length);
 
             // Process projections
-            const projections = data.nbaStats.stats.seasonalPlayerStatsProjections?.players?.map(playerStats => ({
-                info: {
-                    playerId: playerStats.player.id,
-                    teamId: playerStats.team.id,
-                    firstName: playerStats.player.firstName,
-                    lastName: playerStats.player.lastName,
-                    fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                    injuryStatus: playerStats.player.currentInjury,
-                },
-                projectedStats: {
-                    gamesPlayed: playerStats.projectedStats.gamesPlayed,
-                    minPerGame: parseFloat((playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60).toFixed(1)),
-                    foulsPerGame: playerStats.projectedStats.miscellaneous.foulsPerGame,
-                    //
-                    fieldGoalPercentage: playerStats.projectedStats.fieldGoals.fgPct,
-                    threePointsMadePerGame: playerStats.projectedStats.fieldGoals.fg3PtMadePerGame,
-                    freeThrowPercentage: playerStats.projectedStats.freeThrows.ftPct,
-                    pointsPerGame: playerStats.projectedStats.offense.ptsPerGame,
-                    reboundsPerGame: playerStats.projectedStats.rebounds.rebPerGame,
-                    assistsPerGame: playerStats.projectedStats.offense.astPerGame,
-                    stealsPerGame: playerStats.projectedStats.defense.stlPerGame,
-                    blocksPerGame: playerStats.projectedStats.defense.blkPerGame,
-                    turnoversPerGame: playerStats.projectedStats.defense.tovPerGame,
-                    threePointPercentage: playerStats.projectedStats.fieldGoals.fg3PtPct,
-                    trueShootingPercentage: (playerStats.projectedStats.offense.ptsPerGame / (2 * (playerStats.projectedStats.fieldGoals.fgAtt + 0.44 * playerStats.projectedStats.freeThrows.ftAtt)) * 100).toFixed(1),
-                    assistToTurnoverRatio: (playerStats.projectedStats.offense.astPerGame / Math.max(playerStats.projectedStats.defense.tovPerGame, 0.1)).toFixed(1),
-                    // dd
-                    // td
-                }
-            })) || [];
+            const projections = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
+                console.log('Processing projection:', playerStats.player.firstName, playerStats.player.lastName);
+                const teamAbbreviation = playerStats.team?.abbreviation ||
+                    playerStats.player?.currentTeam?.abbreviation ||
+                    'FA';  // FA for Free Agent if no team found
+
+                return {
+                    info: {
+                        playerId: playerStats.player.id,
+                        firstName: playerStats.player.firstName,
+                        lastName: playerStats.player.lastName,
+                        position: playerStats.player.primaryPosition,
+                        team: teamAbbreviation,  // Use our safely accessed team abbreviation
+                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
+                        height: playerStats.player.height,
+                        weight: playerStats.player.weight,
+                        jerseyNumber: playerStats.player.jerseyNumber,
+                        officialImageSrc: playerStats.player.officialImageSrc
+                    },
+                    projectedStats: {
+                        gamesPlayed: playerStats.projectedStats.gamesPlayed,
+                        points: playerStats.projectedStats.offense.pts,
+                        pointsPerGame: playerStats.projectedStats.offense.ptsPerGame,
+                        rebounds: playerStats.projectedStats.rebounds.reb,
+                        reboundsPerGame: playerStats.projectedStats.rebounds.rebPerGame,
+                        assists: playerStats.projectedStats.offense.ast,
+                        assistsPerGame: playerStats.projectedStats.offense.astPerGame,
+                        steals: playerStats.projectedStats.defense.stl,
+                        stealsPerGame: playerStats.projectedStats.defense.stlPerGame,
+                        blocks: playerStats.projectedStats.defense.blk,
+                        blocksPerGame: playerStats.projectedStats.defense.blkPerGame,
+                        fieldGoalPercentage: playerStats.projectedStats.fieldGoals.fgPct,
+                        freeThrowPercentage: playerStats.projectedStats.freeThrows.ftPct,
+                        minutesPerGame: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60)
+                    }
+                };
+            }) || [];
+
+            console.log('Processed projections:', projections.length);
+
+            // Before setting state
+            console.log('Setting state with:', {
+                players: players.length,
+                projections: projections.length,
+                lastUpdated: new Date()
+            });
 
             set({
                 nba: {
@@ -115,10 +133,10 @@ const MasterDataset = create((set, get) => ({
                 isLoading: false
             });
         } catch (error) {
-            set({
-                error: error.message,
-                isLoading: false
-            });
+            console.error('Error in fetchNbaData:', error);
+            set({ error: error.message });
+        } finally {
+            set({ isLoading: false });
         }
     },
 
