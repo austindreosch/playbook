@@ -1,32 +1,24 @@
 'use client';
 
+import MasterDataset from '@/stores/MasterDataset';
 import { useEffect, useState } from 'react';
 
 export default function AllPlayersBox() {
-  const [players, setPlayers] = useState([]);
+  const { nba, fetchNbaData } = MasterDataset();
 
   useEffect(() => {
-    async function fetchPlayers() {
-      const res = await fetch('/api/fetch/NBA/GetAllPlayers');
-      const json = await res.json();
-      setPlayers(json.players || []);
+    if (!nba.players.length) {
+      fetchNbaData();
     }
-
-    fetchPlayers();
-  }, []);
-
-
-
-
-
+  }, [fetchNbaData]);
 
   return (
     <div className="border rounded-lg p-4 w-full max-w-md h-96 overflow-y-auto bg-white shadow">
       <h2 className="text-lg font-semibold mb-3">Players in DB </h2>
       <ul className="space-y-1 text-sm text-gray-700">
-        {players.map((p, i) => (
-          <li key={i}>
-            {p.info.fullName} <span className="text-gray-400">({p.info.team}, {p.info.pos})</span> - ID: {p.info.id}
+        {nba.players.map((p, i) => (
+          <li key={p.info.playerId}>
+            {p.info.firstName} {p.info.lastName} <span className="text-gray-400">({p.info.team}, {p.info.position})</span> - ID: {p.info.playerId}
           </li>
         ))}
       </ul>

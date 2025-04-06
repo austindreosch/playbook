@@ -31,16 +31,19 @@ const MasterDataset = create((set, get) => ({
     error: null,       // Just one simple error state
     stateSize: '0 KB',
 
-    // Fetch NBA data
+
+    // =====================================================================
+    //                          FETCH NBA DATA
+    // =====================================================================
+
     fetchNbaData: async () => {
         try {
             set({ isLoading: true });
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
 
-
-            // Process regular season stats
-            const players = data.nbaStats?.playerStatsTotals?.map(playerStats => {
+            // First map the regular season stats
+            const regularSeasonPlayers = data.nbaStats?.playerStatsTotals?.map(playerStats => {
                 const teamAbbreviation = playerStats.team?.abbreviation ||
                     playerStats.player?.currentTeam?.abbreviation ||
                     'FA';
@@ -76,9 +79,8 @@ const MasterDataset = create((set, get) => ({
                 };
             }) || [];
 
-
-            // Process projections
-            const projections = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
+            // Map the projected stats separately
+            const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
                 const teamAbbreviation = playerStats.team?.abbreviation ||
                     playerStats.player?.currentTeam?.abbreviation ||
                     'FA';
@@ -114,11 +116,64 @@ const MasterDataset = create((set, get) => ({
                 };
             }) || [];
 
+            // Merge duplicate players in regular season stats
+            const players = Object.values(
+                regularSeasonPlayers.reduce((acc, player) => {
+                    const id = player.info.playerId;
+                    if (!acc[id]) {
+                        acc[id] = { ...player };
+                    } else {
+                        // Merge stats (assuming all stat fields are numeric)
+                        const existingGames = acc[id].stats.gamesPlayed;
+                        const newGames = player.stats.gamesPlayed;
+                        const totalGames = existingGames + newGames;
+
+                        // Helper function for weighted averages
+                        const weightedAvg = (a, b) => {
+                            return ((a * existingGames) + (b * newGames)) / totalGames;
+                        };
+
+                        // Update per-game stats with weighted averages
+                        acc[id].stats.pointsPerGame = weightedAvg(acc[id].stats.pointsPerGame, player.stats.pointsPerGame);
+                        acc[id].stats.reboundsPerGame = weightedAvg(acc[id].stats.reboundsPerGame, player.stats.reboundsPerGame);
+                        acc[id].stats.assistsPerGame = weightedAvg(acc[id].stats.assistsPerGame, player.stats.assistsPerGame);
+                        acc[id].stats.stealsPerGame = weightedAvg(acc[id].stats.stealsPerGame, player.stats.stealsPerGame);
+                        acc[id].stats.blocksPerGame = weightedAvg(acc[id].stats.blocksPerGame, player.stats.blocksPerGame);
+
+                        // Update totals
+                        acc[id].stats.gamesPlayed = totalGames;
+                        acc[id].stats.points += player.stats.points;
+                        acc[id].stats.rebounds += player.stats.rebounds;
+                        acc[id].stats.assists += player.stats.assists;
+                        acc[id].stats.steals += player.stats.steals;
+                        acc[id].stats.blocks += player.stats.blocks;
+
+                        // Update percentages with weighted averages
+                        acc[id].stats.fieldGoalPercentage = weightedAvg(acc[id].stats.fieldGoalPercentage, player.stats.fieldGoalPercentage);
+                        acc[id].stats.freeThrowPercentage = weightedAvg(acc[id].stats.freeThrowPercentage, player.stats.freeThrowPercentage);
+                    }
+                    return acc;
+                }, {})
+            );
+
+            // For debugging
+            console.log('Total players before merge:', regularSeasonPlayers.length);
+            console.log('Total players after merge:', players.length);
+
+            // Log any players that had duplicates
+            const duplicates = regularSeasonPlayers.filter(p =>
+                regularSeasonPlayers.filter(p2 => p2.info.playerId === p.info.playerId).length > 1
+            );
+            if (duplicates.length > 0) {
+                console.log('Found duplicates for players:',
+                    [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
+                );
+            }
 
             const newState = {
                 nba: {
                     players,
-                    projections,
+                    projections: projectedPlayers,
                     injuries: [],
                     lastUpdated: new Date()
                 },
@@ -141,7 +196,10 @@ const MasterDataset = create((set, get) => ({
         }
     },
 
-    // Fetch MLB data
+    // =====================================================================
+    //                          FETCH NBA DATA
+    // =====================================================================
+
     // fetchMlbData: async () => {
     //     try {
     //         set({ isLoading: true });
@@ -186,7 +244,12 @@ const MasterDataset = create((set, get) => ({
     //     }
     // },
 
-    // Fetch NFL data  
+
+    // =====================================================================
+    //                          FETCH NFL DATA
+    // =====================================================================
+
+
     // fetchNflData: async () => {
     //     try {
     //         set({ isLoading: true });

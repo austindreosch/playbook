@@ -162,6 +162,8 @@ export default function RankingsPage() {
           </pre>
         </div>
       </div>
+
+
     </div>
   );
 }
