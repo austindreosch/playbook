@@ -6,26 +6,34 @@ import PlayerListRankingHeader from '@/components/RankingsPage/PlayerListRanking
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
-import { availableCategories } from '@/utilities/dummyData/AvailableCategoriesDummyData';
 import { useEffect, useState } from 'react';
 
 export default function RankingsPage() {
   const [latestUserRankings, setLatestUserRankings] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeRankingId, setActiveRankingId] = useState(null);
+
   const {
     nba, mlb, nfl,
     fetchNbaData, fetchMlbData, fetchNflData,
     isLoading: masterDatasetLoading,
     error: masterDatasetError
   } = useMasterDataset();
-  const { rankings, activeRanking, isLoading: rankingsLoading, error: rankingsError, initAutoSave } = useUserRankings();
+
+  const {
+    activeRanking,
+    isLoading: rankingsLoading,
+    error: rankingsError,
+    initAutoSave
+  } = useUserRankings();
+
   const [selectedSport, setSelectedSport] = useState('NBA');
 
   // Initialize auto-save
   useEffect(() => {
     const cleanup = initAutoSave();
-    return () => cleanup(); // Clean up interval on component unmount
+    return () => cleanup();
   }, [initAutoSave]);
 
   // Fetch expert rankings
@@ -34,13 +42,13 @@ export default function RankingsPage() {
       try {
         const response = await fetch('/api/fetch/NBA/GetNBADynastyRankings');
         if (!response.ok) {
-          setLatestUserRankings(null);
-          return;
+          throw new Error('Failed to fetch rankings');
         }
         const data = await response.json();
         setLatestUserRankings(data.rankings);
       } catch (err) {
         console.error('Error fetching rankings:', err);
+        setError(err.message);
         setLatestUserRankings(null);
       } finally {
         setIsLoading(false);
@@ -53,21 +61,27 @@ export default function RankingsPage() {
   // Fetch master dataset based on selected sport
   useEffect(() => {
     const fetchSportData = async () => {
-      switch (selectedSport) {
-        case 'NBA':
-          await fetchNbaData();
-          break;
-        case 'MLB':
-          await fetchMlbData();
-          break;
-        case 'NFL':
-          await fetchNflData();
-          break;
+      try {
+        switch (selectedSport) {
+          case 'NBA':
+            await fetchNbaData();
+            break;
+          case 'MLB':
+            await fetchMlbData();
+            break;
+          case 'NFL':
+            await fetchNflData();
+            break;
+          default:
+            break;
+        }
+      } catch (err) {
+        console.error(`Error fetching ${selectedSport} data:`, err);
       }
     };
 
     fetchSportData();
-  }, [selectedSport]);
+  }, [selectedSport, fetchNbaData, fetchMlbData, fetchNflData]);
 
   // Handle saving when user tries to leave the page
   useEffect(() => {
@@ -86,24 +100,17 @@ export default function RankingsPage() {
   }, []);
 
   const handleRankingSelect = async (rankingId) => {
-    setActiveRankingId(rankingId);
-
     try {
+      setActiveRankingId(rankingId);
       const response = await fetch(`/api/user-rankings/${rankingId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch ranking');
       }
       const rankingData = await response.json();
-
-      // Update the UI with this ranking's data
-      // This depends on how you want to display it - could be:
-      // - Updating the player list with this ranking
-      // - Showing a comparison view
-      // - Displaying historical changes
-
+      // Handle the ranking data as needed
     } catch (error) {
       console.error('Error loading ranking:', error);
-      // Handle error (maybe show an error message to user)
+      setError(error.message);
     }
   };
 
@@ -122,9 +129,8 @@ export default function RankingsPage() {
   };
 
   const currentSportData = getSportData();
-  const filteredData = currentSportData.players;
 
-  if (isLoading || masterDatasetLoading) {
+  if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;
   }
 
@@ -135,9 +141,9 @@ export default function RankingsPage() {
         <AddRankingListButton masterDataset={currentSportData} />
       </div>
 
-      {(error || masterDatasetError) && (
+      {(error || masterDatasetError || rankingsError) && (
         <div className="text-red-500 mb-4 p-4 bg-red-50 rounded-md">
-          {error || masterDatasetError}
+          {error || masterDatasetError || rankingsError}
         </div>
       )}
 
@@ -148,35 +154,30 @@ export default function RankingsPage() {
         </div>
       ) : (
         <div className="flex gap-6 relative">
-          {/* Main content area with max-width to prevent pushing side panel */}
           <div className="flex-1 space-y-2 overflow-x-auto" style={{ maxWidth: 'calc(100% - 288px)' }}>
             <PlayerListRankingHeader
               sport={selectedSport}
-              rankings={latestUserRankings}
+              userRankings={latestUserRankings}
               activeRanking={activeRanking}
-              masterDataset={currentSportData}
             />
 
             <PlayerListContainer
               sport={selectedSport}
               userRankings={latestUserRankings}
-              dataset={filteredData}
-              masterDataset={currentSportData}
+              dataset={currentSportData}
+              activeRanking={activeRanking}
             />
           </div>
 
-          {/* Side panel - fixed position */}
           <div className="w-72 sticky top-4">
             <RankingsSidePanel
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
-            // masterDataset={currentSportData}
             />
           </div>
         </div>
       )}
-
     </div>
   );
 }

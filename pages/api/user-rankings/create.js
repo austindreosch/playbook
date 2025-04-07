@@ -20,7 +20,6 @@ const sportConfigs = {
             'A/TO': { enabled: false, multiplier: 1 },
             'DREB': { enabled: false, multiplier: 1 },
             'OREB': { enabled: false, multiplier: 1 },
-            'STL': { enabled: false, multiplier: 1 },
             // 'DD': { enabled: false, multiplier: 1 },
             // 'TD': { enabled: false, multiplier: 1 }
         }

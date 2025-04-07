@@ -1,31 +1,73 @@
 'use client';
 
 import PlayerRow from '@/components/PlayerList/PlayerRow';
-import useMasterDataset from '@/stores/useMasterDataset'; // Import the store
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const PlayerListContainer = ({ sport = 'NBA' }) => {  // Remove dataset prop
-    // Get data from MasterDataset store
-    const { nba, fetchNbaData } = useMasterDataset();
+const PLAYERS_PER_PAGE = 100;
 
+const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
+
+    // console.log('dataset', dataset); 
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [chosenCategories, setChosenCategories] = useState([]);
+
+    // Update categories when activeRanking changes
+    useEffect(() => {
+        if (!activeRanking?.categories) {
+            console.log('No categories found');
+            return;
+        }
+
+        console.log('Categories:', activeRanking.categories);
+
+        const enabledCategories = Object.entries(activeRanking.categories)
+            .filter(([_, value]) => value.enabled)
+            .map(([key]) => key);
+
+        setChosenCategories(enabledCategories);
+
+        console.log('Enabled Categories:', enabledCategories);
+
+    }, [activeRanking?.categories]);
+
+    // Log chosenCategories after it changes
+    useEffect(() => {
+        console.log('Chosen Categories:', chosenCategories);
+    }, [chosenCategories]);
+
+    // Update stats and weights when activeRanking changes
+    useEffect(() => {
+        if (!activeRanking?.categories) return;
+
+        // Filter enabled categories and get their weights
+        const enabledCategories = Object.entries(activeRanking.categories)
+            .filter(([_, value]) => value.enabled)
+            .reduce((acc, [key, value]) => {
+                acc[key] = value.multiplier || 1;
+                return acc;
+            }, {});
+
+        setChosenCategories(Object.keys(enabledCategories));
+    }, [activeRanking?.categories]);
+
 
     // Fetch data when component mounts
     useEffect(() => {
-        if (!nba.players.length) {
-            fetchNbaData();
+        if (dataset?.players?.length) {
+            setPlayers(dataset.players);
         }
-    }, [fetchNbaData]);
+    }, [dataset]);
 
     // Transform player data - memoized to avoid recreating on every render
     const transformedPlayers = useMemo(() => {
-        if (!nba.players.length) return [];
+        if (!dataset?.players?.length) return [];
 
-        return nba.players.map(player => ({
+        return dataset.players.map(player => ({
             id: player.info.playerId,
             name: `${player.info.firstName} ${player.info.lastName}`,
             position: player.info.position,
@@ -44,7 +86,7 @@ const PlayerListContainer = ({ sport = 'NBA' }) => {  // Remove dataset prop
                 }
             }
         }));
-    }, [nba.players]);
+    }, [dataset?.players]);
 
     // Update players when transformed data changes
     useEffect(() => {
@@ -52,6 +94,12 @@ const PlayerListContainer = ({ sport = 'NBA' }) => {  // Remove dataset prop
             setPlayers(transformedPlayers);
         }
     }, [transformedPlayers]);
+
+    // Get paginated players
+    const paginatedPlayers = useMemo(() => {
+        const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
+        return players.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
+    }, [players, currentPage]);
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -82,7 +130,7 @@ const PlayerListContainer = ({ sport = 'NBA' }) => {  // Remove dataset prop
         setActiveId(null);
     }, []);
 
-    if (!nba.players.length) {
+    if (!dataset?.players?.length) {
         return <div>Loading players...</div>;
     }
 
@@ -94,11 +142,11 @@ const PlayerListContainer = ({ sport = 'NBA' }) => {  // Remove dataset prop
             onDragEnd={handleDragEnd}
         >
             <SortableContext
-                items={players.map(player => player.id)}
+                items={paginatedPlayers.map(player => player.id)}
                 strategy={verticalListSortingStrategy}
             >
                 <div className="player-list-container">
-                    {players.map(player => (
+                    {paginatedPlayers.map(player => (
                         <PlayerRow
                             key={player.id}
                             player={player}
