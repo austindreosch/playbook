@@ -1,15 +1,52 @@
 'use client';
 
+import PlayerRow from '@/components/PlayerList/PlayerRow';
+import useMasterDataset from '@/stores/useMasterDataset'; // Import the store
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import PlayerRow from '@/components/PlayerList/PlayerRow';
+const PlayerListContainer = ({ sport = 'NBA' }) => {  // Remove dataset prop
+    // Get data from MasterDataset store
+    const { nba, fetchNbaData } = useMasterDataset();
 
-const PlayerListContainer = ({ dataset, sport = 'NBA' }) => {
     // Initialize state with players
-    const [players, setPlayers] = useState(dataset || []);
+    const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
+
+    // Fetch data when component mounts
+    useEffect(() => {
+        if (!nba.players.length) {
+            fetchNbaData();
+        }
+    }, [fetchNbaData]);
+
+    // Update players when nba.players changes
+    useEffect(() => {
+        if (nba.players.length) {
+            // Transform the data to match what PlayerRow expects
+            const transformedPlayers = nba.players.map(player => ({
+                id: player.info.playerId,
+                name: `${player.info.firstName} ${player.info.lastName}`,
+                position: player.info.position,
+                team: player.info.team,
+                stats: {
+                    season: {
+                        fieldGoalPercentage: player.stats.fieldGoalPercentage,
+                        threePointsMadePerGame: player.stats.fg3PtMadePerGame || 0,
+                        freeThrowPercentage: player.stats.freeThrowPercentage,
+                        pointsPerGame: player.stats.pointsPerGame,
+                        assistsPerGame: player.stats.assistsPerGame,
+                        reboundsPerGame: player.stats.reboundsPerGame,
+                        stealsPerGame: player.stats.stealsPerGame,
+                        blocksPerGame: player.stats.blocksPerGame,
+                        turnoversPerGame: player.stats.toPerGame || 0
+                    }
+                }
+            }));
+            setPlayers(transformedPlayers);
+        }
+    }, [nba.players]);
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -40,6 +77,10 @@ const PlayerListContainer = ({ dataset, sport = 'NBA' }) => {
         setActiveId(null);
     };
 
+    if (!nba.players.length) {
+        return <div>Loading players...</div>;
+    }
+
     return (
         <DndContext
             sensors={sensors}
@@ -48,13 +89,13 @@ const PlayerListContainer = ({ dataset, sport = 'NBA' }) => {
             onDragEnd={handleDragEnd}
         >
             <SortableContext
-                items={players.map(player => player.playerId)}
+                items={players.map(player => player.id)}
                 strategy={verticalListSortingStrategy}
             >
                 <div className="player-list-container">
                     {players.map(player => (
                         <PlayerRow
-                            key={player.playerId}
+                            key={player.id}
                             player={player}
                             sport={sport}
                         />

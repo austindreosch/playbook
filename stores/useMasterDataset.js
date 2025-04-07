@@ -8,7 +8,7 @@ const getObjectSize = (obj) => {
     return megaBytes < 1 ? `${kiloBytes.toFixed(2)} KB` : `${megaBytes.toFixed(2)} MB`;
 };
 
-const MasterDataset = create((set, get) => ({
+const useMasterDataset = create((set, get) => ({
     nba: {
         players: [],
         projections: [],
@@ -305,4 +305,4 @@ const MasterDataset = create((set, get) => ({
     getTeams: (sport) => get()[sport].teams,
 }));
 
-export default MasterDataset;
+export default useMasterDataset;

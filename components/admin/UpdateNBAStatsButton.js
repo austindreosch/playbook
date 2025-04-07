@@ -1,6 +1,6 @@
 'use client';
 
-import { useMasterDataset } from '@/stores/MasterDataset';
+import { useMasterDataset } from '@/stores/useMasterDataset';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import React, { useState } from 'react';
 

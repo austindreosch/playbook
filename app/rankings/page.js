@@ -4,7 +4,8 @@ import PlayerListContainer from '@/components/PlayerList/PlayerListContainer';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import PlayerListRankingHeader from '@/components/RankingsPage/PlayerListRankingHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
-import MasterDataset from '@/stores/MasterDataset';
+import useMasterDataset from '@/stores/useMasterDataset';
+import useUserRankings from '@/stores/useUserRankings';
 import { availableCategories } from '@/utilities/dummyData/AvailableCategoriesDummyData';
 import { useEffect, useState } from 'react';
 
@@ -14,7 +15,14 @@ export default function RankingsPage() {
   const [activeRankingId, setActiveRankingId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { nba, fetchNbaData, isLoading: masterDatasetLoading, error: masterDatasetError } = MasterDataset();
+  const { nba, fetchNbaData, isLoading: masterDatasetLoading, error: masterDatasetError } = useMasterDataset();
+  const { initAutoSave } = useUserRankings();
+
+  // Initialize auto-save
+  useEffect(() => {
+    const cleanup = initAutoSave();
+    return () => cleanup(); // Clean up interval on component unmount
+  }, [initAutoSave]);
 
   // Fetch expert rankings
   useEffect(() => {
@@ -67,9 +75,26 @@ export default function RankingsPage() {
     fetchUserRankings();
   }, []);
 
+  // Fetch NBA data
   useEffect(() => {
     console.log('Fetching NBA data...');
     fetchNbaData();
+  }, []);
+
+  // Handle saving when user tries to leave the page
+  useEffect(() => {
+    const { hasUnsavedChanges, saveChanges } = useUserRankings.getState();
+
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedChanges) {
+        saveChanges();
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
   // console.log('Current NBA state:', nba);
@@ -122,18 +147,20 @@ export default function RankingsPage() {
       ) : (
         <div className="flex gap-6">
           {/* Main content area */}
-          {/* <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-2">
             <PlayerListRankingHeader
               sport="NBA"
-              dataset={latestRankings}
-              availableCategories={availableCategories}
+              rankings={latestRankings}
+              userRankings={userRankings}
+            // availableCategories={availableCategories}
             />
 
             <PlayerListContainer
-              dataset={latestRankings}
               sport="NBA"
+              rankings={latestRankings}
+              userRankings={userRankings}
             />
-          </div> */}
+          </div>
 
           {/* Side panel - fixed width */}
           <div className="w-72">

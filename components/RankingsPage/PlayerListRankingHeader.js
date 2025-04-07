@@ -18,7 +18,7 @@ const PlayerListRankingHeader = ({
     onCategoryToggle = () => { }, // Add default empty function
     onSortChange = () => { },
     userRankings = {},
-    availableCategories = {},
+    rankings = {},
     onSave = async () => { }
 }) => {
     const [expanded, setExpanded] = useState(false);
@@ -76,7 +76,7 @@ const PlayerListRankingHeader = ({
         handleCategoryToggle(key, true, { multiplier: value });
     };
 
-    console.log('availableCategories:', availableCategories);
+    console.log('userRankings:', userRankings);
 
     return (
         <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
@@ -167,7 +167,7 @@ const PlayerListRankingHeader = ({
                     {/* Stat Boxes */}
                     <div className="text-pb_darkgray h-full col-span-6">
                         <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 p-2">
-                            {availableCategories?.NBA && Object.values(availableCategories.NBA).map((category) => {
+                            {rankings?.[sport] && Object.values(rankings[sport]).map((category) => {
                                 return (
                                     <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
                                         <div className="flex items-center justify-between w-full">
@@ -188,11 +188,14 @@ const PlayerListRankingHeader = ({
                                                     <SelectValue className="text-xs text-center" placeholder={`x${category.multiplier || 1}`} />
                                                 </SelectTrigger>
                                                 <SelectContent>
+                                                    <SelectItem value="0.25">x0.25</SelectItem>
                                                     <SelectItem value="0.5">x0.5</SelectItem>
+                                                    <SelectItem value="0.75">x0.75</SelectItem>
                                                     <SelectItem value="1">x1</SelectItem>
+                                                    <SelectItem value="1.25">x1.25</SelectItem>
                                                     <SelectItem value="1.5">x1.5</SelectItem>
                                                     <SelectItem value="2">x2</SelectItem>
-                                                    <SelectItem value="2.5">x2.5</SelectItem>
+                                                    <SelectItem value="3">x3</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>

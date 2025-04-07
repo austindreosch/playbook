@@ -1,10 +1,10 @@
 'use client';
 
-import MasterDataset from '@/stores/MasterDataset';
+import useMasterDataset from '@/stores/useMasterDataset';
 import { useEffect, useState } from 'react';
 
 export default function AllPlayersBox() {
-  const { nba, fetchNbaData } = MasterDataset();
+  const { nba, fetchNbaData } = useMasterDataset();
 
   useEffect(() => {
     if (!nba.players.length) {
