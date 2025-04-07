@@ -10,11 +10,11 @@ const useUserRankings = create(
                 const prevState = get();
                 set(updates);
                 const newState = get();
-                console.log('UserRankings Store Update:', {
-                    previous: prevState,
-                    current: newState,
-                    changes: Object.keys(typeof updates === 'function' ? updates(prevState) : updates)
-                });
+                // console.log('UserRankings Store Update:', {
+                //     previous: prevState,
+                //     current: newState,
+                //     changes: Object.keys(typeof updates === 'function' ? updates(prevState) : updates)
+                // });
             };
 
             return {
@@ -116,10 +116,61 @@ const useUserRankings = create(
                         const { hasUnsavedChanges } = get();
                         if (hasUnsavedChanges) {
                             get().saveChanges();
+                            console.log('Auto-saving changes');
                         }
                     }, 30000);
 
                     return () => clearInterval(saveInterval);
+                },
+
+                // Add updateCategories function to the store
+                updateCategories: async (updatedCategories) => {
+                    const { activeRanking, rankings } = get();
+                    if (!activeRanking) return;
+
+                    // Update the categories in the active ranking
+                    const updatedRanking = {
+                        ...activeRanking,
+                        categories: updatedCategories,
+                        details: {
+                            ...activeRanking.details,
+                            dateUpdated: new Date().toISOString()
+                        }
+                    };
+
+                    // Update both activeRanking and the ranking in the rankings array
+                    setState({
+                        activeRanking: updatedRanking,
+                        rankings: rankings.map(r =>
+                            r._id === updatedRanking._id ? updatedRanking : r
+                        ),
+                        hasUnsavedChanges: true
+                    });
+
+                    // Save changes to the database
+                    try {
+                        const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedRanking)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to save category changes');
+                        }
+
+                        setState({
+                            hasUnsavedChanges: false,
+                            lastSaved: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error('Error updating ranking:', {
+                            message: error.message,
+                            stack: error.stack,
+                            code: error.code
+                        });
+                        setState({ error: error.message });
+                    }
                 }
             };
         },

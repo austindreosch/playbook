@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
 import { FilterSelector } from './Selectors/FilterSelector';
@@ -16,18 +16,17 @@ import { SourceSelector } from './Selectors/SourceSelector';
 
 const PlayerListRankingHeader = ({
     sport,
-    onCategoryToggle = () => { },
     onSortChange = () => { },
-    rankings = {},
     onSave = async () => { }
 }) => {
-    const { activeRanking } = useUserRankings();
+    const { activeRanking, updateCategories } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
     const [sortConfig, setSortConfig] = useState({
         field: null,
         direction: 'asc'
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // Add state for selectors
     const [selectedSource, setSelectedSource] = useState("");
@@ -35,42 +34,83 @@ const PlayerListRankingHeader = ({
     const [selectedPlayoffStrength, setSelectedPlayoffStrength] = useState("");
     const [selectedDataView, setSelectedDataView] = useState("");
 
-    const chosenCategories = useMemo(() => {
+    // Transform categories object into array for rendering
+    const categoryList = useMemo(() => {
         if (!activeRanking?.categories) return [];
-        return activeRanking.categories.filter(category => category.enabled);
+
+        return Object.entries(activeRanking.categories).map(([key, value]) => ({
+            key,
+            name: key,
+            enabled: value.enabled,
+            multiplier: value.multiplier || 1
+        }));
     }, [activeRanking?.categories]);
 
+    // Get only enabled categories for the header
+    const enabledCategories = useMemo(() => {
+        return categoryList.filter(category => category.enabled);
+    }, [categoryList]);
+
     const handleSave = async () => {
-        setIsSaving(true);
         try {
+            // Save changes to the database
             await onSave();
-        } finally {
-            setIsSaving(false);
+
+            // Collapse the component
+            setIsCollapsed(true);
+        } catch (error) {
+            console.error('Error saving changes:', error);
         }
     };
 
     const handleSortChange = (field) => {
-        // Toggle sort direction if same field, otherwise set to ascending
         setSortConfig(prev => ({
             field,
             direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
         }));
 
-        // Call parent component's sort change handler
         onSortChange?.(field, sortConfig.direction === 'asc' ? 'desc' : 'asc');
     };
 
-    const handleCategoryToggle = (key, enabled, options = {}) => {
-        if (typeof onCategoryToggle === 'function') {
-            onCategoryToggle(key, enabled, options);
+    const handleCategoryToggle = (categoryKey, enabled) => {
+        if (!activeRanking?.categories) return;
+
+        const updatedCategories = {
+            ...activeRanking.categories,
+            [categoryKey]: {
+                ...activeRanking.categories[categoryKey],
+                enabled
+            }
+        };
+
+        updateCategories(updatedCategories);
+    };
+
+    const handleMultiplierChange = (categoryKey, multiplier) => {
+        if (!activeRanking?.categories) return;
+
+        const updatedCategories = {
+            ...activeRanking.categories,
+            [categoryKey]: {
+                ...activeRanking.categories[categoryKey],
+                multiplier
+            }
+        };
+
+        updateCategories(updatedCategories);
+    };
+
+    // Add console logging to check the state
+    useEffect(() => {
+        console.log('Active Ranking:', activeRanking);
+        if (activeRanking) {
+            console.log('Categories:', activeRanking.categories);
         }
-    };
+    }, [activeRanking]);
 
-    const onMultiplierChange = (key, value) => {
-        // Update the multiplier for the selected category
-        handleCategoryToggle(key, true, { multiplier: value });
-    };
-
+    if (!activeRanking) {
+        return <div className="text-center p-4 text-gray-500">Please select a ranking to view.</div>;
+    }
 
     return (
         <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
@@ -90,7 +130,7 @@ const PlayerListRankingHeader = ({
 
                 {/* Stats Headers - 60% section with exact same structure */}
                 <div className="flex w-[60%] h-full gap-1 font-bold">
-                    {chosenCategories.map((category) => (
+                    {enabledCategories.map((category) => (
                         <div
                             key={category.key}
                             className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white"
@@ -109,10 +149,10 @@ const PlayerListRankingHeader = ({
                     <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 space-y-1 flex flex-col justify-between">
                         <div>
                             <div className='text-lg font-bold ml-0.5'>{activeRanking?.name || 'Rankings'}</div>
-                            <div className='text-pb_midgray text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>{activeRanking?.sport.toUpperCase()} • {activeRanking?.format.toUpperCase()} • {activeRanking?.scoring.toUpperCase()}</div>
-
+                            <div className='text-pb_midgray text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>
+                                {activeRanking?.sport.toUpperCase()} • {activeRanking?.format.toUpperCase()} • {activeRanking?.scoring.toUpperCase()}
+                            </div>
                         </div>
-
 
                         <div>
                             {isSaving ? (
@@ -121,10 +161,9 @@ const PlayerListRankingHeader = ({
                                 <Button onClick={handleSave} className='bg-pb_blue text-white shadow-md hover:bg-pb_darkblue'>Save Changes</Button>
                             )}
                             <div className='text-2xs py-2 px-1'>
-                                Last Updated:  {activeRanking?.details?.dateUpdated}
+                                Last Updated: {new Date(activeRanking?.details?.dateUpdated).toLocaleDateString()}
                             </div>
                         </div>
-
                     </div>
 
                     {/* Source Boxes */}
@@ -158,44 +197,42 @@ const PlayerListRankingHeader = ({
                         </div>
                     </div>
 
-                    {/* Stat Boxes */}
+                    {/* Categories */}
                     <div className="text-pb_darkgray h-full col-span-6">
                         <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 p-2">
-                            {rankings?.[sport] && Object.values(rankings[sport]).map((category) => {
-                                return (
-                                    <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
-                                        <div className="flex items-center justify-between w-full">
-                                            <div className="flex items-center">
-                                                <Switch
-                                                    checked={category.enabled}
-                                                    onCheckedChange={(checked) => handleCategoryToggle(category.key, checked)}
-                                                    className="flex-shrink-0 mr-2"
-                                                />
-                                                <span className="text-sm font-medium pr-4">{category.name}</span>
-                                            </div>
-                                            <Select
-                                                value={(category.multiplier || 1).toString()}
-                                                onValueChange={(value) => onMultiplierChange(category.key, parseFloat(value))}
-                                                className="w-[52px]"
-                                            >
-                                                <SelectTrigger className="h-7">
-                                                    <SelectValue className="text-xs text-center" placeholder={`x${category.multiplier || 1}`} />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="0.25">x0.25</SelectItem>
-                                                    <SelectItem value="0.5">x0.5</SelectItem>
-                                                    <SelectItem value="0.75">x0.75</SelectItem>
-                                                    <SelectItem value="1">x1</SelectItem>
-                                                    <SelectItem value="1.25">x1.25</SelectItem>
-                                                    <SelectItem value="1.5">x1.5</SelectItem>
-                                                    <SelectItem value="2">x2</SelectItem>
-                                                    <SelectItem value="3">x3</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                            {categoryList.map((category) => (
+                                <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center">
+                                            <Switch
+                                                checked={category.enabled}
+                                                onCheckedChange={(checked) => handleCategoryToggle(category.key, checked)}
+                                                className="flex-shrink-0 mr-2"
+                                            />
+                                            <span className="text-sm font-medium pr-4">{category.name}</span>
                                         </div>
+                                        <Select
+                                            value={category.multiplier.toString()}
+                                            onValueChange={(value) => handleMultiplierChange(category.key, parseFloat(value))}
+                                            className="w-[52px]"
+                                        >
+                                            <SelectTrigger className="h-7">
+                                                <SelectValue className="text-xs text-center" placeholder={`x${category.multiplier}`} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="0.25">x0.25</SelectItem>
+                                                <SelectItem value="0.5">x0.5</SelectItem>
+                                                <SelectItem value="0.75">x0.75</SelectItem>
+                                                <SelectItem value="1">x1</SelectItem>
+                                                <SelectItem value="1.25">x1.25</SelectItem>
+                                                <SelectItem value="1.5">x1.5</SelectItem>
+                                                <SelectItem value="2">x2</SelectItem>
+                                                <SelectItem value="3">x3</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
-                                );
-                            })}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

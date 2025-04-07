@@ -1,14 +1,16 @@
 'use client';
 
 import { HistoryIcon } from '@/components/icons/HistoryIcon';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 const RankingsSidePanel = () => {
     const { user } = useUser();
-    const { rankings, activeRanking, setActiveRanking } = useUserRankings();
+    const { rankings, activeRanking, setActiveRanking, updateCategories } = useUserRankings();
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
@@ -21,6 +23,16 @@ const RankingsSidePanel = () => {
             return new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated);
         });
     }, [rankings, activeRanking?._id]);
+
+    // Format date - memoize to avoid recreating on each render
+    const formatDate = useCallback((dateString) => {
+        return new Date(dateString).toLocaleDateString();
+    }, []);
+
+    // Handle ranking selection with debounce to prevent rapid re-renders
+    const handleRankingSelect = useCallback((rankingId) => {
+        setActiveRanking(rankingId);
+    }, [setActiveRanking]);
 
     // Get sport icon
     // const getSportIcon = (ranking) => {
@@ -36,11 +48,6 @@ const RankingsSidePanel = () => {
     //     }
     // };
 
-    // Format date
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString();
-    };
-
     if (!user) {
         return <div className="p-4 text-gray-500">Please log in to view your rankings.</div>;
     }
@@ -53,22 +60,20 @@ const RankingsSidePanel = () => {
         <div className="rankings-selector max-w-24 rounded-lg">
             <motion.div
                 className="space-y-1"
-                layout
+                layout="position"
             >
                 <AnimatePresence>
-                    {sortedRankings.map((ranking, index) => (
+                    {sortedRankings.map((ranking) => (
                         <motion.div
                             key={ranking._id}
-                            layout
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            layout="position"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
                             transition={{
-                                type: "spring",
-                                stiffness: 500,
-                                damping: 30,
-                                mass: 1,
-                                layoutY: { duration: 0.2 }
+                                opacity: { duration: 0.2 },
+                                height: { duration: 0.2 },
+                                layout: { duration: 0.2 }
                             }}
                             className={`
                                 grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer
@@ -77,16 +82,12 @@ const RankingsSidePanel = () => {
                                     : 'bg-white hover:bg-gray-100 border border-pb_lightgray shadow-sm'
                                 }
                             `}
-                            onClick={() => setActiveRanking(ranking._id)}
+                            onClick={() => handleRankingSelect(ranking._id)}
                         >
-                            <motion.div
-                                layout
+                            <div
                                 className={`${activeRanking?._id === ranking._id ? 'bg-pb_orange' : 'bg-pb_lightgray'}`}
                             />
-                            <motion.div
-                                layout
-                                className="p-3"
-                            >
+                            <div className="p-3">
                                 <div className={`text-lg font-bold ${activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
                                     {ranking.name}
                                 </div>
@@ -100,7 +101,7 @@ const RankingsSidePanel = () => {
                                         {formatDate(ranking.details?.dateUpdated)}
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         </motion.div>
                     ))}
                 </AnimatePresence>

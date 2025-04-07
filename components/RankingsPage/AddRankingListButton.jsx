@@ -67,34 +67,6 @@ const AddRankingListButton = ({ rankings }) => {
                         name: player.name,
                         rank: player.rank
                     })) : [],
-                    positions: {
-                        available: {
-                            All: true,
-                            PG: true,
-                            SG: true,
-                            SF: true,
-                            PF: true,
-                            C: true
-                        },
-                        enabled: {
-                            All: true,
-                            PG: false,
-                            SG: false,
-                            SF: false,
-                            PF: false,
-                            C: false
-                        }
-                    },
-                    categories: {
-                        available: [
-                            'FG%', 'FT%', '3PM', 'PTS', 'REB',
-                            'AST', 'STL', 'BLK', 'TO'
-                        ],
-                        enabled: [
-                            'FG%', 'FT%', '3PM', 'PTS', 'REB',
-                            'AST', 'STL', 'BLK', 'TO'
-                        ]
-                    },
                     details: {
                         dateCreated: new Date().toISOString(),
                         dateUpdated: new Date().toISOString(),
