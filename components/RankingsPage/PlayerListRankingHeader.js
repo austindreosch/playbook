@@ -6,6 +6,7 @@ import { ButtonLoading } from '@/components/Interface/ButtonLoading';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import useUserRankings from '@/stores/useUserRankings';
 import { useMemo, useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
@@ -15,12 +16,12 @@ import { SourceSelector } from './Selectors/SourceSelector';
 
 const PlayerListRankingHeader = ({
     sport,
-    onCategoryToggle = () => { }, // Add default empty function
+    onCategoryToggle = () => { },
     onSortChange = () => { },
-    userRankings = {},
     rankings = {},
     onSave = async () => { }
 }) => {
+    const { activeRanking } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
     const [sortConfig, setSortConfig] = useState({
         field: null,
@@ -34,16 +35,10 @@ const PlayerListRankingHeader = ({
     const [selectedPlayoffStrength, setSelectedPlayoffStrength] = useState("");
     const [selectedDataView, setSelectedDataView] = useState("");
 
-    // Get the first ranking  (or you could pass a specific sheet name as a prop)
-    const activeRankingList = useMemo(() => {
-        if (!userRankings) return null;
-        return Object.values(userRankings)[0];
-    }, [userRankings]);
-
     const chosenCategories = useMemo(() => {
-        if (!activeRankingList?.categories) return [];
-        return activeRankingList.categories.filter(category => category.enabled);
-    }, [activeRankingList?.categories]);
+        if (!activeRanking?.categories) return [];
+        return activeRanking.categories.filter(category => category.enabled);
+    }, [activeRanking?.categories]);
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -76,7 +71,6 @@ const PlayerListRankingHeader = ({
         handleCategoryToggle(key, true, { multiplier: value });
     };
 
-    console.log('userRankings:', userRankings);
 
     return (
         <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
@@ -114,8 +108,8 @@ const PlayerListRankingHeader = ({
                     {/* Details */}
                     <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 space-y-1 flex flex-col justify-between">
                         <div>
-                            <div className='text-lg font-bold ml-0.5'>{activeRankingList?.name || 'Rankings'}</div>
-                            <div className='text-pb_midgray text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>{activeRankingList?.sport.toUpperCase()} • {activeRankingList?.format.toUpperCase()} • {activeRankingList?.scoring.toUpperCase()}</div>
+                            <div className='text-lg font-bold ml-0.5'>{activeRanking?.name || 'Rankings'}</div>
+                            <div className='text-pb_midgray text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>{activeRanking?.sport.toUpperCase()} • {activeRanking?.format.toUpperCase()} • {activeRanking?.scoring.toUpperCase()}</div>
 
                         </div>
 
@@ -127,7 +121,7 @@ const PlayerListRankingHeader = ({
                                 <Button onClick={handleSave} className='bg-pb_blue text-white shadow-md hover:bg-pb_darkblue'>Save Changes</Button>
                             )}
                             <div className='text-2xs py-2 px-1'>
-                                Last Updated:  {activeRankingList?.details?.dateUpdated}
+                                Last Updated:  {activeRanking?.details?.dateUpdated}
                             </div>
                         </div>
 

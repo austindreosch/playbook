@@ -11,12 +11,10 @@ import { useEffect, useState } from 'react';
 
 export default function RankingsPage() {
   const [latestRankings, setLatestRankings] = useState(null);
-  const [userRankings, setUserRankings] = useState([]);
-  const [activeRankingId, setActiveRankingId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { nba, fetchNbaData, isLoading: masterDatasetLoading, error: masterDatasetError } = useMasterDataset();
-  const { initAutoSave } = useUserRankings();
+  const { rankings, activeRanking, isLoading: rankingsLoading, error: rankingsError, initAutoSave } = useUserRankings();
 
   // Initialize auto-save
   useEffect(() => {
@@ -44,35 +42,6 @@ export default function RankingsPage() {
     };
 
     fetchLatestRankings();
-  }, []);
-
-  // Fetch user rankings
-  useEffect(() => {
-    const fetchUserRankings = async () => {
-      try {
-        const response = await fetch('/api/user-rankings');
-        if (response.status === 401) {
-          // User is not logged in
-          setError('Please log in to view your rankings');
-          setUserRankings([]);
-          return;
-        }
-        if (!response.ok) {
-          throw new Error(`Failed to fetch user rankings: ${response.status}`);
-        }
-        const data = await response.json();
-        setUserRankings(data);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching user rankings:', err);
-        setError('Failed to load your rankings. Please try again later.');
-        setUserRankings([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserRankings();
   }, []);
 
   // Fetch NBA data
@@ -145,35 +114,33 @@ export default function RankingsPage() {
           <p className="text-sm text-gray-500">Create your first rankings list to get started.</p>
         </div>
       ) : (
-        <div className="flex gap-6">
-          {/* Main content area */}
-          <div className="flex-1 space-y-2">
+        <div className="flex gap-6 relative">
+          {/* Main content area with max-width to prevent pushing side panel */}
+          <div className="flex-1 space-y-2 overflow-x-auto" style={{ maxWidth: 'calc(100% - 288px)' }}>
             <PlayerListRankingHeader
               sport="NBA"
               rankings={latestRankings}
-              userRankings={userRankings}
-            // availableCategories={availableCategories}
             />
 
             <PlayerListContainer
               sport="NBA"
               rankings={latestRankings}
-              userRankings={userRankings}
+              userRankings={rankings}
             />
           </div>
 
-          {/* Side panel - fixed width */}
-          <div className="w-72">
+          {/* Side panel - fixed position */}
+          <div className="w-72 sticky top-4">
             <RankingsSidePanel
-              rankings={userRankings}
-              activeRankingId={activeRankingId}
+              rankings={rankings}
+              activeRankingId={activeRanking}
               onSelectRanking={handleRankingSelect}
             />
           </div>
         </div>
       )}
 
-      <div className="p-4">
+      {/* <div className="p-4">
         <h2>Debug View</h2>
         {masterDatasetLoading && <div>Loading...</div>}
         {masterDatasetError && <div className="text-red-500">Error: {masterDatasetError}</div>}
@@ -188,7 +155,7 @@ export default function RankingsPage() {
             {JSON.stringify(nba.projections.slice(0, 3), null, 2)}
           </pre>
         </div>
-      </div>
+      </div> */}
 
 
     </div>

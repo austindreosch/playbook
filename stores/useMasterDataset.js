@@ -157,17 +157,17 @@ const useMasterDataset = create((set, get) => ({
             );
 
             // For debugging
-            console.log('Total players before merge:', regularSeasonPlayers.length);
-            console.log('Total players after merge:', players.length);
+            // console.log('Total players before merge:', regularSeasonPlayers.length);
+            // console.log('Total players after merge:', players.length);
 
             // Log any players that had duplicates
             const duplicates = regularSeasonPlayers.filter(p =>
                 regularSeasonPlayers.filter(p2 => p2.info.playerId === p.info.playerId).length > 1
             );
             if (duplicates.length > 0) {
-                console.log('Found duplicates for players:',
-                    [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
-                );
+                // console.log('Found duplicates for players:',
+                //     [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
+                // );
             }
 
             const newState = {
@@ -182,7 +182,7 @@ const useMasterDataset = create((set, get) => ({
 
             // Calculate state size before setting
             const stateSize = getObjectSize(newState);
-            console.log('State size:', stateSize);
+            console.log('Stats state size:', stateSize);
 
             set({
                 ...newState,

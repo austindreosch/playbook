@@ -4,97 +4,125 @@ import { persist } from 'zustand/middleware';
 
 const useUserRankings = create(
     persist(
-        (set, get) => ({
-            // State structure
-            rankings: [],          // Array of all user's ranking lists
-            activeRanking: null,   // Currently selected/viewed ranking list
-            isLoading: false,      // Loading state for async operations
-            error: null,           // Error state for failed operations
-            hasUnsavedChanges: false,  // Track if there are pending changes
-            lastSaved: null,       // Timestamp of last successful save
-
-            // Fetch all user's rankings from the database
-            fetchUserRankings: async () => {
-                set({ isLoading: true });
-                try {
-                    const response = await fetch('/api/user-rankings');
-                    const data = await response.json();
-                    set({ rankings: data, isLoading: false });
-                } catch (error) {
-                    set({ error: error.message, isLoading: false });
-                }
-            },
-
-            // Set which ranking list is currently being viewed/edited (connect to rankings page side panel)
-            setActiveRanking: (rankingId) => {
-                const ranking = get().rankings.find(r => r._id === rankingId);
-                set({ activeRanking: ranking });
-            },
-
-            // Update a player's rank in the active ranking list
-            // This updates the local state immediately (optimistic update)
-            updatePlayerRank: (playerId, newRank) => {
-                const { activeRanking, rankings } = get();
-                if (!activeRanking) return;
-
-                // Create new ranking object with updated player rank
-                const updatedRanking = {
-                    ...activeRanking,
-                    players: activeRanking.players.map(p =>
-                        p.id === playerId ? { ...p, rank: newRank } : p
-                    )
-                };
-
-                // Update both the active ranking and the rankings array
-                // Also set hasUnsavedChanges flag to trigger future save
-                set({
-                    activeRanking: updatedRanking,
-                    rankings: rankings.map(r =>
-                        r._id === updatedRanking._id ? updatedRanking : r
-                    ),
-                    hasUnsavedChanges: true
+        (set, get) => {
+            // Add a wrapped set function that logs changes
+            const setState = (updates) => {
+                const prevState = get();
+                set(updates);
+                const newState = get();
+                console.log('UserRankings Store Update:', {
+                    previous: prevState,
+                    current: newState,
+                    changes: Object.keys(typeof updates === 'function' ? updates(prevState) : updates)
                 });
-            },
+            };
 
-            // Save changes to the database
-            // Only runs if there are actual changes to save
-            saveChanges: async () => {
-                const { activeRanking, hasUnsavedChanges } = get();
-                if (!hasUnsavedChanges || !activeRanking) return;
+            return {
+                // State structure
+                rankings: [],          // Array of all user's ranking lists
+                activeRanking: null,   // Currently selected/viewed ranking list
+                isLoading: false,      // Loading state for async operations
+                error: null,           // Error state for failed operations
+                hasUnsavedChanges: false,  // Track if there are pending changes
+                lastSaved: null,       // Timestamp of last successful save
+                selectionLoading: false,  // Track when a ranking is being selected
 
-                try {
-                    // Send updated ranking to the server
-                    const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(activeRanking)
-                    });
+                // Fetch all user's rankings from the database
+                fetchUserRankings: async () => {
+                    setState({ isLoading: true });
+                    try {
+                        const response = await fetch('/api/user-rankings');
+                        const data = await response.json();
 
-                    if (!response.ok) throw new Error('Failed to save changes');
+                        // Find the most recent ranking first
+                        const mostRecent = data.length > 0
+                            ? [...data].sort((a, b) => new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated))[0]
+                            : null;
 
-                    // Reset change flags and update last saved timestamp
-                    set({
-                        hasUnsavedChanges: false,
-                        lastSaved: new Date()
-                    });
-                } catch (error) {
-                    set({ error: error.message });
-                }
-            },
-
-            // Set up automatic saving every 30 seconds
-            // Returns a cleanup function to clear the interval
-            initAutoSave: () => {
-                const saveInterval = setInterval(() => {
-                    const { hasUnsavedChanges } = get();
-                    if (hasUnsavedChanges) {
-                        get().saveChanges();
+                        // Set both rankings and active ranking in one update to avoid multiple rerenders
+                        setState({
+                            rankings: data,
+                            activeRanking: mostRecent,
+                            isLoading: false
+                        });
+                    } catch (error) {
+                        setState({ error: error.message, isLoading: false });
                     }
-                }, 30000); // 30 seconds
+                },
 
-                return () => clearInterval(saveInterval);
-            }
-        }),
+                // Set which ranking list is currently being viewed/edited
+                setActiveRanking: async (rankingId) => {
+                    setState({ selectionLoading: true });
+                    try {
+                        const ranking = get().rankings.find(r => r._id === rankingId);
+                        setState({
+                            activeRanking: ranking,
+                            selectionLoading: false
+                        });
+                    } catch (error) {
+                        setState({
+                            error: error.message,
+                            selectionLoading: false
+                        });
+                    }
+                },
+
+                // Update a player's rank in the active ranking list
+                updatePlayerRank: (playerId, newRank) => {
+                    const { activeRanking, rankings } = get();
+                    if (!activeRanking) return;
+
+                    const updatedRanking = {
+                        ...activeRanking,
+                        players: activeRanking.players.map(p =>
+                            p.id === playerId ? { ...p, rank: newRank } : p
+                        )
+                    };
+
+                    setState({
+                        activeRanking: updatedRanking,
+                        rankings: rankings.map(r =>
+                            r._id === updatedRanking._id ? updatedRanking : r
+                        ),
+                        hasUnsavedChanges: true
+                    });
+                },
+
+                // Save changes to the database
+                saveChanges: async () => {
+                    const { activeRanking, hasUnsavedChanges } = get();
+                    if (!hasUnsavedChanges || !activeRanking) return;
+
+                    try {
+                        const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(activeRanking)
+                        });
+
+                        if (!response.ok) throw new Error('Failed to save changes');
+
+                        setState({
+                            hasUnsavedChanges: false,
+                            lastSaved: new Date()
+                        });
+                    } catch (error) {
+                        setState({ error: error.message });
+                    }
+                },
+
+                initAutoSave: () => {
+                    const saveInterval = setInterval(() => {
+                        const { hasUnsavedChanges } = get();
+                        if (hasUnsavedChanges) {
+                            get().saveChanges();
+                        }
+                    }, 30000);
+
+                    return () => clearInterval(saveInterval);
+                }
+            };
+        },
         {
             name: 'user-rankings-storage', // unique name for localStorage key
             partialize: (state) => ({

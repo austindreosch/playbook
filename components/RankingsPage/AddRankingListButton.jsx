@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 
 const AddRankingListButton = ({ rankings }) => {
     const { user } = useUser();
+    const { fetchUserRankings } = useUserRankings();
     // Form state
     const [formData, setFormData] = useState({
         sport: 'NBA',
@@ -109,6 +111,9 @@ const AddRankingListButton = ({ rankings }) => {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `Failed to save rankings (${response.status})`);
             }
+
+            // Refresh the rankings list
+            await fetchUserRankings();
 
             // Close the dialog and reset form
             setOpen(false);
