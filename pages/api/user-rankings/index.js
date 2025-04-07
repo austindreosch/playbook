@@ -35,7 +35,9 @@ export default async function handler(req, res) {
                 sport: 1,
                 format: 1,
                 scoring: 1,
-                details: 1
+                details: 1,
+                categories: 1,
+                rankings: 1
             })
             .sort({ 'details.dateUpdated': -1 })
             .toArray();

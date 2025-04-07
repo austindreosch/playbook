@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 
 const AddRankingListButton = ({ rankings }) => {
     const { user } = useUser();
+    const { fetchUserRankings } = useUserRankings();
     // Form state
     const [formData, setFormData] = useState({
         sport: 'NBA',
@@ -65,34 +67,6 @@ const AddRankingListButton = ({ rankings }) => {
                         name: player.name,
                         rank: player.rank
                     })) : [],
-                    positions: {
-                        available: {
-                            All: true,
-                            PG: true,
-                            SG: true,
-                            SF: true,
-                            PF: true,
-                            C: true
-                        },
-                        enabled: {
-                            All: true,
-                            PG: false,
-                            SG: false,
-                            SF: false,
-                            PF: false,
-                            C: false
-                        }
-                    },
-                    categories: {
-                        available: [
-                            'FG%', 'FT%', '3PM', 'PTS', 'REB',
-                            'AST', 'STL', 'BLK', 'TO'
-                        ],
-                        enabled: [
-                            'FG%', 'FT%', '3PM', 'PTS', 'REB',
-                            'AST', 'STL', 'BLK', 'TO'
-                        ]
-                    },
                     details: {
                         dateCreated: new Date().toISOString(),
                         dateUpdated: new Date().toISOString(),
@@ -109,6 +83,9 @@ const AddRankingListButton = ({ rankings }) => {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `Failed to save rankings (${response.status})`);
             }
+
+            // Refresh the rankings list
+            await fetchUserRankings();
 
             // Close the dialog and reset form
             setOpen(false);
