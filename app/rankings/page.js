@@ -9,6 +9,7 @@ import useUserRankings from '@/stores/useUserRankings';
 import { useEffect, useState } from 'react';
 
 export default function RankingsPage() {
+  const [expertRankings, setExpertRankings] = useState(null);
   const [latestUserRankings, setLatestUserRankings] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +24,7 @@ export default function RankingsPage() {
 
   const {
     activeRanking,
+    setActiveRanking,
     isLoading: rankingsLoading,
     error: rankingsError,
     initAutoSave
@@ -38,24 +40,24 @@ export default function RankingsPage() {
 
   // Fetch expert rankings
   useEffect(() => {
-    const fetchLatestRankings = async () => {
+    const fetchExpertRankings = async () => {
       try {
         const response = await fetch('/api/fetch/NBA/GetNBADynastyRankings');
         if (!response.ok) {
           throw new Error('Failed to fetch rankings');
         }
         const data = await response.json();
-        setLatestUserRankings(data.rankings);
+        setExpertRankings(data.rankings);
       } catch (err) {
         console.error('Error fetching rankings:', err);
         setError(err.message);
-        setLatestUserRankings(null);
+        setExpertRankings(null);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLatestRankings();
+    fetchExpertRankings();
   }, []);
 
   // Fetch master dataset based on selected sport
@@ -97,6 +99,26 @@ export default function RankingsPage() {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  useEffect(() => {
+    const fetchUserRankings = async () => {
+      try {
+        const response = await fetch('/api/user-rankings');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user rankings');
+        }
+        const data = await response.json();
+        console.log('Fetched User Rankings:', data);
+        setLatestUserRankings(data);
+      } catch (err) {
+        console.error('Error fetching user rankings:', err);
+        setError(err.message);
+        setLatestUserRankings(null);
+      }
+    };
+
+    fetchUserRankings();
   }, []);
 
   const handleRankingSelect = async (rankingId) => {
@@ -174,6 +196,7 @@ export default function RankingsPage() {
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
+              setActiveRanking={setActiveRanking}
             />
           </div>
         </div>
