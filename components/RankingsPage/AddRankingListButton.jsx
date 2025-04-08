@@ -8,7 +8,7 @@ import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 
-const AddRankingListButton = ({ rankings }) => {
+const AddRankingListButton = ({ rankings, dataset }) => {
     const { user } = useUser();
     const { fetchUserRankings } = useUserRankings();
     // Form state

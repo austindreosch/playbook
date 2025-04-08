@@ -107,12 +107,12 @@ const PlayerListRankingHeader = ({
     };
 
     // Add console logging to check the state
-    useEffect(() => {
-        console.log('Active Ranking:', activeRanking);
-        if (activeRanking) {
-            console.log('Categories:', activeRanking.categories);
-        }
-    }, [activeRanking]);
+    // useEffect(() => {
+    //     console.log('Active Ranking:', activeRanking);
+    //     if (activeRanking) {
+    //         console.log('Categories:', activeRanking.categories);
+    //     }
+    // }, [activeRanking]);
 
     if (!activeRanking) {
         return <div className="text-center p-4 text-gray-500">Please select a ranking to view.</div>;

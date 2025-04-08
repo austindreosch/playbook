@@ -137,23 +137,26 @@ export default function RankingsPage() {
   };
 
   // Get the appropriate dataset based on selected sport
-  const getSportData = () => {
+  const getDatasetForSelectedSport = () => {
     switch (selectedSport) {
       case 'NBA':
-        return nba;
+        return { nba: nba };
       case 'MLB':
-        return mlb;
+        return { mlb: mlb };
       case 'NFL':
-        return nfl;
+        return { nfl: nfl };
       default:
         return { players: [] };
     }
   };
 
-  const currentSportData = getSportData();
-  useEffect(() => {
-    console.log('Current Sport Data:', currentSportData);
-  }, [currentSportData]);
+  const datasetForSelectedSport = getDatasetForSelectedSport();
+
+
+  // useEffect(() => {
+  //   console.log('Current Sport Data:', datasetForSelectedSport);
+  // }, [datasetForSelectedSport]);
+
 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;
@@ -163,7 +166,7 @@ export default function RankingsPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Customized Rankings</h1>
-        <AddRankingListButton masterDataset={currentSportData} />
+        <AddRankingListButton dataset={datasetForSelectedSport} />
       </div>
 
       {(error || masterDatasetError || rankingsError) && (
@@ -189,7 +192,7 @@ export default function RankingsPage() {
             <PlayerListContainer
               sport={selectedSport}
               userRankings={latestUserRankings}
-              dataset={currentSportData}
+              dataset={datasetForSelectedSport}
               activeRanking={activeRanking}
             />
           </div>
