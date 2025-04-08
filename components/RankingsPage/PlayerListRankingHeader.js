@@ -26,7 +26,6 @@ const PlayerListRankingHeader = ({
         direction: 'asc'
     });
     const [isSaving, setIsSaving] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(false);
 
     // Add state for selectors
     const [selectedSource, setSelectedSource] = useState("");
@@ -54,10 +53,17 @@ const PlayerListRankingHeader = ({
     const handleSave = async () => {
         try {
             // Save changes to the database
-            await onSave();
+            setIsSaving(true);
+            try {
+                await onSave();
+                // Add minimum delay of 200ms
+                await new Promise(resolve => setTimeout(resolve, 300));
+            } finally {
+                setIsSaving(false);
+            }
 
             // Collapse the component
-            setIsCollapsed(true);
+            setExpanded(false);
         } catch (error) {
             console.error('Error saving changes:', error);
         }
@@ -207,7 +213,7 @@ const PlayerListRankingHeader = ({
                                             <Switch
                                                 checked={category.enabled}
                                                 onCheckedChange={(checked) => handleCategoryToggle(category.key, checked)}
-                                                className="flex-shrink-0 mr-2"
+                                                className="flex-shrink-0 mr-2 data-[state=checked]:bg-pb_blue"
                                             />
                                             <span className="text-sm font-medium pr-4">{category.name}</span>
                                         </div>

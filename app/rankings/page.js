@@ -151,6 +151,9 @@ export default function RankingsPage() {
   };
 
   const currentSportData = getSportData();
+  useEffect(() => {
+    console.log('Current Sport Data:', currentSportData);
+  }, [currentSportData]);
 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;

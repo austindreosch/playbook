@@ -8,6 +8,10 @@ const getObjectSize = (obj) => {
     return megaBytes < 1 ? `${kiloBytes.toFixed(2)} KB` : `${megaBytes.toFixed(2)} MB`;
 };
 
+const formatNumber = (value) => {
+    return value != null && !isNaN(value) ? parseFloat(value.toFixed(1)) : 'N/A';
+};
+
 const useMasterDataset = create((set, get) => ({
     nba: {
         players: [],
@@ -61,23 +65,71 @@ const useMasterDataset = create((set, get) => ({
                         officialImageSrc: playerStats.player.officialImageSrc
                     },
                     stats: {
-                        gamesPlayed: playerStats.stats.gamesPlayed,
-                        points: playerStats.stats.offense.pts,
-                        pointsPerGame: playerStats.stats.offense.ptsPerGame,
-                        rebounds: playerStats.stats.rebounds.reb,
-                        reboundsPerGame: playerStats.stats.rebounds.rebPerGame,
-                        assists: playerStats.stats.offense.ast,
-                        assistsPerGame: playerStats.stats.offense.astPerGame,
-                        steals: playerStats.stats.defense.stl,
-                        stealsPerGame: playerStats.stats.defense.stlPerGame,
-                        blocks: playerStats.stats.defense.blk,
-                        blocksPerGame: playerStats.stats.defense.blkPerGame,
-                        fieldGoalPercentage: playerStats.stats.fieldGoals.fgPct,
-                        freeThrowPercentage: playerStats.stats.freeThrows.ftPct,
-                        minutesPerGame: Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60)
+                        gamesPlayed: formatNumber(playerStats.stats.gamesPlayed),
+                        points: formatNumber(playerStats.stats.offense.pts),
+                        pointsPerGame: formatNumber(playerStats.stats.offense.ptsPerGame),
+                        rebounds: formatNumber(playerStats.stats.rebounds.reb),
+                        reboundsPerGame: formatNumber(playerStats.stats.rebounds.rebPerGame),
+                        assists: formatNumber(playerStats.stats.offense.ast),
+                        assistsPerGame: formatNumber(playerStats.stats.offense.astPerGame),
+                        threePointsMadePerGame: formatNumber(playerStats.stats.fieldGoals.fg3PtMadePerGame),
+                        turnoversPerGame: formatNumber(playerStats.stats.defense.tovPerGame),
+                        steals: formatNumber(playerStats.stats.defense.stl),
+                        stealsPerGame: formatNumber(playerStats.stats.defense.stlPerGame),
+                        blocks: formatNumber(playerStats.stats.defense.blk),
+                        blocksPerGame: formatNumber(playerStats.stats.defense.blkPerGame),
+                        fieldGoalPercentage: formatNumber(playerStats.stats.fieldGoals.fgPct),
+                        freeThrowPercentage: formatNumber(playerStats.stats.freeThrows.ftPct),
+                        minutesPerGame: formatNumber(Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60))
                     }
                 };
             }) || [];
+
+            // Merge duplicate players in regular season stats
+            const players = Object.values(
+                regularSeasonPlayers.reduce((acc, player) => {
+                    const id = player.info.playerId;
+                    if (!acc[id]) {
+                        acc[id] = { ...player };
+                    } else {
+                        // Merge stats (assuming all stat fields are numeric)
+                        const existingGames = acc[id].stats.gamesPlayed;
+                        const newGames = player.stats.gamesPlayed;
+                        const totalGames = existingGames + newGames;
+
+                        // Helper function for weighted averages
+                        const weightedAvg = (a, b, existingGames, newGames) => {
+                            const totalGames = existingGames + newGames;
+                            return formatNumber(((a * existingGames) + (b * newGames)) / totalGames);
+                        };
+
+                        // Update per-game stats with weighted averages
+                        acc[id].stats.pointsPerGame = weightedAvg(acc[id].stats.pointsPerGame, player.stats.pointsPerGame, existingGames, newGames);
+                        acc[id].stats.reboundsPerGame = weightedAvg(acc[id].stats.reboundsPerGame, player.stats.reboundsPerGame, existingGames, newGames);
+                        acc[id].stats.assistsPerGame = weightedAvg(acc[id].stats.assistsPerGame, player.stats.assistsPerGame, existingGames, newGames);
+                        acc[id].stats.stealsPerGame = weightedAvg(acc[id].stats.stealsPerGame, player.stats.stealsPerGame, existingGames, newGames);
+                        acc[id].stats.blocksPerGame = weightedAvg(acc[id].stats.blocksPerGame, player.stats.blocksPerGame, existingGames, newGames);
+                        acc[id].stats.minutesPerGame = weightedAvg(acc[id].stats.minutesPerGame, player.stats.minutesPerGame, existingGames, newGames);
+                        acc[id].stats.threePointsMadePerGame = weightedAvg(acc[id].stats.threePointsMadePerGame, player.stats.threePointsMadePerGame, existingGames, newGames);
+                        acc[id].stats.turnoversPerGame = weightedAvg(acc[id].stats.turnoversPerGame, player.stats.turnoversPerGame, existingGames, newGames);
+
+                        // Update totals
+                        acc[id].stats.gamesPlayed = totalGames;
+                        acc[id].stats.points += player.stats.points;
+                        acc[id].stats.rebounds += player.stats.rebounds;
+                        acc[id].stats.assists += player.stats.assists;
+                        acc[id].stats.steals += player.stats.steals;
+                        acc[id].stats.blocks += player.stats.blocks;
+                        acc[id].stats.turnovers += player.stats.turnovers;
+
+                        // Update percentages with weighted averages
+                        acc[id].stats.fieldGoalPercentage = weightedAvg(acc[id].stats.fieldGoalPercentage, player.stats.fieldGoalPercentage, existingGames, newGames);
+                        acc[id].stats.freeThrowPercentage = weightedAvg(acc[id].stats.freeThrowPercentage, player.stats.freeThrowPercentage, existingGames, newGames);
+                    }
+                    return acc;
+                }, {})
+            );
+
 
             // Map the projected stats separately
             const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
@@ -105,6 +157,8 @@ const useMasterDataset = create((set, get) => ({
                         reboundsPerGame: playerStats.projectedStats.rebounds.rebPerGame,
                         assists: playerStats.projectedStats.offense.ast,
                         assistsPerGame: playerStats.projectedStats.offense.astPerGame,
+                        threePointsMadePerGame: playerStats.projectedStats.fieldGoals.fg3PtMadePerGame,
+                        turnoversPerGame: playerStats.projectedStats.defense.tovPerGame,
                         steals: playerStats.projectedStats.defense.stl,
                         stealsPerGame: playerStats.projectedStats.defense.stlPerGame,
                         blocks: playerStats.projectedStats.defense.blk,
@@ -116,45 +170,7 @@ const useMasterDataset = create((set, get) => ({
                 };
             }) || [];
 
-            // Merge duplicate players in regular season stats
-            const players = Object.values(
-                regularSeasonPlayers.reduce((acc, player) => {
-                    const id = player.info.playerId;
-                    if (!acc[id]) {
-                        acc[id] = { ...player };
-                    } else {
-                        // Merge stats (assuming all stat fields are numeric)
-                        const existingGames = acc[id].stats.gamesPlayed;
-                        const newGames = player.stats.gamesPlayed;
-                        const totalGames = existingGames + newGames;
 
-                        // Helper function for weighted averages
-                        const weightedAvg = (a, b) => {
-                            return ((a * existingGames) + (b * newGames)) / totalGames;
-                        };
-
-                        // Update per-game stats with weighted averages
-                        acc[id].stats.pointsPerGame = weightedAvg(acc[id].stats.pointsPerGame, player.stats.pointsPerGame);
-                        acc[id].stats.reboundsPerGame = weightedAvg(acc[id].stats.reboundsPerGame, player.stats.reboundsPerGame);
-                        acc[id].stats.assistsPerGame = weightedAvg(acc[id].stats.assistsPerGame, player.stats.assistsPerGame);
-                        acc[id].stats.stealsPerGame = weightedAvg(acc[id].stats.stealsPerGame, player.stats.stealsPerGame);
-                        acc[id].stats.blocksPerGame = weightedAvg(acc[id].stats.blocksPerGame, player.stats.blocksPerGame);
-
-                        // Update totals
-                        acc[id].stats.gamesPlayed = totalGames;
-                        acc[id].stats.points += player.stats.points;
-                        acc[id].stats.rebounds += player.stats.rebounds;
-                        acc[id].stats.assists += player.stats.assists;
-                        acc[id].stats.steals += player.stats.steals;
-                        acc[id].stats.blocks += player.stats.blocks;
-
-                        // Update percentages with weighted averages
-                        acc[id].stats.fieldGoalPercentage = weightedAvg(acc[id].stats.fieldGoalPercentage, player.stats.fieldGoalPercentage);
-                        acc[id].stats.freeThrowPercentage = weightedAvg(acc[id].stats.freeThrowPercentage, player.stats.freeThrowPercentage);
-                    }
-                    return acc;
-                }, {})
-            );
 
             // For debugging
             // console.log('Total players before merge:', regularSeasonPlayers.length);

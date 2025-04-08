@@ -9,7 +9,7 @@ const PLAYERS_PER_PAGE = 100;
 
 const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
 
-    // console.log('dataset', dataset); 
+    console.log('dataset', dataset);
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
@@ -23,7 +23,7 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
             return;
         }
 
-        console.log('Categories:', activeRanking.categories);
+        // console.log('Categories:', activeRanking.categories);
 
         const enabledCategories = Object.entries(activeRanking.categories)
             .filter(([_, value]) => value.enabled)
@@ -31,14 +31,14 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
 
         setChosenCategories(enabledCategories);
 
-        console.log('Enabled Categories:', enabledCategories);
+        // console.log('Enabled Categories:', enabledCategories);
 
     }, [activeRanking?.categories]);
 
     // Log chosenCategories after it changes
-    useEffect(() => {
-        console.log('Chosen Categories:', chosenCategories);
-    }, [chosenCategories]);
+    // useEffect(() => {
+    //     console.log('Chosen Categories:', chosenCategories);
+    // }, [chosenCategories]);
 
     // Update stats and weights when activeRanking changes
     useEffect(() => {
@@ -75,14 +75,14 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
             stats: {
                 season: {
                     fieldGoalPercentage: player.stats.fieldGoalPercentage,
-                    threePointsMadePerGame: player.stats.fg3PtMadePerGame || 0,
+                    threePointsMadePerGame: player.stats.threePointsMadePerGame,
                     freeThrowPercentage: player.stats.freeThrowPercentage,
                     pointsPerGame: player.stats.pointsPerGame,
                     assistsPerGame: player.stats.assistsPerGame,
                     reboundsPerGame: player.stats.reboundsPerGame,
                     stealsPerGame: player.stats.stealsPerGame,
                     blocksPerGame: player.stats.blocksPerGame,
-                    turnoversPerGame: player.stats.toPerGame || 0
+                    turnoversPerGame: player.stats.turnoversPerGame
                 }
             }
         }));
@@ -129,6 +129,7 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
 
         setActiveId(null);
     }, []);
+
 
     if (!dataset?.players?.length) {
         return <div>Loading players...</div>;
