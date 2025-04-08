@@ -89,13 +89,13 @@ const PlayerRow = ({ player, sport, categories }) => {
                         return (
                             <div
                                 key={statKey}
-                                className={`flex-1 text-center h-full flex items-center justify-center `}
-                                title={`${stat?.abbreviation || statKey}: ${stat?.value || '-'}`}
+                                className="flex-1 text-center h-full flex items-center justify-center"
+                                title={`${stat?.abbreviation || statKey}: ${stat?.value}`}
+                                style={{ backgroundColor: stat?.color }}
                             >
-                                <div className="flex flex-col items-center">
-                                    {/* <span className="text-xs text-gray-500">{stat?.abbreviation || statKey}</span> */}
-                                    <span>{stat?.value || '-'}</span>
-                                </div>
+                                <span className="text-sm text-pb_darkgray">
+                                    {stat?.value === 0 ? '0' : stat?.value?.toFixed(1)}
+                                </span>
                             </div>
                         );
                     })}

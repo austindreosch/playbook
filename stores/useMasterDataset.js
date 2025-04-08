@@ -9,48 +9,84 @@ const getObjectSize = (obj) => {
 };
 
 const formatNumber = (value) => {
-    // If the value is undefined or null, return '0'
-    if (value == null) return '0';
-
-    // If it's not a number (NaN), return '0'
-    if (isNaN(value)) return '0';
-
-    // For very small numbers (close to 0), return '0'
-    if (Math.abs(value) < 0.1) return '0';
-
-    // Otherwise format to 1 decimal place
+    if (value == null) return 0.0;
+    if (isNaN(value)) return 0.0;
+    if (Math.abs(value) < 0.1) return 0.0;
+    // Always show one decimal place, even for integers
     return parseFloat(value.toFixed(1));
 };
 
-const calculateZScoresForAllStats = (players, statKeys, topN = 156) => {
-    const zScorePlayers = [...players];
 
-    statKeys.forEach(statKey => {
-        // Sort players by the stat in descending order
-        const sortedPlayers = [...zScorePlayers].sort((a, b) => b.stats[statKey] - a.stats[statKey]);
+// const calculateZScoresForAllStats = (players, statKeys, topN = 156) => {
+//     const zScorePlayers = [...players];
 
-        // Select the top N players
-        const topPlayers = sortedPlayers.slice(0, topN);
+//     statKeys.forEach(statKey => {
+//         // Sort players by the stat in descending order
+//         const sortedPlayers = [...zScorePlayers].sort((a, b) => b.stats[statKey] - a.stats[statKey]);
 
-        // Calculate mean and standard deviation
-        const values = topPlayers.map(player => player.stats[statKey]);
-        const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
-        const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
+//         // Select the top N players
+//         const topPlayers = sortedPlayers.slice(0, topN);
 
-        // Calculate z-scores and add color placeholders
-        topPlayers.forEach(player => {
-            const zScore = (player.stats[statKey] - mean) / stdDev;
-            player.stats[`${statKey}ZScore`] = zScore;
-            player.stats[`${statKey}Color`] = ''; // Placeholder for color
-        });
-    });
+//         // Calculate mean and standard deviation
+//         const values = topPlayers.map(player => player.stats[statKey]);
+//         const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
+//         const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
 
-    return zScorePlayers;
-};
+//         // Calculate z-scores and add color placeholders
+//         topPlayers.forEach(player => {
+//             const zScore = (player.stats[statKey] - mean) / stdDev;
+//             player.stats[`${statKey}ZScore`] = zScore;
+//             player.stats[`${statKey}Color`] = ''; // Placeholder for color
+//         });
+//     });
+
+//     return zScorePlayers;
+// };
+
+
+// function calculateVolumeWeightedZScore(rawValue, mean, stdDev, volumeValue, volumeThreshold) {
+//     // Calculate the raw z-score
+//     const rawZScore = (rawValue - mean) / stdDev;
+
+//     // Calculate volume weight (0.5 to 1.0)
+//     const volumeWeight = Math.min(volumeValue / volumeThreshold, 1);
+//     const weightedFactor = 0.5 + 0.5 * volumeWeight;
+
+//     // Return the volume-weighted z-score
+//     return rawZScore * weightedFactor;
+// }
+
+
+const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
+
+function hexToRgba(hex, alpha) {
+    const stripped = hex.replace('#', '');
+    const r = parseInt(stripped.substring(0, 2), 16);
+    const g = parseInt(stripped.substring(2, 4), 16);
+    const b = parseInt(stripped.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352') {
+    // Clamp zScore between -2 and 2 for color mapping
+    const clampedZ = clamp(zScore, -2, 2);
+    // Convert that to a 0..1 ratio
+    const ratio = Math.abs(clampedZ) / 2;
+    // Linearly map ratio to alpha in range 0.05..1.0
+    const minAlpha = 0.05;
+    const maxAlpha = 1.0;
+    const alpha = minAlpha + ratio * (maxAlpha - minAlpha);
+    // Choose green for positive or red for negative
+    const baseColor = zScore >= 0 ? basePos : baseNeg;
+    return hexToRgba(baseColor, alpha);
+}
 
 
 
 
+
+
+// =====================================================================
 
 const useMasterDataset = create((set, get) => ({
     nba: {
@@ -132,6 +168,11 @@ const useMasterDataset = create((set, get) => ({
                         blocksPerGame: { value: formatNumber(playerStats.stats.defense.blkPerGame), zScore: null, color: '', abbreviation: 'BLK' },
                         fieldGoalPercentage: { value: formatNumber(playerStats.stats.fieldGoals.fgPct), zScore: null, color: '', abbreviation: 'FG%' },
                         freeThrowPercentage: { value: formatNumber(playerStats.stats.freeThrows.ftPct), zScore: null, color: '', abbreviation: 'FT%' },
+
+                        fgAttPerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
+                        ftAttPerGame: { value: formatNumber(playerStats.stats.freeThrows.ftAttPerGame), zScore: null, color: '' },
+                        fgMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
+                        ftMadePerGame: { value: formatNumber(playerStats.stats.freeThrows.ftMadePerGame), zScore: null, color: '' },
 
                     }
                 };
@@ -221,7 +262,16 @@ const useMasterDataset = create((set, get) => ({
                         blocksPerGame: { value: playerStats.projectedStats.defense.blkPerGame, zScore: null, color: '' },
                         fieldGoalPercentage: { value: playerStats.projectedStats.fieldGoals.fgPct, zScore: null, color: '' },
                         freeThrowPercentage: { value: playerStats.projectedStats.freeThrows.ftPct, zScore: null, color: '' },
-                        minutesPerGame: { value: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60), zScore: null, color: '' }
+                        minutesPerGame: { value: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60), zScore: null, color: '' },
+
+                        fgAttPerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
+                        ftAttPerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftAttPerGame), zScore: null, color: '' },
+                        fgMadePerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
+                        ftMadePerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftMadePerGame), zScore: null, color: '' },
+
+                        //For z-scorevalidation
+                        minSeconds: { value: playerStats.projectedStats.miscellaneous.minSeconds, zScore: null, color: '' },
+                        fgAtt: { value: playerStats.projectedStats.fieldGoals.fgAtt, zScore: null, color: '' },
                     }
                 };
             }) || [];
@@ -253,16 +303,19 @@ const useMasterDataset = create((set, get) => ({
 
             // Calculate z-scores for regular stats
             statKeys.forEach(statKey => {
-                // Filter players with valid stat values for this key
-                const validPlayers = playersWithProjections.filter(player =>
-                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value)
+                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
+                const baselinePlayers = playersWithProjections.filter(player =>
+                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value) &&
+                    player.projections &&
+                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
+                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
                 );
 
-                if (!validPlayers.length) return;
+                if (!baselinePlayers.length) return;
 
-                // Sort descending and select top N players
-                const sortedPlayers = [...validPlayers].sort((a, b) => b.stats[statKey].value - a.stats[statKey].value);
-                const topPlayers = sortedPlayers.slice(0, topN);
+                // Sort descending and select top N players from baseline players
+                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => b.stats[statKey].value - a.stats[statKey].value);
+                const topPlayers = sortedBaselinePlayers.slice(0, topN);
 
                 // Calculate mean and standard deviation from top players
                 const values = topPlayers.map(player => player.stats[statKey].value);
@@ -272,23 +325,64 @@ const useMasterDataset = create((set, get) => ({
                 // Save reference outside of each player's data
                 statsReferences[statKey] = { mean, stdDev };
 
-                // Loop back and assign z-scores for each player with a valid value
-                validPlayers.forEach(player => {
-                    player.stats[statKey].zScore = (player.stats[statKey].value - mean) / stdDev;
-                    player.stats[statKey].color = ''; // Placeholder for your color coding logic
+                // Calculate z-scores and colors for ALL players with valid stats
+                const allValidPlayers = playersWithProjections.filter(player =>
+                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value)
+                );
+
+                allValidPlayers.forEach(player => {
+                    // For turnovers, invert the z-score since lower is better
+                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
+                        player.stats[statKey].zScore = (mean - player.stats[statKey].value) / stdDev;
+                    }
+                    // For percentage-based stats, weight the z-score by volume
+                    else if (statKey === 'fieldGoalPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.stats.fgMadePerGame.value + player.stats.fgAttPerGame.value) / (15 + 30),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else if (statKey === 'freeThrowPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.stats.ftMadePerGame.value + player.stats.ftAttPerGame.value) / (4.5 + 9),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else {
+                        player.stats[statKey].zScore = (player.stats[statKey].value - mean) / stdDev;
+                    }
+                    // Calculate color based on z-score using new function
+                    const zScore = player.stats[statKey].zScore;
+                    player.stats[statKey].color = getColorForZScore(zScore);
                 });
             });
 
             // Calculate z-scores for projection stats if available
             statKeys.forEach(statKey => {
-                const validPlayers = playersWithProjections.filter(player =>
-                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value)
+                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
+                const baselinePlayers = playersWithProjections.filter(player =>
+                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value) &&
+                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
+                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
                 );
 
-                if (!validPlayers.length) return;
+                if (!baselinePlayers.length) return;
 
-                const sortedPlayers = [...validPlayers].sort((a, b) => b.projections[statKey].value - a.projections[statKey].value);
-                const topPlayers = sortedPlayers.slice(0, topN);
+                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => {
+                    // For turnovers, sort ascending since lower is better
+                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
+                        return a.projections[statKey].value - b.projections[statKey].value;
+                    }
+                    // For all other stats, sort descending
+                    return b.projections[statKey].value - a.projections[statKey].value;
+                });
+                const topPlayers = sortedBaselinePlayers.slice(0, topN);
 
                 const values = topPlayers.map(player => player.projections[statKey].value);
                 const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
@@ -297,9 +391,41 @@ const useMasterDataset = create((set, get) => ({
                 // Save projection reference values with a prefix to distinguish
                 statsReferences[`proj_${statKey}`] = { mean, stdDev };
 
-                validPlayers.forEach(player => {
-                    player.projections[statKey].zScore = (player.projections[statKey].value - mean) / stdDev;
-                    player.projections[statKey].color = ''; // Placeholder for your color coding
+                // Calculate z-scores and colors for ALL players with valid projection stats
+                const allValidPlayers = playersWithProjections.filter(player =>
+                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value)
+                );
+
+                allValidPlayers.forEach(player => {
+                    // For turnovers, invert the z-score since lower is better
+                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
+                        player.projections[statKey].zScore = (mean - player.projections[statKey].value) / stdDev;
+                    }
+                    // For percentage-based stats, weight the z-score by volume
+                    else if (statKey === 'fieldGoalPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.projections.fgMadePerGame.value + player.projections.fgAttPerGame.value) / (15 + 30),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else if (statKey === 'freeThrowPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.projections.ftMadePerGame.value + player.projections.ftAttPerGame.value) / (4.5 + 9),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else {
+                        player.projections[statKey].zScore = (player.projections[statKey].value - mean) / stdDev;
+                    }
+                    // Calculate color based on z-score using new function
+                    const zScore = player.projections[statKey].zScore;
+                    player.projections[statKey].color = getColorForZScore(zScore);
                 });
             });
 
