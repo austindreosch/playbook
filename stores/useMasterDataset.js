@@ -67,19 +67,20 @@ function hexToRgba(hex, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352') {
-    // Clamp zScore between -2 and 2 for color mapping
+function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue) {
+    // If statValue is 0, force full deep red
+    if (statValue === 0) {
+        return hexToRgba(baseNeg, 1.0);
+    }
     const clampedZ = clamp(zScore, -2, 2);
-    // Convert that to a 0..1 ratio
     const ratio = Math.abs(clampedZ) / 2;
-    // Linearly map ratio to alpha in range 0.05..1.0
     const minAlpha = 0.05;
     const maxAlpha = 1.0;
     const alpha = minAlpha + ratio * (maxAlpha - minAlpha);
-    // Choose green for positive or red for negative
     const baseColor = zScore >= 0 ? basePos : baseNeg;
     return hexToRgba(baseColor, alpha);
 }
+
 
 
 

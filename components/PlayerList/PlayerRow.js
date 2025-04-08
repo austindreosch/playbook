@@ -49,7 +49,7 @@ const PlayerRow = ({ player, sport, categories }) => {
         <div
             ref={setNodeRef}
             style={style}
-            className={`player-row border rounded-md overflow-hidden mb-2 shadow-sm ${isDragging ? 'z-10' : ''}`}
+            className={`player-row border rounded-md overflow-hidden mb-1 shadow-sm ${isDragging ? 'z-10' : ''}`}
         >
             {/* -------------------------------------- */}
             {/* Basic player info row - always visible */}
