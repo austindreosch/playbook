@@ -8,24 +8,105 @@ const getObjectSize = (obj) => {
     return megaBytes < 1 ? `${kiloBytes.toFixed(2)} KB` : `${megaBytes.toFixed(2)} MB`;
 };
 
+const formatNumber = (value) => {
+    if (value == null) return 0.0;
+    if (isNaN(value)) return 0.0;
+    if (Math.abs(value) < 0.1) return 0.0;
+    // Always show one decimal place, even for integers
+    return parseFloat(value.toFixed(1));
+};
+
+
+// const calculateZScoresForAllStats = (players, statKeys, topN = 156) => {
+//     const zScorePlayers = [...players];
+
+//     statKeys.forEach(statKey => {
+//         // Sort players by the stat in descending order
+//         const sortedPlayers = [...zScorePlayers].sort((a, b) => b.stats[statKey] - a.stats[statKey]);
+
+//         // Select the top N players
+//         const topPlayers = sortedPlayers.slice(0, topN);
+
+//         // Calculate mean and standard deviation
+//         const values = topPlayers.map(player => player.stats[statKey]);
+//         const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
+//         const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
+
+//         // Calculate z-scores and add color placeholders
+//         topPlayers.forEach(player => {
+//             const zScore = (player.stats[statKey] - mean) / stdDev;
+//             player.stats[`${statKey}ZScore`] = zScore;
+//             player.stats[`${statKey}Color`] = ''; // Placeholder for color
+//         });
+//     });
+
+//     return zScorePlayers;
+// };
+
+
+// function calculateVolumeWeightedZScore(rawValue, mean, stdDev, volumeValue, volumeThreshold) {
+//     // Calculate the raw z-score
+//     const rawZScore = (rawValue - mean) / stdDev;
+
+//     // Calculate volume weight (0.5 to 1.0)
+//     const volumeWeight = Math.min(volumeValue / volumeThreshold, 1);
+//     const weightedFactor = 0.5 + 0.5 * volumeWeight;
+
+//     // Return the volume-weighted z-score
+//     return rawZScore * weightedFactor;
+// }
+
+
+const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
+
+function hexToRgba(hex, alpha) {
+    const stripped = hex.replace('#', '');
+    const r = parseInt(stripped.substring(0, 2), 16);
+    const g = parseInt(stripped.substring(2, 4), 16);
+    const b = parseInt(stripped.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue) {
+    // If statValue is 0, force full deep red
+    if (statValue === 0) {
+        return hexToRgba(baseNeg, 1.0);
+    }
+    const clampedZ = clamp(zScore, -2, 2);
+    const ratio = Math.abs(clampedZ) / 2;
+    const minAlpha = 0.05;
+    const maxAlpha = 1.0;
+    const alpha = minAlpha + ratio * (maxAlpha - minAlpha);
+    const baseColor = zScore >= 0 ? basePos : baseNeg;
+    return hexToRgba(baseColor, alpha);
+}
+
+
+
+
+
+
+
+// =====================================================================
+
 const useMasterDataset = create((set, get) => ({
     nba: {
         players: [],
-        projections: [],
         injuries: [],
         lastUpdated: null,
+        statsReferences: {},
     },
     mlb: {
         players: [],
-        projections: [],
         injuries: [],
         lastUpdated: null,
+        statsReferences: {},
     },
     nfl: {
         players: [],
-        projections: [],
         injuries: [],
         lastUpdated: null,
+        statsReferences: {},
     },
     isLoading: false,  // Just one simple loading state
     error: null,       // Just one simple error state
@@ -33,7 +114,7 @@ const useMasterDataset = create((set, get) => ({
 
 
     // =====================================================================
-    //                          FETCH NBA DATA
+    //                     🏀 FETCH NBA DATA 🏀
     // =====================================================================
 
     fetchNbaData: async () => {
@@ -41,6 +122,11 @@ const useMasterDataset = create((set, get) => ({
             set({ isLoading: true });
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
+
+
+
+
+
 
             // First map the regular season stats
             const regularSeasonPlayers = data.nbaStats?.playerStatsTotals?.map(playerStats => {
@@ -52,66 +138,43 @@ const useMasterDataset = create((set, get) => ({
                         playerId: playerStats.player.id,
                         firstName: playerStats.player.firstName,
                         lastName: playerStats.player.lastName,
+                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
                         position: playerStats.player.primaryPosition,
                         team: teamAbbreviation,
                         teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
                         height: playerStats.player.height,
                         weight: playerStats.player.weight,
                         jerseyNumber: playerStats.player.jerseyNumber,
-                        officialImageSrc: playerStats.player.officialImageSrc
+                        officialImageSrc: playerStats.player.officialImageSrc,
+                        injuryStatus: playerStats.player.currentInjury
                     },
                     stats: {
-                        gamesPlayed: playerStats.stats.gamesPlayed,
-                        points: playerStats.stats.offense.pts,
-                        pointsPerGame: playerStats.stats.offense.ptsPerGame,
-                        rebounds: playerStats.stats.rebounds.reb,
-                        reboundsPerGame: playerStats.stats.rebounds.rebPerGame,
-                        assists: playerStats.stats.offense.ast,
-                        assistsPerGame: playerStats.stats.offense.astPerGame,
-                        steals: playerStats.stats.defense.stl,
-                        stealsPerGame: playerStats.stats.defense.stlPerGame,
-                        blocks: playerStats.stats.defense.blk,
-                        blocksPerGame: playerStats.stats.defense.blkPerGame,
-                        fieldGoalPercentage: playerStats.stats.fieldGoals.fgPct,
-                        freeThrowPercentage: playerStats.stats.freeThrows.ftPct,
-                        minutesPerGame: Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60)
-                    }
-                };
-            }) || [];
+                        //totals
+                        minutesPerGame: { value: formatNumber(Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60)), zScore: null, color: '', abbreviation: 'MPG' },
+                        gamesPlayed: { value: formatNumber(playerStats.stats.gamesPlayed), zScore: null, color: '', abbreviation: 'GP' },
+                        points: { value: formatNumber(playerStats.stats.offense.pts), zScore: null, color: '' },
+                        rebounds: { value: formatNumber(playerStats.stats.rebounds.reb), zScore: null, color: '' },
+                        assists: { value: formatNumber(playerStats.stats.offense.ast), zScore: null, color: '' },
+                        steals: { value: formatNumber(playerStats.stats.defense.stl), zScore: null, color: '' },
+                        blocks: { value: formatNumber(playerStats.stats.defense.blk), zScore: null, color: '' },
+                        turnovers: { value: formatNumber(playerStats.stats.defense.tov), zScore: null, color: '' },
 
-            // Map the projected stats separately
-            const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
-                const teamAbbreviation = playerStats.team?.abbreviation ||
-                    playerStats.player?.currentTeam?.abbreviation ||
-                    'FA';
-                return {
-                    info: {
-                        playerId: playerStats.player.id,
-                        firstName: playerStats.player.firstName,
-                        lastName: playerStats.player.lastName,
-                        position: playerStats.player.primaryPosition,
-                        team: teamAbbreviation,
-                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
-                        height: playerStats.player.height,
-                        weight: playerStats.player.weight,
-                        jerseyNumber: playerStats.player.jerseyNumber,
-                        officialImageSrc: playerStats.player.officialImageSrc
-                    },
-                    projectedStats: {
-                        gamesPlayed: playerStats.projectedStats.gamesPlayed,
-                        points: playerStats.projectedStats.offense.pts,
-                        pointsPerGame: playerStats.projectedStats.offense.ptsPerGame,
-                        rebounds: playerStats.projectedStats.rebounds.reb,
-                        reboundsPerGame: playerStats.projectedStats.rebounds.rebPerGame,
-                        assists: playerStats.projectedStats.offense.ast,
-                        assistsPerGame: playerStats.projectedStats.offense.astPerGame,
-                        steals: playerStats.projectedStats.defense.stl,
-                        stealsPerGame: playerStats.projectedStats.defense.stlPerGame,
-                        blocks: playerStats.projectedStats.defense.blk,
-                        blocksPerGame: playerStats.projectedStats.defense.blkPerGame,
-                        fieldGoalPercentage: playerStats.projectedStats.fieldGoals.fgPct,
-                        freeThrowPercentage: playerStats.projectedStats.freeThrows.ftPct,
-                        minutesPerGame: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60)
+                        //per game
+                        pointsPerGame: { value: formatNumber(playerStats.stats.offense.ptsPerGame), zScore: null, color: '', abbreviation: 'PTS' },
+                        reboundsPerGame: { value: formatNumber(playerStats.stats.rebounds.rebPerGame), zScore: null, color: '', abbreviation: 'REB' },
+                        assistsPerGame: { value: formatNumber(playerStats.stats.offense.astPerGame), zScore: null, color: '', abbreviation: 'AST' },
+                        threePointsMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fg3PtMadePerGame), zScore: null, color: '', abbreviation: '3PM' },
+                        turnoversPerGame: { value: formatNumber(playerStats.stats.defense.tovPerGame), zScore: null, color: '', abbreviation: 'TO' },
+                        stealsPerGame: { value: formatNumber(playerStats.stats.defense.stlPerGame), zScore: null, color: '', abbreviation: 'STL' },
+                        blocksPerGame: { value: formatNumber(playerStats.stats.defense.blkPerGame), zScore: null, color: '', abbreviation: 'BLK' },
+                        fieldGoalPercentage: { value: formatNumber(playerStats.stats.fieldGoals.fgPct), zScore: null, color: '', abbreviation: 'FG%' },
+                        freeThrowPercentage: { value: formatNumber(playerStats.stats.freeThrows.ftPct), zScore: null, color: '', abbreviation: 'FT%' },
+
+                        fgAttPerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
+                        ftAttPerGame: { value: formatNumber(playerStats.stats.freeThrows.ftAttPerGame), zScore: null, color: '' },
+                        fgMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
+                        ftMadePerGame: { value: formatNumber(playerStats.stats.freeThrows.ftMadePerGame), zScore: null, color: '' },
+
                     }
                 };
             }) || [];
@@ -129,38 +192,254 @@ const useMasterDataset = create((set, get) => ({
                         const totalGames = existingGames + newGames;
 
                         // Helper function for weighted averages
-                        const weightedAvg = (a, b) => {
-                            return ((a * existingGames) + (b * newGames)) / totalGames;
+                        const weightedAvg = (a, b, existingGames, newGames) => {
+                            const totalGames = existingGames + newGames;
+                            return formatNumber(((a * existingGames) + (b * newGames)) / totalGames);
                         };
 
                         // Update per-game stats with weighted averages
-                        acc[id].stats.pointsPerGame = weightedAvg(acc[id].stats.pointsPerGame, player.stats.pointsPerGame);
-                        acc[id].stats.reboundsPerGame = weightedAvg(acc[id].stats.reboundsPerGame, player.stats.reboundsPerGame);
-                        acc[id].stats.assistsPerGame = weightedAvg(acc[id].stats.assistsPerGame, player.stats.assistsPerGame);
-                        acc[id].stats.stealsPerGame = weightedAvg(acc[id].stats.stealsPerGame, player.stats.stealsPerGame);
-                        acc[id].stats.blocksPerGame = weightedAvg(acc[id].stats.blocksPerGame, player.stats.blocksPerGame);
+                        acc[id].stats.pointsPerGame = { value: weightedAvg(acc[id].stats.pointsPerGame.value, player.stats.pointsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.reboundsPerGame = { value: weightedAvg(acc[id].stats.reboundsPerGame.value, player.stats.reboundsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.assistsPerGame = { value: weightedAvg(acc[id].stats.assistsPerGame.value, player.stats.assistsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.stealsPerGame = { value: weightedAvg(acc[id].stats.stealsPerGame.value, player.stats.stealsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.blocksPerGame = { value: weightedAvg(acc[id].stats.blocksPerGame.value, player.stats.blocksPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.minutesPerGame = { value: weightedAvg(acc[id].stats.minutesPerGame.value, player.stats.minutesPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.threePointsMadePerGame = { value: weightedAvg(acc[id].stats.threePointsMadePerGame.value, player.stats.threePointsMadePerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.turnoversPerGame = { value: weightedAvg(acc[id].stats.turnoversPerGame.value, player.stats.turnoversPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
 
                         // Update totals
-                        acc[id].stats.gamesPlayed = totalGames;
-                        acc[id].stats.points += player.stats.points;
-                        acc[id].stats.rebounds += player.stats.rebounds;
-                        acc[id].stats.assists += player.stats.assists;
-                        acc[id].stats.steals += player.stats.steals;
-                        acc[id].stats.blocks += player.stats.blocks;
+                        acc[id].stats.gamesPlayed = { value: totalGames, zScore: null, color: '' };
+                        acc[id].stats.points = { value: acc[id].stats.points.value + player.stats.points.value, zScore: null, color: '' };
+                        acc[id].stats.rebounds = { value: acc[id].stats.rebounds.value + player.stats.rebounds.value, zScore: null, color: '' };
+                        acc[id].stats.assists = { value: acc[id].stats.assists.value + player.stats.assists.value, zScore: null, color: '' };
+                        acc[id].stats.steals = { value: acc[id].stats.steals.value + player.stats.steals.value, zScore: null, color: '' };
+                        acc[id].stats.blocks = { value: acc[id].stats.blocks.value + player.stats.blocks.value, zScore: null, color: '' };
+                        acc[id].stats.turnovers = { value: acc[id].stats.turnovers.value + player.stats.turnovers.value, zScore: null, color: '' };
 
                         // Update percentages with weighted averages
-                        acc[id].stats.fieldGoalPercentage = weightedAvg(acc[id].stats.fieldGoalPercentage, player.stats.fieldGoalPercentage);
-                        acc[id].stats.freeThrowPercentage = weightedAvg(acc[id].stats.freeThrowPercentage, player.stats.freeThrowPercentage);
+                        acc[id].stats.fieldGoalPercentage = { value: weightedAvg(acc[id].stats.fieldGoalPercentage.value, player.stats.fieldGoalPercentage.value, existingGames.value, newGames.value), zScore: null, color: '' };
+                        acc[id].stats.freeThrowPercentage = { value: weightedAvg(acc[id].stats.freeThrowPercentage.value, player.stats.freeThrowPercentage.value, existingGames.value, newGames.value), zScore: null, color: '' };
                     }
                     return acc;
                 }, {})
             );
 
-            // For debugging
-            // console.log('Total players before merge:', regularSeasonPlayers.length);
-            // console.log('Total players after merge:', players.length);
+            // Map the projected stats separately
+            const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
+                const teamAbbreviation = playerStats.team?.abbreviation ||
+                    playerStats.player?.currentTeam?.abbreviation ||
+                    'FA';
+                return {
+                    info: {
+                        playerId: playerStats.player.id,
+                        firstName: playerStats.player.firstName,
+                        lastName: playerStats.player.lastName,
+                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
+                        position: playerStats.player.primaryPosition,
+                        team: teamAbbreviation,
+                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
+                        height: playerStats.player.height,
+                        weight: playerStats.player.weight,
+                        jerseyNumber: playerStats.player.jerseyNumber,
+                        officialImageSrc: playerStats.player.officialImageSrc,
+                        injuryStatus: playerStats.player.currentInjury
+                    },
+                    projectedStats: {
+                        //totals
+                        gamesPlayed: { value: playerStats.projectedStats.gamesPlayed, zScore: null, color: '' },
+                        points: { value: playerStats.projectedStats.offense.pts, zScore: null, color: '' },
+                        rebounds: { value: playerStats.projectedStats.rebounds.reb, zScore: null, color: '' },
+                        assists: { value: playerStats.projectedStats.offense.ast, zScore: null, color: '' },
+                        steals: { value: playerStats.projectedStats.defense.stl, zScore: null, color: '' },
+                        blocks: { value: playerStats.projectedStats.defense.blk, zScore: null, color: '' },
+                        turnovers: { value: playerStats.projectedStats.defense.tov, zScore: null, color: '' },
+                        //per game
+                        pointsPerGame: { value: playerStats.projectedStats.offense.ptsPerGame, zScore: null, color: '' },
+                        reboundsPerGame: { value: playerStats.projectedStats.rebounds.rebPerGame, zScore: null, color: '' },
+                        assistsPerGame: { value: playerStats.projectedStats.offense.astPerGame, zScore: null, color: '' },
+                        turnoversPerGame: { value: playerStats.projectedStats.defense.tovPerGame, zScore: null, color: '' },
+                        threePointsMadePerGame: { value: playerStats.projectedStats.fieldGoals.fg3PtMadePerGame, zScore: null, color: '' },
+                        stealsPerGame: { value: playerStats.projectedStats.defense.stlPerGame, zScore: null, color: '' },
+                        blocksPerGame: { value: playerStats.projectedStats.defense.blkPerGame, zScore: null, color: '' },
+                        fieldGoalPercentage: { value: playerStats.projectedStats.fieldGoals.fgPct, zScore: null, color: '' },
+                        freeThrowPercentage: { value: playerStats.projectedStats.freeThrows.ftPct, zScore: null, color: '' },
+                        minutesPerGame: { value: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60), zScore: null, color: '' },
 
-            // Log any players that had duplicates
+                        fgAttPerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
+                        ftAttPerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftAttPerGame), zScore: null, color: '' },
+                        fgMadePerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
+                        ftMadePerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftMadePerGame), zScore: null, color: '' },
+
+                        //For z-scorevalidation
+                        minSeconds: { value: playerStats.projectedStats.miscellaneous.minSeconds, zScore: null, color: '' },
+                        fgAtt: { value: playerStats.projectedStats.fieldGoals.fgAtt, zScore: null, color: '' },
+                    }
+                };
+            }) || [];
+
+            // Inject projected stats into existing players
+            const playerMap = regularSeasonPlayers.reduce((acc, player) => {
+                acc[player.info.playerId] = player;
+                return acc;
+            }, {});
+
+            projectedPlayers.forEach(projection => {
+                const playerId = projection.info.playerId;
+                if (playerMap[playerId]) {
+                    playerMap[playerId].projections = projection.projectedStats;
+                }
+            });
+
+            const playersWithProjections = Object.values(playerMap);
+
+            //    ------------------------------------------
+            //           Z-SCORES CALCULATION
+            //    ------------------------------------------
+
+
+            const statKeys = Object.keys(regularSeasonPlayers[0]?.stats || {}).map(key => key);
+
+            const topN = 156; //12 team standard league rostered players
+            const statsReferences = {};
+
+            // Calculate z-scores for regular stats
+            statKeys.forEach(statKey => {
+                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
+                const baselinePlayers = playersWithProjections.filter(player =>
+                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value) &&
+                    player.projections &&
+                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
+                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
+                );
+
+                if (!baselinePlayers.length) return;
+
+                // Sort descending and select top N players from baseline players
+                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => b.stats[statKey].value - a.stats[statKey].value);
+                const topPlayers = sortedBaselinePlayers.slice(0, topN);
+
+                // Calculate mean and standard deviation from top players
+                const values = topPlayers.map(player => player.stats[statKey].value);
+                const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
+                const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
+
+                // Save reference outside of each player's data
+                statsReferences[statKey] = { mean, stdDev };
+
+                // Calculate z-scores and colors for ALL players with valid stats
+                const allValidPlayers = playersWithProjections.filter(player =>
+                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value)
+                );
+
+                allValidPlayers.forEach(player => {
+                    // For turnovers, invert the z-score since lower is better
+                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
+                        player.stats[statKey].zScore = (mean - player.stats[statKey].value) / stdDev;
+                    }
+                    // For percentage-based stats, weight the z-score by volume
+                    else if (statKey === 'fieldGoalPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.stats.fgMadePerGame.value + player.stats.fgAttPerGame.value) / (15 + 30),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else if (statKey === 'freeThrowPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.stats.ftMadePerGame.value + player.stats.ftAttPerGame.value) / (4.5 + 9),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else {
+                        player.stats[statKey].zScore = (player.stats[statKey].value - mean) / stdDev;
+                    }
+                    // Calculate color based on z-score using new function
+                    const zScore = player.stats[statKey].zScore;
+                    player.stats[statKey].color = getColorForZScore(zScore);
+                });
+            });
+
+            // Calculate z-scores for projection stats if available
+            statKeys.forEach(statKey => {
+                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
+                const baselinePlayers = playersWithProjections.filter(player =>
+                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value) &&
+                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
+                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
+                );
+
+                if (!baselinePlayers.length) return;
+
+                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => {
+                    // For turnovers, sort ascending since lower is better
+                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
+                        return a.projections[statKey].value - b.projections[statKey].value;
+                    }
+                    // For all other stats, sort descending
+                    return b.projections[statKey].value - a.projections[statKey].value;
+                });
+                const topPlayers = sortedBaselinePlayers.slice(0, topN);
+
+                const values = topPlayers.map(player => player.projections[statKey].value);
+                const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
+                const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
+
+                // Save projection reference values with a prefix to distinguish
+                statsReferences[`proj_${statKey}`] = { mean, stdDev };
+
+                // Calculate z-scores and colors for ALL players with valid projection stats
+                const allValidPlayers = playersWithProjections.filter(player =>
+                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value)
+                );
+
+                allValidPlayers.forEach(player => {
+                    // For turnovers, invert the z-score since lower is better
+                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
+                        player.projections[statKey].zScore = (mean - player.projections[statKey].value) / stdDev;
+                    }
+                    // For percentage-based stats, weight the z-score by volume
+                    else if (statKey === 'fieldGoalPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.projections.fgMadePerGame.value + player.projections.fgAttPerGame.value) / (15 + 30),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else if (statKey === 'freeThrowPercentage') {
+                        // Weight by both makes and attempts
+                        const volumeWeight = Math.min(
+                            (player.projections.ftMadePerGame.value + player.projections.ftAttPerGame.value) / (4.5 + 9),
+                            1
+                        );
+                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
+                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
+                    }
+                    else {
+                        player.projections[statKey].zScore = (player.projections[statKey].value - mean) / stdDev;
+                    }
+                    // Calculate color based on z-score using new function
+                    const zScore = player.projections[statKey].zScore;
+                    player.projections[statKey].color = getColorForZScore(zScore);
+                });
+            });
+
+            // Save statsReferences to state
+            set({ statsReferences });
+            // console.log('Stats references:', statsReferences);
+
+
+
+            //    ------------------------------------------
+            //           HELPER FUNCTIONS
+            //    ------------------------------------------
+
             const duplicates = regularSeasonPlayers.filter(p =>
                 regularSeasonPlayers.filter(p2 => p2.info.playerId === p.info.playerId).length > 1
             );
@@ -172,10 +451,10 @@ const useMasterDataset = create((set, get) => ({
 
             const newState = {
                 nba: {
-                    players,
-                    projections: projectedPlayers,
+                    players: playersWithProjections,
                     injuries: [],
-                    lastUpdated: new Date()
+                    lastUpdated: new Date(),
+                    statsReferences: statsReferences
                 },
                 isLoading: false
             };
@@ -196,9 +475,11 @@ const useMasterDataset = create((set, get) => ({
         }
     },
 
+
     // =====================================================================
-    //                          FETCH NBA DATA
+    //                     ⚾️ 🧢 FETCH MLB DATA ⚾️ 🧢
     // =====================================================================
+
 
     // fetchMlbData: async () => {
     //     try {
@@ -245,9 +526,11 @@ const useMasterDataset = create((set, get) => ({
     // },
 
 
+
     // =====================================================================
-    //                          FETCH NFL DATA
+    //                         🏈 FETCH NFL DATA 🏈
     // =====================================================================
+
 
 
     // fetchNflData: async () => {
@@ -294,15 +577,24 @@ const useMasterDataset = create((set, get) => ({
     //     }
     // },
 
+
+
+
     // Selectors
     getPlayers: (sport) => get()[sport].players,
     getPlayerById: (sport, id) => get()[sport].players.find(p => p.info.id === id),
     getPlayersByTeam: (sport, teamId) => get()[sport].players.filter(p => p.info.teamId === teamId),
-    getPlayerProjections: (sport) => get()[sport].projections,
-    getPlayerProjectionsById: (sport, id) => get()[sport].projections.find(p => p.info.id === id),
+    getPlayerProjections: (sport) => get()[sport].players.map(p => p.projections).filter(Boolean),
+    getPlayerProjectionsById: (sport, id) => get()[sport].players.find(p => p.info.id === id)?.projections,
     getStandings: (sport) => get()[sport].standings,
     getInjuries: (sport) => get()[sport].injuries,
     getTeams: (sport) => get()[sport].teams,
+
+
+
+
+
+
 }));
 
 export default useMasterDataset;

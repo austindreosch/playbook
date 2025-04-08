@@ -8,13 +8,36 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 const PLAYERS_PER_PAGE = 100;
 
 const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
+    console.log('Sport:', sport);
+    console.log('Dataset structure:', dataset);
+    console.log('Sport-specific data:', dataset?.[sport.toLowerCase()]);
 
-    // console.log('dataset', dataset); 
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [chosenCategories, setChosenCategories] = useState([]);
+    const [statMappings, setStatMappings] = useState({});
+
+    // Create mapping of abbreviations to stat keys when data is loaded
+    useEffect(() => {
+        if (dataset?.[sport.toLowerCase()]?.players?.length) {
+            // Get the first player's stats to analyze the structure
+            const firstPlayer = dataset[sport.toLowerCase()].players[0];
+            const mappings = {};
+
+            // Look through all stats of the first player to find matching abbreviations
+            Object.entries(firstPlayer.stats).forEach(([key, stat]) => {
+                if (stat?.abbreviation) {
+                    mappings[stat.abbreviation] = key;
+                }
+            });
+
+            setStatMappings(mappings);
+            setPlayers(dataset[sport.toLowerCase()].players);
+            console.log(`${sport} stat mappings created:`, mappings);
+        }
+    }, [dataset, sport]);
 
     // Update categories when activeRanking changes
     useEffect(() => {
@@ -23,22 +46,13 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
             return;
         }
 
-        console.log('Categories:', activeRanking.categories);
-
+        // Get enabled categories and map them to their corresponding stat keys
         const enabledCategories = Object.entries(activeRanking.categories)
             .filter(([_, value]) => value.enabled)
-            .map(([key]) => key);
+            .map(([abbrev]) => statMappings[abbrev] || abbrev);
 
         setChosenCategories(enabledCategories);
-
-        console.log('Enabled Categories:', enabledCategories);
-
-    }, [activeRanking?.categories]);
-
-    // Log chosenCategories after it changes
-    useEffect(() => {
-        console.log('Chosen Categories:', chosenCategories);
-    }, [chosenCategories]);
+    }, [activeRanking?.categories, statMappings]);
 
     // Update stats and weights when activeRanking changes
     useEffect(() => {
@@ -55,45 +69,12 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
         setChosenCategories(Object.keys(enabledCategories));
     }, [activeRanking?.categories]);
 
-
-    // Fetch data when component mounts
+    // Fetch data when component mounts or sport changes
     useEffect(() => {
-        if (dataset?.players?.length) {
-            setPlayers(dataset.players);
+        if (dataset?.[sport.toLowerCase()]?.players?.length) {
+            setPlayers(dataset[sport.toLowerCase()].players);
         }
-    }, [dataset]);
-
-    // Transform player data - memoized to avoid recreating on every render
-    const transformedPlayers = useMemo(() => {
-        if (!dataset?.players?.length) return [];
-
-        return dataset.players.map(player => ({
-            id: player.info.playerId,
-            name: `${player.info.firstName} ${player.info.lastName}`,
-            position: player.info.position,
-            team: player.info.team,
-            stats: {
-                season: {
-                    fieldGoalPercentage: player.stats.fieldGoalPercentage,
-                    threePointsMadePerGame: player.stats.fg3PtMadePerGame || 0,
-                    freeThrowPercentage: player.stats.freeThrowPercentage,
-                    pointsPerGame: player.stats.pointsPerGame,
-                    assistsPerGame: player.stats.assistsPerGame,
-                    reboundsPerGame: player.stats.reboundsPerGame,
-                    stealsPerGame: player.stats.stealsPerGame,
-                    blocksPerGame: player.stats.blocksPerGame,
-                    turnoversPerGame: player.stats.toPerGame || 0
-                }
-            }
-        }));
-    }, [dataset?.players]);
-
-    // Update players when transformed data changes
-    useEffect(() => {
-        if (transformedPlayers.length) {
-            setPlayers(transformedPlayers);
-        }
-    }, [transformedPlayers]);
+    }, [dataset, sport]);
 
     // Get paginated players
     const paginatedPlayers = useMemo(() => {
@@ -130,8 +111,25 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
         setActiveId(null);
     }, []);
 
-    if (!dataset?.players?.length) {
-        return <div>Loading players...</div>;
+    const sportKey = sport.toLowerCase();
+    console.log('Checking loading state:', {
+        sportKey,
+        hasDataset: !!dataset,
+        hasSportData: !!dataset?.[sportKey],
+        hasPlayers: !!dataset?.[sportKey]?.players,
+        playersLength: dataset?.[sportKey]?.players?.length
+    });
+
+    if (!dataset) {
+        return <div>Loading dataset...</div>;
+    }
+
+    if (!dataset[sportKey]) {
+        return <div>No data available for {sport}...</div>;
+    }
+
+    if (!dataset[sportKey].players?.length) {
+        return <div>No players found for {sport}...</div>;
     }
 
     return (
@@ -142,15 +140,16 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
             onDragEnd={handleDragEnd}
         >
             <SortableContext
-                items={paginatedPlayers.map(player => player.id)}
+                items={paginatedPlayers.map(player => player.info.playerId)}
                 strategy={verticalListSortingStrategy}
             >
                 <div className="player-list-container">
                     {paginatedPlayers.map(player => (
                         <PlayerRow
-                            key={player.id}
+                            key={player.info.playerId}
                             player={player}
                             sport={sport}
+                            categories={chosenCategories}
                         />
                     ))}
                 </div>

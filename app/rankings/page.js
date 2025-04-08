@@ -9,6 +9,7 @@ import useUserRankings from '@/stores/useUserRankings';
 import { useEffect, useState } from 'react';
 
 export default function RankingsPage() {
+  const [expertRankings, setExpertRankings] = useState(null);
   const [latestUserRankings, setLatestUserRankings] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +24,7 @@ export default function RankingsPage() {
 
   const {
     activeRanking,
+    setActiveRanking,
     isLoading: rankingsLoading,
     error: rankingsError,
     initAutoSave
@@ -38,24 +40,24 @@ export default function RankingsPage() {
 
   // Fetch expert rankings
   useEffect(() => {
-    const fetchLatestRankings = async () => {
+    const fetchExpertRankings = async () => {
       try {
         const response = await fetch('/api/fetch/NBA/GetNBADynastyRankings');
         if (!response.ok) {
           throw new Error('Failed to fetch rankings');
         }
         const data = await response.json();
-        setLatestUserRankings(data.rankings);
+        setExpertRankings(data.rankings);
       } catch (err) {
         console.error('Error fetching rankings:', err);
         setError(err.message);
-        setLatestUserRankings(null);
+        setExpertRankings(null);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLatestRankings();
+    fetchExpertRankings();
   }, []);
 
   // Fetch master dataset based on selected sport
@@ -99,6 +101,26 @@ export default function RankingsPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
+  useEffect(() => {
+    const fetchUserRankings = async () => {
+      try {
+        const response = await fetch('/api/user-rankings');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user rankings');
+        }
+        const data = await response.json();
+        console.log('Fetched User Rankings:', data);
+        setLatestUserRankings(data);
+      } catch (err) {
+        console.error('Error fetching user rankings:', err);
+        setError(err.message);
+        setLatestUserRankings(null);
+      }
+    };
+
+    fetchUserRankings();
+  }, []);
+
   const handleRankingSelect = async (rankingId) => {
     try {
       setActiveRankingId(rankingId);
@@ -115,20 +137,26 @@ export default function RankingsPage() {
   };
 
   // Get the appropriate dataset based on selected sport
-  const getSportData = () => {
+  const getDatasetForSelectedSport = () => {
     switch (selectedSport) {
       case 'NBA':
-        return nba;
+        return { nba: nba };
       case 'MLB':
-        return mlb;
+        return { mlb: mlb };
       case 'NFL':
-        return nfl;
+        return { nfl: nfl };
       default:
         return { players: [] };
     }
   };
 
-  const currentSportData = getSportData();
+  const datasetForSelectedSport = getDatasetForSelectedSport();
+
+
+  // useEffect(() => {
+  //   console.log('Current Sport Data:', datasetForSelectedSport);
+  // }, [datasetForSelectedSport]);
+
 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;
@@ -138,7 +166,7 @@ export default function RankingsPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Customized Rankings</h1>
-        <AddRankingListButton masterDataset={currentSportData} />
+        <AddRankingListButton dataset={datasetForSelectedSport} />
       </div>
 
       {(error || masterDatasetError || rankingsError) && (
@@ -164,7 +192,7 @@ export default function RankingsPage() {
             <PlayerListContainer
               sport={selectedSport}
               userRankings={latestUserRankings}
-              dataset={currentSportData}
+              dataset={datasetForSelectedSport}
               activeRanking={activeRanking}
             />
           </div>
@@ -174,6 +202,7 @@ export default function RankingsPage() {
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
+              setActiveRanking={setActiveRanking}
             />
           </div>
         </div>

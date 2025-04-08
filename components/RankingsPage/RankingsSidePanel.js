@@ -3,26 +3,27 @@
 import { HistoryIcon } from '@/components/icons/HistoryIcon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useMemo } from 'react';
 
-const RankingsSidePanel = () => {
+const RankingsSidePanel = ({ userRankings, activeRanking, setActiveRanking }) => {
     const { user } = useUser();
-    const { rankings, activeRanking, setActiveRanking, updateCategories } = useUserRankings();
+    // const { userRankings, activeRanking, setActiveRanking, updateCategories } = useUserRankings();
+
+    console.log('User Rankings:', userRankings);
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
-        if (!rankings) return [];
-        return [...rankings].sort((a, b) => {
+        if (!userRankings) return [];
+        return [...userRankings].sort((a, b) => {
             // If one is active, it goes first
             if (a._id === activeRanking?._id) return -1;
             if (b._id === activeRanking?._id) return 1;
             // Otherwise sort by date updated
             return new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated);
         });
-    }, [rankings, activeRanking?._id]);
+    }, [userRankings, activeRanking?._id]);
 
     // Format date - memoize to avoid recreating on each render
     const formatDate = useCallback((dateString) => {
@@ -52,7 +53,7 @@ const RankingsSidePanel = () => {
         return <div className="p-4 text-gray-500">Please log in to view your rankings.</div>;
     }
 
-    if (!rankings?.length) {
+    if (!userRankings?.length) {
         return <div className="p-4 text-gray-500">No rankings created yet.</div>;
     }
 
