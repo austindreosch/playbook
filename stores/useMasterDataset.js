@@ -2,11 +2,13 @@
 import { create } from 'zustand';
 
 const getObjectSize = (obj) => {
-    const size = new TextEncoder().encode(JSON.stringify(obj)).length;
-    const kiloBytes = size / 1024;
+    const json = JSON.stringify(obj);
+    const bytes = new Blob([json]).size;
+    const kiloBytes = bytes / 1024;
     const megaBytes = kiloBytes / 1024;
     return megaBytes < 1 ? `${kiloBytes.toFixed(2)} KB` : `${megaBytes.toFixed(2)} MB`;
 };
+
 
 const formatNumber = (value) => {
     if (value == null) return 0.0;
@@ -15,47 +17,6 @@ const formatNumber = (value) => {
     // Always show one decimal place, even for integers
     return parseFloat(value.toFixed(1));
 };
-
-
-// const calculateZScoresForAllStats = (players, statKeys, topN = 156) => {
-//     const zScorePlayers = [...players];
-
-//     statKeys.forEach(statKey => {
-//         // Sort players by the stat in descending order
-//         const sortedPlayers = [...zScorePlayers].sort((a, b) => b.stats[statKey] - a.stats[statKey]);
-
-//         // Select the top N players
-//         const topPlayers = sortedPlayers.slice(0, topN);
-
-//         // Calculate mean and standard deviation
-//         const values = topPlayers.map(player => player.stats[statKey]);
-//         const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
-//         const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
-
-//         // Calculate z-scores and add color placeholders
-//         topPlayers.forEach(player => {
-//             const zScore = (player.stats[statKey] - mean) / stdDev;
-//             player.stats[`${statKey}ZScore`] = zScore;
-//             player.stats[`${statKey}Color`] = ''; // Placeholder for color
-//         });
-//     });
-
-//     return zScorePlayers;
-// };
-
-
-// function calculateVolumeWeightedZScore(rawValue, mean, stdDev, volumeValue, volumeThreshold) {
-//     // Calculate the raw z-score
-//     const rawZScore = (rawValue - mean) / stdDev;
-
-//     // Calculate volume weight (0.5 to 1.0)
-//     const volumeWeight = Math.min(volumeValue / volumeThreshold, 1);
-//     const weightedFactor = 0.5 + 0.5 * volumeWeight;
-
-//     // Return the volume-weighted z-score
-//     return rawZScore * weightedFactor;
-// }
-
 
 const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
 
@@ -92,19 +53,16 @@ function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', sta
 const useMasterDataset = create((set, get) => ({
     nba: {
         players: [],
-        injuries: [],
         lastUpdated: null,
         statsReferences: {},
     },
     mlb: {
         players: [],
-        injuries: [],
         lastUpdated: null,
         statsReferences: {},
     },
     nfl: {
         players: [],
-        injuries: [],
         lastUpdated: null,
         statsReferences: {},
     },
@@ -122,11 +80,6 @@ const useMasterDataset = create((set, get) => ({
             set({ isLoading: true });
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
-
-
-
-
-
 
             // First map the regular season stats
             const regularSeasonPlayers = data.nbaStats?.playerStatsTotals?.map(playerStats => {
@@ -179,7 +132,7 @@ const useMasterDataset = create((set, get) => ({
                 };
             }) || [];
 
-            // Merge duplicate players in regular season stats
+            // Merge stats for duplicate players in regular season stats, ie players who were traded mid-season
             const players = Object.values(
                 regularSeasonPlayers.reduce((acc, player) => {
                     const id = player.info.playerId;
@@ -224,7 +177,7 @@ const useMasterDataset = create((set, get) => ({
                 }, {})
             );
 
-            // Map the projected stats separately
+            // Inject projected stats into existing players
             const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
                 const teamAbbreviation = playerStats.team?.abbreviation ||
                     playerStats.player?.currentTeam?.abbreviation ||
@@ -461,7 +414,7 @@ const useMasterDataset = create((set, get) => ({
 
             // Calculate state size before setting
             const stateSize = getObjectSize(newState);
-            console.log('Stats state size:', stateSize);
+            console.log('Stats state size:', stateSize, newState);
 
             set({
                 ...newState,
