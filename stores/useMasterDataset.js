@@ -92,19 +92,16 @@ function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', sta
 const useMasterDataset = create((set, get) => ({
     nba: {
         players: [],
-        injuries: [],
         lastUpdated: null,
         statsReferences: {},
     },
     mlb: {
         players: [],
-        injuries: [],
         lastUpdated: null,
         statsReferences: {},
     },
     nfl: {
         players: [],
-        injuries: [],
         lastUpdated: null,
         statsReferences: {},
     },

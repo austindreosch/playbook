@@ -171,6 +171,52 @@ const useUserRankings = create(
                         });
                         setState({ error: error.message });
                     }
+                },
+
+                // Add updateRankingName function
+                updateRankingName: async (newName) => {
+                    const { activeRanking, rankings } = get();
+                    if (!activeRanking) return;
+
+                    // Update the name in the active ranking
+                    const updatedRanking = {
+                        ...activeRanking,
+                        name: newName,
+                        details: {
+                            ...activeRanking.details,
+                            dateUpdated: new Date().toISOString()
+                        }
+                    };
+
+                    // Update both activeRanking and the ranking in the rankings array
+                    setState({
+                        activeRanking: updatedRanking,
+                        rankings: rankings.map(r =>
+                            r._id === updatedRanking._id ? updatedRanking : r
+                        ),
+                        hasUnsavedChanges: true
+                    });
+
+                    // Save changes to the database
+                    try {
+                        const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updatedRanking)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to save name change');
+                        }
+
+                        setState({
+                            hasUnsavedChanges: false,
+                            lastSaved: new Date().toISOString()
+                        });
+                    } catch (error) {
+                        console.error('Error updating ranking name:', error);
+                        setState({ error: error.message });
+                    }
                 }
             };
         },

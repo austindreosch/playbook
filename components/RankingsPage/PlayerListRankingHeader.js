@@ -4,6 +4,8 @@ import { BarsIcon } from '@/components/icons/BarsIcon';
 import { HistoryIcon } from '@/components/icons/HistoryIcon';
 import { ButtonLoading } from '@/components/Interface/ButtonLoading';
 import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
@@ -19,13 +21,15 @@ const PlayerListRankingHeader = ({
     onSortChange = () => { },
     onSave = async () => { }
 }) => {
-    const { activeRanking, updateCategories } = useUserRankings();
+    const { activeRanking, updateCategories, updateRankingName } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
     const [sortConfig, setSortConfig] = useState({
         field: null,
         direction: 'asc'
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [editingName, setEditingName] = useState('');
+    const [namePopoverOpen, setNamePopoverOpen] = useState(false);
 
     // Add state for selectors
     const [selectedSource, setSelectedSource] = useState("");
@@ -126,7 +130,7 @@ const PlayerListRankingHeader = ({
                 <div className="flex items-center w-[40%]">
                     <button
                         onClick={() => setExpanded(!expanded)}
-                        className={`h-10 w-20 flex items-center justify-center hover:bg-pb_midgray transition-colors ${expanded ? 'bg-white border-t border-l border-pb_lightgray' : ''}`}
+                        className={`h-10 w-20 flex items-center justify-center hover:bg-gray-600 transition-colors ${expanded ? 'bg-white border-t border-l border-pb_lightgray' : ''}`}
                     >
                         <div className="w-10 h-10 flex items-center justify-center">
                             <BarsIcon className={`h-6 w-6  ${expanded ? 'text-pb_darkgray' : 'text-white'}`} />
@@ -154,7 +158,58 @@ const PlayerListRankingHeader = ({
                     {/* Details */}
                     <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 space-y-1 flex flex-col justify-between">
                         <div>
-                            <div className='text-lg font-bold ml-0.5'>{activeRanking?.name || 'Rankings'}</div>
+                            <div className='flex items-center gap-1.5 ml-0.5'>
+                                <div className='text-lg font-bold'>{activeRanking?.name || 'Rankings'}</div>
+                                <Popover open={namePopoverOpen} onOpenChange={setNamePopoverOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-6 w-6 p-0 hover:bg-gray-100"
+                                            onClick={() => setEditingName(activeRanking?.name || '')}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-56 p-2">
+                                        <div className="space-y-2">
+                                            <h4 className="font-medium text-sm">Edit Ranking Name</h4>
+                                            <Input
+                                                value={editingName}
+                                                onChange={(e) => setEditingName(e.target.value)}
+                                                placeholder="Enter ranking name"
+                                                className="h-8"
+                                            />
+                                            <div className="flex justify-end gap-2 mt-2">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => setNamePopoverOpen(false)}
+                                                    className="h-7 px-2"
+                                                >
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    variant="default"
+                                                    size="sm"
+                                                    onClick={async () => {
+                                                        if (editingName.trim()) {
+                                                            await updateRankingName(editingName.trim());
+                                                            setNamePopoverOpen(false);
+                                                        }
+                                                    }}
+                                                    className="h-7 px-2 bg-pb_blue hover:bg-pb_darkblue"
+                                                >
+                                                    Save
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+
                             <div className='text-pb_midgray text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>
                                 {activeRanking?.sport.toUpperCase()} • {activeRanking?.format.toUpperCase()} • {activeRanking?.scoring.toUpperCase()}
                             </div>

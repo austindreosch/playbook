@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState } from 'react';
 
-const PlayerRow = ({ player, sport, categories }) => {
+const PlayerRow = ({ player, sport, categories, rank }) => {
     const [expanded, setExpanded] = useState(false);
 
     // Set up the sortable hook
@@ -72,24 +72,32 @@ const PlayerRow = ({ player, sport, categories }) => {
                     </div>
 
                     {/* Rank number */}
-                    <div className="w-8 text-center">1 </div>
+                    <div className="w-12 pr-4 text-center select-none">{rank}</div>
                     {/* <div className="w-8 text-center">{player.info.playerId}</div> */}
-
+                    <div className="w-12 text-center select-none">
+                        {player.info.officialImageSrc && (
+                            <img
+                                src={player.info.officialImageSrc}
+                                alt={player.info.fullName}
+                                className="w-8 h-8 object-cover bg-pb_lightergray border border-pb_lightgray rounded-md"
+                            />
+                        )}
+                    </div>
                     {/* Player name and position */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 select-none">
                         <div className="font-bold">{player.info.fullName || 'Player Name'}</div>
                         <div className="text-gray-500 text-xs">{player.info.position}</div>
                     </div>
                 </div>
 
                 {/* Stats section - flexible width */}
-                <div className="flex w-[60%] h-full gap-1">
+                <div className="flex w-[60%] h-full gap-[3px]">
                     {categories.map((statKey) => {
                         const stat = player.stats[statKey];
                         return (
                             <div
                                 key={statKey}
-                                className="flex-1 text-center h-full flex items-center justify-center"
+                                className="flex-1 text-center h-full flex items-center justify-center select-none"
                                 title={`${stat?.abbreviation || statKey}: ${stat?.value}`}
                                 style={{ backgroundColor: stat?.color }}
                             >

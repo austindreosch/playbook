@@ -25,7 +25,7 @@ const viewOptions = [
     },
     {
         value: "projections",
-        label: "Rest of Season Projections",
+        label: "Rest of Season",
     }
 ]
 

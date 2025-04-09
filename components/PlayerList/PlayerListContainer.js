@@ -18,6 +18,7 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [chosenCategories, setChosenCategories] = useState([]);
     const [statMappings, setStatMappings] = useState({});
+    const [rankedPlayers, setRankedPlayers] = useState([]);
 
     // Create mapping of abbreviations to stat keys when data is loaded
     useEffect(() => {
@@ -38,6 +39,59 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
             console.log(`${sport} stat mappings created:`, mappings);
         }
     }, [dataset, sport]);
+
+    // Create a function that:
+    // Takes an 'activeRanking' object as input
+    // Extracts the list of players along with their rankings
+    // Matches each player with their corresponding data in the player dataset
+    // Returns a combined object that includes both ranking information and player statistics
+    // The returned data will be used to populate a player row component in my UI. 
+
+    const processRankingData = useCallback((activeRanking) => {
+        if (!activeRanking || !dataset?.[sport.toLowerCase()]?.players) {
+            return [];
+        }
+
+        // Get the player rankings from activeRanking
+        const rankingPlayers = activeRanking.rankings || [];
+
+        // Create a map of player IDs to their dataset info for efficient lookup
+        const playerDataMap = new Map();
+
+        // Try to map using both info.playerId and id fields
+        dataset[sport.toLowerCase()].players.forEach(player => {
+            if (player.info?.playerId) {
+                playerDataMap.set(player.info.playerId, player);
+            }
+            if (player.id) {
+                playerDataMap.set(player.id, player);
+            }
+        });
+
+        // Combine ranking data with player data
+        return rankingPlayers.map((rankingPlayer) => {
+            // Try to find player by ID using playerId from the ranking
+            let playerData = playerDataMap.get(rankingPlayer.playerId);
+
+            const combinedPlayer = {
+                rankingId: rankingPlayer.playerId,
+                rank: rankingPlayer.rank,
+                name: rankingPlayer.name,
+                position: rankingPlayer.position,
+                info: playerData?.info || {},
+                stats: playerData?.stats || {}
+            };
+
+            console.log('Player stats:', combinedPlayer.stats);
+            return combinedPlayer;
+        });
+    }, [dataset, sport]);
+
+    // Add this effect to process ranking data when activeRanking changes
+    useEffect(() => {
+        const processedPlayers = processRankingData(activeRanking);
+        setRankedPlayers(processedPlayers);
+    }, [activeRanking, processRankingData]);
 
     // Update categories when activeRanking changes
     useEffect(() => {
@@ -76,11 +130,11 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
         }
     }, [dataset, sport]);
 
-    // Get paginated players
+    // Get paginated players - update to use rankedPlayers instead of players
     const paginatedPlayers = useMemo(() => {
         const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
-        return players.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
-    }, [players, currentPage]);
+        return rankedPlayers.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
+    }, [rankedPlayers, currentPage]);
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -100,9 +154,9 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
         const { active, over } = event;
 
         if (active.id !== over.id) {
-            setPlayers((items) => {
-                const oldIndex = items.findIndex(item => item.id === active.id);
-                const newIndex = items.findIndex(item => item.id === over.id);
+            setRankedPlayers((items) => {
+                const oldIndex = items.findIndex(item => item.rankingId === active.id);
+                const newIndex = items.findIndex(item => item.rankingId === over.id);
 
                 return arrayMove(items, oldIndex, newIndex);
             });
@@ -133,37 +187,40 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
     }
 
     return (
-        <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-        >
-            <SortableContext
-                items={paginatedPlayers.map(player => player.info.playerId)}
-                strategy={verticalListSortingStrategy}
+        <div>
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
             >
-                <div className="player-list-container">
-                    {paginatedPlayers.map(player => (
+                <SortableContext
+                    items={paginatedPlayers.map(player => player.rankingId)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {paginatedPlayers.map((player) => (
                         <PlayerRow
-                            key={player.info.playerId}
+                            key={player.rankingId}
                             player={player}
                             sport={sport}
                             categories={chosenCategories}
+                            rank={player.rank}
                         />
                     ))}
-                </div>
-            </SortableContext>
+                </SortableContext>
 
-            {/* Optional drag overlay for custom drag appearance */}
-            <DragOverlay>
-                {activeId ? (
-                    <div className="dragging-overlay bg-white border shadow-lg rounded-md p-3">
-                        {players.find(player => player.id === activeId)?.name || 'Player'}
-                    </div>
-                ) : null}
-            </DragOverlay>
-        </DndContext>
+                <DragOverlay>
+                    {activeId ? (
+                        <PlayerRow
+                            player={paginatedPlayers.find(p => p.rankingId === activeId)}
+                            sport={sport}
+                            categories={chosenCategories}
+                            rank={paginatedPlayers.find(p => p.rankingId === activeId)?.rank}
+                        />
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
+        </div>
     );
 };
 
