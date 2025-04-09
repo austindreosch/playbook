@@ -1,8 +1,8 @@
 'use client';
 
-import PlayerListContainer from '@/components/PlayerList/PlayerListContainer';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
-import PlayerListRankingHeader from '@/components/RankingsPage/PlayerListRankingHeader';
+import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
+import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerListHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
@@ -109,7 +109,7 @@ export default function RankingsPage() {
           throw new Error('Failed to fetch user rankings');
         }
         const data = await response.json();
-        console.log('Fetched User Rankings:', data);
+        // console.log('Fetched User Rankings:', data);
         setLatestUserRankings(data);
       } catch (err) {
         console.error('Error fetching user rankings:', err);
@@ -183,13 +183,13 @@ export default function RankingsPage() {
       ) : (
         <div className="flex gap-6 relative">
           <div className="flex-1 space-y-2 overflow-x-auto" style={{ maxWidth: 'calc(100% - 288px)' }}>
-            <PlayerListRankingHeader
+            <RankingsPlayerListHeader
               sport={selectedSport}
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
             />
 
-            <PlayerListContainer
+            <RankingsPlayerListContainer
               sport={selectedSport}
               userRankings={latestUserRankings}
               dataset={datasetForSelectedSport}

@@ -5,13 +5,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 const RankingsSidePanel = ({ userRankings, activeRanking, setActiveRanking }) => {
     const { user } = useUser();
     // const { userRankings, activeRanking, setActiveRanking, updateCategories } = useUserRankings();
 
-    console.log('User Rankings:', userRankings);
+    // console.log('User Rankings:', userRankings);
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
@@ -34,6 +34,11 @@ const RankingsSidePanel = ({ userRankings, activeRanking, setActiveRanking }) =>
     const handleRankingSelect = useCallback((rankingId) => {
         setActiveRanking(rankingId);
     }, [setActiveRanking]);
+
+    // Log active ranking on component load
+    // useEffect(() => {
+    //     console.log('Active Ranking:', activeRanking);
+    // }, []);
 
     // Get sport icon
     // const getSportIcon = (ranking) => {

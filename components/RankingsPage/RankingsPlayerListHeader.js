@@ -16,7 +16,7 @@ import { FilterSelector } from './Selectors/FilterSelector';
 import { PositionSelector } from './Selectors/PositionSelector';
 import { SourceSelector } from './Selectors/SourceSelector';
 
-const PlayerListRankingHeader = ({
+const RankingsPlayerListHeader = ({
     sport,
     onSortChange = () => { },
     onSave = async () => { }
@@ -302,4 +302,4 @@ const PlayerListRankingHeader = ({
     );
 };
 
-export default PlayerListRankingHeader; 
+export default RankingsPlayerListHeader; 

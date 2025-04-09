@@ -1,13 +1,14 @@
 'use client';
 
-import PlayerRow from '@/components/PlayerList/RankingsPlayerRow';
+import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
+import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const PLAYERS_PER_PAGE = 50;
+const PLAYERS_PER_PAGE = 100;
 
-const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
+const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     // console.log('Sport:', sport);
     // console.log('Dataset structure:', dataset);
     // console.log('Sport-specific data:', dataset?.[sport.toLowerCase()]);
@@ -19,6 +20,8 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
     const [chosenCategories, setChosenCategories] = useState([]);
     const [statMappings, setStatMappings] = useState({});
     const [rankedPlayers, setRankedPlayers] = useState([]);
+
+    const { updateAllPlayerRanks } = useUserRankings();
 
     // Create mapping of abbreviations to stat keys when data is loaded
     useEffect(() => {
@@ -154,16 +157,23 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
         const { active, over } = event;
 
         if (active.id !== over.id) {
-            setRankedPlayers((items) => {
-                const oldIndex = items.findIndex(item => item.rankingId === active.id);
-                const newIndex = items.findIndex(item => item.rankingId === over.id);
+            const oldIndex = rankedPlayers.findIndex(item => item.rankingId === active.id);
+            const newIndex = rankedPlayers.findIndex(item => item.rankingId === over.id);
 
-                return arrayMove(items, oldIndex, newIndex);
-            });
+            // Create new array with reordered items
+            const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
+
+            // Update local state first
+            setRankedPlayers(newOrder);
+
+            // Update the store state in the next tick to avoid render phase updates
+            setTimeout(() => {
+                updateAllPlayerRanks(newOrder.map(item => item.rankingId));
+            }, 0);
         }
 
         setActiveId(null);
-    }, []);
+    }, [rankedPlayers, updateAllPlayerRanks]);
 
     const sportKey = sport.toLowerCase();
     // console.log('Checking loading state:', {
@@ -199,7 +209,7 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
                     strategy={verticalListSortingStrategy}
                 >
                     {paginatedPlayers.map((player) => (
-                        <PlayerRow
+                        <RankingsPlayerRow
                             key={player.rankingId}
                             player={player}
                             sport={sport}
@@ -211,7 +221,7 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
 
                 <DragOverlay>
                     {activeId ? (
-                        <PlayerRow
+                        <RankingsPlayerRow
                             player={paginatedPlayers.find(p => p.rankingId === activeId)}
                             sport={sport}
                             categories={chosenCategories}
@@ -224,4 +234,4 @@ const PlayerListContainer = ({ sport, activeRanking, dataset }) => {
     );
 };
 
-export default PlayerListContainer;
+export default RankingsPlayerListContainer;

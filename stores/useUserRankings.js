@@ -217,6 +217,31 @@ const useUserRankings = create(
                         console.error('Error updating ranking name:', error);
                         setState({ error: error.message });
                     }
+                },
+
+                // Add a function to update all player ranks in the active ranking list
+                updateAllPlayerRanks: (newPlayerOrder) => {
+                    const { activeRanking, rankings } = get();
+                    if (!activeRanking || !activeRanking.rankings) return;
+
+                    // Update the players' ranks based on the new order
+                    const updatedPlayers = newPlayerOrder.map((playerId, index) => {
+                        const player = activeRanking.rankings.find(p => p.playerId === playerId);
+                        return { ...player, rank: index + 1 };
+                    });
+
+                    const updatedRanking = {
+                        ...activeRanking,
+                        rankings: updatedPlayers
+                    };
+
+                    setState({
+                        activeRanking: updatedRanking,
+                        rankings: rankings.map(r =>
+                            r._id === updatedRanking._id ? updatedRanking : r
+                        ),
+                        hasUnsavedChanges: true
+                    });
                 }
             };
         },

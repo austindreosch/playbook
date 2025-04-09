@@ -2,9 +2,9 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 
-const PlayerRow = ({ player, sport, categories, rank }) => {
+const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
     const [expanded, setExpanded] = useState(false);
 
     // Set up the sortable hook
@@ -62,7 +62,7 @@ const PlayerRow = ({ player, sport, categories, rank }) => {
                 <div className="flex items-center w-[40%]">
                     {/* Drag handle */}
                     <div
-                        className="px-2 cursor-move text-gray-400"
+                        className="px-1 cursor-move text-gray-400"
                         {...attributes}
                         {...listeners}
                     >
@@ -72,14 +72,14 @@ const PlayerRow = ({ player, sport, categories, rank }) => {
                     </div>
 
                     {/* Rank number */}
-                    <div className="w-12 pr-4 text-center select-none">{rank}</div>
+                    <div className="w-10 h-7  text-center select-none  rounded-sm border  flex items-center justify-center font-bold">{rank}</div>
                     {/* <div className="w-8 text-center">{player.info.playerId}</div> */}
-                    <div className="w-12 text-center select-none">
+                    <div className="w-12 text-center select-none flex items-center justify-center">
                         {player.info.officialImageSrc && (
                             <img
                                 src={player.info.officialImageSrc}
                                 alt={player.info.fullName}
-                                className="w-8 h-8 object-cover bg-pb_lightergray border border-pb_lightgray rounded-md"
+                                className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
                             />
                         )}
                     </div>
@@ -122,6 +122,6 @@ const PlayerRow = ({ player, sport, categories, rank }) => {
             )}
         </div>
     );
-};
+});
 
-export default PlayerRow;
+export default RankingsPlayerRow;
