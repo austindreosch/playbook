@@ -3,10 +3,13 @@
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FixedSizeList as List } from 'react-window';
 
 const PLAYERS_PER_PAGE = 100;
+const ROW_HEIGHT = 40;
 
 const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     // console.log('Sport:', sport);
@@ -20,8 +23,24 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     const [chosenCategories, setChosenCategories] = useState([]);
     const [statMappings, setStatMappings] = useState({});
     const [rankedPlayers, setRankedPlayers] = useState([]);
+    const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
+    const listRef = useRef(null);
 
     const { updateAllPlayerRanks } = useUserRankings();
+
+    // Set up window size measurement
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowSize({
+                width: window.innerWidth,
+                height: Math.min(window.innerHeight * 0.7, 800)
+            });
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Create mapping of abbreviations to stat keys when data is loaded
     useEffect(() => {
@@ -141,7 +160,11 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8, // Adjust this value to set how many pixels need to be moved before drag is activated
+            }
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -150,10 +173,12 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     // Handler for when dragging starts
     const handleDragStart = useCallback((event) => {
         setActiveId(event.active.id);
+        document.body.style.cursor = 'grabbing';
     }, []);
 
     // Handler for when dragging ends
     const handleDragEnd = useCallback((event) => {
+        document.body.style.cursor = '';
         const { active, over } = event;
 
         if (active.id !== over.id) {
@@ -174,6 +199,24 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
 
         setActiveId(null);
     }, [rankedPlayers, updateAllPlayerRanks]);
+
+    // Virtualized row renderer for performance
+    const rowRenderer = useCallback(({ index, style }) => {
+        const player = paginatedPlayers[index];
+        if (!player) return null;
+
+        return (
+            <div style={style}>
+                <RankingsPlayerRow
+                    key={player.rankingId}
+                    player={player}
+                    sport={sport}
+                    categories={chosenCategories}
+                    rank={player.rank}
+                />
+            </div>
+        );
+    }, [paginatedPlayers, sport, chosenCategories]);
 
     const sportKey = sport.toLowerCase();
     // console.log('Checking loading state:', {
@@ -203,23 +246,29 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                 collisionDetection={closestCenter}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                measuring={{
+                    droppable: {
+                        strategy: 'always',
+                    },
+                }}
+                modifiers={[restrictToVerticalAxis]}
             >
                 <SortableContext
                     items={paginatedPlayers.map(player => player.rankingId)}
                     strategy={verticalListSortingStrategy}
                 >
-                    {paginatedPlayers.map((player) => (
-                        <RankingsPlayerRow
-                            key={player.rankingId}
-                            player={player}
-                            sport={sport}
-                            categories={chosenCategories}
-                            rank={player.rank}
-                        />
-                    ))}
+                    <List
+                        ref={listRef}
+                        height={windowSize.height}
+                        width="100%"
+                        itemCount={paginatedPlayers.length}
+                        itemSize={ROW_HEIGHT}
+                    >
+                        {rowRenderer}
+                    </List>
                 </SortableContext>
 
-                <DragOverlay>
+                <DragOverlay adjustScale={false}>
                     {activeId ? (
                         <RankingsPlayerRow
                             player={paginatedPlayers.find(p => p.rankingId === activeId)}

@@ -2,21 +2,80 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { memo, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
+
+// Create a specialized component just for stats to reduce re-renders
+const StatsSection = memo(({ categories, stats }) => {
+    return (
+        <div className="flex w-[60%] h-full gap-[3px]">
+            {categories.map((statKey) => {
+                const stat = stats[statKey];
+                return (
+                    <div
+                        key={statKey}
+                        className="flex-1 text-center h-full flex items-center justify-center select-none"
+                        title={`${stat?.abbreviation || statKey}: ${stat?.value}`}
+                        style={{ backgroundColor: stat?.color }}
+                    >
+                        <span className="text-sm text-pb_darkgray">
+                            {stat?.value === 0 ? '0' : stat?.value?.toFixed(1)}
+                        </span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+});
+
+StatsSection.displayName = 'StatsSection';
 
 const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
     const [expanded, setExpanded] = useState(false);
+    const rowRef = useRef(null);
 
-    // Set up the sortable hook
+    // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id: player.info.playerId
+        id: player.info.playerId,
+        animateLayoutChanges: () => false, // Disable layout animations for better performance
     });
 
-    // Apply styles for dragging
-    const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, };
+    // Apply styles for dragging - use CSS variables for better performance
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        willChange: 'transform', // Hint to browser for optimization
+        contain: 'content', // Improve rendering performance
+    };
+
+    // Only compute these when expanded changes
+    const detailPanelRef = useRef(null);
+    const insightPanelRef = useRef(null);
+
+    // Use intersection observer to only render when visible
+    useEffect(() => {
+        if (!rowRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                // No need to do anything special here for now
+                // Just using the observer to potentially optimize in the future
+            },
+            { threshold: 0.1 }
+        );
+
+        observer.observe(rowRef.current);
+        return () => {
+            if (rowRef.current) {
+                observer.unobserve(rowRef.current);
+            }
+        };
+    }, []);
 
     // Get the appropriate panel components based on the sport
     const getDetailPanel = () => {
+        if (!expanded) return null;
+
         switch (sport) {
             case 'NBA':
                 // You would import and use the actual component
@@ -31,6 +90,8 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
     };
 
     const getInsightPanel = () => {
+        if (!expanded) return null;
+
         switch (sport) {
             case 'NBA':
                 return <div className="insight-panel">NBA Insight Panel</div>;
@@ -43,17 +104,16 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
         }
     };
 
-
-
     return (
         <div
-            ref={setNodeRef}
+            ref={(node) => {
+                // Combine refs
+                setNodeRef(node);
+                rowRef.current = node;
+            }}
             style={style}
             className={`player-row border rounded-md overflow-hidden mb-1 shadow-sm ${isDragging ? 'z-10' : ''}`}
         >
-            {/* -------------------------------------- */}
-            {/* Basic player info row - always visible */}
-            {/* -------------------------------------- */}
             <div
                 className="flex h-9 items-center bg-white hover:bg-gray-50"
                 onClick={() => setExpanded(!expanded)}
@@ -62,7 +122,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
                 <div className="flex items-center w-[40%]">
                     {/* Drag handle */}
                     <div
-                        className="px-1 cursor-move text-gray-400"
+                        className="px-1 cursor-grab text-gray-400 active:cursor-grabbing"
                         {...attributes}
                         {...listeners}
                     >
@@ -72,17 +132,21 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
                     </div>
 
                     {/* Rank number */}
-                    <div className="w-10 h-7  text-center select-none  rounded-sm border  flex items-center justify-center font-bold">{rank}</div>
-                    {/* <div className="w-8 text-center">{player.info.playerId}</div> */}
+                    <div className="w-10 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold">{rank}</div>
+
                     <div className="w-12 text-center select-none flex items-center justify-center">
                         {player.info.officialImageSrc && (
                             <img
                                 src={player.info.officialImageSrc}
                                 alt={player.info.fullName}
                                 className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
+                                loading="lazy"
+                                width="28"
+                                height="28"
                             />
                         )}
                     </div>
+
                     {/* Player name and position */}
                     <div className="flex items-center gap-2 select-none">
                         <div className="font-bold">{player.info.fullName || 'Player Name'}</div>
@@ -91,37 +155,22 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
                 </div>
 
                 {/* Stats section - flexible width */}
-                <div className="flex w-[60%] h-full gap-[3px]">
-                    {categories.map((statKey) => {
-                        const stat = player.stats[statKey];
-                        return (
-                            <div
-                                key={statKey}
-                                className="flex-1 text-center h-full flex items-center justify-center select-none"
-                                title={`${stat?.abbreviation || statKey}: ${stat?.value}`}
-                                style={{ backgroundColor: stat?.color }}
-                            >
-                                <span className="text-sm text-pb_darkgray">
-                                    {stat?.value === 0 ? '0' : stat?.value?.toFixed(1)}
-                                </span>
-                            </div>
-                        );
-                    })}
-                </div>
+                <StatsSection categories={categories} stats={player.stats} />
             </div>
 
-            {/* Expanded content - only visible when expanded */}
+            {/* Only render expanded content when needed */}
             {expanded && (
                 <div className="expanded-content border-t">
                     <div className="p-4">
-                        {/* Render appropriate detail and insight panels */}
-
-
+                        {detailPanelRef.current || (detailPanelRef.current = getDetailPanel())}
+                        {insightPanelRef.current || (insightPanelRef.current = getInsightPanel())}
                     </div>
                 </div>
             )}
         </div>
     );
 });
+
+RankingsPlayerRow.displayName = 'RankingsPlayerRow';
 
 export default RankingsPlayerRow;
