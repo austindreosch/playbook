@@ -33,7 +33,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
         const handleResize = () => {
             setWindowSize({
                 width: window.innerWidth,
-                height: Math.min(window.innerHeight * 0.7, 800)
+                height: Math.min(window.innerHeight * 0.9, 1200)
             });
         };
 
