@@ -109,8 +109,18 @@ export default function RankingsPage() {
           throw new Error('Failed to fetch user rankings');
         }
         const data = await response.json();
-        // console.log('Fetched User Rankings:', data);
+        console.log('Fetched User Rankings:', data);
         setLatestUserRankings(data);
+
+        // Auto-select most recent ranking if none is selected
+        if (data?.length > 0 && !activeRankingId) {
+          const mostRecent = [...data].sort((a, b) =>
+            new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated)
+          )[0];
+          if (mostRecent) {
+            handleRankingSelect(mostRecent._id);
+          }
+        }
       } catch (err) {
         console.error('Error fetching user rankings:', err);
         setError(err.message);
@@ -119,9 +129,11 @@ export default function RankingsPage() {
     };
 
     fetchUserRankings();
-  }, []);
+  }, []); // Only run on mount
 
   const handleRankingSelect = async (rankingId) => {
+    if (!rankingId) return;
+
     try {
       setActiveRankingId(rankingId);
       const response = await fetch(`/api/user-rankings/${rankingId}`);
@@ -129,7 +141,8 @@ export default function RankingsPage() {
         throw new Error('Failed to fetch ranking');
       }
       const rankingData = await response.json();
-      // Handle the ranking data as needed
+      console.log('Active Ranking Data:', rankingData);
+      setActiveRanking(rankingData);
     } catch (error) {
       console.error('Error loading ranking:', error);
       setError(error.message);
@@ -202,7 +215,6 @@ export default function RankingsPage() {
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
-              setActiveRanking={setActiveRanking}
             />
           </div>
         </div>

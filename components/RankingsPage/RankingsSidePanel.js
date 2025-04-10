@@ -5,17 +5,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
-const RankingsSidePanel = ({ userRankings, activeRanking, setActiveRanking }) => {
+const RankingsSidePanel = ({ userRankings, activeRanking, onSelectRanking }) => {
     const { user } = useUser();
-    // const { userRankings, activeRanking, setActiveRanking, updateCategories } = useUserRankings();
-
-    // console.log('User Rankings:', userRankings);
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
         if (!userRankings) return [];
+        console.log('Active Ranking:', activeRanking);
+        console.log('User Rankings:', userRankings);
         return [...userRankings].sort((a, b) => {
             // If one is active, it goes first
             if (a._id === activeRanking?._id) return -1;
@@ -29,30 +28,6 @@ const RankingsSidePanel = ({ userRankings, activeRanking, setActiveRanking }) =>
     const formatDate = useCallback((dateString) => {
         return new Date(dateString).toLocaleDateString();
     }, []);
-
-    // Handle ranking selection with debounce to prevent rapid re-renders
-    const handleRankingSelect = useCallback((rankingId) => {
-        setActiveRanking(rankingId);
-    }, [setActiveRanking]);
-
-    // Log active ranking on component load
-    // useEffect(() => {
-    //     console.log('Active Ranking:', activeRanking);
-    // }, []);
-
-    // Get sport icon
-    // const getSportIcon = (ranking) => {
-    //     switch (ranking.sport) {
-    //         case 'NBA':
-    //             return '🏀';
-    //         case 'NFL':
-    //             return '🏈';
-    //         case 'MLB':
-    //             return '⚾';
-    //         default:
-    //             return '🎯';
-    //     }
-    // };
 
     if (!user) {
         return <div className="p-4 text-gray-500">Please log in to view your rankings.</div>;
@@ -88,10 +63,10 @@ const RankingsSidePanel = ({ userRankings, activeRanking, setActiveRanking }) =>
                                     : 'bg-white hover:bg-gray-100 border border-pb_lightgray shadow-sm'
                                 }
                             `}
-                            onClick={() => handleRankingSelect(ranking._id)}
+                            onClick={() => onSelectRanking(ranking._id)}
                         >
                             <div
-                                className={`${activeRanking?._id === ranking._id ? 'bg-pb_orange' : 'bg-pb_lightgray'}`}
+                                className={`h-full ${activeRanking?._id === ranking._id ? 'bg-pb_orange' : 'bg-pb_lightgray'}`}
                             />
                             <div className="p-3">
                                 <div className={`text-lg font-bold ${activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>

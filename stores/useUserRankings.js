@@ -51,12 +51,11 @@ const useUserRankings = create(
                 },
 
                 // Set which ranking list is currently being viewed/edited
-                setActiveRanking: async (rankingId) => {
+                setActiveRanking: async (rankingData) => {
                     setState({ selectionLoading: true });
                     try {
-                        const ranking = get().rankings.find(r => r._id === rankingId);
                         setState({
-                            activeRanking: ranking,
+                            activeRanking: rankingData,
                             selectionLoading: false
                         });
                     } catch (error) {
