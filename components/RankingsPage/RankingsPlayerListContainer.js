@@ -31,10 +31,34 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     // Set up window size measurement
     useEffect(() => {
         const handleResize = () => {
+            // Get viewport height
+            const viewportHeight = window.innerHeight;
+
+            // Get the top navigation bar height
+            const navbarHeight = document.querySelector('nav')?.offsetHeight || 80; // Estimate from your screenshot
+
+            // Get the header section with "Customized Rankings" and buttons
+            const pageHeaderHeight = document.querySelector('h1')?.closest('div')?.offsetHeight || 60;
+
+            // Get the column headers row height
+            const columnHeadersHeight = document.querySelector('.player-list-header')?.offsetHeight || 50;
+
+            // Add some bottom margin for aesthetics
+            const bottomMargin = 65;
+
+            // Calculate total space taken by fixed elements
+            const fixedElementsHeight = navbarHeight + pageHeaderHeight + columnHeadersHeight + bottomMargin;
+
+            // Calculate the available height for the list
+            const availableHeight = viewportHeight - fixedElementsHeight;
+
             setWindowSize({
                 width: window.innerWidth,
-                height: Math.min(window.innerHeight * 0.9, 1200)
+                height: availableHeight
             });
+
+            // Debugging
+            console.log('Heights:', { viewportHeight, navbarHeight, pageHeaderHeight, columnHeadersHeight, availableHeight });
         };
 
         handleResize();
