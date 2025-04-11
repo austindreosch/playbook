@@ -319,6 +319,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                         itemCount={paginatedPlayers.length}
                         itemSize={getRowHeight}
                         estimatedItemSize={DEFAULT_ROW_HEIGHT}
+                        className="hide-scrollbar"
                     >
                         {rowRenderer}
                     </List>
@@ -336,6 +337,16 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                     ) : null}
                 </DragOverlay>
             </DndContext>
+
+            <style jsx global>{`
+                .hide-scrollbar {
+                    scrollbar-width: none;  /* Firefox */
+                    -ms-overflow-style: none;  /* IE and Edge */
+                }
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;  /* Chrome, Safari, Opera */
+                }
+            `}</style>
         </div>
     );
 };

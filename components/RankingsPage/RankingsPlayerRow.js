@@ -159,10 +159,34 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
 
             {/* Only render expanded content when needed */}
             {isExpanded && (
-                <div className="expanded-content border-t h-[180px]">
-                    <div className="h-full p-4">
-                        {detailPanelRef.current || (detailPanelRef.current = getDetailPanel())}
-                        {insightPanelRef.current || (insightPanelRef.current = getInsightPanel())}
+                <div className="flex flex-col w-full h-[180px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
+
+                    {/* inner */}
+                    <div className="flex h-24 h-full">
+                        {/* Left orange panel */}
+                        <div className="bg-orange-400 w-[10%] items-center justify-center">
+                            <span className="font-bold">RANKS</span>
+                        </div>
+                        <div className=" w-[30%]">
+                            <div className="bg-blue-300 flex items-center justify-center h-1/2">
+                                <span className="font-bold">INSIGHTS PANEL</span>
+                            </div>
+
+                            <div className="flex h-1/2 items-center justify-center bg-orange-200">
+                                <span className="font-bold">STATIC INSIGHTS</span>
+
+                            </div>
+                        </div>
+                        <div className="bg-red-300 w-[60%]">
+                            <div className="bg-green-300 p-2 flex items-center justify-center h-[30%]">
+                                <span className="font-bold">LAST 30</span>
+                            </div>
+
+                            <div className="flex h-[70%] items-center justify-center">
+                                <span className="font-bold">DETAIL PANEL</span>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

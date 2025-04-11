@@ -28,7 +28,7 @@ export default function RankingsPage() {
     isLoading: rankingsLoading,
     error: rankingsError,
     initAutoSave
-  } = useUserRankings();
+  } = useUserRankings()
 
   const [selectedSport, setSelectedSport] = useState('NBA');
 
