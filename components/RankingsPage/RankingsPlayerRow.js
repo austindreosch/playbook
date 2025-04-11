@@ -187,6 +187,10 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                         <div className="font-bold">{player.info.fullName || 'Player Name'}</div>
                         <div className="text-gray-500 text-xs">{player.info.position}</div>
                     </div>
+
+                    {isExpanded && (
+                        <div className="ml-auto text-xs tracking-wider text-pb_midgray mr-[17px]"> SEASON</div>
+                    )}
                 </div>
 
                 {/* Stats section - flexible width */}
@@ -254,8 +258,8 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
 
                         {/* right panel 0*/}
                         <div className="w-[7%] items-center justify-center border-l border-pb_lightgray">
-                            <div className="p-2 flex flex-col h-[30%] items-center justify-center">
-                                <span className="text-xs tracking-wider">LAST 30</span>
+                            <div className="p-2 flex flex-col h-[30%] items-center justify-center mt-0.5">
+                                <span className="text-xs tracking-wider text-pb_midgray">LAST 30</span>
                                 <span className="text-xs tracking-wider text-pb_green">▲ 47%</span>
                             </div>
 
