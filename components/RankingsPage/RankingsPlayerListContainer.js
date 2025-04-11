@@ -6,10 +6,12 @@ import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, 
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import ReactDOM from 'react-dom/client';
+import { VariableSizeList as List } from 'react-window';
 
 const PLAYERS_PER_PAGE = 100;
-const ROW_HEIGHT = 40;
+const DEFAULT_ROW_HEIGHT = 40;
+const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
 const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     // console.log('Sport:', sport);
@@ -24,6 +26,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     const [statMappings, setStatMappings] = useState({});
     const [rankedPlayers, setRankedPlayers] = useState([]);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
+    const [expandedRows, setExpandedRows] = useState(new Set());
     const listRef = useRef(null);
 
     const { updateAllPlayerRanks } = useUserRankings();
@@ -224,7 +227,33 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
         setActiveId(null);
     }, [rankedPlayers, updateAllPlayerRanks]);
 
-    // Virtualized row renderer for performance
+    // Simple function to get row height based on expanded state
+    const getRowHeight = useCallback((index) => {
+        const player = paginatedPlayers[index];
+        if (!player) return DEFAULT_ROW_HEIGHT;
+
+        return expandedRows.has(player.rankingId) ? EXPANDED_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
+    }, [paginatedPlayers, expandedRows]);
+
+    // Function to handle row expansion
+    const handleRowExpand = useCallback((playerId) => {
+        setExpandedRows(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(playerId)) {
+                newSet.delete(playerId);
+            } else {
+                newSet.add(playerId);
+            }
+            return newSet;
+        });
+
+        // Force list to recalculate
+        if (listRef.current) {
+            listRef.current.resetAfterIndex(0);
+        }
+    }, []);
+
+    // Update the rowRenderer
     const rowRenderer = useCallback(({ index, style }) => {
         const player = paginatedPlayers[index];
         if (!player) return null;
@@ -237,10 +266,12 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                     sport={sport}
                     categories={chosenCategories}
                     rank={player.rank}
+                    isExpanded={expandedRows.has(player.rankingId)}
+                    onExpand={() => handleRowExpand(player.rankingId)}
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategories]);
+    }, [paginatedPlayers, sport, chosenCategories, expandedRows, handleRowExpand]);
 
     const sportKey = sport.toLowerCase();
     // console.log('Checking loading state:', {
@@ -286,7 +317,8 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                         height={windowSize.height}
                         width="100%"
                         itemCount={paginatedPlayers.length}
-                        itemSize={ROW_HEIGHT}
+                        itemSize={getRowHeight}
+                        estimatedItemSize={DEFAULT_ROW_HEIGHT}
                     >
                         {rowRenderer}
                     </List>
@@ -299,6 +331,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                             sport={sport}
                             categories={chosenCategories}
                             rank={paginatedPlayers.find(p => p.rankingId === activeId)?.rank}
+                            isExpanded={expandedRows.has(activeId)}
                         />
                     ) : null}
                 </DragOverlay>

@@ -29,8 +29,7 @@ const StatsSection = memo(({ categories, stats }) => {
 
 StatsSection.displayName = 'StatsSection';
 
-const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
-    const [expanded, setExpanded] = useState(false);
+const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, onExpand }) => {
     const rowRef = useRef(null);
 
     // Set up the sortable hook with optimization options
@@ -74,7 +73,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
 
     // Get the appropriate panel components based on the sport
     const getDetailPanel = () => {
-        if (!expanded) return null;
+        if (!isExpanded) return null;
 
         switch (sport) {
             case 'NBA':
@@ -90,7 +89,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
     };
 
     const getInsightPanel = () => {
-        if (!expanded) return null;
+        if (!isExpanded) return null;
 
         switch (sport) {
             case 'NBA':
@@ -116,7 +115,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
         >
             <div
                 className="flex h-9 items-center bg-white hover:bg-gray-50"
-                onClick={() => setExpanded(!expanded)}
+                onClick={onExpand}
             >
                 {/* Left section with fixed widths */}
                 <div className="flex items-center w-[40%]">
@@ -159,9 +158,9 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank }) => {
             </div>
 
             {/* Only render expanded content when needed */}
-            {expanded && (
-                <div className="expanded-content border-t">
-                    <div className="p-4">
+            {isExpanded && (
+                <div className="expanded-content border-t h-[180px]">
+                    <div className="h-full p-4">
                         {detailPanelRef.current || (detailPanelRef.current = getDetailPanel())}
                         {insightPanelRef.current || (insightPanelRef.current = getInsightPanel())}
                     </div>
