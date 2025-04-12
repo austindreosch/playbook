@@ -5,8 +5,8 @@ import Papa from 'papaparse';
 import path from 'path';
 
 // Parse CSV rankings
-async function getNBADynastyRankings() {
-  const filePath = path.join(process.cwd(), 'public', 'docs', 'nba_dynasty_rankings_cat.csv');
+async function getNBARedraftCatsRankings() {
+  const filePath = path.join(process.cwd(), 'public', 'docs', 'BBM_PlayerRankings.csv');
   const fileContents = await fs.readFile(filePath, 'utf-8');
   const parsed = Papa.parse(fileContents, { header: true });
   return parsed.data;
@@ -37,10 +37,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const rankings = await getNBADynastyRankings();
+    const rankings = await getNBARedraftCatsRankings();
     const db = await connectToDb();
 
-    const raw = await db.collection('stats').findOne({ league: 'nba' });
+    const raw = await db.collection('stats').findOne({ sport: 'nba', endpoint: 'seasonalPlayerStats' });
     const allPlayers = raw?.stats || [];
 
     const fuse = new Fuse(allPlayers, {
@@ -70,9 +70,11 @@ export default async function handler(req, res) {
 
     await db.collection('rankings').updateOne(
       {
-        name: 'NBA Dynasty Rankings',
+        name: 'NBA Redraft Categories Rankings',
         sport: 'NBA',
-        format: 'Dynasty'
+        format: 'Redraft',
+        scoring: 'Categories',
+        source: 'BBM',
       },
       {
         $set: {

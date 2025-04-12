@@ -8,6 +8,9 @@ import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
 
+
+
+
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats }) => {
     return (
@@ -189,7 +192,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                     </div>
 
                     {isExpanded && (
-                        <div className="ml-auto text-xs tracking-wider text-pb_midgray mr-[17px]"> SEASON</div>
+                        <div className="ml-auto text-xs tracking-wider text-pb_midgray mr-[17px] select-none"> SEASON</div>
                     )}
                 </div>
 
@@ -237,20 +240,25 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    {/* <span className="text-xs tracking-wider mb-2">CLE</span> */}
-                                    <div className='bg-pb_green h-4 w-8 mb-3'></div>
+                                    <div className={`h-4 w-8 mb-3 ${player.info.injuryStatus?.playingProbability === 'OUT' ? 'bg-red-500' :
+                                        player.info.injuryStatus?.playingProbability === 'QUESTIONABLE' ? 'bg-yellow-500' :
+                                            player.info.injuryStatus?.playingProbability === 'PROBABLE' ? 'bg-green-500' :
+                                                'bg-pb_green'
+                                        }`}>
+
+                                    </div>
                                     <FlagIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3">CLE</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{player.info.team}</span>
                                     <PeopleGroupIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3">28</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{player.info.age}</span>
                                     <CalendarIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3">SG,SF</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{player.info.position}</span>
                                     <BullseyeIcon className="w-5 h-5" />
                                 </div>
                             </div>

@@ -16,6 +16,7 @@ export default async function handler(req, res) {
     const rankingsDoc = await db.collection('rankings').findOne({
       sport: 'NBA',
       format: 'Dynasty',
+      scoring: 'Categories',
       isLatest: true
     }, {
       sort: { publishedAt: -1 }

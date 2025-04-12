@@ -9,7 +9,6 @@ import useUserRankings from '@/stores/useUserRankings';
 import { useEffect, useState } from 'react';
 
 export default function RankingsPage() {
-  const [expertRankings, setExpertRankings] = useState(null);
   const [latestUserRankings, setLatestUserRankings] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,28 +36,6 @@ export default function RankingsPage() {
     const cleanup = initAutoSave();
     return () => cleanup();
   }, [initAutoSave]);
-
-  // Fetch expert rankings
-  useEffect(() => {
-    const fetchExpertRankings = async () => {
-      try {
-        const response = await fetch('/api/fetch/NBA/GetNBADynastyRankings');
-        if (!response.ok) {
-          throw new Error('Failed to fetch rankings');
-        }
-        const data = await response.json();
-        setExpertRankings(data.rankings);
-      } catch (err) {
-        console.error('Error fetching rankings:', err);
-        setError(err.message);
-        setExpertRankings(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchExpertRankings();
-  }, []);
 
   // Fetch master dataset based on selected sport
   useEffect(() => {
@@ -125,6 +102,8 @@ export default function RankingsPage() {
         console.error('Error fetching user rankings:', err);
         setError(err.message);
         setLatestUserRankings(null);
+      } finally {
+        setIsLoading(false);
       }
     };
 

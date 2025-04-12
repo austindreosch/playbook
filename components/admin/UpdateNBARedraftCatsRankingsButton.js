@@ -3,7 +3,7 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import React, { useState } from 'react';
 
-function UpdateNBADynastyCatsRankingsButton() {
+function UpdateNBARedraftCatsRankingsButton() {
   const { user } = useUser();
   const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
   const isAdmin = user && (user.sub === adminSub || user.isAdmin);
@@ -104,12 +104,12 @@ function UpdateNBADynastyCatsRankingsButton() {
 
     try {
       // First, get the latest version to compare
-      const latestVersionResponse = await fetch('/api/rankings/latest?sport=NBA&format=Dynasty');
+      const latestVersionResponse = await fetch('/api/rankings/latest?sport=NBA&format=Redraft');
       const latestVersionData = await latestVersionResponse.json();
       console.log('📥 Latest version data:', latestVersionData);
 
       // Then fetch the new rankings data from CSV
-      const fetchResponse = await fetch('/api/fetch/NBA/NBADynastyCatsRankingsStore', {
+      const fetchResponse = await fetch('/api/fetch/NBA/NBARedraftCatsRankingsStore', {
         method: 'POST',
       });
       const fetchData = await fetchResponse.json();
@@ -120,7 +120,7 @@ function UpdateNBADynastyCatsRankingsButton() {
       }
 
       // Get the stored rankings from the rankings collection
-      const rankingsResponse = await fetch('/api/fetch/NBA/GetNBADynastyCatsRankings');
+      const rankingsResponse = await fetch('/api/fetch/NBA/GetNBARedraftRankings');
       const rankingsData = await rankingsResponse.json();
       console.log('📥 Rankings data:', rankingsData);
 
@@ -171,9 +171,9 @@ function UpdateNBADynastyCatsRankingsButton() {
       const sanitizedRankings = sanitizeRankings(rankingsData.rankings);
 
       const requestBody = {
-        name: "NBA Dynasty Categories Rankings",
+        name: "NBA Redraft Categories Rankings",
         sport: "NBA",
-        format: "Dynasty",
+        format: "Redraft",
         scoring: "Categories",
         version: new Date().toISOString().split('T')[0].replace(/-/g, '.'),
         rankings: sanitizedRankings,
@@ -240,7 +240,7 @@ function UpdateNBADynastyCatsRankingsButton() {
               <path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" />
               <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
             </svg>
-            Update NBA Dynasty Categories Rankings
+            Update NBA Redraft Categories Rankings
           </>
         )}
       </button>
@@ -253,4 +253,4 @@ function UpdateNBADynastyCatsRankingsButton() {
   );
 }
 
-export default UpdateNBADynastyCatsRankingsButton;
+export default UpdateNBARedraftCatsRankingsButton;

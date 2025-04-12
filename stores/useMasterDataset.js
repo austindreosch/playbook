@@ -99,7 +99,8 @@ const useMasterDataset = create((set, get) => ({
                         weight: playerStats.player.weight,
                         jerseyNumber: playerStats.player.jerseyNumber,
                         officialImageSrc: playerStats.player.officialImageSrc,
-                        injuryStatus: playerStats.player.currentInjury
+                        injuryStatus: playerStats.player.currentInjury,
+                        age: playerStats.player.age,
                     },
                     stats: {
                         //totals
