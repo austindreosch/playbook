@@ -1,5 +1,25 @@
 'use client';
 
+/*
+This is the main Rankings page component that allows users to create and manage custom player rankings.
+It handles:
+- Fetching and displaying user's saved ranking lists
+- Loading master player datasets for NBA/MLB/NFL 
+- Auto-saving functionality when changes are made
+- Switching between different sports
+- Selecting and displaying ranking lists
+
+Key interactions:
+- Uses useMasterDataset store to fetch player data for each sport
+- Uses useUserRankings store to manage ranking state and auto-save
+- Communicates with /api/user-rankings endpoints to fetch/save rankings
+- Renders child components:
+  - AddRankingListButton - Creates new ranking lists
+  - RankingsPlayerListHeader - Shows header info (categories, weights, etc.) for current ranking
+  - RankingsPlayerListContainer - Displays and manages ranked players
+  - RankingsSidePanel - Shows list of saved rankings
+*/
+
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
 import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerListHeader';
