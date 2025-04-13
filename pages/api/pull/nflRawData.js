@@ -170,35 +170,37 @@ export default async function handler(req, res) {
 
         console.log('Fetching and storing CORE data...');
 
-        // Seasonal games
-        const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/games.json`, 'seasonalGames');
-        if (seasonalGames && validateData(seasonalGames, 'seasonalGames', errors)) {
-            await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalGames', seasonalGames, errors);
-        }
+        // TODO: UNCOMMENT WHEN DONE TESTING
 
-        // Daily games
-        const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
-        if (dailyGames && validateData(dailyGames, 'dailyGames', errors)) {
-            await updateEndpoint(statsCollection, 'nfl', 'core', 'dailyGames', dailyGames, errors);
-        }
+        // // Seasonal games
+        // const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/games.json`, 'seasonalGames');
+        // if (seasonalGames && validateData(seasonalGames, 'seasonalGames', errors)) {
+        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalGames', seasonalGames, errors);
+        // }
 
-        // Current season
-        const currentSeason = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/current_season.json`, 'currentSeason');
-        if (currentSeason && validateData(currentSeason, 'currentSeason', errors)) {
-            await updateEndpoint(statsCollection, 'nfl', 'core', 'currentSeason', currentSeason, errors);
-        }
+        // // Daily games
+        // const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
+        // if (dailyGames && validateData(dailyGames, 'dailyGames', errors)) {
+        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'dailyGames', dailyGames, errors);
+        // }
 
-        // Latest updates
-        const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/latest_updates.json`, 'latestUpdates');
-        if (latestUpdates && validateData(latestUpdates, 'latestUpdates', errors)) {
-            await updateEndpoint(statsCollection, 'nfl', 'core', 'latestUpdates', latestUpdates, errors);
-        }
+        // // Current season
+        // const currentSeason = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/current_season.json`, 'currentSeason');
+        // if (currentSeason && validateData(currentSeason, 'currentSeason', errors)) {
+        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'currentSeason', currentSeason, errors);
+        // }
 
-        // Seasonal venues
-        const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/venues.json`, 'seasonalVenues');
-        if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues', errors)) {
-            await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalVenues', seasonalVenues, errors);
-        }
+        // // Latest updates
+        // const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/latest_updates.json`, 'latestUpdates');
+        // if (latestUpdates && validateData(latestUpdates, 'latestUpdates', errors)) {
+        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'latestUpdates', latestUpdates, errors);
+        // }
+
+        // // Seasonal venues
+        // const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/venues.json`, 'seasonalVenues');
+        // if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues', errors)) {
+        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalVenues', seasonalVenues, errors);
+        // }
 
         //=============================================================================
         //                    2. FETCH AND STORE STATS DATA

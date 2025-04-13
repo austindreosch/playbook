@@ -14,25 +14,27 @@ const sportConfigs = {
             'STL': { enabled: true, multiplier: 1 },
             'BLK': { enabled: true, multiplier: 1 },
             'TO': { enabled: true, multiplier: 1 },
+            // Other
             'FGM': { enabled: false, multiplier: 1 },
             'FTM': { enabled: false, multiplier: 1 },
             '3P%': { enabled: false, multiplier: 1 },
             'A/TO': { enabled: false, multiplier: 1 },
             'DREB': { enabled: false, multiplier: 1 },
             'OREB': { enabled: false, multiplier: 1 },
-            // 'DD': { enabled: false, multiplier: 1 },
-            // 'TD': { enabled: false, multiplier: 1 }
+            // 'DD': { enabled: false, multiplier: 1 }, //dont have?
+            // 'TD': { enabled: false, multiplier: 1 }  //dont have?
         }
     },
     MLB: {
         positions: ['All', 'SP', 'RP', 'P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'UT', 'CI', 'MI', 'INF'],
         categories: {
             hitting: {
-                'AVG': { enabled: true, multiplier: 1 },
-                'HR': { enabled: true, multiplier: 1 },
-                'RBI': { enabled: true, multiplier: 1 },
-                'R': { enabled: true, multiplier: 1 },
-                'SB': { enabled: true, multiplier: 1 },
+                'AVG': { enabled: true, multiplier: 1 }, // Batting Average ✅
+                'HR': { enabled: true, multiplier: 1 }, // Home Runs ✅
+                'RBI': { enabled: true, multiplier: 1 }, // Runs Batted In ✅
+                'R': { enabled: true, multiplier: 1 }, // Runs ✅
+                'SB': { enabled: true, multiplier: 1 }, // Stolen Bases ✅
+                // Other
                 'OBP': { enabled: false, multiplier: 1 },
                 'SLG': { enabled: false, multiplier: 1 },
                 'OPS': { enabled: false, multiplier: 1 },
@@ -47,6 +49,7 @@ const sportConfigs = {
                 'W': { enabled: true, multiplier: 1 },
                 'SV': { enabled: true, multiplier: 1 },
                 'K': { enabled: true, multiplier: 1 },
+                // Other
                 'SVHLD': { enabled: false, multiplier: 1 },
                 'HLD': { enabled: false, multiplier: 1 },
                 'K/BB': { enabled: false, multiplier: 1 },
@@ -60,6 +63,32 @@ const sportConfigs = {
     },
     NFL: {
         positions: ['All', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'],
+        categories: {
+            'PPG': { enabled: true, multiplier: 1 }, // Fantasy Points Per Game ✅
+            'PPS': { enabled: true, multiplier: 1 }, // Fantasy Points Per Snap ✅
+            'OPG': { enabled: true, multiplier: 1 }, // Opportunites Per Game ✅
+            'OPE': { enabled: true, multiplier: 1 }, // Opportunity Efficiency ✅
+            'YD%': { enabled: true, multiplier: 1 }, // Yard Share ✅
+            'PS%': { enabled: true, multiplier: 1 }, // Production Share ✅ 
+            'TS%': { enabled: true, multiplier: 1 }, // Touchdown Rate ✅
+            'BP%': { enabled: true, multiplier: 1 }, // Big Play Rate ✅
+            'TO%': { enabled: true, multiplier: 1 }, // Turnover Rate ✅
+            // Other
+            'FPG_NoPPR': { enabled: false, multiplier: 1 }, // Fantasy Points Per Game (No PPR)
+            'FPS_NoPPR': { enabled: false, multiplier: 1 }, // Fantasy Points Per Snap (No PPR)
+            'OPE_NoPPR': { enabled: false, multiplier: 1 }, // Opportunity Efficiency (No PPR)
+            'TFP_NoPPR': { enabled: false, multiplier: 1 }, // Total Fantasy Points (No PPR)
+            'PPG': { enabled: false, multiplier: 1 }, // Plays Per Game 
+            'TFP': { enabled: false, multiplier: 1 }, // Total Fantasy Points
+            'TTD': { enabled: false, multiplier: 1 }, // Total Touchdowns
+            'TD%': { enabled: false, multiplier: 1 }, // Touchdown Rate
+            'YPC': { enabled: false, multiplier: 1 }, // Yards Per Carry
+            'YPG': { enabled: false, multiplier: 1 }, // Yards Per Game
+            'YPO': { enabled: false, multiplier: 1 }, // Yards Per Opportunity
+            'YPR': { enabled: false, multiplier: 1 }, // Yards Per Reception
+            'YPT': { enabled: false, multiplier: 1 }, // Yards Per Target
+            'HOG': { enabled: false, multiplier: 1 }, // Hog Rate (Rushing)
+        }
     }
 };
 

@@ -139,12 +139,80 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     return advancedStats;
 }
 
+/**
+ * Calculates the mean and standard deviation of an array of numbers.
+ * @param {Array<number>} data - Array of numbers.
+ * @returns {Object} - Object containing mean and standard deviation { mean, stdDev }.
+ */
+function calculateMeanStdDev(data) {
+    const n = data.length;
+    if (n === 0) return { mean: 0, stdDev: 0 };
+
+    const mean = data.reduce((a, b) => a + b, 0) / n;
+    const variance = data.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+    const stdDev = Math.sqrt(variance);
+
+    return { mean, stdDev };
+}
+
+/**
+ * Calculates the Z-score for a value given mean and standard deviation.
+ * Handles inversion for stats where lower is better.
+ * @param {number} value - The value to score.
+ * @param {number} mean - The mean of the dataset.
+ * @param {number} stdDev - The standard deviation of the dataset.
+ * @param {boolean} [invert=false] - Whether to invert the score (lower is better).
+ * @returns {number} - The calculated Z-score.
+ */
+function calculateZScore(value, mean, stdDev, invert = false) {
+    if (stdDev === 0) return 0; // Avoid division by zero; return neutral score
+
+    let z = (value - mean) / stdDev;
+    if (invert) {
+        z *= -1; // Invert score if lower is better
+    }
+    // Clamp z-score to a reasonable range like -3 to 3
+    return Math.max(-3, Math.min(3, parseFloat(z.toFixed(2))));
+}
+
+/**
+ * Determines a color based on the Z-score value using a gradient.
+ * Maps Z-scores from -3 to 3 to a green-yellow-red gradient.
+ * @param {number} zScore - The Z-score.
+ * @returns {string} - Hex color code.
+ */
+function getColorForZScore(zScore) {
+    // Normalize zScore from [-3, 3] to [0, 1]
+    const normalized = (Math.max(-3, Math.min(3, zScore)) + 3) / 6;
+
+    // Simple Green -> Yellow -> Red gradient
+    // Green (0) -> Yellow (0.5) -> Red (1) based on normalized score
+    let r, g, b = 0;
+    if (normalized < 0.5) {
+        // Green to Yellow
+        r = Math.round(255 * (normalized * 2));
+        g = 255;
+    } else {
+        // Yellow to Red
+        r = 255;
+        g = Math.round(255 * (1 - (normalized - 0.5) * 2));
+    }
+
+    // Convert RGB to Hex
+    const toHex = (c) => {
+        const hex = c.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+    };
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
 
 /**
  * Orchestrates the calculation of advanced stats for NFL players using fetched team stats.
+ * Includes Z-score calculation based on top players.
  * @param {Array<Object>} mergedPlayers - Array of player objects with duplicates merged and stats aggregated.
  * @param {Array<Object>} teamStatsTotals - Array of raw team stat objects fetched from DB (endpoint: seasonalTeamStats).
- * @returns {Array<Object>} - The array of player objects enriched with advanced stats.
+ * @returns {Array<Object>} - The array of player objects enriched with advanced stats including z-scores.
  */
 export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
     if (!mergedPlayers || mergedPlayers.length === 0) {
@@ -182,28 +250,98 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
     // Add a temporary log during testing to verify the map
     // console.log("Processed Team Stats Map:", JSON.stringify(teamStatsMap, null, 2));
 
-    // Step 2: Calculate advanced stats for each player and enrich them
-    const finalPlayers = mergedPlayers.map(player => {
+    // Step 2: Calculate raw advanced stats for each player
+    let playersWithAdvancedStats = mergedPlayers.map(player => {
         const teamId = player.info.teamId;
         const relevantTeamStats = teamStatsMap[teamId] || {};
-
-        // Add a temporary log during testing for one player
-        // if (player.info.lastName === 'Mahomes') { // Example player
-        //     console.log(`Stats for ${player.info.fullName}:`, player.stats);
-        //     console.log(`Team stats for ${teamId}:`, relevantTeamStats);
-        // }
-
         const advancedStats = _calculateAdvancedNflStats(player, relevantTeamStats);
 
         return {
             ...player,
             stats: {
                 ...player.stats,
-                advanced: advancedStats
+                advanced: advancedStats // Store raw advanced stats first
             }
         };
     });
 
-    // console.log("Finished processing NFL player data with fetched team stats.");
+    // Step 3: Calculate Z-Scores based on top players
+    const NFL_TOP_N = 150; // Or adjust as needed
+    const MIN_GAMES = 5;
+    const MIN_OPPORTUNITIES = 2; // Based on opportunitiesPerGame
+
+    // Filter for top players based on criteria
+    const topPlayers = playersWithAdvancedStats
+        .filter(p =>
+            (p.stats.other?.gamesPlayed || 0) >= MIN_GAMES &&
+            (p.stats.advanced?.opportunitiesPerGame || 0) >= MIN_OPPORTUNITIES
+        )
+        .sort((a, b) => (b.stats.advanced?.fantasyPointsPerGame || 0) - (a.stats.advanced?.fantasyPointsPerGame || 0)) // Sort by FPG
+        .slice(0, NFL_TOP_N);
+
+    if (topPlayers.length === 0) {
+        console.warn("No players met the criteria for Z-score baseline calculation. Skipping Z-scores.");
+        // Return players with only raw advanced stats if no baseline can be established
+        return playersWithAdvancedStats.map(player => ({
+            ...player,
+            stats: {
+                ...player.stats,
+                advanced: Object.entries(player.stats.advanced).reduce((acc, [key, value]) => {
+                    acc[key] = { value: value, zScore: 0, color: getColorForZScore(0) };
+                    return acc;
+                }, {})
+            }
+        }));
+    }
+
+    // Identify stats for Z-score calculation (all keys in advanced stats)
+    const statsToCalculateZScore = Object.keys(topPlayers[0].stats.advanced);
+    const invertedStats = new Set(['turnoverRate']); // Add other stats if lower is better
+
+    // Calculate mean and std dev for each stat using top players
+    const statsSummary = {};
+    statsToCalculateZScore.forEach(statKey => {
+        const statValues = topPlayers.map(p => p.stats.advanced[statKey]).filter(v => typeof v === 'number' && isFinite(v));
+        statsSummary[statKey] = calculateMeanStdDev(statValues);
+    });
+
+    // Step 4: Apply Z-score and color to all players
+    const finalPlayers = playersWithAdvancedStats.map(player => {
+        const advancedStatsWithZ = {};
+        const rawAdvancedStats = player.stats.advanced;
+
+        statsToCalculateZScore.forEach(statKey => {
+            const originalValue = rawAdvancedStats[statKey];
+            const { mean, stdDev } = statsSummary[statKey] || { mean: 0, stdDev: 0 };
+            const invert = invertedStats.has(statKey);
+
+            let zScore = 0;
+            // Only calculate Z-score if the value is a valid number
+            if (typeof originalValue === 'number' && isFinite(originalValue)) {
+                zScore = calculateZScore(originalValue, mean, stdDev, invert);
+            } else {
+                console.warn(`Invalid value for Z-score calculation: Player ${player.info?.id}, Stat ${statKey}, Value: ${originalValue}`);
+            }
+            const color = getColorForZScore(zScore);
+
+            advancedStatsWithZ[statKey] = {
+                value: originalValue, // Keep the original calculated value
+                zScore: zScore,
+                color: color
+            };
+        });
+
+        return {
+            ...player,
+            stats: {
+                ...player.stats,
+                advanced: advancedStatsWithZ // Replace raw stats with object containing value, zScore, color
+            }
+        };
+    });
+
+    // console.log("Finished processing NFL player data with fetched team stats and Z-scores.");
     return finalPlayers;
 }
+
+
