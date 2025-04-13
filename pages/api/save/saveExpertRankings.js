@@ -27,11 +27,38 @@ async function connectToDb() {
 // Custom name mappings for each sport
 const customNameMaps = {
     NBA: {
+        // Matt Lawson
         'Alexandre Sarr': 'Alex Sarr',
         'Nic Claxton': 'Nicolas Claxton',
         'Cam Thomas': 'Cameron Thomas',
         'Ronald Holland II': 'Ron Holland',
-        // add more NBA mappings
+        'Trey Murphy III': 'Trey Murphy',
+        'Jakob Pöltl': 'Jakob Poeltl',
+        'Jabari Smith Jr.': 'Jabari Smith',
+        'Vince Williams Jr.': 'Vince Williams',
+        'GG Jackson': 'G. G. Jackson',
+        'Bobby Portis Jr.': 'Bobby Portis',
+        'Bobby Portis Jr. ': 'Bobby Portis',
+        'Bruce Brown Jr.': 'Bruce Brown',
+        'AJ Green': 'A.J. Green',
+
+        // Basketball Monster
+
+        'G.G. Jackson': 'G. G. Jackson',
+        'O.G. Anunoby': 'OG Anunoby',
+        'PJ Washington': 'P.J. Washington',
+        'C.J. McCollum': 'CJ McCollum',
+        'R.J. Barrett': 'RJ Barrett',
+        'Bub Carrington': 'Carlton Carrington',
+        'KJ Martin': 'Kenyon Martin Jr.',
+        'Jeff Dowtin Jr': 'Jeff Dowtin',
+        'E.J. Harkless': 'Elijah Harkless',
+        'A.J. Johnson': 'AJ Johnson',
+        'J.T. Thor': 'JT Thor',
+        'P.J. Hall': 'PJ Hall',
+        'Jeenathan Williams Jr.': 'Jeenathan Williams',
+        'J.D. Davison': 'JD Davison',
+        'P.J. Dozier': 'PJ Dozier',
     },
     MLB: {
         // MLB name mappings
@@ -153,12 +180,17 @@ export default async function handler(req, res) {
 
         // Setup fuzzy search with more lenient matching
         const fuse = new Fuse(allPlayers, {
-            keys: [(item) => `${item.player.firstName} ${item.player.lastName}`],
-            threshold: 0.4,  // More lenient matching
-            ignoreLocation: true,  // Don't care where the match occurs
-            useExtendedSearch: true,  // Enable extended search features
-            distance: 100,  // Allow more characters between matches
-            includeScore: true  // Include match score in results
+            keys: [
+                {
+                    name: 'fullName', // Define a key name for the combined name
+                    getFn: (item) => `${item.player.firstName} ${item.player.lastName}` // Function to get the full name
+                }
+            ],
+            threshold: 0.3,  // Slightly more lenient threshold
+            ignoreLocation: true,
+            useExtendedSearch: true,
+            distance: 100,
+            includeScore: true
         });
 
         // Helper function to normalize text for comparison
@@ -171,27 +203,48 @@ export default async function handler(req, res) {
 
         // Process rankings with name matching
         const results = csvRankings.map((row) => {
-            const searchName = customNameMaps[sport]?.[row.name] || row.name;
-            // Try exact match first
-            const exactMatch = allPlayers.find(p =>
-                normalizeText(`${p.player.firstName} ${p.player.lastName}`) === normalizeText(searchName)
-            );
+            // Add detailed logging FOR the mapping lookup
 
-            // If no exact match, try fuzzy search
-            const fuzzyMatch = !exactMatch ? fuse.search(searchName)?.[0]?.item : null;
+
+            const mappedName = customNameMaps[sport]?.[row.name];
+
+            const searchName = mappedName || row.name; // Use mapped name if found, otherwise original name
+
+            // Try exact match first
+            const exactMatch = allPlayers.find(p => {
+                const fullName = `${p.player.firstName} ${p.player.lastName}`;
+                const normalizedFullName = normalizeText(fullName);
+                const normalizedSearchName = normalizeText(searchName);
+                // console.log(`Comparing: "${normalizedFullName}" with "${normalizedSearchName}"`);
+                return normalizedFullName === normalizedSearchName;
+            });
+
+            let fuzzyMatch = null;
+            if (!exactMatch) {
+                const fuseResults = fuse.search(searchName);
+                // console.log(` Fuzzy search results for \"${searchName}\":`, fuseResults.slice(0, 3));
+                if (fuseResults.length > 0) {
+                    if (fuseResults[0].score <= 0.3) {
+                        fuzzyMatch = fuseResults[0].item;
+                    } else {
+                        // console.log(` Fuzzy match for \"${searchName}\" score (${fuseResults[0].score}) too high. Skipping.`);
+                    }
+                }
+            }
+
             const match = exactMatch || fuzzyMatch;
             const matched = !!match;
 
             if (!matched) {
                 console.log(`❌ No match found for: ${searchName}`);
             } else {
-                // console.log(`✅ Found match for ${searchName} -> ${match.player.firstName} ${match.player.lastName} (ID: ${match.player.id})`);
+
             }
 
             return {
                 playerId: match?.player?.id || null,
                 rank: row.rank,
-                name: row.name,
+                name: row.name, // Keep original name from CSV
                 matched,
             };
         });

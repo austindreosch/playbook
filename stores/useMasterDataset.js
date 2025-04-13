@@ -431,6 +431,93 @@ const useMasterDataset = create((set, get) => ({
 
 
     // =====================================================================
+    //                         🏈 FETCH NFL DATA 🏈
+    // =====================================================================
+
+
+
+    fetchNflData: async () => {
+        try {
+            set({ isLoading: true, error: null }); // Clear previous errors
+            const response = await fetch('/api/load/MasterDatasetFetch'); // Assuming this fetches NFL data structure
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.error || 'Failed to fetch NFL data');
+
+            // Ensure the data structure matches expectations (adjust path if needed)
+            const seasonalStats = data.nflStats?.stats?.seasonalPlayerStats?.players;
+
+            if (!seasonalStats) {
+                console.warn('NFL seasonal player stats not found in the response.');
+                set({ isLoading: false });
+                return; // Exit if data is missing
+            }
+
+            const players = seasonalStats.map(playerStats => ({
+                info: {
+                    id: playerStats.player.id,
+                    firstName: playerStats.player.firstName,
+                    lastName: playerStats.player.lastName,
+                    fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
+                    team: playerStats.team?.abbreviation || 'N/A', // Handle missing team
+                    teamId: playerStats.team?.id,
+                    img: playerStats.player.officialImageSrc,
+                    position: playerStats.player.primaryPosition || 'N/A', // Handle missing position
+                    injuryStatus: playerStats.player.currentInjury,
+                },
+                stats: {
+                    gamesPlayed: playerStats.stats?.gamesPlayed || 0,
+                    fumblesLost: playerStats.stats?.fumbles?.fumLost || 0,
+                    passing: {
+                        passYards: playerStats.stats?.passing?.passYards || 0,
+                        passTD: playerStats.stats?.passing?.passTD || 0,
+                        passInt: playerStats.stats?.passing?.passInt || 0,
+                    },
+                    rushing: {
+                        rushYards: playerStats.stats?.rushing?.rushYards || 0,
+                        rushTD: playerStats.stats?.rushing?.rushTD || 0,
+                    },
+                    receiving: {
+                        receptions: playerStats.stats?.receiving?.receptions || 0,
+                        recYards: playerStats.stats?.receiving?.recYards || 0,
+                        recTD: playerStats.stats?.receiving?.recTD || 0,
+                    },
+                    special: {
+                        fieldGoals: playerStats.stats?.special?.fieldGoals || 0,
+                        extraPoints: playerStats.stats?.special?.extraPoints || 0,
+                        sacks: playerStats.stats?.special?.sacks || 0,
+                        tackles: playerStats.stats?.special?.tackles || 0,
+                        interceptions: playerStats.stats?.special?.interceptions || 0,
+                        touchdowns: playerStats.stats?.special?.touchdowns || 0,
+                        safeties: playerStats.stats?.special?.safeties || 0,
+                        blockedKicks: playerStats.stats?.special?.blockedKicks || 0,
+
+                    },
+                }
+            }));
+
+            set({
+                nfl: {
+                    players,
+                    projections: [], // Keep existing structure
+                    injuries: [],    // Keep existing structure
+                    lastUpdated: new Date()
+                },
+                isLoading: false,
+                error: null // Explicitly clear error on success
+            });
+        } catch (error) {
+            console.error("Error fetching NFL data:", error); // Log the actual error
+            set({
+                error: error.message,
+                isLoading: false
+            });
+        }
+    },
+
+
+
+    // =====================================================================
     //                     ⚾️ 🧢 FETCH MLB DATA ⚾️ 🧢
     // =====================================================================
 
@@ -479,57 +566,6 @@ const useMasterDataset = create((set, get) => ({
     //     }
     // },
 
-
-
-    // =====================================================================
-    //                         🏈 FETCH NFL DATA 🏈
-    // =====================================================================
-
-
-
-    // fetchNflData: async () => {
-    //     try {
-    //         set({ isLoading: true });
-    //         const response = await fetch('/api/load/MasterDatasetFetch');
-    //         const data = await response.json();
-
-    //         if (!response.ok) throw new Error(data.error || 'Failed to fetch NFL data');
-
-    //         // Process stats
-    //         const players = data.nflStats.stats.seasonalPlayerStats?.players?.map(playerStats => ({
-    //             info: {
-    //                 id: playerStats.player.id,
-    //                 firstName: playerStats.player.firstName,
-    //                 lastName: playerStats.player.lastName,
-    //                 fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-    //                 team: playerStats.team.abbreviation,
-    //                 teamId: playerStats.team.id,
-    //                 img: playerStats.player.officialImageSrc,
-    //                 position: playerStats.player.primaryPosition,
-    //                 injuryStatus: playerStats.player.currentInjury,
-    //             },
-    //             stats: {
-    //                 gamesPlayed: playerStats.stats.gamesPlayed,
-    //                 // Add relevant NFL stats here
-    //             }
-    //         })) || [];
-
-    //         set({
-    //             nfl: {
-    //                 players,
-    //                 projections: [],
-    //                 injuries: [],
-    //                 lastUpdated: new Date()
-    //             },
-    //             isLoading: false
-    //         });
-    //     } catch (error) {
-    //         set({
-    //             error: error.message,
-    //             isLoading: false
-    //         });
-    //     }
-    // },
 
 
 

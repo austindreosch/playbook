@@ -1,31 +1,31 @@
-// stats.nba db entry structure
+// stats > nba db entry structure
 
 // // CORE endpoints
-// nba.core.seasonalGames -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games.json
-// nba.core.dailyGames -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/games.json
-// nba.core.currentSeason -> https://api.mysportsfeeds.com/v2.1/pull/nba/current_season.json
-// nba.core.latestUpdates -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/latest_updates.json
-// nba.core.seasonalVenues -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/venues.json
+// nba > seasonalGames -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games.json
+// nba > dailyGames -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/games.json
+// nba > currentSeason -> https://api.mysportsfeeds.com/v2.1/pull/nba/current_season.json
+// nba > latestUpdates -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/latest_updates.json
+// nba > seasonalVenues -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/venues.json
 
 // // STATS endpoints
-// nba.stats.dailyPlayerGamelogs -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/player_gamelogs.json
-// nba.stats.dailyTeamGamelogs -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/team_gamelogs.json
-// nba.stats.seasonalTeamStats -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/team_stats_totals.json
-// nba.stats.seasonalPlayerStats -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/player_stats_totals.json
-// nba.stats.seasonalStandings -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/standings.json
+// nba > dailyPlayerGamelogs -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/player_gamelogs.json
+// nba > dailyTeamGamelogs -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/team_gamelogs.json
+// nba > seasonalTeamStats -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/team_stats_totals.json
+// nba > seasonalPlayerStats -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/player_stats_totals.json
+// nba > seasonalStandings -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/standings.json
 
 // // DETAILED endpoints
-// nba.detailed.gameBoxscore -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games/{YYYYMMDD}-XXX-XXX/boxscore.json
-// nba.detailed.gamePlayByPlay -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games/{YYYYMMDD}-XXX-XXX/playbyplay.json
-// nba.detailed.gameLineup -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games/{YYYYMMDD}-XXX-XXX/lineup.json
-// nba.detailed.playerInjuries -> https://api.mysportsfeeds.com/v2.1/pull/nba/injuries.json
-// nba.detailed.players -> https://api.mysportsfeeds.com/v2.1/pull/nba/players.json
-// nba.detailed.injuryHistory -> https://api.mysportsfeeds.com/v2.1/pull/nba/injury_history.json
+// nba > gameBoxscore -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games/{YYYYMMDD}-XXX-XXX/boxscore.json
+// nba > gamePlayByPlay -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games/{YYYYMMDD}-XXX-XXX/playbyplay.json
+// nba > gameLineup -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/games/{YYYYMMDD}-XXX-XXX/lineup.json
+// nba > playerInjuries -> https://api.mysportsfeeds.com/v2.1/pull/nba/injuries.json
+// nba > players -> https://api.mysportsfeeds.com/v2.1/pull/nba/players.json
+// nba > injuryHistory -> https://api.mysportsfeeds.com/v2.1/pull/nba/injury_history.json
 
 // // PROJECTIONS endpoints
-// nba.projections.dailyPlayerGamelogsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/player_gamelogs_projections.json
-// nba.projections.dailyDfsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/dfs_projections.json
-// nba.projections.seasonalPlayerStatsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/player_stats_totals_projections.json
+// nba > dailyPlayerGamelogsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/player_gamelogs_projections.json
+// nba > dailyDfsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/dfs_projections.json
+// nba > seasonalPlayerStatsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/player_stats_totals_projections.json
 
 import { MongoClient } from 'mongodb';
 
@@ -141,7 +141,7 @@ export default async function handler(req, res) {
         'MONGODB_URI',
         'MYSPORTSFEEDS_API_KEY',
         'MYSPORTSFEEDS_API_VERSION',
-        'MYSPORTSFEEDS_SEASON'
+        'MYSPORTSFEEDS_NBA_SEASON'
     ];
 
     const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -170,13 +170,13 @@ export default async function handler(req, res) {
         console.log('Fetching and storing CORE data...');
 
         // Seasonal games
-        const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/games.json`, 'seasonalGames');
+        const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/games.json`, 'seasonalGames');
         if (seasonalGames && validateData(seasonalGames, 'seasonalGames', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'core', 'seasonalGames', seasonalGames, errors);
         }
 
         // Daily games
-        const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
+        const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
         if (dailyGames && validateData(dailyGames, 'dailyGames', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'core', 'dailyGames', dailyGames, errors);
         }
@@ -188,13 +188,13 @@ export default async function handler(req, res) {
         }
 
         // Latest updates
-        const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/latest_updates.json`, 'latestUpdates');
+        const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/latest_updates.json`, 'latestUpdates');
         if (latestUpdates && validateData(latestUpdates, 'latestUpdates', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'core', 'latestUpdates', latestUpdates, errors);
         }
 
         // Seasonal venues
-        const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/venues.json`, 'seasonalVenues');
+        const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/venues.json`, 'seasonalVenues');
         if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'core', 'seasonalVenues', seasonalVenues, errors);
         }
@@ -206,31 +206,31 @@ export default async function handler(req, res) {
         console.log('Fetching and storing STATS data...');
 
         // Daily player gamelogs
-        const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
+        const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
         if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'stats', 'dailyPlayerGamelogs', dailyPlayerGamelogs, errors);
         }
 
         // Daily team gamelogs
-        const dailyTeamGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/team_gamelogs.json`, 'dailyTeamGamelogs');
+        const dailyTeamGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/team_gamelogs.json`, 'dailyTeamGamelogs');
         if (dailyTeamGamelogs && validateData(dailyTeamGamelogs, 'dailyTeamGamelogs', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'stats', 'dailyTeamGamelogs', dailyTeamGamelogs, errors);
         }
 
         // Seasonal team stats
-        const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
+        const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
         if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalTeamStats', seasonalTeamStats, errors);
         }
 
         // Seasonal player stats
-        const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
+        const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
         if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
         }
 
         // Seasonal standings
-        const seasonalStandings = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/standings.json`, 'seasonalStandings');
+        const seasonalStandings = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/standings.json`, 'seasonalStandings');
         if (seasonalStandings && validateData(seasonalStandings, 'seasonalStandings', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalStandings', seasonalStandings, errors);
         }
@@ -277,19 +277,19 @@ export default async function handler(req, res) {
         console.log('Fetching and storing PROJECTIONS data...');
 
         // Daily player gamelogs projections
-        const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
+        const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
         if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'projections', 'dailyPlayerGamelogsProjections', dailyPlayerGamelogsProjections, errors);
         }
 
         // Daily dfs projections
-        const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
+        const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
         if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'projections', 'dailyDfsProjections', dailyDfsProjections, errors);
         }
 
         // Seasonal player stats projections
-        const seasonalPlayerStatsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_SEASON}/player_stats_totals_projections.json`, 'seasonalPlayerStatsProjections');
+        const seasonalPlayerStatsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/player_stats_totals_projections.json`, 'seasonalPlayerStatsProjections');
         if (seasonalPlayerStatsProjections && validateData(seasonalPlayerStatsProjections, 'seasonalPlayerStatsProjections', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'projections', 'seasonalPlayerStatsProjections', seasonalPlayerStatsProjections, errors);
         }
