@@ -2,11 +2,10 @@ import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { DM_Sans, Fira, Fira_Sans, Inter, Libre_Franklin } from 'next/font/google';
+import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
+import NavBar from '../components/NavBar';
 import './globals.css';
 config.autoAddCss = false
-
-
-import NavBar from '../components/NavBar';
 
 const DMSans = DM_Sans({
   subsets: ['latin'],
@@ -26,6 +25,7 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={DMSans.className}>
           <NavBar />
+          <MasterDatasetInitializer />
           {children}
         </body>
       </html>

@@ -58,29 +58,29 @@ export default function RankingsPage() {
   }, [initAutoSave]);
 
   // Fetch master dataset based on selected sport
-  useEffect(() => {
-    const fetchSportData = async () => {
-      try {
-        switch (selectedSport) {
-          case 'NBA':
-            await fetchNbaData();
-            break;
-          case 'MLB':
-            await fetchMlbData();
-            break;
-          case 'NFL':
-            await fetchNflData();
-            break;
-          default:
-            break;
-        }
-      } catch (err) {
-        console.error(`Error fetching ${selectedSport} data:`, err);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSportData = async () => {
+  //     try {
+  //       switch (selectedSport) {
+  //         case 'NBA':
+  //           await fetchNbaData();
+  //           break;
+  //         case 'MLB':
+  //           await fetchMlbData();
+  //           break;
+  //         case 'NFL':
+  //           await fetchNflData();
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //     } catch (err) {
+  //       console.error(`Error fetching ${selectedSport} data:`, err);
+  //     }
+  //   };
 
-    fetchSportData();
-  }, [selectedSport, fetchNbaData, fetchMlbData, fetchNflData]);
+  //   fetchSportData();
+  // }, [selectedSport, fetchNbaData, fetchMlbData, fetchNflData]);
 
   // Handle saving when user tries to leave the page
   useEffect(() => {
