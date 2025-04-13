@@ -27,6 +27,12 @@ const dataSources = {
     // }
 };
 
+export const config = {
+    api: {
+        responseLimit: '10mb', // Or '15mb', '20mb' etc.
+    },
+};
+
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
