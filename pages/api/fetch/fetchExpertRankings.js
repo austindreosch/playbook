@@ -1,16 +1,22 @@
 /**
- * API endpoint to fetch expert rankings for a given sport/format/scoring combination
+ * API endpoint to fetch expert rankings for fantasy sports.
  * 
- * Key functionality:
- * - Fetches latest rankings from MongoDB 'rankings' collection based on sport/format/scoring
- * - Enriches rankings data with player stats from 'stats' collection
- * - Returns enriched rankings with player details like position, team, stats
+ * Functionality:
+ * - Retrieves expert rankings for a specific sport, format, and scoring type
+ * - Enriches rankings with player data from stats collection
+ * - Returns formatted rankings with player position and team information
  * 
- * Interactions:
- * - Called by UpdateRankingsButton component when updating rankings
- * - Reads from MongoDB 'rankings' and 'stats' collections
- * - Returns data used by saveExpertRankings endpoint
+ * Database interactions:
+ * - Connects to MongoDB 'playbook' database
+ * - Queries 'rankings' collection for latest expert rankings
+ * - Queries 'stats' collection for player statistics
+ * 
+ * Query parameters:
+ * - sport: The sport code (NFL, NBA, MLB)
+ * - format: The format of rankings (e.g., Dynasty, Redraft)
+ * - scoring: The scoring system (e.g., PPR, Standard)
  */
+
 
 import { MongoClient } from 'mongodb';
 
@@ -35,9 +41,11 @@ export default async function handler(req, res) {
     try {
         await client.connect();
         const db = client.db('playbook');
+        const rankingsCollection = db.collection('rankings');
+        const statsCollection = db.collection('stats');
 
         // Find the latest rankings for the specified combination
-        const rankingsDoc = await db.collection('rankings').findOne({
+        const rankingsDoc = await rankingsCollection.findOne({
             sport: sport.toUpperCase(),
             format: format.charAt(0).toUpperCase() + format.slice(1).toLowerCase(),
             scoring: scoring.charAt(0).toUpperCase() + scoring.slice(1).toLowerCase(),
@@ -53,31 +61,38 @@ export default async function handler(req, res) {
             });
         }
 
-        // Get player stats based on sport
-        const statsQuery = {
-            nba: { league: 'nba' },
-            mlb: { league: 'mlb' },
-            nfl: { league: 'nfl' }
-        }[sport.toLowerCase()];
+        const rankings = rankingsDoc?.rankings || [];
 
-        if (!statsQuery) {
+        // Get player base stats using the consistent sport/endpoint query
+        const sportUpper = sport.toUpperCase();
+        const playerStatsQuery = {
+            sport: sportUpper,
+            endpoint: 'seasonalPlayerStats'
+        };
+
+        if (!['NBA', 'NFL', 'MLB'].includes(sportUpper)) {
             return res.status(400).json({
                 error: 'Invalid sport',
                 details: `Sport ${sport} is not supported`
             });
         }
 
-        const playerDoc = await db.collection('stats').findOne(statsQuery);
-        const allPlayers = playerDoc?.stats || [];
-        const rankings = rankingsDoc?.rankings || [];
+        const playerStatsDoc = await statsCollection.findOne(playerStatsQuery);
+
+        // Extract the player array from the correct path within the 'data' field
+        const allPlayers = playerStatsDoc?.data?.playerStatsTotals || [];
+
+        if (allPlayers.length === 0) {
+            console.warn(`No player stats found in DB for query:`, playerStatsQuery);
+        }
 
         // Enrich rankings with player data
         const enrichedRankings = rankings.map(r => {
-            const player = allPlayers.find(p => p.info?.id === r.playerId);
+            const player = allPlayers.find(pStat => pStat.player?.id === r.playerId);
 
             // Ensure we have the required fields
             if (!r.playerId || !r.name || typeof r.rank !== 'number') {
-                console.error('Invalid ranking data:', r);
+                console.error('Skipping invalid ranking data structure:', r);
                 return null;
             }
 
@@ -85,14 +100,13 @@ export default async function handler(req, res) {
                 playerId: r.playerId,
                 name: r.name,
                 rank: r.rank,
-                position: player?.info?.pos || '—',
-                team: player?.info?.team || '—',
-                stats: player?.stats || {},
+                position: player?.player?.primaryPosition || 'N/A',
+                team: player?.player?.currentTeam?.abbreviation || player?.team?.abbreviation || 'FA',
             };
         }).filter(Boolean); // Remove any null entries
 
         if (enrichedRankings.length === 0) {
-            return res.status(404).json({ error: 'No valid rankings found' });
+            console.warn("No rankings could be successfully enriched with player data.");
         }
 
         res.status(200).json({

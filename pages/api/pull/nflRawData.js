@@ -211,7 +211,7 @@ export default async function handler(req, res) {
         const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
 
         // Define defensive positions to filter out (not including K?)
-        const defensivePositions = new Set(['DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT',]);
+        const defensivePositions = new Set(['DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT', 'MLB']);
 
         // Filter out defensive players if data exists
         if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) { // Adjust 'playerStatsTotals' if the key is different

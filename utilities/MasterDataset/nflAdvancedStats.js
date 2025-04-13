@@ -160,7 +160,6 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         const teamId = teamEntry.team?.id; // Get team ID from the entry
         if (teamId) {
             // Extract the relevant stats from the teamEntry.stats object
-            // !!! USER MUST VERIFY THESE PATHS match their seasonalTeamStats data !!!
             acc[teamId] = {
                 teamPassAtt: teamEntry.stats?.passing?.passAttempts || 0,
                 teamRushAtt: teamEntry.stats?.rushing?.rushAttempts || 0,
@@ -189,10 +188,10 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         const relevantTeamStats = teamStatsMap[teamId] || {};
 
         // Add a temporary log during testing for one player
-        if (player.info.lastName === 'Mahomes') { // Example player
-            console.log(`Stats for ${player.info.fullName}:`, player.stats);
-            console.log(`Team stats for ${teamId}:`, relevantTeamStats);
-        }
+        // if (player.info.lastName === 'Mahomes') { // Example player
+        //     console.log(`Stats for ${player.info.fullName}:`, player.stats);
+        //     console.log(`Team stats for ${teamId}:`, relevantTeamStats);
+        // }
 
         const advancedStats = _calculateAdvancedNflStats(player, relevantTeamStats);
 
