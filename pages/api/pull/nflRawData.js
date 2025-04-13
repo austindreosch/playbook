@@ -206,6 +206,38 @@ export default async function handler(req, res) {
 
         console.log('Fetching and storing STATS data...');
 
+
+        // Seasonal player stats (remove defensive players)
+        const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
+
+        // Define defensive positions to filter out (not including K?)
+        const defensivePositions = new Set(['DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT',]);
+
+        // Filter out defensive players if data exists
+        if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) { // Adjust 'playerStatsTotals' if the key is different
+            const offensivePlayers = seasonalPlayerStats.playerStatsTotals.filter(playerStat => {
+                const position = playerStat.player?.primaryPosition?.toUpperCase(); // Check position safely
+                return position && !defensivePositions.has(position);
+            });
+            // Replace the original player list with the filtered one
+            seasonalPlayerStats.playerStatsTotals = offensivePlayers;
+        }
+
+        // Proceed with validation and saving using the potentially filtered data
+        if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
+        }
+
+        // ---------------------------------------------------------------------
+
+        // Seasonal player stats
+        // const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
+        // if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
+        //     await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
+        // }
+
+        // ----------------------------------------------------------------------
+
         // Daily player gamelogs
         const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
         if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs', errors)) {
@@ -222,12 +254,6 @@ export default async function handler(req, res) {
         const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
         if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats', errors)) {
             await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalTeamStats', seasonalTeamStats, errors);
-        }
-
-        // Seasonal player stats
-        const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
-        if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
-            await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
         }
 
         // Seasonal standings

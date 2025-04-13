@@ -1,5 +1,7 @@
 // stores/MasterDataset.js
 import { create } from 'zustand';
+import { processNflPlayerData } from '../utilities/MasterDataset/nflAdvancedStats';
+
 
 const getObjectSize = (obj) => {
     const json = JSON.stringify(obj);
@@ -70,16 +72,60 @@ const useMasterDataset = create((set, get) => ({
     error: null,       // Just one simple error state
     stateSize: '0 KB',
 
+    // --- New state for caching ---
+    rawFetchedData: null,
+    isRawDataFetched: false,
+
+    // --- New Helper Function for Fetching and Caching ---
+    _ensureRawDataFetched: async () => {
+        if (get().isRawDataFetched) {
+            // console.log("Using cached raw data");
+            return get().rawFetchedData;
+        }
+
+        // console.log("Fetching raw data from API...");
+        set({ isLoading: true, error: null }); // Start loading, clear previous error
+        try {
+            const response = await fetch('/api/load/MasterDatasetFetch');
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || `API request failed with status ${response.status}`);
+            }
+
+            set({
+                rawFetchedData: data,
+                isRawDataFetched: true,
+                isLoading: false, // Stop loading on success
+                error: null
+            });
+            return data;
+        } catch (error) {
+            console.error("Error fetching raw master data:", error);
+            set({
+                error: error.message,
+                isLoading: false, // Stop loading on error
+                isRawDataFetched: false, // Ensure flag stays false on error
+                rawFetchedData: null   // Clear potentially partial data
+            });
+            return null; // Indicate fetch failure
+        }
+    },
+
 
     // =====================================================================
     //                     🏀 FETCH NBA DATA 🏀
     // =====================================================================
 
     fetchNbaData: async () => {
+        // 1. Ensure raw data is fetched (or use cache)
+        const data = await get()._ensureRawDataFetched();
+        if (!data) return; // Exit if fetching failed
+
+        // 2. Process NBA data (rest of the function remains similar)
         try {
-            set({ isLoading: true });
-            const response = await fetch('/api/load/MasterDatasetFetch');
-            const data = await response.json();
+            // Optional: Set loading specific to NBA processing if needed, though main load is handled above
+            // set({ isLoading: true });
 
             // First map the regular season stats
             const regularSeasonPlayers = data.nbaStats?.playerStatsTotals?.map(playerStats => {
@@ -99,8 +145,11 @@ const useMasterDataset = create((set, get) => ({
                         weight: playerStats.player.weight,
                         jerseyNumber: playerStats.player.jerseyNumber,
                         officialImageSrc: playerStats.player.officialImageSrc,
-                        injuryStatus: playerStats.player.currentInjury,
                         age: playerStats.player.age,
+                        preciseAge: playerStats.player.birthDate ?
+                            ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
+                            playerStats.player.age,
+                        injuryStatus: playerStats.player.currentInjury,
                     },
                     stats: {
                         //totals
@@ -415,17 +464,15 @@ const useMasterDataset = create((set, get) => ({
 
             // Calculate state size before setting
             const stateSize = getObjectSize(newState);
-            console.log('Stats state size:', stateSize, newState);
+            console.log('NBA stats state size:', stateSize, newState);
 
             set({
                 ...newState,
                 stateSize
             });
         } catch (error) {
-            console.error('Error in fetchNbaData:', error);
-            set({ error: error.message });
-        } finally {
-            set({ isLoading: false });
+            console.error('Error processing NBA data:', error);
+            set({ error: `Error processing NBA data: ${error.message}` /* isLoading: false */ }); // Handle processing error
         }
     },
 
@@ -434,84 +481,190 @@ const useMasterDataset = create((set, get) => ({
     //                         🏈 FETCH NFL DATA 🏈
     // =====================================================================
 
-
-
     fetchNflData: async () => {
-        try {
-            set({ isLoading: true, error: null }); // Clear previous errors
-            const response = await fetch('/api/load/MasterDatasetFetch'); // Assuming this fetches NFL data structure
-            const data = await response.json();
+        // 1. Ensure raw data is fetched (or use cache)
+        const data = await get()._ensureRawDataFetched();
+        if (!data) return; // Exit if fetching failed
 
-            if (!response.ok) throw new Error(data.error || 'Failed to fetch NFL data');
+        // 2. Process NFL data
+        try {
+            // Optional: Set loading specific to NFL processing if needed
+            // set({ isLoading: true });
 
             // Ensure the data structure matches expectations (adjust path if needed)
+            // NOTE: Use 'data' variable from the helper function
             const seasonalStats = data.nflStats?.stats?.seasonalPlayerStats?.players;
 
             if (!seasonalStats) {
                 console.warn('NFL seasonal player stats not found in the response.');
-                set({ isLoading: false });
+                // set({ isLoading: false }); // Stop loading if set above
                 return; // Exit if data is missing
             }
 
-            const players = seasonalStats.map(playerStats => ({
+            // Step 1: Initial Mapping (Result stored in initialPlayers)
+            const initialPlayers = seasonalStats.map(playerStats => ({
                 info: {
                     id: playerStats.player.id,
                     firstName: playerStats.player.firstName,
                     lastName: playerStats.player.lastName,
                     fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                    team: playerStats.team?.abbreviation || 'N/A', // Handle missing team
-                    teamId: playerStats.team?.id,
+                    // Store the team info from this specific entry for now
+                    team: playerStats.team?.abbreviation || 'FA',
+                    teamId: playerStats.team?.id || 'FA',
                     img: playerStats.player.officialImageSrc,
-                    position: playerStats.player.primaryPosition || 'N/A', // Handle missing position
+                    position: playerStats.player.primaryPosition || 'N/A',
                     injuryStatus: playerStats.player.currentInjury,
+                    age: playerStats.player.age,
+                    birthDate: playerStats.player.birthDate,
+                    age: playerStats.player.age,
+                    preciseAge: playerStats.player.birthDate ?
+                        ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
+                        playerStats.player.age,
+                    height: playerStats.player.height,
+                    weight: playerStats.player.weight,
+                    jerseyNumber: playerStats.player.jerseyNumber,
                 },
+                // Keep stats nested as they are from the API initially
                 stats: {
-                    gamesPlayed: playerStats.stats?.gamesPlayed || 0,
-                    fumblesLost: playerStats.stats?.fumbles?.fumLost || 0,
                     passing: {
                         passYards: playerStats.stats?.passing?.passYards || 0,
                         passTD: playerStats.stats?.passing?.passTD || 0,
                         passInt: playerStats.stats?.passing?.passInt || 0,
+                        passAtt: playerStats.stats?.passing?.passAtt || 0,
+                        passComp: playerStats.stats?.passing?.passComp || 0,
+                        pass20Plus: playerStats.stats?.passing?.pass20Plus || 0,
                     },
                     rushing: {
                         rushYards: playerStats.stats?.rushing?.rushYards || 0,
                         rushTD: playerStats.stats?.rushing?.rushTD || 0,
+                        rushAtt: playerStats.stats?.rushing?.rushAtt || 0,
+                        rush20Plus: playerStats.stats?.rushing?.rush20Plus || 0,
                     },
                     receiving: {
-                        receptions: playerStats.stats?.receiving?.receptions || 0,
                         recYards: playerStats.stats?.receiving?.recYards || 0,
                         recTD: playerStats.stats?.receiving?.recTD || 0,
+                        receptions: playerStats.stats?.receiving?.receptions || 0,
+                        targets: playerStats.stats?.receiving?.targets || 0,
+                        rec20Plus: playerStats.stats?.receiving?.rec20Plus || 0,
                     },
-                    special: {
-                        fieldGoals: playerStats.stats?.special?.fieldGoals || 0,
-                        extraPoints: playerStats.stats?.special?.extraPoints || 0,
-                        sacks: playerStats.stats?.special?.sacks || 0,
-                        tackles: playerStats.stats?.special?.tackles || 0,
-                        interceptions: playerStats.stats?.special?.interceptions || 0,
-                        touchdowns: playerStats.stats?.special?.touchdowns || 0,
-                        safeties: playerStats.stats?.special?.safeties || 0,
-                        blockedKicks: playerStats.stats?.special?.blockedKicks || 0,
-
+                    other: {
+                        gamesPlayed: playerStats.stats?.gamesPlayed || 0,
+                        gamesStarted: playerStats.stats?.miscellaneous?.gamesStarted || 0,
+                        offenseSnaps: playerStats.stats?.snapCounts?.offenseSnaps || 0,
+                        fumbles: playerStats.stats?.fumbles?.fumbles || 0,
+                        fumblesLost: playerStats.stats?.fumbles?.fumLost || 0,
                     },
                 }
             }));
 
-            set({
+            // Step 2: Handle duplicate players (aggregate stats)
+            const mergedPlayersMap = initialPlayers.reduce((acc, player) => {
+                const id = player.info.id;
+                if (!acc[id]) {
+                    // First time seeing this player, add them directly
+                    acc[id] = { ...player };
+                    // Optional: Recalculate PassCompPct if Comp/Att are present
+                    if (acc[id].stats.passing.passAtt > 0) {
+                        acc[id].stats.passing.passCompPct = parseFloat(((acc[id].stats.passing.passComp / acc[id].stats.passing.passAtt) * 100).toFixed(1));
+                    } else {
+                        acc[id].stats.passing.passCompPct = 0;
+                    }
+                } else {
+                    // Player exists, accumulate stats
+                    const existing = acc[id].stats;
+                    const current = player.stats;
+
+                    // Sum passing stats
+                    existing.passing.passYards += current.passing.passYards;
+                    existing.passing.passTD += current.passing.passTD;
+                    existing.passing.passInt += current.passing.passInt;
+                    existing.passing.passAtt += current.passing.passAtt;
+                    existing.passing.passComp += current.passing.passComp;
+                    existing.passing.pass20Plus += current.passing.pass20Plus;
+
+                    // Sum rushing stats
+                    existing.rushing.rushYards += current.rushing.rushYards;
+                    existing.rushing.rushTD += current.rushing.rushTD;
+                    existing.rushing.rushAtt += current.rushing.rushAtt;
+                    existing.rushing.rush20Plus += current.rushing.rush20Plus;
+
+                    // Sum receiving stats
+                    existing.receiving.recYards += current.receiving.recYards;
+                    existing.receiving.recTD += current.receiving.recTD;
+                    existing.receiving.receptions += current.receiving.receptions;
+                    existing.receiving.targets += current.receiving.targets;
+                    existing.receiving.rec20Plus += current.receiving.rec20Plus;
+
+                    // Sum other stats
+                    existing.other.gamesPlayed += current.other.gamesPlayed;
+                    existing.other.gamesStarted += current.other.gamesStarted; // Make sure this is correct, might just take latest? Summing for now.
+                    existing.other.offenseSnaps += current.other.offenseSnaps;
+                    existing.other.fumbles += current.other.fumbles;
+                    existing.other.fumblesLost += current.other.fumblesLost;
+
+                    // Recalculate PassCompPct based on accumulated totals
+                    if (existing.passing.passAtt > 0) {
+                        existing.passing.passCompPct = parseFloat(((existing.passing.passComp / existing.passing.passAtt) * 100).toFixed(1));
+                    } else {
+                        existing.passing.passCompPct = 0;
+                    }
+
+
+                    // Update player info (team, teamId) to the latest entry encountered
+                    acc[id].info.team = player.info.team;
+                    acc[id].info.teamId = player.info.teamId;
+                }
+                return acc;
+            }, {});
+
+            const mergedPlayers = Object.values(mergedPlayersMap); //after handling duplicates
+
+            // Get team stats from the raw fetched data
+            const teamStats = get().rawFetchedData?.nflStats?.teamStatsTotals || [];
+            // Process the player data with advanced stats using the utility function
+            const playersWithAdvancedStats = processNflPlayerData(mergedPlayers, teamStats);
+            console.log('playersWithAdvancedStats', playersWithAdvancedStats);
+
+
+            // Now playersWithAdvancedStats contains all the advanced metrics calculated in nflAdvancedStats.js
+
+
+            // TODO: add projections stats to players, but im not doing this yet (IGNORE FOR NOW)
+
+
+
+
+
+
+
+            // Data size
+            const newState = {
                 nfl: {
-                    players,
-                    projections: [], // Keep existing structure
-                    injuries: [],    // Keep existing structure
+                    players: playersWithAdvancedStats,
+                    projections: [],
+                    injuries: [],
                     lastUpdated: new Date()
                 },
-                isLoading: false,
-                error: null // Explicitly clear error on success
-            });
-        } catch (error) {
-            console.error("Error fetching NFL data:", error); // Log the actual error
-            set({
-                error: error.message,
                 isLoading: false
+            };
+
+            // Calculate state size before setting
+            const stateSize = getObjectSize(newState);
+            console.log('NFL stats state size:', stateSize, newState);
+
+            set({
+                nfl: {
+                    players: playersWithAdvancedStats,
+                    projections: [],
+                    injuries: [],
+                    lastUpdated: new Date()
+                },
+                error: null
             });
+
+        } catch (error) {
+            console.error("Error processing NFL data:", error);
+            set({ error: `Error processing NFL data: ${error.message}` /* isLoading: false */ }); // Handle processing error
         }
     },
 
@@ -521,50 +674,53 @@ const useMasterDataset = create((set, get) => ({
     //                     ⚾️ 🧢 FETCH MLB DATA ⚾️ 🧢
     // =====================================================================
 
+    fetchMlbData: async () => {
+        // 1. Ensure raw data is fetched (or use cache)
+        const data = await get()._ensureRawDataFetched();
+        if (!data) return; // Exit if fetching failed
 
-    // fetchMlbData: async () => {
-    //     try {
-    //         set({ isLoading: true });
-    //         const response = await fetch('/api/load/MasterDatasetFetch');
-    //         const data = await response.json();
+        // 2. Process MLB data (Placeholder structure)
+        try {
+            // Optional: Set loading specific to MLB processing if needed
+            // set({ isLoading: true });
 
-    //         if (!response.ok) throw new Error(data.error || 'Failed to fetch MLB data');
+            // NOTE: Use 'data' variable from the helper function
+            const seasonalStats = data.mlbStats?.stats?.seasonalPlayerStats?.players;
 
-    //         // Process stats
-    //         const players = data.mlbStats.stats.seasonalPlayerStats?.players?.map(playerStats => ({
-    //             info: {
-    //                 id: playerStats.player.id,
-    //                 firstName: playerStats.player.firstName,
-    //                 lastName: playerStats.player.lastName,
-    //                 fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-    //                 team: playerStats.team.abbreviation,
-    //                 teamId: playerStats.team.id,
-    //                 img: playerStats.player.officialImageSrc,
-    //                 position: playerStats.player.primaryPosition,
-    //                 injuryStatus: playerStats.player.currentInjury,
-    //             },
-    //             stats: {
-    //                 gamesPlayed: playerStats.stats.gamesPlayed,
-    //                 // Add relevant MLB stats here
-    //             }
-    //         })) || [];
+            if (!seasonalStats) {
+                console.warn('MLB seasonal player stats not found in the response.');
+                // set({ isLoading: false }); // Stop loading if set above
+                return; // Exit if data is missing
+            }
 
-    //         set({
-    //             mlb: {
-    //                 players,
-    //                 projections: [],
-    //                 injuries: [],
-    //                 lastUpdated: new Date()
-    //             },
-    //             isLoading: false
-    //         });
-    //     } catch (error) {
-    //         set({
-    //             error: error.message,
-    //             isLoading: false
-    //         });
-    //     }
-    // },
+            const players = seasonalStats.map(playerStats => ({
+                // ... (Map MLB player info and stats here) ...
+                info: {
+                    id: playerStats.player.id,
+                    // ... other info fields ...
+                },
+                stats: {
+                    // ... MLB stats ...
+                }
+            })) || [];
+
+            set({
+                mlb: {
+                    players,
+                    projections: [],
+                    injuries: [],
+                    lastUpdated: new Date()
+                    // statsReferences can be added if MLB gets Z-scores later
+                },
+                // isLoading: false // Stop loading if set above
+                error: null // Clear any previous processing error
+            });
+
+        } catch (error) {
+            console.error("Error processing MLB data:", error);
+            set({ error: `Error processing MLB data: ${error.message}` /* isLoading: false */ }); // Handle processing error
+        }
+    },
 
 
 
