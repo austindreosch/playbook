@@ -481,7 +481,7 @@ const useMasterDataset = create((set, get) => ({
                 // );
             }
 
-            console.log('NBA Dataset Finalized:', playersWithProjections);
+            // console.log('NBA Dataset Finalized:', playersWithProjections);/
 
             const newState = {
                 nba: {
@@ -578,14 +578,14 @@ const useMasterDataset = create((set, get) => ({
                         passYards: playerStats.stats?.passing?.passYards || 0,
                         passTD: playerStats.stats?.passing?.passTD || 0,
                         passInt: playerStats.stats?.passing?.passInt || 0,
-                        passAtt: playerStats.stats?.passing?.passAtt || 0,
-                        passComp: playerStats.stats?.passing?.passComp || 0,
+                        passAtt: playerStats.stats?.passing?.passAttempts || 0,
+                        passComp: playerStats.stats?.passing?.passCompletions || 0,
                         pass20Plus: playerStats.stats?.passing?.pass20Plus || 0,
                     },
                     rushing: {
                         rushYards: playerStats.stats?.rushing?.rushYards || 0,
                         rushTD: playerStats.stats?.rushing?.rushTD || 0,
-                        rushAtt: playerStats.stats?.rushing?.rushAtt || 0,
+                        rushAtt: playerStats.stats?.rushing?.rushAttempts || 0,
                         rush20Plus: playerStats.stats?.rushing?.rush20Plus || 0,
                     },
                     receiving: {
@@ -676,7 +676,7 @@ const useMasterDataset = create((set, get) => ({
             const teamStats = get().rawFetchedData?.nflStats?.teamStatsTotals || [];
             // Process the player data with advanced stats using the utility function
             const playersWithAdvancedStats = processNflPlayerData(mergedPlayers, teamStats);
-            console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
+            // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
 
 
             // Now playersWithAdvancedStats contains all the advanced metrics calculated in nflAdvancedStats.js

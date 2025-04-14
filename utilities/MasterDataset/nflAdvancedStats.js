@@ -34,14 +34,15 @@ function hexToRgba(hex, alpha) {
 
 function _calculateAdvancedNflStats(player, teamStats = {}) {
     // --- Debugging Specific Player --- 
-    const targetPlayerName = "Jordan Love"; // Adjust name/ID as needed
-    const shouldLog = player.info?.fullName === targetPlayerName;
+    // const targetPlayerName = "Jordan Love"; // Adjust name/ID as needed
+    // const shouldLog = player.info?.fullName === targetPlayerName;
 
-    if (shouldLog) {
-        console.log(`--- Debugging _calculateAdvancedNflStats for ${targetPlayerName} ---`);
-        console.log("Input Player Stats (pPass, pRush, pRec):", player.stats?.passing, player.stats?.rushing, player.stats?.receiving);
-        console.log("Input Team Stats:", teamStats);
-    }
+    // if (shouldLog) {
+    //     console.log(`--- Debugging _calculateAdvancedNflStats for ${targetPlayerName} ---`);
+    //     console.log("Input Player Stats (pPass, pRush, pRec):", player.stats?.passing, player.stats?.rushing, player.stats?.receiving);
+    //     console.log("Input Player Other Stats (pOther):", player.stats?.other);
+    //     console.log("Input Team Stats:", teamStats);
+    // }
     // ----------------------------------
 
     const advancedStats = {};
@@ -112,6 +113,20 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     // Correctly calculate teamActionPlays using map keys
     const teamActionPlays = teamPassCompletions + teamRushAtt + teamReceptions;
 
+    // if (shouldLog) {
+    //     console.log("--- Intermediate Values ---");
+    //     console.log(`gamesPlayed: ${gamesPlayed}, offenseSnaps: ${offenseSnaps}`);
+    //     console.log(`totalFantasyPointsPPR: ${totalFantasyPointsPPR}`);
+    //     console.log(`totalOpportunities: ${totalOpportunities}`);
+    //     console.log(`actionPlays: ${actionPlays}`);
+    //     console.log(`totalPlays: ${totalPlays}`);
+    //     console.log(`totalPlayerYards: ${totalPlayerYards}`);
+    //     console.log(`totalPlayerTDs: ${totalPlayerTDs}`);
+    //     console.log(`totalPlayerBigPlays: ${totalPlayerBigPlays}`);
+    //     console.log(`totalPlayerTurnovers: ${totalPlayerTurnovers}`);
+    //     console.log(`totalTeamYards: ${totalTeamYards}`);
+    //     console.log(`teamActionPlays: ${teamActionPlays}`);
+    // }
 
     // --- Final Advanced Stat Calculations ---
 
@@ -129,12 +144,12 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     // Yard Share % (YS%)
     advancedStats.yardShare = totalTeamYards > 0 ? parseFloat(((totalPlayerYards / totalTeamYards) * 100).toFixed(1)) : 0.0;
 
-    if (shouldLog) {
-        console.log(`Player Total Yards: ${totalPlayerYards}`);
-        console.log(`Team Total Yards: ${totalTeamYards}`);
-        console.log(`Calculated Yard Share: ${advancedStats.yardShare}`);
-        console.log(`--- End Debugging ${targetPlayerName} ---`);
-    }
+    // if (shouldLog) {
+    //     console.log(`Player Total Yards: ${totalPlayerYards}`);
+    //     console.log(`Team Total Yards: ${totalTeamYards}`);
+    //     console.log(`Calculated Yard Share: ${advancedStats.yardShare}`);
+    //     console.log(`--- End Debugging ${targetPlayerName} ---`);
+    // }
 
     // Big Play Rate % (BP%)
     advancedStats.bigPlayRate = actionPlays > 0 ? parseFloat(((totalPlayerBigPlays / actionPlays) * 100).toFixed(1)) : 0.0;
@@ -151,6 +166,20 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
 
     // Turnover Rate % (using actionPlays as denominator)
     advancedStats.turnoverRate = actionPlays > 0 ? parseFloat(((totalPlayerTurnovers / actionPlays) * 100).toFixed(1)) : 0.0;
+
+    // if (shouldLog) {
+    //     console.log("--- Final Calculated Stats ---");
+    //     console.log(`fantasyPointsPerGame (PPG): ${advancedStats.fantasyPointsPerGame}`);
+    //     console.log(`fantasyPointsPerSnap (PPS): ${advancedStats.fantasyPointsPerSnap}`);
+    //     console.log(`opportunitiesPerGame (OPG): ${advancedStats.opportunitiesPerGame}`);
+    //     console.log(`opportunityEfficiency (OPE): ${advancedStats.opportunityEfficiency}`);
+    //     console.log(`yardShare (YD%): ${advancedStats.yardShare}`);
+    //     console.log(`productionShare (PR%): ${advancedStats.productionShare}`);
+    //     console.log(`touchdownRate (TD%): ${advancedStats.touchdownRate}`);
+    //     console.log(`bigPlayRate (BP%): ${advancedStats.bigPlayRate}`);
+    //     console.log(`turnoverRate (TO%): ${advancedStats.turnoverRate}`);
+    //     console.log(`--- End Debugging ${targetPlayerName} ---`); // Moved end log here
+    // }
 
     // -------------------
 
@@ -297,80 +326,105 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         };
     });
 
-    // Step 3: Calculate Z-Scores based on top players
-    const NFL_TOP_N = 150; // Or adjust as needed
+    // Step 3: Group players by primary position
+    const playersByPosition = playersWithAdvancedStats.reduce((acc, player) => {
+        const position = player.info?.position || 'Unknown';
+        if (!acc[position]) {
+            acc[position] = [];
+        }
+        acc[position].push(player);
+        return acc;
+    }, {});
+
+    // Step 4: Calculate Z-Scores PER POSITION
+    const finalPlayers = [];
+    const NFL_TOP_N_PER_POS = { // Define Top N per position (adjust as needed)
+        QB: 30,
+        RB: 50,
+        WR: 60,
+        TE: 30,
+        Unknown: 0 // Don't calculate Z-scores for unknowns
+    };
     const MIN_GAMES = 5;
-    const MIN_OPPORTUNITIES = 2; // Based on opportunitiesPerGame
-
-    // Filter for top players based on criteria
-    const topPlayers = playersWithAdvancedStats
-        .filter(p =>
-            (p.stats.other?.gamesPlayed || 0) >= MIN_GAMES &&
-            (p.stats.advanced?.opportunitiesPerGame || 0) >= MIN_OPPORTUNITIES
-        )
-        .sort((a, b) => (b.stats.advanced?.fantasyPointsPerGame || 0) - (a.stats.advanced?.fantasyPointsPerGame || 0)) // Sort by FPG
-        .slice(0, NFL_TOP_N);
-
-    if (topPlayers.length === 0) {
-        console.warn("No players met the criteria for Z-score baseline calculation. Skipping Z-scores.");
-        // Return players with only raw advanced stats if no baseline can be established
-        return playersWithAdvancedStats.map(player => ({
-            ...player,
-            stats: {
-                ...player.stats,
-                advanced: Object.entries(player.stats.advanced).reduce((acc, [key, value]) => {
-                    acc[key] = { value: value, zScore: 0, color: getColorForZScore(0) };
-                    return acc;
-                }, {})
-            }
-        }));
-    }
-
-    // Identify stats for Z-score calculation (all keys in advanced stats)
-    const statsToCalculateZScore = Object.keys(topPlayers[0].stats.advanced);
+    const MIN_OPPORTUNITIES_PER_GAME = 2; // Could also be position-specific
     const invertedStats = new Set(['turnoverRate']); // Add other stats if lower is better
 
-    // Calculate mean and std dev for each stat using top players
-    const statsSummary = {};
-    statsToCalculateZScore.forEach(statKey => {
-        const statValues = topPlayers.map(p => p.stats.advanced[statKey]).filter(v => typeof v === 'number' && isFinite(v));
-        statsSummary[statKey] = calculateMeanStdDev(statValues);
-    });
+    for (const position in playersByPosition) {
+        const positionPlayers = playersByPosition[position];
+        const topN = NFL_TOP_N_PER_POS[position] || 20; // Default Top 20 for other positions
 
-    // Step 4: Apply Z-score and color to all players
-    const finalPlayers = playersWithAdvancedStats.map(player => {
-        const advancedStatsWithZ = {};
-        const rawAdvancedStats = player.stats.advanced;
+        // Filter for top players *within this position*
+        const topPlayersForPos = positionPlayers
+            .filter(p =>
+                (p.stats.other?.gamesPlayed || 0) >= MIN_GAMES &&
+                (p.stats.advanced?.opportunitiesPerGame || 0) >= MIN_OPPORTUNITIES_PER_GAME
+            )
+            .sort((a, b) => (b.stats.advanced?.fantasyPointsPerGame || 0) - (a.stats.advanced?.fantasyPointsPerGame || 0))
+            .slice(0, topN);
 
-        statsToCalculateZScore.forEach(statKey => {
-            const originalValue = rawAdvancedStats[statKey];
-            const { mean, stdDev } = statsSummary[statKey] || { mean: 0, stdDev: 0 };
-            const invert = invertedStats.has(statKey);
+        let positionStatsSummary = {};
+        let statsToCalculateZScore = [];
 
-            let zScore = 0;
-            // Only calculate Z-score if the value is a valid number
-            if (typeof originalValue === 'number' && isFinite(originalValue)) {
-                zScore = calculateZScore(originalValue, mean, stdDev, invert);
-            } else {
-                console.warn(`Invalid value for Z-score calculation: Player ${player.info?.id}, Stat ${statKey}, Value: ${originalValue}`);
+        if (topPlayersForPos.length > 0) {
+            // Identify stats to calculate Z-score (use first top player as reference)
+            statsToCalculateZScore = Object.keys(topPlayersForPos[0].stats.advanced);
+
+            // Calculate mean and std dev for each stat using top positional players
+            statsToCalculateZScore.forEach(statKey => {
+                const statValues = topPlayersForPos.map(p => p.stats.advanced[statKey]).filter(v => typeof v === 'number' && isFinite(v));
+                positionStatsSummary[statKey] = calculateMeanStdDev(statValues);
+            });
+        } else {
+            // If no players meet criteria for baseline, skip Z-score for this position
+            console.warn(`No players met criteria for Z-score baseline for position: ${position}. Assigning neutral Z-scores.`);
+            // Get stat keys from the first player in the group if possible
+            if (positionPlayers.length > 0) {
+                statsToCalculateZScore = Object.keys(positionPlayers[0].stats.advanced || {});
             }
-            const color = getColorForZScore(zScore, '#59cd90', '#ee6352', originalValue);
+        }
 
-            advancedStatsWithZ[statKey] = {
-                value: originalValue, // Keep the original calculated value
-                zScore: zScore,
-                color: color
+        // Apply Z-score and color to all players *in this position group*
+        const processedPositionPlayers = positionPlayers.map(player => {
+            const advancedStatsWithZ = {};
+            const rawAdvancedStats = player.stats.advanced || {}; // Handle cases where advanced might be missing
+
+            // Use the identified stats or fallback to player's own stats keys
+            const keysToProcess = statsToCalculateZScore.length > 0 ? statsToCalculateZScore : Object.keys(rawAdvancedStats);
+
+            keysToProcess.forEach(statKey => {
+                const originalValue = rawAdvancedStats[statKey];
+                const { mean, stdDev } = positionStatsSummary[statKey] || { mean: 0, stdDev: 0 }; // Use positional summary
+                const invert = invertedStats.has(statKey);
+
+                let zScore = 0;
+                if (typeof originalValue === 'number' && isFinite(originalValue) && topPlayersForPos.length > 0) {
+                    zScore = calculateZScore(originalValue, mean, stdDev, invert);
+                } else if (topPlayersForPos.length === 0) {
+                    // Assign neutral Z-score if no baseline was available
+                    zScore = 0;
+                } else {
+                    console.warn(`Invalid value for Z-score calc: Pos ${position}, Player ${player.info?.id}, Stat ${statKey}, Val ${originalValue}`);
+                }
+                const color = getColorForZScore(zScore, '#59cd90', '#ee6352', originalValue);
+
+                advancedStatsWithZ[statKey] = {
+                    value: originalValue !== undefined ? originalValue : null, // Ensure value exists
+                    zScore: zScore,
+                    color: color
+                };
+            });
+
+            return {
+                ...player,
+                stats: {
+                    ...player.stats,
+                    advanced: advancedStatsWithZ
+                }
             };
         });
 
-        return {
-            ...player,
-            stats: {
-                ...player.stats,
-                advanced: advancedStatsWithZ // Replace raw stats with object containing value, zScore, color
-            }
-        };
-    });
+        finalPlayers.push(...processedPositionPlayers);
+    }
 
     // console.log("Finished processing NFL player data with fetched team stats and Z-scores.");
     return finalPlayers;
