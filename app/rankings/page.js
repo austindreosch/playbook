@@ -211,8 +211,8 @@ export default function RankingsPage() {
 
           <div className="w-72 sticky top-4">
             <RankingsSidePanel
-              userRankings={latestUserRankings}
-              activeRanking={activeRanking}
+              // userRankings={latestUserRankings}
+              // activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
             />
           </div>
