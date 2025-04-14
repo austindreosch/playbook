@@ -241,6 +241,21 @@ const useMasterDataset = create((set, get) => ({
                 }, {})
             );
 
+            // Filter out players with no stats (points, rebounds, and assists all equal to 0)
+            const filteredPlayers = players.filter(player => {
+                const hasStats =
+                    player.stats.points.value !== 0 ||
+                    player.stats.rebounds.value !== 0 ||
+                    player.stats.assists.value !== 0;
+
+                return hasStats;
+            });
+
+            // Replace the players array with the filtered version
+            const activePlayers = filteredPlayers;
+
+
+
             // Inject projected stats into existing players
             const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
                 const teamAbbreviation = playerStats.team?.abbreviation ||
@@ -295,7 +310,7 @@ const useMasterDataset = create((set, get) => ({
             }) || [];
 
             // Inject projected stats into existing players
-            const playerMap = regularSeasonPlayers.reduce((acc, player) => {
+            const playerMap = activePlayers.reduce((acc, player) => {
                 acc[player.info.playerId] = player;
                 return acc;
             }, {});
@@ -465,6 +480,8 @@ const useMasterDataset = create((set, get) => ({
                 //     [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
                 // );
             }
+
+            console.log('NBA Dataset Finalized:', playersWithProjections);
 
             const newState = {
                 nba: {
@@ -648,13 +665,18 @@ const useMasterDataset = create((set, get) => ({
                 return acc;
             }, {});
 
-            const mergedPlayers = Object.values(mergedPlayersMap); //after handling duplicates
+            // Filter out players with no meaningful stats (no receiving, rushing, or passing yards)
+            const mergedPlayers = Object.values(mergedPlayersMap).filter(player => {
+                return player.stats.receiving.recYards > 0 ||
+                    player.stats.rushing.rushYards > 0 ||
+                    player.stats.passing.passYards > 0;
+            });
 
             // Get team stats from the raw fetched data
             const teamStats = get().rawFetchedData?.nflStats?.teamStatsTotals || [];
             // Process the player data with advanced stats using the utility function
             const playersWithAdvancedStats = processNflPlayerData(mergedPlayers, teamStats);
-            console.log('playersWithAdvancedStats', playersWithAdvancedStats);
+            console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
 
 
             // Now playersWithAdvancedStats contains all the advanced metrics calculated in nflAdvancedStats.js

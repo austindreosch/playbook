@@ -50,9 +50,11 @@ const AddRankingListButton = ({ rankings, dataset }) => {
         setIsSubmitting(true);
         setError(null);
 
+        let newListId = null; // Variable to store the new list ID
+
         try {
-            // Create the rankings list - either with provided rankings or empty
-            const response = await fetch('/api/user-rankings/create', {
+            // 1. Create the rankings list
+            const createResponse = await fetch('/api/user-rankings/create', { // Renamed 'response' to 'createResponse'
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -61,6 +63,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     name: formData.name,
                     format: formData.format,
                     scoring: formData.scoring,
+                    ...(formData.sport === 'NFL' && formData.scoring === 'Points' && { pprType: formData.pprType || 'PPR' }),
                     source: formData.source,
                     rankings: rankings ? rankings.map(player => ({
                         playerId: player.playerId,
@@ -78,16 +81,38 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                 })
             });
 
-            if (!response.ok) {
-                // Try to get more detailed error information
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || `Failed to save rankings (${response.status})`);
+            if (!createResponse.ok) {
+                const errorData = await createResponse.json().catch(() => ({}));
+                throw new Error(errorData.error || `Failed to save rankings (${createResponse.status})`);
             }
 
-            // Refresh the rankings list
+            // 2. Get the new List ID from the response
+            const createResult = await createResponse.json();
+            newListId = createResult.listId; // Store the ID
+
+            // 3. Refresh the overall list of rankings (for the side panel)
             await fetchUserRankings();
 
-            // Close the dialog and reset form
+            // 4. Fetch the newly created ranking data specifically
+            if (newListId) {
+                const fetchNewRankingResponse = await fetch(`/api/user-rankings/${newListId}`);
+                if (!fetchNewRankingResponse.ok) {
+                    throw new Error(`Failed to fetch newly created ranking (${fetchNewRankingResponse.status})`);
+                }
+                const newRankingData = await fetchNewRankingResponse.json();
+
+                // 5. Set the new ranking as active in the store
+                useUserRankings.getState().setActiveRanking(newRankingData);
+                // Also update the local activeRankingId state in RankingsPage if needed,
+                // though ideally RankingsPage reads directly from the store's activeRanking.
+                // If RankingsPage uses a local state 'activeRankingId', you'd need to lift state up
+                // or pass a setter function down. Assuming it relies on the store state now.
+            } else {
+                console.warn("Could not get new list ID from creation response.");
+            }
+
+
+            // 6. Close the dialog and reset form
             setOpen(false);
             setFormData({
                 sport: 'NBA',
@@ -97,9 +122,11 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                 name: ''
             });
             setError(null);
+
         } catch (error) {
-            console.error('Error creating ranking list:', error);
-            setError(error.message || 'Failed to create ranking list. Please try again.');
+            console.error('Error during ranking creation/activation:', error);
+            setError(error.message || 'Failed to create or activate ranking list. Please try again.');
+            // Don't automatically set active if something failed
         } finally {
             setIsSubmitting(false);
         }
@@ -128,10 +155,18 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                             Sport
                         </Label>
                         <Tabs value={formData.sport} className="col-span-3"
-                            onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
+                            onValueChange={(value) => {
+                                setFormData(prev => ({
+                                    ...prev,
+                                    sport: value,
+                                    // If the new sport is NFL, force scoring to Points,
+                                    // otherwise keep the existing scoring value.
+                                    scoring: value === 'NFL' ? 'Points' : prev.scoring
+                                }));
+                            }}>
                             <TabsList className="grid w-full grid-cols-3">
                                 <TabsTrigger value="NBA">NBA</TabsTrigger>
-                                <TabsTrigger disabled value="NFL">NFL</TabsTrigger>
+                                <TabsTrigger value="NFL">NFL</TabsTrigger>
                                 <TabsTrigger disabled value="MLB">MLB</TabsTrigger>
                             </TabsList>
                         </Tabs>
@@ -144,7 +179,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                         <Tabs value={formData.format} className="col-span-3"
                             onValueChange={(value) => setFormData(prev => ({ ...prev, format: value }))}>
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger disabled value="Redraft">Redraft</TabsTrigger>
+                                <TabsTrigger disabled={formData.sport === 'NFL'} value="Redraft">Redraft</TabsTrigger>
                                 <TabsTrigger value="Dynasty">Dynasty</TabsTrigger>
                             </TabsList>
                         </Tabs>
@@ -157,8 +192,8 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                         <Tabs value={formData.scoring} className="col-span-3"
                             onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="Categories">Categories</TabsTrigger>
-                                <TabsTrigger disabled value="Points">Points</TabsTrigger>
+                                <TabsTrigger value="Categories" disabled={formData.sport === 'NFL'}>Categories</TabsTrigger>
+                                <TabsTrigger value="Points" disabled={formData.sport === 'NBA' || formData.sport === 'MLB'}>Points</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -182,6 +217,22 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                             </TabsList>
                         </Tabs>
                     </div>
+
+                    {formData.sport === 'NFL' && (
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="pprType" className="text-right">
+                                PPR Type
+                            </Label>
+                            <Tabs value={formData.pprType || 'PPR'} className="col-span-3"
+                                onValueChange={(value) => setFormData(prev => ({ ...prev, pprType: value }))}>
+                                <TabsList className="grid w-full grid-cols-3">
+                                    <TabsTrigger value="Non-PPR">Non-PPR</TabsTrigger>
+                                    <TabsTrigger value="Half-PPR">Half-PPR</TabsTrigger>
+                                    <TabsTrigger value="Full-PPR">Full-PPR</TabsTrigger>
+                                </TabsList>
+                            </Tabs>
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="listName" className="text-right">

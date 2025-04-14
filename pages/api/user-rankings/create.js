@@ -62,7 +62,7 @@ const sportConfigs = {
         }
     },
     NFL: {
-        positions: ['All', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'],
+        positions: ['All', 'QB', 'RB', 'WR', 'TE',],
         categories: {
             'PPG': { enabled: true, multiplier: 1 }, // Fantasy Points Per Game ✅
             'PPS': { enabled: true, multiplier: 1 }, // Fantasy Points Per Snap ✅
@@ -78,17 +78,17 @@ const sportConfigs = {
             'FPS_NoPPR': { enabled: false, multiplier: 1 }, // Fantasy Points Per Snap (No PPR)
             'OPE_NoPPR': { enabled: false, multiplier: 1 }, // Opportunity Efficiency (No PPR)
             'TFP_NoPPR': { enabled: false, multiplier: 1 }, // Total Fantasy Points (No PPR)
-            'PPG': { enabled: false, multiplier: 1 }, // Plays Per Game 
             'TFP': { enabled: false, multiplier: 1 }, // Total Fantasy Points
             'TTD': { enabled: false, multiplier: 1 }, // Total Touchdowns
             'TD%': { enabled: false, multiplier: 1 }, // Touchdown Rate
-            'YPC': { enabled: false, multiplier: 1 }, // Yards Per Carry
-            'YPG': { enabled: false, multiplier: 1 }, // Yards Per Game
             'YPO': { enabled: false, multiplier: 1 }, // Yards Per Opportunity
-            'YPR': { enabled: false, multiplier: 1 }, // Yards Per Reception
-            'YPT': { enabled: false, multiplier: 1 }, // Yards Per Target
+            'PPG': { enabled: false, multiplier: 1 }, // Plays Per Game 
             'HOG': { enabled: false, multiplier: 1 }, // Hog Rate (Rushing)
-        }
+            // 'YPC': { enabled: false, multiplier: 1 }, // Yards Per Carry
+            // 'YPG': { enabled: false, multiplier: 1 }, // Yards Per Game
+            // 'YPR': { enabled: false, multiplier: 1 }, // Yards Per Reception
+            // 'YPT': { enabled: false, multiplier: 1 }, // Yards Per Target
+        },
     }
 };
 
@@ -114,7 +114,8 @@ export default async function handler(req, res) {
         source,
         positions,
         categories,
-        details
+        details,
+        pprType
     } = req.body;
 
     // Validate required fields
@@ -191,8 +192,8 @@ export default async function handler(req, res) {
                 playerId: player.playerId,
                 name: player.name,
                 rank: player.rank,
-                position: player.position,
-                stats: player.stats || {},
+                // position: player.position,
+                // stats: player.stats || {},
                 notes: '',
                 tags: []
             })),
@@ -200,6 +201,7 @@ export default async function handler(req, res) {
             categories: sportConfigs[sport]?.categories || {},
             details: {
                 ...details,
+                ...(pprType && { pprType }),
                 dateCreated: new Date(),
                 dateUpdated: new Date(),
                 originRankings: {

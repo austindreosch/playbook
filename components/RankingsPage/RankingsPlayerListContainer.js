@@ -61,7 +61,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
             });
 
             // Debugging
-            console.log('Heights:', { viewportHeight, navbarHeight, pageHeaderHeight, columnHeadersHeight, availableHeight });
+            // console.log('Heights:', { viewportHeight, navbarHeight, pageHeaderHeight, columnHeadersHeight, availableHeight });
         };
 
         handleResize();
