@@ -8,24 +8,81 @@ import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
 
+// Helper function to get nested values safely
+const getNestedValue = (obj, path, defaultValue = null) => {
+    // Handle cases where obj is null/undefined or path is not provided
+    if (!obj || typeof path !== 'string') return defaultValue;
 
+    // Handle non-nested paths first (simple keys like 'PPG')
+    if (path.indexOf('.') === -1) {
+        // Check if the key exists directly in the object
+        return obj.hasOwnProperty(path) ? obj[path] : defaultValue;
+    }
 
+    // Handle nested paths (like 'passing.passYards')
+    const keys = path.split('.');
+    let value = obj;
+    for (const key of keys) {
+        // Ensure value is an object and the key exists
+        if (value && typeof value === 'object' && key in value) {
+            value = value[key];
+        } else {
+            return defaultValue; // Path doesn't fully exist
+        }
+    }
+    return value; // Return the final value/object found at the path
+};
 
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats }) => {
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
-            {categories.map((statKey) => {
-                const stat = stats[statKey];
+            {categories.map((statPathOrKey) => {
+                // Get the data using the path or key
+                const statData = getNestedValue(stats, statPathOrKey);
+
+                // Determine the value to display
+                let displayValue = '-'; // Default placeholder
+                if (statData !== null && statData !== undefined) {
+                    // Check if it's the NBA-like structure { value: ..., color: ... }
+                    if (typeof statData === 'object' && 'value' in statData) {
+                        displayValue = statData.value;
+                    } else {
+                        // Otherwise, assume statData is the raw value (NFL-like)
+                        displayValue = statData;
+                    }
+                }
+
+                // Determine title (use path/key as fallback)
+                const title = (statData && typeof statData === 'object' && statData.abbreviation)
+                    ? `${statData.abbreviation}: ${displayValue}`
+                    : `${statPathOrKey}: ${displayValue}`;
+
+                // Determine background color (only if NBA-like structure)
+                const bgColor = (statData && typeof statData === 'object' && statData.color)
+                    ? statData.color
+                    : undefined; // No color for raw values
+
+                // Format the display value (handle numbers, nulls, zeros)
+                let formattedValue = displayValue;
+                if (typeof displayValue === 'number') {
+                    formattedValue = displayValue.toFixed(1); // Format numbers to 1 decimal place
+                    if (formattedValue.endsWith('.0')) {
+                        formattedValue = formattedValue.slice(0, -2); // Remove .0 for whole numbers
+                    }
+                } else if (displayValue === null || displayValue === undefined) {
+                    formattedValue = '-'; // Use placeholder for null/undefined
+                }
+
                 return (
                     <div
-                        key={statKey}
+                        key={statPathOrKey}
                         className="flex-1 text-center h-full flex items-center justify-center select-none"
-                        title={`${stat?.abbreviation || statKey}: ${stat?.value}`}
-                        style={{ backgroundColor: stat?.color }}
+                        title={title}
+                        style={{ backgroundColor: bgColor }} // Apply color if available
                     >
                         <span className="text-sm text-pb_darkgray">
-                            {stat?.value === 0 ? '0' : stat?.value?.toFixed(1)}
+                            {formattedValue}
                         </span>
                     </div>
                 );
@@ -40,24 +97,51 @@ StatsSection.displayName = 'StatsSection';
 const StatsSectionSecondary = memo(({ categories, stats }) => {
     return (
         <div className="flex w-full h-full gap-[3px]">
-            {categories.map((statKey) => {
-                const stat = stats[statKey];
+            {categories.map((statPathOrKey) => {
+                // Get the data using the path or key
+                const statData = getNestedValue(stats, statPathOrKey);
+
+                let displayValue = '-';
+                if (statData !== null && statData !== undefined) {
+                    if (typeof statData === 'object' && 'value' in statData) {
+                        displayValue = statData.value;
+                    } else {
+                        displayValue = statData;
+                    }
+                }
+
+                const title = (statData && typeof statData === 'object' && statData.abbreviation)
+                    ? `${statData.abbreviation}: ${displayValue}`
+                    : `${statPathOrKey}: ${displayValue}`;
+
+                const bgColor = (statData && typeof statData === 'object' && statData.color)
+                    ? statData.color
+                    : undefined;
+
+                let formattedValue = displayValue;
+                if (typeof displayValue === 'number') {
+                    formattedValue = displayValue.toFixed(1);
+                    if (formattedValue.endsWith('.0')) {
+                        formattedValue = formattedValue.slice(0, -2);
+                    }
+                } else if (displayValue === null || displayValue === undefined) {
+                    formattedValue = '-';
+                }
+
                 return (
                     <div
-                        key={statKey}
+                        key={statPathOrKey}
                         className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-gray-200 border border-gray-300 rounded-sm relative shadow-sm"
-                        title={`${stat?.abbreviation || statKey}: ${stat?.value}`}
+                        title={title}
                     >
                         <div className="text-sm text-pb_darkgray z-10">
                             <div className="flex items-center justify-center w-full pb-2.5">
-                                {stat?.value === 0 ? '0' : stat?.value?.toFixed(1)}
+                                {formattedValue}
                             </div>
-
                         </div>
-                        <div style={{ backgroundColor: stat?.color }} className="absolute bottom-0 w-full h-2.5 border-t border-gray-300">
+                        <div style={{ backgroundColor: bgColor }} className="absolute bottom-0 w-full h-2.5 border-t border-gray-300">
                         </div>
                     </div>
-
                 );
             })}
         </div >
@@ -67,6 +151,7 @@ const StatsSectionSecondary = memo(({ categories, stats }) => {
 StatsSectionSecondary.displayName = 'StatsSectionSecondary';
 
 
+// 
 
 const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, onExpand }) => {
     const rowRef = useRef(null);

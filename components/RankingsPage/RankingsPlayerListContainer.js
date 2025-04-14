@@ -13,17 +13,71 @@ const PLAYERS_PER_PAGE = 100;
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
-const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
-    // console.log('Sport:', sport);
-    // console.log('Dataset structure:', dataset);
-    // console.log('Sport-specific data:', dataset?.[sport.toLowerCase()]);
+// --- Manual Mapping for NFL Stats --- 
+// TODO: Fill this map with the correct paths for your NFL player.stats structure
+const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
+    // --- Advanced / Other (Examples - User needs to confirm/add these) --- 
+    'PPG': 'advanced.fantasyPointsPerGame',
+    'PPS': 'advanced.fantasyPointsPerSnap',
+    'OPG': 'advanced.opportunitiesPerGame',
+    'OPE': 'advanced.opportunityEfficiency',
+    'YD%': 'advanced.yardShare',
+    'PR%': 'advanced.productionShare',
+    'TD%': 'advanced.touchdownRate',
+    'BP%': 'advanced.bigPlayRate',
+    'TO%': 'advanced.turnoverRate',
 
+    // 'PPG_NoPPR': 'advanced.fantasyPointsPerGameNoPPR',
+    // 'PPS_NoPPR': 'advanced.fantasyPointsPerSnapNoPPR',
+    // 'TFP_NoPPR': 'advanced.totalFantasyPointsNoPPR',
+    // 'OPE_NoPPR': 'advanced.opportunityEfficiencyNoPPR',
+    // 'TFP': 'advanced.totalFantasyPointsPPR',
+    // 'TS%': 'advanced.targetShare',
+    // 'TTD': 'advanced.totalTouchdowns',
+    // 'YPO': 'advanced.yardsPerOpportunity',
+    // 'PPG': 'advanced.playsPerGame',
+    // 'HOG': 'advanced.hogRate',
+    // 'YPG': 'advanced.yardsPerGame',
+    // 'YPC': 'advanced.yardsPerCarry',
+    // 'YPR': 'advanced.yardsPerReception',
+    // 'YPT': 'advanced.yardsPerTarget',
+
+    // --- Passing --- 
+    // 'PassYds': 'passing.passYards', // Example
+    // 'PassTD': 'passing.passTD',    // Example
+    // 'PassInt': 'passing.passInt',  // Example
+    // 'PassAtt': 'passing.passAtt',  // Example - Add if needed
+    // 'PassComp': 'passing.passComp',// Example - Add if needed
+    // 'Pass20Plus': 'passing.pass20Plus', // Example - Add if needed
+    // 'PassCompPct': 'passing.passCompPct', // Example - Add if needed
+
+    // // --- Rushing --- 
+    // 'RushYds': 'rushing.rushYards', // Example
+    // 'RushTD': 'rushing.rushTD',    // Example
+    // 'RushAtt': 'rushing.rushAtt',  // Example - Add if needed
+    // 'Rush20Plus': 'rushing.rush20Plus',  // Example - Add if needed
+
+    // // --- Receiving --- 
+    // 'RecYds': 'receiving.recYards',  // Example
+    // 'RecTD': 'receiving.recTD',     // Example
+    // 'Receptions': 'receiving.receptions', // Example - Add if needed
+    // 'Targets': 'receiving.targets',   // Example - Add if needed
+    // 'Rec20Plus': 'receiving.rec20Plus', // Example - Add if needed
+
+    // 'Fmb': 'other.fumbles', // Placeholder - NEEDS CONFIRMATION
+    // 'FmbLst': 'other.fumblesLost', // Placeholder - NEEDS CONFIRMATION
+    // 'GP': 'other.gamesPlayed', // Placeholder - NEEDS CONFIRMATION
+    // 'GS': 'other.gamesStarted', // Placeholder - NEEDS CONFIRMATION
+    // 'Snaps': 'other.offenseSnaps', // Placeholder - NEEDS CONFIRMATION
+
+};
+
+const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [chosenCategories, setChosenCategories] = useState([]);
-    const [statMappings, setStatMappings] = useState({});
     const [rankedPlayers, setRankedPlayers] = useState([]);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
     const [expandedRows, setExpandedRows] = useState(new Set());
@@ -59,35 +113,12 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                 width: window.innerWidth,
                 height: availableHeight
             });
-
-            // Debugging
-            // console.log('Heights:', { viewportHeight, navbarHeight, pageHeaderHeight, columnHeadersHeight, availableHeight });
         };
 
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-    // Create mapping of abbreviations to stat keys when data is loaded
-    useEffect(() => {
-        if (dataset?.[sport.toLowerCase()]?.players?.length) {
-            // Get the first player's stats to analyze the structure
-            const firstPlayer = dataset[sport.toLowerCase()].players[0];
-            const mappings = {};
-
-            // Look through all stats of the first player to find matching abbreviations
-            Object.entries(firstPlayer.stats).forEach(([key, stat]) => {
-                if (stat?.abbreviation) {
-                    mappings[stat.abbreviation] = key;
-                }
-            });
-
-            setStatMappings(mappings);
-            setPlayers(dataset[sport.toLowerCase()].players);
-            // console.log(`${sport} stat mappings created:`, mappings);
-        }
-    }, [dataset, sport]);
 
     // Create a function that:
     // Takes an 'activeRanking' object as input
@@ -118,7 +149,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
         });
 
         // Combine ranking data with player data
-        return rankingPlayers.map((rankingPlayer) => {
+        const combinedPlayers = rankingPlayers.map((rankingPlayer) => {
             // Try to find player by ID using playerId from the ranking
             let playerData = playerDataMap.get(rankingPlayer.playerId);
 
@@ -131,46 +162,65 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
                 stats: playerData?.stats || {}
             };
 
-            // console.log('Player stats:', combinedPlayer.stats);
             return combinedPlayer;
         });
+
+        return combinedPlayers;
     }, [dataset, sport]);
 
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
         const processedPlayers = processRankingData(activeRanking);
         setRankedPlayers(processedPlayers);
-    }, [activeRanking, processRankingData]);
+    }, [activeRanking, processRankingData, sport]);
 
-    // Update categories when activeRanking changes
+    // Update categories and chosen stat keys when activeRanking or dataset changes
     useEffect(() => {
-        if (!activeRanking?.categories) {
-            // console.log('No categories found');
+        const currentSport = sport.toLowerCase(); // Get current sport once
+
+        // Ensure necessary data exists before proceeding
+        if (!activeRanking?.categories || !dataset?.[currentSport]?.players?.length) {
+            setChosenCategories([]); // Clear if no categories or data
             return;
         }
 
-        // Get enabled categories and map them to their corresponding stat keys
-        const enabledCategories = Object.entries(activeRanking.categories)
+        // 1. Determine the mapping strategy
+        let statPathMapping = {}; // Use this to map abbrev -> actual path/key
+
+        if (currentSport === 'nfl') {
+            // --- Strategy for NFL: Use the predefined manual map --- 
+            statPathMapping = NFL_STAT_ABBREVIATION_TO_PATH_MAP;
+            // console.log('[NFL] Using manual stat path mappings:', statPathMapping);
+        } else {
+            // --- Strategy for NBA/Other: Generate from abbreviations --- 
+            const firstPlayer = dataset[currentSport].players[0];
+            Object.entries(firstPlayer.stats).forEach(([key, stat]) => {
+                if (stat?.abbreviation) {
+                    statPathMapping[stat.abbreviation] = key;
+                }
+            });
+            // console.log(`[${currentSport.toUpperCase()}] Generated mappings from abbreviations:`, statPathMapping);
+        }
+
+
+
+        // 2. Calculate chosenCategories (which are now the actual paths/keys)
+        const enabledCategoryPaths = Object.entries(activeRanking.categories)
             .filter(([_, value]) => value.enabled)
-            .map(([abbrev]) => statMappings[abbrev] || abbrev);
+            // Map the abbreviation from the category to its actual path using the determined map
+            .map(([abbrev]) => {
+                const path = statPathMapping[abbrev];
+                if (!path && currentSport === 'nfl') {
+                    console.warn(`[NFL Mapping] No path found in NFL_STAT_ABBREVIATION_TO_PATH_MAP for abbreviation: "${abbrev}". Falling back to using abbreviation itself.`);
+                }
+                return path || abbrev; // Fallback to abbrev if path not found
+            });
 
-        setChosenCategories(enabledCategories);
-    }, [activeRanking?.categories, statMappings]);
 
-    // Update stats and weights when activeRanking changes
-    useEffect(() => {
-        if (!activeRanking?.categories) return;
 
-        // Filter enabled categories and get their weights
-        const enabledCategories = Object.entries(activeRanking.categories)
-            .filter(([_, value]) => value.enabled)
-            .reduce((acc, [key, value]) => {
-                acc[key] = value.multiplier || 1;
-                return acc;
-            }, {});
-
-        setChosenCategories(Object.keys(enabledCategories));
-    }, [activeRanking?.categories]);
+        setChosenCategories(enabledCategoryPaths); // State now holds paths/keys
+        // Depend on activeRanking categories, the specific dataset for the sport, and the sport itself
+    }, [activeRanking?.categories, dataset?.[sport.toLowerCase()], sport]); // Dependencies updated
 
     // Fetch data when component mounts or sport changes
     useEffect(() => {
@@ -274,13 +324,6 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
     }, [paginatedPlayers, sport, chosenCategories, expandedRows, handleRowExpand]);
 
     const sportKey = sport.toLowerCase();
-    // console.log('Checking loading state:', {
-    //     sportKey,
-    //     hasDataset: !!dataset,
-    //     hasSportData: !!dataset?.[sportKey],
-    //     hasPlayers: !!dataset?.[sportKey]?.players,
-    //     playersLength: dataset?.[sportKey]?.players?.length
-    // });
 
     if (!dataset) {
         return <div>Loading dataset...</div>;

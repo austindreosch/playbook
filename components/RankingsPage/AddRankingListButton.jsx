@@ -17,6 +17,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
         format: 'Dynasty',
         scoring: 'Categories',
         source: 'Experts',
+        pprType: 'PPR',
         name: ''
     });
     const [open, setOpen] = useState(false);

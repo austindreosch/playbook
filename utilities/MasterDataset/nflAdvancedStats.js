@@ -7,7 +7,43 @@
  * @returns {Object} - An object containing the calculated advanced stats.
  */
 
+// --- Helper Functions --- 
+
+// Clamp function to constrain a value within a range
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+}
+
+// Function to convert hex color to RGBA
+function hexToRgba(hex, alpha) {
+    if (!hex || typeof hex !== 'string') return 'rgba(255, 255, 255, 0)'; // Default transparent
+    let r = 0, g = 0, b = 0;
+    // 3 digits
+    if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+        // 6 digits
+    } else if (hex.length === 7) {
+        r = parseInt(hex[1] + hex[2], 16);
+        g = parseInt(hex[3] + hex[4], 16);
+        b = parseInt(hex[5] + hex[6], 16);
+    }
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function _calculateAdvancedNflStats(player, teamStats = {}) {
+    // --- Debugging Specific Player --- 
+    const targetPlayerName = "Jordan Love"; // Adjust name/ID as needed
+    const shouldLog = player.info?.fullName === targetPlayerName;
+
+    if (shouldLog) {
+        console.log(`--- Debugging _calculateAdvancedNflStats for ${targetPlayerName} ---`);
+        console.log("Input Player Stats (pPass, pRush, pRec):", player.stats?.passing, player.stats?.rushing, player.stats?.receiving);
+        console.log("Input Team Stats:", teamStats);
+    }
+    // ----------------------------------
+
     const advancedStats = {};
     const pStats = player.stats; // Shorthand for player stats
     const pPass = pStats.passing || {};
@@ -66,12 +102,13 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     const teamTargets = teamStats.teamTargets || 0; // Potentially derived, check teamStatsMap creation
     const teamPassYards = teamStats.teamPassYards || 0;
     const teamRushYards = teamStats.teamRushYards || 0;
-    const teamRecYards = teamStats.teamRecYards || 0;
+    // const teamRecYards = teamStats.teamRecYards || 0; // No longer needed for totalTeamYards
     // Get completions and receptions needed for teamActionPlays
     const teamPassCompletions = teamStats.teamPassCompletions || 0;
     const teamReceptions = teamStats.teamReceptions || 0;
 
-    const totalTeamYards = teamPassYards + teamRushYards + teamRecYards;
+    // Corrected: Standard definition is Pass + Rush
+    const totalTeamYards = teamPassYards + teamRushYards;
     // Correctly calculate teamActionPlays using map keys
     const teamActionPlays = teamPassCompletions + teamRushAtt + teamReceptions;
 
@@ -91,6 +128,13 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
 
     // Yard Share % (YS%)
     advancedStats.yardShare = totalTeamYards > 0 ? parseFloat(((totalPlayerYards / totalTeamYards) * 100).toFixed(1)) : 0.0;
+
+    if (shouldLog) {
+        console.log(`Player Total Yards: ${totalPlayerYards}`);
+        console.log(`Team Total Yards: ${totalTeamYards}`);
+        console.log(`Calculated Yard Share: ${advancedStats.yardShare}`);
+        console.log(`--- End Debugging ${targetPlayerName} ---`);
+    }
 
     // Big Play Rate % (BP%)
     advancedStats.bigPlayRate = actionPlays > 0 ? parseFloat(((totalPlayerBigPlays / actionPlays) * 100).toFixed(1)) : 0.0;
@@ -181,30 +225,18 @@ function calculateZScore(value, mean, stdDev, invert = false) {
  * @param {number} zScore - The Z-score.
  * @returns {string} - Hex color code.
  */
-function getColorForZScore(zScore) {
-    // Normalize zScore from [-3, 3] to [0, 1]
-    const normalized = (Math.max(-3, Math.min(3, zScore)) + 3) / 6;
-
-    // Simple Green -> Yellow -> Red gradient
-    // Green (0) -> Yellow (0.5) -> Red (1) based on normalized score
-    let r, g, b = 0;
-    if (normalized < 0.5) {
-        // Green to Yellow
-        r = Math.round(255 * (normalized * 2));
-        g = 255;
-    } else {
-        // Yellow to Red
-        r = 255;
-        g = Math.round(255 * (1 - (normalized - 0.5) * 2));
+function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue) {
+    // If statValue is 0, force full deep red
+    if (statValue === 0) {
+        return hexToRgba(baseNeg, 1.0);
     }
-
-    // Convert RGB to Hex
-    const toHex = (c) => {
-        const hex = c.toString(16);
-        return hex.length === 1 ? "0" + hex : hex;
-    };
-
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    const clampedZ = clamp(zScore, -2, 2);
+    const ratio = Math.abs(clampedZ) / 2;
+    const minAlpha = 0.05;
+    const maxAlpha = 1.0;
+    const alpha = minAlpha + ratio * (maxAlpha - minAlpha);
+    const baseColor = zScore >= 0 ? basePos : baseNeg;
+    return hexToRgba(baseColor, alpha);
 }
 
 /**
@@ -322,7 +354,7 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
             } else {
                 console.warn(`Invalid value for Z-score calculation: Player ${player.info?.id}, Stat ${statKey}, Value: ${originalValue}`);
             }
-            const color = getColorForZScore(zScore);
+            const color = getColorForZScore(zScore, '#59cd90', '#ee6352', originalValue);
 
             advancedStatsWithZ[statKey] = {
                 value: originalValue, // Keep the original calculated value

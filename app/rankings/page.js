@@ -142,6 +142,7 @@ export default function RankingsPage() {
       const rankingData = await response.json();
       console.log('Active Ranking Data:', rankingData);
       setActiveRanking(rankingData);
+      setSelectedSport(rankingData.sport);
     } catch (error) {
       console.error('Error loading ranking:', error);
       setError(error.message);
@@ -187,10 +188,32 @@ export default function RankingsPage() {
         </div>
       )}
 
-      {!latestUserRankings ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600 mb-4">No rankings available yet.</p>
-          <p className="text-sm text-gray-500">Create your first rankings list to get started.</p>
+      {latestUserRankings.length === 0 ? (
+        <div className="text-center py-12 px-4 bg-gradient-to-b from-white to-gray-50 rounded-lg shadow-sm border border-gray-100">
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-pb_blue mb-4">Welcome to the Rankings Hub</h2>
+            <p className="text-gray-600 mb-6">Create personalized rankings for NBA, NFL, and MLB to track your favorite players and make better fantasy decisions.</p>
+
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
+              <h3 className="font-semibold text-gray-800 mb-3">Getting Started:</h3>
+              <ol className="text-left text-gray-600 space-y-2 mb-4">
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0">1</span>
+                  <span>Click the "Create Rankings List" button above</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0">2</span>
+                  <span>Select your sport, format and scoring preferences</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0">3</span>
+                  <span>Customize your rankings to match your strategy</span>
+                </li>
+              </ol>
+            </div>
+
+            <AddRankingListButton dataset={datasetForSelectedSport} />
+          </div>
         </div>
       ) : (
         <div className="flex gap-6 relative">

@@ -64,30 +64,29 @@ const sportConfigs = {
     NFL: {
         positions: ['All', 'QB', 'RB', 'WR', 'TE',],
         categories: {
-            'PPG': { enabled: true, multiplier: 1 }, // Fantasy Points Per Game ✅
-            'PPS': { enabled: true, multiplier: 1 }, // Fantasy Points Per Snap ✅
-            'OPG': { enabled: true, multiplier: 1 }, // Opportunites Per Game ✅
-            'OPE': { enabled: true, multiplier: 1 }, // Opportunity Efficiency ✅
-            'YD%': { enabled: true, multiplier: 1 }, // Yard Share ✅
-            'PS%': { enabled: true, multiplier: 1 }, // Production Share ✅ 
-            'TS%': { enabled: true, multiplier: 1 }, // Touchdown Rate ✅
-            'BP%': { enabled: true, multiplier: 1 }, // Big Play Rate ✅
-            'TO%': { enabled: true, multiplier: 1 }, // Turnover Rate ✅
-            // Other
-            'FPG_NoPPR': { enabled: false, multiplier: 1 }, // Fantasy Points Per Game (No PPR)
-            'FPS_NoPPR': { enabled: false, multiplier: 1 }, // Fantasy Points Per Snap (No PPR)
-            'OPE_NoPPR': { enabled: false, multiplier: 1 }, // Opportunity Efficiency (No PPR)
-            'TFP_NoPPR': { enabled: false, multiplier: 1 }, // Total Fantasy Points (No PPR)
-            'TFP': { enabled: false, multiplier: 1 }, // Total Fantasy Points
-            'TTD': { enabled: false, multiplier: 1 }, // Total Touchdowns
-            'TD%': { enabled: false, multiplier: 1 }, // Touchdown Rate
-            'YPO': { enabled: false, multiplier: 1 }, // Yards Per Opportunity
-            'PPG': { enabled: false, multiplier: 1 }, // Plays Per Game 
-            'HOG': { enabled: false, multiplier: 1 }, // Hog Rate (Rushing)
-            // 'YPC': { enabled: false, multiplier: 1 }, // Yards Per Carry
-            // 'YPG': { enabled: false, multiplier: 1 }, // Yards Per Game
-            // 'YPR': { enabled: false, multiplier: 1 }, // Yards Per Reception
-            // 'YPT': { enabled: false, multiplier: 1 }, // Yards Per Target
+            'PPG': { enabled: true, multiplier: 1, description: 'Fantasy Points Per Game', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receptions × 1) + (Receiving TDs × 6) / Games Played' },
+            'PPS': { enabled: true, multiplier: 1, description: 'Fantasy Points Per Snap', formula: 'Total Fantasy Points / Offensive Snaps' },
+            'OPG': { enabled: true, multiplier: 1, description: 'Opportunites Per Game', formula: '(Pass Attempts + Rush Attempts + Targets) / Games Played' },
+            'OPE': { enabled: true, multiplier: 1, description: 'Opportunity Efficiency', formula: 'Total Fantasy Points / (Pass Attempts + Rush Attempts + Targets)' },
+            'YD%': { enabled: true, multiplier: 1, description: 'Yard Share', formula: '(Passing Yards + Rushing Yards + Receiving Yards) / (Team Passing Yards + Team Rushing Yards + Team Receiving Yards) × 100' },
+            'PR%': { enabled: true, multiplier: 1, description: 'Production Share', formula: '(Pass Completions + Rush Attempts + Receptions) / (Team Pass Completions + Team Rush Attempts + Team Receptions) × 100' },
+            'TD%': { enabled: true, multiplier: 1, description: 'Touchdown Rate', formula: '(Passing TDs + Rushing TDs + Receiving TDs) / (Pass Attempts + Rush Attempts + Targets) × 100' },
+            'BP%': { enabled: true, multiplier: 1, description: 'Big Play Rate', formula: '(Pass 20+ Yard Plays + Rush 20+ Yard Plays + Rec 20+ Yard Plays) / (Pass Attempts + Rush Attempts + Receptions) × 100' },
+            'TO%': { enabled: true, multiplier: 1, description: 'Turnover Rate', formula: '(Interceptions + Fumbles Lost) / (Pass Attempts + Rush Attempts + Targets) × 100' },
+            // // Other
+            // 'FPG_NoPPR': { enabled: false, multiplier: 1, description: 'Fantasy Points Per Game (No PPR)', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receiving TDs × 6) / Games Played' },
+            // 'FPS_NoPPR': { enabled: false, multiplier: 1, description: 'Fantasy Points Per Snap (No PPR)', formula: 'Total Fantasy Points (No PPR) / Offensive Snaps' },
+            // 'OPE_NoPPR': { enabled: false, multiplier: 1, description: 'Opportunity Efficiency (No PPR)', formula: 'Total Fantasy Points (No PPR) / (Pass Attempts + Rush Attempts + Targets)' },
+            // 'TFP_NoPPR': { enabled: false, multiplier: 1, description: 'Total Fantasy Points (No PPR)', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receiving TDs × 6)' },
+            // 'TFP': { enabled: false, multiplier: 1, description: 'Total Fantasy Points', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receptions × 1) + (Receiving TDs × 6)' },
+            // 'TTD': { enabled: false, multiplier: 1, description: 'Total Touchdowns', formula: 'Passing TDs + Rushing TDs + Receiving TDs' },
+            // 'YPO': { enabled: false, multiplier: 1, description: 'Yards Per Opportunity', formula: '(Passing Yards + Rushing Yards + Receiving Yards) / (Pass Attempts + Rush Attempts + Targets)' },
+            // 'PPG': { enabled: false, multiplier: 1, description: 'Plays Per Game', formula: '(Pass Completions + Rush Attempts + Receptions) / Games Played' },
+            // 'HOG': { enabled: false, multiplier: 1, description: 'Hog Rate (Rushing)', formula: 'Rush Attempts / Team Rush Attempts × 100' },
+            // 'YPG': { enabled: false, multiplier: 1, description: 'Yards Per Game', formula: '(Passing Yards + Rushing Yards + Receiving Yards) / Games Played' },
+            // 'YPC': { enabled: false, multiplier: 1, description: 'Yards Per Carry', formula: 'Rushing Yards / Rush Attempts' },
+            // 'YPR': { enabled: false, multiplier: 1, description: 'Yards Per Reception', formula: 'Receiving Yards / Receptions' },
+            // 'YPT': { enabled: false, multiplier: 1, description: 'Yards Per Target', formula: 'Receiving Yards / Targets' },
         },
     }
 };

@@ -552,7 +552,7 @@ const useMasterDataset = create((set, get) => ({
             // Step 1: Initial Mapping (Result stored in initialPlayers)
             const initialPlayers = seasonalStats.map(playerStats => ({
                 info: {
-                    id: playerStats.player.id,
+                    playerId: playerStats.player.id,
                     firstName: playerStats.player.firstName,
                     lastName: playerStats.player.lastName,
                     fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
@@ -607,7 +607,7 @@ const useMasterDataset = create((set, get) => ({
 
             // Step 2: Handle duplicate players (aggregate stats)
             const mergedPlayersMap = initialPlayers.reduce((acc, player) => {
-                const id = player.info.id;
+                const id = player.info.playerId;
                 if (!acc[id]) {
                     // First time seeing this player, add them directly
                     acc[id] = { ...player };
@@ -794,10 +794,10 @@ const useMasterDataset = create((set, get) => ({
 
     // Selectors
     getPlayers: (sport) => get()[sport].players,
-    getPlayerById: (sport, id) => get()[sport].players.find(p => p.info.id === id),
+    getPlayerById: (sport, id) => get()[sport].players.find(p => p.info.playerId === id),
     getPlayersByTeam: (sport, teamId) => get()[sport].players.filter(p => p.info.teamId === teamId),
     getPlayerProjections: (sport) => get()[sport].players.map(p => p.projections).filter(Boolean),
-    getPlayerProjectionsById: (sport, id) => get()[sport].players.find(p => p.info.id === id)?.projections,
+    getPlayerProjectionsById: (sport, id) => get()[sport].players.find(p => p.info.playerId === id)?.projections,
     getStandings: (sport) => get()[sport].standings,
     getInjuries: (sport) => get()[sport].injuries,
     getTeams: (sport) => get()[sport].teams,
