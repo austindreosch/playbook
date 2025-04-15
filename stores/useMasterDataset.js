@@ -559,7 +559,7 @@ const useMasterDataset = create((set, get) => ({
                     // Store the team info from this specific entry for now
                     team: playerStats.team?.abbreviation || 'FA',
                     teamId: playerStats.team?.id || 'FA',
-                    img: playerStats.player.officialImageSrc,
+                    officialImageSrc: playerStats.player.officialImageSrc,
                     position: playerStats.player.primaryPosition || 'N/A',
                     injuryStatus: playerStats.player.currentInjury,
                     age: playerStats.player.age,
@@ -704,6 +704,7 @@ const useMasterDataset = create((set, get) => ({
             // Calculate state size before setting
             const stateSize = getObjectSize(newState);
             console.log('NFL stats state size:', stateSize, newState);
+            console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
 
             set({
                 nfl: {

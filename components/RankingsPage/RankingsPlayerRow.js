@@ -155,6 +155,7 @@ StatsSectionSecondary.displayName = 'StatsSectionSecondary';
 
 const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, onExpand }) => {
     const rowRef = useRef(null);
+    const [imageLoadError, setImageLoadError] = useState(false);
 
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -227,6 +228,19 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
         }
     };
 
+    // Use player.info.fullName if available, otherwise fallback
+    const playerName = player.info?.fullName || player.name || 'Player Name';
+    const playerPosition = player.info?.position || player.position || 'N/A';
+    const playerImage = player.info?.officialImageSrc || player.info?.img; // Prefer officialImageSrc
+    const team = player.info?.team || 'N/A';
+    const age = player.info?.age || 'N/A';
+    const injuryStatus = player.info?.injuryStatus;
+
+    // Reset image error state if player image src changes
+    useEffect(() => {
+        setImageLoadError(false);
+    }, [playerImage]);
+
     return (
         <div
             ref={(node) => {
@@ -257,13 +271,25 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                     {/* Rank number */}
                     <div className="w-10 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold">{rank}</div>
 
+                    {/* Player Image - Updated Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
-                        {player.info.officialImageSrc && (
+                        {playerImage && !imageLoadError ? ( // Check for valid src AND no error
                             <img
-                                src={player.info.officialImageSrc}
-                                alt={player.info.fullName}
+                                key={playerImage} // Add key to help reset if src changes
+                                src={playerImage}
+                                alt={playerName}
                                 className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
                                 loading="lazy"
+                                width="28"
+                                height="28"
+                                onError={() => setImageLoadError(true)} // Set error state on failure
+                            />
+                        ) : (
+                            // Render fallback if no image src OR if error occurred
+                            <img
+                                src="/avatar-default.png" // <-- Use the default avatar image
+                                alt="Default Avatar"
+                                className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
                                 width="28"
                                 height="28"
                             />
@@ -272,8 +298,8 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
 
                     {/* Player name and position */}
                     <div className="flex items-center gap-2 select-none">
-                        <div className="font-bold">{player.info.fullName || 'Player Name'}</div>
-                        <div className="text-gray-500 text-xs">{player.info.position}</div>
+                        <div className="font-bold">{playerName}</div>
+                        <div className="text-gray-500 text-xs">{playerPosition}</div>
                     </div>
 
                     {isExpanded && (
@@ -325,9 +351,9 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <div className={`h-4 w-8 mb-3 ${player.info.injuryStatus?.playingProbability === 'OUT' ? 'bg-red-500' :
-                                        player.info.injuryStatus?.playingProbability === 'QUESTIONABLE' ? 'bg-yellow-500' :
-                                            player.info.injuryStatus?.playingProbability === 'PROBABLE' ? 'bg-green-500' :
+                                    <div className={`h-4 w-8 mb-3 ${injuryStatus?.playingProbability === 'OUT' ? 'bg-red-500' :
+                                        injuryStatus?.playingProbability === 'QUESTIONABLE' ? 'bg-yellow-500' :
+                                            injuryStatus?.playingProbability === 'PROBABLE' ? 'bg-green-500' :
                                                 'bg-pb_green'
                                         }`}>
 
@@ -335,15 +361,15 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                                     <FlagIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{player.info.team}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{team}</span>
                                     <PeopleGroupIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{player.info.age}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{age}</span>
                                     <CalendarIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{player.info.position}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{playerPosition}</span>
                                     <BullseyeIcon className="w-5 h-5" />
                                 </div>
                             </div>

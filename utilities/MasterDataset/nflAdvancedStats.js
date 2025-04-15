@@ -252,13 +252,21 @@ function calculateZScore(value, mean, stdDev, invert = false) {
  * Determines a color based on the Z-score value using a gradient.
  * Maps Z-scores from -3 to 3 to a green-yellow-red gradient.
  * @param {number} zScore - The Z-score.
- * @returns {string} - Hex color code.
+ * @param {string} [basePos='#59cd90'] - Base hex color for positive scores.
+ * @param {string} [baseNeg='#ee6352'] - Base hex color for negative scores.
+ * @param {number} statValue - The actual stat value (used to force color for 0).
+ * @param {boolean} invert - Whether this stat is inverted (lower is better).
+ * @returns {string} - RGBA color code.
  */
-function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue) {
-    // If statValue is 0, force full deep red
+function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue, invert) {
+    // Handle the zero value case based on inversion
     if (statValue === 0) {
-        return hexToRgba(baseNeg, 1.0);
+        // If inverted (lower is better), 0 is the best score -> return full green
+        // If not inverted (higher is better), 0 is the worst score -> return full red
+        return invert ? hexToRgba(basePos, 1.0) : hexToRgba(baseNeg, 1.0);
     }
+
+    // Proceed with Z-score based coloring for non-zero values
     const clampedZ = clamp(zScore, -2, 2);
     const ratio = Math.abs(clampedZ) / 2;
     const minAlpha = 0.05;
@@ -397,7 +405,7 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
                 const invert = invertedStats.has(statKey);
 
                 let zScore = 0;
-                if (typeof originalValue === 'number' && isFinite(originalValue) && topPlayersForPos.length > 0) {
+                if (topN > 0 && topPlayersForPos.length > 0 && typeof originalValue === 'number' && isFinite(originalValue)) {
                     zScore = calculateZScore(originalValue, mean, stdDev, invert);
                 } else if (topPlayersForPos.length === 0) {
                     // Assign neutral Z-score if no baseline was available
@@ -405,7 +413,7 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
                 } else {
                     console.warn(`Invalid value for Z-score calc: Pos ${position}, Player ${player.info?.id}, Stat ${statKey}, Val ${originalValue}`);
                 }
-                const color = getColorForZScore(zScore, '#59cd90', '#ee6352', originalValue);
+                const color = getColorForZScore(zScore, '#59cd90', '#ee6352', originalValue, invert);
 
                 advancedStatsWithZ[statKey] = {
                     value: originalValue !== undefined ? originalValue : null, // Ensure value exists
