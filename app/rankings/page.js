@@ -33,6 +33,7 @@ export default function RankingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeRankingId, setActiveRankingId] = useState(null);
+  const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
 
   const {
     nba, mlb, nfl,
@@ -130,6 +131,11 @@ export default function RankingsPage() {
     fetchUserRankings();
   }, []); // Only run on mount
 
+  // Add handler function to trigger collapse
+  const handleCollapseAll = () => {
+    setCollapseAllTrigger(prev => prev + 1);
+  };
+
   const handleRankingSelect = async (rankingId) => {
     if (!rankingId) return;
 
@@ -222,6 +228,7 @@ export default function RankingsPage() {
               sport={selectedSport}
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
+              onCollapseAll={handleCollapseAll}
             />
 
             <RankingsPlayerListContainer
@@ -229,6 +236,7 @@ export default function RankingsPage() {
               userRankings={latestUserRankings}
               dataset={datasetForSelectedSport}
               activeRanking={activeRanking}
+              collapseAllTrigger={collapseAllTrigger}
             />
           </div>
 

@@ -16,10 +16,13 @@ import { FilterSelector } from './Selectors/FilterSelector';
 import { PositionSelector } from './Selectors/PositionSelector';
 import { SourceSelector } from './Selectors/SourceSelector';
 
+
+
 const RankingsPlayerListHeader = ({
     sport,
     onSortChange = () => { },
-    onSave = async () => { }
+    onSave = async () => { },
+    onCollapseAll = () => { }
 }) => {
     const { activeRanking, updateCategories, updateRankingName } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
@@ -130,8 +133,8 @@ const RankingsPlayerListHeader = ({
                 <div className="flex items-center w-[40%]">
                     {/* Button 1: BarsIcon (Handles the click) */}
                     <button
-                        onClick={() => setExpanded(!expanded)}
-                        className={`h-10 w-16 flex-shrink-0 flex items-center justify-center hover:bg-gray-600 transition-colors ${expanded ? '' : ''}`}
+                        onClick={() => onCollapseAll()}
+                        className={`h-10 w-16 flex-shrink-0 flex items-center justify-center hover:bg-gray-600 transition-colors`}
                     >
                         <div className="w-10 h-10 flex items-center justify-center">
                             <BarsIcon className={`h-6 w-6 `} />

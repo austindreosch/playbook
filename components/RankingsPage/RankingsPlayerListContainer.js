@@ -72,7 +72,7 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
 
 };
 
-const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
+const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAllTrigger }) => {
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
@@ -119,6 +119,16 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset }) => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // Add useEffect to handle collapsing all rows
+    useEffect(() => {
+        if (collapseAllTrigger > 0) { // Only trigger on subsequent changes
+            setExpandedRows(new Set());
+            if (listRef.current) {
+                listRef.current.resetAfterIndex(0);
+            }
+        }
+    }, [collapseAllTrigger]); // Depend on the trigger prop
 
     // Create a function that:
     // Takes an 'activeRanking' object as input
