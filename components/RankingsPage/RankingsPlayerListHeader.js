@@ -245,7 +245,7 @@ const RankingsPlayerListHeader = ({
                             {isSaving ? (
                                 <ButtonLoading />
                             ) : (
-                                <Button onClick={handleSave} className='bg-pb_blue text-white shadow-md hover:bg-pb_darkblue'>Save Changes</Button>
+                                <Button onClick={handleSave} className='bg-pb_orange text-pb_darkgray shadow-md hover:bg-pb_darkorange'>Save Changes</Button>
                             )}
                             <div className='text-2xs py-2 px-1'>
                                 Last Updated: {new Date(activeRanking?.details?.dateUpdated).toLocaleDateString()}
