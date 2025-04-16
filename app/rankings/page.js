@@ -149,6 +149,7 @@ export default function RankingsPage() {
       console.log('Active Ranking Data:', rankingData);
       setActiveRanking(rankingData);
       setSelectedSport(rankingData.sport);
+      setCollapseAllTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Error loading ranking:', error);
       setError(error.message);
@@ -245,6 +246,7 @@ export default function RankingsPage() {
               // userRankings={latestUserRankings}
               // activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
+              collapseAllTrigger={collapseAllTrigger}
             />
           </div>
         </div>
