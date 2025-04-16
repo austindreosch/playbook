@@ -21,6 +21,15 @@ export default function Home() {
     }
   }, [isLoading, user, router]);
 
+  // Function to handle redirection to rankings page
+  useEffect(() => {
+    if (user) {
+      router.push('/rankings');
+    }
+  }, [user, router]);
+
+
+
   if (isLoading) return <div className='flex justify-center content-align my-auto mx-auto pt-48 h-screen'>
     <ThreeCircles
       height="200"

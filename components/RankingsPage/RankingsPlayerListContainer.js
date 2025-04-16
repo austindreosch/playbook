@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { VariableSizeList as List } from 'react-window';
 
-const PLAYERS_PER_PAGE = 100;
+const PLAYERS_PER_PAGE = 500;
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
