@@ -83,7 +83,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
     const [expandedRows, setExpandedRows] = useState(new Set());
     const listRef = useRef(null);
 
-    const { updateAllPlayerRanks } = useUserRankings();
+    const { updateAllPlayerRanks, saveChanges } = useUserRankings();
 
     // Set up window size measurement
     useEffect(() => {
@@ -265,7 +265,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
 
     // Handler for when dragging ends
     const handleDragEnd = useCallback((event) => {
-        document.body.style.cursor = '';
+        // document.body.style.cursor = '';  // possible problem
         const { active, over } = event;
 
         if (active.id !== over.id) {
@@ -281,11 +281,12 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
             // Update the store state in the next tick to avoid render phase updates
             setTimeout(() => {
                 updateAllPlayerRanks(newOrder.map(item => item.rankingId));
+                saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
         }
 
         setActiveId(null);
-    }, [rankedPlayers, updateAllPlayerRanks]);
+    }, [rankedPlayers, updateAllPlayerRanks, saveChanges]);
 
     // Simple function to get row height based on expanded state
     const getRowHeight = useCallback((index) => {
