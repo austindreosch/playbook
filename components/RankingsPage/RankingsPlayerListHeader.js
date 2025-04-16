@@ -128,14 +128,25 @@ const RankingsPlayerListHeader = ({
             <div className="flex h-10 items-center">
                 {/* Left section with fixed width - must match PlayerRow */}
                 <div className="flex items-center w-[40%]">
+                    {/* Button 1: BarsIcon (Handles the click) */}
                     <button
                         onClick={() => setExpanded(!expanded)}
-                        className={`h-10 w-20 flex items-center justify-center hover:bg-gray-600 transition-colors ${expanded ? 'bg-white border-t border-l border-pb_lightgray' : ''}`}
+                        className={`h-10 w-16 flex-shrink-0 flex items-center justify-center hover:bg-gray-600 transition-colors ${expanded ? '' : ''}`}
                     >
                         <div className="w-10 h-10 flex items-center justify-center">
-                            <BarsIcon className={`h-6 w-6  ${expanded ? 'text-pb_darkgray' : 'text-white'}`} />
+                            <BarsIcon className={`h-6 w-6 `} />
                         </div>
                     </button>
+
+                    {/* Div 2: Empty, hoverable space (Not a button) */}
+                    <div
+                        // Use flex-1 to fill remaining space, add bg-transparent
+                        // Add hover effect here
+                        className="flex-1 h-10 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer"
+                        onClick={() => setExpanded(!expanded)} // Add onClick here if this area should also trigger expand/collapse
+                    >
+                        {/* Intentionally Empty */}
+                    </div>
                 </div>
 
                 {/* Stats Headers - 60% section with exact same structure */}
