@@ -33,6 +33,7 @@ const RankingsPlayerListHeader = ({
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
     const [namePopoverOpen, setNamePopoverOpen] = useState(false);
+    const [isCollapsing, setIsCollapsing] = useState(false);
 
     // Add state for selectors
     const [selectedSource, setSelectedSource] = useState("");
@@ -133,11 +134,22 @@ const RankingsPlayerListHeader = ({
                 <div className="flex items-center w-[40%]">
                     {/* Button 1: BarsIcon (Handles the click) */}
                     <button
-                        onClick={() => onCollapseAll()}
-                        className={`h-10 w-16 flex-shrink-0 flex items-center justify-center hover:bg-gray-600 transition-colors`}
+                        onClick={() => {
+                            setIsCollapsing(true);
+                            onCollapseAll();
+                            // Reset spinner after a short delay
+                            setTimeout(() => setIsCollapsing(false), 500);
+                        }}
+                        disabled={isCollapsing}
+                        className={`h-10 w-16 flex-shrink-0 flex items-center justify-center hover:bg-gray-600 transition-colors ${isCollapsing ? 'cursor-wait' : ''}`}
+                        title="Collapse/Expand All Rows"
                     >
                         <div className="w-10 h-10 flex items-center justify-center">
-                            <BarsIcon className={`h-6 w-6 `} />
+                            {isCollapsing ? (
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                            ) : (
+                                <BarsIcon className={`h-6 w-6 `} />
+                            )}
                         </div>
                     </button>
 
