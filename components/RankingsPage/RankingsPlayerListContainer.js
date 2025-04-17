@@ -147,30 +147,51 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
 
         // Create a map of player IDs to their dataset info for efficient lookup
         const playerDataMap = new Map();
-
-        // Try to map using both info.playerId and id fields
         dataset[sport.toLowerCase()].players.forEach(player => {
-            if (player.info?.playerId) {
-                playerDataMap.set(player.info.playerId, player);
-            }
-            if (player.id) {
-                playerDataMap.set(player.id, player);
+            // Use a consistent ID source if possible, fallback included
+            const id = player.info?.playerId || player.id;
+            if (id) {
+                playerDataMap.set(id, player);
             }
         });
 
-        // Combine ranking data with player data
+
+        // Combine ranking data with player data, handling null playerIds
         const combinedPlayers = rankingPlayers.map((rankingPlayer) => {
-            // Try to find player by ID using playerId from the ranking
-            let playerData = playerDataMap.get(rankingPlayer.playerId);
+            let playerData = null;
+            let isPlaceholder = false;
+            let rankingId = rankingPlayer.playerId; // Default to playerId
+
+            if (rankingPlayer.playerId != null) {
+                // Try to find player by ID using playerId from the ranking
+                playerData = playerDataMap.get(rankingPlayer.playerId);
+            } else {
+                // Handle null playerId (e.g., draft picks, rookies not yet in dataset)
+                isPlaceholder = true;
+                // Log the incoming data for placeholders
+                console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Data:`, rankingPlayer);
+                // Create a unique ID for dnd-kit (assuming rank is unique enough for placeholders)
+                rankingId = `pick-${rankingPlayer.rank}-${rankingPlayer.name || 'unknown'}`;
+                // console.log("Created placeholder:", rankingId, rankingPlayer);
+            }
+
+            // Ensure rankingId is a string for dnd-kit
+            rankingId = String(rankingId);
 
             const combinedPlayer = {
-                rankingId: rankingPlayer.playerId,
+                rankingId: rankingId, // Use the determined rankingId
                 rank: rankingPlayer.rank,
-                name: rankingPlayer.name,
-                position: rankingPlayer.position,
+                name: rankingPlayer.originalName || rankingPlayer.name || 'Unknown Player', // Check originalName first, then name
+                position: rankingPlayer.position || 'N/A', // Provide default position
+                isPlaceholder: isPlaceholder,
                 info: playerData?.info || {},
                 stats: playerData?.stats || {}
             };
+
+            // Log the final assigned name for placeholders
+            if (isPlaceholder) {
+                console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Assigned Name:`, combinedPlayer.name);
+            }
 
             return combinedPlayer;
         });
@@ -293,6 +314,11 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
         const player = paginatedPlayers[index];
         if (!player) return DEFAULT_ROW_HEIGHT;
 
+        // Placeholder rows are never expanded
+        if (player.isPlaceholder) {
+            return DEFAULT_ROW_HEIGHT;
+        }
+
         return expandedRows.has(player.rankingId) ? EXPANDED_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
     }, [paginatedPlayers, expandedRows]);
 
@@ -319,16 +345,19 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
         const player = paginatedPlayers[index];
         if (!player) return null;
 
+        const isPlaceholder = player.isPlaceholder;
+
         return (
             <div style={style}>
                 <RankingsPlayerRow
-                    key={player.rankingId}
+                    key={player.rankingId} // Use the unique rankingId
                     player={player}
                     sport={sport}
                     categories={chosenCategories}
                     rank={player.rank}
-                    isExpanded={expandedRows.has(player.rankingId)}
-                    onExpand={() => handleRowExpand(player.rankingId)}
+                    isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
+                    onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)} // Pass null if placeholder
+                    isPlaceholder={isPlaceholder} // Pass the flag down
                 />
             </div>
         );
@@ -380,15 +409,21 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
                 </SortableContext>
 
                 <DragOverlay adjustScale={false}>
-                    {activeId ? (
-                        <RankingsPlayerRow
-                            player={paginatedPlayers.find(p => p.rankingId === activeId)}
-                            sport={sport}
-                            categories={chosenCategories}
-                            rank={paginatedPlayers.find(p => p.rankingId === activeId)?.rank}
-                            isExpanded={expandedRows.has(activeId)}
-                        />
-                    ) : null}
+                    {activeId ? (() => {
+                        const activePlayer = paginatedPlayers.find(p => p.rankingId === activeId);
+                        if (!activePlayer) return null;
+                        return (
+                            <RankingsPlayerRow
+                                player={activePlayer}
+                                sport={sport}
+                                categories={chosenCategories}
+                                rank={activePlayer.rank}
+                                isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
+                                isPlaceholder={activePlayer.isPlaceholder}
+                            // Note: Drag overlay row doesn't need onExpand
+                            />
+                        );
+                    })() : null}
                 </DragOverlay>
             </DndContext>
 

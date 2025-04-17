@@ -254,7 +254,7 @@ export default async function handler(req, res) {
                             rankings: results.map(r => ({
                                 playerId: r.playerId, // Will be null for unmatched players
                                 rank: r.rank,
-                                originalName: r.name,
+                                name: r.name,
                                 matchType: r.matchType
                             })),
                             version: new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),

@@ -159,7 +159,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
 
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id: player.info.playerId,
+        id: player.rankingId,
         animateLayoutChanges: () => false, // Disable layout animations for better performance
     });
 

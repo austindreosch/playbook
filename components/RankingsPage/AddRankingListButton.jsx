@@ -16,8 +16,9 @@ const AddRankingListButton = ({ rankings, dataset }) => {
         sport: 'NBA',
         format: 'Dynasty',
         scoring: 'Categories',
+        flexSetting: 'Superflex',
+        pprType: 'Full-PPR',
         source: 'Experts',
-        pprType: 'PPR',
         name: ''
     });
     const [open, setOpen] = useState(false);
@@ -53,9 +54,31 @@ const AddRankingListButton = ({ rankings, dataset }) => {
 
         let newListId = null; // Variable to store the new list ID
 
+        // --- Prepare Origin Rankings Data ---
+        let originRankingsPayload = {};
+        let requestSource = formData.source; // Default for non-NFL
+
+        if (formData.sport === 'NFL') {
+            requestSource = 'FantasyCalc'; // Explicit source for NFL
+            const pprMap = { 'Non-PPR': 0, 'Half-PPR': 0.5, 'Full-PPR': 1.0 };
+            originRankingsPayload = {
+                source: requestSource,
+                isDynasty: formData.format === 'Dynasty', // boolean
+                numQbs: formData.flexSetting === 'Superflex' ? 2 : 1, // 2 for SF, 1 for Standard
+                ppr: pprMap[formData.pprType] ?? 1.0 // Default to 1.0 if mapping fails
+                // rankingsId: null // Keep this null, backend finds latest matching base
+            };
+        } else {
+            // For non-NFL sports, just use the selected source name
+            originRankingsPayload = {
+                source: requestSource
+                // rankingsId: null // Backend finds latest matching base for this source
+            };
+        }
+
         try {
             // 1. Create the rankings list
-            const createResponse = await fetch('/api/user-rankings/create', { // Renamed 'response' to 'createResponse'
+            const createResponse = await fetch('/api/user-rankings/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -64,20 +87,14 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     name: formData.name,
                     format: formData.format,
                     scoring: formData.scoring,
-                    ...(formData.sport === 'NFL' && formData.scoring === 'Points' && { pprType: formData.pprType || 'PPR' }),
-                    source: formData.source,
-                    rankings: rankings ? rankings.map(player => ({
-                        playerId: player.playerId,
-                        name: player.name,
-                        rank: player.rank
-                    })) : [],
+                    // Only include pprType if it's relevant (NFL Points)
+                    ...(formData.sport === 'NFL' && { pprType: formData.pprType }),
+                    source: requestSource, // Use the determined source (FantasyCalc or user selection)
+                    rankings: [], // Send empty rankings, backend populates based on originRankings
                     details: {
                         dateCreated: new Date().toISOString(),
                         dateUpdated: new Date().toISOString(),
-                        originRankings: {
-                            source: formData.source,
-                            rankingsId: null  // This will be set by the API using the latest rankings
-                        }
+                        originRankings: originRankingsPayload // Use the prepared payload
                     }
                 })
             });
@@ -160,9 +177,10 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                                 setFormData(prev => ({
                                     ...prev,
                                     sport: value,
-                                    // If the new sport is NFL, force scoring to Points,
-                                    // otherwise keep the existing scoring value.
-                                    scoring: value === 'NFL' ? 'Points' : prev.scoring
+                                    // Reset dependent fields based on new sport
+                                    scoring: value === 'NFL' ? 'Points' : 'Categories', // Force Points for NFL
+                                    format: value === 'NFL' ? 'Dynasty' : prev.format, // Allow Dynasty/Redraft for NFL?
+                                    source: value === 'NFL' ? 'FantasyCalc' : 'Experts' // Set source implicitly for NFL
                                 }));
                             }}>
                             <TabsList className="grid w-full grid-cols-3">
@@ -180,7 +198,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                         <Tabs value={formData.format} className="col-span-3"
                             onValueChange={(value) => setFormData(prev => ({ ...prev, format: value }))}>
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger disabled={formData.sport === 'NFL'} value="Redraft">Redraft</TabsTrigger>
+                                <TabsTrigger value="Redraft">Redraft</TabsTrigger>
                                 <TabsTrigger value="Dynasty">Dynasty</TabsTrigger>
                             </TabsList>
                         </Tabs>
@@ -199,26 +217,46 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                         </Tabs>
                     </div>
 
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="source" className="text-right">
-                            Source
-                        </Label>
-                        <Tabs value={formData.source} className="col-span-3"
-                            onValueChange={(value) => setFormData(prev => ({ ...prev, source: value }))}>
-                            <TabsList className="grid w-full grid-cols-2">
-                                {Object.keys(sourcesPerSport[formData.sport]).map(source => (
-                                    <TabsTrigger
-                                        key={source}
-                                        value={source}
-                                        disabled={!sourcesPerSport[formData.sport][source].enabled}
-                                    >
-                                        {sourcesPerSport[formData.sport][source].name}
-                                    </TabsTrigger>
-                                ))}
-                            </TabsList>
-                        </Tabs>
-                    </div>
+                    {/* Conditionally show Flex Setting for NFL */}
+                    {formData.sport === 'NFL' && (
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="flexSetting" className="text-right">
+                                Flex Type
+                            </Label>
+                            <Tabs value={formData.flexSetting} className="col-span-3"
+                                onValueChange={(value) => setFormData(prev => ({ ...prev, flexSetting: value }))}>
+                                <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="Standard">Standard</TabsTrigger>
+                                    <TabsTrigger value="Superflex">Superflex</TabsTrigger>
+                                </TabsList>
+                            </Tabs>
+                        </div>
+                    )}
 
+                    {/* Conditionally HIDE Source for NFL */}
+                    {formData.sport !== 'NFL' && (
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="source" className="text-right">
+                                Source
+                            </Label>
+                            <Tabs value={formData.source} className="col-span-3"
+                                onValueChange={(value) => setFormData(prev => ({ ...prev, source: value }))}>
+                                <TabsList className="grid w-full grid-cols-2">
+                                    {Object.keys(sourcesPerSport[formData.sport]).map(source => (
+                                        <TabsTrigger
+                                            key={source}
+                                            value={source}
+                                            disabled={!sourcesPerSport[formData.sport][source].enabled}
+                                        >
+                                            {sourcesPerSport[formData.sport][source].name}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </Tabs>
+                        </div>
+                    )}
+
+                    {/* Conditionally show PPR Type for NFL (Points scoring is implicit)*/}
                     {formData.sport === 'NFL' && (
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="pprType" className="text-right">

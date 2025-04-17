@@ -137,17 +137,46 @@ export default async function handler(req, res) {
         await client.connect();
         const db = client.db('playbook');
 
-        // Get the latest expert rankings for this sport/format
+        // --- Dynamically build the query to find the base ranking --- 
+        const originRankings = details?.originRankings || {};
+        let baseRankingQuery = {
+            sport: sport,
+            isLatest: true
+        };
+
+        if (sport === 'NFL') {
+            // Convert numerical ppr back to string for DB query
+            let pprSettingString = '1ppr'; // Default from your structure
+            if (originRankings.ppr === 0) pprSettingString = '0ppr';
+            else if (originRankings.ppr === 0.5) pprSettingString = '0.5ppr';
+            // Add other cases if needed, e.g., 1.0 -> '1ppr' (already default)
+
+            baseRankingQuery = {
+                ...baseRankingQuery,
+                source: 'FantasyCalc', // Source is fixed for NFL variants
+                format: originRankings.isDynasty ? 'Dynasty' : 'Redraft',
+                scoring: 'Points', // Scoring is fixed for NFL variants
+                flexSetting: originRankings.numQbs === 2 ? 'Superflex' : 'Standard',
+                pprSetting: pprSettingString
+            };
+            console.log("NFL Base Ranking Query:", baseRankingQuery);
+        } else {
+            // Handle non-NFL query criteria (using source from originRankings)
+            baseRankingQuery = {
+                ...baseRankingQuery,
+                source: originRankings.source, // e.g., 'Experts' or 'Default'
+                format: format, // Use format directly from req.body
+                scoring: scoring // Use scoring directly from req.body
+            };
+            console.log("Non-NFL Base Ranking Query:", baseRankingQuery);
+        }
+
+        // Get the latest expert rankings using the dynamic query
         const latestRankings = await db.collection('rankings')
             .findOne(
+                baseRankingQuery, // <-- Use the dynamically built query object
                 {
-                    sport,
-                    format,
-                    scoring,
-                    isLatest: true
-                },
-                {
-                    sort: { publishedAt: -1 }
+                    sort: { importedAt: -1 } // Sort by import date as fallback
                 }
             );
 
@@ -166,18 +195,22 @@ export default async function handler(req, res) {
 
         // Validate each player in the rankings
         const validRankings = latestRankings.rankings.filter(player => {
-            // Basic validation
-            if (!player.playerId || !player.name || typeof player.rank !== 'number') {
+            // Basic validation - Allow null playerId, just check name and rank type
+            if (!player.name || typeof player.rank !== 'number') {
+                console.warn(`Invalid player data found in base ranking ${latestRankings._id}:`, player); // Log invalid entries
                 return false;
             }
             return true;
         });
 
-        if (validRankings.length === 0) {
+        // Check if the *original* list was empty or if filtering removed everything crucial
+        if (!latestRankings.rankings || latestRankings.rankings.length === 0) { // Check original length
             return res.status(500).json({
-                error: 'No valid player rankings found in expert rankings'
+                // error: 'No valid player rankings found in expert rankings' // Keep original error maybe?
+                error: 'Base expert ranking list is empty or invalid.' // Or use this more specific one
             });
         }
+        // Optional: Add a check if validRankings is drastically smaller than original, indicating many invalid entries?
 
         // Create the new user rankings list with the expert rankings data
         const newRankingsList = {
@@ -187,12 +220,10 @@ export default async function handler(req, res) {
             name,
             scoring,
             source,
-            rankings: validRankings.map(player => ({
-                playerId: player.playerId,
-                name: player.name,
+            rankings: latestRankings.rankings.map(player => ({
+                playerId: player.playerId, // Will be null for unmatched players
+                name: player.originalName || player.name, // Store the name from the source
                 rank: player.rank,
-                // position: player.position,
-                // stats: player.stats || {},
                 notes: '',
                 tags: []
             })),
