@@ -48,6 +48,8 @@ const customNameMaps = {
         // Add specific NFL name mappings here as needed
         // Example: 'Mitch Trubisky': 'Mitchell Trubisky', 
         'Hollywood Brown': 'Marquise Brown',
+        'DJ Chark': 'D.J. Chark Jr.',
+
 
     }
 };
@@ -213,7 +215,7 @@ export default async function handler(req, res) {
                     console.warn(`⚠️ [${variantIdentifier}] Could not match any API players to internal players. Skipping variant.`);
                     throw new Error('No rankings matched'); // Treat as error for this variant
                 }
-                console.log(`💾 [${variantIdentifier}] Prepared ${validResults.length} valid rankings to save (${variantUnmatchedPlayers.length} unmatched).`);
+                console.log(`💾 [${variantIdentifier}] Prepared ${results.length} total rankings for potential save (${variantUnmatchedPlayers.length} unmatched).`);
 
                 // === 4. SAVE TO DATABASE (Transaction per variant) ===
                 const session = client.startSession();
@@ -233,7 +235,7 @@ export default async function handler(req, res) {
 
                         if (currentLatest) {
                             const currentTopN = currentLatest.rankings.slice(0, 25).map(r => ({ rank: r.rank, playerId: r.playerId })).sort((a, b) => a.rank - b.rank);
-                            const newTopN = validResults.slice(0, 25).map(r => ({ rank: r.rank, playerId: r.playerId })).sort((a, b) => a.rank - b.rank);
+                            const newTopN = results.slice(0, 25).map(r => ({ rank: r.rank, playerId: r.playerId })).sort((a, b) => a.rank - b.rank);
 
                             if (JSON.stringify(currentTopN) === JSON.stringify(newTopN)) {
                                 console.log(`✅ [${variantIdentifier}] Rankings unchanged. Skipping save.`);
@@ -247,8 +249,14 @@ export default async function handler(req, res) {
 
                         const newRankingDoc = {
                             name: `NFL ${format} ${scoring} ${flexSetting} ${pprSetting} (${sourceName})`,
-                            sport: 'NFL', format, scoring, flexSetting, pprSetting, source: sourceName,
-                            rankings: validResults.map(r => ({ playerId: r.playerId, rank: r.rank, originalName: r.name, matchType: r.matchType })),
+                            sport: 'NFL',
+                            format, scoring, flexSetting, pprSetting, source: sourceName,
+                            rankings: results.map(r => ({
+                                playerId: r.playerId, // Will be null for unmatched players
+                                rank: r.rank,
+                                originalName: r.name,
+                                matchType: r.matchType
+                            })),
                             version: new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
                             importedAt: new Date(),
                             isLatest: true,
@@ -257,7 +265,7 @@ export default async function handler(req, res) {
                         const insertResult = await db.collection('rankings').insertOne(newRankingDoc, { session });
                         console.log(`✅ [${variantIdentifier}] Inserted new ranking document ID: ${insertResult.insertedId}`);
                         variantSaved = true;
-                        variantInsertedCount = validResults.length;
+                        variantInsertedCount = results.length;
                     }); // End transaction
                 } finally {
                     await session.endSession();
