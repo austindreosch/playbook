@@ -3,7 +3,7 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import React, { useState } from 'react';
 
-function UpdateRankingsButton({ sport, format, scoring }) {
+function UpdateRankingsNFLButton() {
   const { user } = useUser();
   const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
   const isAdmin = user && (user.sub === adminSub || user.isAdmin);
@@ -15,31 +15,20 @@ function UpdateRankingsButton({ sport, format, scoring }) {
     setError(null);
 
     try {
-      // Call save endpoint directly - it will read from CSV
-      const saveResponse = await fetch('/api/save/saveExpertRankingsFromCSV', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sport,
-          format,
-          scoring,
-        }),
+      // Call the new endpoint that handles all NFL variants
+      const saveResponse = await fetch('/api/save/saveExpertRankingsNFL', {
+        method: 'POST'
       });
 
       const saveData = await saveResponse.json();
       console.log('📥 Save response:', saveData);
 
       if (!saveResponse.ok) {
-        throw new Error(saveData.error || 'Failed to save rankings');
+        throw new Error(saveData.error || saveData.details || 'Failed to save NFL rankings');
       }
 
-      if (saveData.skipped) {
-        setError('No changes detected in rankings. Skipping update.');
-      } else {
-        console.log('✅ Rankings updated successfully:', saveData);
-      }
+      // Log the detailed results array from the new API
+      console.log('✅ Update All NFL Rankings Response:', saveData);
     } catch (error) {
       console.error('❌ Update failed:', error.message);
       setError(error.message);
@@ -63,7 +52,7 @@ function UpdateRankingsButton({ sport, format, scoring }) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Updating...
+            Updating NFL Rankings...
           </>
         ) : (
           <>
@@ -76,7 +65,7 @@ function UpdateRankingsButton({ sport, format, scoring }) {
               <path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" />
               <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
             </svg>
-            Update {sport} {format} {scoring} Rankings
+            Update All NFL Rankings
           </>
         )}
       </button>
@@ -89,4 +78,4 @@ function UpdateRankingsButton({ sport, format, scoring }) {
   );
 }
 
-export default UpdateRankingsButton;
+export default UpdateRankingsNFLButton;
