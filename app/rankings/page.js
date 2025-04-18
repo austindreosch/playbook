@@ -200,31 +200,28 @@ export default function RankingsPage() {
 
     setStatPathMapping(currentMapping); // Store the calculated map
 
-    // 2. Calculate chosenCategoryPaths (full paths for enabled categories)
-    //    and enabledCategoryAbbrevs (just the abbreviations for the header)
-    const enabledPaths = [];
-    currentEnabledAbbrevs = Object.entries(activeRanking.categories)
+    // 2. Get all enabled abbreviations from the active ranking definition
+    const enabledAbbrevsFromRanking = Object.entries(activeRanking.categories)
       .filter(([_, value]) => value.enabled)
-      .map(([abbrev]) => {
-        const path = currentMapping[abbrev];
-        if (path) {
-          enabledPaths.push(path);
-        } else {
-          console.warn(`[Category Calculation] No path found for enabled abbreviation: "${abbrev}" in ${selectedSport}. Header might be incorrect.`);
-          // Optional: Add abbrev itself as path if you want to display raw abbrev as header
-          // enabledPaths.push(abbrev);
-        }
-        return abbrev; // Keep the abbreviation for the header list
-      });
+      .map(([abbrev]) => abbrev);
 
-    setChosenCategoryPaths(enabledPaths); // State now holds actual paths/keys
-    setEnabledCategoryAbbrevs(currentEnabledAbbrevs); // State holds abbrevs for header
+    // --- NEW: Filter these based on what actually exists in the current sport's mapping --- 
+    const finalEnabledAbbrevs = enabledAbbrevsFromRanking.filter(abbrev => {
+      const pathExists = currentMapping.hasOwnProperty(abbrev);
+      if (!pathExists) {
+        console.warn(`[Category Calculation] Enabled abbreviation "${abbrev}" from ranking definition does not exist in generated map for ${selectedSport}. Excluding.`);
+      }
+      return pathExists;
+    });
 
-    // Reset sort if categories change
-    // (Check if only enabled *abbreviations* changed, or underlying paths/map)
-    // For simplicity, resetting sort might be okay here, or add more complex check.
+    // 3. Calculate chosenCategoryPaths using only the filtered, valid abbreviations
+    const enabledPaths = finalEnabledAbbrevs.map(abbrev => currentMapping[abbrev]);
+
+    setChosenCategoryPaths(enabledPaths); // State now holds actual paths/keys for valid stats
+    setEnabledCategoryAbbrevs(finalEnabledAbbrevs); // State holds valid abbrevs for header
+
+    // Reset sort if categories change (check based on valid paths)
     setSortConfig(currentConfig => {
-      // Only reset if the *current* sort key is no longer in the *new* set of enabled paths
       if (currentConfig.key !== null && !enabledPaths.includes(currentConfig.key)) {
         console.log(`[Sort Reset] Current sort key ${currentConfig.key} no longer enabled. Resetting.`);
         return { key: null, direction: 'desc' };
