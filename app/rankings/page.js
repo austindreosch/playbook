@@ -50,6 +50,9 @@ export default function RankingsPage() {
   const [activeRankingId, setActiveRankingId] = useState(null);
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
+  const [statPathMapping, setStatPathMapping] = useState({});
+  const [chosenCategoryPaths, setChosenCategoryPaths] = useState([]);
+  const [enabledCategoryAbbrevs, setEnabledCategoryAbbrevs] = useState([]);
   const listContainerRef = useRef(null);
 
   const {
@@ -148,6 +151,89 @@ export default function RankingsPage() {
     fetchUserRankings();
   }, []); // Only run on mount
 
+  // --- MOVED & UPDATED: useEffect for Category Mapping --- 
+  useEffect(() => {
+    const currentSportLower = selectedSport.toLowerCase();
+
+    // --- NEW: Determine which dataset source to use INSIDE the effect ---
+    let sourceDataset;
+    if (currentSportLower === 'nba') sourceDataset = nba;
+    else if (currentSportLower === 'mlb') sourceDataset = mlb;
+    else if (currentSportLower === 'nfl') sourceDataset = nfl;
+    else sourceDataset = null;
+
+    // Ensure necessary data exists before proceeding
+    // Check activeRanking, categories, AND that the source dataset for the sport is loaded
+    if (!activeRanking?.categories || !sourceDataset?.players?.length) {
+      setStatPathMapping({});
+      setChosenCategoryPaths([]);
+      setEnabledCategoryAbbrevs([]);
+      // Reset sort if categories/data disappear
+      setSortConfig({ key: null, direction: 'desc' });
+      return;
+    }
+
+    // 1. Determine the mapping strategy
+    let currentMapping = {};
+    let currentEnabledAbbrevs = [];
+
+    if (currentSportLower === 'nfl') {
+      // Strategy for NFL: Use the predefined manual map
+      currentMapping = NFL_STAT_ABBREVIATION_TO_PATH_MAP;
+      console.log('[NFL Mapping] Using manual stat paths:', currentMapping);
+    } else {
+      // Strategy for NBA/Other: Generate from abbreviations in the first player's stats
+      const firstPlayerStats = sourceDataset.players[0]?.stats;
+      if (firstPlayerStats) {
+        Object.entries(firstPlayerStats).forEach(([key, stat]) => {
+          // Check if stat is an object with 'abbreviation' property
+          if (stat && typeof stat === 'object' && stat.abbreviation) {
+            currentMapping[stat.abbreviation] = key; // Map abbrev -> key (e.g., 'PTS' -> 'pointsPerGame')
+          }
+          // TODO: Add handling for potential raw values if structure varies?
+        });
+        console.log(`[${selectedSport} Mapping] Generated paths from abbreviations:`, currentMapping);
+      } else {
+        console.warn(`[${selectedSport} Mapping] Could not generate paths: No stats found for the first player.`);
+      }
+    }
+
+    setStatPathMapping(currentMapping); // Store the calculated map
+
+    // 2. Calculate chosenCategoryPaths (full paths for enabled categories)
+    //    and enabledCategoryAbbrevs (just the abbreviations for the header)
+    const enabledPaths = [];
+    currentEnabledAbbrevs = Object.entries(activeRanking.categories)
+      .filter(([_, value]) => value.enabled)
+      .map(([abbrev]) => {
+        const path = currentMapping[abbrev];
+        if (path) {
+          enabledPaths.push(path);
+        } else {
+          console.warn(`[Category Calculation] No path found for enabled abbreviation: "${abbrev}" in ${selectedSport}. Header might be incorrect.`);
+          // Optional: Add abbrev itself as path if you want to display raw abbrev as header
+          // enabledPaths.push(abbrev);
+        }
+        return abbrev; // Keep the abbreviation for the header list
+      });
+
+    setChosenCategoryPaths(enabledPaths); // State now holds actual paths/keys
+    setEnabledCategoryAbbrevs(currentEnabledAbbrevs); // State holds abbrevs for header
+
+    // Reset sort if categories change
+    // (Check if only enabled *abbreviations* changed, or underlying paths/map)
+    // For simplicity, resetting sort might be okay here, or add more complex check.
+    setSortConfig(currentConfig => {
+      // Only reset if the *current* sort key is no longer in the *new* set of enabled paths
+      if (currentConfig.key !== null && !enabledPaths.includes(currentConfig.key)) {
+        console.log(`[Sort Reset] Current sort key ${currentConfig.key} no longer enabled. Resetting.`);
+        return { key: null, direction: 'desc' };
+      }
+      return currentConfig; // Keep current sort otherwise
+    });
+
+  }, [activeRanking?.categories, selectedSport, nba, mlb, nfl]); // Depend on source data
+
   // Add handler function to trigger collapse
   const handleCollapseAll = () => {
     setCollapseAllTrigger(prev => prev + 1);
@@ -194,38 +280,26 @@ export default function RankingsPage() {
   //   console.log('Current Sport Data:', datasetForSelectedSport);
   // }, [datasetForSelectedSport]);
 
-  const handleSortChange = useCallback((newKey) => {
-    // --- NEW: Translate abbreviation to full path --- 
-    let fullPath = null;
-    if (selectedSport === 'NFL') {
-      // Use the predefined map for NFL
-      fullPath = NFL_STAT_ABBREVIATION_TO_PATH_MAP[newKey];
-      if (!fullPath) {
-        console.warn(`[Sort Warning] No NFL path found for abbreviation: ${newKey}. Using abbreviation itself.`);
-        fullPath = newKey; // Fallback just in case
-      }
-    } else {
-      // TODO: Implement logic for other sports if needed
-      // Could involve generating map from dataset structure or using different predefined maps
-      console.warn(`[Sort Warning] Stat path mapping not implemented for sport: ${selectedSport}. Using abbreviation: ${newKey}`);
-      fullPath = newKey; // Fallback to using abbreviation directly
+  const handleSortChange = useCallback((newKey_abbreviation) => {
+    // --- UPDATED: Use statPathMapping state --- 
+    let fullPath = statPathMapping[newKey_abbreviation];
+
+    if (!fullPath) {
+      console.warn(`[Sort Warning] No path found in statPathMapping for abbreviation: ${newKey_abbreviation}. Sorting might not work.`);
+      fullPath = newKey_abbreviation; // Fallback, but likely won't sort correctly
     }
 
-    console.log(`[Sort] Header clicked: ${newKey}, Translated path: ${fullPath}`);
+    console.log(`[Sort] Header clicked: ${newKey_abbreviation}, Translated path: ${fullPath}`);
 
     setSortConfig(currentConfig => {
-      // Compare with the *full path* now
       if (currentConfig.key === fullPath) {
-        // If clicking the same stat, revert to rank sort
         return { key: null, direction: 'desc' };
       } else {
-        // Otherwise, sort by the new stat (full path) descending
         return { key: fullPath, direction: 'desc' };
       }
     });
     listContainerRef.current?.resetListCache();
-    // Pass selectedSport as dependency if mapping logic depends on it
-  }, [selectedSport]);
+  }, [statPathMapping]); // Depend on the generated mapping
 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;
@@ -280,6 +354,8 @@ export default function RankingsPage() {
               activeRanking={activeRanking}
               sortConfig={sortConfig}
               onSortChange={handleSortChange}
+              enabledCategoryAbbrevs={enabledCategoryAbbrevs}
+              statPathMapping={statPathMapping}
               onCollapseAll={handleCollapseAll}
             />
 
@@ -289,6 +365,7 @@ export default function RankingsPage() {
               dataset={datasetForSelectedSport}
               activeRanking={activeRanking}
               sortConfig={sortConfig}
+              chosenCategoryPaths={chosenCategoryPaths}
               collapseAllTrigger={collapseAllTrigger}
             />
           </div>

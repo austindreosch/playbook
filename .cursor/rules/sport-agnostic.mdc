@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+Design every feature as sport‑agnostic modular structures. Be mindful of different sports (NBA, NFL, MLB for now - maybe more later on?), fantasy scoring formats, league variants, and future sports by abstracting rules, stats, and calculations. Insert clear to-do placeholders for sport‑specific constants, mappings, and ui labels so they can be filled in later without touching core logic.

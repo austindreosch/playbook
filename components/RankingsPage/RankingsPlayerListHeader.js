@@ -35,9 +35,12 @@ const RankingsPlayerListHeader = ({
     sortConfig,
     onSortChange = () => { },
     onSave = async () => { },
-    onCollapseAll = () => { }
+    onCollapseAll = () => { },
+    enabledCategoryAbbrevs = [],
+    activeRanking,
+    statPathMapping = {}
 }) => {
-    const { activeRanking, updateCategories, updateRankingName } = useUserRankings();
+    const { updateCategories, updateRankingName } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
@@ -49,23 +52,6 @@ const RankingsPlayerListHeader = ({
     const [selectedPosition, setSelectedPosition] = useState("");
     const [selectedPlayoffStrength, setSelectedPlayoffStrength] = useState("");
     const [selectedDataView, setSelectedDataView] = useState("");
-
-    // Transform categories object into array for rendering
-    const categoryList = useMemo(() => {
-        if (!activeRanking?.categories) return [];
-
-        return Object.entries(activeRanking.categories).map(([key, value]) => ({
-            key,
-            name: key,
-            enabled: value.enabled,
-            multiplier: value.multiplier || 1
-        }));
-    }, [activeRanking?.categories]);
-
-    // Get only enabled categories for the header
-    const enabledCategories = useMemo(() => {
-        return categoryList.filter(category => category.enabled);
-    }, [categoryList]);
 
     const handleSave = async () => {
         try {
@@ -158,19 +144,15 @@ const RankingsPlayerListHeader = ({
 
                 {/* Stats Headers - 60% section with exact same structure */}
                 <div className="flex w-[60%] h-full gap-1 font-bold">
-                    {enabledCategories.map((category) => (
+                    {enabledCategoryAbbrevs.map((abbrev) => (
                         <div
-                            key={category.key}
+                            key={abbrev}
                             className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
-                            onClick={() => {
-                                console.log('Header clicked:', category.key);
-                                console.log('onSortChange prop:', onSortChange);
-                                onSortChange(category.key);
-                            }}
+                            onClick={() => onSortChange(abbrev)}
                         >
-                            {category.name}
-                            {/* --- MODIFIED: Only show Desc icon when sorting by this key --- */}
-                            {sortConfig && sortConfig.key === category.key && <SortDescIcon />}
+                            {abbrev}
+                            {/* --- MODIFIED: Check if sortConfig.key matches the mapped path --- */}
+                            {sortConfig?.key && statPathMapping[abbrev] === sortConfig.key && <SortDescIcon />}
                         </div>
                     ))}
                 </div>
@@ -284,41 +266,7 @@ const RankingsPlayerListHeader = ({
 
                     {/* Categories */}
                     <div className="text-pb_darkgray h-full col-span-6">
-                        <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 p-2">
-                            {categoryList.map((category) => (
-                                <div key={category.key} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
-                                    <div className="flex items-center justify-between w-full">
-                                        <div className="flex items-center">
-                                            <Switch
-                                                checked={category.enabled}
-                                                onCheckedChange={(checked) => handleCategoryToggle(category.key, checked)}
-                                                className="flex-shrink-0 mr-2 data-[state=checked]:bg-pb_blue"
-                                            />
-                                            <span className="text-sm font-medium pr-4">{category.name}</span>
-                                        </div>
-                                        <Select
-                                            value={category.multiplier.toString()}
-                                            onValueChange={(value) => handleMultiplierChange(category.key, parseFloat(value))}
-                                            className="w-[52px]"
-                                        >
-                                            <SelectTrigger className="h-7">
-                                                <SelectValue className="text-xs text-center" placeholder={`x${category.multiplier}`} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="0.25">x0.25</SelectItem>
-                                                <SelectItem value="0.5">x0.5</SelectItem>
-                                                <SelectItem value="0.75">x0.75</SelectItem>
-                                                <SelectItem value="1">x1</SelectItem>
-                                                <SelectItem value="1.25">x1.25</SelectItem>
-                                                <SelectItem value="1.5">x1.5</SelectItem>
-                                                <SelectItem value="2">x2</SelectItem>
-                                                <SelectItem value="3">x3</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <div className="p-4 text-center italic">Category toggles/multipliers might need adjustment after refactor.</div>
                     </div>
                 </div>
             )}

@@ -111,13 +111,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
     activeRanking,
     dataset,
     sortConfig,
+    chosenCategoryPaths,
     collapseAllTrigger
 }, ref) => {
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [chosenCategories, setChosenCategories] = useState([]);
     const [rankedPlayers, setRankedPlayers] = useState([]);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
     const [expandedRows, setExpandedRows] = useState(new Set());
@@ -247,55 +247,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
         console.log("[useEffect] Processed Players:", processedPlayers);
         setRankedPlayers(processedPlayers);
     }, [activeRanking, processRankingData, sport]);
-
-    // Update categories and chosen stat keys when activeRanking or dataset changes
-    useEffect(() => {
-        const currentSport = sport.toLowerCase(); // Get current sport once
-
-        // Ensure necessary data exists before proceeding
-        if (!activeRanking?.categories || !dataset?.[currentSport]?.players?.length) {
-            setChosenCategories([]); // Clear if no categories or data
-            // --- NEW: Reset sort if categories change --- 
-            return;
-        }
-
-        // 1. Determine the mapping strategy
-        let statPathMapping = {}; // Use this to map abbrev -> actual path/key
-
-        if (currentSport === 'nfl') {
-            // --- Strategy for NFL: Use the predefined manual map --- 
-            statPathMapping = NFL_STAT_ABBREVIATION_TO_PATH_MAP;
-            // console.log('[NFL] Using manual stat path mappings:', statPathMapping);
-        } else {
-            // --- Strategy for NBA/Other: Generate from abbreviations --- 
-            const firstPlayer = dataset[currentSport].players[0];
-            Object.entries(firstPlayer.stats).forEach(([key, stat]) => {
-                if (stat?.abbreviation) {
-                    statPathMapping[stat.abbreviation] = key;
-                }
-            });
-            // console.log(`[${currentSport.toUpperCase()}] Generated mappings from abbreviations:`, statPathMapping);
-        }
-
-
-
-        // 2. Calculate chosenCategories (which are now the actual paths/keys)
-        const enabledCategoryPaths = Object.entries(activeRanking.categories)
-            .filter(([_, value]) => value.enabled)
-            // Map the abbreviation from the category to its actual path using the determined map
-            .map(([abbrev]) => {
-                const path = statPathMapping[abbrev];
-                if (!path && currentSport === 'nfl') {
-                    console.warn(`[NFL Mapping] No path found in NFL_STAT_ABBREVIATION_TO_PATH_MAP for abbreviation: "${abbrev}". Falling back to using abbreviation itself.`);
-                }
-                return path || abbrev; // Fallback to abbrev if path not found
-            });
-
-
-
-        setChosenCategories(enabledCategoryPaths); // State now holds paths/keys
-        // Depend on activeRanking categories, the specific dataset for the sport, and the sport itself
-    }, [activeRanking?.categories, dataset?.[sport.toLowerCase()], sport]); // Dependencies updated
 
     // Fetch data when component mounts or sport changes
     useEffect(() => {
@@ -472,22 +423,19 @@ const RankingsPlayerListContainer = React.forwardRef(({
         return (
             <div style={style}>
                 <RankingsPlayerRow
-                    key={player.rankingId} // Use the unique rankingId
+                    key={player.rankingId}
                     player={player}
                     sport={sport}
-                    categories={chosenCategories}
-                    // --- MODIFIED: Use index + 1 for display rank when sorted by stat --- 
+                    categories={chosenCategoryPaths}
                     rank={isRankSorted ? player.rank : index + 1}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
-                    onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)} // Pass null if placeholder
-                    isPlaceholder={isPlaceholder} // Pass the flag down
-                    // --- NEW: Pass sorting status --- 
+                    onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
+                    isPlaceholder={isPlaceholder}
                     isRankSorted={isRankSorted}
                 />
             </div>
         );
-        // Add prop sortConfig.key to dependency array
-    }, [paginatedPlayers, sport, chosenCategories, expandedRows, handleRowExpand, sortConfig?.key]);
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key]);
 
     const sportKey = sport.toLowerCase();
 
@@ -554,14 +502,11 @@ const RankingsPlayerListContainer = React.forwardRef(({
                             <RankingsPlayerRow
                                 player={activePlayer}
                                 sport={sport}
-                                categories={chosenCategories}
-                                // --- MODIFIED: Use calculated display rank --- 
+                                categories={chosenCategoryPaths}
                                 rank={displayRank}
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
-                                // --- NEW: Indicate overlay is not sortable/draggable --- 
-                                isRankSorted={false} // Overlay should not appear draggable 
-                            // Note: Drag overlay row doesn't need onExpand
+                                isRankSorted={false}
                             />
                         );
                     })() : null}
