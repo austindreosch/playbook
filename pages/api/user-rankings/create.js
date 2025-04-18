@@ -222,7 +222,7 @@ export default async function handler(req, res) {
             source,
             rankings: latestRankings.rankings.map(player => ({
                 playerId: player.playerId, // Will be null for unmatched players
-                name: player.originalName || player.name, // Store the name from the source
+                name: player.name, // Store the name from the source
                 rank: player.rank,
                 notes: '',
                 tags: []

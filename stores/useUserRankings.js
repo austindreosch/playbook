@@ -224,10 +224,38 @@ const useUserRankings = create(
                     if (!activeRanking || !activeRanking.rankings) return;
 
                     // Update the players' ranks based on the new order
-                    const updatedPlayers = newPlayerOrder.map((playerId, index) => {
-                        const player = activeRanking.rankings.find(p => p.playerId === playerId);
+                    const updatedPlayers = newPlayerOrder.map((rankingId, index) => {
+                        // Find player by matching rankingId (either playerId or generated placeholder ID)
+                        const player = activeRanking.rankings.find(p => {
+                            let p_rankingId;
+                            if (p.playerId != null) {
+                                // If the stored player has a playerId, use that (as string)
+                                p_rankingId = String(p.playerId);
+                            } else {
+                                // If the stored player is a placeholder (playerId is null)
+                                // Reconstruct the placeholder ID using the stored rank and name
+                                // Use the same logic as the frontend to find the name (originalName or name)
+                                const nameForId = p.originalName || p.name || 'unknown';
+                                p_rankingId = `pick-${p.rank}-${nameForId}`;
+                            }
+                            // Compare the reconstructed/retrieved ID with the incoming rankingId (ensure both are strings)
+                            return String(p_rankingId) === String(rankingId);
+                        });
+
+                        if (!player) {
+                            console.error(`[store updateAllPlayerRanks] Player not found for rankingId: ${rankingId}`);
+                            return null; // Return null if player not found for filtering
+                        }
+
+                        // Return the found player with updated rank
                         return { ...player, rank: index + 1 };
-                    });
+                    }).filter(p => p !== null); // Filter out any nulls from not finding a player
+
+                    // Check if the length matches after filtering
+                    if (updatedPlayers.length !== newPlayerOrder.length) {
+                        console.error("[store updateAllPlayerRanks] Mismatch between input order length and updated players length after filtering.");
+                        // Potentially stop the update here or handle the error appropriately
+                    }
 
                     const updatedRanking = {
                         ...activeRanking,

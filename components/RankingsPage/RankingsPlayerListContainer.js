@@ -169,7 +169,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
                 // Handle null playerId (e.g., draft picks, rookies not yet in dataset)
                 isPlaceholder = true;
                 // Log the incoming data for placeholders
-                console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Data:`, rankingPlayer);
+                // console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Data:`, rankingPlayer);
                 // Create a unique ID for dnd-kit (assuming rank is unique enough for placeholders)
                 rankingId = `pick-${rankingPlayer.rank}-${rankingPlayer.name || 'unknown'}`;
                 // console.log("Created placeholder:", rankingId, rankingPlayer);
@@ -181,7 +181,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
             const combinedPlayer = {
                 rankingId: rankingId, // Use the determined rankingId
                 rank: rankingPlayer.rank,
-                name: rankingPlayer.originalName || rankingPlayer.name || 'Unknown Player', // Check originalName first, then name
+                name: rankingPlayer.name || 'Unknown Player',
                 position: rankingPlayer.position || 'N/A', // Provide default position
                 isPlaceholder: isPlaceholder,
                 info: playerData?.info || {},
@@ -189,9 +189,9 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
             };
 
             // Log the final assigned name for placeholders
-            if (isPlaceholder) {
-                console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Assigned Name:`, combinedPlayer.name);
-            }
+            // if (isPlaceholder) {
+            //     console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Assigned Name:`, combinedPlayer.name);
+            // }
 
             return combinedPlayer;
         });
@@ -201,7 +201,10 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
 
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
+        // Log the activeRanking when it changes, especially after drag/drop
+        console.log("[useEffect] ActiveRanking changed:", activeRanking);
         const processedPlayers = processRankingData(activeRanking);
+        console.log("[useEffect] Processed Players:", processedPlayers);
         setRankedPlayers(processedPlayers);
     }, [activeRanking, processRankingData, sport]);
 
@@ -289,19 +292,36 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
         // document.body.style.cursor = '';  // possible problem
         const { active, over } = event;
 
-        if (active.id !== over.id) {
+        if (over && active.id !== over.id) { // Add check for over
             const oldIndex = rankedPlayers.findIndex(item => item.rankingId === active.id);
             const newIndex = rankedPlayers.findIndex(item => item.rankingId === over.id);
 
             // Create new array with reordered items
             const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
 
+            // Log the newOrder array immediately after creation
+            console.log("[handleDragEnd] newOrder:", newOrder);
+
             // Update local state first
             setRankedPlayers(newOrder);
 
             // Update the store state in the next tick to avoid render phase updates
             setTimeout(() => {
-                updateAllPlayerRanks(newOrder.map(item => item.rankingId));
+                // Ensure we are mapping valid IDs
+                const rankingIdsInNewOrder = newOrder.map(item => {
+                    if (!item || !item.rankingId) {
+                        console.error("Item missing rankingId in newOrder:", item);
+                        return null;
+                    }
+                    return item.rankingId;
+                }).filter(id => id !== null);
+
+                if (rankingIdsInNewOrder.length !== newOrder.length) {
+                    console.error("Mismatch in ranking IDs after filtering!");
+                }
+
+                console.log("[handleDragEnd] Updating store with IDs:", rankingIdsInNewOrder);
+                updateAllPlayerRanks(rankingIdsInNewOrder);
                 saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
         }
