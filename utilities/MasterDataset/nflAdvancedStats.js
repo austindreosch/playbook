@@ -68,7 +68,7 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
         (pRec.recTD || 0) * 6 +
         (pOther.fumblesLost || 0) * -2
     );
-    advancedStats.totalFantasyPointsPPR = parseFloat(totalFantasyPointsPPR.toFixed(1));
+    advancedStats.totalFantasyPointsPPR = totalFantasyPointsPPR;
 
     // Total Fantasy Points (Standard - based on FPPG formula components)
     const totalFantasyPointsNoPPR = (
@@ -82,7 +82,7 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
         (pRec.recTD || 0) * 6 +
         (pOther.fumblesLost || 0) * -2
     );
-    advancedStats.totalFantasyPointsNoPPR = parseFloat(totalFantasyPointsNoPPR.toFixed(1));
+    advancedStats.totalFantasyPointsNoPPR = totalFantasyPointsNoPPR;
 
 
     // Total Opportunities (denominator for several rates)
@@ -131,18 +131,18 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     // --- Final Advanced Stat Calculations ---
 
     // Fantasy Points Per Game (FPG)
-    advancedStats.fantasyPointsPerGame = gamesPlayed > 0 ? parseFloat((totalFantasyPointsPPR / gamesPlayed).toFixed(1)) : 0.0;
-    advancedStats.fantasyPointsPerGameNoPPR = gamesPlayed > 0 ? parseFloat((totalFantasyPointsNoPPR / gamesPlayed).toFixed(1)) : 0.0;
+    advancedStats.fantasyPointsPerGame = gamesPlayed > 0 ? (totalFantasyPointsPPR / gamesPlayed) : 0.0;
+    advancedStats.fantasyPointsPerGameNoPPR = gamesPlayed > 0 ? (totalFantasyPointsNoPPR / gamesPlayed) : 0.0;
 
     // Fantasy Points Per Snap (FPS)
-    advancedStats.fantasyPointsPerSnap = offenseSnaps > 0 ? parseFloat((totalFantasyPointsPPR / offenseSnaps).toFixed(1)) : 0.0;
-    advancedStats.fantasyPointsPerSnapNoPPR = offenseSnaps > 0 ? parseFloat((totalFantasyPointsNoPPR / offenseSnaps).toFixed(1)) : 0.0;
+    advancedStats.fantasyPointsPerSnap = offenseSnaps > 0 ? (totalFantasyPointsPPR / offenseSnaps) : 0.0;
+    advancedStats.fantasyPointsPerSnapNoPPR = offenseSnaps > 0 ? (totalFantasyPointsNoPPR / offenseSnaps) : 0.0;
 
     // Opportunities Per Game (OPG)
-    advancedStats.opportunitiesPerGame = gamesPlayed > 0 ? parseFloat((totalOpportunities / gamesPlayed).toFixed(1)) : 0.0;
+    advancedStats.opportunitiesPerGame = gamesPlayed > 0 ? (totalOpportunities / gamesPlayed) : 0.0;
 
     // Yard Share % (YS%)
-    advancedStats.yardShare = totalTeamYards > 0 ? parseFloat(((totalPlayerYards / totalTeamYards) * 100).toFixed(1)) : 0.0;
+    advancedStats.yardShare = totalTeamYards > 0 ? ((totalPlayerYards / totalTeamYards) * 100) : 0.0;
 
     // if (shouldLog) {
     //     console.log(`Player Total Yards: ${totalPlayerYards}`);
@@ -152,20 +152,20 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     // }
 
     // Big Play Rate % (BP%)
-    advancedStats.bigPlayRate = actionPlays > 0 ? parseFloat(((totalPlayerBigPlays / actionPlays) * 100).toFixed(1)) : 0.0;
+    advancedStats.bigPlayRate = actionPlays > 0 ? ((totalPlayerBigPlays / actionPlays) * 100) : 0.0;
 
     // TD Rate % (TD%)
-    advancedStats.touchdownRate = actionPlays > 0 ? parseFloat(((totalPlayerTDs / actionPlays) * 100).toFixed(1)) : 0.0;
+    advancedStats.touchdownRate = actionPlays > 0 ? ((totalPlayerTDs / actionPlays) * 100) : 0.0;
 
     // Opportunity Efficiency (OPE)
-    advancedStats.opportunityEfficiency = totalOpportunities > 0 ? parseFloat((totalFantasyPointsPPR / totalOpportunities).toFixed(1)) : 0.0;
-    advancedStats.opportunityEfficiencyNoPPR = totalOpportunities > 0 ? parseFloat((totalFantasyPointsNoPPR / totalOpportunities).toFixed(1)) : 0.0;
+    advancedStats.opportunityEfficiency = totalOpportunities > 0 ? (totalFantasyPointsPPR / totalOpportunities) : 0.0;
+    advancedStats.opportunityEfficiencyNoPPR = totalOpportunities > 0 ? (totalFantasyPointsNoPPR / totalOpportunities) : 0.0;
 
     // Production Share %
-    advancedStats.productionShare = teamActionPlays > 0 ? parseFloat(((totalPlays / teamActionPlays) * 100).toFixed(1)) : 0.0;
+    advancedStats.productionShare = teamActionPlays > 0 ? ((totalPlays / teamActionPlays) * 100) : 0.0;
 
     // Turnover Rate % (using actionPlays as denominator)
-    advancedStats.turnoverRate = actionPlays > 0 ? parseFloat(((totalPlayerTurnovers / actionPlays) * 100).toFixed(1)) : 0.0;
+    advancedStats.turnoverRate = actionPlays > 0 ? ((totalPlayerTurnovers / actionPlays) * 100) : 0.0;
 
     // if (shouldLog) {
     //     console.log("--- Final Calculated Stats ---");
@@ -184,29 +184,29 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     // -------------------
 
     // Yards Per Opportunity (YPO)
-    advancedStats.yardsPerOpportunity = totalOpportunities > 0 ? parseFloat((totalPlayerYards / totalOpportunities).toFixed(1)) : 0.0;
+    advancedStats.yardsPerOpportunity = totalOpportunities > 0 ? (totalPlayerYards / totalOpportunities) : 0.0;
 
     // Total Touchdowns
     advancedStats.totalTouchdowns = totalPlayerTDs;
 
     // Yards Per Game
-    advancedStats.yardsPerGame = gamesPlayed > 0 ? parseFloat((totalPlayerYards / gamesPlayed).toFixed(1)) : 0.0;
+    advancedStats.yardsPerGame = gamesPlayed > 0 ? (totalPlayerYards / gamesPlayed) : 0.0;
 
     // Plays Per Game
-    advancedStats.playsPerGame = gamesPlayed > 0 ? parseFloat((totalPlays / gamesPlayed).toFixed(1)) : 0.0;
+    advancedStats.playsPerGame = gamesPlayed > 0 ? (totalPlays / gamesPlayed) : 0.0;
 
 
     // --- Add other pre-calculated examples ---
-    advancedStats.yardsPerCarry = pRush.rushAtt > 0 ? parseFloat((pRush.rushYards / pRush.rushAtt).toFixed(1)) : 0.0;
-    advancedStats.yardsPerTarget = pRec.targets > 0 ? parseFloat((pRec.recYards / pRec.targets).toFixed(1)) : 0.0;
-    advancedStats.yardsPerReception = pRec.receptions > 0 ? parseFloat((pRec.recYards / pRec.receptions).toFixed(1)) : 0.0;
-    advancedStats.targetShare = teamTargets > 0 ? parseFloat(((pRec.targets || 0) / teamTargets * 100).toFixed(1)) : 0.0;
+    advancedStats.yardsPerCarry = pRush.rushAtt > 0 ? (pRush.rushYards / pRush.rushAtt) : 0.0;
+    advancedStats.yardsPerTarget = pRec.targets > 0 ? (pRec.recYards / pRec.targets) : 0.0;
+    advancedStats.yardsPerReception = pRec.receptions > 0 ? (pRec.recYards / pRec.receptions) : 0.0;
+    advancedStats.targetShare = teamTargets > 0 ? ((pRec.targets || 0) / teamTargets * 100) : 0.0;
 
 
     // Note: Hog Rate definition might vary, simplified example:
     const touches = (pRush.rushAtt || 0) + (pRec.receptions || 0);
     // Corrected hogRate denominator using team stats from map
-    advancedStats.hogRate = (teamRushAtt + teamTargets) > 0 ? parseFloat(((touches / (teamRushAtt + teamTargets)) * 100).toFixed(1)) : 0.0;
+    advancedStats.hogRate = (teamRushAtt + teamTargets) > 0 ? ((touches / (teamRushAtt + teamTargets)) * 100) : 0.0;
 
 
     return advancedStats;

@@ -2,7 +2,7 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import BullseyeIcon from '../icons/BullseyeIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
@@ -35,6 +35,13 @@ const getNestedValue = (obj, path, defaultValue = null) => {
 
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats }) => {
+    // Define stats that need 2 decimal places
+    const statsNeedingTwoDecimals = [
+        'advanced.fantasyPointsPerSnap', // PPS
+        'advanced.opportunityEfficiency', // OPE
+        'advanced.turnoverRate'          // TO%
+    ];
+
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
             {categories.map((statPathOrKey) => {
@@ -66,9 +73,19 @@ const StatsSection = memo(({ categories, stats }) => {
                 // Format the display value (handle numbers, nulls, zeros)
                 let formattedValue = displayValue;
                 if (typeof displayValue === 'number') {
-                    formattedValue = displayValue.toFixed(1); // Format numbers to 1 decimal place
-                    if (formattedValue.endsWith('.0')) {
-                        formattedValue = formattedValue.slice(0, -2); // Remove .0 for whole numbers
+                    if (statsNeedingTwoDecimals.includes(statPathOrKey)) {
+                        // Format specific stats to 2 decimal places
+                        formattedValue = displayValue.toFixed(2);
+                        // Optionally remove trailing .00 if needed, though usually desired for these stats
+                        // if (formattedValue.endsWith('.00')) {
+                        //     formattedValue = formattedValue.slice(0, -3);
+                        // }
+                    } else {
+                        // Format other numbers to 1 decimal place, remove trailing .0
+                        formattedValue = displayValue.toFixed(1);
+                        if (formattedValue.endsWith('.0')) {
+                            formattedValue = formattedValue.slice(0, -2);
+                        }
                     }
                 } else if (displayValue === null || displayValue === undefined) {
                     formattedValue = '-'; // Use placeholder for null/undefined
@@ -95,6 +112,13 @@ StatsSection.displayName = 'StatsSection';
 
 // Secondary stats section for last 30 etc
 const StatsSectionSecondary = memo(({ categories, stats }) => {
+    // Define stats that need 2 decimal places (same as above)
+    const statsNeedingTwoDecimals = [
+        'advanced.fantasyPointsPerSnap', // PPS
+        'advanced.opportunityEfficiency', // OPE
+        'advanced.turnoverRate'          // TO%
+    ];
+
     return (
         <div className="flex w-full h-full gap-[3px]">
             {categories.map((statPathOrKey) => {
@@ -120,9 +144,19 @@ const StatsSectionSecondary = memo(({ categories, stats }) => {
 
                 let formattedValue = displayValue;
                 if (typeof displayValue === 'number') {
-                    formattedValue = displayValue.toFixed(1);
-                    if (formattedValue.endsWith('.0')) {
-                        formattedValue = formattedValue.slice(0, -2);
+                    if (statsNeedingTwoDecimals.includes(statPathOrKey)) {
+                        // Format specific stats to 2 decimal places
+                        formattedValue = displayValue.toFixed(2);
+                        // Optionally remove trailing .00
+                        // if (formattedValue.endsWith('.00')) {
+                        //     formattedValue = formattedValue.slice(0, -3);
+                        // }
+                    } else {
+                        // Format other numbers to 1 decimal place, remove trailing .0
+                        formattedValue = displayValue.toFixed(1);
+                        if (formattedValue.endsWith('.0')) {
+                            formattedValue = formattedValue.slice(0, -2);
+                        }
                     }
                 } else if (displayValue === null || displayValue === undefined) {
                     formattedValue = '-';
@@ -156,6 +190,32 @@ StatsSectionSecondary.displayName = 'StatsSectionSecondary';
 const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, onExpand }) => {
     const rowRef = useRef(null);
     const [imageLoadError, setImageLoadError] = useState(false);
+
+    // Calculate the sum of zScores for the selected categories, applying weight for NFL PPG
+    const zScoreSum = useMemo(() => {
+        const ppgKey = 'advanced.fantasyPointsPerGame';
+        const nflPpgWeight = 3; // Adjust this weight as needed
+        let sum = 0;
+
+        if (player?.stats && categories?.length > 0) {
+            categories.forEach(statPathOrKey => {
+                const statData = getNestedValue(player.stats, statPathOrKey);
+
+                if (statData && typeof statData === 'object' && typeof statData.zScore === 'number') {
+                    let scoreToAdd = statData.zScore;
+
+                    // Apply weight only for NFL and only for the PPG stat
+                    if (sport === 'NFL' && statPathOrKey === ppgKey) {
+                        scoreToAdd *= nflPpgWeight;
+                    }
+                    // Add the (potentially weighted) score to the sum
+                    sum += scoreToAdd;
+                }
+            });
+        }
+        // Format to two decimal places for potentially larger sums
+        return sum.toFixed(2);
+    }, [player?.stats, categories, sport]); // Add sport as dependency
 
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -301,10 +361,10 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                         <div className="font-bold">{playerName}</div>
                         <div className="text-gray-500 text-xs">{playerPosition}</div>
                     </div>
-
-                    {isExpanded && (
-                        <div className="ml-auto text-xs tracking-wider text-pb_midgray mr-[17px] select-none"> SEASON</div>
-                    )}
+                    {/* Display Z-Score Sum centered within a div pushed right */}
+                    <div className="ml-auto  w-16 text-center text-xs tracking-wider text-pb_midgray select-none">
+                        {zScoreSum}
+                    </div>
                 </div>
 
                 {/* Stats section - flexible width */}
