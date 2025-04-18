@@ -266,7 +266,47 @@ const RankingsPlayerListHeader = ({
 
                     {/* Categories */}
                     <div className="text-pb_darkgray h-full col-span-6">
-                        <div className="p-4 text-center italic">Category toggles/multipliers might need adjustment after refactor.</div>
+                        {/* Use activeRanking.categories to render toggles/multipliers */}
+                        <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 p-2">
+                            {activeRanking?.categories && Object.entries(activeRanking.categories).map(([abbrev, categoryDetails]) => (
+                                <div key={abbrev} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center">
+                                            <Switch
+                                                // Use details from activeRanking.categories
+                                                checked={categoryDetails.enabled}
+                                                // Pass abbreviation (key) to handler
+                                                onCheckedChange={(checked) => handleCategoryToggle(abbrev, checked)}
+                                                className="flex-shrink-0 mr-2 data-[state=checked]:bg-pb_blue"
+                                            />
+                                            {/* Display abbreviation */}
+                                            <span className="text-sm font-medium pr-4">{abbrev}</span>
+                                        </div>
+                                        <Select
+                                            // Use multiplier from activeRanking.categories
+                                            value={categoryDetails.multiplier?.toString() || '1'} // Default to '1' if undefined
+                                            // Pass abbreviation (key) to handler
+                                            onValueChange={(value) => handleMultiplierChange(abbrev, parseFloat(value))}
+                                            className="w-[52px]"
+                                        >
+                                            <SelectTrigger className="h-7">
+                                                <SelectValue className="text-xs text-center" placeholder={`x${categoryDetails.multiplier || 1}`} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="0.25">x0.25</SelectItem>
+                                                <SelectItem value="0.5">x0.5</SelectItem>
+                                                <SelectItem value="0.75">x0.75</SelectItem>
+                                                <SelectItem value="1">x1</SelectItem>
+                                                <SelectItem value="1.25">x1.25</SelectItem>
+                                                <SelectItem value="1.5">x1.5</SelectItem>
+                                                <SelectItem value="2">x2</SelectItem>
+                                                <SelectItem value="3">x3</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
