@@ -164,11 +164,10 @@ export default async function handler(req, res) {
             // Handle non-NFL query criteria (using source from originRankings)
             baseRankingQuery = {
                 ...baseRankingQuery,
-                source: originRankings.source, // e.g., 'Experts' or 'Default'
                 format: format, // Use format directly from req.body
                 scoring: scoring // Use scoring directly from req.body
             };
-            console.log("Non-NFL Base Ranking Query:", baseRankingQuery);
+            console.log("Non-NFL Base Ranking Query (source omitted):", baseRankingQuery);
         }
 
         // Get the latest expert rankings using the dynamic query

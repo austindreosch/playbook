@@ -246,7 +246,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         const processedPlayers = processRankingData(activeRanking);
         console.log("[useEffect] Processed Players:", processedPlayers);
         setRankedPlayers(processedPlayers);
-    }, [activeRanking, processRankingData, sport]);
+    }, [activeRanking, sport]);
 
     // Fetch data when component mounts or sport changes
     useEffect(() => {
@@ -529,3 +529,4 @@ const RankingsPlayerListContainer = React.forwardRef(({
 RankingsPlayerListContainer.displayName = 'RankingsPlayerListContainer'; // Add display name for dev tools
 
 export default RankingsPlayerListContainer;
+
