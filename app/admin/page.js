@@ -5,6 +5,7 @@ import CleanupRankingsButton from '@/components/admin/CleanupRankingsButton';
 import UpdateNBAStatsButton from '@/components/admin/UpdateNBAStatsButton';
 import UpdateNFLStatsButton from '@/components/admin/UpdateNFLStatsButton';
 import UpdateRankingsButton from '@/components/admin/UpdateRankingsButton';
+import UpdateRankingsNFLButton from '@/components/admin/UpdateRankingsNFLButton';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 
@@ -66,7 +67,9 @@ export default function AdminPage() {
                 {/* <CleanupRankingsButton /> */}
                 <UpdateRankingsButton sport="NBA" format="Dynasty" scoring="Categories" />
                 <UpdateRankingsButton sport="NBA" format="Redraft" scoring="Categories" />
-                <UpdateRankingsButton sport="NFL" format="Dynasty" scoring="Points" />
+                {/* <UpdateRankingsButton sport="NFL" format="Dynasty" scoring="Points" /> */}
+                <h1>NFL</h1>
+                <UpdateRankingsNFLButton />
               </div>
             </div>
           </div>

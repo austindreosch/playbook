@@ -1,5 +1,23 @@
 'use client';
 
+/**
+ * UpdateNFLStatsButton Component
+ * 
+ * Functionality:
+ * - Admin-only button to trigger NFL stats update
+ * - Makes POST request to /api/pull/nflRawData endpoint
+ * - Displays loading state during update process
+ * - Shows error messages if update fails
+ * 
+ * Data Flow:
+ * - Triggers API endpoint to fetch and update NFL player statistics
+ * - Handles success/error responses from the API
+ * 
+ * Integration:
+ * - Uses Auth0 for admin authentication
+ * - Connects to backend API for NFL data updates
+ */
+
 import { useMasterDataset } from '@/stores/useMasterDataset';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import React, { useState } from 'react';

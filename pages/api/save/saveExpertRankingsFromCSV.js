@@ -1,10 +1,23 @@
 /**
- * THIS IS THE NOW /API/SAVE/SAVEEXPERTRANKINGS.JS
+ * API endpoint to save expert rankings for fantasy sports from CSV files.
  * 
- * NEED TO USE THIS FOR SAVING ALL SPORTS EXPERT RANKINGS DATA FROM CSV FILES ETC
+ * Functionality:
+ * - Parses CSV files containing expert rankings for different sports (NFL, NBA, MLB)
+ * - Matches player names with existing player data in the database
+ * - Handles name variations using custom mappings and fuzzy matching
+ * - Stores rankings in MongoDB with version tracking
+ * - Prevents duplicate imports of unchanged rankings
+ * 
+ * File integrations:
+ * - Reads CSV files from public/docs directory (e.g., nfl_dynasty_points_rankings.csv)
+ * - CSV format requires 'Rank' and 'Player' columns with optional comment lines
+ * - Extracts source information from CSV comment lines
+ * 
+ * Database interactions:
+ * - Connects to MongoDB 'playbook' database
+ * - Queries 'stats' collection for player data
+ * - Updates 'rankings' collection with new rankings
  */
-
-
 
 import fs from 'fs/promises';
 import Fuse from 'fuse.js';
