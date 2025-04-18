@@ -199,6 +199,12 @@ const RankingsPlayerRow = memo(({
     const rowRef = useRef(null);
     const [imageLoadError, setImageLoadError] = useState(false);
 
+    // --- NEW: Log received props --- 
+    // Limit logging frequency if needed
+    // if (Math.random() < 0.05) {
+    console.log(`[Row Render] Rank: ${rank}, Player: ${player?.name || player?.rankingId}, Sorted: ${!isRankSorted}`);
+    // }
+
     // Calculate the sum of zScores for the selected categories, applying weight for NFL PPG
     const zScoreSum = useMemo(() => {
         const ppgKey = 'advanced.fantasyPointsPerGame';

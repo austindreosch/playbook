@@ -26,7 +26,22 @@ import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerLi
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+// --- NEW: Add NFL Mapping (or import from shared location) ---
+const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
+  // --- Advanced / Other --- 
+  'PPG': 'advanced.fantasyPointsPerGame',
+  'PPS': 'advanced.fantasyPointsPerSnap',
+  'OPG': 'advanced.opportunitiesPerGame',
+  'OPE': 'advanced.opportunityEfficiency',
+  'YD%': 'advanced.yardShare',
+  'PR%': 'advanced.productionShare',
+  'TD%': 'advanced.touchdownRate',
+  'BP%': 'advanced.bigPlayRate',
+  'TO%': 'advanced.turnoverRate',
+  // Add other categories from your map if needed...
+};
 
 export default function RankingsPage() {
   const [latestUserRankings, setLatestUserRankings] = useState(null);
@@ -35,6 +50,7 @@ export default function RankingsPage() {
   const [activeRankingId, setActiveRankingId] = useState(null);
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
+  const listContainerRef = useRef(null);
 
   const {
     nba, mlb, nfl,
@@ -179,18 +195,37 @@ export default function RankingsPage() {
   // }, [datasetForSelectedSport]);
 
   const handleSortChange = useCallback((newKey) => {
+    // --- NEW: Translate abbreviation to full path --- 
+    let fullPath = null;
+    if (selectedSport === 'NFL') {
+      // Use the predefined map for NFL
+      fullPath = NFL_STAT_ABBREVIATION_TO_PATH_MAP[newKey];
+      if (!fullPath) {
+        console.warn(`[Sort Warning] No NFL path found for abbreviation: ${newKey}. Using abbreviation itself.`);
+        fullPath = newKey; // Fallback just in case
+      }
+    } else {
+      // TODO: Implement logic for other sports if needed
+      // Could involve generating map from dataset structure or using different predefined maps
+      console.warn(`[Sort Warning] Stat path mapping not implemented for sport: ${selectedSport}. Using abbreviation: ${newKey}`);
+      fullPath = newKey; // Fallback to using abbreviation directly
+    }
+
+    console.log(`[Sort] Header clicked: ${newKey}, Translated path: ${fullPath}`);
+
     setSortConfig(currentConfig => {
-      if (currentConfig.key === newKey) {
-        // If clicking the same key, revert to rank sort
+      // Compare with the *full path* now
+      if (currentConfig.key === fullPath) {
+        // If clicking the same stat, revert to rank sort
         return { key: null, direction: 'desc' };
       } else {
-        // Otherwise, sort by the new key descending
-        return { key: newKey, direction: 'desc' };
+        // Otherwise, sort by the new stat (full path) descending
+        return { key: fullPath, direction: 'desc' };
       }
     });
-    // Optional: Scroll list to top (would require ref handling)
-    // listContainerRef.current?.scrollToTop(); 
-  }, []);
+    listContainerRef.current?.resetListCache();
+    // Pass selectedSport as dependency if mapping logic depends on it
+  }, [selectedSport]);
 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;
@@ -249,8 +284,8 @@ export default function RankingsPage() {
             />
 
             <RankingsPlayerListContainer
+              ref={listContainerRef}
               sport={selectedSport}
-              userRankings={latestUserRankings}
               dataset={datasetForSelectedSport}
               activeRanking={activeRanking}
               sortConfig={sortConfig}

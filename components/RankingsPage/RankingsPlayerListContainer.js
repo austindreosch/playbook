@@ -75,27 +75,33 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
 // --- Helper function (moved here or to utils) ---
 const getNestedValue = (obj, path, defaultValue = null) => {
     if (!obj || typeof path !== 'string') return defaultValue;
+
+    // --- MODIFIED: Handle potential object structure first ---
+    let potentialValue = obj;
     if (path.indexOf('.') === -1) {
-        // Handle NBA-like structure { value: ... } for top-level keys if needed
-        if (obj.hasOwnProperty(path) && typeof obj[path] === 'object' && obj[path]?.hasOwnProperty('value')) {
-            return obj[path].value;
+        // If simple path, check directly
+        potentialValue = obj.hasOwnProperty(path) ? obj[path] : defaultValue;
+    } else {
+        // If nested path, traverse
+        const keys = path.split('.');
+        for (const key of keys) {
+            if (potentialValue && typeof potentialValue === 'object' && key in potentialValue) {
+                potentialValue = potentialValue[key];
+            } else {
+                potentialValue = defaultValue; // Path doesn't fully exist
+                break; // Stop traversal
+            }
         }
-        return obj.hasOwnProperty(path) ? obj[path] : defaultValue;
     }
-    const keys = path.split('.');
-    let value = obj;
-    for (const key of keys) {
-        if (value && typeof value === 'object' && key in value) {
-            value = value[key];
-        } else {
-            return defaultValue;
-        }
+
+    // --- NEW: Check if the final value is an object with a 'value' property ---
+    if (potentialValue !== defaultValue && potentialValue && typeof potentialValue === 'object' && potentialValue.hasOwnProperty('value')) {
+        // If it has a 'value' property, return that (potentially null/undefined)
+        return potentialValue.value;
     }
-    // Handle potential final value being an object like { value: ... }
-    if (value && typeof value === 'object' && value.hasOwnProperty('value')) {
-        return value.value;
-    }
-    return value;
+
+    // Otherwise, return the traversed value (could be raw value, object, or default)
+    return potentialValue;
 };
 
 // --- End Helper --- 
@@ -310,6 +316,12 @@ const RankingsPlayerListContainer = React.forwardRef(({
             if (listRef.current) {
                 listRef.current.resetAfterIndex(0);
             }
+        },
+        // --- NEW: Expose list reset ---
+        resetListCache: () => {
+            if (listRef.current) {
+                listRef.current.resetAfterIndex(0, true); // Pass true to force re-render
+            }
         }
     }));
 
@@ -319,21 +331,29 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // Apply sorting if a sort key is set
         if (sortConfig?.key !== null) {
+            // --- NEW: Add Log --- 
+            console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
             playersToDisplay.sort((a, b) => {
-                const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity); // Use -Infinity for null/missing to sort them lower
+                const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity);
                 const valueB = getNestedValue(b.stats, sortConfig.key, -Infinity);
 
-                // Handle non-numeric values gracefully (treat as equal for now, or implement string compare)
-                if (typeof valueA !== 'number' || typeof valueB !== 'number') {
-                    // Basic null/undefined handling
-                    if (valueA === null || valueA === undefined) return 1; // a comes after b
-                    if (valueB === null || valueB === undefined) return -1; // b comes after a
-                    return 0; // Treat other non-numbers as equal
-                }
+                // --- NEW: Add Log --- 
+                // Limit logging frequency for performance if needed
+                // if (Math.random() < 0.1) { // Log ~10% of comparisons 
+                //     console.log(`[Sort Compare] ${a.name || 'Unknown'} (${valueA}) vs ${b.name || 'Unknown'} (${valueB}) | Key: ${sortConfig.key}`);
+                // }
 
-                const comparison = valueA - valueB;
-                return sortConfig.direction === 'asc' ? comparison : -comparison;
+                // Use more robust comparison
+                const numA = (typeof valueA === 'number' && isFinite(valueA)) ? valueA : -Infinity;
+                const numB = (typeof valueB === 'number' && isFinite(valueB)) ? valueB : -Infinity;
+
+                // Descending sort (higher number first)
+                return numB - numA;
             });
+            // --- NEW: Log the sorted array (first few items) ---
+            console.log("[Sort] Sorted players (first 5):",
+                playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
+            );
         }
 
         // Apply pagination (kept for structure, but currently showing all sorted/ranked)
