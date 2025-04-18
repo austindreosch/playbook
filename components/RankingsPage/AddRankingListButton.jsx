@@ -108,10 +108,8 @@ const AddRankingListButton = ({ rankings, dataset }) => {
             const createResult = await createResponse.json();
             newListId = createResult.listId; // Store the ID
 
-            // 3. Refresh the overall list of rankings (for the side panel)
-            await fetchUserRankings();
-
-            // 4. Fetch the newly created ranking data specifically
+            // --- MODIFIED: Fetch new ranking and set active *before* refreshing full list ---
+            // 3. Fetch the newly created ranking data specifically
             if (newListId) {
                 const fetchNewRankingResponse = await fetch(`/api/user-rankings/${newListId}`);
                 if (!fetchNewRankingResponse.ok) {
@@ -119,16 +117,18 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                 }
                 const newRankingData = await fetchNewRankingResponse.json();
 
-                // 5. Set the new ranking as active in the store
+                // 4. Set the new ranking as active in the store FIRST
                 useUserRankings.getState().setActiveRanking(newRankingData);
-                // Also update the local activeRankingId state in RankingsPage if needed,
-                // though ideally RankingsPage reads directly from the store's activeRanking.
-                // If RankingsPage uses a local state 'activeRankingId', you'd need to lift state up
-                // or pass a setter function down. Assuming it relies on the store state now.
+
+                // 5. THEN, refresh the overall list of rankings (for the side panel)
+                await fetchUserRankings();
+
             } else {
                 console.warn("Could not get new list ID from creation response.");
+                // Still attempt to refresh the list even if setting active failed
+                await fetchUserRankings();
             }
-
+            // --- END MODIFICATION ---
 
             // 6. Close the dialog and reset form
             setOpen(false);
