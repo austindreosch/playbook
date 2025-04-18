@@ -26,7 +26,7 @@ import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerLi
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function RankingsPage() {
   const [latestUserRankings, setLatestUserRankings] = useState(null);
@@ -34,6 +34,7 @@ export default function RankingsPage() {
   const [error, setError] = useState(null);
   const [activeRankingId, setActiveRankingId] = useState(null);
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
 
   const {
     nba, mlb, nfl,
@@ -177,6 +178,19 @@ export default function RankingsPage() {
   //   console.log('Current Sport Data:', datasetForSelectedSport);
   // }, [datasetForSelectedSport]);
 
+  const handleSortChange = useCallback((newKey) => {
+    setSortConfig(currentConfig => {
+      if (currentConfig.key === newKey) {
+        // If clicking the same key, revert to rank sort
+        return { key: null, direction: 'desc' };
+      } else {
+        // Otherwise, sort by the new key descending
+        return { key: newKey, direction: 'desc' };
+      }
+    });
+    // Optional: Scroll list to top (would require ref handling)
+    // listContainerRef.current?.scrollToTop(); 
+  }, []);
 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     return <div className="container mx-auto p-4">Loading rankings...</div>;
@@ -229,6 +243,8 @@ export default function RankingsPage() {
               sport={selectedSport}
               userRankings={latestUserRankings}
               activeRanking={activeRanking}
+              sortConfig={sortConfig}
+              onSortChange={handleSortChange}
               onCollapseAll={handleCollapseAll}
             />
 
@@ -237,14 +253,13 @@ export default function RankingsPage() {
               userRankings={latestUserRankings}
               dataset={datasetForSelectedSport}
               activeRanking={activeRanking}
+              sortConfig={sortConfig}
               collapseAllTrigger={collapseAllTrigger}
             />
           </div>
 
           <div className="w-72 sticky top-4">
             <RankingsSidePanel
-              // userRankings={latestUserRankings}
-              // activeRanking={activeRanking}
               onSelectRanking={handleRankingSelect}
               collapseAllTrigger={collapseAllTrigger}
             />

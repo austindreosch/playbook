@@ -187,7 +187,15 @@ StatsSectionSecondary.displayName = 'StatsSectionSecondary';
 
 // 
 
-const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, onExpand }) => {
+const RankingsPlayerRow = memo(({
+    player,
+    sport,
+    categories,
+    rank,
+    isExpanded,
+    onExpand,
+    isRankSorted
+}) => {
     const rowRef = useRef(null);
     const [imageLoadError, setImageLoadError] = useState(false);
 
@@ -221,6 +229,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: player.rankingId,
         animateLayoutChanges: () => false, // Disable layout animations for better performance
+        disabled: !isRankSorted,
     });
 
     // Apply styles for dragging - use CSS variables for better performance
@@ -316,12 +325,13 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                 onClick={onExpand}
             >
                 {/* Left section with fixed widths */}
-                <div className="flex items-center w-[40%]">
+                <div className="flex items-center w-[40%] relative">
                     {/* Drag handle */}
                     <div
-                        className="px-1 cursor-grab text-gray-400 active:cursor-grabbing"
-                        {...attributes}
-                        {...listeners}
+                        className={`px-1 text-gray-400 ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
+                        {...(isRankSorted ? attributes : {})}
+                        {...(isRankSorted ? listeners : {})}
+                        title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
@@ -329,7 +339,7 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                     </div>
 
                     {/* Rank number */}
-                    <div className="w-10 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold">{rank}</div>
+                    <div className={`w-10 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
 
                     {/* Player Image - Updated Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
@@ -365,6 +375,10 @@ const RankingsPlayerRow = memo(({ player, sport, categories, rank, isExpanded, o
                     <div className="ml-auto  w-16 text-center text-xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div>
+
+                    {!isRankSorted && (
+                        <div className="absolute inset-0 bg-transparent z-20" title="Sorting by stat, drag disabled"></div>
+                    )}
                 </div>
 
                 {/* Stats section - flexible width */}

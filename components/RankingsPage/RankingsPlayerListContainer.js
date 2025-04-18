@@ -5,7 +5,7 @@ import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { VariableSizeList as List } from 'react-window';
 
@@ -72,7 +72,41 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
 
 };
 
-const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAllTrigger }) => {
+// --- Helper function (moved here or to utils) ---
+const getNestedValue = (obj, path, defaultValue = null) => {
+    if (!obj || typeof path !== 'string') return defaultValue;
+    if (path.indexOf('.') === -1) {
+        // Handle NBA-like structure { value: ... } for top-level keys if needed
+        if (obj.hasOwnProperty(path) && typeof obj[path] === 'object' && obj[path]?.hasOwnProperty('value')) {
+            return obj[path].value;
+        }
+        return obj.hasOwnProperty(path) ? obj[path] : defaultValue;
+    }
+    const keys = path.split('.');
+    let value = obj;
+    for (const key of keys) {
+        if (value && typeof value === 'object' && key in value) {
+            value = value[key];
+        } else {
+            return defaultValue;
+        }
+    }
+    // Handle potential final value being an object like { value: ... }
+    if (value && typeof value === 'object' && value.hasOwnProperty('value')) {
+        return value.value;
+    }
+    return value;
+};
+
+// --- End Helper --- 
+
+const RankingsPlayerListContainer = React.forwardRef(({
+    sport,
+    activeRanking,
+    dataset,
+    sortConfig,
+    collapseAllTrigger
+}, ref) => {
     // Initialize state with players
     const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
@@ -215,6 +249,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
         // Ensure necessary data exists before proceeding
         if (!activeRanking?.categories || !dataset?.[currentSport]?.players?.length) {
             setChosenCategories([]); // Clear if no categories or data
+            // --- NEW: Reset sort if categories change --- 
             return;
         }
 
@@ -263,11 +298,50 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
         }
     }, [dataset, sport]);
 
-    // Get paginated players - update to use rankedPlayers instead of players
+    // --- Expose methods via ref (example) ---
+    React.useImperativeHandle(ref, () => ({
+        scrollToTop: () => {
+            if (listRef.current) {
+                listRef.current.scrollTo(0);
+            }
+        },
+        collapseAll: () => {
+            setExpandedRows(new Set());
+            if (listRef.current) {
+                listRef.current.resetAfterIndex(0);
+            }
+        }
+    }));
+
+    // Get paginated players - update to use rankedPlayers and apply sorting
     const paginatedPlayers = useMemo(() => {
-        const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
-        return rankedPlayers.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
-    }, [rankedPlayers, currentPage]);
+        let playersToDisplay = [...rankedPlayers]; // Start with rank-ordered players
+
+        // Apply sorting if a sort key is set
+        if (sortConfig?.key !== null) {
+            playersToDisplay.sort((a, b) => {
+                const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity); // Use -Infinity for null/missing to sort them lower
+                const valueB = getNestedValue(b.stats, sortConfig.key, -Infinity);
+
+                // Handle non-numeric values gracefully (treat as equal for now, or implement string compare)
+                if (typeof valueA !== 'number' || typeof valueB !== 'number') {
+                    // Basic null/undefined handling
+                    if (valueA === null || valueA === undefined) return 1; // a comes after b
+                    if (valueB === null || valueB === undefined) return -1; // b comes after a
+                    return 0; // Treat other non-numbers as equal
+                }
+
+                const comparison = valueA - valueB;
+                return sortConfig.direction === 'asc' ? comparison : -comparison;
+            });
+        }
+
+        // Apply pagination (kept for structure, but currently showing all sorted/ranked)
+        // const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
+        // return playersToDisplay.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
+        return playersToDisplay; // Return all sorted/ranked players for now
+
+    }, [rankedPlayers, sortConfig, currentPage]); // Add sortConfig and currentPage
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -289,10 +363,18 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
 
     // Handler for when dragging ends
     const handleDragEnd = useCallback((event) => {
-        // document.body.style.cursor = '';  // possible problem
+        document.body.style.cursor = ''; // Reset cursor
+        setActiveId(null); // Reset activeId regardless of outcome
+
+        // --- NEW: Prevent re-ranking if sorted by stat --- 
+        if (sortConfig?.key !== null) {
+            console.log("[handleDragEnd] Drag disabled while sorted by stat:", sortConfig.key);
+            return; // Do not allow reordering when sorted by stat
+        }
+
         const { active, over } = event;
 
-        if (over && active.id !== over.id) { // Add check for over
+        if (over && active.id !== over.id) {
             const oldIndex = rankedPlayers.findIndex(item => item.rankingId === active.id);
             const newIndex = rankedPlayers.findIndex(item => item.rankingId === over.id);
 
@@ -325,9 +407,7 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
                 saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
         }
-
-        setActiveId(null);
-    }, [rankedPlayers, updateAllPlayerRanks, saveChanges]);
+    }, [rankedPlayers, updateAllPlayerRanks, saveChanges, sortConfig?.key]); // Use prop sortConfig.key
 
     // Simple function to get row height based on expanded state
     const getRowHeight = useCallback((index) => {
@@ -366,6 +446,8 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
         if (!player) return null;
 
         const isPlaceholder = player.isPlaceholder;
+        // --- MODIFIED: Use prop sortConfig ---
+        const isRankSorted = sortConfig?.key === null;
 
         return (
             <div style={style}>
@@ -374,14 +456,18 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
                     player={player}
                     sport={sport}
                     categories={chosenCategories}
-                    rank={player.rank}
+                    // --- MODIFIED: Use index + 1 for display rank when sorted by stat --- 
+                    rank={isRankSorted ? player.rank : index + 1}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)} // Pass null if placeholder
                     isPlaceholder={isPlaceholder} // Pass the flag down
+                    // --- NEW: Pass sorting status --- 
+                    isRankSorted={isRankSorted}
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategories, expandedRows, handleRowExpand]);
+        // Add prop sortConfig.key to dependency array
+    }, [paginatedPlayers, sport, chosenCategories, expandedRows, handleRowExpand, sortConfig?.key]);
 
     const sportKey = sport.toLowerCase();
 
@@ -399,6 +485,11 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
 
     return (
         <div>
+            {/* --- NEW: Pass sortConfig and handleSortChange to Header --- */}
+            {/* Note: Assuming RankingsPlayerListHeader is rendered *above* this component */}
+            {/* If it's rendered elsewhere, you'll need a different way to pass props (e.g., context) */}
+            {/* For now, assuming parent component renders both and passes props */}
+
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -410,10 +501,14 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
                     },
                 }}
                 modifiers={[restrictToVerticalAxis]}
+                // --- MODIFIED: Use prop sortConfig ---
+                disabled={sortConfig?.key !== null}
             >
                 <SortableContext
                     items={paginatedPlayers.map(player => player.rankingId)}
                     strategy={verticalListSortingStrategy}
+                    // --- MODIFIED: Use prop sortConfig ---
+                    disabled={sortConfig?.key !== null}
                 >
                     <List
                         ref={listRef}
@@ -432,14 +527,20 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
                     {activeId ? (() => {
                         const activePlayer = paginatedPlayers.find(p => p.rankingId === activeId);
                         if (!activePlayer) return null;
+                        // --- MODIFIED: Use prop sortConfig ---
+                        const isRankSorted = sortConfig?.key === null;
+                        const displayRank = isRankSorted ? activePlayer.rank : paginatedPlayers.findIndex(p => p.rankingId === activeId) + 1;
                         return (
                             <RankingsPlayerRow
                                 player={activePlayer}
                                 sport={sport}
                                 categories={chosenCategories}
-                                rank={activePlayer.rank}
+                                // --- MODIFIED: Use calculated display rank --- 
+                                rank={displayRank}
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
+                                // --- NEW: Indicate overlay is not sortable/draggable --- 
+                                isRankSorted={false} // Overlay should not appear draggable 
                             // Note: Drag overlay row doesn't need onExpand
                             />
                         );
@@ -458,6 +559,8 @@ const RankingsPlayerListContainer = ({ sport, activeRanking, dataset, collapseAl
             `}</style>
         </div>
     );
-};
+});
+
+RankingsPlayerListContainer.displayName = 'RankingsPlayerListContainer'; // Add display name for dev tools
 
 export default RankingsPlayerListContainer;

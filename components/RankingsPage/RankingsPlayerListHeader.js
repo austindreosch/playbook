@@ -16,20 +16,29 @@ import { FilterSelector } from './Selectors/FilterSelector';
 import { PositionSelector } from './Selectors/PositionSelector';
 import { SourceSelector } from './Selectors/SourceSelector';
 
-
+// --- NEW: Sort Indicator Icons --- 
+// Remove SortAscIcon as it's no longer needed
+// const SortAscIcon = () => (
+//     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1">
+//         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+//     </svg>
+// );
+const SortDescIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+);
+// --- End Icons --- 
 
 const RankingsPlayerListHeader = ({
     sport,
+    sortConfig,
     onSortChange = () => { },
     onSave = async () => { },
     onCollapseAll = () => { }
 }) => {
     const { activeRanking, updateCategories, updateRankingName } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
-    const [sortConfig, setSortConfig] = useState({
-        field: null,
-        direction: 'asc'
-    });
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
     const [namePopoverOpen, setNamePopoverOpen] = useState(false);
@@ -77,15 +86,6 @@ const RankingsPlayerListHeader = ({
         }
     };
 
-    const handleSortChange = (field) => {
-        setSortConfig(prev => ({
-            field,
-            direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
-        }));
-
-        onSortChange?.(field, sortConfig.direction === 'asc' ? 'desc' : 'asc');
-    };
-
     const handleCategoryToggle = (categoryKey, enabled) => {
         if (!activeRanking?.categories) return;
 
@@ -113,14 +113,6 @@ const RankingsPlayerListHeader = ({
 
         updateCategories(updatedCategories);
     };
-
-    // Add console logging to check the state
-    // useEffect(() => {
-    //     console.log('Active Ranking:', activeRanking);
-    //     if (activeRanking) {
-    //         console.log('Categories:', activeRanking.categories);
-    //     }
-    // }, [activeRanking]);
 
     if (!activeRanking) {
         return <div className="text-center p-4 text-gray-500">Please select a ranking to view.</div>;
@@ -169,10 +161,16 @@ const RankingsPlayerListHeader = ({
                     {enabledCategories.map((category) => (
                         <div
                             key={category.key}
-                            className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white"
-                            onClick={() => handleSortChange(category.key)}
+                            className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
+                            onClick={() => {
+                                console.log('Header clicked:', category.key);
+                                console.log('onSortChange prop:', onSortChange);
+                                onSortChange(category.key);
+                            }}
                         >
                             {category.name}
+                            {/* --- MODIFIED: Only show Desc icon when sorting by this key --- */}
+                            {sortConfig && sortConfig.key === category.key && <SortDescIcon />}
                         </div>
                     ))}
                 </div>
