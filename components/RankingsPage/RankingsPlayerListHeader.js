@@ -3,6 +3,17 @@
 import { BarsIcon } from '@/components/icons/BarsIcon';
 import { HistoryIcon } from '@/components/icons/HistoryIcon';
 import { ButtonLoading } from '@/components/Interface/ButtonLoading';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -40,12 +51,14 @@ const RankingsPlayerListHeader = ({
     activeRanking,
     statPathMapping = {}
 }) => {
-    const { updateCategories, updateRankingName } = useUserRankings();
+    const { updateCategories, updateRankingName, deleteRanking } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
     const [namePopoverOpen, setNamePopoverOpen] = useState(false);
     const [isCollapsing, setIsCollapsing] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Add state for selectors
     const [selectedSource, setSelectedSource] = useState("");
@@ -98,6 +111,26 @@ const RankingsPlayerListHeader = ({
         };
 
         updateCategories(updatedCategories);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!activeRanking?._id) return;
+
+        setIsDeleting(true);
+        try {
+            // Call the store function to delete the ranking
+            await deleteRanking(activeRanking._id);
+            // No need to manually close dialog here, store update should trigger re-renders
+            // If the component unmounts or activeRanking becomes null, dialog might close automatically
+            // Or explicitly close if needed after success (though maybe not necessary)
+            // setIsDeleteDialogOpen(false); 
+        } catch (error) {
+            console.error("Failed to delete ranking (error caught in component):", error);
+            // Optionally display an error message to the user here
+            // For now, error is logged and handled in the store
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     if (!activeRanking) {
@@ -221,13 +254,46 @@ const RankingsPlayerListHeader = ({
                             </div>
                         </div>
 
-                        <div>
+                        <div className="space-y-2">
+                            {/* Save Button */}
                             {isSaving ? (
                                 <ButtonLoading />
                             ) : (
-                                <Button onClick={handleSave} className='bg-pb_orange text-pb_darkgray shadow-md hover:bg-pb_darkorange'>Save Changes</Button>
+                                <Button onClick={handleSave} className='bg-pb_orange text-pb_darkgray shadow-md hover:bg-pb_darkorange w-full'>Save Changes</Button>
                             )}
-                            <div className='text-2xs py-2 px-1'>
+                            {/* Delete Button Area */}
+                            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        variant="destructive"
+                                        className="w-full text-xs h-8"
+                                    >
+                                        Delete Ranking List
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete the
+                                            <span className="font-medium"> "{activeRanking?.name}" </span>
+                                            ranking list and remove its data from our servers.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleDeleteConfirm}
+                                            disabled={isDeleting}
+                                            className="bg-red-600 hover:bg-red-700"
+                                        >
+                                            {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
+                            <div className='text-2xs py-1 px-1 text-center'>
                                 Last Updated: {new Date(activeRanking?.details?.dateUpdated).toLocaleDateString()}
                             </div>
                         </div>

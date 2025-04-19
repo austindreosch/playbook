@@ -219,13 +219,20 @@ export default async function handler(req, res) {
             name,
             scoring,
             source,
-            rankings: latestRankings.rankings.map(player => ({
-                playerId: player.playerId, // Will be null for unmatched players
-                name: player.name, // Store the name from the source
-                rank: player.rank,
-                notes: '',
-                tags: []
-            })),
+            rankings: latestRankings.rankings
+                .filter(player =>
+                    player.name &&
+                    !player.name.toLowerCase().includes(' pick ') &&  // Remove picks from rankings, but they're still in db
+                    !player.name.toLowerCase().includes(' round ')
+                )
+                .map(player => ({
+                    playerId: player.playerId,
+                    name: player.name,
+                    rank: player.rank,
+                    draftModeEnabled: true, // Default to enabled for Draft Mode
+                    notes: '',
+                    tags: []
+                })),
             positions: sportConfigs[sport]?.positions || [],
             categories: sportConfigs[sport]?.categories || {},
             details: {

@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+Please make sure to keep to the current tooling as much as possible unless there's a sigificant and/or meaningful reason to look outside of it. I'm using Next.js 15+, MongoDB, Zustand, auth0, Tailwind, Vercel, ShadCN for the base template styling of components, Fuse.js for fuzzy matching.

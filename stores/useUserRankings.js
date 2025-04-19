@@ -269,7 +269,54 @@ const useUserRankings = create(
                         ),
                         hasUnsavedChanges: true
                     });
+                },
+
+                // --- NEW: Delete Ranking Function ---
+                deleteRanking: async (rankingId) => {
+                    if (!rankingId) return;
+
+                    const { activeRanking, rankings } = get();
+                    setState({ isLoading: true, error: null }); // Indicate loading
+
+                    try {
+                        const response = await fetch(`/api/user-rankings/delete/${rankingId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({})); // Attempt to get error message
+                            throw new Error(errorData.error || `Failed to delete ranking list (${response.status})`);
+                        }
+
+                        // --- Update State on Success ---
+                        const newRankings = rankings.filter(r => r._id !== rankingId);
+                        let newActiveRanking = activeRanking;
+
+                        // If the deleted ranking was the active one, select the first remaining one, or null if none remain.
+                        if (activeRanking?._id === rankingId) {
+                            if (newRankings.length > 0) {
+                                // Select the first ranking from the updated list
+                                newActiveRanking = newRankings[0];
+                            } else {
+                                // No rankings left, set active to null
+                                newActiveRanking = null;
+                            }
+                        }
+                        // If the deleted ranking wasn't the active one, newActiveRanking remains unchanged (keeps the original activeRanking)
+
+                        setState({
+                            rankings: newRankings,
+                            activeRanking: newActiveRanking,
+                            isLoading: false
+                        });
+
+                    } catch (error) {
+                        console.error('Error deleting ranking:', error);
+                        setState({ error: error.message, isLoading: false });
+                        // Optionally re-throw or handle the error further if needed by the calling component
+                    }
                 }
+                // --- END: Delete Ranking Function ---
             };
         },
         {
