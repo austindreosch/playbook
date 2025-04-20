@@ -114,7 +114,8 @@ export default async function handler(req, res) {
         positions,
         categories,
         details,
-        pprType
+        pprType,
+        flexSetting
     } = req.body;
 
     // Validate required fields
@@ -229,7 +230,7 @@ export default async function handler(req, res) {
                     playerId: player.playerId,
                     name: player.name,
                     rank: player.rank,
-                    draftModeEnabled: true, // Default to enabled for Draft Mode
+                    draftModeAvailable: true, // Default to available for Draft Mode
                     notes: '',
                     tags: []
                 })),
@@ -237,7 +238,8 @@ export default async function handler(req, res) {
             categories: sportConfigs[sport]?.categories || {},
             details: {
                 ...details,
-                ...(pprType && { pprType }),
+                pprSetting: pprType,
+                flexSetting: flexSetting,
                 dateCreated: new Date(),
                 dateUpdated: new Date(),
                 originRankings: {
