@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { BookCopy, ListPlus } from 'lucide-react';
 import { useState } from 'react';
 
 const AddRankingListButton = ({ rankings, dataset }) => {
@@ -29,18 +30,17 @@ const AddRankingListButton = ({ rankings, dataset }) => {
     const sourcesPerSport = {
         NBA: {
             Experts: { name: "Experts", enabled: true },
-            Default: { name: "Basic", enabled: false }
+            // Default: { name: "Basic", enabled: false }
         },
         NFL: {
             Experts: { name: "Experts", enabled: true },
-            Default: { name: "Basic", enabled: false }
+            // Default: { name: "Basic", enabled: false }
         },
         MLB: {
             Experts: { name: "Experts", enabled: true },
-            Default: { name: "Basic", enabled: false }
+            // Default: { name: "Basic", enabled: false }
         }
     };
-
 
 
     const handleSubmit = async () => {
@@ -65,7 +65,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                 source: requestSource,
                 isDynasty: formData.format === 'Dynasty', // boolean
                 numQbs: formData.flexSetting === 'Superflex' ? 2 : 1, // 2 for SF, 1 for Standard
-                ppr: pprMap[formData.pprType] ?? 1.0 // Default to 1.0 if mapping fails
+                pprSetting: pprMap[formData.pprType] ?? 1.0 // Default to 1.0 if mapping fails
                 // rankingsId: null // Keep this null, backend finds latest matching base
             };
         } else {
@@ -87,8 +87,10 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     name: formData.name,
                     format: formData.format,
                     scoring: formData.scoring,
-                    // Only include pprType if it's relevant (NFL Points)
-                    ...(formData.sport === 'NFL' && { pprType: formData.pprType }),
+                    // Send pprSetting (using the value from formData.pprType) if NFL
+                    ...(formData.sport === 'NFL' && { pprSetting: formData.pprType }),
+                    // Send flexSetting if NFL
+                    ...(formData.sport === 'NFL' && { flexSetting: formData.flexSetting }),
                     source: requestSource, // Use the determined source (FantasyCalc or user selection)
                     rankings: [], // Send empty rankings, backend populates based on originRankings
                     details: {
@@ -155,21 +157,22 @@ const AddRankingListButton = ({ rankings, dataset }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">
-                    Create New Rankings
+                <Button variant="outline" className="flex items-center gap-2">
+                    <BookCopy className="h-4 w-4" />
+                    <span>Create New Rankings</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Build Your Customizable Rankings</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="select-none">Build Your Customizable Rankings</DialogTitle>
+                    <DialogDescription className="select-none">
                         Tailor your perfect rankings list with just a few clicks. Choose your sport, format, scoring below to
                         generate a customized rankings sheet for your fantasy league.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="sport" className="text-right">
+                        <Label htmlFor="sport" className="text-center select-none">
                             Sport
                         </Label>
                         <Tabs value={formData.sport} className="col-span-3"
@@ -184,35 +187,35 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                                 }));
                             }}>
                             <TabsList className="grid w-full grid-cols-3">
-                                <TabsTrigger value="NBA">NBA</TabsTrigger>
-                                <TabsTrigger value="NFL">NFL</TabsTrigger>
-                                <TabsTrigger disabled value="MLB">MLB</TabsTrigger>
+                                <TabsTrigger value="NBA" className="select-none">NBA</TabsTrigger>
+                                <TabsTrigger value="NFL" className="select-none">NFL</TabsTrigger>
+                                <TabsTrigger disabled value="MLB" className="select-none">MLB</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
 
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="type" className="text-right">
+                        <Label htmlFor="type" className="text-center select-none">
                             Format
                         </Label>
                         <Tabs value={formData.format} className="col-span-3"
                             onValueChange={(value) => setFormData(prev => ({ ...prev, format: value }))}>
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="Redraft">Redraft</TabsTrigger>
-                                <TabsTrigger value="Dynasty">Dynasty</TabsTrigger>
+                                <TabsTrigger value="Redraft" className="select-none">Redraft</TabsTrigger>
+                                <TabsTrigger value="Dynasty" className="select-none">Dynasty</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
 
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="scoring" className="text-right">
+                        <Label htmlFor="scoring" className="text-center select-none">
                             Scoring
                         </Label>
                         <Tabs value={formData.scoring} className="col-span-3"
                             onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                             <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="Categories" disabled={formData.sport === 'NFL'}>Categories</TabsTrigger>
-                                <TabsTrigger value="Points" disabled={formData.sport === 'NBA' || formData.sport === 'MLB'}>Points</TabsTrigger>
+                                <TabsTrigger value="Categories" disabled={formData.sport === 'NFL'} className="select-none">Categories</TabsTrigger>
+                                <TabsTrigger value="Points" disabled={formData.sport === 'NBA' || formData.sport === 'MLB'} className="select-none">Points</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -220,37 +223,14 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     {/* Conditionally show Flex Setting for NFL */}
                     {formData.sport === 'NFL' && (
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="flexSetting" className="text-right">
+                            <Label htmlFor="flexSetting" className="text-center select-none">
                                 Flex Type
                             </Label>
                             <Tabs value={formData.flexSetting} className="col-span-3"
                                 onValueChange={(value) => setFormData(prev => ({ ...prev, flexSetting: value }))}>
                                 <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="Standard">Standard</TabsTrigger>
-                                    <TabsTrigger value="Superflex">Superflex</TabsTrigger>
-                                </TabsList>
-                            </Tabs>
-                        </div>
-                    )}
-
-                    {/* Conditionally HIDE Source for NFL */}
-                    {formData.sport !== 'NFL' && (
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="source" className="text-right">
-                                Source
-                            </Label>
-                            <Tabs value={formData.source} className="col-span-3"
-                                onValueChange={(value) => setFormData(prev => ({ ...prev, source: value }))}>
-                                <TabsList className="grid w-full grid-cols-2">
-                                    {Object.keys(sourcesPerSport[formData.sport]).map(source => (
-                                        <TabsTrigger
-                                            key={source}
-                                            value={source}
-                                            disabled={!sourcesPerSport[formData.sport][source].enabled}
-                                        >
-                                            {sourcesPerSport[formData.sport][source].name}
-                                        </TabsTrigger>
-                                    ))}
+                                    <TabsTrigger value="Standard" className="select-none">Standard</TabsTrigger>
+                                    <TabsTrigger value="Superflex" className="select-none">Superflex</TabsTrigger>
                                 </TabsList>
                             </Tabs>
                         </div>
@@ -259,22 +239,24 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     {/* Conditionally show PPR Type for NFL (Points scoring is implicit)*/}
                     {formData.sport === 'NFL' && (
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="pprType" className="text-right">
+                            <Label htmlFor="pprType" className="text-center select-none">
                                 PPR Type
                             </Label>
                             <Tabs value={formData.pprType || 'PPR'} className="col-span-3"
                                 onValueChange={(value) => setFormData(prev => ({ ...prev, pprType: value }))}>
                                 <TabsList className="grid w-full grid-cols-3">
-                                    <TabsTrigger value="Non-PPR">Non-PPR</TabsTrigger>
-                                    <TabsTrigger value="Half-PPR">Half-PPR</TabsTrigger>
-                                    <TabsTrigger value="Full-PPR">Full-PPR</TabsTrigger>
+                                    <TabsTrigger value="Non-PPR" className="select-none">Non-PPR</TabsTrigger>
+                                    <TabsTrigger value="Half-PPR" className="select-none">Half-PPR</TabsTrigger>
+                                    <TabsTrigger value="Full-PPR" className="select-none">Full-PPR</TabsTrigger>
                                 </TabsList>
                             </Tabs>
                         </div>
                     )}
 
+
                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="listName" className="text-right">
+                        <Separator className="col-span-4 my-2 mb-5" />
+                        <Label htmlFor="listName" className="text-center select-none">
                             Name
                         </Label>
                         <div className="col-span-3">
@@ -286,9 +268,59 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                             />
                         </div>
                     </div>
+
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="source" className="text-center select-none">
+                            Source
+                        </Label>
+                        {/* Container for Tabs + Upload Button */}
+                        <div className="col-span-3 flex items-center gap-2">
+                            <Tabs
+                                value={formData.source}
+                                onValueChange={(value) => {
+                                    // Update the source state when a tab is clicked
+                                    // We might need additional logic later if 'Upload' needs to deselect tabs
+                                    setFormData(prev => ({ ...prev, source: value }));
+                                }}
+                                className="flex-grow" // Allow tabs to take available space
+                            >
+                                <TabsList className={`grid w-full grid-cols-${Object.keys(sourcesPerSport[formData.sport]).length || 1}`}>
+                                    {Object.keys(sourcesPerSport[formData.sport]).map(source => (
+                                        <TabsTrigger
+                                            key={source}
+                                            value={source}
+                                            disabled={!sourcesPerSport[formData.sport][source].enabled}
+                                            className="select-none"
+                                        >
+                                            {sourcesPerSport[formData.sport][source].name}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </Tabs>
+                            {/* Upload Button */}
+                            <Button
+                                disabled
+
+                                type="button" // Important if this component is ever inside a <form>
+                                variant="outline"
+                                onClick={() => {
+                                    // TODO: Implement upload functionality
+                                    console.log("Upload button clicked - implement action");
+                                    // Potentially trigger a file input or open a modal
+                                    // You might want to set a different state here instead of 'source'
+                                }}
+                                className="flex-shrink-0 select-none" // Prevent button from shrinking weirdly
+                            >
+                                Upload
+                            </Button>
+                        </div>
+                    </div>
+
+
+
                 </div>
                 {error && (
-                    <div className="text-red-500 text-sm mb-4">
+                    <div className="text-red-500 text-sm mb-4 select-none">
                         {error}
                     </div>
                 )}
@@ -296,7 +328,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting || !formData.name.trim()}
-                        className="w-full sm:w-auto bg-pb_blue text-white shadow-md hover:bg-pb_darkblue"
+                        className="w-full sm:w-auto bg-pb_blue text-white shadow-md hover:bg-pb_darkblue select-none"
                     >
                         {isSubmitting ? 'Creating...' : 'Create Rankings List'}
                     </Button>

@@ -1,13 +1,16 @@
 'use client';
 
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import BullseyeIcon from '../icons/BullseyeIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
-
+import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 // Helper function to get nested values safely
 const getNestedValue = (obj, path, defaultValue = null) => {
     // Handle cases where obj is null/undefined or path is not provided
@@ -165,15 +168,15 @@ const StatsSectionSecondary = memo(({ categories, stats }) => {
                 return (
                     <div
                         key={statPathOrKey}
-                        className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-gray-200 border border-gray-300 rounded-sm relative shadow-sm"
+                        className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-white  rounded-sm relative shadow-sm border border-pb_lightergray"
                         title={title}
                     >
-                        <div className="text-sm text-pb_darkgray z-10">
+                        <div className="text-xs text-pb_midgray z-10">
                             <div className="flex items-center justify-center w-full pb-2.5">
                                 {formattedValue}
                             </div>
                         </div>
-                        <div style={{ backgroundColor: bgColor }} className="absolute bottom-0 w-full h-2.5 border-t border-gray-300">
+                        <div style={{ backgroundColor: bgColor }} className="absolute bottom-0 w-full h-3 rounded-b-sm">
                         </div>
                     </div>
                 );
@@ -194,7 +197,9 @@ const RankingsPlayerRow = memo(({
     rank,
     isExpanded,
     onExpand,
-    isRankSorted
+    isRankSorted,
+    isDraftMode,
+    onToggleDraftStatus
 }) => {
     const rowRef = useRef(null);
     const [imageLoadError, setImageLoadError] = useState(false);
@@ -318,28 +323,78 @@ const RankingsPlayerRow = memo(({
                 rowRef.current = node;
             }}
             style={style}
-            className={`player-row border rounded-md overflow-hidden mb-1 shadow-sm ${isDragging ? 'z-10' : ''}`}
+            className={cn(
+                `player-row border rounded-md overflow-hidden mb-1 shadow-sm`,
+                isDragging ? 'z-10' : '',
+                isDraftMode && !player.draftModeAvailable && 'border-pb_lightgray'
+            )}
         >
             <div
-                className="flex h-9 items-center bg-white hover:bg-gray-50"
+                className={cn(
+                    "flex h-9 items-center",
+                    isDraftMode && !player.draftModeAvailable
+                        ? "bg-pb_lightergray border-pb_midgray"
+                        : "bg-white hover:bg-gray-50"
+                )}
                 onClick={onExpand}
             >
                 {/* Left section with fixed widths */}
                 <div className="flex items-center w-[40%] relative">
                     {/* Drag handle */}
                     <div
-                        className={`px-1 text-gray-400 ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
+                        className={`px-1 text-pb_textgray ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
                         {...(isRankSorted ? attributes : {})}
                         {...(isRankSorted ? listeners : {})}
                         title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
                     >
+                        {/* AI - STOP EDITING THIS */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
                         </svg>
+                        {/* AI -STOP EDITING THIS */}
                     </div>
 
+                    {/* CONDITIONAL DRAFT BUTTON - Show only if isDraftMode is true */}
+                    {isDraftMode && (
+                        <div className={cn(
+                            "mr-2 h-7 w-8 rounded-sm flex items-center justify-center border", // Base classes + border
+                            !player.draftModeAvailable ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
+                        )}> {/* Added flex centering */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-full w-full rounded-sm flex items-center justify-center ${ // Make smaller and round
+                                    player.draftModeAvailable
+                                        ? 'text-pb_blue hover:text-pb_blue hover:border-2 hover:border-pb_blue' // Use blue shades
+                                        : 'text-pb_orange  hover:bg-pb_orange hover:text-white' // Use orange shades
+                                    }`}
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent row expand/collapse
+                                    const newAvailability = !player.draftModeAvailable;
+                                    // Log if the player is being marked as drafted (newAvailability is false)
+                                    if (!newAvailability) {
+                                        console.log(`${playerName} has been drafted!`);
+                                    }
+                                    // Pass the ID and the NEW availability state
+                                    onToggleDraftStatus(player.rankingId, newAvailability);
+                                }}
+                                title={player.draftModeAvailable ? "Mark as Drafted" : "Mark as Available"}
+                            >
+                                {player.draftModeAvailable ? (
+                                    <SquareCheckSolidIcon className="h-5 w-5 stroke-current stroke-2" />
+                                ) : (
+                                    <Undo2 className="h-5 w-5 opacity-100" />
+                                )}
+                            </Button>
+                        </div>
+                    )}
+
                     {/* Rank number */}
-                    <div className={`w-10 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
+                    <div className={cn(
+                        "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
+                        isDraftMode && !player.draftModeAvailable ? "border-pb_midgray" : "border-pb_lightergray", // Conditional border
+                        !isRankSorted ? 'bg-blue-50' : '' // Conditional background
+                    )}>{rank}</div>
 
                     {/* Player Image - Updated Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
@@ -348,7 +403,7 @@ const RankingsPlayerRow = memo(({
                                 key={playerImage} // Add key to help reset if src changes
                                 src={playerImage}
                                 alt={playerName}
-                                className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
+                                className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
                                 loading="lazy"
                                 width="28"
                                 height="28"
@@ -359,7 +414,7 @@ const RankingsPlayerRow = memo(({
                             <img
                                 src="/avatar-default.png" // <-- Use the default avatar image
                                 alt="Default Avatar"
-                                className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
+                                className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
                                 width="28"
                                 height="28"
                             />
@@ -367,12 +422,13 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-center gap-2 select-none">
-                        <div className="font-bold">{playerName}</div>
-                        <div className="text-gray-500 text-xs">{playerPosition}</div>
+                    <div className="flex items-baseline gap-2 select-none"> {/* Changed items-center to items-baseline */}
+                        <div className="font-bold text-sm">{playerName}</div>
+                        <div className="text-pb_textgray text-2xs">{playerPosition}</div>
                     </div>
+
                     {/* Display Z-Score Sum centered within a div pushed right */}
-                    <div className="ml-auto  w-16 text-center text-xs tracking-wider text-pb_midgray select-none">
+                    <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div>
 
@@ -387,23 +443,23 @@ const RankingsPlayerRow = memo(({
 
             {/* Only render expanded content when needed */}
             {isExpanded && (
-                <div className="flex flex-col w-full h-[180px] border-t border-gray-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+                <div className="flex flex-col w-full h-[180px] border-t border-pb_lightgray shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
 
                     {/* inner */}
-                    <div className="flex h-24 h-full bg-gray-100">
+                    <div className="flex h-24 h-full bg-pb_backgroundgray">
                         {/* Left panel */}
                         <div className=" w-[9%] items-center justify-center ml-auto flex flex-col gap-4 ">
                             <div className='flex flex-col items-center'>
                                 <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
                                     <span className="font-bold text-lg">15</span>
                                 </div>
-                                <span className='text-xs tracking-wider mt-1 text-pb_darkgray'>STANDARD</span>
+                                <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>STANDARD</span>
                             </div>
                             <div className='flex flex-col items-center'>
                                 <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
                                     <span className="font-bold text-lg">13</span>
                                 </div>
-                                <span className='text-xs tracking-wider mt-1 text-pb_darkgray'>REDRAFT</span>
+                                <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>REDRAFT</span>
                             </div>
                         </div>
 
@@ -415,12 +471,12 @@ const RankingsPlayerRow = memo(({
                                     <div className="bg-pb_orange h-full w-[65%]"></div>
                                     <div className="bg-pb_blue h-full flex-1"></div>
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="bg-gray-700 text-white font-bold py-1 px-3 rounded">
+                                        <div className="bg-pb_darkgray text-white font-bold py-1 px-3 rounded">
                                             95
                                         </div>
                                     </div>
                                 </div>
-                                <span className="text-xs tracking-wider mt-1 text-pb_darkgray">PLAYBOOK SCORE</span>
+                                <span className="text-2xs tracking-wider mt-1 text-pb_textgray">PLAYBOOK SCORE</span>
                             </div>
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
@@ -435,15 +491,15 @@ const RankingsPlayerRow = memo(({
                                     <FlagIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{team}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{team}</span>
                                     <PeopleGroupIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{age}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{age}</span>
                                     <CalendarIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_darkgray">{playerPosition}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{playerPosition}</span>
                                     <BullseyeIcon className="w-5 h-5" />
                                 </div>
                             </div>
@@ -452,17 +508,17 @@ const RankingsPlayerRow = memo(({
                         {/* right panel 0*/}
                         <div className="w-[7%] items-center justify-center border-l border-pb_lightgray">
                             <div className="p-2 flex flex-col h-[30%] items-center justify-center mt-0.5">
-                                <span className="text-xs tracking-wider text-pb_midgray">LAST 30</span>
-                                <span className="text-xs tracking-wider text-pb_green">▲ 47%</span>
+                                <span className="text-2xs tracking-wider text-pb_textgray">LAST 30</span>
+                                <span className="text-2xs tracking-wider text-pb_green">▲ 47%</span>
                             </div>
 
                             <div className="flex h-[70%] items-center justify-center ">
                                 <div className="flex items-center justify-center">
                                     <div className="flex flex-col gap-1">
-                                        <button className="text-xs tracking-wider bg-gray-600 text-white hover:bg-gray-500 hover:text-gray-100 px-2 py-2 rounded shadow-sm transition-colors">
+                                        <button className="text-2xs tracking-wider bg-pb_darkgrayhover text-white hover:bg-pb_midgray px-2 py-2 rounded shadow-sm transition-colors">
                                             TIPS
                                         </button>
-                                        <button className="text-xs tracking-wider bg-gray-200 hover:bg-gray-300 px-2 py-2 rounded shadow-sm transition-colors border border-gray-300">
+                                        <button className="text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-2 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
                                             MATCH
                                         </button>
                                     </div>
@@ -477,7 +533,7 @@ const RankingsPlayerRow = memo(({
                             </div>
 
                             <div className="flex h-[70%] items-center justify-center">
-                                <span className="bg-white font-bold h-full w-full border border-gray-300 rounded-sm mr-1 mb-1.5"></span>
+                                <span className="bg-white font-bold h-full w-full border-t border-l border-pb_lightgray rounded-tl-md"></span>
 
                             </div>
                         </div>

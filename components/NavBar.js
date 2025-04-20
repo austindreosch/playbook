@@ -24,7 +24,7 @@ function NavBar() {
 
                     <div className="flex items-center group font-bold">
                         <img src="/playbookicon.png" alt="Playbook Icon" className="h-8 w-8" />
-                        <a href="/" className="px-3 py-2 flex items-center">
+                        <a href="/rankings" className="px-3 py-2 flex items-center">
                             <div className={`text-3xl font-bold group-hover:text-white`}>
                                 Playbook
                             </div>
@@ -37,13 +37,14 @@ function NavBar() {
                     <div className="hidden md:block">
 
                         <div className="ml-10 flex items-center space-x-4">
-                            <Link href="/" className={`text-black font-medium hover:text-white px-3 py-2 rounded-md text-sm`}>Dashboard</Link>
-                            <Link href="/rankings" className={`text-black font-medium hover:text-white px-3 py-2 rounded-md text-sm`}>Rankings</Link>
-                            <Link href="/landing" className={`text-black hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>About</Link>
+                            {/* Disabled Dashboard Link */}
+                            <span className={`text-pb_orangedisabled font-bold px-3 py-2 rounded-md text-sm cursor-not-allowed tracking-wider select-none `}>DASHBOARD</span>
+                            <Link href="/rankings" className={`text-pb_darkgray font-bold hover:text-white px-3 py-2 rounded-md text-sm  tracking-wider select-none`}>RANKINGS</Link>
+                            <Link href="/landing" className={`text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm font-bold tracking-wider select-none`}>ABOUT</Link>
                             {/* <Link href="/about" className={`text-black font-bold hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>Feature Roadmap</Link> */}
 
                             {user ? (
-                                <div className="py-2 pl-2">
+                                <div className="py-2 pl-2 pr-3">
                                     <UserProfileDropdown user={user} />
                                 </div>
                             ) : (

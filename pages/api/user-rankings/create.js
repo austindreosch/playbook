@@ -104,6 +104,7 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // Destructure including pprType from body
     const {
         userId,
         sport,
@@ -111,10 +112,11 @@ export default async function handler(req, res) {
         name,
         scoring,
         source,
-        positions,
-        categories,
+        positions, // Note: These are not used for saving, defaults come from sportConfigs
+        categories, // Note: These are not used for saving, defaults come from sportConfigs
         details,
-        pprType
+        pprSetting, // <-- Input from user (e.g., "Full-PPR")
+        flexSetting
     } = req.body;
 
     // Validate required fields
@@ -130,6 +132,19 @@ export default async function handler(req, res) {
             error: 'You can only create rankings for your own account'
         });
     }
+
+    // --- PPR Type Transformation --- 
+    let pprTypeToSave = null;
+    if (sport === 'NFL') { // Only transform if it's NFL
+        const pprStringMap = {
+            "Full-PPR": "1ppr",
+            "Half-PPR": "0.5ppr",
+            "Non-PPR": "0ppr"
+        };
+        pprTypeToSave = pprStringMap[pprSetting] || null; // Use the map, fallback to null
+    }
+    // For non-NFL, pprTypeToSave remains null
+    // --- End PPR Type Transformation ---  
 
     const client = new MongoClient(process.env.MONGODB_URI);
 
@@ -159,16 +174,13 @@ export default async function handler(req, res) {
                 flexSetting: originRankings.numQbs === 2 ? 'Superflex' : 'Standard',
                 pprSetting: pprSettingString
             };
-            console.log("NFL Base Ranking Query:", baseRankingQuery);
         } else {
             // Handle non-NFL query criteria (using source from originRankings)
             baseRankingQuery = {
                 ...baseRankingQuery,
-                source: originRankings.source, // e.g., 'Experts' or 'Default'
                 format: format, // Use format directly from req.body
                 scoring: scoring // Use scoring directly from req.body
             };
-            console.log("Non-NFL Base Ranking Query:", baseRankingQuery);
         }
 
         // Get the latest expert rankings using the dynamic query
@@ -220,41 +232,50 @@ export default async function handler(req, res) {
             name,
             scoring,
             source,
-            rankings: latestRankings.rankings.map(player => ({
-                playerId: player.playerId, // Will be null for unmatched players
-                name: player.name, // Store the name from the source
-                rank: player.rank,
-                notes: '',
-                tags: []
-            })),
+            rankings: latestRankings.rankings
+                .filter(player =>
+                    player.name &&
+                    !player.name.toLowerCase().includes(' pick ') &&  // Remove picks from rankings, but they're still in db
+                    !player.name.toLowerCase().includes(' round ')
+                )
+                .map(player => ({
+                    playerId: player.playerId,
+                    name: player.name,
+                    rank: player.rank,
+                    draftModeAvailable: true, // Default to available for Draft Mode
+                    notes: '',
+                    tags: []
+                })),
             positions: sportConfigs[sport]?.positions || [],
             categories: sportConfigs[sport]?.categories || {},
             details: {
-                ...details,
-                ...(pprType && { pprType }),
+                ...(details || {}), // Spread existing details safely
+                // Save the TRANSFORMED ppr value using the key pprSetting (if NFL)
+                ...(sport === 'NFL' && { pprSetting: pprTypeToSave }),
+                // Keep flexSetting as is from request body (assuming it's correct format)
+                ...(sport === 'NFL' && { flexSetting: flexSetting }),
                 dateCreated: new Date(),
                 dateUpdated: new Date(),
+                // Update originRankings structure slightly
                 originRankings: {
-                    source,
+                    source: latestRankings.source, // Use source from the fetched base ranking
                     rankingsId: latestRankings._id,
-                    version: latestRankings.version
+                    version: latestRankings.version,
+                    // Add original numerical PPR value here if needed for reference
+                    // ppr: details?.originRankings?.ppr 
                 }
             }
         };
 
+        // Insert the new rankings list
         const result = await db.collection('user_rankings').insertOne(newRankingsList);
+        const newListId = result.insertedId;
 
-        res.status(201).json({
-            success: true,
-            listId: result.insertedId,
-            message: 'Rankings list created successfully'
-        });
+        res.status(201).json({ message: 'Ranking list created successfully', listId: newListId });
+
     } catch (error) {
-        console.error('Failed to create rankings list:', error);
-        res.status(500).json({
-            error: 'Failed to create rankings list',
-            details: error.message
-        });
+        console.error('Error creating ranking list:', error);
+        res.status(500).json({ error: 'Internal server error' });
     } finally {
         await client.close();
     }

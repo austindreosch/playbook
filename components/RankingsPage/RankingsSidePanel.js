@@ -16,8 +16,8 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
         if (!userRankings) return [];
-        console.log('Active Ranking:', activeRanking);
-        console.log('User Rankings:', userRankings);
+        // console.log('Active Ranking:', activeRanking);
+        // console.log('User Rankings:', userRankings);
         return [...userRankings].sort((a, b) => {
             // If one is active, it goes first
             if (a._id === activeRanking?._id) return -1;
@@ -60,16 +60,16 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
                                 layout: { duration: 0.2 }
                             }}
                             className={`
-                                grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer
+                                grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-md
                                 ${activeRanking?._id === ranking._id
-                                    ? 'bg-pb_blue text-white shadow-sm'
-                                    : 'bg-white hover:bg-gray-100 border border-pb_lightgray shadow-sm'
+                                    ? 'bg-pb_blue text-white shadow-sm hover:bg-pb_bluehover'
+                                    : 'bg-pb_backgroundgray hover:bg-pb_lightergray shadow-sm border border-pb_lightergray'
                                 }
                             `}
                             onClick={() => onSelectRanking(ranking._id)}
                         >
                             <div
-                                className={`h-full ${activeRanking?._id === ranking._id ? 'bg-pb_orange' : 'bg-pb_lightgray'}`}
+                                className={`h-full ${activeRanking?._id === ranking._id ? 'bg-pb_orange' : 'bg-pb_textgray hover:bg-pb_orange '}`}
                             />
                             <div className="p-3">
                                 <div className={`text-lg font-bold ${activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
@@ -77,10 +77,10 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
                                 </div>
 
                                 <div className="text-2xs mt-1 flex justify-between items-center tracking-wider">
-                                    <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_midgray'}>
+                                    <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_textgray'}>
                                         {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} • {ranking.scoring.toUpperCase()}
                                     </div>
-                                    <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_midgray'}>
+                                    <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_textgray'}>
                                         <HistoryIcon className="w-2 h-2 inline-block mr-1" />
                                         {formatDate(ranking.details?.dateUpdated)}
                                     </div>

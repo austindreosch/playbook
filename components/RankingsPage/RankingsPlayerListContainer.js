@@ -123,7 +123,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const [expandedRows, setExpandedRows] = useState(new Set());
     const listRef = useRef(null);
 
-    const { updateAllPlayerRanks, saveChanges } = useUserRankings();
+    const {
+        updateAllPlayerRanks,
+        saveChanges,
+        isDraftModeActive,
+        setPlayerAvailability,
+        showDraftedPlayers
+    } = useUserRankings();
 
     // Set up window size measurement
     useEffect(() => {
@@ -219,13 +225,18 @@ const RankingsPlayerListContainer = React.forwardRef(({
             rankingId = String(rankingId);
 
             const combinedPlayer = {
-                rankingId: rankingId, // Use the determined rankingId
-                rank: rankingPlayer.rank,
+                // Start with all properties from the original rankingPlayer
+                ...rankingPlayer,
+                // Explicitly set/override properties we handle specially
+                rankingId: rankingId,
                 name: rankingPlayer.name || 'Unknown Player',
-                position: rankingPlayer.position || 'N/A', // Provide default position
+                position: rankingPlayer.position || 'N/A',
                 isPlaceholder: isPlaceholder,
+                // Merge dataset info (if found)
                 info: playerData?.info || {},
-                stats: playerData?.stats || {}
+                stats: playerData?.stats || {},
+                // Ensure draftModeAvailable defaults to true if not present
+                draftModeAvailable: rankingPlayer.draftModeAvailable !== undefined ? rankingPlayer.draftModeAvailable : true
             };
 
             // Log the final assigned name for placeholders
@@ -242,11 +253,11 @@ const RankingsPlayerListContainer = React.forwardRef(({
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
         // Log the activeRanking when it changes, especially after drag/drop
-        console.log("[useEffect] ActiveRanking changed:", activeRanking);
+        // console.log("[useEffect] ActiveRanking changed:", activeRanking);
         const processedPlayers = processRankingData(activeRanking);
-        console.log("[useEffect] Processed Players:", processedPlayers);
+        // console.log("[useEffect] Processed Players:", processedPlayers);
         setRankedPlayers(processedPlayers);
-    }, [activeRanking, processRankingData, sport]);
+    }, [activeRanking, sport]);
 
     // Fetch data when component mounts or sport changes
     useEffect(() => {
@@ -276,14 +287,14 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
     }));
 
-    // Get paginated players - update to use rankedPlayers and apply sorting
+    // Get paginated players - update to use rankedPlayers and apply sorting/filtering
     const paginatedPlayers = useMemo(() => {
         let playersToDisplay = [...rankedPlayers]; // Start with rank-ordered players
 
         // Apply sorting if a sort key is set
         if (sortConfig?.key !== null) {
             // --- NEW: Add Log --- 
-            console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
+            // console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
             playersToDisplay.sort((a, b) => {
                 const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity);
                 const valueB = getNestedValue(b.stats, sortConfig.key, -Infinity);
@@ -302,17 +313,22 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 return numB - numA;
             });
             // --- NEW: Log the sorted array (first few items) ---
-            console.log("[Sort] Sorted players (first 5):",
-                playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
-            );
+            // console.log("[Sort] Sorted players (first 5):",
+            //     playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
+            // );
+        }
+
+        // --- Apply Draft Mode Filtering ---
+        if (isDraftModeActive && !showDraftedPlayers) {
+            playersToDisplay = playersToDisplay.filter(player => player.draftModeAvailable);
         }
 
         // Apply pagination (kept for structure, but currently showing all sorted/ranked)
         // const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
         // return playersToDisplay.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
-        return playersToDisplay; // Return all sorted/ranked players for now
+        return playersToDisplay; // Return filtered/sorted players
 
-    }, [rankedPlayers, sortConfig, currentPage]); // Add sortConfig and currentPage
+    }, [rankedPlayers, sortConfig, currentPage, isDraftModeActive, showDraftedPlayers]); // Add draft mode dependencies
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -339,7 +355,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // --- NEW: Prevent re-ranking if sorted by stat --- 
         if (sortConfig?.key !== null) {
-            console.log("[handleDragEnd] Drag disabled while sorted by stat:", sortConfig.key);
+            // console.log("[handleDragEnd] Drag disabled while sorted by stat:", sortConfig.key);
             return; // Do not allow reordering when sorted by stat
         }
 
@@ -353,7 +369,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
             const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
 
             // Log the newOrder array immediately after creation
-            console.log("[handleDragEnd] newOrder:", newOrder);
+            // console.log("[handleDragEnd] newOrder:", newOrder);
 
             // Update local state first
             setRankedPlayers(newOrder);
@@ -373,7 +389,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     console.error("Mismatch in ranking IDs after filtering!");
                 }
 
-                console.log("[handleDragEnd] Updating store with IDs:", rankingIdsInNewOrder);
+                // console.log("[handleDragEnd] Updating store with IDs:", rankingIdsInNewOrder);
                 updateAllPlayerRanks(rankingIdsInNewOrder);
                 saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
@@ -417,7 +433,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
         if (!player) return null;
 
         const isPlaceholder = player.isPlaceholder;
-        // --- MODIFIED: Use prop sortConfig ---
         const isRankSorted = sortConfig?.key === null;
 
         return (
@@ -432,10 +447,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
                     isPlaceholder={isPlaceholder}
                     isRankSorted={isRankSorted}
+                    // --- Pass Draft Mode Props ---
+                    isDraftMode={isDraftModeActive}
+                    onToggleDraftStatus={setPlayerAvailability}
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key]);
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]); // Add showDraftedPlayers dependency for safety
 
     const sportKey = sport.toLowerCase();
 
@@ -495,7 +513,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     {activeId ? (() => {
                         const activePlayer = paginatedPlayers.find(p => p.rankingId === activeId);
                         if (!activePlayer) return null;
-                        // --- MODIFIED: Use prop sortConfig ---
                         const isRankSorted = sortConfig?.key === null;
                         const displayRank = isRankSorted ? activePlayer.rank : paginatedPlayers.findIndex(p => p.rankingId === activeId) + 1;
                         return (
@@ -507,6 +524,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
                                 isRankSorted={false}
+                                // --- Pass Draft Mode Props ---
+                                isDraftMode={isDraftModeActive}
+                                onToggleDraftStatus={setPlayerAvailability}
                             />
                         );
                     })() : null}
@@ -529,3 +549,4 @@ const RankingsPlayerListContainer = React.forwardRef(({
 RankingsPlayerListContainer.displayName = 'RankingsPlayerListContainer'; // Add display name for dev tools
 
 export default RankingsPlayerListContainer;
+

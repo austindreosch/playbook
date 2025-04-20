@@ -3,6 +3,17 @@
 import { BarsIcon } from '@/components/icons/BarsIcon';
 import { HistoryIcon } from '@/components/icons/HistoryIcon';
 import { ButtonLoading } from '@/components/Interface/ButtonLoading';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -40,12 +51,14 @@ const RankingsPlayerListHeader = ({
     activeRanking,
     statPathMapping = {}
 }) => {
-    const { updateCategories, updateRankingName } = useUserRankings();
+    const { updateCategories, updateRankingName, deleteRanking } = useUserRankings();
     const [expanded, setExpanded] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
     const [namePopoverOpen, setNamePopoverOpen] = useState(false);
     const [isCollapsing, setIsCollapsing] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Add state for selectors
     const [selectedSource, setSelectedSource] = useState("");
@@ -98,6 +111,26 @@ const RankingsPlayerListHeader = ({
         };
 
         updateCategories(updatedCategories);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!activeRanking?._id) return;
+
+        setIsDeleting(true);
+        try {
+            // Call the store function to delete the ranking
+            await deleteRanking(activeRanking._id);
+            // No need to manually close dialog here, store update should trigger re-renders
+            // If the component unmounts or activeRanking becomes null, dialog might close automatically
+            // Or explicitly close if needed after success (though maybe not necessary)
+            // setIsDeleteDialogOpen(false); 
+        } catch (error) {
+            console.error("Failed to delete ranking (error caught in component):", error);
+            // Optionally display an error message to the user here
+            // For now, error is logged and handled in the store
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     if (!activeRanking) {
@@ -221,29 +254,65 @@ const RankingsPlayerListHeader = ({
                             </div>
                         </div>
 
-                        <div>
+                        <div className="space-y-2">
+                            {/* Save Button */}
                             {isSaving ? (
                                 <ButtonLoading />
                             ) : (
-                                <Button onClick={handleSave} className='bg-pb_orange text-pb_darkgray shadow-md hover:bg-pb_darkorange'>Save Changes</Button>
+                                <Button onClick={handleSave} className='bg-pb_orange text-pb_darkgray shadow-md hover:bg-pb_darkorange w-full'>Save Changes</Button>
                             )}
-                            <div className='text-2xs py-2 px-1'>
-                                Last Updated: {new Date(activeRanking?.details?.dateUpdated).toLocaleDateString()}
+
+                            {/* Container for Delete Icon and Last Updated Date */}
+                            <div className="flex items-center justify-between pt-1 pb-2">
+
+                                {/* Last Updated Text */}
+                                <div className='text-2xs text-pb_midgray pl-1'>
+                                    Last Updated: {new Date(activeRanking?.details?.dateUpdated).toLocaleDateString()}
+                                </div>
+
+                                {/* Delete Button Area */}
+                                <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                                    <AlertDialogTrigger asChild>
+                                        {/* Restyled Trash Icon Button */}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-gray-500 border border-gray-300 hover:bg-pb_red hover:text-white h-7 w-7 p-1"
+                                            aria-label="Delete ranking list"
+                                        >
+                                            {/* Trash Icon SVG */}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                            </svg>
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This action cannot be undone. This will permanently delete the
+                                                <span className="font-medium"> &quot;{activeRanking?.name}&quot; </span>
+                                                ranking list and remove its data from our servers.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={handleDeleteConfirm}
+                                                disabled={isDeleting}
+                                                className="bg-pb_red hover:bg-pb_redhover"
+                                            >
+                                                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         </div>
                     </div>
 
                     {/* Source Boxes */}
                     <div className="text-pb_darkgray h-full col-span-2 space-y-2 p-2 flex flex-col justify-start">
-                        <div className="space-y-1">
-                            <h3 className='text-sm font-bold text-center'>Data View</h3>
-                            <DataViewSelector
-                                value={selectedDataView}
-                                onValueChange={setSelectedDataView}
-                                defaultValue="season"
-                            />
-                        </div>
-
                         <div className="space-y-1">
                             <h3 className='text-sm font-bold text-center'>Position</h3>
                             <PositionSelector
@@ -253,7 +322,17 @@ const RankingsPlayerListHeader = ({
                             />
                         </div>
 
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1">
+                            <h3 className='text-sm font-bold text-center'>Data View</h3>
+                            <DataViewSelector
+                                value={selectedDataView}
+                                onValueChange={setSelectedDataView}
+                                defaultValue="season"
+                            />
+                        </div> */}
+
+
+                        {/* <div className="space-y-1">
                             <h3 className='text-sm font-bold text-center'>Source</h3>
                             <SourceSelector
                                 value={selectedSource}
@@ -261,7 +340,7 @@ const RankingsPlayerListHeader = ({
                                 disabled={true}
                                 defaultValue="experts"
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Categories */}
