@@ -80,16 +80,21 @@ module.exports = {
         mydarkblue: '#094074',
         mybiege: '#E6C79C',
         mydarktext: '#222222',
+        pb_darkgray: '#383838',
+        pb_darkgrayhover: '#4c4c4c',
+        pb_midgray: '#747474',
+        pb_textgray: '#888888',
+        pb_lightgray: '#d7d7d7',
+        pb_lightergray: '#ebebeb',
+        pb_backgroundgray: '#f4f4f4',
         pb_orange: '#fac05e',
         pb_blue: '#3fa7d6',
-        pb_darkblue: '#2f80b4',
-        pb_darkgray: '#383838',
-        pb_midgray: '#848484',
-        pb_lightgray: '#e2e2e2',
-        pb_lightergray: '#efefef',
+        pb_bluehover: '#3996c1',
         pb_red: '#ee6352',
+        pb_redhover: '#d6594a',
         pb_green: '#59cd90',
-        pb_salmon: '#f790d84',
+        pb_greenhover: '#50b982',
+        pb_salmon: '#f79d84',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -136,6 +141,9 @@ module.exports = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
         xs: 'calc(var(--radius) - 6px)'
+      },
+      boxShadow: {
+        'sm_light': '0 1px 2px 0 rgb(0 0 0 / 0.08)',
       }
     }
   },
