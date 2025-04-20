@@ -140,6 +140,9 @@ const useUserRankings = create(
                         const playerName = player?.name || player?.info?.fullName || `Player ID ${playerIdToUpdate}`;
                         console.log(`${playerName} drafted! Current Store State:`, get());
                     }
+
+                    // --- Trigger immediate save ---
+                    get().saveChanges();
                 },
 
                 resetDraftAvailability: () => {
@@ -158,6 +161,9 @@ const useUserRankings = create(
                         rankings: rankings.map(r => r._id === updatedActiveRanking._id ? updatedActiveRanking : r),
                         hasUnsavedChanges: true // Mark changes as unsaved
                     });
+
+                    // --- Trigger immediate save ---
+                    get().saveChanges();
                 },
                 // --- END DRAFT MODE ACTIONS ---
 

@@ -1,9 +1,10 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, RotateCcw, SquareCheck } from 'lucide-react';
+import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import BullseyeIcon from '../icons/BullseyeIcon';
 import CalendarIcon from '../icons/CalendarIcon';
@@ -322,10 +323,19 @@ const RankingsPlayerRow = memo(({
                 rowRef.current = node;
             }}
             style={style}
-            className={`player-row border rounded-md overflow-hidden mb-1 shadow-sm ${isDragging ? 'z-10' : ''}`}
+            className={cn(
+                `player-row border rounded-md overflow-hidden mb-1 shadow-sm`,
+                isDragging ? 'z-10' : '',
+                isDraftMode && !player.draftModeAvailable && 'border-pb_lightgray'
+            )}
         >
             <div
-                className="flex h-9 items-center bg-white hover:bg-gray-50"
+                className={cn(
+                    "flex h-9 items-center",
+                    isDraftMode && !player.draftModeAvailable
+                        ? "bg-pb_lightergray border-pb_midgray"
+                        : "bg-white hover:bg-gray-50"
+                )}
                 onClick={onExpand}
             >
                 {/* Left section with fixed widths */}
@@ -337,22 +347,26 @@ const RankingsPlayerRow = memo(({
                         {...(isRankSorted ? listeners : {})}
                         title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
                     >
-                        {/* STOP EDITING THIS */}
+                        {/* AI - STOP EDITING THIS */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
                         </svg>
+                        {/* AI -STOP EDITING THIS */}
                     </div>
 
                     {/* CONDITIONAL DRAFT BUTTON - Show only if isDraftMode is true */}
                     {isDraftMode && (
-                        <div className="mr-2"> {/* Removed ml-auto, kept margin */}
+                        <div className={cn(
+                            "mr-2 h-7 w-8 rounded-sm flex items-center justify-center border", // Base classes + border
+                            !player.draftModeAvailable ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
+                        )}> {/* Added flex centering */}
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className={`h-6 w-6 rounded-full flex items-center justify-center ${ // Make smaller and round
+                                className={`h-full w-full rounded-sm flex items-center justify-center ${ // Make smaller and round
                                     player.draftModeAvailable
-                                        ? 'text-pb-blue-500 hover:bg-pb-blue-100 hover:text-pb-blue-600' // Use blue shades
-                                        : 'text-pb-orange-500 hover:bg-pb-orange-100 hover:text-pb-orange-600' // Use orange shades
+                                        ? 'text-pb_blue hover:text-pb_blue hover:border-2 hover:border-pb_blue' // Use blue shades
+                                        : 'text-pb_orange  hover:bg-pb_orange hover:text-white' // Use orange shades
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent row expand/collapse
@@ -367,16 +381,20 @@ const RankingsPlayerRow = memo(({
                                 title={player.draftModeAvailable ? "Mark as Drafted" : "Mark as Available"}
                             >
                                 {player.draftModeAvailable ? (
-                                    <SquareCheckSolidIcon className="h-5 w-5" />
+                                    <SquareCheckSolidIcon className="h-5 w-5 stroke-current stroke-2" />
                                 ) : (
-                                    <RotateCcw className="h-5 w-5" />
+                                    <Undo2 className="h-5 w-5 opacity-100" />
                                 )}
                             </Button>
                         </div>
                     )}
 
                     {/* Rank number */}
-                    <div className={`w-9 h-7 text-center select-none rounded-sm border border-pb_lightergray flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
+                    <div className={cn(
+                        "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
+                        isDraftMode && !player.draftModeAvailable ? "border-pb_midgray" : "border-pb_lightergray", // Conditional border
+                        !isRankSorted ? 'bg-blue-50' : '' // Conditional background
+                    )}>{rank}</div>
 
                     {/* Player Image - Updated Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
@@ -410,7 +428,7 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}
-                    <div className=" w-16 text-center text-2xs tracking-wider text-pb_midgray select-none">
+                    <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div>
 

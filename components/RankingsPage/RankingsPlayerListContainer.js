@@ -126,9 +126,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const {
         updateAllPlayerRanks,
         saveChanges,
-        // --- Add Draft Mode State/Actions ---
         isDraftModeActive,
-        setPlayerAvailability
+        setPlayerAvailability,
+        showDraftedPlayers
     } = useUserRankings();
 
     // Set up window size measurement
@@ -287,7 +287,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
     }));
 
-    // Get paginated players - update to use rankedPlayers and apply sorting
+    // Get paginated players - update to use rankedPlayers and apply sorting/filtering
     const paginatedPlayers = useMemo(() => {
         let playersToDisplay = [...rankedPlayers]; // Start with rank-ordered players
 
@@ -318,12 +318,17 @@ const RankingsPlayerListContainer = React.forwardRef(({
             // );
         }
 
+        // --- Apply Draft Mode Filtering ---
+        if (isDraftModeActive && !showDraftedPlayers) {
+            playersToDisplay = playersToDisplay.filter(player => player.draftModeAvailable);
+        }
+
         // Apply pagination (kept for structure, but currently showing all sorted/ranked)
         // const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
         // return playersToDisplay.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
-        return playersToDisplay; // Return all sorted/ranked players for now
+        return playersToDisplay; // Return filtered/sorted players
 
-    }, [rankedPlayers, sortConfig, currentPage]); // Add sortConfig and currentPage
+    }, [rankedPlayers, sortConfig, currentPage, isDraftModeActive, showDraftedPlayers]); // Add draft mode dependencies
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -448,7 +453,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]); // Add new dependencies
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]); // Add showDraftedPlayers dependency for safety
 
     const sportKey = sport.toLowerCase();
 
