@@ -337,6 +337,7 @@ const RankingsPlayerRow = memo(({
                         {...(isRankSorted ? listeners : {})}
                         title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
                     >
+                        {/* STOP EDITING THIS */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
                         </svg>
@@ -350,29 +351,32 @@ const RankingsPlayerRow = memo(({
                                 size="icon"
                                 className={`h-6 w-6 rounded-full flex items-center justify-center ${ // Make smaller and round
                                     player.draftModeAvailable
-                                        ? 'text-pb-orange-500 hover:bg-pb-orange-100 hover:text-pb-orange-600' // Use orange shades
-                                        : 'text-pb-blue-500 hover:bg-pb-blue-100 hover:text-pb-blue-600' // Use blue shades
+                                        ? 'text-pb-blue-500 hover:bg-pb-blue-100 hover:text-pb-blue-600' // Use blue shades
+                                        : 'text-pb-orange-500 hover:bg-pb-orange-100 hover:text-pb-orange-600' // Use orange shades
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent row expand/collapse
-                                    onToggleDraftStatus(player.rankingId); // Use rankingId
+                                    const newAvailability = !player.draftModeAvailable;
+                                    // Log if the player is being marked as drafted (newAvailability is false)
+                                    if (!newAvailability) {
+                                        console.log(`${playerName} has been drafted!`);
+                                    }
+                                    // Pass the ID and the NEW availability state
+                                    onToggleDraftStatus(player.rankingId, newAvailability);
                                 }}
-                                title={player.draftModeAvailable ? "Mark as Available" : "Mark as Drafted"}
+                                title={player.draftModeAvailable ? "Mark as Drafted" : "Mark as Available"}
                             >
                                 {player.draftModeAvailable ? (
-                                    <RotateCcw className="h-4 w-4" />
+                                    <SquareCheckSolidIcon className="h-5 w-5" />
                                 ) : (
-                                    // <CheckSquare2 className="h-6 w-6 mt-3" />
-                                    <div className="flex items-center justify-center h-7 px- border border-pb_lightgray rounded-sm">
-                                        <SquareCheckSolidIcon className="h-5 w-5" />
-                                    </div>
+                                    <RotateCcw className="h-5 w-5" />
                                 )}
                             </Button>
                         </div>
                     )}
 
                     {/* Rank number */}
-                    <div className={`w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
+                    <div className={`w-9 h-7 text-center select-none rounded-sm border border-pb_lightergray flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
 
                     {/* Player Image - Updated Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">

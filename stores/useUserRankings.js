@@ -91,35 +91,71 @@ const useUserRankings = create(
                     setState(state => ({ showDraftedPlayers: !state.showDraftedPlayers }));
                 },
 
-                setPlayerAvailability: (playerId, isAvailable) => {
-                    const { activeRanking } = get();
-                    if (!activeRanking || !activeRanking.players) return;
+                setPlayerAvailability: (playerIdToUpdate, isAvailable) => {
+                    const { activeRanking, rankings } = get();
+                    if (!activeRanking || !activeRanking.rankings) return;
 
-                    const updatedPlayers = activeRanking.players.map(p => {
-                        // Ensure consistent comparison (e.g., both strings or numbers)
-                        if (String(p.playerId) === String(playerId)) {
+                    let playerFound = false; // Flag to check if player was found
+                    const updatedRankings = activeRanking.rankings.map(p => {
+                        // Use the same complex matching logic as updateAllPlayerRanks
+                        let p_rankingId;
+                        if (p.playerId != null) {
+                            p_rankingId = String(p.playerId);
+                        } else {
+                            const nameForId = p.originalName || p.name || 'unknown';
+                            p_rankingId = `pick-${p.rank}-${nameForId}`;
+                        }
+
+                        // Compare the reconstructed/retrieved ID with the incoming ID (ensure both are strings)
+                        if (String(p_rankingId) === String(playerIdToUpdate)) {
+                            playerFound = true;
                             return { ...p, draftModeAvailable: isAvailable };
                         }
                         return p;
                     });
 
+                    // Optional: Log if the player wasn't found for debugging
+                    if (!playerFound) {
+                        console.warn(`[setPlayerAvailability] Player not found for update with ID: ${playerIdToUpdate}`);
+                        return; // Don't update state if player wasn't found
+                    }
+
+                    const updatedActiveRanking = { ...activeRanking, rankings: updatedRankings };
+
                     setState({
-                        activeRanking: { ...activeRanking, players: updatedPlayers },
-                        hasUnsavedChanges: true // Mark changes as unsaved
+                        activeRanking: updatedActiveRanking,
+                        rankings: rankings.map(r => r._id === updatedActiveRanking._id ? updatedActiveRanking : r),
+                        hasUnsavedChanges: true
                     });
+
+                    // Log after state update if drafted
+                    if (!isAvailable) {
+                        const player = updatedRankings.find(p => {
+                            // Repeat matching logic to find the updated player for logging
+                            let p_rankingId;
+                            if (p.playerId != null) { p_rankingId = String(p.playerId); }
+                            else { const nameForId = p.originalName || p.name || 'unknown'; p_rankingId = `pick-${p.rank}-${nameForId}`; }
+                            return String(p_rankingId) === String(playerIdToUpdate);
+                        });
+                        const playerName = player?.name || player?.info?.fullName || `Player ID ${playerIdToUpdate}`;
+                        console.log(`${playerName} drafted! Current Store State:`, get());
+                    }
                 },
 
                 resetDraftAvailability: () => {
-                    const { activeRanking } = get();
-                    if (!activeRanking || !activeRanking.players) return;
+                    const { activeRanking, rankings } = get();
+                    if (!activeRanking || !activeRanking.rankings) return;
 
-                    const updatedPlayers = activeRanking.players.map(p => ({
+                    const updatedRankings = activeRanking.rankings.map(p => ({
                         ...p,
                         draftModeAvailable: true // Mark all players as available
                     }));
 
+                    const updatedActiveRanking = { ...activeRanking, rankings: updatedRankings };
+
                     setState({
-                        activeRanking: { ...activeRanking, players: updatedPlayers },
+                        activeRanking: updatedActiveRanking,
+                        rankings: rankings.map(r => r._id === updatedActiveRanking._id ? updatedActiveRanking : r),
                         hasUnsavedChanges: true // Mark changes as unsaved
                     });
                 },

@@ -225,13 +225,18 @@ const RankingsPlayerListContainer = React.forwardRef(({
             rankingId = String(rankingId);
 
             const combinedPlayer = {
-                rankingId: rankingId, // Use the determined rankingId
-                rank: rankingPlayer.rank,
+                // Start with all properties from the original rankingPlayer
+                ...rankingPlayer,
+                // Explicitly set/override properties we handle specially
+                rankingId: rankingId,
                 name: rankingPlayer.name || 'Unknown Player',
-                position: rankingPlayer.position || 'N/A', // Provide default position
+                position: rankingPlayer.position || 'N/A',
                 isPlaceholder: isPlaceholder,
+                // Merge dataset info (if found)
                 info: playerData?.info || {},
-                stats: playerData?.stats || {}
+                stats: playerData?.stats || {},
+                // Ensure draftModeAvailable defaults to true if not present
+                draftModeAvailable: rankingPlayer.draftModeAvailable !== undefined ? rankingPlayer.draftModeAvailable : true
             };
 
             // Log the final assigned name for placeholders
