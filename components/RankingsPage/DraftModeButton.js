@@ -53,16 +53,29 @@ const DraftModeButton = ({
                         className="data-[state=checked]:bg-pb_blue"
                     />
                 </DropdownMenuItem>
-                {/* <DropdownMenuSeparator /> */}
-                <div className="px-3 py-1.5 text-xs text-muted-foreground select-none">
-                    {/* Read from details.pprSetting instead of details.pprType */}
-                    {activeRanking?.sport} {activeRanking?.format} {activeRanking?.scoring}
-                    {/* Conditionally display flexSetting and pprSetting only if they exist */}
-                    {activeRanking?.details?.flexSetting ? ` • ${activeRanking.details.flexSetting}` : ''}
-                    {activeRanking?.details?.pprSetting ? ` • ${activeRanking.details.pprSetting}` : ''}
+                <DropdownMenuSeparator />
+                {/* Container for details */}
+                <div className="px-3 py-1.5 text-2xs text-muted-foreground select-none tracking-wider font-bold">
+                    {/* Conditionally display details based on sport */}
+                    {activeRanking?.sport === 'NFL' ? (
+                        // NFL: Show Sport • Format • Flex • PPR
+                        <>
+                            {activeRanking?.sport?.toUpperCase()}
+                            {activeRanking?.format ? ` • ${activeRanking.format.toUpperCase()}` : ''}
+                            {activeRanking?.details?.flexSetting ? ` • ${activeRanking.details.flexSetting.toUpperCase()}` : ''}
+                            {activeRanking?.details?.pprSetting ? ` • ${activeRanking.details.pprSetting.toUpperCase()}` : ''}
+                        </>
+                    ) : (
+                        // Non-NFL: Show Sport • Format • Scoring
+                        <>
+                            {activeRanking?.sport?.toUpperCase()}
+                            {activeRanking?.format ? ` • ${activeRanking.format.toUpperCase()}` : ''}
+                            {activeRanking?.scoring ? ` • ${activeRanking.scoring.toUpperCase()}` : ''}
+                        </>
+                    )}
                 </div>
-                <div className="px-3 pb-1.5 text-xs text-muted-foreground select-none">
-                    Drafted: {draftedCount ?? '0'} / {activeRanking?.players?.length ?? '0'}
+                <div className="px-3 pb-1.5 text-2xs text-muted-foreground select-none">
+                    DRAFTED PLAYERS:  {draftedCount ?? '0'} / {activeRanking?.rankings?.length ?? '0'}
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
@@ -80,6 +93,9 @@ const DraftModeButton = ({
                         aria-label="Toggle Show Drafted Players"
                     />
                 </DropdownMenuCheckboxItem>
+
+
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={onResetDraft}

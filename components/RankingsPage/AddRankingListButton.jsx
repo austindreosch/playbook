@@ -89,6 +89,8 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     scoring: formData.scoring,
                     // Send pprSetting (using the value from formData.pprType) if NFL
                     ...(formData.sport === 'NFL' && { pprSetting: formData.pprType }),
+                    // Send flexSetting if NFL
+                    ...(formData.sport === 'NFL' && { flexSetting: formData.flexSetting }),
                     source: requestSource, // Use the determined source (FantasyCalc or user selection)
                     rankings: [], // Send empty rankings, backend populates based on originRankings
                     details: {

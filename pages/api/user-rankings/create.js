@@ -142,10 +142,9 @@ export default async function handler(req, res) {
             "Non-PPR": "0ppr"
         };
         pprTypeToSave = pprStringMap[pprSetting] || null; // Use the map, fallback to null
-        console.log(`[API Create] Transformed pprSetting from "${pprSetting}" to "${pprTypeToSave}" for saving.`);
     }
     // For non-NFL, pprTypeToSave remains null
-    // --- End PPR Type Transformation ---
+    // --- End PPR Type Transformation ---  
 
     const client = new MongoClient(process.env.MONGODB_URI);
 
@@ -175,7 +174,6 @@ export default async function handler(req, res) {
                 flexSetting: originRankings.numQbs === 2 ? 'Superflex' : 'Standard',
                 pprSetting: pprSettingString
             };
-            console.log("NFL Base Ranking Query:", baseRankingQuery);
         } else {
             // Handle non-NFL query criteria (using source from originRankings)
             baseRankingQuery = {
@@ -183,7 +181,6 @@ export default async function handler(req, res) {
                 format: format, // Use format directly from req.body
                 scoring: scoring // Use scoring directly from req.body
             };
-            console.log("Non-NFL Base Ranking Query (source omitted):", baseRankingQuery);
         }
 
         // Get the latest expert rankings using the dynamic query

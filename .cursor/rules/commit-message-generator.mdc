@@ -24,3 +24,8 @@ examples:
            - Introduced autosave toggle switch with state
   - before: Fixed bug in draft board rendering and improved performance
     after: Working on Draft Board Stability: fixing rendering issues and improving load performance.
+
+
+
+
+make a new cursor rule for this 
