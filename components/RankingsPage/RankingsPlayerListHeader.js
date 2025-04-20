@@ -291,7 +291,7 @@ const RankingsPlayerListHeader = ({
                                             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                                             <AlertDialogDescription>
                                                 This action cannot be undone. This will permanently delete the
-                                                <span className="font-medium"> "{activeRanking?.name}" </span>
+                                                <span className="font-medium"> &quot;{activeRanking?.name}&quot; </span>
                                                 ranking list and remove its data from our servers.
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
