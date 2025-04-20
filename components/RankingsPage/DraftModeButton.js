@@ -55,11 +55,14 @@ const DraftModeButton = ({
                 </DropdownMenuItem>
                 {/* <DropdownMenuSeparator /> */}
                 <div className="px-3 py-1.5 text-xs text-muted-foreground select-none">
-                    {/* {rankingDetailsString || 'Ranking Details N/A'} */}
-                    {activeRanking?.sport} {activeRanking?.format} {activeRanking?.scoring} {activeRanking?.flexSetting} {activeRanking?.pprType}
+                    {/* Read from details.pprSetting instead of details.pprType */}
+                    {activeRanking?.sport} {activeRanking?.format} {activeRanking?.scoring}
+                    {/* Conditionally display flexSetting and pprSetting only if they exist */}
+                    {activeRanking?.details?.flexSetting ? ` • ${activeRanking.details.flexSetting}` : ''}
+                    {activeRanking?.details?.pprSetting ? ` • ${activeRanking.details.pprSetting}` : ''}
                 </div>
                 <div className="px-3 pb-1.5 text-xs text-muted-foreground select-none">
-                    Drafted: {draftedCount ?? '0'} / {activeRanking?.players.length ?? '0'}
+                    Drafted: {draftedCount ?? '0'} / {activeRanking?.players?.length ?? '0'}
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem

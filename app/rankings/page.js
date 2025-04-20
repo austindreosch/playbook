@@ -29,7 +29,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // --- NEW: Add NFL Mapping (or import from shared location) ---
 const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
@@ -71,8 +71,14 @@ export default function RankingsPage() {
     setActiveRanking,
     isLoading: rankingsLoading,
     error: rankingsError,
-    initAutoSave
-  } = useUserRankings()
+    initAutoSave,
+    isDraftModeActive,
+    showDraftedPlayers,
+    toggleDraftMode,
+    toggleShowDraftedPlayers,
+    resetDraftAvailability,
+    setPlayerAvailability
+  } = useUserRankings();
 
   const [selectedSport, setSelectedSport] = useState('NBA');
 
@@ -364,6 +370,12 @@ export default function RankingsPage() {
     listContainerRef.current?.resetListCache();
   }, [statPathMapping]); // Depend on the generated mapping
 
+  // --- Calculate Draft Counts --- 
+  const draftedCount = useMemo(() => {
+    if (!activeRanking?.players) return 0;
+    return activeRanking.players.filter(p => !p.draftModeAvailable).length;
+  }, [activeRanking?.players]);
+
   // --- Loading Skeleton UI --- 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     // Return the existing Skeleton UI
@@ -434,9 +446,18 @@ export default function RankingsPage() {
         <h1 className="text-2xl font-bold tracking-wide">Rankings</h1>
         {/* Button container for future expansion */}
         <div className="flex items-center gap-2">
-
-          {/* TODO: DRAFT MODE BUTTON */}
-          <DraftModeButton />
+          {/* Render DraftModeButton only if there's an active ranking */}
+          {activeRanking && (
+            <DraftModeButton
+              isDraftMode={isDraftModeActive}
+              onDraftModeChange={toggleDraftMode}
+              showDrafted={showDraftedPlayers}
+              onShowDraftedChange={toggleShowDraftedPlayers}
+              onResetDraft={resetDraftAvailability}
+              draftedCount={draftedCount}
+              activeRanking={activeRanking} // Pass the whole object for details
+            />
+          )}
           <AddRankingListButton dataset={datasetForSelectedSport} />
         </div>
       </div>

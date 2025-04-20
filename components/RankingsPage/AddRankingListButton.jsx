@@ -43,7 +43,6 @@ const AddRankingListButton = ({ rankings, dataset }) => {
     };
 
 
-
     const handleSubmit = async () => {
         if (!formData.name.trim()) {
             setError("Please enter a name for your rankings.");
@@ -66,7 +65,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                 source: requestSource,
                 isDynasty: formData.format === 'Dynasty', // boolean
                 numQbs: formData.flexSetting === 'Superflex' ? 2 : 1, // 2 for SF, 1 for Standard
-                ppr: pprMap[formData.pprType] ?? 1.0 // Default to 1.0 if mapping fails
+                pprSetting: pprMap[formData.pprType] ?? 1.0 // Default to 1.0 if mapping fails
                 // rankingsId: null // Keep this null, backend finds latest matching base
             };
         } else {
@@ -88,8 +87,8 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                     name: formData.name,
                     format: formData.format,
                     scoring: formData.scoring,
-                    // Only include pprType if it's relevant (NFL Points)
-                    ...(formData.sport === 'NFL' && { pprType: formData.pprType }),
+                    // Send pprSetting (using the value from formData.pprType) if NFL
+                    ...(formData.sport === 'NFL' && { pprSetting: formData.pprType }),
                     source: requestSource, // Use the determined source (FantasyCalc or user selection)
                     rankings: [], // Send empty rankings, backend populates based on originRankings
                     details: {

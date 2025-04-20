@@ -27,12 +27,19 @@ const useUserRankings = create(
                 lastSaved: null,       // Timestamp of last successful save
                 selectionLoading: false,  // Track when a ranking is being selected
 
+                // --- DRAFT MODE STATE ---
+                isDraftModeActive: false,
+                showDraftedPlayers: false,
+                // --- END DRAFT MODE STATE ---
+
                 // Fetch all user's rankings from the database
                 fetchUserRankings: async () => {
+                    // console.log('[fetchUserRankings] Starting fetch...');
                     setState({ isLoading: true });
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
+                        // console.log('[fetchUserRankings] API Response Data:', data);
 
                         // Find the most recent ranking first
                         const mostRecent = data.length > 0
@@ -43,20 +50,29 @@ const useUserRankings = create(
                         setState({
                             rankings: data,
                             activeRanking: mostRecent,
-                            isLoading: false
+                            isLoading: false,
+                            // Reset draft mode when fetching all lists initially
+                            isDraftModeActive: false,
+                            showDraftedPlayers: false
                         });
+                        // console.log('[fetchUserRankings] State AFTER update:', get());
                     } catch (error) {
+                        console.error('[fetchUserRankings] Error:', error);
                         setState({ error: error.message, isLoading: false });
                     }
                 },
 
                 // Set which ranking list is currently being viewed/edited
                 setActiveRanking: async (rankingData) => {
+                    // const previousActiveId = get().activeRanking?._id; // Keep track if needed elsewhere
                     setState({ selectionLoading: true });
                     try {
                         setState({
                             activeRanking: rankingData,
-                            selectionLoading: false
+                            selectionLoading: false,
+                            // Always reset draft mode when setting/changing active ranking
+                            isDraftModeActive: false,
+                            showDraftedPlayers: false
                         });
                     } catch (error) {
                         setState({
@@ -65,6 +81,49 @@ const useUserRankings = create(
                         });
                     }
                 },
+
+                // --- DRAFT MODE ACTIONS ---
+                toggleDraftMode: () => {
+                    setState(state => ({ isDraftModeActive: !state.isDraftModeActive }));
+                },
+
+                toggleShowDraftedPlayers: () => {
+                    setState(state => ({ showDraftedPlayers: !state.showDraftedPlayers }));
+                },
+
+                setPlayerAvailability: (playerId, isAvailable) => {
+                    const { activeRanking } = get();
+                    if (!activeRanking || !activeRanking.players) return;
+
+                    const updatedPlayers = activeRanking.players.map(p => {
+                        // Ensure consistent comparison (e.g., both strings or numbers)
+                        if (String(p.playerId) === String(playerId)) {
+                            return { ...p, draftModeAvailable: isAvailable };
+                        }
+                        return p;
+                    });
+
+                    setState({
+                        activeRanking: { ...activeRanking, players: updatedPlayers },
+                        hasUnsavedChanges: true // Mark changes as unsaved
+                    });
+                },
+
+                resetDraftAvailability: () => {
+                    const { activeRanking } = get();
+                    if (!activeRanking || !activeRanking.players) return;
+
+                    const updatedPlayers = activeRanking.players.map(p => ({
+                        ...p,
+                        draftModeAvailable: true // Mark all players as available
+                    }));
+
+                    setState({
+                        activeRanking: { ...activeRanking, players: updatedPlayers },
+                        hasUnsavedChanges: true // Mark changes as unsaved
+                    });
+                },
+                // --- END DRAFT MODE ACTIONS ---
 
                 // Update a player's rank in the active ranking list
                 updatePlayerRank: (playerId, newRank) => {
@@ -320,13 +379,15 @@ const useUserRankings = create(
             };
         },
         {
-            name: 'user-rankings-storage', // unique name for localStorage key
+            name: 'user-rankings-store', // Unique name for localStorage persistence
+            // Optionally specify parts of the state to persist (e.g., not isLoading, error)
             partialize: (state) => ({
-                // Only persist these fields
                 rankings: state.rankings,
                 activeRanking: state.activeRanking,
-                hasUnsavedChanges: state.hasUnsavedChanges
-            })
+                // Persist draft mode state? Maybe not, treat as transient UI state
+                // isDraftModeActive: state.isDraftModeActive, 
+                // showDraftedPlayers: state.showDraftedPlayers 
+            }),
         }
     )
 );
