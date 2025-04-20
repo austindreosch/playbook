@@ -88,6 +88,8 @@ module.exports = {
         pb_lightergray: '#ebebeb',
         pb_backgroundgray: '#f4f4f4',
         pb_orange: '#fac05e',
+        pb_orangehover: '#e1ad55',
+        pb_orangedisabled: '#c89a4b',
         pb_blue: '#3fa7d6',
         pb_bluehover: '#3996c1',
         pb_red: '#ee6352',

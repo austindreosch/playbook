@@ -21,6 +21,7 @@ Key interactions:
 */
 
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
+import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
 import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerListHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
@@ -363,7 +364,7 @@ export default function RankingsPage() {
     listContainerRef.current?.resetListCache();
   }, [statPathMapping]); // Depend on the generated mapping
 
-  // Put back original loading check
+  // --- Loading Skeleton UI --- 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     // Return the existing Skeleton UI
     return (
@@ -433,8 +434,10 @@ export default function RankingsPage() {
         <h1 className="text-2xl font-bold tracking-wide">Rankings</h1>
         {/* Button container for future expansion */}
         <div className="flex items-center gap-2">
+
+          {/* TODO: DRAFT MODE BUTTON */}
+          <DraftModeButton />
           <AddRankingListButton dataset={datasetForSelectedSport} />
-          {/* TODO: Add more header buttons here later */}
         </div>
       </div>
 

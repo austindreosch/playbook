@@ -19,7 +19,7 @@ const UserProfileDropdown = ({ user }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-                <Avatar className="h-9 w-9 select-none"> {/* Added select-none here */}
+                <Avatar className="h-9 w-9 select-none shadow border-white"> {/* Added select-none here */}
                     <AvatarImage src={user.picture} alt="User" />
                     <AvatarFallback className="font-bold text-white bg-pb_blue">{getInitials(user.name)}</AvatarFallback>
                 </Avatar>

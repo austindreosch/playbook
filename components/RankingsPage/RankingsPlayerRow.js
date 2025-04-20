@@ -367,12 +367,12 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-center gap-2 select-none">
-                        <div className="font-bold">{playerName}</div>
-                        <div className="text-gray-500 text-xs">{playerPosition}</div>
+                    <div className="flex items-baseline gap-2 select-none"> {/* Changed items-center to items-baseline */}
+                        <div className="font-bold text-sm">{playerName}</div>
+                        <div className="text-pb_textgray text-2xs">{playerPosition}</div>
                     </div>
                     {/* Display Z-Score Sum centered within a div pushed right */}
-                    <div className="ml-auto  w-16 text-center text-xs tracking-wider text-pb_midgray select-none">
+                    <div className="ml-auto  w-16 text-center text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div>
 

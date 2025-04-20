@@ -38,13 +38,13 @@ function NavBar() {
 
                         <div className="ml-10 flex items-center space-x-4">
                             {/* Disabled Dashboard Link */}
-                            <span className={`text-gray-500 font-medium px-3 py-2 rounded-md text-sm cursor-not-allowed tracking-wider select-none`}>DASHBOARD</span>
-                            <Link href="/rankings" className={`text-black font-medium hover:text-white px-3 py-2 rounded-md text-sm tracking-wider select-none`}>RANKINGS</Link>
-                            <Link href="/landing" className={`text-black hover:text-white px-3 py-2 rounded-md text-sm font-medium tracking-wider select-none`}>ABOUT</Link>
+                            <span className={`text-pb_orangedisabled font-bold px-3 py-2 rounded-md text-sm cursor-not-allowed tracking-wider select-none `}>DASHBOARD</span>
+                            <Link href="/rankings" className={`text-pb_darkgray font-bold hover:text-white px-3 py-2 rounded-md text-sm  tracking-wider select-none`}>RANKINGS</Link>
+                            <Link href="/landing" className={`text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm font-bold tracking-wider select-none`}>ABOUT</Link>
                             {/* <Link href="/about" className={`text-black font-bold hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>Feature Roadmap</Link> */}
 
                             {user ? (
-                                <div className="py-2 pl-2">
+                                <div className="py-2 pl-2 pr-3">
                                     <UserProfileDropdown user={user} />
                                 </div>
                             ) : (
