@@ -1,13 +1,15 @@
 'use client';
 
+import { Button } from "@/components/ui/button";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, RotateCcw, SquareCheck } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import BullseyeIcon from '../icons/BullseyeIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
-
+import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 // Helper function to get nested values safely
 const getNestedValue = (obj, path, defaultValue = null) => {
     // Handle cases where obj is null/undefined or path is not provided
@@ -194,7 +196,9 @@ const RankingsPlayerRow = memo(({
     rank,
     isExpanded,
     onExpand,
-    isRankSorted
+    isRankSorted,
+    isDraftMode,
+    onToggleDraftStatus
 }) => {
     const rowRef = useRef(null);
     const [imageLoadError, setImageLoadError] = useState(false);
@@ -338,8 +342,37 @@ const RankingsPlayerRow = memo(({
                         </svg>
                     </div>
 
+                    {/* CONDITIONAL DRAFT BUTTON - Show only if isDraftMode is true */}
+                    {isDraftMode && (
+                        <div className="mr-2"> {/* Removed ml-auto, kept margin */}
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-6 w-6 rounded-full flex items-center justify-center ${ // Make smaller and round
+                                    player.draftModeAvailable
+                                        ? 'text-pb-orange-500 hover:bg-pb-orange-100 hover:text-pb-orange-600' // Use orange shades
+                                        : 'text-pb-blue-500 hover:bg-pb-blue-100 hover:text-pb-blue-600' // Use blue shades
+                                    }`}
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent row expand/collapse
+                                    onToggleDraftStatus(player.rankingId); // Use rankingId
+                                }}
+                                title={player.draftModeAvailable ? "Mark as Available" : "Mark as Drafted"}
+                            >
+                                {player.draftModeAvailable ? (
+                                    <RotateCcw className="h-4 w-4" />
+                                ) : (
+                                    // <CheckSquare2 className="h-6 w-6 mt-3" />
+                                    <div className="flex items-center justify-center h-7 px-1 border border-pb_lightgray rounded-sm">
+                                        <SquareCheckSolidIcon className="h-5 w-5" />
+                                    </div>
+                                )}
+                            </Button>
+                        </div>
+                    )}
+
                     {/* Rank number */}
-                    <div className={`w-10 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
+                    <div className={`w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold ${!isRankSorted ? 'bg-blue-50' : ''}`}>{rank}</div>
 
                     {/* Player Image - Updated Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
@@ -371,8 +404,9 @@ const RankingsPlayerRow = memo(({
                         <div className="font-bold text-sm">{playerName}</div>
                         <div className="text-pb_textgray text-2xs">{playerPosition}</div>
                     </div>
+
                     {/* Display Z-Score Sum centered within a div pushed right */}
-                    <div className="ml-auto  w-16 text-center text-2xs tracking-wider text-pb_midgray select-none">
+                    <div className=" w-16 text-center text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div>
 

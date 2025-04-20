@@ -123,7 +123,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const [expandedRows, setExpandedRows] = useState(new Set());
     const listRef = useRef(null);
 
-    const { updateAllPlayerRanks, saveChanges } = useUserRankings();
+    const {
+        updateAllPlayerRanks,
+        saveChanges,
+        // --- Add Draft Mode State/Actions ---
+        isDraftModeActive,
+        setPlayerAvailability
+    } = useUserRankings();
 
     // Set up window size measurement
     useEffect(() => {
@@ -417,7 +423,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
         if (!player) return null;
 
         const isPlaceholder = player.isPlaceholder;
-        // --- MODIFIED: Use prop sortConfig ---
         const isRankSorted = sortConfig?.key === null;
 
         return (
@@ -432,10 +437,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
                     isPlaceholder={isPlaceholder}
                     isRankSorted={isRankSorted}
+                    // --- Pass Draft Mode Props ---
+                    isDraftMode={isDraftModeActive}
+                    onToggleDraftStatus={setPlayerAvailability}
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key]);
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]); // Add new dependencies
 
     const sportKey = sport.toLowerCase();
 
@@ -495,7 +503,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     {activeId ? (() => {
                         const activePlayer = paginatedPlayers.find(p => p.rankingId === activeId);
                         if (!activePlayer) return null;
-                        // --- MODIFIED: Use prop sortConfig ---
                         const isRankSorted = sortConfig?.key === null;
                         const displayRank = isRankSorted ? activePlayer.rank : paginatedPlayers.findIndex(p => p.rankingId === activeId) + 1;
                         return (
@@ -507,6 +514,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
                                 isRankSorted={false}
+                                // --- Pass Draft Mode Props ---
+                                isDraftMode={isDraftModeActive}
+                                onToggleDraftStatus={setPlayerAvailability}
                             />
                         );
                     })() : null}
