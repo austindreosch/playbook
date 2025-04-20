@@ -363,7 +363,7 @@ const RankingsPlayerRow = memo(({
                                     <RotateCcw className="h-4 w-4" />
                                 ) : (
                                     // <CheckSquare2 className="h-6 w-6 mt-3" />
-                                    <div className="flex items-center justify-center h-7 px-1 border border-pb_lightgray rounded-sm">
+                                    <div className="flex items-center justify-center h-7 px- border border-pb_lightgray rounded-sm">
                                         <SquareCheckSolidIcon className="h-5 w-5" />
                                     </div>
                                 )}
