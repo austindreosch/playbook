@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { BookCopy, ListPlus } from 'lucide-react';
 import { useState } from 'react';
 
 const AddRankingListButton = ({ rankings, dataset }) => {
@@ -155,8 +156,9 @@ const AddRankingListButton = ({ rankings, dataset }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline">
-                    Create New Rankings
+                <Button variant="outline" className="flex items-center gap-2">
+                    <BookCopy className="h-4 w-4" />
+                    <span>Create New Rankings</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
