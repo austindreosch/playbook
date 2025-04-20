@@ -57,7 +57,7 @@ const useUserRankings = create(
                         });
                         // console.log('[fetchUserRankings] State AFTER update:', get());
                     } catch (error) {
-                        console.error('[fetchUserRankings] Error:', error);
+                        // console.error('[fetchUserRankings] Error:', error);
                         setState({ error: error.message, isLoading: false });
                     }
                 },
@@ -174,7 +174,7 @@ const useUserRankings = create(
                         const { hasUnsavedChanges } = get();
                         if (hasUnsavedChanges) {
                             get().saveChanges();
-                            console.log('Auto-saving changes');
+                            // console.log('Auto-saving changes');
                         }
                     }, 30000);
 
@@ -222,11 +222,11 @@ const useUserRankings = create(
                             lastSaved: new Date().toISOString()
                         });
                     } catch (error) {
-                        console.error('Error updating ranking:', {
-                            message: error.message,
-                            stack: error.stack,
-                            code: error.code
-                        });
+                        // console.error('Error updating ranking:', {
+                        //     message: error.message,
+                        //     stack: error.stack,
+                        //     code: error.code
+                        // });
                         setState({ error: error.message });
                     }
                 },
@@ -272,7 +272,7 @@ const useUserRankings = create(
                             lastSaved: new Date().toISOString()
                         });
                     } catch (error) {
-                        console.error('Error updating ranking name:', error);
+                        // console.error('Error updating ranking name:', error);
                         setState({ error: error.message });
                     }
                 },
@@ -302,7 +302,7 @@ const useUserRankings = create(
                         });
 
                         if (!player) {
-                            console.error(`[store updateAllPlayerRanks] Player not found for rankingId: ${rankingId}`);
+                            // console.error(`[store updateAllPlayerRanks] Player not found for rankingId: ${rankingId}`);
                             return null; // Return null if player not found for filtering
                         }
 
@@ -312,7 +312,7 @@ const useUserRankings = create(
 
                     // Check if the length matches after filtering
                     if (updatedPlayers.length !== newPlayerOrder.length) {
-                        console.error("[store updateAllPlayerRanks] Mismatch between input order length and updated players length after filtering.");
+                        // console.error("[store updateAllPlayerRanks] Mismatch between input order length and updated players length after filtering.");
                         // Potentially stop the update here or handle the error appropriately
                     }
 
@@ -370,7 +370,7 @@ const useUserRankings = create(
                         });
 
                     } catch (error) {
-                        console.error('Error deleting ranking:', error);
+                        // console.error('Error deleting ranking:', error);
                         setState({ error: error.message, isLoading: false });
                         // Optionally re-throw or handle the error further if needed by the calling component
                     }

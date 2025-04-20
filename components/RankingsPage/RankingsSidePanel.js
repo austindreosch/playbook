@@ -16,8 +16,8 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
         if (!userRankings) return [];
-        console.log('Active Ranking:', activeRanking);
-        console.log('User Rankings:', userRankings);
+        // console.log('Active Ranking:', activeRanking);
+        // console.log('User Rankings:', userRankings);
         return [...userRankings].sort((a, b) => {
             // If one is active, it goes first
             if (a._id === activeRanking?._id) return -1;

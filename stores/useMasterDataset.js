@@ -79,11 +79,11 @@ const useMasterDataset = create((set, get) => ({
     // --- New Helper Function for Fetching and Caching ---
     _ensureRawDataFetched: async () => {
         if (get().isRawDataFetched) {
-            // console.log("Using cached raw data");
+            // // console.log("Using cached raw data");
             return get().rawFetchedData;
         }
 
-        // console.log("Fetching raw data from API...");
+        // // console.log("Fetching raw data from API...");
         set({ isLoading: true, error: null }); // Start loading, clear previous error
         try {
             const response = await fetch('/api/load/MasterDatasetFetch');
@@ -101,7 +101,7 @@ const useMasterDataset = create((set, get) => ({
             });
             return data;
         } catch (error) {
-            console.error("Error fetching raw master data:", error);
+            // console.error("Error fetching raw master data:", error);
             set({
                 error: error.message,
                 isLoading: false, // Stop loading on error
@@ -124,21 +124,21 @@ const useMasterDataset = create((set, get) => ({
 
         // 2. Fetch if missing/stale
         if (!data || !isDataAlreadyFetched) { // Adjust condition
-            console.log("fetchNbaData: Raw data not found or stale, attempting fetch...");
+            // console.log("fetchNbaData: Raw data not found or stale, attempting fetch...");
             data = await get()._ensureRawDataFetched();
         } else {
-            // console.log("fetchNbaData: Using existing raw data from store state.");
+            // // console.log("fetchNbaData: Using existing raw data from store state.");
         }
 
         // 3. Check if data available
         if (!data) {
-            console.error("fetchNbaData: No raw data available for processing.");
+            // console.error("fetchNbaData: No raw data available for processing.");
             return;
         }
 
         // 4. Process NBA data
         try {
-            // console.log("fetchNbaData: Starting processing...");
+            // // console.log("fetchNbaData: Starting processing...");
             if (get().isLoading) set({ isLoading: false });
 
             // First map the regular season stats
@@ -464,7 +464,7 @@ const useMasterDataset = create((set, get) => ({
 
             // Save statsReferences to state
             set({ statsReferences });
-            // console.log('Stats references:', statsReferences);
+            // // console.log('Stats references:', statsReferences);
 
 
 
@@ -476,12 +476,12 @@ const useMasterDataset = create((set, get) => ({
                 regularSeasonPlayers.filter(p2 => p2.info.playerId === p.info.playerId).length > 1
             );
             if (duplicates.length > 0) {
-                // console.log('Found duplicates for players:',
+                // // console.log('Found duplicates for players:',
                 //     [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
                 // );
             }
 
-            // console.log('NBA Dataset Finalized:', playersWithProjections);/
+            // // console.log('NBA Dataset Finalized:', playersWithProjections);/
 
             const newState = {
                 nba: {
@@ -495,14 +495,14 @@ const useMasterDataset = create((set, get) => ({
 
             // Calculate state size before setting
             const stateSize = getObjectSize(newState);
-            console.log('NBA stats state size:', stateSize, newState);
+            // console.log('NBA stats state size:', stateSize, newState);
 
             set({
                 ...newState,
                 stateSize
             });
         } catch (error) {
-            console.error('Error processing NBA data:', error);
+            // console.error('Error processing NBA data:', error);
             set({ error: `Error processing NBA data: ${error.message}` /* isLoading: false */ }); // Handle processing error
         }
     },
@@ -519,15 +519,15 @@ const useMasterDataset = create((set, get) => ({
 
         // 2. If raw data doesn't exist (or is considered stale), try fetching it
         if (!data || !isDataAlreadyFetched) { // Adjust this condition based on your caching logic (e.g., check timestamp)
-            console.log("fetchNflData: Raw data not found or stale, attempting fetch...");
+            // console.log("fetchNflData: Raw data not found or stale, attempting fetch...");
             data = await get()._ensureRawDataFetched(); // Call the central fetcher as a fallback
         } else {
-            // console.log("fetchNflData: Using existing raw data from store state.");
+            // // console.log("fetchNflData: Using existing raw data from store state.");
         }
 
         // 3. Check if data is available after potential fetch attempt
         if (!data) {
-            console.error("fetchNflData: No raw data available for processing.");
+            // console.error("fetchNflData: No raw data available for processing.");
             // Optionally set an error state or just return
             // set({ isLoading: false, error: "Failed to load master data for NFL processing." });
             return; // Exit if data couldn't be obtained
@@ -535,7 +535,7 @@ const useMasterDataset = create((set, get) => ({
 
         // 4. Process NFL data using the 'data' variable
         try {
-            console.log("fetchNflData: Starting processing...");
+            // console.log("fetchNflData: Starting processing...");
             // Make sure isLoading is false if we proceed with processing existing data
             if (get().isLoading) set({ isLoading: false });
 
@@ -544,7 +544,7 @@ const useMasterDataset = create((set, get) => ({
             const teamStatsTotals = data.nflStats?.teamStatsTotals || [];
 
             if (!seasonalStats) {
-                console.warn('fetchNflData: NFL seasonal player stats not found in the raw data.');
+                // console.warn('fetchNflData: NFL seasonal player stats not found in the raw data.');
                 // Optionally set error or just return
                 return;
             }
@@ -564,7 +564,7 @@ const useMasterDataset = create((set, get) => ({
                     injuryStatus: playerStats.player.currentInjury,
                     age: playerStats.player.age,
                     birthDate: playerStats.player.birthDate,
-                    age: playerStats.player.age,
+                    // age: playerStats.player.age, // Duplicate age key removed
                     preciseAge: playerStats.player.birthDate ?
                         ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
                         playerStats.player.age,
@@ -676,7 +676,7 @@ const useMasterDataset = create((set, get) => ({
             const teamStats = get().rawFetchedData?.nflStats?.teamStatsTotals || [];
             // Process the player data with advanced stats using the utility function
             const playersWithAdvancedStats = processNflPlayerData(mergedPlayers, teamStats);
-            // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
+            // // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
 
 
             // Now playersWithAdvancedStats contains all the advanced metrics calculated in nflAdvancedStats.js
@@ -703,8 +703,8 @@ const useMasterDataset = create((set, get) => ({
 
             // Calculate state size before setting
             const stateSize = getObjectSize(newState);
-            console.log('NFL stats state size:', stateSize, newState);
-            console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
+            // console.log('NFL stats state size:', stateSize, newState);
+            // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
 
             set({
                 nfl: {
@@ -717,7 +717,7 @@ const useMasterDataset = create((set, get) => ({
             });
 
         } catch (error) {
-            console.error("fetchNflData: Error during processing:", error);
+            // console.error("fetchNflData: Error during processing:", error);
             set({ error: `Error processing NFL data: ${error.message}` }); // Set processing error
         }
     },
@@ -735,27 +735,27 @@ const useMasterDataset = create((set, get) => ({
 
         // // 2. Fetch if missing/stale
         // if (!data || !isDataAlreadyFetched) { // Adjust condition
-        //     console.log("fetchMlbData: Raw data not found or stale, attempting fetch...");
+        //     // console.log("fetchMlbData: Raw data not found or stale, attempting fetch...");
         //     data = await get()._ensureRawDataFetched();
         // } else {
-        //     // console.log("fetchMlbData: Using existing raw data from store state.");
+        //     // // console.log("fetchMlbData: Using existing raw data from store state.");
         // }
 
         // // 3. Check if data available
         // if (!data) {
-        //     console.error("fetchMlbData: No raw data available for processing.");
+        //     // console.error("fetchMlbData: No raw data available for processing.");
         //     return;
         // }
 
         // // 4. Process MLB data
         // try {
-        //     console.log("fetchMlbData: Starting processing...");
+        //     // console.log("fetchMlbData: Starting processing...");
         //     if (get().isLoading) set({ isLoading: false });
         //     // NOTE: Use 'data' variable from the helper function
         //     const seasonalStats = data.mlbStats?.stats?.seasonalPlayerStats?.players;
 
         //     if (!seasonalStats) {
-        //         console.warn('fetchMlbData: MLB seasonal player stats not found in the raw data.');
+        //         // console.warn('fetchMlbData: MLB seasonal player stats not found in the raw data.');
         //         // set({ isLoading: false }); // Stop loading if set above
         //         return; // Exit if data is missing
         //     }
@@ -784,7 +784,7 @@ const useMasterDataset = create((set, get) => ({
         //     });
 
         // } catch (error) {
-        //     console.error("fetchMlbData: Error during processing:", error);
+        //     // console.error("fetchMlbData: Error during processing:", error);
         //     set({ error: `Error processing MLB data: ${error.message}` }); // Handle processing error
         // }
     },

@@ -117,7 +117,7 @@ export default function RankingsPage() {
           throw new Error('Failed to fetch user rankings list');
         }
         fetchedRankingsList = await listResponse.json();
-        console.log('Fetched User Rankings List:', fetchedRankingsList);
+        // console.log('Fetched User Rankings List:', fetchedRankingsList);
 
         // 2. Determine the most recent ranking ID
         if (fetchedRankingsList?.length > 0) {
@@ -128,11 +128,11 @@ export default function RankingsPage() {
           // 3. Fetch the full data for the most recent ranking
           if (mostRecent?._id) {
             try {
-              console.log(`Fetching initial active ranking: ${mostRecent._id}`);
+              // console.log(`Fetching initial active ranking: ${mostRecent._id}`);
               const detailResponse = await fetch(`/api/user-rankings/${mostRecent._id}`);
               if (detailResponse.ok) {
                 initialActiveData = await detailResponse.json();
-                console.log('Fetched Initial Active Ranking Data:', initialActiveData);
+                // console.log('Fetched Initial Active Ranking Data:', initialActiveData);
               } else {
                 console.error(`Failed to fetch initial ranking details for ${mostRecent._id}, status: ${detailResponse.status}`);
                 // Proceed without initial active data, list will still load
@@ -165,7 +165,7 @@ export default function RankingsPage() {
           else if (sportKey === 'nfl') existingData = nfl;
 
           if (!existingData?.players?.length) {
-            console.log(`Triggering master fetch for initial sport: ${sport}`);
+            // console.log(`Triggering master fetch for initial sport: ${sport}`);
             if (sport === 'NBA') {
               fetchNbaData();
             } else if (sport === 'MLB') {
@@ -176,7 +176,7 @@ export default function RankingsPage() {
               console.warn("Unknown sport for initial fetch:", sport);
             }
           } else {
-            console.log(`Master data for initial sport ${sport} already present.`);
+            // console.log(`Master data for initial sport ${sport} already present.`);
           }
 
           // 6. Set the active ranking and sport states
@@ -252,7 +252,7 @@ export default function RankingsPage() {
     if (currentSportLower === 'nfl') {
       // Strategy for NFL: Use the predefined manual map
       currentMapping = NFL_STAT_ABBREVIATION_TO_PATH_MAP;
-      console.log('[NFL Mapping] Using manual stat paths:', currentMapping);
+      // console.log('[NFL Mapping] Using manual stat paths:', currentMapping);
     } else {
       // Strategy for NBA/Other: Generate from abbreviations in the first player's stats
       const firstPlayerStats = sourceDataset.players[0]?.stats;
@@ -264,7 +264,7 @@ export default function RankingsPage() {
           }
           // TODO: Add handling for potential raw values if structure varies?
         });
-        console.log(`[${selectedSport} Mapping] Generated paths from abbreviations:`, currentMapping);
+        // console.log(`[${selectedSport} Mapping] Generated paths from abbreviations:`, currentMapping);
       } else {
         console.warn(`[${selectedSport} Mapping] Could not generate paths: No stats found for the first player.`);
       }
@@ -295,7 +295,7 @@ export default function RankingsPage() {
     // Reset sort if categories change (check based on valid paths)
     setSortConfig(currentConfig => {
       if (currentConfig.key !== null && !enabledPaths.includes(currentConfig.key)) {
-        console.log(`[Sort Reset] Current sort key ${currentConfig.key} no longer enabled. Resetting.`);
+        // console.log(`[Sort Reset] Current sort key ${currentConfig.key} no longer enabled. Resetting.`);
         return { key: null, direction: 'desc' };
       }
       return currentConfig; // Keep current sort otherwise
@@ -318,7 +318,7 @@ export default function RankingsPage() {
         throw new Error('Failed to fetch ranking');
       }
       const rankingData = await response.json();
-      console.log('Active Ranking Data:', rankingData);
+      // console.log('Active Ranking Data:', rankingData);
       setActiveRanking(rankingData);
       setSelectedSport(rankingData.sport);
       setCollapseAllTrigger(prev => prev + 1);
@@ -346,7 +346,7 @@ export default function RankingsPage() {
 
 
   // useEffect(() => {
-  //   console.log('Current Sport Data:', datasetForSelectedSport);
+  //   // console.log('Current Sport Data:', datasetForSelectedSport);
   // }, [datasetForSelectedSport]);
 
   const handleSortChange = useCallback((newKey_abbreviation) => {
@@ -358,7 +358,7 @@ export default function RankingsPage() {
       fullPath = newKey_abbreviation; // Fallback, but likely won't sort correctly
     }
 
-    console.log(`[Sort] Header clicked: ${newKey_abbreviation}, Translated path: ${fullPath}`);
+    // console.log(`[Sort] Header clicked: ${newKey_abbreviation}, Translated path: ${fullPath}`);
 
     setSortConfig(currentConfig => {
       if (currentConfig.key === fullPath) {

@@ -242,9 +242,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
         // Log the activeRanking when it changes, especially after drag/drop
-        console.log("[useEffect] ActiveRanking changed:", activeRanking);
+        // console.log("[useEffect] ActiveRanking changed:", activeRanking);
         const processedPlayers = processRankingData(activeRanking);
-        console.log("[useEffect] Processed Players:", processedPlayers);
+        // console.log("[useEffect] Processed Players:", processedPlayers);
         setRankedPlayers(processedPlayers);
     }, [activeRanking, sport]);
 
@@ -283,7 +283,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         // Apply sorting if a sort key is set
         if (sortConfig?.key !== null) {
             // --- NEW: Add Log --- 
-            console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
+            // console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
             playersToDisplay.sort((a, b) => {
                 const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity);
                 const valueB = getNestedValue(b.stats, sortConfig.key, -Infinity);
@@ -302,9 +302,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 return numB - numA;
             });
             // --- NEW: Log the sorted array (first few items) ---
-            console.log("[Sort] Sorted players (first 5):",
-                playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
-            );
+            // console.log("[Sort] Sorted players (first 5):",
+            //     playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
+            // );
         }
 
         // Apply pagination (kept for structure, but currently showing all sorted/ranked)
@@ -339,7 +339,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // --- NEW: Prevent re-ranking if sorted by stat --- 
         if (sortConfig?.key !== null) {
-            console.log("[handleDragEnd] Drag disabled while sorted by stat:", sortConfig.key);
+            // console.log("[handleDragEnd] Drag disabled while sorted by stat:", sortConfig.key);
             return; // Do not allow reordering when sorted by stat
         }
 
@@ -353,7 +353,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
             const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
 
             // Log the newOrder array immediately after creation
-            console.log("[handleDragEnd] newOrder:", newOrder);
+            // console.log("[handleDragEnd] newOrder:", newOrder);
 
             // Update local state first
             setRankedPlayers(newOrder);
@@ -373,7 +373,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     console.error("Mismatch in ranking IDs after filtering!");
                 }
 
-                console.log("[handleDragEnd] Updating store with IDs:", rankingIdsInNewOrder);
+                // console.log("[handleDragEnd] Updating store with IDs:", rankingIdsInNewOrder);
                 updateAllPlayerRanks(rankingIdsInNewOrder);
                 saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
