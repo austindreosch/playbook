@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import { Eye, RotateCcw, ScrollText, SlidersHorizontal } from 'lucide-react';
 import React from 'react';
 
@@ -23,7 +24,6 @@ const DraftModeButton = ({
     onShowDraftedChange,
     onResetDraft,
     draftedCount,
-    totalPlayers,
     activeRanking
 }) => {
     // Unique ID for the switch inside the menu
@@ -32,9 +32,25 @@ const DraftModeButton = ({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                    <ScrollText className="h-4 w-4" />
-                    <span>Draft Mode</span>
+                <Button
+                    variant="outline"
+                    className={cn(
+                        "flex items-center gap-2  duration-400 ease-in-out",
+                        isDraftMode &&
+                        `bg-gradient-to-r from-pb-blue-500 via-pb-blue-400 to-pb-blue-500 
+                       bg-[length:200%_auto] animate-shimmer 
+                        text-white border-transparent 
+                       shadow-md`
+                    )}
+                >
+                    <ScrollText className={cn(
+                        "h-4 w-4"
+                    )} />
+                    <span className={cn(
+                        isDraftMode && "font-bold"
+                    )}>
+                        Draft Mode
+                    </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
@@ -42,7 +58,7 @@ const DraftModeButton = ({
                     className="flex items-center gap-2 pl-3 pr-2 py-1 cursor-pointer select-none"
                     onSelect={(e) => e.preventDefault()}
                 >
-                    <Label htmlFor={enableSwitchId} className="text-sm cursor-pointer grow">
+                    <Label htmlFor={enableSwitchId} className="text-sm cursor-pointer grow text-pb_darkgray hover:text-pb_orange">
                         Enable Draft Mode
                     </Label>
                     <Switch
@@ -55,7 +71,7 @@ const DraftModeButton = ({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {/* Container for details */}
-                <div className="px-3 py-1.5 text-2xs text-muted-foreground select-none tracking-wider font-bold">
+                <div className={`px-3 py-1.5 text-2xs text-muted-foreground select-none tracking-wider text-pb_textgray ${!isDraftMode ? 'opacity-50' : ''}`}>
                     {/* Conditionally display details based on sport */}
                     {activeRanking?.sport === 'NFL' ? (
                         // NFL: Show Sport • Format • Flex • PPR
@@ -74,25 +90,27 @@ const DraftModeButton = ({
                         </>
                     )}
                 </div>
-                <div className="px-3 pb-1.5 text-2xs text-muted-foreground select-none">
-                    DRAFTED PLAYERS:  {draftedCount ?? '0'} / {activeRanking?.rankings?.length ?? '0'}
-                </div>
+                {/* Conditionally render Drafted Count only if isDraftMode is true */}
+                {isDraftMode && (
+                    <div className="px-3 pb-1.5 text-2xs text-muted-foreground select-none text-pb_textgray">
+                        Drafted Players: {draftedCount ?? '0'} / {activeRanking?.rankings?.length ?? '0'}
+                    </div>
+                )}
                 <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                    checked={showDrafted}
-                    onCheckedChange={onShowDraftedChange}
+                <DropdownMenuItem
                     disabled={!isDraftMode}
                     className="flex items-center gap-2 pl-3 pr-2 py-1 cursor-pointer select-none"
                     onSelect={(e) => e.preventDefault()}
                 >
                     <Eye className="h-4 w-4" />
-                    <span className="text-sm grow">Show Drafted</span>
+                    <span className="text-sm grow text-pb_darkgray">Show Drafted</span>
                     <Switch
                         checked={showDrafted}
                         onCheckedChange={onShowDraftedChange}
                         aria-label="Toggle Show Drafted Players"
+                        className="data-[state=checked]:bg-pb_blue"
                     />
-                </DropdownMenuCheckboxItem>
+                </DropdownMenuItem>
 
 
 

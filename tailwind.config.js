@@ -90,8 +90,34 @@ module.exports = {
         pb_orange: '#fac05e',
         pb_orangehover: '#e1ad55',
         pb_orangedisabled: '#c89a4b',
+        'pb-orange': {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#fac05e',
+          600: '#e1ad55',
+          700: '#c89a4b',
+          800: '#92400e',
+          900: '#78350f',
+          950: '#451a03',
+        },
         pb_blue: '#3fa7d6',
         pb_bluehover: '#3996c1',
+        'pb-blue': {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#3fa7d6',
+          600: '#3996c1',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+          950: '#082f49',
+        },
         pb_red: '#ee6352',
         pb_redhover: '#d6594a',
         pb_green: '#59cd90',
@@ -146,7 +172,16 @@ module.exports = {
       },
       boxShadow: {
         'sm_light': '0 1px 2px 0 rgb(0 0 0 / 0.08)',
-      }
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+      },
+      animation: {
+        shimmer: 'shimmer 5s linear infinite',
+      },
     }
   },
   plugins: [],
