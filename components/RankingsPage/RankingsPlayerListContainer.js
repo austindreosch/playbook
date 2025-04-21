@@ -1,6 +1,7 @@
 'use client';
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
+import { calculatePlayerZScoreSums } from '@/lib/calculations/playerStatsUtils';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -112,6 +113,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
     dataset,
     sortConfig,
     chosenCategoryPaths,
+    statPathMapping,
     collapseAllTrigger
 }, ref) => {
     // Initialize state with players
@@ -266,6 +268,16 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
     }, [dataset, sport]);
 
+    // --- NEW: Add effect to monitor sortConfig changes ---
+    useEffect(() => {
+        console.log("%c [RankingsPlayerListContainer] sortConfig changed:", "color:orange;font-weight:bold;", sortConfig);
+        // Force list to recalculate when sortConfig changes
+        if (listRef.current) {
+            console.log("%c [RankingsPlayerListContainer] Resetting list after sortConfig change", "color:orange;font-weight:bold;");
+            listRef.current.resetAfterIndex(0, true);
+        }
+    }, [sortConfig]);
+
     // --- Expose methods via ref (example) ---
     React.useImperativeHandle(ref, () => ({
         scrollToTop: () => {
@@ -281,6 +293,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         },
         // --- NEW: Expose list reset ---
         resetListCache: () => {
+            console.log("%c [RankingsPlayerListContainer] resetListCache called!", "color:purple;font-weight:bold;");
             if (listRef.current) {
                 listRef.current.resetAfterIndex(0, true); // Pass true to force re-render
             }
@@ -289,46 +302,69 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     // Get paginated players - update to use rankedPlayers and apply sorting/filtering
     const paginatedPlayers = useMemo(() => {
+        console.log("Recalculating paginatedPlayers, sortConfig:", sortConfig, "showDrafted:", showDraftedPlayers);
         let playersToDisplay = [...rankedPlayers]; // Start with rank-ordered players
 
-        // Apply sorting if a sort key is set
-        if (sortConfig?.key !== null) {
-            // --- NEW: Add Log --- 
-            // console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
+        // --- REFACTORED: Use utility function for Z-Score Sum Calculation ---
+        if (activeRanking?.categories && statPathMapping && playersToDisplay.length > 0) {
+            // TODO: Get actual format and scoring from activeRanking or props when available
+            const format = activeRanking?.format || 'standard';
+            const scoring = activeRanking?.scoring || 'default';
+
+            playersToDisplay = calculatePlayerZScoreSums(
+                playersToDisplay,               // Current player list
+                activeRanking.categories,       // Category details (enabled, multiplier)
+                statPathMapping,                // Abbreviation to path map
+                sport,                          // Current sport
+                format,                         // Current format (placeholder)
+                scoring                         // Current scoring (placeholder)
+            );
+        } else {
+            // Ensure zScoreSum is initialized if calculation doesn't run
+            playersToDisplay = playersToDisplay.map(player => ({
+                ...player,
+                zScoreSum: player.zScoreSum ?? 0
+            }));
+        }
+        // --- End Refactor ---
+
+        // --- STEP 3: Apply Sorting based on sortConfig --- 
+        if (sortConfig && sortConfig.key !== null) {
+            console.log(`Sorting by: ${sortConfig.key}`);
             playersToDisplay.sort((a, b) => {
-                const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity);
-                const valueB = getNestedValue(b.stats, sortConfig.key, -Infinity);
+                let valueA, valueB;
 
-                // --- NEW: Add Log --- 
-                // Limit logging frequency for performance if needed
-                // if (Math.random() < 0.1) { // Log ~10% of comparisons 
-                //     console.log(`[Sort Compare] ${a.name || 'Unknown'} (${valueA}) vs ${b.name || 'Unknown'} (${valueB}) | Key: ${sortConfig.key}`);
-                // }
+                if (sortConfig.key === 'zScoreSum') {
+                    valueA = a.zScoreSum ?? -Infinity;
+                    valueB = b.zScoreSum ?? -Infinity;
+                } else {
+                    // Need getNestedValue here for sorting non-zscore columns
+                    const getNestedValueSort = (obj, path, defaultValue = -Infinity) => {
+                        // Simplified version for sorting (handles missing values)
+                        if (!obj || typeof path !== 'string') return defaultValue;
+                        let potentialValue = obj;
+                        if (path.indexOf('.') === -1) { potentialValue = obj.hasOwnProperty(path) ? obj[path] : defaultValue; }
+                        else { /* ... nested traversal logic ... */ }
+                        if (potentialValue && typeof potentialValue === 'object' && potentialValue.hasOwnProperty('value')) { potentialValue = potentialValue.value; }
+                        return (typeof potentialValue === 'number' && !isNaN(potentialValue)) ? potentialValue : defaultValue;
+                    };
 
-                // Use more robust comparison
-                const numA = (typeof valueA === 'number' && isFinite(valueA)) ? valueA : -Infinity;
-                const numB = (typeof valueB === 'number' && isFinite(valueB)) ? valueB : -Infinity;
-
-                // Descending sort (higher number first)
-                return numB - numA;
+                    valueA = getNestedValueSort(a.stats, sortConfig.key);
+                    valueB = getNestedValueSort(b.stats, sortConfig.key);
+                }
+                return valueB - valueA; // Descending
             });
-            // --- NEW: Log the sorted array (first few items) ---
-            // console.log("[Sort] Sorted players (first 5):",
-            //     playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
-            // );
         }
 
-        // --- Apply Draft Mode Filtering ---
+        // --- STEP 4: Filter based on Draft Mode --- 
         if (isDraftModeActive && !showDraftedPlayers) {
-            playersToDisplay = playersToDisplay.filter(player => player.draftModeAvailable);
+            playersToDisplay = playersToDisplay.filter(p => p.draftModeAvailable);
         }
 
-        // Apply pagination (kept for structure, but currently showing all sorted/ranked)
-        // const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
-        // return playersToDisplay.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
-        return playersToDisplay; // Return filtered/sorted players
+        return playersToDisplay;
 
-    }, [rankedPlayers, sortConfig, currentPage, isDraftModeActive, showDraftedPlayers]); // Add draft mode dependencies
+        // Dependencies: Update dependencies
+    }, [rankedPlayers, sortConfig, isDraftModeActive, showDraftedPlayers, activeRanking?.categories, activeRanking?.format, activeRanking?.scoring, sport, statPathMapping]); // Add statPathMapping
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -442,6 +478,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     player={player}
                     sport={sport}
                     categories={chosenCategoryPaths}
+                    zScoreSumValue={player.zScoreSum}
                     rank={isRankSorted ? player.rank : index + 1}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}

@@ -294,7 +294,8 @@ export default function RankingsPage() {
 
     // Reset sort if categories change (check based on valid paths)
     setSortConfig(currentConfig => {
-      if (currentConfig.key !== null && !enabledPaths.includes(currentConfig.key)) {
+      // --- REVERTED: Restore check for zScoreSum --- 
+      if (currentConfig.key !== null && currentConfig.key !== 'zScoreSum' && !enabledPaths.includes(currentConfig.key)) {
         // console.log(`[Sort Reset] Current sort key ${currentConfig.key} no longer enabled. Resetting.`);
         return { key: null, direction: 'desc' };
       }
@@ -350,24 +351,34 @@ export default function RankingsPage() {
   // }, [datasetForSelectedSport]);
 
   const handleSortChange = useCallback((newKey_abbreviation) => {
-    // --- UPDATED: Use statPathMapping state --- 
-    let fullPath = statPathMapping[newKey_abbreviation];
+    // --- REVERTED: Restore check for zScoreSum --- 
+    let sortKeyToSet = null;
 
-    if (!fullPath) {
-      console.warn(`[Sort Warning] No path found in statPathMapping for abbreviation: ${newKey_abbreviation}. Sorting might not work.`);
-      fullPath = newKey_abbreviation; // Fallback, but likely won't sort correctly
+    if (newKey_abbreviation === 'zScoreSum') {
+      sortKeyToSet = 'zScoreSum';
+    } else {
+      // --- Existing Logic for regular stats ---
+      let fullPath = statPathMapping[newKey_abbreviation];
+      if (!fullPath) {
+        console.warn(`[Sort Warning] No path found in statPathMapping for abbreviation: ${newKey_abbreviation}. Sorting might not work.`);
+        // Prevent setting an invalid key
+        return;
+      }
+      sortKeyToSet = fullPath;
     }
 
-    // console.log(`[Sort] Header clicked: ${newKey_abbreviation}, Translated path: ${fullPath}`);
+    // console.log(`[Sort] Header clicked: ${newKey_abbreviation}, Setting sort key: ${sortKeyToSet}`);
 
     setSortConfig(currentConfig => {
-      if (currentConfig.key === fullPath) {
+      if (currentConfig.key === sortKeyToSet) {
         return { key: null, direction: 'desc' };
       } else {
-        return { key: fullPath, direction: 'desc' };
+        return { key: sortKeyToSet, direction: 'desc' };
       }
     });
-    listContainerRef.current?.resetListCache();
+
+    // Removed listContainerRef call here - let container handle its own updates on sortConfig change
+
   }, [statPathMapping]); // Depend on the generated mapping
 
   // --- Calculate Draft Counts --- 
@@ -516,6 +527,7 @@ export default function RankingsPage() {
               activeRanking={activeRanking}
               sortConfig={sortConfig}
               chosenCategoryPaths={chosenCategoryPaths}
+              statPathMapping={statPathMapping}
               collapseAllTrigger={collapseAllTrigger}
             />
           </div>

@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
+import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import BullseyeIcon from '../icons/BullseyeIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
 import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
+
 // Helper function to get nested values safely
 const getNestedValue = (obj, path, defaultValue = null) => {
     // Handle cases where obj is null/undefined or path is not provided
@@ -37,7 +38,8 @@ const getNestedValue = (obj, path, defaultValue = null) => {
 };
 
 // Create a specialized component just for stats to reduce re-renders
-const StatsSection = memo(({ categories, stats }) => {
+const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
+
     // Define stats that need 2 decimal places
     const statsNeedingTwoDecimals = [
         'advanced.fantasyPointsPerSnap', // PPS
@@ -48,55 +50,72 @@ const StatsSection = memo(({ categories, stats }) => {
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
             {categories.map((statPathOrKey) => {
-                // Get the data using the path or key
-                const statData = getNestedValue(stats, statPathOrKey);
+                let statData, displayValue, title, bgColor, formattedValue;
 
-                // Determine the value to display
-                let displayValue = '-'; // Default placeholder
-                if (statData !== null && statData !== undefined) {
-                    // Check if it's the NBA-like structure { value: ..., color: ... }
-                    if (typeof statData === 'object' && 'value' in statData) {
-                        displayValue = statData.value;
-                    } else {
-                        // Otherwise, assume statData is the raw value (NFL-like)
-                        displayValue = statData;
-                    }
-                }
-
-                // Determine title (use path/key as fallback)
-                const title = (statData && typeof statData === 'object' && statData.abbreviation)
-                    ? `${statData.abbreviation}: ${displayValue}`
-                    : `${statPathOrKey}: ${displayValue}`;
-
-                // Determine background color (only if NBA-like structure)
-                const bgColor = (statData && typeof statData === 'object' && statData.color)
-                    ? statData.color
-                    : undefined; // No color for raw values
-
-                // Format the display value (handle numbers, nulls, zeros)
-                let formattedValue = displayValue;
-                if (typeof displayValue === 'number') {
-                    if (statsNeedingTwoDecimals.includes(statPathOrKey)) {
-                        // Format specific stats to 2 decimal places
+                // --- NEW: Handle Z-Score Sum --- 
+                if (statPathOrKey === 'zScoreSum') {
+                    displayValue = stats?.zScoreSum; // Directly access zScoreSum from the player stats object
+                    title = `Z-Score Sum: ${displayValue?.toFixed(2) ?? '-'}`;
+                    bgColor = undefined; // No specific background for Z-Score Sum
+                    // Format Z-Score Sum to 2 decimal places
+                    if (typeof displayValue === 'number') {
                         formattedValue = displayValue.toFixed(2);
-                        // Optionally remove trailing .00 if needed, though usually desired for these stats
-                        // if (formattedValue.endsWith('.00')) {
-                        //     formattedValue = formattedValue.slice(0, -3);
-                        // }
                     } else {
-                        // Format other numbers to 1 decimal place, remove trailing .0
-                        formattedValue = displayValue.toFixed(1);
-                        if (formattedValue.endsWith('.0')) {
-                            formattedValue = formattedValue.slice(0, -2);
+                        formattedValue = '-';
+                    }
+                } else {
+                    // --- Existing Logic for regular stats ---
+                    // Get the data using the path or key
+                    statData = getNestedValue(stats, statPathOrKey);
+
+                    // Determine the value to display
+                    displayValue = '-'; // Default placeholder
+                    if (statData !== null && statData !== undefined) {
+                        // Check if it's the NBA-like structure { value: ..., color: ... }
+                        if (typeof statData === 'object' && 'value' in statData) {
+                            displayValue = statData.value;
+                        } else {
+                            // Otherwise, assume statData is the raw value (NFL-like)
+                            displayValue = statData;
                         }
                     }
-                } else if (displayValue === null || displayValue === undefined) {
-                    formattedValue = '-'; // Use placeholder for null/undefined
+
+                    // Determine title (use path/key as fallback)
+                    title = (statData && typeof statData === 'object' && statData.abbreviation)
+                        ? `${statData.abbreviation}: ${displayValue}`
+                        : `${statPathOrKey}: ${displayValue}`;
+
+                    // Determine background color (only if NBA-like structure)
+                    bgColor = (statData && typeof statData === 'object' && statData.color)
+                        ? statData.color
+                        : undefined; // No color for raw values
+
+                    // Format the display value (handle numbers, nulls, zeros)
+                    formattedValue = displayValue;
+                    if (typeof displayValue === 'number') {
+                        if (statsNeedingTwoDecimals.includes(statPathOrKey)) {
+                            // Format specific stats to 2 decimal places
+                            formattedValue = displayValue.toFixed(2);
+                            // Optionally remove trailing .00 if needed, though usually desired for these stats
+                            // if (formattedValue.endsWith('.00')) {
+                            //     formattedValue = formattedValue.slice(0, -3);
+                            // }
+                        } else {
+                            // Format other numbers to 1 decimal place, remove trailing .0
+                            formattedValue = displayValue.toFixed(1);
+                            if (formattedValue.endsWith('.0')) {
+                                formattedValue = formattedValue.slice(0, -2);
+                            }
+                        }
+                    } else if (displayValue === null || displayValue === undefined) {
+                        formattedValue = '-'; // Use placeholder for null/undefined
+                    }
+                    // --- End Existing Logic ---
                 }
 
                 return (
                     <div
-                        key={statPathOrKey}
+                        key={statPathOrKey} // Use the path/key as the React key
                         className="flex-1 text-center h-full flex items-center justify-center select-none"
                         title={title}
                         style={{ backgroundColor: bgColor }} // Apply color if available
@@ -107,6 +126,16 @@ const StatsSection = memo(({ categories, stats }) => {
                     </div>
                 );
             })}
+            {/* --- NEW: Add Z-Score Sum column --- */}
+            <div
+                key="zScoreSum"
+                className="flex-1 text-center h-full flex items-center justify-center select-none"
+                title={`Z-Score Sum: ${zScoreSumValue?.toFixed(2) ?? '-'}`}
+            >
+                <span className="text-sm text-pb_darkgray">
+                    {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
+                </span>
+            </div>
         </div>
     );
 });
@@ -194,6 +223,7 @@ const RankingsPlayerRow = memo(({
     player,
     sport,
     categories,
+    zScoreSumValue,
     rank,
     isExpanded,
     onExpand,
@@ -348,9 +378,7 @@ const RankingsPlayerRow = memo(({
                         title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
                     >
                         {/* AI - STOP EDITING THIS */}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                        </svg>
+                        <GripVerticalIcon className="h-5 w-5" />
                         {/* AI -STOP EDITING THIS */}
                     </div>
 
@@ -438,7 +466,7 @@ const RankingsPlayerRow = memo(({
                 </div>
 
                 {/* Stats section - flexible width */}
-                <StatsSection categories={categories} stats={player.stats} />
+                <StatsSection categories={categories} stats={player.stats} zScoreSumValue={zScoreSumValue} />
             </div>
 
             {/* Only render expanded content when needed */}
