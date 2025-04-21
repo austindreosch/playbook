@@ -330,7 +330,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // --- STEP 3: Apply Sorting based on sortConfig --- 
         if (sortConfig && sortConfig.key !== null) {
-            console.log(`Sorting by: ${sortConfig.key}`);
+            // console.log(`Sorting by: ${sortConfig.key}`);
             playersToDisplay.sort((a, b) => {
                 let valueA, valueB;
 
@@ -338,19 +338,34 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     valueA = a.zScoreSum ?? -Infinity;
                     valueB = b.zScoreSum ?? -Infinity;
                 } else {
-                    // Need getNestedValue here for sorting non-zscore columns
-                    const getNestedValueSort = (obj, path, defaultValue = -Infinity) => {
-                        // Simplified version for sorting (handles missing values)
-                        if (!obj || typeof path !== 'string') return defaultValue;
-                        let potentialValue = obj;
-                        if (path.indexOf('.') === -1) { potentialValue = obj.hasOwnProperty(path) ? obj[path] : defaultValue; }
-                        else { /* ... nested traversal logic ... */ }
-                        if (potentialValue && typeof potentialValue === 'object' && potentialValue.hasOwnProperty('value')) { potentialValue = potentialValue.value; }
-                        return (typeof potentialValue === 'number' && !isNaN(potentialValue)) ? potentialValue : defaultValue;
+                    // --- REPLACED: Use full getNestedValue logic for sorting ---
+                    const getSortValue = (playerStats, path) => {
+                        const defaultValue = -Infinity; // Default for sorting comparison
+                        if (!playerStats || typeof path !== 'string') return defaultValue;
+
+                        let current = playerStats;
+                        const keys = path.split('.');
+
+                        for (const key of keys) {
+                            if (current && typeof current === 'object' && key in current) {
+                                current = current[key];
+                            } else {
+                                return defaultValue; // Path doesn't exist
+                            }
+                        }
+
+                        // After traversal, check if 'current' is the value or an object with .value
+                        let finalValue = current;
+                        if (finalValue && typeof finalValue === 'object' && finalValue.hasOwnProperty('value')) {
+                            finalValue = finalValue.value;
+                        }
+
+                        // Return the number or default value
+                        return (typeof finalValue === 'number' && !isNaN(finalValue)) ? finalValue : defaultValue;
                     };
 
-                    valueA = getNestedValueSort(a.stats, sortConfig.key);
-                    valueB = getNestedValueSort(b.stats, sortConfig.key);
+                    valueA = getSortValue(a.stats, sortConfig.key);
+                    valueB = getSortValue(b.stats, sortConfig.key);
                 }
                 return valueB - valueA; // Descending
             });
