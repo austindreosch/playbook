@@ -128,12 +128,12 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
             })}
             {/* --- NEW: Add Z-Score Sum column --- */}
             <div
-                key="zScoreSum"
+                key="zScoreSum_scaled"
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
-                title={`Z-Score Sum: ${zScoreSumValue?.toFixed(2) ?? '-'}`}
+                title={`Scaled Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(1) : '-'}`}
             >
                 <span className="text-sm text-pb_darkgray">
-                    {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
+                    {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(1) : '-'}
                 </span>
             </div>
         </div>
