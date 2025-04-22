@@ -20,6 +20,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
+import { SigmaSquareIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
@@ -188,6 +189,18 @@ const RankingsPlayerListHeader = ({
                             {sortConfig?.key && statPathMapping[abbrev] === sortConfig.key && <SortDescIcon />}
                         </div>
                     ))}
+
+                    {/* --- NEW: Z-Score Sum Sort Button --- */}
+                    <div
+                        key="zScoreSum"
+                        className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
+                        onClick={() => onSortChange('zScoreSum')} // Use a unique key
+                    >
+                        {/* TODO: Use a sport-agnostic label, maybe "Overall" or "Z-Sum"? */}
+                        <SigmaSquareIcon className="w-4 h-4" />
+                        {/* --- MODIFIED: Check for zScoreSum key --- */}
+                        {sortConfig?.key === 'zScoreSum' && <SortDescIcon />}
+                    </div>
                 </div>
             </div>
 

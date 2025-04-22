@@ -1,6 +1,7 @@
 'use client';
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
+import { calculatePlayerZScoreSums } from '@/lib/calculations/zScoreUtil';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -104,7 +105,7 @@ const getNestedValue = (obj, path, defaultValue = null) => {
     return potentialValue;
 };
 
-// --- End Helper --- 
+// --- End Helper ---
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
@@ -112,6 +113,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
     dataset,
     sortConfig,
     chosenCategoryPaths,
+    statPathMapping,
     collapseAllTrigger
 }, ref) => {
     // Initialize state with players
@@ -181,7 +183,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
     // Extracts the list of players along with their rankings
     // Matches each player with their corresponding data in the player dataset
     // Returns a combined object that includes both ranking information and player statistics
-    // The returned data will be used to populate a player row component in my UI. 
+    // The returned data will be used to populate a player row component in my UI.
 
     const processRankingData = useCallback((activeRanking) => {
         if (!activeRanking || !dataset?.[sport.toLowerCase()]?.players) {
@@ -214,11 +216,8 @@ const RankingsPlayerListContainer = React.forwardRef(({
             } else {
                 // Handle null playerId (e.g., draft picks, rookies not yet in dataset)
                 isPlaceholder = true;
-                // Log the incoming data for placeholders
-                // console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Data:`, rankingPlayer);
                 // Create a unique ID for dnd-kit (assuming rank is unique enough for placeholders)
                 rankingId = `pick-${rankingPlayer.rank}-${rankingPlayer.name || 'unknown'}`;
-                // console.log("Created placeholder:", rankingId, rankingPlayer);
             }
 
             // Ensure rankingId is a string for dnd-kit
@@ -239,11 +238,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 draftModeAvailable: rankingPlayer.draftModeAvailable !== undefined ? rankingPlayer.draftModeAvailable : true
             };
 
-            // Log the final assigned name for placeholders
-            // if (isPlaceholder) {
-            //     console.log(`[Placeholder Check] Rank: ${rankingPlayer.rank}, Assigned Name:`, combinedPlayer.name);
-            // }
-
             return combinedPlayer;
         });
 
@@ -252,12 +246,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
-        // Log the activeRanking when it changes, especially after drag/drop
-        // console.log("[useEffect] ActiveRanking changed:", activeRanking);
         const processedPlayers = processRankingData(activeRanking);
-        // console.log("[useEffect] Processed Players:", processedPlayers);
         setRankedPlayers(processedPlayers);
-    }, [activeRanking, sport]);
+    }, [activeRanking, sport, processRankingData]); // Added processRankingData dependency
 
     // Fetch data when component mounts or sport changes
     useEffect(() => {
@@ -265,6 +256,14 @@ const RankingsPlayerListContainer = React.forwardRef(({
             setPlayers(dataset[sport.toLowerCase()].players);
         }
     }, [dataset, sport]);
+
+    // --- NEW: Add effect to monitor sortConfig changes ---
+    useEffect(() => {
+        // Force list to recalculate when sortConfig changes
+        if (listRef.current) {
+            listRef.current.resetAfterIndex(0, true);
+        }
+    }, [sortConfig]);
 
     // --- Expose methods via ref (example) ---
     React.useImperativeHandle(ref, () => ({
@@ -291,44 +290,86 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const paginatedPlayers = useMemo(() => {
         let playersToDisplay = [...rankedPlayers]; // Start with rank-ordered players
 
-        // Apply sorting if a sort key is set
-        if (sortConfig?.key !== null) {
-            // --- NEW: Add Log --- 
-            // console.log(`[Sort] Sorting by key: ${sortConfig.key}`);
+        // --- REFACTORED: Use utility function for Z-Score Sum Calculation ---
+        if (activeRanking?.categories && statPathMapping && playersToDisplay.length > 0) {
+
+            // TODO: Replace hardcoded values above with actual values retrieved from activeRanking or props
+            const format = activeRanking?.format
+            const scoringType = activeRanking?.scoring
+            // These settings are specific to NFL calculations
+            const pprSetting = sport === 'NFL' ? activeRanking?.details?.pprSetting : null;
+            const flexSetting = sport === 'NFL' ? activeRanking?.details?.flexSetting : null;
+
+            playersToDisplay = calculatePlayerZScoreSums(
+                playersToDisplay,               // Current player list
+                activeRanking.categories,       // Category details (enabled, multiplier)
+                statPathMapping,                // Abbreviation to path map
+                sport,                          // Current sport
+                format,                         // Pass the format
+                scoringType,                    // Pass the scoring type
+                pprSetting,                     // Pass the PPR setting
+                flexSetting                     // Pass the Flex setting
+            );
+        } else {
+            // Ensure zScoreSum is initialized if calculation doesn't run
+            playersToDisplay = playersToDisplay.map(player => ({
+                ...player,
+                zScoreSum: player.zScoreSum ?? 0
+            }));
+        }
+        // --- End Refactor ---
+
+        // --- STEP 3: Apply Sorting based on sortConfig ---
+        if (sortConfig && sortConfig.key !== null) {
             playersToDisplay.sort((a, b) => {
-                const valueA = getNestedValue(a.stats, sortConfig.key, -Infinity);
-                const valueB = getNestedValue(b.stats, sortConfig.key, -Infinity);
+                let valueA, valueB;
 
-                // --- NEW: Add Log --- 
-                // Limit logging frequency for performance if needed
-                // if (Math.random() < 0.1) { // Log ~10% of comparisons 
-                //     console.log(`[Sort Compare] ${a.name || 'Unknown'} (${valueA}) vs ${b.name || 'Unknown'} (${valueB}) | Key: ${sortConfig.key}`);
-                // }
+                if (sortConfig.key === 'zScoreSum') {
+                    valueA = a.zScoreSum ?? -Infinity;
+                    valueB = b.zScoreSum ?? -Infinity;
+                } else {
+                    // --- REPLACED: Use full getNestedValue logic for sorting ---
+                    const getSortValue = (playerStats, path) => {
+                        const defaultValue = -Infinity; // Default for sorting comparison
+                        if (!playerStats || typeof path !== 'string') return defaultValue;
 
-                // Use more robust comparison
-                const numA = (typeof valueA === 'number' && isFinite(valueA)) ? valueA : -Infinity;
-                const numB = (typeof valueB === 'number' && isFinite(valueB)) ? valueB : -Infinity;
+                        let current = playerStats;
+                        const keys = path.split('.');
 
-                // Descending sort (higher number first)
-                return numB - numA;
+                        for (const key of keys) {
+                            if (current && typeof current === 'object' && key in current) {
+                                current = current[key];
+                            } else {
+                                return defaultValue; // Path doesn't exist
+                            }
+                        }
+
+                        // After traversal, check if 'current' is the value or an object with .value
+                        let finalValue = current;
+                        if (finalValue && typeof finalValue === 'object' && finalValue.hasOwnProperty('value')) {
+                            finalValue = finalValue.value;
+                        }
+
+                        // Return the number or default value
+                        return (typeof finalValue === 'number' && !isNaN(finalValue)) ? finalValue : defaultValue;
+                    };
+
+                    valueA = getSortValue(a.stats, sortConfig.key);
+                    valueB = getSortValue(b.stats, sortConfig.key);
+                }
+                return valueB - valueA; // Descending
             });
-            // --- NEW: Log the sorted array (first few items) ---
-            // console.log("[Sort] Sorted players (first 5):",
-            //     playersToDisplay.slice(0, 5).map(p => ({ name: p.name, rank: p.rank, stat: getNestedValue(p.stats, sortConfig.key) }))
-            // );
         }
 
-        // --- Apply Draft Mode Filtering ---
+        // --- STEP 4: Filter based on Draft Mode ---
         if (isDraftModeActive && !showDraftedPlayers) {
-            playersToDisplay = playersToDisplay.filter(player => player.draftModeAvailable);
+            playersToDisplay = playersToDisplay.filter(p => p.draftModeAvailable);
         }
 
-        // Apply pagination (kept for structure, but currently showing all sorted/ranked)
-        // const startIndex = (currentPage - 1) * PLAYERS_PER_PAGE;
-        // return playersToDisplay.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
-        return playersToDisplay; // Return filtered/sorted players
+        return playersToDisplay;
 
-    }, [rankedPlayers, sortConfig, currentPage, isDraftModeActive, showDraftedPlayers]); // Add draft mode dependencies
+        // Dependencies: Update dependencies
+    }, [rankedPlayers, sortConfig, isDraftModeActive, showDraftedPlayers, activeRanking?.categories, activeRanking?.format, activeRanking?.scoring, activeRanking?.details, sport, statPathMapping]); // Added activeRanking?.details
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
@@ -353,9 +394,8 @@ const RankingsPlayerListContainer = React.forwardRef(({
         document.body.style.cursor = ''; // Reset cursor
         setActiveId(null); // Reset activeId regardless of outcome
 
-        // --- NEW: Prevent re-ranking if sorted by stat --- 
+        // --- NEW: Prevent re-ranking if sorted by stat ---
         if (sortConfig?.key !== null) {
-            // console.log("[handleDragEnd] Drag disabled while sorted by stat:", sortConfig.key);
             return; // Do not allow reordering when sorted by stat
         }
 
@@ -368,9 +408,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
             // Create new array with reordered items
             const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
 
-            // Log the newOrder array immediately after creation
-            // console.log("[handleDragEnd] newOrder:", newOrder);
-
             // Update local state first
             setRankedPlayers(newOrder);
 
@@ -379,17 +416,16 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 // Ensure we are mapping valid IDs
                 const rankingIdsInNewOrder = newOrder.map(item => {
                     if (!item || !item.rankingId) {
-                        console.error("Item missing rankingId in newOrder:", item);
+                        // console.error("Item missing rankingId in newOrder:", item); // Removed console.error
                         return null;
                     }
                     return item.rankingId;
                 }).filter(id => id !== null);
 
                 if (rankingIdsInNewOrder.length !== newOrder.length) {
-                    console.error("Mismatch in ranking IDs after filtering!");
+                    // console.error("Mismatch in ranking IDs after filtering!"); // Removed console.error
                 }
 
-                // console.log("[handleDragEnd] Updating store with IDs:", rankingIdsInNewOrder);
                 updateAllPlayerRanks(rankingIdsInNewOrder);
                 saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
@@ -442,18 +478,18 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     player={player}
                     sport={sport}
                     categories={chosenCategoryPaths}
-                    rank={isRankSorted ? player.rank : index + 1}
+                    zScoreSumValue={player.zScoreSum}
+                    rank={player.rank}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
                     isPlaceholder={isPlaceholder}
                     isRankSorted={isRankSorted}
-                    // --- Pass Draft Mode Props ---
                     isDraftMode={isDraftModeActive}
                     onToggleDraftStatus={setPlayerAvailability}
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]); // Add showDraftedPlayers dependency for safety
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]);
 
     const sportKey = sport.toLowerCase();
 
@@ -524,7 +560,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
                                 isRankSorted={false}
-                                // --- Pass Draft Mode Props ---
                                 isDraftMode={isDraftModeActive}
                                 onToggleDraftStatus={setPlayerAvailability}
                             />
@@ -549,4 +584,3 @@ const RankingsPlayerListContainer = React.forwardRef(({
 RankingsPlayerListContainer.displayName = 'RankingsPlayerListContainer'; // Add display name for dev tools
 
 export default RankingsPlayerListContainer;
-
