@@ -346,12 +346,12 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
 
     // Step 4: Calculate Z-Scores PER POSITION
     const finalPlayers = [];
-    const NFL_TOP_N_PER_POS = { // Define Top N per position (adjust as needed)
-        QB: 30,
-        RB: 50,
-        WR: 60,
-        TE: 30,
-        Unknown: 0 // Don't calculate Z-scores for unknowns
+    const NFL_TOP_N_PER_POS = {
+        QB: 36,     // All starters + 1–2 backups per team, useful in bye weeks or superflex
+        RB: 60,     // 4–5 per team rostered (including backups, stashes)
+        WR: 72,     // 6 per team (3 starters + 2–3 stashes)
+        TE: 36,     // 2–3 per team max (starter + streamer or rookie stash)
+        Unknown: 0
     };
     const MIN_GAMES = 5;
     const MIN_OPPORTUNITIES_PER_GAME = 2; // Could also be position-specific
