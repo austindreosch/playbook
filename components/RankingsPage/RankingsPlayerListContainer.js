@@ -307,18 +307,32 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // --- REFACTORED: Use utility function for Z-Score Sum Calculation ---
         if (activeRanking?.categories && statPathMapping && playersToDisplay.length > 0) {
-            // TODO: Get actual format and scoring from activeRanking or props when available
-            const format = activeRanking?.format || 'standard';
-            const scoring = activeRanking?.scoring || 'default';
+
+            // --- TEMPORARY HARDCODED SETTINGS FOR TESTING --- 
+            // const format = 'dynasty';         // Options: 'dynasty', 'redraft'
+            // const scoringType = 'categories'; // Options: 'points', 'categories'
+            // const pprSetting = '1ppr';        // Options: '1ppr', '0.5ppr', '0ppr'
+            // const flexSetting = 'superflex';    // Options: 'superflex', 'standard'
+            // --- END TEMPORARY HARDCODING ---
+
+            // TODO: Replace hardcoded values above with actual values retrieved from activeRanking or props
+            const format = activeRanking?.format
+            const scoringType = activeRanking?.scoring
+            // These settings are specific to NFL calculations
+            const pprSetting = sport === 'NFL' ? activeRanking?.details?.pprSetting : null;
+            const flexSetting = sport === 'NFL' ? activeRanking?.details?.flexSetting : null;
 
             playersToDisplay = calculatePlayerZScoreSums(
                 playersToDisplay,               // Current player list
                 activeRanking.categories,       // Category details (enabled, multiplier)
                 statPathMapping,                // Abbreviation to path map
                 sport,                          // Current sport
-                format,                         // Current format (placeholder)
-                scoring                         // Current scoring (placeholder)
+                format,                         // Pass the hardcoded format
+                scoringType,                    // Pass the hardcoded scoring type
+                pprSetting,                     // Pass the hardcoded PPR setting
+                flexSetting                     // Pass the hardcoded Flex setting
             );
+            console.log("sport:", sport, "format:", format, "scoringType:", scoringType, "pprSetting:", pprSetting, "flexSetting:", flexSetting);
         } else {
             // Ensure zScoreSum is initialized if calculation doesn't run
             playersToDisplay = playersToDisplay.map(player => ({
