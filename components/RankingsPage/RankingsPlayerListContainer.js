@@ -1,7 +1,7 @@
 'use client';
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
-import { calculatePlayerZScoreSums } from '@/lib/calculations/playerStatsUtils';
+import { calculatePlayerZScoreSums } from '@/lib/calculations/zScoreUtil';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
