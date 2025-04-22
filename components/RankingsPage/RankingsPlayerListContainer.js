@@ -494,18 +494,17 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     sport={sport}
                     categories={chosenCategoryPaths}
                     zScoreSumValue={player.zScoreSum}
-                    rank={isRankSorted ? player.rank : index + 1}
+                    rank={player.rank}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
                     isPlaceholder={isPlaceholder}
                     isRankSorted={isRankSorted}
-                    // --- Pass Draft Mode Props ---
                     isDraftMode={isDraftModeActive}
                     onToggleDraftStatus={setPlayerAvailability}
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]); // Add showDraftedPlayers dependency for safety
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]);
 
     const sportKey = sport.toLowerCase();
 
@@ -576,7 +575,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
                                 isRankSorted={false}
-                                // --- Pass Draft Mode Props ---
                                 isDraftMode={isDraftModeActive}
                                 onToggleDraftStatus={setPlayerAvailability}
                             />

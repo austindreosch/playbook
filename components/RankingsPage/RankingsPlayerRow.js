@@ -132,7 +132,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Scaled Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(1) : '-'}`}
             >
-                <span className="text-sm text-pb_darkgray">
+                <span className="text-xs text-pb_textgray">
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(1) : '-'}
                 </span>
             </div>
@@ -456,9 +456,9 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}
-                    <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
+                    {/* <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
-                    </div>
+                    </div> */}
 
                     {!isRankSorted && (
                         <div className="absolute inset-0 bg-transparent z-20" title="Sorting by stat, drag disabled"></div>
