@@ -350,7 +350,7 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         QB: 36,     // All starters + 1–2 backups per team, useful in bye weeks or superflex
         RB: 60,     // 4–5 per team rostered (including backups, stashes)
         WR: 72,     // 6 per team (3 starters + 2–3 stashes)
-        TE: 36,     // 2–3 per team max (starter + streamer or rookie stash)
+        TE: 24,     // 2 per team max (starter + streamer or rookie stash)
         Unknown: 0
     };
     const MIN_GAMES = 5;
