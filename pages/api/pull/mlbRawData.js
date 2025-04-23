@@ -222,23 +222,23 @@ export default async function handler(req, res) {
 
         console.log('Fetching and storing DETAILED data...');
 
-        // Players
-        const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/players.json`, 'players');
-        if (players && validateData(players, 'players', errors)) {
-            await updateEndpoint(statsCollection, 'mlb', 'detailed', 'players', players, errors);
-        }
+        // // Players
+        // const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/players.json`, 'players');
+        // if (players && validateData(players, 'players', errors)) {
+        //     await updateEndpoint(statsCollection, 'mlb', 'detailed', 'players', players, errors);
+        // }
 
-        // Injuries
-        const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/injuries.json`, 'injuries');
-        if (injuries && validateData(injuries, 'injuries', errors)) {
-            await updateEndpoint(statsCollection, 'mlb', 'detailed', 'playerInjuries', injuries, errors);
-        }
+        // // Injuries
+        // const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/injuries.json`, 'injuries');
+        // if (injuries && validateData(injuries, 'injuries', errors)) {
+        //     await updateEndpoint(statsCollection, 'mlb', 'detailed', 'playerInjuries', injuries, errors);
+        // }
 
-        // Injury history
-        const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/injury_history.json`, 'injuryHistory');
-        if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
-            await updateEndpoint(statsCollection, 'mlb', 'detailed', 'injuryHistory', injuryHistory, errors);
-        }
+        // // Injury history
+        // const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/injury_history.json`, 'injuryHistory');
+        // if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
+        //     await updateEndpoint(statsCollection, 'mlb', 'detailed', 'injuryHistory', injuryHistory, errors);
+        // }
 
         //=============================================================================
         //                    4. FETCH AND STORE PROJECTIONS DATA
