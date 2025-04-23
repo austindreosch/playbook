@@ -2,6 +2,7 @@
 
 import AllPlayersBox from '@/components/admin/AllPlayersBox';
 import CleanupRankingsButton from '@/components/admin/CleanupRankingsButton';
+import UpdateMLBStatsButton from '@/components/admin/UpdateMLBStatsButton';
 import UpdateNBAStatsButton from '@/components/admin/UpdateNBAStatsButton';
 import UpdateNFLStatsButton from '@/components/admin/UpdateNFLStatsButton';
 import UpdateRankingsButton from '@/components/admin/UpdateRankingsButton';
@@ -56,6 +57,7 @@ export default function AdminPage() {
               <div className="space-y-4">
                 <UpdateNBAStatsButton />
                 <UpdateNFLStatsButton />
+                <UpdateMLBStatsButton />
               </div>
             </div>
           </div>

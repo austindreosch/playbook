@@ -321,6 +321,19 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
 
     // Step 2: Calculate raw advanced stats for each player
     let playersWithAdvancedStats = mergedPlayers.map(player => {
+
+        // --- Simple Manual Override for Caleb Williams Snaps ---
+        if (player.info?.fullName === "Caleb Williams") {
+            if (player.stats?.other) {
+                const originalSnaps = player.stats.other.offenseSnaps;
+                player.stats.other.offenseSnaps = 1123; // Correct snap count
+                console.log(`Applied manual snap override for Caleb Williams: ${originalSnaps} -> 1123`);
+            } else {
+                console.warn("Could not apply Caleb Williams snap override: player.stats.other not found.");
+            }
+        }
+        // --- End Override ---
+
         const teamId = player.info.teamId;
         const relevantTeamStats = teamStatsMap[teamId] || {};
         const advancedStats = _calculateAdvancedNflStats(player, relevantTeamStats);
