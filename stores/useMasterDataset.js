@@ -611,54 +611,49 @@ const useMasterDataset = create((set, get) => ({
                 if (!acc[id]) {
                     // First time seeing this player, add them directly
                     acc[id] = { ...player };
-                    // Optional: Recalculate PassCompPct if Comp/Att are present
-                    if (acc[id].stats.passing.passAtt > 0) {
-                        acc[id].stats.passing.passCompPct = parseFloat(((acc[id].stats.passing.passComp / acc[id].stats.passing.passAtt) * 100).toFixed(1));
-                    } else {
-                        acc[id].stats.passing.passCompPct = 0;
-                    }
                 } else {
-                    // Player exists, accumulate stats
+                    // Player exists, need to aggregate their stats
                     const existing = acc[id].stats;
                     const current = player.stats;
 
-                    // Sum passing stats
-                    existing.passing.passYards += current.passing.passYards;
-                    existing.passing.passTD += current.passing.passTD;
-                    existing.passing.passInt += current.passing.passInt;
-                    existing.passing.passAtt += current.passing.passAtt;
-                    existing.passing.passComp += current.passing.passComp;
-                    existing.passing.pass20Plus += current.passing.pass20Plus;
+                    // Update games played
+                    existing.gamesPlayed += current.gamesPlayed;
 
-                    // Sum rushing stats
-                    existing.rushing.rushYards += current.rushing.rushYards;
-                    existing.rushing.rushTD += current.rushing.rushTD;
-                    existing.rushing.rushAtt += current.rushing.rushAtt;
-                    existing.rushing.rush20Plus += current.rushing.rush20Plus;
+                    // Aggregate batting stats
+                    Object.keys(existing.passing).forEach(key => {
+                        // For averages and percentages, we'll need weighted calculation later
+                        if (!['passCompPct'].includes(key)) {
+                            existing.passing[key] += current.passing[key];
+                        }
+                    });
 
-                    // Sum receiving stats
-                    existing.receiving.recYards += current.receiving.recYards;
-                    existing.receiving.recTD += current.receiving.recTD;
-                    existing.receiving.receptions += current.receiving.receptions;
-                    existing.receiving.targets += current.receiving.targets;
-                    existing.receiving.rec20Plus += current.receiving.rec20Plus;
+                    // Aggregate rushing stats
+                    Object.keys(existing.rushing).forEach(key => {
+                        if (!['rush20Plus'].includes(key)) {
+                            existing.rushing[key] += current.rushing[key];
+                        }
+                    });
 
-                    // Sum other stats
-                    existing.other.gamesPlayed += current.other.gamesPlayed;
-                    existing.other.gamesStarted += current.other.gamesStarted; // Make sure this is correct, might just take latest? Summing for now.
-                    existing.other.offenseSnaps += current.other.offenseSnaps;
-                    existing.other.fumbles += current.other.fumbles;
-                    existing.other.fumblesLost += current.other.fumblesLost;
+                    // Aggregate receiving stats
+                    Object.keys(existing.receiving).forEach(key => {
+                        if (!['rec20Plus'].includes(key)) {
+                            existing.receiving[key] += current.receiving[key];
+                        }
+                    });
 
-                    // Recalculate PassCompPct based on accumulated totals
+                    // Aggregate other stats
+                    Object.keys(existing.other).forEach(key => {
+                        if (!['fumblesLost'].includes(key)) {
+                            existing.other[key] += current.other[key];
+                        }
+                    });
+
+                    // Recalculate passing averages/percentages
                     if (existing.passing.passAtt > 0) {
                         existing.passing.passCompPct = parseFloat(((existing.passing.passComp / existing.passing.passAtt) * 100).toFixed(1));
-                    } else {
-                        existing.passing.passCompPct = 0;
                     }
 
-
-                    // Update player info (team, teamId) to the latest entry encountered
+                    // Update player info to the latest entry encountered
                     acc[id].info.team = player.info.team;
                     acc[id].info.teamId = player.info.teamId;
                 }
@@ -874,51 +869,77 @@ const useMasterDataset = create((set, get) => ({
                     const existing = acc[id].stats;
                     const current = player.stats;
 
+                    // Update games played
+                    existing.gamesPlayed += current.gamesPlayed;
+
                     // Aggregate batting stats
                     Object.keys(existing.batting).forEach(key => {
                         // For averages and percentages, we'll need weighted calculation later
-                        if (!['battingAverage', 'onBasePercentage', 'sluggingPercentage', 'onBasePlusSlugging'].includes(key)) {
+                        if (!['battingAvg', 'batterOnBasePct', 'batterSluggingPct', 'batterOnBasePlusSluggingPct'].includes(key)) {
                             existing.batting[key] += current.batting[key];
                         }
                     });
 
                     // Aggregate pitching stats (except for ERA and WHIP)
                     Object.keys(existing.pitching).forEach(key => {
-                        if (!['earnedRunAvg', 'whip'].includes(key)) {
+                        if (!['earnedRunAvg', 'walksAndHitsPerInningPitched', 'strikeoutsPer9Innings', 'walksAllowedPer9Innings', 'hitsAllowedPer9Innings', 'strikeoutsToWalksRatio'].includes(key)) {
                             existing.pitching[key] += current.pitching[key];
                         }
                     });
 
+                    // Aggregate fielding stats
+                    Object.keys(existing.fielding).forEach(key => {
+                        if (!['fieldingPct'].includes(key)) {
+                            existing.fielding[key] += current.fielding[key];
+                        }
+                    });
 
                     // Recalculate batting averages/percentages
                     if (existing.batting.atBats > 0) {
-                        existing.batting.battingAverage = formatNumber(existing.batting.hits / existing.batting.atBats);
+                        existing.batting.battingAvg = formatNumber(existing.batting.hits / existing.batting.atBats);
                     }
 
                     // Recalculate OBP
-                    const onBaseEvents = existing.batting.hits + existing.batting.walks + existing.batting.hitByPitch;
-                    const onBaseOpportunities = existing.batting.atBats + existing.batting.walks + existing.batting.hitByPitch + existing.batting.sacrifices;
+                    const onBaseEvents = existing.batting.hits + existing.batting.batterWalks + existing.batting.hitByPitch;
+                    const onBaseOpportunities = existing.batting.atBats + existing.batting.batterWalks + existing.batting.hitByPitch;
                     if (onBaseOpportunities > 0) {
-                        existing.batting.onBasePercentage = formatNumber(onBaseEvents / onBaseOpportunities);
+                        existing.batting.batterOnBasePct = formatNumber(onBaseEvents / onBaseOpportunities);
                     }
 
                     // Recalculate SLG
                     if (existing.batting.atBats > 0) {
-                        const totalBases = existing.batting.hits + existing.batting.doubles + (2 * existing.batting.triples) + (3 * existing.batting.homeRuns);
-                        existing.batting.sluggingPercentage = formatNumber(totalBases / existing.batting.atBats);
+                        existing.batting.batterSluggingPct = formatNumber(existing.batting.totalBases / existing.batting.atBats);
                     }
 
                     // Recalculate OPS
-                    existing.batting.onBasePlusSlugging = formatNumber(existing.batting.onBasePercentage + existing.batting.sluggingPercentage);
+                    existing.batting.batterOnBasePlusSluggingPct = formatNumber(existing.batting.batterOnBasePct + existing.batting.batterSluggingPct);
 
                     // Recalculate ERA
                     if (existing.pitching.inningsPitched > 0) {
-                        existing.pitching.earnedRunAvg = formatNumber((9 * existing.pitching.earnedRuns) / existing.pitching.inningsPitched);
+                        existing.pitching.earnedRunAvg = formatNumber((9 * existing.pitching.earnedRunsAllowed) / existing.pitching.inningsPitched);
                     }
 
                     // Recalculate WHIP
                     if (existing.pitching.inningsPitched > 0) {
-                        existing.pitching.whip = formatNumber((existing.pitching.hits + existing.pitching.pitcherWalks) / existing.pitching.inningsPitched);
+                        existing.pitching.walksAndHitsPerInningPitched = formatNumber((existing.pitching.hitsAllowed + existing.pitching.pitcherWalks) / existing.pitching.inningsPitched);
+                    }
+
+                    // Recalculate K/9, BB/9, H/9
+                    if (existing.pitching.inningsPitched > 0) {
+                        existing.pitching.strikeoutsPer9Innings = formatNumber((9 * existing.pitching.pitcherStrikeouts) / existing.pitching.inningsPitched);
+                        existing.pitching.walksAllowedPer9Innings = formatNumber((9 * existing.pitching.pitcherWalks) / existing.pitching.inningsPitched);
+                        existing.pitching.hitsAllowedPer9Innings = formatNumber((9 * existing.pitching.hitsAllowed) / existing.pitching.inningsPitched);
+                    }
+
+                    // Recalculate K/BB ratio
+                    if (existing.pitching.pitcherWalks > 0) {
+                        existing.pitching.strikeoutsToWalksRatio = formatNumber(existing.pitching.pitcherStrikeouts / existing.pitching.pitcherWalks);
+                    }
+
+                    // Recalculate fielding percentage
+                    if ((existing.fielding.putOuts + existing.fielding.assists + existing.fielding.errors) > 0) {
+                        existing.fielding.fieldingPct = formatNumber((existing.fielding.putOuts + existing.fielding.assists) / 
+                            (existing.fielding.putOuts + existing.fielding.assists + existing.fielding.errors));
                     }
 
                     // Update player info to the latest entry encountered
