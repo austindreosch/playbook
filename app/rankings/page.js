@@ -253,8 +253,31 @@ export default function RankingsPage() {
       // Strategy for NFL: Use the predefined manual map
       currentMapping = NFL_STAT_ABBREVIATION_TO_PATH_MAP;
       // console.log('[NFL Mapping] Using manual stat paths:', currentMapping);
-    } else {
-      // Strategy for NBA/Other: Generate from abbreviations in the first player's stats
+    } else if (currentSportLower === 'mlb') {
+      // Strategy for MLB: Generate from nested abbreviations (batting/pitching)
+      const firstPlayerStats = sourceDataset.players[0]?.stats;
+      if (firstPlayerStats) {
+        Object.entries(firstPlayerStats).forEach(([categoryKey, categoryStats]) => {
+          // Check if categoryStats is an object (like batting or pitching)
+          if (categoryStats && typeof categoryStats === 'object') {
+            Object.entries(categoryStats).forEach(([statKey, stat]) => {
+              // Check if stat is an object with 'abbreviation' property
+              if (stat && typeof stat === 'object' && stat.abbreviation) {
+                const pathString = `${categoryKey}.${statKey}`; // e.g., "batting.hits"
+                currentMapping[stat.abbreviation] = pathString; // Map abbrev -> path (e.g., 'H' -> 'batting.hits')
+              }
+            });
+          } else if (categoryStats && typeof categoryStats === 'object' && categoryStats.abbreviation) {
+            // Handle potential top-level stats like GP if they exist directly under stats
+            currentMapping[categoryStats.abbreviation] = categoryKey;
+          }
+        });
+        // console.log(`[${selectedSport} Mapping] Generated paths from abbreviations:`, currentMapping);
+      } else {
+        console.warn(`[${selectedSport} Mapping] Could not generate paths: No stats found for the first player.`);
+      }
+    } else if (currentSportLower === 'nba') {
+      // Strategy for NBA: Generate from abbreviations in the first player's stats (top-level)
       const firstPlayerStats = sourceDataset.players[0]?.stats;
       if (firstPlayerStats) {
         Object.entries(firstPlayerStats).forEach(([key, stat]) => {
@@ -269,6 +292,7 @@ export default function RankingsPage() {
         console.warn(`[${selectedSport} Mapping] Could not generate paths: No stats found for the first player.`);
       }
     }
+    // TODO: Add a default else or warning for unsupported sports?
 
     setStatPathMapping(currentMapping); // Store the calculated map
 

@@ -72,6 +72,11 @@ export default function AdminPage() {
                 {/* <UpdateRankingsButton sport="NFL" format="Dynasty" scoring="Points" /> */}
                 <h1>NFL</h1>
                 <UpdateRankingsNFLButton />
+                <h1>MLB</h1>
+                <UpdateRankingsButton sport="MLB" format="Dynasty" scoring="Categories" />
+                <UpdateRankingsButton sport="MLB" format="Dynasty" scoring="Points" />
+                <UpdateRankingsButton sport="MLB" format="Redraft" scoring="Categories" />
+                <UpdateRankingsButton sport="MLB" format="Redraft" scoring="Points" />
               </div>
             </div>
           </div>

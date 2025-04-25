@@ -24,6 +24,11 @@ import Fuse from 'fuse.js';
 import { MongoClient } from 'mongodb';
 import Papa from 'papaparse';
 import path from 'path';
+import { customNameMaps } from '../../../lib/nameMappings'; // Import the maps
+
+// Ensure unmatched directory exists
+const unmatchedDir = path.join(process.cwd(), 'public', 'docs', 'unmatched');
+fs.mkdir(unmatchedDir, { recursive: true }).catch(console.error); // Create dir if not exists, ignore errors if it does
 
 const mongoUri = process.env.MONGODB_URI;
 
@@ -37,55 +42,11 @@ async function connectToDb() {
     return { client, db: client.db('playbook') };
 }
 
-// Custom name mappings for each sport
-const customNameMaps = {
-    NBA: {
-        // Matt Lawson
-        'Alexandre Sarr': 'Alex Sarr',
-        'Nic Claxton': 'Nicolas Claxton',
-        'Cam Thomas': 'Cameron Thomas',
-        'Ronald Holland II': 'Ron Holland',
-        'Trey Murphy III': 'Trey Murphy',
-        'Jakob Pöltl': 'Jakob Poeltl',
-        'Jabari Smith Jr.': 'Jabari Smith',
-        'Vince Williams Jr.': 'Vince Williams',
-        'GG Jackson': 'G. G. Jackson',
-        'Bobby Portis Jr.': 'Bobby Portis',
-        'Bobby Portis Jr. ': 'Bobby Portis',
-        'Bruce Brown Jr.': 'Bruce Brown',
-        'AJ Green': 'A.J. Green',
-
-        // Basketball Monster
-
-        'G.G. Jackson': 'G. G. Jackson',
-        'O.G. Anunoby': 'OG Anunoby',
-        'PJ Washington': 'P.J. Washington',
-        'C.J. McCollum': 'CJ McCollum',
-        'R.J. Barrett': 'RJ Barrett',
-        'Bub Carrington': 'Carlton Carrington',
-        'KJ Martin': 'Kenyon Martin Jr.',
-        'Jeff Dowtin Jr': 'Jeff Dowtin',
-        'E.J. Harkless': 'Elijah Harkless',
-        'A.J. Johnson': 'AJ Johnson',
-        'J.T. Thor': 'JT Thor',
-        'P.J. Hall': 'PJ Hall',
-        'Jeenathan Williams Jr.': 'Jeenathan Williams',
-        'J.D. Davison': 'JD Davison',
-        'P.J. Dozier': 'PJ Dozier',
-    },
-    MLB: {
-        // MLB name mappings
-    },
-    NFL: {
-        // NFL name mappings
-    }
-};
-
 // Stats collection queries for each sport
 const statsQueries = {
     NBA: { sport: 'nba', endpoint: 'seasonalPlayerStats', addon: 'stats' },
-    MLB: { sport: 'mlb', endpoint: 'seasonalPlayerStats' },
-    NFL: { sport: 'nfl', endpoint: 'seasonalPlayerStats' }
+    MLB: { sport: 'mlb', endpoint: 'seasonalPlayerStats', addon: 'stats' },
+    NFL: { sport: 'nfl', endpoint: 'seasonalPlayerStats', addon: 'stats' }
 };
 
 // Parse CSV rankings
@@ -100,13 +61,6 @@ async function parseExpertRankingsCSV(sport, format, scoring) {
     });
     return parsed.data;
 }
-
-
-
-
-
-
-
 
 // API handler
 export default async function handler(req, res) {
@@ -210,6 +164,8 @@ export default async function handler(req, res) {
         const normalizeText = (text) => {
             return text.normalize('NFKD')  // Normalize special characters
                 .replace(/[\u0300-\u036f]/g, '')  // Remove diacritics
+                .replace(/[.\\']/g, '') // Remove periods, apostrophes
+                .replace(/\s+(jr|sr|iii|ii|iv)\.?$/i, '') // Remove suffixes like Jr., Sr., II, III, IV
                 .toLowerCase()
                 .trim();
         };
@@ -262,12 +218,27 @@ export default async function handler(req, res) {
             };
         });
 
-        // Log unmatched players
-        const unmatchedPlayers = results.filter(r => !r.matched).map(r => r.name);
-        // if (unmatchedPlayers.length > 0) {
-        //     console.log(`❌ Unmatched players for ${sport} ${format} ${scoring}:`);
-        //     unmatchedPlayers.forEach(name => console.log(name));
-        // }
+        // Log unmatched players and generate CSV
+        const unmatchedPlayers = results.filter(r => !r.matched).map(r => ({ Name: r.name })); // Format for PapaParse header
+        let unmatchedFilePath = null;
+
+        if (unmatchedPlayers.length > 0) {
+            console.log(`❌ ${unmatchedPlayers.length} Unmatched players for ${sport} ${format} ${scoring}.`);
+            // Generate CSV
+            try {
+                const csvString = Papa.unparse(unmatchedPlayers);
+                const dateStamp = new Date().toISOString().split('T')[0].replace(/-/g, ''); // YYYYMMDD
+                const unmatchedFileName = `unmatched_${sport.toLowerCase()}_${format.toLowerCase()}_${scoring.toLowerCase()}_${dateStamp}.csv`;
+                unmatchedFilePath = path.join('docs', 'unmatched', unmatchedFileName); // Relative path for response
+                const fullUnmatchedPath = path.join(process.cwd(), 'public', unmatchedFilePath);
+
+                await fs.writeFile(fullUnmatchedPath, csvString);
+                console.log(`📝 Unmatched players saved to: ${unmatchedFilePath}`);
+            } catch (csvError) {
+                console.error('❌ Error writing unmatched players CSV:', csvError);
+                unmatchedFilePath = null; // Reset path if saving failed
+            }
+        }
 
         // Start a session for transaction
         const session = client.startSession();
@@ -301,7 +272,9 @@ export default async function handler(req, res) {
                             message: 'Rankings unchanged',
                             skipped: true,
                             currentTop5: currentTop25.slice(0, 5),
-                            newTop5: newTop25.slice(0, 5)
+                            newTop5: newTop25.slice(0, 5),
+                            unmatchedCount: unmatchedPlayers.length,
+                            unmatchedFilePath: unmatchedFilePath // Include path even if skipped
                         });
                     }
 
@@ -334,7 +307,7 @@ export default async function handler(req, res) {
                 inserted: results.length,
                 matched: results.length - unmatchedPlayers.length,
                 unmatched: unmatchedPlayers.length,
-                unmatchedPlayers,
+                unmatchedFilePath: unmatchedFilePath // Add path to response
             });
         } finally {
             await session.endSession();

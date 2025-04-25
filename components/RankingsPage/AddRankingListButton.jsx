@@ -189,7 +189,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                             <TabsList className="grid w-full grid-cols-3">
                                 <TabsTrigger value="NBA" className="select-none">NBA</TabsTrigger>
                                 <TabsTrigger value="NFL" className="select-none">NFL</TabsTrigger>
-                                <TabsTrigger disabled value="MLB" className="select-none">MLB</TabsTrigger>
+                                <TabsTrigger value="MLB" className="select-none">MLB</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -215,7 +215,7 @@ const AddRankingListButton = ({ rankings, dataset }) => {
                             onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                             <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="Categories" disabled={formData.sport === 'NFL'} className="select-none">Categories</TabsTrigger>
-                                <TabsTrigger value="Points" disabled={formData.sport === 'NBA' || formData.sport === 'MLB'} className="select-none">Points</TabsTrigger>
+                                <TabsTrigger value="Points" disabled={formData.sport === 'NBA'} className="select-none">Points</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
