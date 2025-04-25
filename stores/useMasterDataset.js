@@ -541,7 +541,7 @@ const useMasterDataset = create((set, get) => ({
 
             // Access the NFL-specific part of the raw data
             const seasonalStats = data.nflStats?.stats?.seasonalPlayerStats?.players;
-            const teamStatsTotals = data.nflStats?.teamStatsTotals || [];
+            // const teamStatsTotals = data.nflStats?.teamStatsTotals || [];
 
             if (!seasonalStats) {
                 // console.warn('fetchNflData: NFL seasonal player stats not found in the raw data.');
@@ -729,64 +729,295 @@ const useMasterDataset = create((set, get) => ({
     // =====================================================================
 
     fetchMlbData: async () => {
-        // 1. Check existing data
-        // let data = get().rawFetchedData;
-        // const isDataAlreadyFetched = get().isRawDataFetched; // Or use timestamp
+        // 1. Check if raw data already exists in the store state
+        let data = get().rawFetchedData;
+        const isDataAlreadyFetched = get().isRawDataFetched; 
 
-        // // 2. Fetch if missing/stale
-        // if (!data || !isDataAlreadyFetched) { // Adjust condition
-        //     // console.log("fetchMlbData: Raw data not found or stale, attempting fetch...");
-        //     data = await get()._ensureRawDataFetched();
-        // } else {
-        //     // // console.log("fetchMlbData: Using existing raw data from store state.");
-        // }
+        // 2. If raw data doesn't exist (or is considered stale), try fetching it
+        if (!data || !isDataAlreadyFetched) {
+            // console.log("fetchMlbData: Raw data not found or stale, attempting fetch...");
+            data = await get()._ensureRawDataFetched(); // Call the central fetcher as a fallback
+        } else {
+            // console.log("fetchMlbData: Using existing raw data from store state.");
+        }
 
-        // // 3. Check if data available
-        // if (!data) {
-        //     // console.error("fetchMlbData: No raw data available for processing.");
-        //     return;
-        // }
+        // 3. Check if data is available after potential fetch attempt
+        if (!data) {
+            // console.error("fetchMlbData: No raw data available for processing.");
+            return; // Exit if data couldn't be obtained
+        }
 
-        // // 4. Process MLB data
-        // try {
-        //     // console.log("fetchMlbData: Starting processing...");
-        //     if (get().isLoading) set({ isLoading: false });
-        //     // NOTE: Use 'data' variable from the helper function
-        //     const seasonalStats = data.mlbStats?.stats?.seasonalPlayerStats?.players;
+        // 4. Process MLB data using the 'data' variable
+        try {
+            // console.log("fetchMlbData: Starting processing...");
+            // Make sure isLoading is false if we proceed with processing existing data
+            if (get().isLoading) set({ isLoading: false });
 
-        //     if (!seasonalStats) {
-        //         // console.warn('fetchMlbData: MLB seasonal player stats not found in the raw data.');
-        //         // set({ isLoading: false }); // Stop loading if set above
-        //         return; // Exit if data is missing
-        //     }
+            // Access the MLB-specific part of the raw data
+            const seasonalStats = data.mlbStats?.playerStatsTotals || [];
+            const projectedStats = data.mlbStats?.playerStatsProjectedTotals || [];
 
-        //     const players = seasonalStats.map(playerStats => ({
-        //         // ... (Map MLB player info and stats here) ...
-        //         info: {
-        //             id: playerStats.player.id,
-        //             // ... other info fields ...
-        //         },
-        //         stats: {
-        //             // ... MLB stats ...
-        //         }
-        //     })) || [];
+            if (!seasonalStats || seasonalStats.length === 0) {
+                // console.warn('fetchMlbData: MLB seasonal player stats not found in the raw data or empty.');
+                return;
+            }
 
-        //     set({
-        //         mlb: {
-        //             players,
-        //             projections: [],
-        //             injuries: [],
-        //             lastUpdated: new Date()
-        //             // statsReferences can be added if MLB gets Z-scores later
-        //         },
-        //         // isLoading: false // Stop loading if set above
-        //         error: null // Clear any previous processing error
-        //     });
+            // Step 1: Initial Mapping (Result stored in initialPlayers)
+            const initialPlayers = seasonalStats.map(playerStats => ({
+                info: {
+                    playerId: playerStats.player.id,
+                    firstName: playerStats.player.firstName,
+                    lastName: playerStats.player.lastName,
+                    fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
+                    team: playerStats.team?.abbreviation || 'FA',
+                    teamId: playerStats.team?.id || 'FA',
+                    officialImageSrc: playerStats.player.officialImageSrc,
+                    position: playerStats.player.primaryPosition || 'N/A',
+                    jerseyNumber: playerStats.player?.jerseyNumber,
+                    injuryStatus: playerStats.player.currentInjury,
+                    age: playerStats.player.age,
+                    birthDate: playerStats.player.birthDate,
+                    preciseAge: playerStats.player.birthDate ?
+                        ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
+                        playerStats.player.age,
+                    height: playerStats.player.height,
+                    weight: playerStats.player.weight,
+                    handedness: playerStats.player?.handedness || { bats: '', throws: '' },
+                },
+                // MLB stats directly mapping to API structure
+                stats: {
+                    gamesPlayed: playerStats.stats?.gamesPlayed || 0,
+                    batting: {
+                        atBats: playerStats.stats?.batting?.atBats || 0,
+                        hits: playerStats.stats?.batting?.hits || 0,
+                        plateAppearances: playerStats.stats?.batting?.plateAppearances || 0,
+                        //main stats
+                        runs: playerStats.stats?.batting?.runs || 0,
+                        homeruns: playerStats.stats?.batting?.homeruns || 0,
+                        runsBattedIn: playerStats.stats?.batting?.runsBattedIn || 0,
+                        battingAvg: playerStats.stats?.batting?.battingAvg || 0,
+                        stolenBases: playerStats.stats?.batting?.stolenBases || 0,
+                        //alt stats
+                        batterOnBasePct: playerStats.stats?.batting?.batterOnBasePct || 0,
+                        batterSluggingPct: playerStats.stats?.batting?.batterSluggingPct || 0,
+                        batterOnBasePlusSluggingPct: playerStats.stats?.batting?.batterOnBasePlusSluggingPct || 0,
+                        secondBaseHits: playerStats.stats?.batting?.secondBaseHits || 0, // doubles
+                        thirdBaseHits: playerStats.stats?.batting?.thirdBaseHits || 0, // triples
 
-        // } catch (error) {
-        //     // console.error("fetchMlbData: Error during processing:", error);
-        //     set({ error: `Error processing MLB data: ${error.message}` }); // Handle processing error
-        // }
+                        // batterWalks: playerStats.stats?.batting?.batterWalks || 0,
+                        // batterStrikeouts: playerStats.stats?.batting?.batterStrikeouts || 0,
+                        // caughtBaseSteals: playerStats.stats?.batting?.caughtBaseSteals || 0,
+                        // hitByPitch: playerStats.stats?.batting?.hitByPitch || 0,
+                        // totalBases: playerStats.stats?.batting?.totalBases || 0,
+                        // extraBaseHits: playerStats.stats?.batting?.extraBaseHits || 0,
+                    
+                        // Fantasy-relevant calculated stats (marked for calculation)
+                        // wOBA: 0, // needs advanced stat calculation
+                        // wRC: 0, // needs advanced stat calculation
+                        // ISO: 0, // needs advanced stat calculation
+                    },
+                    pitching: {
+                        gamesStarted: playerStats.stats?.miscellaneous?.gamesStarted || 0,
+                        inningsPitched: playerStats.stats?.pitching?.inningsPitched || 0,
+                        pitcherWalks: playerStats.stats?.pitching?.pitcherWalks || 0,
+                        //main stats
+                        wins: playerStats.stats?.pitching?.wins || 0,
+                        pitcherStrikeouts: playerStats.stats?.pitching?.pitcherStrikeouts || 0,
+                        earnedRunAvg: playerStats.stats?.pitching?.earnedRunAvg || 0,
+                        saves: playerStats.stats?.pitching?.saves || 0,
+                        walksAndHitsPerInningPitched: playerStats.stats?.pitching?.walksAndHitsPerInningPitched || 0,
+                        //alt stats
+                        qualityStarts: playerStats.stats?.pitching?.qualityStarts || 0, // doesnt exist yet
+                        holds: playerStats.stats?.pitching?.holds || 0,
+                        strikeoutsToWalksRatio: playerStats.stats?.pitching?.strikeoutsToWalksRatio || 0, // K/BB
+                        pitchingAvg: playerStats.stats?.pitching?.pitchingAvg || 0, // BAA
+                        strikeoutsPer9Innings: playerStats.stats?.pitching?.strikeoutsPer9Innings || 0, // K/9
+                        walksAllowedPer9Innings: playerStats.stats?.pitching?.walksAllowedPer9Innings || 0, // BB/9
+                        
+                        // losses: playerStats.stats?.pitching?.losses || 0,
+                        // saveOpportunities: playerStats.stats?.pitching?.saveOpportunities || 0,
+                        // hitsAllowed: playerStats.stats?.pitching?.hitsAllowed || 0,
+                        // runsAllowed: playerStats.stats?.pitching?.runsAllowed || 0,
+                        // earnedRunsAllowed: playerStats.stats?.pitching?.earnedRunsAllowed || 0,
+                        // homerunsAllowed: playerStats.stats?.pitching?.homerunsAllowed || 0,
+                        // completedGames: playerStats.stats?.pitching?.completedGames || 0,
+                        // shutouts: playerStats.stats?.pitching?.shutouts || 0,
+                        // totalBattersFaced: playerStats.stats?.pitching?.totalBattersFaced || 0,
+                        // pitchesThrown: playerStats.stats?.pitching?.pitchesThrown || 0,
+                        // hitsAllowedPer9Innings: playerStats.stats?.pitching?.hitsAllowedPer9Innings || 0,
+                        
+                        // Fantasy-relevant calculated stats (marked for calculation)
+                        // qualityStarts: 0, // needs advanced stat calculation
+                        // blownSaves: playerStats.stats?.pitching?.blownSaves || 0,
+                        // FIP: 0, // needs advanced stat calculation
+                        // xFIP: 0, // needs advanced stat calculation
+                    },
+                    // fielding: {
+                    //     inningsPlayed: playerStats.stats?.fielding?.inningsPlayed || 0,
+                    //     totalChances: playerStats.stats?.fielding?.totalChances || 0,
+                    //     assists: playerStats.stats?.fielding?.assists || 0,
+                    //     putOuts: playerStats.stats?.fielding?.fielderPutOuts || 0,
+                    //     errors: playerStats.stats?.fielding?.errors || 0,
+                    //     fieldingPct: playerStats.stats?.fielding?.fieldingPct || 0,
+                    // }
+                }
+            }));
+
+            // Step 2: Handle duplicate players (aggregate stats)
+            const mergedPlayersMap = initialPlayers.reduce((acc, player) => {
+                const id = player.info.playerId;
+                if (!acc[id]) {
+                    // First time seeing this player, add them directly
+                    acc[id] = { ...player };
+                } else {
+                    // Player exists, need to aggregate their stats
+                    const existing = acc[id].stats;
+                    const current = player.stats;
+
+                    // Aggregate batting stats
+                    Object.keys(existing.batting).forEach(key => {
+                        // For averages and percentages, we'll need weighted calculation later
+                        if (!['battingAverage', 'onBasePercentage', 'sluggingPercentage', 'onBasePlusSlugging'].includes(key)) {
+                            existing.batting[key] += current.batting[key];
+                        }
+                    });
+
+                    // Aggregate pitching stats (except for ERA and WHIP)
+                    Object.keys(existing.pitching).forEach(key => {
+                        if (!['earnedRunAvg', 'whip'].includes(key)) {
+                            existing.pitching[key] += current.pitching[key];
+                        }
+                    });
+
+
+                    // Recalculate batting averages/percentages
+                    if (existing.batting.atBats > 0) {
+                        existing.batting.battingAverage = formatNumber(existing.batting.hits / existing.batting.atBats);
+                    }
+
+                    // Recalculate OBP
+                    const onBaseEvents = existing.batting.hits + existing.batting.walks + existing.batting.hitByPitch;
+                    const onBaseOpportunities = existing.batting.atBats + existing.batting.walks + existing.batting.hitByPitch + existing.batting.sacrifices;
+                    if (onBaseOpportunities > 0) {
+                        existing.batting.onBasePercentage = formatNumber(onBaseEvents / onBaseOpportunities);
+                    }
+
+                    // Recalculate SLG
+                    if (existing.batting.atBats > 0) {
+                        const totalBases = existing.batting.hits + existing.batting.doubles + (2 * existing.batting.triples) + (3 * existing.batting.homeRuns);
+                        existing.batting.sluggingPercentage = formatNumber(totalBases / existing.batting.atBats);
+                    }
+
+                    // Recalculate OPS
+                    existing.batting.onBasePlusSlugging = formatNumber(existing.batting.onBasePercentage + existing.batting.sluggingPercentage);
+
+                    // Recalculate ERA
+                    if (existing.pitching.inningsPitched > 0) {
+                        existing.pitching.earnedRunAvg = formatNumber((9 * existing.pitching.earnedRuns) / existing.pitching.inningsPitched);
+                    }
+
+                    // Recalculate WHIP
+                    if (existing.pitching.inningsPitched > 0) {
+                        existing.pitching.whip = formatNumber((existing.pitching.hits + existing.pitching.pitcherWalks) / existing.pitching.inningsPitched);
+                    }
+
+                    // Update player info to the latest entry encountered
+                    acc[id].info.team = player.info.team;
+                    acc[id].info.teamId = player.info.teamId;
+                }
+                return acc;
+            }, {});
+
+            // Filter out players with minimal stats
+            const mergedPlayers = Object.values(mergedPlayersMap).filter(player => {
+                // For batters: show players with at least some plate appearances
+                const hasBattingStats = player.stats.batting.plateAppearances >= 10;
+                // For pitchers: show players who have pitched some innings
+                const hasPitchingStats = player.stats.pitching.inningsPitched >= 1;
+                
+                return hasBattingStats || hasPitchingStats;
+            });
+
+            // Add projections data if available
+            if (projectedStats && projectedStats.length > 0) {
+                // Create a map of player IDs to their projections
+                const projectionsMap = projectedStats.reduce((acc, projection) => {
+                    acc[projection.player.id] = projection;
+                    return acc;
+                }, {});
+
+                // Add projections to each player
+                mergedPlayers.forEach(player => {
+                    const playerProjection = projectionsMap[player.info.playerId];
+                    if (playerProjection) {
+                        player.projections = {
+                            gamesPlayed: playerProjection.projectedStats?.gamesPlayed || 0,
+                            batting: {
+                                atBats: playerProjection.projectedStats?.batting?.atBats || 0,
+                                runs: playerProjection.projectedStats?.batting?.runs || 0,
+                                hits: playerProjection.projectedStats?.batting?.hits || 0,
+                                secondBaseHits: playerProjection.projectedStats?.batting?.secondBaseHits || 0,
+                                thirdBaseHits: playerProjection.projectedStats?.batting?.thirdBaseHits || 0,
+                                homeruns: playerProjection.projectedStats?.batting?.homeruns || 0,
+                                runsBattedIn: playerProjection.projectedStats?.batting?.runsBattedIn || 0,
+                                batterWalks: playerProjection.projectedStats?.batting?.batterWalks || 0,
+                                batterStrikeouts: playerProjection.projectedStats?.batting?.batterStrikeouts || 0,
+                                stolenBases: playerProjection.projectedStats?.batting?.stolenBases || 0,
+                                caughtBaseSteals: playerProjection.projectedStats?.batting?.caughtBaseSteals || 0,
+                                battingAvg: playerProjection.projectedStats?.batting?.battingAvg || 0,
+                                batterOnBasePct: playerProjection.projectedStats?.batting?.batterOnBasePct || 0,
+                                batterSluggingPct: playerProjection.projectedStats?.batting?.batterSluggingPct || 0,
+                                batterOnBasePlusSluggingPct: playerProjection.projectedStats?.batting?.batterOnBasePlusSluggingPct || 0,
+                                hitByPitch: playerProjection.projectedStats?.batting?.hitByPitch || 0,
+                                plateAppearances: playerProjection.projectedStats?.batting?.plateAppearances || 0,
+                            },
+                            pitching: {
+                                wins: playerProjection.projectedStats?.pitching?.wins || 0,
+                                losses: playerProjection.projectedStats?.pitching?.losses || 0,
+                                earnedRunAvg: playerProjection.projectedStats?.pitching?.earnedRunAvg || 0,
+                                saves: playerProjection.projectedStats?.pitching?.saves || 0,
+                                saveOpportunities: playerProjection.projectedStats?.pitching?.saveOpportunities || 0,
+                                inningsPitched: playerProjection.projectedStats?.pitching?.inningsPitched || 0,
+                                hitsAllowed: playerProjection.projectedStats?.pitching?.hitsAllowed || 0,
+                                runsAllowed: playerProjection.projectedStats?.pitching?.runsAllowed || 0,
+                                earnedRunsAllowed: playerProjection.projectedStats?.pitching?.earnedRunsAllowed || 0,
+                                homerunsAllowed: playerProjection.projectedStats?.pitching?.homerunsAllowed || 0,
+                                pitcherWalks: playerProjection.projectedStats?.pitching?.pitcherWalks || 0,
+                                pitcherStrikeouts: playerProjection.projectedStats?.pitching?.pitcherStrikeouts || 0,
+                                walksAndHitsPerInningPitched: playerProjection.projectedStats?.pitching?.walksAndHitsPerInningPitched || 0,
+                                gamesStarted: playerProjection.projectedStats?.miscellaneous?.gamesStarted || 0,
+                                strikeoutsPer9Innings: playerProjection.projectedStats?.pitching?.strikeoutsPer9Innings || 0,
+                                holds: playerProjection.projectedStats?.pitching?.holds || 0,
+                            }
+                        };
+                    }
+                });
+            }
+
+            // Calculate and set state size
+            const newState = {
+                mlb: {
+                    players: mergedPlayers,
+                    lastUpdated: new Date()
+                }
+            };
+
+            const stateSize = getObjectSize(newState);
+            console.log('MLB stats state size:', stateSize, newState);
+            console.log('MLB Dataset Finalized:', mergedPlayers);
+            
+            set({
+                mlb: {
+                    players: mergedPlayers,
+                    lastUpdated: new Date()
+                },
+                error: null
+            });
+
+        } catch (error) {
+            // console.error("fetchMlbData: Error during processing:", error);
+            set({ error: `Error processing MLB data: ${error.message}` }); // Set processing error
+        }
     },
 
 

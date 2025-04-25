@@ -17,8 +17,11 @@ const mongoUri = process.env.MONGODB_URI;
 const dataSources = {
     stats: { // Collection name
         nba: ['seasonalPlayerStats', 'seasonalPlayerStatsProjections'],
-        nfl: ['seasonalPlayerStats', 'seasonalTeamStats'],
-        mlb: ['seasonalPlayerStats'] // Assuming MLB uses seasonalPlayerStats for now
+        nfl: ['seasonalPlayerStats', 'seasonalTeamStats', 'seasonalPlayerStatsProjections'],
+        mlb: [
+            'seasonalPlayerStats', 
+            'seasonalPlayerStatsProjections'
+        ]
     }
     // Future: Could add other collections and their sport/endpoint needs
     // rankings: {
@@ -85,16 +88,13 @@ export default async function handler(req, res) {
                 playerStatsTotals: fetchedData.nba?.seasonalPlayerStats?.playerStatsTotals || [],
                 playerStatsProjectedTotals: fetchedData.nba?.seasonalPlayerStatsProjections?.playerStatsProjectedTotals || []
             },
+            
             // --- MLB Data Structure ---
-            // Assumes similar structure to NFL for now, adjust if needed.
-            // Expects players under mlbStats.stats.seasonalPlayerStats.players
             mlbStats: {
-                stats: {
-                    seasonalPlayerStats: fetchedData.mlb?.seasonalPlayerStats?.playerStatsTotals
-                        ? { players: fetchedData.mlb.seasonalPlayerStats.playerStatsTotals } // Assumes players are in playerStatsTotals
-                        : { players: [] }
-                }
+                playerStatsTotals: fetchedData.mlb?.seasonalPlayerStats?.playerStatsTotals || [],
+                playerStatsProjectedTotals: fetchedData.mlb?.seasonalPlayerStatsProjections?.playerStatsProjectedTotals || []
             },
+            
             // --- NFL Data Structure ---
             // Expects players under nflStats.stats.seasonalPlayerStats.players
             // Uses playerStatsTotals which was filtered in the pull script.
@@ -106,6 +106,7 @@ export default async function handler(req, res) {
                 },
                 teamStatsTotals: fetchedData.nfl?.seasonalTeamStats?.teamStatsTotals || []
             }
+            
             // Future: Add other data types (like rankings) here if they were fetched
             // nbaRankings: { ... }
         });
