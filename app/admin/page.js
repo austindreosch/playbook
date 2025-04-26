@@ -1,4 +1,5 @@
 'use client';
+import SyncPlayersButton from '@/components/admin/SyncPlayersButton';
 
 import AllPlayersBox from '@/components/admin/AllPlayersBox';
 import CleanupRankingsButton from '@/components/admin/CleanupRankingsButton';
@@ -28,19 +29,22 @@ export default function AdminPage() {
     );
   }
 
-  async function handleRefresh(endpoint) {
-    setLoading(true);
-    setMessage('Refreshing...');
-    try {
-      const res = await fetch(endpoint, { method: 'POST' });
-      const data = await res.json();
-      setMessage(`✅ Success:\n${JSON.stringify(data, null, 2)}`);
-    } catch (err) {
-      setMessage(`❌ Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Note: The handleRefresh function is currently unused as buttons
+  // like SyncPlayersButton handle their own state and API calls.
+  // It could be removed or repurposed if needed later.
+  // async function handleRefresh(endpoint) {
+  //   setLoading(true);
+  //   setMessage('Refreshing...');
+  //   try {
+  //     const res = await fetch(endpoint, { method: 'POST' });
+  //     const data = await res.json();
+  //     setMessage(`✅ Success:\n${JSON.stringify(data, null, 2)}`);
+  //   } catch (err) {
+  //     setMessage(`❌ Error: ${err.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,10 +55,14 @@ export default function AdminPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {/* Renamed Card Title and Added SyncPlayersButton */}
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Stats</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Data Updates & Sync</h2>
               <div className="space-y-4">
+                <SyncPlayersButton />
+                <hr/> {/* Optional separator */}
+                <h3 className="text-md font-medium text-gray-700 pt-2">Update Stats</h3>
                 <UpdateNBAStatsButton />
                 <UpdateNFLStatsButton />
                 <UpdateMLBStatsButton />
@@ -67,12 +75,15 @@ export default function AdminPage() {
               <h2 className="text-lg font-medium text-gray-900 mb-4">Expert Rankings</h2>
               <div className="space-y-4">
                 {/* <CleanupRankingsButton /> */}
+                <h3 className="text-md font-medium text-gray-700">NBA</h3>
                 <UpdateRankingsButton sport="NBA" format="Dynasty" scoring="Categories" />
                 <UpdateRankingsButton sport="NBA" format="Redraft" scoring="Categories" />
+                <hr/>
+                <h3 className="text-md font-medium text-gray-700">NFL</h3>
                 {/* <UpdateRankingsButton sport="NFL" format="Dynasty" scoring="Points" /> */}
-                <h1>NFL</h1>
                 <UpdateRankingsNFLButton />
-                <h1>MLB</h1>
+                <hr/>
+                <h3 className="text-md font-medium text-gray-700">MLB</h3>
                 <UpdateRankingsButton sport="MLB" format="Dynasty" scoring="Categories" />
                 <UpdateRankingsButton sport="MLB" format="Dynasty" scoring="Points" />
                 <UpdateRankingsButton sport="MLB" format="Redraft" scoring="Categories" />
@@ -91,7 +102,8 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {message && (
+        {/* Removed the generic message display as individual buttons now show status */}
+        {/* {message && (
           <div className="mt-8 bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Status Messages</h2>
@@ -100,7 +112,7 @@ export default function AdminPage() {
               </pre>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -1,41 +1,48 @@
 // pages/api/admin/syncPlayersRoute.js
-
-// Use require for consistency if syncPlayers uses module.exports
+import { getSession } from '@auth0/nextjs-auth0'; // Import Auth0 function
 const { syncPlayersFromStatsCollection } = require('../../../lib/tasks/syncPlayers');
 
-// Simple security check using an environment variable
-// IMPORTANT: Replace with a more robust method in production (e.g., Auth0 role check, session validation)
-const ADMIN_SECRET = process.env.ADMIN_TASK_SECRET;
+// Define the required role (you might need to adjust the namespace)
+// This namespace usually comes from your Auth0 Application settings or Rules/Actions
+const ADMIN_ROLE = 'Admin';
+const ROLE_NAMESPACE = process.env.AUTH0_ROLE_NAMESPACE || 'http://localhost:3000/roles'; // Example, replace if needed
 
 export default async function handler(req, res) {
     console.log("Received request to /api/admin/syncPlayersRoute");
 
-    // Only allow POST requests (or GET if you prefer, adjust accordingly)
+    // --- Auth0 Session Check ---
+    const session = await getSession(req, res);
+    if (!session || !session.user) {
+        console.warn("Unauthorized: No valid session found.");
+        return res.status(401).json({ message: 'Unauthorized: Not logged in' });
+    }
+    console.log(`Session found for user: ${session.user.sub}`);
+
+    // --- (Optional but Recommended) Role Check ---
+    // Checks if the user has the 'admin' role within the defined namespace.
+    // You MUST configure roles in your Auth0 dashboard and potentially an Action/Rule
+    // to add them to the user's session/token under the correct namespace.
+    const userRoles = session.user[ROLE_NAMESPACE] || [];
+    if (!userRoles.includes(ADMIN_ROLE)) {
+         console.warn(`Forbidden: User ${session.user.sub} lacks required role '${ADMIN_ROLE}'. Roles: ${userRoles.join(', ')}`);
+         return res.status(403).json({ message: `Forbidden: Requires '${ADMIN_ROLE}' role` });
+    }
+    console.log(`User ${session.user.sub} has required role '${ADMIN_ROLE}'. Proceeding...`);
+
+    // --- Original Logic (POST check & Task Execution) ---
     if (req.method !== 'POST') {
         console.warn(`Method ${req.method} not allowed for /api/admin/syncPlayersRoute.`);
         res.setHeader('Allow', ['POST']);
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
 
-    // --- Security Check ---
-    // TODO: Implement proper authentication/authorization
-    // Example: Check for a secret header or validate user session/role
-    const secretHeader = req.headers['x-admin-secret']; // Access headers differently in Pages Router
-    if (!ADMIN_SECRET || secretHeader !== ADMIN_SECRET) {
-        console.warn("Unauthorized attempt to access syncPlayersRoute.");
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-    console.log("Admin secret verified.");
-
     try {
         console.log("Triggering syncPlayersFromStatsCollection...");
         const result = await syncPlayersFromStatsCollection();
         console.log("syncPlayersFromStatsCollection finished execution.");
 
-        // Check for errors reported by the sync function
         if (result.errors && result.errors.length > 0) {
              console.error("Sync completed with errors:", result.errors);
-             // Send 500 status code but include details in the response
              return res.status(500).json({
                  message: `Sync completed with ${result.errors.length} errors.`,
                  details: result
@@ -49,12 +56,10 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        // Catch errors thrown *by* syncPlayersFromStatsCollection (e.g., DB connection)
         console.error('Error running player synchronization task:', error);
         return res.status(500).json({
              message: 'Failed to run player synchronization task.',
              error: error.message,
-             // stack: process.env.NODE_ENV === 'development' ? error.stack : undefined // Optional: include stack in dev
         });
     }
 } 
