@@ -288,23 +288,23 @@ export default async function handler(req, res) {
 
 
 
-        // // Players
-        // const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/players.json`, 'players');
-        // if (players && validateData(players, 'players', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'detailed', 'players', players, errors);
-        // }
+        // Players
+        const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/players.json`, 'players');
+        if (players && validateData(players, 'players', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'detailed', 'players', players, errors);
+        }
 
-        // // Injuries
-        // const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injuries.json`, 'injuries');
-        // if (injuries && validateData(injuries, 'injuries', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'detailed', 'playerInjuries', injuries, errors);
-        // }
+        // Injuries
+        const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injuries.json`, 'injuries');
+        if (injuries && validateData(injuries, 'injuries', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'detailed', 'playerInjuries', injuries, errors);
+        }
 
-        // // Injury history
-        // const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injury_history.json`, 'injuryHistory');
-        // if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'detailed', 'injuryHistory', injuryHistory, errors);
-        // }
+        // Injury history
+        const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injury_history.json`, 'injuryHistory');
+        if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'detailed', 'injuryHistory', injuryHistory, errors);
+        }
 
         // Define the specific positions to filter out FOR PROJECTIONS(Def + K / P)
 
