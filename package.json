@@ -54,7 +54,7 @@
     "mongodb-client-encryption": "^2.9.0",
     "next": "^15.2.4",
     "node-fetch": "^3.3.2",
-    "papaparse": "^5.4.1",
+    "papaparse": "^5.5.2",
     "postcss": "8.4.27",
     "react": "18.2.0",
     "react-apexcharts": "^1.4.1",
