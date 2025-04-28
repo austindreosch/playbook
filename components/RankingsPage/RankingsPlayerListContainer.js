@@ -197,31 +197,46 @@ const RankingsPlayerListContainer = React.forwardRef(({
         const playerDataMap = new Map();
         dataset[sport.toLowerCase()].players.forEach(player => {
             // Use a consistent ID source if possible, fallback included
-            const id = player.info?.playerId || player.id;
+            const id = player.info?.playerId || player.id; // ID used as key in map
             if (id) {
-                playerDataMap.set(id, player);
+                playerDataMap.set(String(id), player); // Ensure key is a string
             }
         });
 
+        // --- ADD Log: Show map keys ---
+        const mapKeysSample = Array.from(playerDataMap.keys()).slice(0, 5);
+        console.log(`[processRankingData] Sample keys from playerDataMap (${sport}):`, mapKeysSample);
 
         // Combine ranking data with player data, handling null playerIds
         const combinedPlayers = rankingPlayers.map((rankingPlayer) => {
             let playerData = null;
             let isPlaceholder = false;
-            let rankingId = rankingPlayer.mySportsFeedsId; // Default to playerId
+            let rankingId = rankingPlayer.mySportsFeedsId; // Default to mySportsFeedsId
+            let lookupId = rankingPlayer.mySportsFeedsId;
 
-            if (rankingPlayer.mySportsFeedsId != null) {
-                // Try to find player by ID using playerId from the ranking
-                playerData = playerDataMap.get(rankingPlayer.mySportsFeedsId);
-            } else {
-                // Handle null playerId (e.g., draft picks, rookies not yet in dataset)
+            // --- ADD Log: Check ID and Map --- 
+            const lookupIdStr = lookupId != null ? String(lookupId) : null;
+            const mapHasKey = lookupIdStr ? playerDataMap.has(lookupIdStr) : false;
+            console.log(`[processRankingData] Trying lookup: mySportsFeedsId='${lookupIdStr}', Map has key? ${mapHasKey}`);
+
+            if (lookupIdStr != null) {
+                // Try to find player by ID using mySportsFeedsId from the ranking
+                playerData = playerDataMap.get(lookupIdStr); // Lookup using mySportsFeedsId (as string)
+                // if (mapHasKey && playerData) {
+                //     console.log('  -> Found playerData. Stats keys:', Object.keys(playerData.stats || {}).join(', '));
+                // } else if (mapHasKey && !playerData) {
+                //     console.warn('  -> Key exists in map, but playerData is null/undefined?'); 
+                // }
+            } 
+            
+            if (!playerData) { // If lookup failed or ID was null
                 isPlaceholder = true;
-                // Create a unique ID for dnd-kit (assuming rank is unique enough for placeholders)
+                // Create a unique DND ID
                 rankingId = `pick-${rankingPlayer.userRank}-${rankingPlayer.name || 'unknown'}`;
             }
 
-            // Ensure rankingId is a string for dnd-kit
-            rankingId = String(rankingId);
+            // Ensure DND rankingId is a string (use mySportsFeedsId if found, else the generated pick ID)
+            rankingId = playerData ? String(lookupIdStr) : rankingId; 
 
             const combinedPlayer = {
                 // Start with all properties from the original rankingPlayer

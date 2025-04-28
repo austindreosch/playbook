@@ -40,6 +40,13 @@ const getNestedValue = (obj, path, defaultValue = null) => {
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
 
+    // --- ADD LOG ---
+    console.log('[StatsSection] Received props:', {
+        stats: stats,
+        categories: categories
+    });
+    // --- END LOG ---
+
     // Define stats that need 2 decimal places
     const statsNeedingTwoDecimals = [
         'advanced.fantasyPointsPerSnap', // PPS
