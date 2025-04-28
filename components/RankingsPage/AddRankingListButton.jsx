@@ -104,35 +104,15 @@ const AddRankingListButton = ({ dataset }) => {
             return;
         }
 
-        // TEMPORARY Source ID logic (needs backend update)
-        let tempSourceRankingId = null;
-        if (formData.sport === 'nba' && formData.scoring === 'Categories') {
-            tempSourceRankingId = 'YOUR_MOCK_NBA_CAT_ID';
-        } else if (formData.sport === 'nba' && formData.scoring === 'Points') {
-            tempSourceRankingId = 'YOUR_MOCK_NBA_POINTS_ID';
-        } else if (formData.sport === 'nfl') {
-            tempSourceRankingId = formData.format === 'Dynasty' ? '779f0cf8a745c0ff805a5f8c' : '779f0cf8a745c0ff805a5f8d';
-        } else if (formData.sport === 'mlb' && formData.scoring === 'Categories') {
-            tempSourceRankingId = 'YOUR_MOCK_MLB_CAT_ID';
-        } else if (formData.sport === 'mlb' && formData.scoring === 'Points') {
-            tempSourceRankingId = 'YOUR_MOCK_MLB_POINTS_ID';
-        }
-        // Add other necessary conditions
-
-        if (!tempSourceRankingId) {
-            setError("Could not determine a source ranking for the selected options (Temporary Error).");
-            console.error("handleSubmit: Could not determine tempSourceRankingId for formData:", formData);
-            return;
-        }
-        console.log(`Using temporary source ID: ${tempSourceRankingId}`);
-
         setIsSubmitting(true);
         setError(null);
 
         const payload = {
-            sourceRankingId: tempSourceRankingId,
             name: formData.name.trim(),
-            ...(formData.sport !== 'nfl' && formData.scoring === 'Categories' && { customCategories: formData.customCategories }),
+            sport: formData.sport,
+            format: formData.format,
+            scoring: formData.scoring,
+            ...(formData.sport !== 'nfl' && formData.scoring === 'Categories' && { selectedCategoryKeys: formData.customCategories }),
             ...(formData.sport === 'nfl' && {
                 flexSetting: formData.flexSetting,
                 pprSetting: formData.pprType,
@@ -156,24 +136,21 @@ const AddRankingListButton = ({ dataset }) => {
             const createResult = await createResponse.json();
             const newListId = createResult.userRankingId;
 
-            // Post-creation logic (fetch new, set active, refresh list)
             if (newListId) {
                 const fetchNewRankingResponse = await fetch(`/api/user-rankings/${newListId}`);
                 if (!fetchNewRankingResponse.ok) {
                     console.error(`Failed to fetch newly created ranking (${fetchNewRankingResponse.status})`);
-                    // Don't throw here, maybe just warn and proceed to refresh list
-                    await fetchUserRankings(); // Refresh list anyway
+                    await fetchUserRankings();
                 } else {
                     const newRankingData = await fetchNewRankingResponse.json();
-                    useUserRankings.getState().setActiveRanking(newRankingData); // Set active
-                    await fetchUserRankings(); // Then refresh list
+                    useUserRankings.getState().setActiveRanking(newRankingData);
+                    await fetchUserRankings();
                 }
             } else {
                 console.warn("Could not get new list ID from creation response.");
-                await fetchUserRankings(); // Refresh list anyway
+                await fetchUserRankings();
             }
 
-            // Close dialog and reset form
             setOpen(false);
             updateFormState({
                 sport: 'nba',

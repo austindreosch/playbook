@@ -23,23 +23,20 @@ export default async function handler(req, res) {
     }
     const userId = session.user.sub;
 
-    // --- Input Validation ---
+    // --- Input Validation (Modified) ---
     const {
-        sourceRankingId,  // ID of the source ranking document in 'rankings' collection
         name,             // Name for the new user ranking list
-        customCategories, // Optional: array of strings
-        // Note: flexSetting/pprSetting will be derived from the source doc
+        sport,            // Sport (e.g., 'nba', 'nfl', 'mlb') - Required for lookup
+        format,           // Format (e.g., 'Dynasty', 'Redraft') - Required for lookup
+        scoring,          // Scoring (e.g., 'Categories', 'Points') - Required for lookup
+        selectedCategoryKeys, // Renamed from customCategories: Optional array of selected category KEYS
+        flexSetting,      // Optional: NFL Flex setting (e.g., 'Standard', 'Superflex')
+        pprSetting,       // Optional: NFL PPR setting (e.g., 'Full-PPR')
     } = req.body;
 
-    if (!sourceRankingId || !name) {
-        return res.status(400).json({ message: 'Missing required fields: sourceRankingId, name' });
-    }
-
-    let sourceRankingObjectId;
-    try {
-        sourceRankingObjectId = new ObjectId(sourceRankingId);
-    } catch (e) {
-        return res.status(400).json({ message: 'Invalid ObjectId format for sourceRankingId' });
+    // Validate required fields for lookup
+    if (!name || !sport || !format || !scoring) {
+        return res.status(400).json({ message: 'Missing required fields: name, sport, format, scoring' });
     }
 
     const client = new MongoClient(mongoUri);
@@ -50,20 +47,41 @@ export default async function handler(req, res) {
         const sourceRankingsCollection = db.collection(SOURCE_RANKINGS_COLLECTION);
         const userRankingsCollection = db.collection(USER_RANKINGS_COLLECTION);
 
-        // 1. Fetch the source ranking document
-        console.log(`Fetching source ranking with ID: ${sourceRankingId}`);
-        const sourceRanking = await sourceRankingsCollection.findOne({ _id: sourceRankingObjectId });
+        // --- Find Latest Source Ranking Document --- //
+        const query = {
+            sport: sport.toLowerCase(),
+            format: format.toLowerCase(),
+            scoring: scoring.toLowerCase(),
+            // Add NFL specific filters if applicable
+            ...(sport.toLowerCase() === 'nfl' && {
+                ...(flexSetting && { flexSetting: flexSetting.toLowerCase() }),
+                ...(pprSetting && { pprSetting: pprSetting.toLowerCase() }),
+            }),
+            // We might need additional filters depending on how sources are uniquely identified
+            // e.g., sourceType: 'api' or sourceType: 'csv', or a specific source name?
+            // For now, assume sport/format/scoring/nfl-settings are enough to find the latest.
+        };
+
+        console.log("Querying for source ranking with:", query);
+
+        const sourceRanking = await sourceRankingsCollection
+            .find(query)
+            .sort({ version: -1 }) // Sort by version/date descending to get latest
+            .limit(1)
+            .next(); // Get the first document or null
 
         if (!sourceRanking) {
-            return res.status(404).json({ message: `Source ranking document with ID ${sourceRankingId} not found.` });
+            console.error("No matching source ranking found for query:", query);
+            return res.status(404).json({ message: `Could not find a suitable source ranking for the selected criteria.` });
         }
-        
-        // Check if source ranking has a rankings array
+        console.log(`Found source ranking: ID ${sourceRanking._id}, Source ${sourceRanking.source}, Version ${sourceRanking.version}`);
+
+        // Check if found source ranking has data
         if (!sourceRanking.rankings || !Array.isArray(sourceRanking.rankings) || sourceRanking.rankings.length === 0) {
-            return res.status(400).json({ message: 'Source ranking document does not contain valid ranking data.'});
+            return res.status(400).json({ message: 'Found source ranking document does not contain valid ranking data.'});
         }
 
-        // 2. Process the source rankings array
+        // 2. Process the source rankings array (using the found sourceRanking)
         // NOTE: SPORT_CONFIGS is available here if needed for future weighting logic
         // based on comparing customCategories to SPORT_CONFIGS[sourceRanking.sport.toLowerCase()].categories
         const processedRankings = sourceRanking.rankings.map(entry => {
@@ -99,30 +117,73 @@ export default async function handler(req, res) {
         const newUserRankingDoc = {
             userId: userId,
             name: name.trim(),
-            sport: sourceRanking.sport.toLowerCase(), // Ensure lowercase
+            sport: sourceRanking.sport.toLowerCase(),
             format: sourceRanking.format.toLowerCase(),
             scoring: sourceRanking.scoring.toLowerCase(),
-            source: sourceRanking.source, // From the original source doc
-            sourceType: sourceRanking.sourceType, // e.g., 'csv', 'api'
-            sourceIdentifier: sourceRanking.sourceIdentifier, // e.g., file path or api url
-            // Add NFL specific fields if they exist in source
+            categories: (() => {
+                if (sourceRanking.categories && typeof sourceRanking.categories === 'object' && Object.keys(sourceRanking.categories).length > 0) {
+                    console.log('Using categories from source document.');
+                    return JSON.parse(JSON.stringify(sourceRanking.categories)); // Deep copy source
+                } else {
+                    console.log('Source document missing categories, falling back to SPORT_CONFIGS.');
+                    const sportKey = sourceRanking.sport?.toLowerCase();
+                    const sportConfig = SPORT_CONFIGS[sportKey];
+                    if (sportConfig && sportConfig.categories && typeof sportConfig.categories === 'object') {
+                         // Combine MLB hitting/pitching if necessary for the config structure
+                         if (sportKey === 'mlb' && sportConfig.categories.hitting && sportConfig.categories.pitching) {
+                            const combinedMLBCategories = { ...sportConfig.categories.hitting, ...sportConfig.categories.pitching };
+                            return JSON.parse(JSON.stringify(combinedMLBCategories)); // Deep copy combined MLB config
+                         } else {
+                            return JSON.parse(JSON.stringify(sportConfig.categories)); // Deep copy standard config
+                         }
+                    } else {
+                         console.warn(`No categories found in SPORT_CONFIGS for sport: ${sportKey}`);
+                         return {}; // Fallback to empty object
+                    }
+                }
+            })(),
             ...(sourceRanking.sport.toLowerCase() === 'nfl' && {
                 flexSetting: sourceRanking.flexSetting?.toLowerCase(),
                 pprSetting: sourceRanking.pprSetting?.toLowerCase(),
             }),
-            // Add custom categories if provided
-            ...(customCategories && Array.isArray(customCategories) && { customCategories: customCategories }),
-            rankings: processedRankings, // The processed array
+            rankings: processedRankings,
             dateCreated: now,
-            dateUpdated: now,
-            originRankingId: sourceRankingObjectId, // Link back to the source doc ID
-            // Add placeholders for positions/categories if needed later
-            // positions: [], 
-            // categories: {},
+            lastUpdated: now,
+            originDetails: {
+                rankingId: sourceRanking._id,
+                version: sourceRanking.version || null,
+                source: sourceRanking.source || null,
+                type: sourceRanking.sourceType || null,
+                identifier: sourceRanking.sourceIdentifier || null,
+            }
         };
 
+        // --- Modify the copied categories object based on user selection --- 
+        if (newUserRankingDoc.sport !== 'nfl' && newUserRankingDoc.scoring === 'categories' && Array.isArray(selectedCategoryKeys)) {
+            // Ensure categories is an object before modifying
+            if (typeof newUserRankingDoc.categories !== 'object' || newUserRankingDoc.categories === null) {
+                 newUserRankingDoc.categories = {}; // Initialize if somehow missing
+             }
+            
+            const userSelectedKeys = new Set(selectedCategoryKeys); // Use Set for efficient lookup
+
+            // Iterate through all possible categories defined in the copied object
+             Object.keys(newUserRankingDoc.categories).forEach(catKey => {
+                 // Check if this category exists in the user's selections
+                 if (userSelectedKeys.has(catKey)) {
+                    newUserRankingDoc.categories[catKey].enabled = true;
+                    newUserRankingDoc.categories[catKey].multiplier = 1; // Set multiplier to 1 for selected categories
+                } else {
+                    newUserRankingDoc.categories[catKey].enabled = false;
+                    // Keep the original multiplier if category is disabled
+                }
+             });
+             // Note: This assumes sourceRanking.categories contained all relevant category keys.
+             // If a key in selectedCategoryKeys wasn't in sourceRanking.categories, it won't be added here.
+        }
+
         // 4. Insert the new document
-        console.log(`Inserting new user ranking: '${newUserRankingDoc.name}' for user ${userId}`);
+        console.log(`Inserting new user ranking: '${newUserRankingDoc.name}' for user ${userId}, based on source ID ${sourceRanking._id}`);
         const insertResult = await userRankingsCollection.insertOne(newUserRankingDoc);
         const newUserRankingId = insertResult.insertedId;
         console.log(`New user ranking created with ID: ${newUserRankingId}`);
