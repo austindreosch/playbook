@@ -479,7 +479,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     sport={sport}
                     categories={chosenCategoryPaths}
                     zScoreSumValue={player.zScoreSum}
-                    rank={player.rank}
+                    rank={player.userRank}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
                     isPlaceholder={isPlaceholder}
@@ -489,7 +489,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, showDraftedPlayers]);
+    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]);
 
     const sportKey = sport.toLowerCase();
 
