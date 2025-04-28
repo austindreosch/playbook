@@ -356,11 +356,11 @@ export default function RankingsPage() {
   // Get the appropriate dataset based on selected sport
   const getDatasetForSelectedSport = () => {
     switch (selectedSport) {
-      case 'NBA':
+      case 'nba':
         return { nba: nba };
-      case 'MLB':
+      case 'mlb':
         return { mlb: mlb };
-      case 'NFL':
+      case 'nfl':
         return { nfl: nfl };
       default:
         return { players: [] };
