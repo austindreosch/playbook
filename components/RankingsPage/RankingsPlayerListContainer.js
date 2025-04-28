@@ -208,16 +208,16 @@ const RankingsPlayerListContainer = React.forwardRef(({
         const combinedPlayers = rankingPlayers.map((rankingPlayer) => {
             let playerData = null;
             let isPlaceholder = false;
-            let rankingId = rankingPlayer.playerId; // Default to playerId
+            let rankingId = rankingPlayer.mySportsFeedsId; // Default to playerId
 
-            if (rankingPlayer.playerId != null) {
+            if (rankingPlayer.mySportsFeedsId != null) {
                 // Try to find player by ID using playerId from the ranking
-                playerData = playerDataMap.get(rankingPlayer.playerId);
+                playerData = playerDataMap.get(rankingPlayer.mySportsFeedsId);
             } else {
                 // Handle null playerId (e.g., draft picks, rookies not yet in dataset)
                 isPlaceholder = true;
                 // Create a unique ID for dnd-kit (assuming rank is unique enough for placeholders)
-                rankingId = `pick-${rankingPlayer.rank}-${rankingPlayer.name || 'unknown'}`;
+                rankingId = `pick-${rankingPlayer.userRank}-${rankingPlayer.name || 'unknown'}`;
             }
 
             // Ensure rankingId is a string for dnd-kit

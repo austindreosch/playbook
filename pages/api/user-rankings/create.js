@@ -105,6 +105,7 @@ export default async function handler(req, res) {
                 originWeightedRank: originWeightedRank,
                 // Add type if needed
                 type: entry.type || 'player',
+                draftModeAvailable: true // Add default draft availability
             };
         }).filter(entry => entry !== null); // Filter out any skipped entries
 
