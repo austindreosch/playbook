@@ -22,6 +22,20 @@ export default async function handler(req, res) {
         // Remove _id if it exists in updatedData
         delete updatedData._id;
 
+        // --- Add Validation for rankings array --- 
+        if (!updatedData.rankings || !Array.isArray(updatedData.rankings)) {
+            return res.status(400).json({ error: 'Invalid request body: Missing or invalid rankings array.' });
+        }
+        const isValidStructure = updatedData.rankings.every(p => 
+            p && typeof p === 'object' && p.playbookId && typeof p.userRank === 'number'
+        );
+        if (!isValidStructure) {
+            return res.status(400).json({ error: 'Invalid request body: Each entry in rankings array must contain playbookId and userRank.' });
+        }
+        // Add timestamp for update
+        updatedData.dateUpdated = new Date();
+        // --- End Validation --- 
+
         let client;
         try {
             client = new MongoClient(mongoUri);

@@ -1,283 +1,145 @@
 import { getSession } from '@auth0/nextjs-auth0';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
+// Remove internal sportConfigs definition
+import { SPORT_CONFIGS } from '@/lib/config'; // Import from global config
+// Assuming standardCategories are defined elsewhere and imported if needed for future weighting
+// import { STANDARD_CATEGORIES } from '@/lib/config/standardCategories';
 
-const sportConfigs = {
-    NBA: {
-        positions: ['All', 'PG', 'SG', 'SF', 'PF', 'C', 'G', 'F'],
-        categories: {
-            'FG%': { enabled: true, multiplier: 1 },
-            'FT%': { enabled: true, multiplier: 1 },
-            '3PM': { enabled: true, multiplier: 1 },
-            'PTS': { enabled: true, multiplier: 1 },
-            'REB': { enabled: true, multiplier: 1 },
-            'AST': { enabled: true, multiplier: 1 },
-            'STL': { enabled: true, multiplier: 1 },
-            'BLK': { enabled: true, multiplier: 1 },
-            'TO': { enabled: true, multiplier: 1 },
-            // Other
-            'FGM': { enabled: false, multiplier: 1 },
-            'FTM': { enabled: false, multiplier: 1 },
-            '3P%': { enabled: false, multiplier: 1 },
-            'A/TO': { enabled: false, multiplier: 1 },
-            'DREB': { enabled: false, multiplier: 1 },
-            'OREB': { enabled: false, multiplier: 1 },
-            // 'DD': { enabled: false, multiplier: 1 }, //dont have?
-            // 'TD': { enabled: false, multiplier: 1 }  //dont have?
-        }
-    },
-    MLB: {
-        positions: ['All', 'SP', 'RP', 'P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'UT', 'CI', 'MI', 'INF'],
-        categories: {
-            hitting: {
-                'AVG': { enabled: true, multiplier: 1 }, // Batting Average ✅
-                'HR': { enabled: true, multiplier: 1 }, // Home Runs ✅
-                'RBI': { enabled: true, multiplier: 1 }, // Runs Batted In ✅
-                'R': { enabled: true, multiplier: 1 }, // Runs ✅
-                'SB': { enabled: true, multiplier: 1 }, // Stolen Bases ✅
-                // Other
-                'OBP': { enabled: false, multiplier: 1 },
-                'SLG': { enabled: false, multiplier: 1 },
-                'OPS': { enabled: false, multiplier: 1 },
-                'H': { enabled: false, multiplier: 1 },
-                '2B': { enabled: false, multiplier: 1 },
-                '3B': { enabled: false, multiplier: 1 },
-                'TB': { enabled: false, multiplier: 1 }
-            },
-            pitching: {
-                'ERA': { enabled: true, multiplier: 1 },
-                'WHIP': { enabled: true, multiplier: 1 },
-                'W': { enabled: true, multiplier: 1 },
-                'SV': { enabled: true, multiplier: 1 },
-                'K': { enabled: true, multiplier: 1 },
-                // Other
-                'SVHLD': { enabled: false, multiplier: 1 },
-                'HLD': { enabled: false, multiplier: 1 },
-                'K/BB': { enabled: false, multiplier: 1 },
-                'K/9': { enabled: false, multiplier: 1 },
-                'BB/9': { enabled: false, multiplier: 1 },
-                'QS': { enabled: false, multiplier: 1 },
-                'IP': { enabled: false, multiplier: 1 },
-                'L': { enabled: false, multiplier: 1 }
-            }
-        }
-    },
-    NFL: {
-        positions: ['All', 'QB', 'RB', 'WR', 'TE',],
-        categories: {
-            'PPG': { enabled: true, multiplier: 1, description: 'Fantasy Points Per Game', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receptions × 1) + (Receiving TDs × 6) / Games Played' },
-            'PPS': { enabled: true, multiplier: 1, description: 'Fantasy Points Per Snap', formula: 'Total Fantasy Points / Offensive Snaps' },
-            'OPG': { enabled: true, multiplier: 1, description: 'Opportunites Per Game', formula: '(Pass Attempts + Rush Attempts + Targets) / Games Played' },
-            'OPE': { enabled: true, multiplier: 1, description: 'Opportunity Efficiency', formula: 'Total Fantasy Points / (Pass Attempts + Rush Attempts + Targets)' },
-            'YD%': { enabled: true, multiplier: 1, description: 'Yard Share', formula: '(Passing Yards + Rushing Yards + Receiving Yards) / (Team Passing Yards + Team Rushing Yards + Team Receiving Yards) × 100' },
-            'PR%': { enabled: true, multiplier: 1, description: 'Production Share', formula: '(Pass Completions + Rush Attempts + Receptions) / (Team Pass Completions + Team Rush Attempts + Team Receptions) × 100' },
-            'TD%': { enabled: true, multiplier: 1, description: 'Touchdown Rate', formula: '(Passing TDs + Rushing TDs + Receiving TDs) / (Pass Attempts + Rush Attempts + Targets) × 100' },
-            'BP%': { enabled: true, multiplier: 1, description: 'Big Play Rate', formula: '(Pass 20+ Yard Plays + Rush 20+ Yard Plays + Rec 20+ Yard Plays) / (Pass Attempts + Rush Attempts + Receptions) × 100' },
-            'TO%': { enabled: true, multiplier: 1, description: 'Turnover Rate', formula: '(Interceptions + Fumbles Lost) / (Pass Attempts + Rush Attempts + Targets) × 100' },
-            // // Other
-            // 'FPG_NoPPR': { enabled: false, multiplier: 1, description: 'Fantasy Points Per Game (No PPR)', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receiving TDs × 6) / Games Played' },
-            // 'FPS_NoPPR': { enabled: false, multiplier: 1, description: 'Fantasy Points Per Snap (No PPR)', formula: 'Total Fantasy Points (No PPR) / Offensive Snaps' },
-            // 'OPE_NoPPR': { enabled: false, multiplier: 1, description: 'Opportunity Efficiency (No PPR)', formula: 'Total Fantasy Points (No PPR) / (Pass Attempts + Rush Attempts + Targets)' },
-            // 'TFP_NoPPR': { enabled: false, multiplier: 1, description: 'Total Fantasy Points (No PPR)', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receiving TDs × 6)' },
-            // 'TFP': { enabled: false, multiplier: 1, description: 'Total Fantasy Points', formula: '(Passing Yards × 0.04) + (Passing TDs × 4) - (INTs × 2) + (Rushing Yards × 0.1) + (Rushing TDs × 6) + (Receiving Yards × 0.1) + (Receptions × 1) + (Receiving TDs × 6)' },
-            // 'TTD': { enabled: false, multiplier: 1, description: 'Total Touchdowns', formula: 'Passing TDs + Rushing TDs + Receiving TDs' },
-            // 'YPO': { enabled: false, multiplier: 1, description: 'Yards Per Opportunity', formula: '(Passing Yards + Rushing Yards + Receiving Yards) / (Pass Attempts + Rush Attempts + Targets)' },
-            // 'PPG': { enabled: false, multiplier: 1, description: 'Plays Per Game', formula: '(Pass Completions + Rush Attempts + Receptions) / Games Played' },
-            // 'HOG': { enabled: false, multiplier: 1, description: 'Hog Rate (Rushing)', formula: 'Rush Attempts / Team Rush Attempts × 100' },
-            // 'YPG': { enabled: false, multiplier: 1, description: 'Yards Per Game', formula: '(Passing Yards + Rushing Yards + Receiving Yards) / Games Played' },
-            // 'YPC': { enabled: false, multiplier: 1, description: 'Yards Per Carry', formula: 'Rushing Yards / Rush Attempts' },
-            // 'YPR': { enabled: false, multiplier: 1, description: 'Yards Per Reception', formula: 'Receiving Yards / Receptions' },
-            // 'YPT': { enabled: false, multiplier: 1, description: 'Yards Per Target', formula: 'Receiving Yards / Targets' },
-        },
-    }
-};
-
-//
+const mongoUri = process.env.MONGODB_URI;
+const DB_NAME = 'playbook';
+const SOURCE_RANKINGS_COLLECTION = 'rankings';
+const USER_RANKINGS_COLLECTION = 'user_rankings';
+const PLAYERS_COLLECTION = 'players'; // Needed to verify playbookId later?
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
 
-    // Get the user session
     const session = await getSession(req, res);
-    if (!session?.user) {
-        return res.status(401).json({ error: 'Unauthorized' });
+    if (!session?.user?.sub) {
+        return res.status(401).json({ error: 'Unauthorized: User session not found.' });
     }
+    const userId = session.user.sub;
 
-    // Destructure including pprType from body
+    // --- Input Validation ---
     const {
-        userId,
-        sport,
-        format,
-        name,
-        scoring,
-        source,
-        positions, // Note: These are not used for saving, defaults come from sportConfigs
-        categories, // Note: These are not used for saving, defaults come from sportConfigs
-        details,
-        pprSetting, // <-- Input from user (e.g., "Full-PPR")
-        flexSetting
+        sourceRankingId,  // ID of the source ranking document in 'rankings' collection
+        name,             // Name for the new user ranking list
+        customCategories, // Optional: array of strings
+        // Note: flexSetting/pprSetting will be derived from the source doc
     } = req.body;
 
-    // Validate required fields
-    if (!userId || !sport || !format || !name) {
-        return res.status(400).json({
-            error: 'Missing required fields: userId, sport, format, name'
-        });
+    if (!sourceRankingId || !name) {
+        return res.status(400).json({ message: 'Missing required fields: sourceRankingId, name' });
     }
 
-    // Verify the user is creating their own rankings
-    if (userId !== session.user.sub) {
-        return res.status(403).json({
-            error: 'You can only create rankings for your own account'
-        });
+    let sourceRankingObjectId;
+    try {
+        sourceRankingObjectId = new ObjectId(sourceRankingId);
+    } catch (e) {
+        return res.status(400).json({ message: 'Invalid ObjectId format for sourceRankingId' });
     }
 
-    // --- PPR Type Transformation --- 
-    let pprTypeToSave = null;
-    if (sport === 'NFL') { // Only transform if it's NFL
-        const pprStringMap = {
-            "Full-PPR": "1ppr",
-            "Half-PPR": "0.5ppr",
-            "Non-PPR": "0ppr"
-        };
-        pprTypeToSave = pprStringMap[pprSetting] || null; // Use the map, fallback to null
-    }
-    // For non-NFL, pprTypeToSave remains null
-    // --- End PPR Type Transformation ---  
-
-    const client = new MongoClient(process.env.MONGODB_URI);
+    const client = new MongoClient(mongoUri);
 
     try {
         await client.connect();
-        const db = client.db('playbook');
+        const db = client.db(DB_NAME);
+        const sourceRankingsCollection = db.collection(SOURCE_RANKINGS_COLLECTION);
+        const userRankingsCollection = db.collection(USER_RANKINGS_COLLECTION);
 
-        // --- Dynamically build the query to find the base ranking --- 
-        const originRankings = details?.originRankings || {};
-        let baseRankingQuery = {
-            sport: sport,
-            isLatest: true
+        // 1. Fetch the source ranking document
+        console.log(`Fetching source ranking with ID: ${sourceRankingId}`);
+        const sourceRanking = await sourceRankingsCollection.findOne({ _id: sourceRankingObjectId });
+
+        if (!sourceRanking) {
+            return res.status(404).json({ message: `Source ranking document with ID ${sourceRankingId} not found.` });
+        }
+        
+        // Check if source ranking has a rankings array
+        if (!sourceRanking.rankings || !Array.isArray(sourceRanking.rankings) || sourceRanking.rankings.length === 0) {
+            return res.status(400).json({ message: 'Source ranking document does not contain valid ranking data.'});
+        }
+
+        // 2. Process the source rankings array
+        // NOTE: SPORT_CONFIGS is available here if needed for future weighting logic
+        // based on comparing customCategories to SPORT_CONFIGS[sourceRanking.sport.toLowerCase()].categories
+        const processedRankings = sourceRanking.rankings.map(entry => {
+            // Basic validation of entry structure
+            if (entry.rank === undefined || !entry.playbookId) {
+                console.warn("Skipping source entry due to missing rank or playbookId:", entry);
+                return null; // Skip invalid entries
+            }
+            
+            const originRank = entry.rank;
+            // TODO: Implement actual weighting logic based on customCategories vs standard
+            // For now, originWeightedRank = originRank
+            const originWeightedRank = originRank; 
+
+            return {
+                playbookId: entry.playbookId, // Should be ObjectId from source
+                mySportsFeedsId: entry.mySportsFeedsId || null, // Copy if exists
+                name: entry.name || 'Unknown', // Copy player name
+                originRank: originRank,
+                userRank: originRank, // Initialize userRank to originRank
+                originWeightedRank: originWeightedRank,
+                // Add type if needed
+                type: entry.type || 'player',
+            };
+        }).filter(entry => entry !== null); // Filter out any skipped entries
+
+        if (processedRankings.length === 0) {
+             return res.status(400).json({ message: 'No valid player entries could be processed from the source ranking.'});
+        }
+
+        // 3. Construct the new user_rankings document
+        const now = new Date();
+        const newUserRankingDoc = {
+            userId: userId,
+            name: name.trim(),
+            sport: sourceRanking.sport.toLowerCase(), // Ensure lowercase
+            format: sourceRanking.format.toLowerCase(),
+            scoring: sourceRanking.scoring.toLowerCase(),
+            source: sourceRanking.source, // From the original source doc
+            sourceType: sourceRanking.sourceType, // e.g., 'csv', 'api'
+            sourceIdentifier: sourceRanking.sourceIdentifier, // e.g., file path or api url
+            // Add NFL specific fields if they exist in source
+            ...(sourceRanking.sport.toLowerCase() === 'nfl' && {
+                flexSetting: sourceRanking.flexSetting?.toLowerCase(),
+                pprSetting: sourceRanking.pprSetting?.toLowerCase(),
+            }),
+            // Add custom categories if provided
+            ...(customCategories && Array.isArray(customCategories) && { customCategories: customCategories }),
+            rankings: processedRankings, // The processed array
+            dateCreated: now,
+            dateUpdated: now,
+            originRankingId: sourceRankingObjectId, // Link back to the source doc ID
+            // Add placeholders for positions/categories if needed later
+            // positions: [], 
+            // categories: {},
         };
 
-        if (sport === 'NFL') {
-            // Convert numerical ppr back to string for DB query
-            let pprSettingString = '1ppr'; // Default from your structure
-            if (originRankings.ppr === 0) pprSettingString = '0ppr';
-            else if (originRankings.ppr === 0.5) pprSettingString = '0.5ppr';
-            // Add other cases if needed, e.g., 1.0 -> '1ppr' (already default)
+        // 4. Insert the new document
+        console.log(`Inserting new user ranking: '${newUserRankingDoc.name}' for user ${userId}`);
+        const insertResult = await userRankingsCollection.insertOne(newUserRankingDoc);
+        const newUserRankingId = insertResult.insertedId;
+        console.log(`New user ranking created with ID: ${newUserRankingId}`);
 
-            baseRankingQuery = {
-                ...baseRankingQuery,
-                source: 'FantasyCalc', // Source is fixed for NFL variants
-                format: originRankings.isDynasty ? 'Dynasty' : 'Redraft',
-                scoring: 'Points', // Scoring is fixed for NFL variants
-                flexSetting: originRankings.numQbs === 2 ? 'Superflex' : 'Standard',
-                pprSetting: pprSettingString
-            };
-        } else {
-            // Handle non-NFL query criteria (using source from originRankings)
-            baseRankingQuery = {
-                ...baseRankingQuery,
-                format: format, // Use format directly from req.body
-                scoring: scoring // Use scoring directly from req.body
-            };
-        }
-
-        // Get the latest expert rankings using the dynamic query
-        const latestRankings = await db.collection('rankings')
-            .findOne(
-                baseRankingQuery, // <-- Use the dynamically built query object
-                {
-                    sort: { importedAt: -1 } // Sort by import date as fallback
-                }
-            );
-
-        if (!latestRankings) {
-            return res.status(404).json({
-                error: 'No expert rankings found for the specified sport, format, and scoring type'
-            });
-        }
-
-        // Validate the rankings data structure
-        if (!Array.isArray(latestRankings.rankings)) {
-            return res.status(500).json({
-                error: 'Invalid rankings data structure in expert rankings'
-            });
-        }
-
-        // Validate each player in the rankings
-        const validRankings = latestRankings.rankings.filter(player => {
-            // Basic validation - Allow null playerId, just check name and rank type
-            if (!player.name || typeof player.rank !== 'number') {
-                console.warn(`Invalid player data found in base ranking ${latestRankings._id}:`, player); // Log invalid entries
-                return false;
-            }
-            return true;
+        // --- Respond --- //
+        return res.status(201).json({ 
+             message: 'User ranking created successfully.',
+             userRankingId: newUserRankingId 
         });
 
-        // Check if the *original* list was empty or if filtering removed everything crucial
-        if (!latestRankings.rankings || latestRankings.rankings.length === 0) { // Check original length
-            return res.status(500).json({
-                // error: 'No valid player rankings found in expert rankings' // Keep original error maybe?
-                error: 'Base expert ranking list is empty or invalid.' // Or use this more specific one
-            });
-        }
-        // Optional: Add a check if validRankings is drastically smaller than original, indicating many invalid entries?
-
-        // Create the new user rankings list with the expert rankings data
-        const newRankingsList = {
-            userId,
-            sport,
-            format,
-            name,
-            scoring,
-            source,
-            rankings: latestRankings.rankings
-                .filter(player =>
-                    player.name &&
-                    !player.name.toLowerCase().includes(' pick ') &&  // Remove picks from rankings, but they're still in db
-                    !player.name.toLowerCase().includes(' round ')
-                )
-                .map(player => ({
-                    playerId: player.playerId,
-                    name: player.name,
-                    rank: player.rank,
-                    draftModeAvailable: true, // Default to available for Draft Mode
-                    notes: '',
-                    tags: []
-                })),
-            positions: sportConfigs[sport]?.positions || [],
-            categories: sportConfigs[sport]?.categories || {},
-            details: {
-                ...(details || {}), // Spread existing details safely
-                // Save the TRANSFORMED ppr value using the key pprSetting (if NFL)
-                ...(sport === 'NFL' && { pprSetting: pprTypeToSave }),
-                // Keep flexSetting as is from request body (assuming it's correct format)
-                ...(sport === 'NFL' && { flexSetting: flexSetting }),
-                dateCreated: new Date(),
-                dateUpdated: new Date(),
-                // Update originRankings structure slightly
-                originRankings: {
-                    source: latestRankings.source, // Use source from the fetched base ranking
-                    rankingsId: latestRankings._id,
-                    version: latestRankings.version,
-                    // Add original numerical PPR value here if needed for reference
-                    // ppr: details?.originRankings?.ppr 
-                }
-            }
-        };
-
-        // Insert the new rankings list
-        const result = await db.collection('user_rankings').insertOne(newRankingsList);
-        const newListId = result.insertedId;
-
-        res.status(201).json({ message: 'Ranking list created successfully', listId: newListId });
-
     } catch (error) {
-        console.error('Error creating ranking list:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Create user ranking API error:', error);
+        return res.status(500).json({ message: error.message || 'Internal Server Error creating user ranking.' });
     } finally {
-        await client.close();
+        if (client) {
+            await client.close();
+        }
     }
 }
 
