@@ -41,10 +41,10 @@ const getNestedValue = (obj, path, defaultValue = null) => {
 const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
 
     // --- ADD LOG ---
-    console.log('[StatsSection] Received props:', {
-        stats: stats,
-        categories: categories
-    });
+    // console.log('[StatsSection] Received props:', {
+    //     stats: stats,
+    //     categories: categories
+    // });
     // --- END LOG ---
 
     // Define stats that need 2 decimal places

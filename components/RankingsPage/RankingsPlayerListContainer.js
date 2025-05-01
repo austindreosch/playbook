@@ -261,7 +261,14 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
+        // --- DEBUG LOG: Log the activeRanking received from store ---
+        console.log('[useEffect activeRanking] Received activeRanking:', JSON.stringify(activeRanking, null, 2)); // Use stringify for better object inspection
+        
         const processedPlayers = processRankingData(activeRanking);
+        
+        // --- DEBUG LOG: Log the result of processing ---
+        console.log('[useEffect activeRanking] Result of processRankingData:', processedPlayers);
+
         setRankedPlayers(processedPlayers);
     }, [activeRanking, sport, processRankingData]); // Added processRankingData dependency
 
@@ -420,16 +427,22 @@ const RankingsPlayerListContainer = React.forwardRef(({
             const oldIndex = rankedPlayers.findIndex(item => item.rankingId === active.id);
             const newIndex = rankedPlayers.findIndex(item => item.rankingId === over.id);
 
-            // Create new array with reordered items
+            // Calculate the new order based on array move
             const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
 
-            // Update local state first
-            setRankedPlayers(newOrder);
+            // --- NEW: Update userRank locally based on the new index --- 
+            const updatedOrderWithRanks = newOrder.map((player, index) => ({
+                ...player,
+                userRank: index + 1 // Assign new rank based on index
+            }));
 
-            // Update the store state in the next tick to avoid render phase updates
+            // Update local state first with the correctly ranked items
+            // setRankedPlayers(updatedOrderWithRanks); // --- REMOVED: Let useEffect handle update from store ---
+
+            // --- RESTORED: Update the store state asynchronously ---
             setTimeout(() => {
-                // Ensure we are mapping valid IDs
-                const rankingIdsInNewOrder = newOrder.map(item => {
+                // Ensure we are mapping valid IDs from the rank-updated array
+                const rankingIdsInNewOrder = updatedOrderWithRanks.map(item => {
                     if (!item || !item.rankingId) {
                         // console.error("Item missing rankingId in newOrder:", item); // Removed console.error
                         return null;
@@ -437,13 +450,14 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     return item.rankingId;
                 }).filter(id => id !== null);
 
-                if (rankingIdsInNewOrder.length !== newOrder.length) {
+                if (rankingIdsInNewOrder.length !== updatedOrderWithRanks.length) {
                     // console.error("Mismatch in ranking IDs after filtering!"); // Removed console.error
                 }
 
                 updateAllPlayerRanks(rankingIdsInNewOrder);
                 saveChanges(); // Trigger save immediately after updating ranks
             }, 0);
+            // --- END RESTORED BLOCK ---
         }
     }, [rankedPlayers, updateAllPlayerRanks, saveChanges, sortConfig?.key]); // Use prop sortConfig.key
 
@@ -564,17 +578,19 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     {activeId ? (() => {
                         const activePlayer = paginatedPlayers.find(p => p.rankingId === activeId);
                         if (!activePlayer) return null;
-                        const isRankSorted = sortConfig?.key === null;
-                        const displayRank = isRankSorted ? activePlayer.rank : paginatedPlayers.findIndex(p => p.rankingId === activeId) + 1;
+                        // --- MODIFIED: Always use userRank for display during drag ---
+                        const displayRank = activePlayer.userRank; 
+                        // const isRankSorted = sortConfig?.key === null; // No longer needed for rank display
+                        // const displayRank = isRankSorted ? activePlayer.rank : paginatedPlayers.findIndex(p => p.rankingId === activeId) + 1; // Old logic removed
                         return (
                             <RankingsPlayerRow
                                 player={activePlayer}
                                 sport={sport}
                                 categories={chosenCategoryPaths}
-                                rank={displayRank}
+                                rank={displayRank} // Use the consistent userRank
                                 isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
                                 isPlaceholder={activePlayer.isPlaceholder}
-                                isRankSorted={false}
+                                isRankSorted={false} // Overlay doesn't need sorting context for rank display
                                 isDraftMode={isDraftModeActive}
                                 onToggleDraftStatus={setPlayerAvailability}
                             />
