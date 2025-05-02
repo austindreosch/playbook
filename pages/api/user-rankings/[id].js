@@ -41,14 +41,40 @@ export default async function handler(req, res) {
             client = new MongoClient(mongoUri);
             await client.connect();
             const db = client.db('playbook');
+            const collection = db.collection('user_rankings');
 
-            const result = await db.collection('user_rankings').updateOne(
+            // --- START COUNT CHECK ---
+            const currentDoc = await collection.findOne({ _id: new ObjectId(id), userId: session.user.sub });
+
+            if (!currentDoc) {
+                return res.status(404).json({ error: 'Ranking not found for this user.' });
+            }
+
+            // Ensure both current and incoming rankings exist and are arrays before comparing length
+            const currentRankingsLength = Array.isArray(currentDoc.rankings) ? currentDoc.rankings.length : 0;
+            const incomingRankingsLength = Array.isArray(updatedData.rankings) ? updatedData.rankings.length : -1; // Use -1 to fail check if not array
+
+            if (incomingRankingsLength < 0) {
+                 return res.status(400).json({ error: 'Invalid request body: Missing or invalid rankings array.' }); // Re-check for safety
+            }
+
+            if (incomingRankingsLength < currentRankingsLength) {
+                // Prevent update if the incoming list is shorter than the current one
+                return res.status(400).json({
+                    error: `Potential data loss prevented. Incoming ranking count (${incomingRankingsLength}) is less than current count (${currentRankingsLength}).`
+                });
+            }
+            // --- END COUNT CHECK ---
+
+            // If checks pass, proceed with the update
+            const result = await collection.updateOne(
                 { _id: new ObjectId(id), userId: session.user.sub },
                 { $set: updatedData }
             );
 
             if (result.modifiedCount === 0) {
-                return res.status(404).json({ error: 'Ranking not found or no changes made' });
+                // This might happen if the data sent is identical to the stored data
+                return res.status(200).json({ message: 'No changes detected or ranking not found.' }); // Changed status to 200 as it's not necessarily an error
             }
 
             res.status(200).json({ message: 'Ranking updated successfully' });

@@ -455,7 +455,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 }
 
                 updateAllPlayerRanks(rankingIdsInNewOrder);
-                saveChanges(); // Trigger save immediately after updating ranks
+                saveChanges(); // --- RE-ENABLED: Trigger save immediately after updating ranks ---
             }, 0);
             // --- END RESTORED BLOCK ---
         }

@@ -91,32 +91,48 @@ const useUserRankings = create(
                     setState(state => ({ showDraftedPlayers: !state.showDraftedPlayers }));
                 },
 
-                setPlayerAvailability: (playerIdToUpdate, isAvailable) => {
+                setPlayerAvailability: (rankingIdToUpdate, isAvailable) => {
                     const { activeRanking, rankings } = get();
                     if (!activeRanking || !activeRanking.rankings) return;
 
-                    let playerFound = false; // Flag to check if player was found
+                    let playerFound = false;
                     const updatedRankings = activeRanking.rankings.map(p => {
-                        // Use the same complex matching logic as updateAllPlayerRanks
-                        let p_rankingId;
-                        if (p.playerId != null) {
-                            p_rankingId = String(p.playerId);
-                        } else {
-                            const nameForId = p.originalName || p.name || 'unknown';
-                            p_rankingId = `pick-${p.rank}-${nameForId}`;
-                        }
+                        
+                        // --- START REVISED FIND LOGIC (v3 - same as updateAllPlayerRanks) ---
+                        const incomingIdStr = String(rankingIdToUpdate);
+                        let isMatch = false;
 
-                        // Compare the reconstructed/retrieved ID with the incoming ID (ensure both are strings)
-                        if (String(p_rankingId) === String(playerIdToUpdate)) {
+                        if (incomingIdStr.startsWith('pick-')) {
+                            // Match Placeholder by Normalized Name
+                            if (p.mySportsFeedsId == null) { // Only check placeholders
+                                const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
+                                const incomingParts = incomingIdStr.split('-');
+                                if (incomingParts.length >= 3) {
+                                    const incomingNameRaw = incomingParts.slice(2).join('-');
+                                    const storedNameRaw = p.originalName || p.name || 'unknown';
+                                    isMatch = normalizeName(storedNameRaw) === normalizeName(incomingNameRaw);
+                                }
+                            }
+                        } else {
+                            // Match Real Player by mySportsFeedsId
+                            if (p.mySportsFeedsId != null) { // Only check real players
+                                isMatch = String(p.mySportsFeedsId) === incomingIdStr;
+                            }
+                        }
+                        // --- END REVISED FIND LOGIC ---
+
+                        if (isMatch) {
                             playerFound = true;
+                            // Update the draft availability
                             return { ...p, draftModeAvailable: isAvailable };
                         }
+                        // If not a match, return the player unchanged
                         return p;
                     });
 
                     // Optional: Log if the player wasn't found for debugging
                     if (!playerFound) {
-                        console.warn(`[setPlayerAvailability] Player not found for update with ID: ${playerIdToUpdate}`);
+                        console.warn(`[setPlayerAvailability v3] Player not found for update with ID: ${rankingIdToUpdate}`);
                         return; // Don't update state if player wasn't found
                     }
 
@@ -130,14 +146,28 @@ const useUserRankings = create(
 
                     // Log after state update if drafted
                     if (!isAvailable) {
+                        // Re-find the player using the same logic to get their name for logging
                         const player = updatedRankings.find(p => {
-                            // Repeat matching logic to find the updated player for logging
-                            let p_rankingId;
-                            if (p.playerId != null) { p_rankingId = String(p.playerId); }
-                            else { const nameForId = p.originalName || p.name || 'unknown'; p_rankingId = `pick-${p.rank}-${nameForId}`; }
-                            return String(p_rankingId) === String(playerIdToUpdate);
+                             const incomingIdStr = String(rankingIdToUpdate);
+                             let isMatch = false;
+                             if (incomingIdStr.startsWith('pick-')) {
+                                 if (p.mySportsFeedsId == null) {
+                                     const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
+                                     const incomingParts = incomingIdStr.split('-');
+                                     if (incomingParts.length >= 3) {
+                                         const incomingNameRaw = incomingParts.slice(2).join('-');
+                                         const storedNameRaw = p.originalName || p.name || 'unknown';
+                                         isMatch = normalizeName(storedNameRaw) === normalizeName(incomingNameRaw);
+                                     }
+                                 }
+                             } else {
+                                 if (p.mySportsFeedsId != null) {
+                                     isMatch = String(p.mySportsFeedsId) === incomingIdStr;
+                                 }
+                             }
+                             return isMatch;
                         });
-                        const playerName = player?.name || player?.info?.fullName || `Player ID ${playerIdToUpdate}`;
+                        const playerName = player?.name || player?.originalName || `Player ID ${rankingIdToUpdate}`;
                         console.log(`${playerName} drafted! Current Store State:`, get());
                     }
 
