@@ -55,7 +55,7 @@ export default async function handler(req, res) {
             // Add NFL specific filters if applicable
             ...(sport.toLowerCase() === 'nfl' && {
                 ...(flexSetting && { flexSetting: flexSetting.toLowerCase() }),
-                ...(pprSetting && { pprSetting: pprSetting.toLowerCase() }),
+                ...(pprSetting && { pprSetting: pprSetting }),
             }),
             // We might need additional filters depending on how sources are uniquely identified
             // e.g., sourceType: 'api' or sourceType: 'csv', or a specific source name?

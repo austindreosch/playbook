@@ -45,7 +45,7 @@ const AddRankingListButton = ({ dataset }) => {
         format: 'Dynasty',
         scoring: 'Categories',
         flexSetting: 'Superflex',
-        pprType: 'Full-PPR',
+        pprType: '1ppr',
         name: '',
         customCategories: getDefaultCategories(SPORT_CONFIGS.nba),
     });
@@ -62,6 +62,7 @@ const AddRankingListButton = ({ dataset }) => {
             if (updates.sport) { // If sport changed...
                 if (newState.sport === 'nfl') {
                     newState.scoring = 'Points'; // Force NFL to Points
+                    newState.pprType = '1ppr'; // Default NFL PPR to 1ppr
                 } 
                 // No need to force NBA to Categories anymore
                 // MLB can be either, let existing/previous selection persist or default logic handle it
@@ -82,7 +83,12 @@ const AddRankingListButton = ({ dataset }) => {
             // Reset NFL specific fields if changing away from NFL
             if (updates.sport && newState.sport !== 'nfl'){
                  newState.flexSetting = 'Superflex'; // Reset to default
-                 newState.pprType = 'Full-PPR'; // Reset to default
+                 newState.pprType = '1ppr'; // Reset to default (or null?)
+            }
+
+            // Ensure pprType has a valid default if sport is NFL
+            if (newState.sport === 'nfl' && !['0ppr', '0.5ppr', '1ppr'].includes(newState.pprType)) {
+                 newState.pprType = '1ppr';
             }
 
             return newState;
@@ -157,7 +163,7 @@ const AddRankingListButton = ({ dataset }) => {
                 format: 'Dynasty',
                 scoring: 'Categories',
                 flexSetting: 'Superflex',
-                pprType: 'Full-PPR',
+                pprType: '1ppr',
                 name: '',
             });
             setError(null);
@@ -321,12 +327,12 @@ const AddRankingListButton = ({ dataset }) => {
                                 </div>
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="pprType" className="text-right select-none col-span-1"> PPR </Label>
-                                    <Tabs value={formData.pprType || 'Full-PPR'} className="col-span-3"
+                                    <Tabs value={formData.pprType} className="col-span-3"
                                         onValueChange={(value) => updateFormState({ pprType: value })}>
                                         <TabsList className="grid w-full grid-cols-3">
-                                            <TabsTrigger value="Non-PPR" className="select-none">Non</TabsTrigger>
-                                            <TabsTrigger value="Half-PPR" className="select-none">Half</TabsTrigger>
-                                            <TabsTrigger value="Full-PPR" className="select-none">Full</TabsTrigger>
+                                            <TabsTrigger value="0ppr" className="select-none">Non</TabsTrigger>
+                                            <TabsTrigger value="0.5ppr" className="select-none">Half</TabsTrigger>
+                                            <TabsTrigger value="1ppr" className="select-none">Full</TabsTrigger>
                                         </TabsList>
                                     </Tabs>
                                 </div>

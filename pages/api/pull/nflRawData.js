@@ -290,6 +290,26 @@ export default async function handler(req, res) {
 
         // Players
         const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/players.json`, 'players');
+
+        // Filter out defensive/non-offensive players if data exists (assuming data.players is the array)
+        if (players && players.players) { // Check if the 'players' object and its nested 'players' array exist
+            const initialCount = players.players.length;
+            console.log(`Filtering detailed players. Initial count: ${initialCount}`);
+
+            // Use the SAME defensivePositions Set defined earlier for seasonalPlayerStats (around line 222)
+            const offensivePlayers = players.players.filter(playerEntry => {
+                const position = playerEntry.player?.primaryPosition?.toUpperCase(); // Check position safely
+                // Keep player if position is NOT in the defensive/non-offensive set
+                return position && !defensivePositions.has(position);
+            });
+            // Replace the original player list with the filtered one
+            players.players = offensivePlayers;
+            console.log(`Filtering detailed players. Final count: ${offensivePlayers.length}`);
+        } else {
+            console.log('Skipping detailed player filtering - players.players array not found.');
+        }
+
+        // Proceed with validation and saving using the potentially filtered data
         if (players && validateData(players, 'players', errors)) {
             await updateEndpoint(statsCollection, 'nfl', 'detailed', 'players', players, errors);
         }

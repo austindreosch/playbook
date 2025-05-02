@@ -205,7 +205,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // --- ADD Log: Show map keys ---
         const mapKeysSample = Array.from(playerDataMap.keys()).slice(0, 5);
-        console.log(`[processRankingData] Sample keys from playerDataMap (${sport}):`, mapKeysSample);
+        // console.log(`[processRankingData] Sample keys from playerDataMap (${sport}):`, mapKeysSample);
 
         // Combine ranking data with player data, handling null playerIds
         const combinedPlayers = rankingPlayers.map((rankingPlayer) => {
@@ -217,7 +217,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
             // --- ADD Log: Check ID and Map --- 
             const lookupIdStr = lookupId != null ? String(lookupId) : null;
             const mapHasKey = lookupIdStr ? playerDataMap.has(lookupIdStr) : false;
-            console.log(`[processRankingData] Trying lookup: mySportsFeedsId='${lookupIdStr}', Map has key? ${mapHasKey}`);
+            // console.log(`[processRankingData] Trying lookup: mySportsFeedsId='${lookupIdStr}', Map has key? ${mapHasKey}`);
 
             if (lookupIdStr != null) {
                 // Try to find player by ID using mySportsFeedsId from the ranking
@@ -253,6 +253,18 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 draftModeAvailable: rankingPlayer.draftModeAvailable !== undefined ? rankingPlayer.draftModeAvailable : true
             };
 
+            // --- DEBUG LOG for specific player ---
+            if (combinedPlayer.name === 'Lamar Jackson') {
+                console.log('[processRankingData] Debug Lamar Jackson:', {
+                    rankingPlayerInput: rankingPlayer, // Data from user_rankings
+                    lookupIdUsed: lookupIdStr, 
+                    playerDataFound: playerData, // Data found in master dataset
+                    finalCombinedStats: combinedPlayer.stats, // Stats being sent to row
+                    finalCombinedRankingId: combinedPlayer.rankingId // ID being sent to row/drag
+                });
+            }
+            // --- END DEBUG LOG ---
+
             return combinedPlayer;
         });
 
@@ -262,12 +274,12 @@ const RankingsPlayerListContainer = React.forwardRef(({
     // Add this effect to process ranking data when activeRanking changes
     useEffect(() => {
         // --- DEBUG LOG: Log the activeRanking received from store ---
-        console.log('[useEffect activeRanking] Received activeRanking:', JSON.stringify(activeRanking, null, 2)); // Use stringify for better object inspection
+        // console.log('[useEffect activeRanking] Received activeRanking:', JSON.stringify(activeRanking, null, 2)); // Use stringify for better object inspection
         
         const processedPlayers = processRankingData(activeRanking);
         
         // --- DEBUG LOG: Log the result of processing ---
-        console.log('[useEffect activeRanking] Result of processRankingData:', processedPlayers);
+        // console.log('[useEffect activeRanking] Result of processRankingData:', processedPlayers);
 
         setRankedPlayers(processedPlayers);
     }, [activeRanking, sport, processRankingData]); // Added processRankingData dependency

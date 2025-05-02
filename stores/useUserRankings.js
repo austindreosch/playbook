@@ -361,47 +361,63 @@ const useUserRankings = create(
                         let player = null;
 
                         if (incomingIdStr.startsWith('pick-')) {
-                            // --- Match Placeholder by Name ---
-                            // Helper function for normalization
+                            // --- Match Placeholder by Name (allow players with mySportsFeedsId) ---
                             const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
-
-                            player = activeRanking.rankings.find(p => {
-                                if (p.mySportsFeedsId != null) return false; // Skip non-placeholders
-                                
-                                const incomingParts = incomingIdStr.split('-');
-                                if (incomingParts.length < 3) return false; 
+                            const incomingParts = incomingIdStr.split('-');
+                            if (incomingParts.length < 3) {
+                                console.warn(`[updateAllPlayerRanks] Malformed pick ID: ${incomingIdStr}`);
+                                player = null; // Cannot parse name, treat as not found
+                            } else {
                                 const incomingNameRaw = incomingParts.slice(2).join('-');
-                                const storedNameRaw = p.originalName || p.name || 'unknown';
-
-                                // Compare normalized names
-                                return normalizeName(storedNameRaw) === normalizeName(incomingNameRaw);
-                            });
+                                const normalizedIncomingName = normalizeName(incomingNameRaw);
+                        
+                                // Find player matching the normalized name 
+                                player = activeRanking.rankings.find(p => {
+                                    const storedNameRaw = p.originalName || p.name || 'unknown';
+                                    const normalizedStoredName = normalizeName(storedNameRaw);
+                                    return normalizedStoredName === normalizedIncomingName;
+                                });
+                        
+                                // Add logging if name match fails
+                                if (!player) {
+                                    console.warn(`[updateAllPlayerRanks] Failed to find player by name '${normalizedIncomingName}' for pick ID: ${incomingIdStr}`);
+                                }
+                            }
                         } else {
-                            // --- Match Real Player by mySportsFeedsId ---
-                            player = activeRanking.rankings.find(p => 
-                                p.mySportsFeedsId != null && String(p.mySportsFeedsId) === incomingIdStr
-                            );
+                            // --- Match Regular Player by mySportsFeedsId ---
+                            player = activeRanking.rankings.find(p => String(p.mySportsFeedsId) === incomingIdStr); // Ensure string comparison
                         }
 
                         if (!player) {
                             // Log error if player not found with the new logic
-                            console.error(`[store updateAllPlayerRanks v3] Player not found for rankingId: ${rankingId}`);
+                            // console.error(`[store updateAllPlayerRanks v3] Player not found for rankingId: ${rankingId}`); // Keep this less verbose now
                             return null; 
                         }
 
                         // Return the found player with updated userRank based on the new order's index
                         return { ...player, userRank: index + 1 }; 
-                    }).filter(p => p !== null); 
+                    }); // --- .map ends here ---
+                    
+                    // --- START FOCUSED FAILURE LOGGING ---
+                    const failedLookups = newPlayerOrder.filter((_, index) => !updatedPlayers[index]);
+                    if (failedLookups.length > 0) {
+                        console.warn(`[updateAllPlayerRanks] Failed to find players for ${failedLookups.length} rankingId(s):`, failedLookups);
+                        // You could add more logic here later to fetch details about the expected players if needed
+                    }
+                    // --- END FOCUSED FAILURE LOGGING ---
+                    
+                    // Filter out any nulls from not finding a player
+                    const validUpdatedPlayers = updatedPlayers.filter(p => p !== null); 
                     // --- END REVISED MAPPING LOGIC (v3) ---
 
                     // Check if the length matches after filtering
-                    if (updatedPlayers.length !== newPlayerOrder.length) {
+                    if (validUpdatedPlayers.length !== newPlayerOrder.length) {
                         console.error("[store updateAllPlayerRanks v3] Mismatch between input order length and updated players length after filtering. Some players were not found.");
                     }
 
                     const updatedRanking = {
                         ...activeRanking,
-                        rankings: updatedPlayers 
+                        rankings: validUpdatedPlayers 
                     };
 
                     setState({

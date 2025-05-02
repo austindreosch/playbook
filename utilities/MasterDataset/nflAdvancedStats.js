@@ -161,8 +161,45 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     advancedStats.opportunityEfficiency = totalOpportunities > 0 ? (totalFantasyPointsPPR / totalOpportunities) : 0.0;
     advancedStats.opportunityEfficiencyNoPPR = totalOpportunities > 0 ? (totalFantasyPointsNoPPR / totalOpportunities) : 0.0;
 
-    // Production Share %
-    advancedStats.productionShare = teamActionPlays > 0 ? ((totalPlays / teamActionPlays) * 100) : 0.0;
+    // --- Production Share % Calculation (Handles Trades) ---
+    if (player.stints && player.stints.length > 1) {
+        // Player was traded, calculate weighted average production share
+        let totalWeightedShare = 0;
+        let totalGamesAcrossStints = 0;
+
+        player.stints.forEach(stint => {
+            const stintTeamId = stint.teamId;
+            const stintPlayerPlays = stint.playerPlays;
+            const stintGamesPlayed = stint.gamesPlayed;
+
+            // Find the full-season team stats for the stint's team
+            const stintTeamStats = teamStats[stintTeamId] || {}; // Use teamStats passed into the function
+            const stintTeamActionPlays = (stintTeamStats.teamPassCompletions || 0) + 
+                                         (stintTeamStats.teamRushAtt || 0) + 
+                                         (stintTeamStats.teamReceptions || 0);
+
+            let stintShare = 0;
+            if (stintTeamActionPlays > 0) {
+                stintShare = (stintPlayerPlays / stintTeamActionPlays) * 100;
+            }
+
+            // Weight the share by games played during that stint
+            totalWeightedShare += stintShare * stintGamesPlayed;
+            totalGamesAcrossStints += stintGamesPlayed;
+        });
+
+        // Calculate the final weighted average share
+        if (totalGamesAcrossStints > 0) {
+            advancedStats.productionShare = totalWeightedShare / totalGamesAcrossStints;
+        } else {
+            advancedStats.productionShare = 0.0; // Avoid division by zero if total games is somehow 0
+        }
+
+    } else {
+        // Player was not traded (or no stint data available), use the standard calculation
+        advancedStats.productionShare = teamActionPlays > 0 ? ((totalPlays / teamActionPlays) * 100) : 0.0;
+    }
+    // --- End Production Share % ---
 
     // Turnover Rate % (using actionPlays as denominator)
     advancedStats.turnoverRate = actionPlays > 0 ? ((totalPlayerTurnovers / actionPlays) * 100) : 0.0;

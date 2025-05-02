@@ -543,9 +543,20 @@ const useMasterDataset = create((set, get) => ({
             const seasonalStats = data.nflStats?.stats?.seasonalPlayerStats?.players;
             // const teamStatsTotals = data.nflStats?.teamStatsTotals || [];
 
+            // --- DEBUG: Check raw seasonalStats for Lamar Jackson ---
+            if (seasonalStats) {
+                const rawLamar = seasonalStats.find(p => p.player?.id === 23343);
+                console.log(`[fetchNflData] Lamar Jackson (23343) found in raw seasonalStats: ${!!rawLamar}`);
+                if (rawLamar) {
+                    console.log(`[fetchNflData] Raw Lamar Jackson entry:`, JSON.stringify(rawLamar, null, 2));
+                }
+            } else {
+                console.log('[fetchNflData] seasonalStats array is missing or empty.');
+            }
+            // --- END DEBUG ---
+
             if (!seasonalStats) {
                 // console.warn('fetchNflData: NFL seasonal player stats not found in the raw data.');
-                // Optionally set error or just return
                 return;
             }
 
@@ -602,53 +613,84 @@ const useMasterDataset = create((set, get) => ({
                 }
             }));
 
-            // Step 2: Handle duplicate players (aggregate stats)
-            const mergedPlayersMap = initialPlayers.reduce((acc, player) => {
+            // --- FILTER: Keep only offensive fantasy-relevant players ---
+            const offensivePositions = new Set(['QB', 'RB', 'FB', 'WR', 'TE', 'K']);
+            const offensivePlayers = initialPlayers.filter(player => 
+                offensivePositions.has(player.info.position)
+            );
+            // --- END FILTER ---
+
+            // Step 2: Handle duplicate players (aggregate stats) - USE offensivePlayers now
+            const mergedPlayersMap = offensivePlayers.reduce((acc, player) => {
                 const id = player.info.playerId;
+                const current = player.stats; // Current stint's stats
+                const currentGames = current.other?.gamesPlayed || 0;
+                // Calculate player plays for the current stint
+                const currentPlayerPlays = (current.passing?.passComp || 0) + 
+                                         (current.rushing?.rushAtt || 0) + 
+                                         (current.receiving?.receptions || 0);
+
+                // Stint data object to be added
+                const stintData = {
+                    teamId: player.info.teamId,
+                    playerPlays: currentPlayerPlays,
+                    gamesPlayed: currentGames
+                };
+
                 if (!acc[id]) {
-                    // First time seeing this player, add them directly
-                    acc[id] = { ...player };
+                    // First time seeing this player
+                    acc[id] = { 
+                        ...player, 
+                        // Initialize stints array with the first stint
+                        stints: [stintData] 
+                    };
                 } else {
-                    // Player exists, need to aggregate their stats
+                    // Player exists, aggregate stats and add new stint data
                     const existing = acc[id].stats;
-                    const current = player.stats;
 
-                    // Update games played
-                    existing.gamesPlayed += current.gamesPlayed;
+                    // Add current stint to the stints array
+                    acc[id].stints.push(stintData);
 
-                    // Aggregate batting stats
+                    // --- Aggregate Cumulative Stats --- 
+                    // Update games played (use the value from the current stint)
+                    existing.other.gamesPlayed += currentGames;
+
+                    // Aggregate passing stats (Simple Sum)
                     Object.keys(existing.passing).forEach(key => {
-                        // For averages and percentages, we'll need weighted calculation later
-                        if (!['passCompPct'].includes(key)) {
+                        if (current.passing && typeof current.passing[key] === 'number' && !['passCompPct'].includes(key)) { 
                             existing.passing[key] += current.passing[key];
                         }
                     });
 
-                    // Aggregate rushing stats
+                    // Aggregate rushing stats (Simple Sum)
                     Object.keys(existing.rushing).forEach(key => {
-                        if (!['rush20Plus'].includes(key)) {
-                            existing.rushing[key] += current.rushing[key];
-                        }
+                         if (current.rushing && typeof current.rushing[key] === 'number') { 
+                             existing.rushing[key] += current.rushing[key];
+                         }
                     });
-
-                    // Aggregate receiving stats
+                    // Aggregate receiving stats (Simple Sum)
                     Object.keys(existing.receiving).forEach(key => {
-                        if (!['rec20Plus'].includes(key)) {
-                            existing.receiving[key] += current.receiving[key];
-                        }
+                         if (current.receiving && typeof current.receiving[key] === 'number') {
+                             existing.receiving[key] += current.receiving[key];
+                         }
                     });
-
-                    // Aggregate other stats
+                    // Aggregate other stats (Simple Sum)
                     Object.keys(existing.other).forEach(key => {
-                        if (!['fumblesLost'].includes(key)) {
-                            existing.other[key] += current.other[key];
-                        }
+                        // Check if key exists and is a number before adding
+                         if (current.other && typeof current.other[key] === 'number' && key !== 'gamesPlayed') { // gamesPlayed already handled
+                             existing.other[key] += current.other[key];
+                         }
                     });
+                    // --- End Aggregation ---
 
-                    // Recalculate passing averages/percentages
+                    // --- Recalculate Aggregate Rate Stats --- 
                     if (existing.passing.passAtt > 0) {
                         existing.passing.passCompPct = parseFloat(((existing.passing.passComp / existing.passing.passAtt) * 100).toFixed(1));
+                    } else {
+                        existing.passing.passCompPct = 0;
                     }
+                    // TODO: Add recalculations for other rate stats if needed (e.g., YPC, YPR)
+                    // --- End Recalculation ---
 
                     // Update player info to the latest entry encountered
                     acc[id].info.team = player.info.team;
