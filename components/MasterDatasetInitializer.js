@@ -1,58 +1,69 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import useMasterDataset from '../stores/useMasterDataset'; // Adjust path if needed
+import { useEffect } from 'react';
+import { SUPPORTED_SPORTS } from '../lib/config.js'; // Assuming config is here
+import useMasterDataset from '../stores/useMasterDataset.js';
 
-export default function MasterDataInitializer() {
-    const initialized = useRef(false);
+function MasterDatasetInitializer() {
+    const fetchNflData = useMasterDataset((state) => state.fetchNflData);
+    const fetchMlbData = useMasterDataset((state) => state.fetchMlbData);
+    const fetchNbaData = useMasterDataset((state) => state.fetchNbaData);
+    // --- NEW: Get the identity fetcher ---
+    const fetchPlayerIdentities = useMasterDataset((state) => state.fetchPlayerIdentities);
+
+    const isRawDataFetched = useMasterDataset((state) => state.isRawDataFetched);
+    const isLoading = useMasterDataset((state) => state.isLoading); // Tracks raw data loading
+    const isIdentityLoading = useMasterDataset((state) => state.isIdentityLoading); // Tracks identity loading
 
     useEffect(() => {
-        // Only run once on initial client mount
-        if (!initialized.current) {
-            initialized.current = true;
-            console.log('MasterDataInitializer: Triggering data fetch...');
+        console.log('MasterDataInitializer: Triggering data fetch...');
+        
+        // Decide which data fetch functions to call based on SUPPORTED_SPORTS
+        const fetchPromises = [];
+        const identityFetchPromises = [];
 
-            // Call the main fetch function
-            useMasterDataset.getState()._ensureRawDataFetched()
-                .then(fetchedData => {
-                    // Check if the fetch was successful and returned data
-                    if (fetchedData) {
-                        console.log('MasterDataInitializer: Initial fetch successful. Triggering processing...');
-                        // Now trigger the processing functions for each sport.
-                        // Assumes these functions have been modified to use
-                        // existing rawFetchedData if available, instead of fetching again.
-                        const state = useMasterDataset.getState();
-                        return Promise.all([
-                            state.fetchNflData(),
-                            state.fetchNbaData(),
-                            state.fetchMlbData()
-                        ]);
-                    } else {
-                        console.warn('MasterDataInitializer: Fetch completed but returned no data. Skipping processing.');
-                        return null; // Indicate no processing happened
-                    }
-                })
-                .then((results) => {
-                    if (results) { // Only log if processing was attempted
-                        console.log('MasterDataInitializer: Data processing complete.');
+        SUPPORTED_SPORTS.forEach(sport => {
+            // --- NEW: Trigger identity fetch for each supported sport --- 
+            identityFetchPromises.push(fetchPlayerIdentities(sport));
+            // --- END NEW ---
 
-                        // Log the entire master dataset
-                        const fullDataset = useMasterDataset.getState();
-                        // console.log('MASTER DATASET:', fullDataset);
+            // Keep existing logic for fetching detailed stats data
+            if (sport === 'nfl') {
+                fetchPromises.push(fetchNflData());
+            } else if (sport === 'mlb') {
+                fetchPromises.push(fetchMlbData());
+            } else if (sport === 'nba') {
+                fetchPromises.push(fetchNbaData());
+            }
+        });
 
-                        // Optionally log each sport's data separately for better console readability
-                        console.log('NFL Data:', fullDataset.nfl);
-                        // console.log('NBA Data:', fullDataset.nba);
-                        // console.log('MLB Data:', fullDataset.mlb);
-                    }
-                })
-                .catch(error => {
-                    // Log the error if the initial fetch or subsequent processing fails
-                    console.error('MasterDataInitializer: Fetch or processing failed.', error);
-                });
-        }
-    }, []); // Empty dependency array ensures this runs only once on mount
+        Promise.all([...identityFetchPromises, ...fetchPromises])
+            .then(() => {
+                console.log('MasterDataInitializer: Initial fetch successful. Triggering processing...');
+                // Note: Processing of stats (fetchNflData etc.) happens internally in those functions now.
+                // The identity fetch just populates its state slice.
+                 console.log('MasterDataInitializer: Data processing complete.'); // Log completion
+            })
+            .catch((error) => {
+                console.error('MasterDataInitializer: Error during data fetch:', error);
+            });
 
-    // This component doesn't render anything itself
-    return null;
+    }, [fetchNflData, fetchMlbData, fetchNbaData, fetchPlayerIdentities]); // Add fetchPlayerIdentities dependency
+
+    // Optionally, render a loading indicator while data is fetching
+    // if (isLoading || isIdentityLoading) {
+    //     return <div>Loading master data...</div>;
+    // }
+
+    // Example: Log NFL data once fetched and processed
+    // useEffect(() => {
+    //     if (!isLoading && !isIdentityLoading && useMasterDataset.getState().nfl.players.length > 0) {
+    //         console.log('NFL Data:', useMasterDataset.getState().nfl);
+    //         console.log('NFL Identities:', useMasterDataset.getState().nfl.playerIdentities);
+    //     }
+    // }, [isLoading, isIdentityLoading]);
+
+    return null; // This component doesn't render anything itself
 }
+
+export default MasterDatasetInitializer;

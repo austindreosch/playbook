@@ -55,11 +55,9 @@ export default async function handler(req, res) {
             // Add NFL specific filters if applicable
             ...(sport.toLowerCase() === 'nfl' && {
                 ...(flexSetting && { flexSetting: flexSetting.toLowerCase() }),
-                ...(pprSetting && { pprSetting: pprSetting }),
+                ...(pprSetting && { pprSetting: pprSetting.toLowerCase() }),
             }),
-            // We might need additional filters depending on how sources are uniquely identified
-            // e.g., sourceType: 'api' or sourceType: 'csv', or a specific source name?
-            // For now, assume sport/format/scoring/nfl-settings are enough to find the latest.
+            isLatest: true // <<< ADDED: Only look for the latest active rankings
         };
 
         console.log("Querying for source ranking with:", query);

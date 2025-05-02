@@ -57,18 +57,22 @@ const useMasterDataset = create((set, get) => ({
         players: [],
         lastUpdated: null,
         statsReferences: {},
+        playerIdentities: [],
     },
     mlb: {
         players: [],
         lastUpdated: null,
         statsReferences: {},
+        playerIdentities: [],
     },
     nfl: {
         players: [],
         lastUpdated: null,
         statsReferences: {},
+        playerIdentities: [],
     },
     isLoading: false,  // Just one simple loading state
+    isIdentityLoading: false, // NEW: Specific loading state for identities
     error: null,       // Just one simple error state
     stateSize: '0 KB',
 
@@ -112,6 +116,44 @@ const useMasterDataset = create((set, get) => ({
         }
     },
 
+    // --- NEW: Fetch Player Identities ---
+    fetchPlayerIdentities: async (sport) => {
+        const lowerCaseSport = sport.toLowerCase();
+        if (!lowerCaseSport || !get()[lowerCaseSport]) { // Check if sport exists in state
+            console.error(`fetchPlayerIdentities: Invalid or unsupported sport provided: ${sport}`);
+            return;
+        }
+
+        console.log(`fetchPlayerIdentities: Fetching identities for ${lowerCaseSport}...`);
+        set({ isIdentityLoading: true, error: null }); // Use specific loading state
+
+        try {
+            const response = await fetch(`/api/players/list?sport=${lowerCaseSport}`);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `API request failed with status ${response.status}`);
+            }
+            const identities = await response.json();
+            console.log(`fetchPlayerIdentities: Received ${identities.length} identities for ${lowerCaseSport}.`);
+
+            set(state => ({
+                [lowerCaseSport]: {
+                    ...state[lowerCaseSport],
+                    playerIdentities: identities,
+                },
+                isIdentityLoading: false,
+                error: null
+            }));
+
+        } catch (error) {
+            console.error(`Error fetching player identities for ${lowerCaseSport}:`, error);
+            set({ 
+                error: `Error fetching identities for ${lowerCaseSport}: ${error.message}`, 
+                isIdentityLoading: false 
+            });
+        }
+    },
+    // --- END NEW Fetch Player Identities ---
 
     // =====================================================================
     //                     🏀 FETCH NBA DATA 🏀
@@ -1054,14 +1096,15 @@ const useMasterDataset = create((set, get) => ({
 
 
     // Selectors
-    getPlayers: (sport) => get()[sport].players,
-    getPlayerById: (sport, id) => get()[sport].players.find(p => p.info.playerId === id),
-    getPlayersByTeam: (sport, teamId) => get()[sport].players.filter(p => p.info.teamId === teamId),
-    getPlayerProjections: (sport) => get()[sport].players.map(p => p.projections).filter(Boolean),
-    getPlayerProjectionsById: (sport, id) => get()[sport].players.find(p => p.info.playerId === id)?.projections,
-    getStandings: (sport) => get()[sport].standings,
-    getInjuries: (sport) => get()[sport].injuries,
-    getTeams: (sport) => get()[sport].teams,
+    getPlayerIdentities: (sport) => get()[sport.toLowerCase()]?.playerIdentities || [],
+    getPlayers: (sport) => get()[sport.toLowerCase()]?.players || [],
+    getPlayerById: (sport, id) => get()[sport.toLowerCase()]?.players.find(p => p.info.playerId === id),
+    getPlayersByTeam: (sport, teamId) => get()[sport.toLowerCase()]?.players.filter(p => p.info.teamId === teamId),
+    getPlayerProjections: (sport) => get()[sport.toLowerCase()]?.players.map(p => p.projections).filter(Boolean),
+    getPlayerProjectionsById: (sport, id) => get()[sport.toLowerCase()]?.players.find(p => p.info.playerId === id)?.projections,
+    getStandings: (sport) => get()[sport.toLowerCase()]?.standings,
+    getInjuries: (sport) => get()[sport.toLowerCase()]?.injuries,
+    getTeams: (sport) => get()[sport.toLowerCase()]?.teams,
 
 
 
