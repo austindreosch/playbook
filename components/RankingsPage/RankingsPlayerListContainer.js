@@ -111,7 +111,7 @@ const getNestedValue = (obj, path, defaultValue = null) => {
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
     sortConfig,
-    chosenCategoryPaths,
+    enabledCategoryAbbrevs,
     statPathMapping,
     collapseAllTrigger
 }, ref) => {
@@ -601,7 +601,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     key={player.rankingId}
                     player={player}
                     sport={sport}
-                    categories={chosenCategoryPaths}
+                    categories={enabledCategoryAbbrevs}
                     zScoreSumValue={player.zScoreSum}
                     rank={player.userRank}
                     standardEcrRank={player.standardEcrRank}
@@ -615,7 +615,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]);
+    }, [paginatedPlayers, sport, enabledCategoryAbbrevs, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]);
 
     return (
         <div>
@@ -667,7 +667,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                             <RankingsPlayerRow
                                 player={activePlayer}
                                 sport={sport}
-                                categories={chosenCategoryPaths}
+                                categories={enabledCategoryAbbrevs}
                                 rank={displayRank}
                                 isExpanded={false}
                                 isPlaceholder={activePlayer.isPlaceholder}

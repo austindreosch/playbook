@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         source,     // Optional
         pprSetting, // Optional
         flexSetting, // Optional
-        fetchConsensus // NEW flag
+        // fetchConsensus // Flag removed as source is ignored
     } = req.query;
 
     // Basic validation (only for required fields)
@@ -44,17 +44,7 @@ export default async function handler(req, res) {
             isLatest: true
         };
 
-        // --- MODIFIED LOGIC FOR SOURCE ---
-        if (fetchConsensus === 'true') {
-            // If fetchConsensus flag is set, FORCE the source to FantasyCalc
-            query.source = "FantasyCalc"; 
-            console.log('API [/api/rankings/latest] fetchConsensus=true, forcing source=FantasyCalc');
-        } else if (source) {
-            // Otherwise, if a source was provided normally, use it
-            query.source = source;
-        }
-        // If neither fetchConsensus nor source is provided, the query won't filter by source
-        // --- END MODIFIED LOGIC ---
+        // Source field is intentionally ignored for fetching the latest ranking
 
         // Add scoring if present
         if (scoring) {
