@@ -403,6 +403,15 @@ export default function RankingsPage() {
     return activeRanking.players.filter(p => !p.draftModeAvailable).length;
   }, [activeRanking?.players]);
 
+  // --- Add Logging to Check NBA Paths --- 
+  useEffect(() => {
+    if (selectedSport === 'NBA') {
+        console.log('[NBA Mapping Check] statPathMapping:', statPathMapping);
+        console.log('[NBA Mapping Check] chosenCategoryPaths:', chosenCategoryPaths);
+    }
+  }, [selectedSport, statPathMapping, chosenCategoryPaths]);
+  // --- End Logging --- 
+
   // --- Loading Skeleton UI --- 
   if (isLoading || masterDatasetLoading || rankingsLoading) {
     // Return the existing Skeleton UI
