@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { buildApiUrl } from '../lib/utils'; // Assuming you have a helper for this
 
 const useUserRankings = create(
     persist(
@@ -32,19 +33,31 @@ const useUserRankings = create(
                 showDraftedPlayers: false,
                 // --- END DRAFT MODE STATE ---
 
+                // --- ECR State --- ADDED
+                standardEcrRankings: [], // Holds rankings array for standard format
+                redraftEcrRankings: [],  // Holds rankings array for redraft format
+                isEcrLoading: false,
+                ecrError: null,
+                // --- END ECR State ---
+
                 // Fetch all user's rankings from the database
                 fetchUserRankings: async () => {
+                    // console.log('[fetchUserRankings] ACTION CALLED');
                     // console.log('[fetchUserRankings] Starting fetch...');
                     setState({ isLoading: true });
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
-                        // console.log('[fetchUserRankings] API Response Data:', data);
+                        // console.log('[fetchUserRankings] RAW API Response Data:', data);
 
                         // Find the most recent ranking first
                         const mostRecent = data.length > 0
                             ? [...data].sort((a, b) => new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated))[0]
                             : null;
+
+                        // --- DEBUG: Log the found mostRecent object --- ADDED
+                        // console.log('[fetchUserRankings] Most Recent Ranking Found:', mostRecent);
+                        // --- END DEBUG ---
 
                         // Set both rankings and active ranking in one update to avoid multiple rerenders
                         setState({
@@ -74,6 +87,19 @@ const useUserRankings = create(
                             isDraftModeActive: false,
                             showDraftedPlayers: false
                         });
+
+                        // --- NEW: Trigger ECR fetch when active ranking changes ---
+                        if (rankingData) {
+                            const criteria = {
+                                sport: rankingData.sport,
+                                format: rankingData.format,
+                                scoring: rankingData.scoring,
+                                pprSetting: rankingData.pprSetting, // Access directly from root
+                                flexSetting: rankingData.flexSetting // Access directly from root
+                            };
+                            get().fetchConsensusRankings(criteria);
+                        }
+                        // --- END NEW --- 
                     } catch (error) {
                         setState({
                             error: error.message,
@@ -132,7 +158,7 @@ const useUserRankings = create(
 
                     // Optional: Log if the player wasn't found for debugging
                     if (!playerFound) {
-                        console.warn(`[setPlayerAvailability v3] Player not found for update with ID: ${rankingIdToUpdate}`);
+                        // console.warn(`[setPlayerAvailability v3] Player not found for update with ID: ${rankingIdToUpdate}`);
                         return; // Don't update state if player wasn't found
                     }
 
@@ -168,7 +194,7 @@ const useUserRankings = create(
                              return isMatch;
                         });
                         const playerName = player?.name || player?.originalName || `Player ID ${rankingIdToUpdate}`;
-                        console.log(`${playerName} drafted! Current Store State:`, get());
+                        // console.log(`${playerName} drafted! Current Store State:`, get());
                     }
 
                     // --- Trigger immediate save ---
@@ -354,6 +380,19 @@ const useUserRankings = create(
                     const { activeRanking, rankings } = get();
                     if (!activeRanking || !activeRanking.rankings) return;
 
+                    // --- Add Detailed Logging --- 
+                    console.log('[updateAllPlayerRanks] Received newPlayerOrder:', newPlayerOrder);
+                    console.log('[updateAllPlayerRanks] Current activeRanking.rankings (IDs/Names):', 
+                        activeRanking.rankings.map(p => ({ 
+                            idForLookup: p.mySportsFeedsId ? String(p.mySportsFeedsId) : `pick-normalized-${(p.originalName || p.name || 'unknown').toLowerCase().trim()}`, 
+                            msfId: p.mySportsFeedsId,
+                            name: p.name,
+                            originalName: p.originalName,
+                            userRank: p.userRank
+                        }))
+                    );
+                    // --- End Detailed Logging ---
+
                     // --- REVISED MAPPING LOGIC (v3) ---
                     const updatedPlayers = newPlayerOrder.map((rankingId, index) => {
                         
@@ -365,7 +404,7 @@ const useUserRankings = create(
                             const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
                             const incomingParts = incomingIdStr.split('-');
                             if (incomingParts.length < 3) {
-                                console.warn(`[updateAllPlayerRanks] Malformed pick ID: ${incomingIdStr}`);
+                                // console.warn(`[updateAllPlayerRanks] Malformed pick ID: ${incomingIdStr}`);
                                 player = null; // Cannot parse name, treat as not found
                             } else {
                                 const incomingNameRaw = incomingParts.slice(2).join('-');
@@ -380,12 +419,24 @@ const useUserRankings = create(
                         
                                 // Add logging if name match fails
                                 if (!player) {
-                                    console.warn(`[updateAllPlayerRanks] Failed to find player by name '${normalizedIncomingName}' for pick ID: ${incomingIdStr}`);
+                                    // console.warn(`[updateAllPlayerRanks] Failed to find player by name '${normalizedIncomingName}' for pick ID: ${incomingIdStr}`);
                                 }
                             }
                         } else {
-                            // --- Match Regular Player by mySportsFeedsId ---
-                            player = activeRanking.rankings.find(p => String(p.mySportsFeedsId) === incomingIdStr); // Ensure string comparison
+                            // --- Match Regular Player by PlaybookId (primary) or MySportsFeedsId (fallback) ---
+                            player = activeRanking.rankings.find(p => {
+                                // Prioritize PlaybookId match
+                                if (p.playbookId && String(p.playbookId) === incomingIdStr) {
+                                    return true;
+                                }
+                                // Fallback to MySportsFeedsId match ONLY if PlaybookId didn't match
+                                if (p.mySportsFeedsId && String(p.mySportsFeedsId) === incomingIdStr) {
+                                    // Optional: Log if we are falling back to MSF ID
+                                    // console.log(`[updateAllPlayerRanks] Player found using fallback MySportsFeedsId for input: ${incomingIdStr}`);
+                                    return true;
+                                }
+                                return false;
+                            }); 
                         }
 
                         if (!player) {
@@ -401,7 +452,7 @@ const useUserRankings = create(
                     // --- START FOCUSED FAILURE LOGGING ---
                     const failedLookups = newPlayerOrder.filter((_, index) => !updatedPlayers[index]);
                     if (failedLookups.length > 0) {
-                        console.warn(`[updateAllPlayerRanks] Failed to find players for ${failedLookups.length} rankingId(s):`, failedLookups);
+                        // console.warn(`[updateAllPlayerRanks] Failed to find players for ${failedLookups.length} rankingId(s):`, failedLookups);
                         // You could add more logic here later to fetch details about the expected players if needed
                     }
                     // --- END FOCUSED FAILURE LOGGING ---
@@ -473,22 +524,125 @@ const useUserRankings = create(
                         setState({ error: error.message, isLoading: false });
                         // Optionally re-throw or handle the error further if needed by the calling component
                     }
+                },
+
+                // --- NEW: Fetch Consensus Rankings Action --- ADDED
+                fetchConsensusRankings: async (criteria) => {
+                    if (!criteria || !criteria.sport || !criteria.format || !criteria.scoring) {
+                        // console.error('[fetchConsensusRankings] Missing required criteria.'); // Keep this one? Maybe not needed if UI prevents it. Commenting out.
+                        setState({ ecrError: 'Missing required criteria for ECR fetch', isEcrLoading: false });
+                        return;
+                    }
+
+                    // console.log('[fetchConsensusRankings] Fetching ECR for:', criteria);
+                    setState({ isEcrLoading: true, ecrError: null });
+
+                    const { sport, format, scoring, pprSetting, flexSetting } = criteria;
+
+                    // Base params for API calls - REMOVED source
+                    const baseParams = {
+                        sport,
+                        scoring,
+                        fetchConsensus: true // ADDED generic flag
+                    };
+
+                    // Add NFL settings if applicable
+                    if (sport.toLowerCase() === 'nfl') {
+                        if (pprSetting) baseParams.pprSetting = pprSetting;
+                        if (flexSetting) baseParams.flexSetting = flexSetting;
+                    }
+
+                    // --- Fetch 1: Standard Format (using criteria.format) ---
+                    const standardParams = { ...baseParams, format }; 
+                    const standardUrl = buildApiUrl('/api/rankings/latest', standardParams);
+
+                    // --- Fetch 2: Redraft Format (hardcoded format='redraft') ---
+                    const redraftParams = { ...baseParams, format: 'redraft' };
+                    const redraftUrl = buildApiUrl('/api/rankings/latest', redraftParams);
+
+                    try {
+                        // console.log(`[fetchConsensusRankings] Fetching Standard URL: ${standardUrl}`);
+                        // console.log(`[fetchConsensusRankings] Fetching Redraft URL: ${redraftUrl}`);
+
+                        const [standardResponse, redraftResponse] = await Promise.all([
+                            fetch(standardUrl),
+                            fetch(redraftUrl)
+                        ]);
+
+                        let standardRankingsData = { rankings: [] }; // Default to empty array object
+                        if (standardResponse.ok) {
+                            standardRankingsData = await standardResponse.json();
+                            // console.log(`[fetchConsensusRankings] Standard fetch OK. Found ${standardRankingsData?.rankings?.length || 0} rankings.`);
+                        } else {
+                            // console.warn(`[fetchConsensusRankings] Standard fetch failed: ${standardResponse.status}`);
+                             // Keep default empty array
+                        }
+
+                        let redraftRankingsData = { rankings: [] }; // Default
+                        if (redraftResponse.ok) {
+                            redraftRankingsData = await redraftResponse.json();
+                            // console.log(`[fetchConsensusRankings] Redraft fetch OK. Found ${redraftRankingsData?.rankings?.length || 0} rankings.`);
+                        } else {
+                            // console.warn(`[fetchConsensusRankings] Redraft fetch failed: ${redraftResponse.status}`);
+                            // Keep default empty array
+                        }
+
+                        setState({
+                            // Extract rankings array, default to empty if fetch failed or no rankings
+                            standardEcrRankings: standardRankingsData?.rankings || [], 
+                            redraftEcrRankings: redraftRankingsData?.rankings || [],
+                            isEcrLoading: false,
+                            ecrError: null
+                        });
+                        // console.log('[fetchConsensusRankings] ECR State Updated:', {
+                        //      standardCount: (standardRankingsData?.rankings || []).length,
+                        //      redraftCount: (redraftRankingsData?.rankings || []).length
+                        // });
+
+                    } catch (error) {
+                        // console.error('[fetchConsensusRankings] Error fetching ECR data:', error); // Keep this one? Maybe. Commenting for now.
+                        setState({
+                            ecrError: error.message,
+                            isEcrLoading: false,
+                            standardEcrRankings: [], // Reset on error
+                            redraftEcrRankings: []   // Reset on error
+                        });
+                    }
+                },
+                // --- END NEW ACTION ---
+
+                updateCategoryEnabled: (categoryKey, isEnabled) => {
+                    // Implementation needed
+                },
+                updateCategoryMultiplier: (categoryKey, multiplier) => {
+                    // Implementation needed
                 }
-                // --- END: Delete Ranking Function ---
             };
         },
         {
-            name: 'user-rankings-store', // Unique name for localStorage persistence
-            // Optionally specify parts of the state to persist (e.g., not isLoading, error)
+            name: 'user-rankings-storage', // Unique name for localStorage
+            // Optionally specify which parts of the state to persist
             partialize: (state) => ({
                 rankings: state.rankings,
                 activeRanking: state.activeRanking,
-                // Persist draft mode state? Maybe not, treat as transient UI state
-                // isDraftModeActive: state.isDraftModeActive, 
-                // showDraftedPlayers: state.showDraftedPlayers 
+                // Don't persist loading/error/ECR states
             }),
         }
     )
 );
+
+// Hook to initialize store fetching on mount
+export const useInitializeUserRankings = () => {
+    const fetchUserRankings = useUserRankings((state) => state.fetchUserRankings);
+    const rankingsLoaded = useUserRankings((state) => state.rankings.length > 0);
+    const isLoading = useUserRankings((state) => state.isLoading);
+
+    useEffect(() => {
+        // Fetch only if rankings haven't been loaded yet and not currently loading
+        if (!rankingsLoaded && !isLoading) {
+            fetchUserRankings();
+        }
+    }, [fetchUserRankings, rankingsLoaded, isLoading]);
+};
 
 export default useUserRankings;

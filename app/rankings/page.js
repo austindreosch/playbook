@@ -180,11 +180,13 @@ export default function RankingsPage() {
           }
 
           // 6. Set the active ranking and sport states
+          // console.log('PAGE: Passing this object to setActiveRanking:', initialActiveData);
           setActiveRanking(initialActiveData);          // Update store
           setSelectedSport(sport);                     // Update local sport state
           setActiveRankingId(initialActiveData._id);   // Update local ID state
         } else {
           // If no initial active data could be fetched (empty list, error, etc.)
+          // console.log('PAGE: No initialActiveData, setting activeRanking to null');
           setActiveRanking(null); // Ensure store is cleared
           setActiveRankingId(null);
         }
@@ -463,7 +465,7 @@ export default function RankingsPage() {
           {/* Skeleton Right Column (Side Panel) */}
           <div className="w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
             {/* <Skeleton className="h-10 w-full" />  */}
-            <div className="space-y-1">
+            <div className="space-y-2">
               {[...Array(2)].map((_, i) => ( // Simulate a few saved ranking items
                 <Skeleton key={i} className="h-20 w-full" />
               ))}

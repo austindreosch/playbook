@@ -67,6 +67,8 @@ const useMasterDataset = create((set, get) => ({
     },
     nfl: {
         players: [],
+        projectionsData: [],
+        last30DaysData: [],
         lastUpdated: null,
         statsReferences: {},
         playerIdentities: [],
@@ -539,10 +541,17 @@ const useMasterDataset = create((set, get) => ({
             const stateSize = getObjectSize(newState);
             // console.log('NBA stats state size:', stateSize, newState);
 
-            set({
-                ...newState,
+            set(state => ({
+                nba: {
+                    ...state.nba,
+                    players: playersWithProjections,
+                    lastUpdated: new Date(),
+                    statsReferences: statsReferences
+                },
+                isLoading: false,
+                error: null,
                 stateSize
-            });
+            }));
         } catch (error) {
             // console.error('Error processing NBA data:', error);
             set({ error: `Error processing NBA data: ${error.message}` /* isLoading: false */ }); // Handle processing error
@@ -782,15 +791,15 @@ const useMasterDataset = create((set, get) => ({
             // console.log('NFL stats state size:', stateSize, newState);
             // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
 
-            set({
+            set(state => ({
                 nfl: {
+                    ...state.nfl,
                     players: playersWithAdvancedStats,
-                    projections: [],
-                    injuries: [],
                     lastUpdated: new Date()
                 },
+                isLoading: false,
                 error: null
-            });
+            }));
 
         } catch (error) {
             // console.error("fetchNflData: Error during processing:", error);
@@ -1077,39 +1086,37 @@ const useMasterDataset = create((set, get) => ({
                 samplePlayer: mergedPlayers[0]
             });
             
-            set({
+            set(state => ({
                 mlb: {
+                    ...state.mlb,
                     players: mergedPlayers,
                     lastUpdated: new Date()
                 },
-                error: null
-            });
+                isLoading: false,
+                error: null,
+                stateSize
+            }));
 
         } catch (error) {
             console.error("fetchMlbData Error:", error);
-            set({ error: `Error processing MLB data: ${error.message}` });
+            set({ error: `Error processing MLB data: ${error.message}` }); // Fixed template literal
         }
     },
 
-
-
-
-
-    // Selectors
+    // Selectors (Re-added here)
     getPlayerIdentities: (sport) => get()[sport.toLowerCase()]?.playerIdentities || [],
-    getPlayers: (sport) => get()[sport.toLowerCase()]?.players || [],
-    getPlayerById: (sport, id) => get()[sport.toLowerCase()]?.players.find(p => p.info.playerId === id),
+    getSeasonalStats: (sport) => get()[sport.toLowerCase()]?.players || [],
+    getPlayerById: (sport, id) => {
+        const identity = get()[sport.toLowerCase()]?.playerIdentities.find(p => p.playbookId === id);
+        // Consider adding fallback to stats if needed
+        return identity;
+    },
     getPlayersByTeam: (sport, teamId) => get()[sport.toLowerCase()]?.players.filter(p => p.info.teamId === teamId),
     getPlayerProjections: (sport) => get()[sport.toLowerCase()]?.players.map(p => p.projections).filter(Boolean),
     getPlayerProjectionsById: (sport, id) => get()[sport.toLowerCase()]?.players.find(p => p.info.playerId === id)?.projections,
-    getStandings: (sport) => get()[sport.toLowerCase()]?.standings,
-    getInjuries: (sport) => get()[sport.toLowerCase()]?.injuries,
-    getTeams: (sport) => get()[sport.toLowerCase()]?.teams,
-
-
-
-
-
+    // getStandings: (sport) => get()[sport.toLowerCase()]?.standings, // Assuming these don't exist yet
+    // getInjuries: (sport) => get()[sport.toLowerCase()]?.injuries,
+    // getTeams: (sport) => get()[sport.toLowerCase()]?.teams,
 
 }));
 

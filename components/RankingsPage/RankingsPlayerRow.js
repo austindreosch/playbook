@@ -232,6 +232,8 @@ const RankingsPlayerRow = memo(({
     categories,
     zScoreSumValue,
     rank,
+    standardEcrRank,
+    redraftEcrRank,
     isExpanded,
     onExpand,
     isRankSorted,
@@ -486,13 +488,13 @@ const RankingsPlayerRow = memo(({
                         <div className=" w-[9%] items-center justify-center ml-auto flex flex-col gap-4 ">
                             <div className='flex flex-col items-center'>
                                 <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
-                                    <span className="font-bold text-lg">15</span>
+                                    <span className="font-bold text-lg">{standardEcrRank ?? '--'}</span>
                                 </div>
-                                <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>STANDARD</span>
+                                <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>DEFAULT</span>
                             </div>
                             <div className='flex flex-col items-center'>
                                 <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
-                                    <span className="font-bold text-lg">13</span>
+                                    <span className="font-bold text-lg">{redraftEcrRank ?? '--'}</span>
                                 </div>
                                 <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>REDRAFT</span>
                             </div>

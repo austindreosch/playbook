@@ -2,6 +2,7 @@
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
 import { calculatePlayerZScoreSums } from '@/lib/calculations/zScoreUtil';
+import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -14,10 +15,10 @@ const PLAYERS_PER_PAGE = 500;
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
-// --- Manual Mapping for NFL Stats --- 
+// --- Manual Mapping for NFL Stats ---
 // TODO: Fill this map with the correct paths for your NFL player.stats structure
 const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
-    // --- Advanced / Other (Examples - User needs to confirm/add these) --- 
+    // --- Advanced / Other (Examples - User needs to confirm/add these) ---
     'PPG': 'advanced.fantasyPointsPerGame',
     'PPS': 'advanced.fantasyPointsPerSnap',
     'OPG': 'advanced.opportunitiesPerGame',
@@ -43,7 +44,7 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
     // 'YPR': 'advanced.yardsPerReception',
     // 'YPT': 'advanced.yardsPerTarget',
 
-    // --- Passing --- 
+    // --- Passing ---
     // 'PassYds': 'passing.passYards', // Example
     // 'PassTD': 'passing.passTD',    // Example
     // 'PassInt': 'passing.passInt',  // Example
@@ -52,13 +53,13 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
     // 'Pass20Plus': 'passing.pass20Plus', // Example - Add if needed
     // 'PassCompPct': 'passing.passCompPct', // Example - Add if needed
 
-    // // --- Rushing --- 
+    // // --- Rushing ---
     // 'RushYds': 'rushing.rushYards', // Example
     // 'RushTD': 'rushing.rushTD',    // Example
     // 'RushAtt': 'rushing.rushAtt',  // Example - Add if needed
     // 'Rush20Plus': 'rushing.rush20Plus',  // Example - Add if needed
 
-    // // --- Receiving --- 
+    // // --- Receiving ---
     // 'RecYds': 'receiving.recYards',  // Example
     // 'RecTD': 'receiving.recTD',     // Example
     // 'Receptions': 'receiving.receptions', // Example - Add if needed
@@ -109,15 +110,12 @@ const getNestedValue = (obj, path, defaultValue = null) => {
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
-    activeRanking,
-    dataset,
     sortConfig,
     chosenCategoryPaths,
     statPathMapping,
     collapseAllTrigger
 }, ref) => {
     // Initialize state with players
-    const [players, setPlayers] = useState([]);
     const [activeId, setActiveId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [rankedPlayers, setRankedPlayers] = useState([]);
@@ -126,12 +124,22 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const listRef = useRef(null);
 
     const {
+        activeRanking,
+        standardEcrRankings,
+        redraftEcrRankings,
+        isEcrLoading,
         updateAllPlayerRanks,
         saveChanges,
         isDraftModeActive,
         setPlayerAvailability,
         showDraftedPlayers
     } = useUserRankings();
+
+    // --- Get data from Master Dataset Store ---
+    const { getPlayerIdentities, getSeasonalStats } = useMasterDataset();
+    const playerIdentities = getPlayerIdentities(sport);
+    const seasonalStatsData = getSeasonalStats(sport);
+    // --- END ADDED BLOCK ---
 
     // Set up window size measurement
     useEffect(() => {
@@ -178,118 +186,195 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
     }, [collapseAllTrigger]); // Depend on the trigger prop
 
-    // Create a function that:
-    // Takes an 'activeRanking' object as input
-    // Extracts the list of players along with their rankings
-    // Matches each player with their corresponding data in the player dataset
-    // Returns a combined object that includes both ranking information and player statistics
-    // The returned data will be used to populate a player row component in my UI.
+    // --- NEW: Create Player Identity Map (Key: PlaybookID String) ---
+    const playerIdentityMap = useMemo(() => {
+        const map = new Map();
+        playerIdentities.forEach(identity => {
+            if (identity?.playbookId) {
+                map.set(String(identity.playbookId), identity);
+            }
+        });
+        return map;
+    }, [playerIdentities]); // Dependency: playerIdentities
+    // --- END ADDED BLOCK ---
 
-    const processRankingData = useCallback((activeRanking) => {
-        if (!activeRanking || !dataset?.[sport.toLowerCase()]?.players) {
+    // --- NEW: Create Seasonal Stats Map (Key: MySportsFeedsID String) ---
+    const seasonalStatsMap = useMemo(() => {
+        const map = new Map();
+        seasonalStatsData.forEach(playerWithStats => {
+            const msfId = playerWithStats.info?.playerId;
+            if (msfId != null) {
+                map.set(String(msfId), playerWithStats);
+            }
+        });
+        return map;
+    }, [seasonalStatsData]); // Dependency: seasonalStatsData
+    // --- END ADDED BLOCK ---
+
+    // --- NEW: ECR Rank Maps --- ADDED BLOCK
+    const standardEcrMap = useMemo(() => {
+        const map = new Map();
+        (standardEcrRankings || []).forEach(player => {
+            if (player?.playbookId) {
+                // Store the rank associated with the playbookId
+                map.set(String(player.playbookId), player.rank);
+            }
+        });
+        return map;
+    }, [standardEcrRankings]);
+
+    const redraftEcrMap = useMemo(() => {
+        const map = new Map();
+        (redraftEcrRankings || []).forEach(player => {
+            if (player?.playbookId) {
+                map.set(String(player.playbookId), player.rank);
+            }
+        });
+        return map;
+    }, [redraftEcrRankings]);
+    // --- END NEW BLOCK ---
+
+    // --- REFACTORED processRankingData ---
+    const processRankingData = useCallback((currentActiveRanking) => {
+        // Check if ranking data is available
+        if (!currentActiveRanking?.rankings) {
+            // console.log('[processRankingData] No currentActiveRanking.rankings found.'); // Keep if needed for critical error
             return [];
         }
 
-        // Get the player rankings from activeRanking
-        const rankingPlayers = activeRanking.rankings || [];
+        // Check if identity map is ready (avoid processing with incomplete data)
+        if (playerIdentityMap.size === 0 && playerIdentities.length > 0) {
+             // console.log('[processRankingData] Waiting for playerIdentityMap to build...'); // Keep if needed for critical error
+             return []; // Still waiting for identities map to build
+        }
 
-        // Create a map of player IDs to their dataset info for efficient lookup
-        const playerDataMap = new Map();
-        dataset[sport.toLowerCase()].players.forEach(player => {
-            // Use a consistent ID source if possible, fallback included
-            const id = player.info?.playerId || player.id; // ID used as key in map
-            if (id) {
-                playerDataMap.set(String(id), player); // Ensure key is a string
-            }
-        });
+        const rankingEntries = currentActiveRanking.rankings || [];
 
-        // --- ADD Log: Show map keys ---
-        const mapKeysSample = Array.from(playerDataMap.keys()).slice(0, 5);
-        // console.log(`[processRankingData] Sample keys from playerDataMap (${sport}):`, mapKeysSample);
+        let loggedFirstPlayer = false; // Keep for potential future single-log debug
 
-        // Combine ranking data with player data, handling null playerIds
-        const combinedPlayers = rankingPlayers.map((rankingPlayer) => {
-            let playerData = null;
+        const combinedPlayers = rankingEntries.map((rankingEntry) => {
+            let basePlayerIdentity = null;
+            let playerStatsData = null; // Holds stats (seasonal for now)
+            let finalRankingId = null; // DND/Key ID
             let isPlaceholder = false;
-            let rankingId = rankingPlayer.mySportsFeedsId; // Default to mySportsFeedsId
-            let lookupId = rankingPlayer.mySportsFeedsId;
 
-            // --- ADD Log: Check ID and Map --- 
-            const lookupIdStr = lookupId != null ? String(lookupId) : null;
-            const mapHasKey = lookupIdStr ? playerDataMap.has(lookupIdStr) : false;
-            // console.log(`[processRankingData] Trying lookup: mySportsFeedsId='${lookupIdStr}', Map has key? ${mapHasKey}`);
+            const rankingPlaybookId = rankingEntry.playbookId ? String(rankingEntry.playbookId) : null;
+            const rankingMsfId = rankingEntry.mySportsFeedsId ? String(rankingEntry.mySportsFeedsId) : null; // Keep for potential placeholder use
 
-            if (lookupIdStr != null) {
-                // Try to find player by ID using mySportsFeedsId from the ranking
-                playerData = playerDataMap.get(lookupIdStr); // Lookup using mySportsFeedsId (as string)
-                // if (mapHasKey && playerData) {
-                //     console.log('  -> Found playerData. Stats keys:', Object.keys(playerData.stats || {}).join(', '));
-                // } else if (mapHasKey && !playerData) {
-                //     console.warn('  -> Key exists in map, but playerData is null/undefined?'); 
+            // --- 1. Primary Lookup: Find Base Identity using PlaybookId ---
+            if (rankingPlaybookId) {
+                basePlayerIdentity = playerIdentityMap.get(rankingPlaybookId);
+            }
+
+            // --- 2. Secondary Lookup: Find Stats using ID from base identity ---
+            const msfIdForStatsLookup = basePlayerIdentity?.mySportsFeedsId;
+            if (msfIdForStatsLookup != null) {
+                // Currently hardcoded to use seasonal stats
+                playerStatsData = seasonalStatsMap.get(String(msfIdForStatsLookup));
+                // PLACEHOLDER: Add logic here later to choose between seasonalStatsMap, projectionsMap, etc.
+            }
+
+            // --- NEW: Lookup ECR Ranks ---
+            let standardEcrRank = null;
+            let redraftEcrRank = null;
+            if (rankingPlaybookId) {
+                standardEcrRank = standardEcrMap.get(rankingPlaybookId) ?? null;
+                redraftEcrRank = redraftEcrMap.get(rankingPlaybookId) ?? null;
+
+                // --- DEBUG: Log first player ECR lookup --- ADDED (Removed log)
+                // if (!loggedFirstPlayer) {
+                //     loggedFirstPlayer = true;
                 // }
-            } 
-            
-            if (!playerData) { // If lookup failed or ID was null
+                // --- END DEBUG ---
+            }
+            // --- END NEW ---
+
+            // --- 3. Combine Data ---
+            if (basePlayerIdentity) {
+                // Identity found, use PlaybookId as the stable DND/Key ID
+                finalRankingId = rankingPlaybookId;
+
+                // --- DEBUG LOG for specific player --- (Removed log)
+                 // if (basePlayerIdentity.primaryName === 'Lamar Jackson') {
+                 // }
+                 // --- END DEBUG LOG ---
+
+                return {
+                    // Base identity info (primary source)
+                    playbookId: basePlayerIdentity.playbookId,
+                    mySportsFeedsId: basePlayerIdentity.mySportsFeedsId,
+                    name: basePlayerIdentity.primaryName || 'Unknown Player', // Fallback to identity name
+                    position: basePlayerIdentity.position || 'N/A',
+                    teamId: basePlayerIdentity.teamId,
+                    teamName: basePlayerIdentity.teamName,
+                    // Include other identity fields if needed (e.g., age, image)
+                    // info: basePlayerIdentity, // Could potentially pass the whole identity object
+
+                    // Ranking info from user document
+                    originRank: rankingEntry.originRank,
+                    userRank: rankingEntry.userRank,
+                    originWeightedRank: rankingEntry.originWeightedRank,
+
+                    // Stats from stats lookup (could be null/undefined if no stats found)
+                    // Default to empty objects if stats are missing to avoid errors downstream
+                    info: playerStatsData?.info || {},
+                    stats: playerStatsData?.stats || {},
+
+                    // --- NEW: ECR Ranks --- ADDED
+                    standardEcrRank: standardEcrRank,
+                    redraftEcrRank: redraftEcrRank,
+                    // --- END NEW ---
+
+                    // Other essential fields
+                    rankingId: finalRankingId, // Use PlaybookID String for DND/Key
+                    draftModeAvailable: rankingEntry.draftModeAvailable !== undefined ? rankingEntry.draftModeAvailable : true,
+                    isPlaceholder: false, // Not a placeholder if identity was found
+                    type: 'player', // Assume 'player' type
+                };
+            } else {
+                // --- Handle case where player identity wasn't found or it's a pick ---
                 isPlaceholder = true;
-                // Create a unique DND ID
-                rankingId = `pick-${rankingPlayer.userRank}-${rankingPlayer.name || 'unknown'}`;
+                // Generate a stable placeholder ID based on rank and name
+                const namePart = (rankingEntry.name || 'unknown').replace(/\s+/g, '-');
+                finalRankingId = `pick-${rankingEntry.userRank}-${namePart}`;
+
+                return {
+                    // Fill with data from the ranking entry itself
+                    playbookId: null, // No identity found
+                    mySportsFeedsId: rankingMsfId, // Keep original MSF ID if present
+                    name: rankingEntry.name || 'Unknown Pick',
+                    position: rankingEntry.position || 'N/A',
+                    teamId: null,
+                    teamName: null,
+                    originRank: rankingEntry.originRank,
+                    userRank: rankingEntry.userRank,
+                    originWeightedRank: rankingEntry.originWeightedRank,
+                    // Empty stats/info for placeholders
+                    info: {},
+                    stats: {},
+                    // Placeholder specific fields
+                    rankingId: finalRankingId, // Use generated pick ID for DND/Key
+                    draftModeAvailable: rankingEntry.draftModeAvailable !== undefined ? rankingEntry.draftModeAvailable : true, // Preserve availability if set
+                    isPlaceholder: true,
+                    type: rankingEntry.type || 'pick', // Use original type or default to 'pick'
+                    // --- NEW: ECR Ranks (null for placeholders) --- ADDED
+                    standardEcrRank: null,
+                    redraftEcrRank: null,
+                    // --- END NEW ---
+                };
             }
-
-            // Ensure DND rankingId is a string (use mySportsFeedsId if found, else the generated pick ID)
-            rankingId = playerData ? String(lookupIdStr) : rankingId; 
-
-            const combinedPlayer = {
-                // Start with all properties from the original rankingPlayer
-                ...rankingPlayer,
-                // Explicitly set/override properties we handle specially
-                rankingId: rankingId,
-                name: rankingPlayer.name || 'Unknown Player',
-                position: rankingPlayer.position || 'N/A',
-                isPlaceholder: isPlaceholder,
-                // Merge dataset info (if found)
-                info: playerData?.info || {},
-                stats: playerData?.stats || {},
-                // Ensure draftModeAvailable defaults to true if not present
-                draftModeAvailable: rankingPlayer.draftModeAvailable !== undefined ? rankingPlayer.draftModeAvailable : true
-            };
-
-            // --- DEBUG LOG for specific player ---
-            if (combinedPlayer.name === 'Lamar Jackson') {
-                console.log('[processRankingData] Debug Lamar Jackson:', {
-                    rankingPlayerInput: rankingPlayer, // Data from user_rankings
-                    lookupIdUsed: lookupIdStr, 
-                    playerDataFound: playerData, // Data found in master dataset
-                    finalCombinedStats: combinedPlayer.stats, // Stats being sent to row
-                    finalCombinedRankingId: combinedPlayer.rankingId // ID being sent to row/drag
-                });
-            }
-            // --- END DEBUG LOG ---
-
-            return combinedPlayer;
         });
 
         return combinedPlayers;
-    }, [dataset, sport]);
+    // Update dependencies: removed 'dataset', added maps and identity list
+    }, [sport, playerIdentityMap, seasonalStatsMap, playerIdentities, standardEcrMap, redraftEcrMap]);
 
-    // Add this effect to process ranking data when activeRanking changes
+    // Update dependencies for the effect that calls processRankingData
     useEffect(() => {
-        // --- DEBUG LOG: Log the activeRanking received from store ---
-        // console.log('[useEffect activeRanking] Received activeRanking:', JSON.stringify(activeRanking, null, 2)); // Use stringify for better object inspection
-        
         const processedPlayers = processRankingData(activeRanking);
-        
-        // --- DEBUG LOG: Log the result of processing ---
-        // console.log('[useEffect activeRanking] Result of processRankingData:', processedPlayers);
-
         setRankedPlayers(processedPlayers);
-    }, [activeRanking, sport, processRankingData]); // Added processRankingData dependency
-
-    // Fetch data when component mounts or sport changes
-    useEffect(() => {
-        if (dataset?.[sport.toLowerCase()]?.players?.length) {
-            setPlayers(dataset[sport.toLowerCase()].players);
-        }
-    }, [dataset, sport]);
+    // Update dependencies: removed 'processRankingData' (it's stable via useCallback), added maps
+    }, [activeRanking, sport, playerIdentityMap, seasonalStatsMap, standardEcrMap, redraftEcrMap]);
 
     // --- NEW: Add effect to monitor sortConfig changes ---
     useEffect(() => {
@@ -436,42 +521,40 @@ const RankingsPlayerListContainer = React.forwardRef(({
         const { active, over } = event;
 
         if (over && active.id !== over.id) {
-            const oldIndex = rankedPlayers.findIndex(item => item.rankingId === active.id);
-            const newIndex = rankedPlayers.findIndex(item => item.rankingId === over.id);
+            // Ensure IDs are compared as strings, as DND kit might pass numbers/strings
+            const activeIdStr = String(active.id);
+            const overIdStr = String(over.id);
 
-            // Calculate the new order based on array move
+            const oldIndex = rankedPlayers.findIndex(item => String(item.rankingId) === activeIdStr);
+            const newIndex = rankedPlayers.findIndex(item => String(item.rankingId) === overIdStr);
+
+            if (oldIndex === -1 || newIndex === -1) {
+                 // console.error('DND Error: Could not find dragged items in rankedPlayers array.', { activeId: active.id, overId: over.id, activeIdStr, overIdStr }); // Keep if needed for critical error
+                 return;
+            }
+
             const newOrder = arrayMove(rankedPlayers, oldIndex, newIndex);
 
-            // --- NEW: Update userRank locally based on the new index --- 
-            const updatedOrderWithRanks = newOrder.map((player, index) => ({
-                ...player,
-                userRank: index + 1 // Assign new rank based on index
-            }));
-
-            // Update local state first with the correctly ranked items
-            // setRankedPlayers(updatedOrderWithRanks); // --- REMOVED: Let useEffect handle update from store ---
-
-            // --- RESTORED: Update the store state asynchronously ---
+            // Update store state asynchronously
             setTimeout(() => {
-                // Ensure we are mapping valid IDs from the rank-updated array
-                const rankingIdsInNewOrder = updatedOrderWithRanks.map(item => {
-                    if (!item || !item.rankingId) {
-                        // console.error("Item missing rankingId in newOrder:", item); // Removed console.error
+                 // Pass the DND string IDs directly from the newOrder array
+                const rankingIdsInNewOrder = newOrder.map(item => {
+                    if (!item || item.rankingId == null) { // Check for null/undefined
+                        // console.error("Item missing rankingId in newOrder:", item); // Keep if needed for critical error
                         return null;
                     }
-                    return item.rankingId;
+                    return String(item.rankingId); // Ensure it's a string
                 }).filter(id => id !== null);
 
-                if (rankingIdsInNewOrder.length !== updatedOrderWithRanks.length) {
-                    // console.error("Mismatch in ranking IDs after filtering!"); // Removed console.error
+                if (rankingIdsInNewOrder.length !== newOrder.length) {
+                    // console.error("Mismatch in ranking IDs after filtering!"); // Keep if needed for critical error
                 }
 
-                updateAllPlayerRanks(rankingIdsInNewOrder);
-                saveChanges(); // --- RE-ENABLED: Trigger save immediately after updating ranks ---
+                updateAllPlayerRanks(rankingIdsInNewOrder); // Pass array of string IDs
+                saveChanges();
             }, 0);
-            // --- END RESTORED BLOCK ---
         }
-    }, [rankedPlayers, updateAllPlayerRanks, saveChanges, sortConfig?.key]); // Use prop sortConfig.key
+    }, [rankedPlayers, updateAllPlayerRanks, saveChanges, sortConfig?.key]);
 
     // Simple function to get row height based on expanded state
     const getRowHeight = useCallback((index) => {
@@ -521,30 +604,18 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     categories={chosenCategoryPaths}
                     zScoreSumValue={player.zScoreSum}
                     rank={player.userRank}
+                    standardEcrRank={player.standardEcrRank}
+                    redraftEcrRank={player.redraftEcrRank}
                     isExpanded={!isPlaceholder && expandedRows.has(player.rankingId)}
                     onExpand={isPlaceholder ? null : () => handleRowExpand(player.rankingId)}
                     isPlaceholder={isPlaceholder}
                     isRankSorted={isRankSorted}
                     isDraftMode={isDraftModeActive}
-                    onToggleDraftStatus={setPlayerAvailability}
+                    onToggleDraftStatus={() => setPlayerAvailability(String(player.rankingId), player.draftModeAvailable)}
                 />
             </div>
         );
     }, [paginatedPlayers, sport, chosenCategoryPaths, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]);
-
-    const sportKey = sport.toLowerCase();
-
-    if (!dataset) {
-        return <div>Loading dataset...</div>;
-    }
-
-    if (!dataset[sportKey]) {
-        return <div>No data available for {sport}...</div>;
-    }
-
-    if (!dataset[sportKey].players?.length) {
-        return <div>No players found for {sport}...</div>;
-    }
 
     return (
         <div>
@@ -568,7 +639,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 disabled={sortConfig?.key !== null}
             >
                 <SortableContext
-                    items={paginatedPlayers.map(player => player.rankingId)}
+                    items={paginatedPlayers.map(player => String(player.rankingId))}
                     strategy={verticalListSortingStrategy}
                     // --- MODIFIED: Use prop sortConfig ---
                     disabled={sortConfig?.key !== null}
@@ -581,6 +652,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                         itemSize={getRowHeight}
                         estimatedItemSize={DEFAULT_ROW_HEIGHT}
                         className="hide-scrollbar"
+                        itemKey={index => paginatedPlayers[index].rankingId}
                     >
                         {rowRenderer}
                     </List>
@@ -588,23 +660,20 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
                 <DragOverlay adjustScale={false}>
                     {activeId ? (() => {
-                        const activePlayer = paginatedPlayers.find(p => p.rankingId === activeId);
+                        const activePlayer = paginatedPlayers.find(p => String(p.rankingId) === String(activeId));
                         if (!activePlayer) return null;
-                        // --- MODIFIED: Always use userRank for display during drag ---
-                        const displayRank = activePlayer.userRank; 
-                        // const isRankSorted = sortConfig?.key === null; // No longer needed for rank display
-                        // const displayRank = isRankSorted ? activePlayer.rank : paginatedPlayers.findIndex(p => p.rankingId === activeId) + 1; // Old logic removed
+                        const displayRank = activePlayer.userRank;
                         return (
                             <RankingsPlayerRow
                                 player={activePlayer}
                                 sport={sport}
                                 categories={chosenCategoryPaths}
-                                rank={displayRank} // Use the consistent userRank
-                                isExpanded={!activePlayer.isPlaceholder && expandedRows.has(activeId)}
+                                rank={displayRank}
+                                isExpanded={false}
                                 isPlaceholder={activePlayer.isPlaceholder}
-                                isRankSorted={false} // Overlay doesn't need sorting context for rank display
+                                isRankSorted={false}
                                 isDraftMode={isDraftModeActive}
-                                onToggleDraftStatus={setPlayerAvailability}
+                                onToggleDraftStatus={() => {}}
                             />
                         );
                     })() : null}

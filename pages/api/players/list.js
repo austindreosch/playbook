@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { CORE_DATA_SOURCE_KEY } from '../../../lib/config.js'; // Adjust path as needed
+import { CORE_DATA_SOURCE_KEY } from '../../../lib/config'; // Adjust path as needed
 
 const mongoUri = process.env.MONGODB_URI;
 const DB_NAME = 'playbook';
@@ -44,16 +44,15 @@ export default async function handler(req, res) {
 
         console.log(`API: Found ${players.length} player identities for ${lowerCaseSport}`);
 
-        // Map the result to a cleaner structure if needed, renaming _id to playbookId
+        // Map the result to a cleaner structure, renaming _id to playbookId
         const playerIdentities = players.map(p => ({
-            playbookId: p._id,
+            playbookId: p._id.toString(), // Ensure playbookId is a string
             mySportsFeedsId: p[CORE_DATA_SOURCE_KEY]?.id?.toString() || null, // Ensure it's a string or null
             primaryName: p.primaryName,
             position: p.position,
             teamId: p.teamId,
             teamName: p.teamName,
         }));
-
 
         res.status(200).json(playerIdentities);
 
