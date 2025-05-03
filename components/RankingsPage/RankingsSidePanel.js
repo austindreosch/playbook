@@ -22,8 +22,11 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
             // If one is active, it goes first
             if (a._id === activeRanking?._id) return -1;
             if (b._id === activeRanking?._id) return 1;
-            // Otherwise sort by date updated
-            return new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated);
+            // Otherwise sort by date updated (using lastUpdated)
+            // Ensure dates are valid before comparison
+            const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0); // Fallback to epoch start
+            const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0); // Fallback to epoch start
+            return dateB - dateA; // Sort descending (most recent first)
         });
     }, [userRankings, activeRanking?._id]);
 
@@ -82,7 +85,7 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
                                     </div>
                                     <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_textgray'}>
                                         <HistoryIcon className="w-2 h-2 inline-block mr-1" />
-                                        {formatDate(ranking.details?.dateUpdated)}
+                                        {ranking.lastUpdated ? formatDate(ranking.lastUpdated) : 'No Date'}
                                     </div>
                                 </div>
                             </div>

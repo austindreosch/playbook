@@ -50,14 +50,16 @@ const useUserRankings = create(
                         const data = await response.json();
                         // console.log('[fetchUserRankings] RAW API Response Data:', data);
 
-                        // Find the most recent ranking first
+                        // Find the most recent ranking first (API should handle sorting, but we can keep this as fallback/verification)
                         const mostRecent = data.length > 0
-                            ? [...data].sort((a, b) => new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated))[0]
+                            ? [...data].sort((a, b) => {
+                                  const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0);
+                                  const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0);
+                                  return dateB - dateA; // Descending
+                              })[0]
                             : null;
 
-                        // --- DEBUG: Log the found mostRecent object --- ADDED
                         // console.log('[fetchUserRankings] Most Recent Ranking Found:', mostRecent);
-                        // --- END DEBUG ---
 
                         // Set both rankings and active ranking in one update to avoid multiple rerenders
                         setState({
@@ -88,18 +90,18 @@ const useUserRankings = create(
                             showDraftedPlayers: false
                         });
 
-                        // --- NEW: Trigger ECR fetch when active ranking changes ---
-                        if (rankingData) {
-                            const criteria = {
-                                sport: rankingData.sport,
-                                format: rankingData.format,
-                                scoring: rankingData.scoring,
-                                pprSetting: rankingData.pprSetting, // Access directly from root
-                                flexSetting: rankingData.flexSetting // Access directly from root
-                            };
-                            get().fetchConsensusRankings(criteria);
-                        }
-                        // --- END NEW --- 
+                        // --- REMOVED: ECR fetch logic moved to selectAndTouchRanking ---
+                        // if (rankingData) {
+                        //     const criteria = {
+                        //         sport: rankingData.sport,
+                        //         format: rankingData.format, 
+                        //         scoring: rankingData.scoring,
+                        //         pprSetting: rankingData.pprSetting, // Access directly from root
+                        //         flexSetting: rankingData.flexSetting // Access directly from root
+                        //     };
+                        //     get().fetchConsensusRankings(criteria); 
+                        // }
+                        // --- END REMOVED --- 
                     } catch (error) {
                         setState({
                             error: error.message,
@@ -616,7 +618,60 @@ const useUserRankings = create(
                 },
                 updateCategoryMultiplier: (categoryKey, multiplier) => {
                     // Implementation needed
-                }
+                },
+
+                // --- NEW: Select Ranking and Update Timestamp --- 
+                selectAndTouchRanking: async (rankingId) => {
+                    if (!rankingId) return;
+                    setState({ selectionLoading: true, error: null }); // Indicate loading
+
+                    try {
+                        // 1. Find the ranking in the current state list
+                        const currentRankings = get().rankings;
+                        const rankingToSelect = currentRankings.find(r => r._id === rankingId);
+
+                        if (!rankingToSelect) {
+                            throw new Error(`Ranking with ID ${rankingId} not found in local state.`);
+                        }
+
+                        // 2. Create the updated version with the new timestamp
+                        const updatedRankingData = {
+                            ...rankingToSelect,
+                            lastUpdated: new Date() // Set timestamp to now
+                        };
+
+                        // 3. Update the store state
+                        setState({
+                            activeRanking: updatedRankingData, // Set as active
+                            rankings: currentRankings.map(r => 
+                                r._id === rankingId ? updatedRankingData : r // Update in the main list
+                            ),
+                            hasUnsavedChanges: true, // Mark for saving
+                            selectionLoading: false,
+                            // Reset draft mode when selecting
+                            isDraftModeActive: false,
+                            showDraftedPlayers: false
+                        });
+
+                        // 4. Trigger ECR fetch for the newly selected ranking
+                        //    (Moved from setActiveRanking to ensure it happens after timestamp update)
+                        const criteria = {
+                            sport: updatedRankingData.sport,
+                            format: updatedRankingData.format,
+                            scoring: updatedRankingData.scoring,
+                            pprSetting: updatedRankingData.pprSetting, // Access directly from root
+                            flexSetting: updatedRankingData.flexSetting // Access directly from root
+                        };
+                        get().fetchConsensusRankings(criteria);
+
+                        // 5. Save the changes (specifically the timestamp) immediately
+                        await get().saveChanges(); 
+
+                    } catch (error) {
+                        console.error('[selectAndTouchRanking] Error:', error);
+                        setState({ error: error.message, selectionLoading: false });
+                    }
+                },
             };
         },
         {

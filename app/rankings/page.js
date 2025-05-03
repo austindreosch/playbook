@@ -77,7 +77,8 @@ export default function RankingsPage() {
     toggleDraftMode,
     toggleShowDraftedPlayers,
     resetDraftAvailability,
-    setPlayerAvailability
+    setPlayerAvailability,
+    selectAndTouchRanking
   } = useUserRankings();
 
   const [selectedSport, setSelectedSport] = useState('NBA');
@@ -337,22 +338,11 @@ export default function RankingsPage() {
 
   const handleRankingSelect = async (rankingId) => {
     if (!rankingId) return;
-
-    try {
-      setActiveRankingId(rankingId);
-      const response = await fetch(`/api/user-rankings/${rankingId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch ranking');
-      }
-      const rankingData = await response.json();
-      // console.log('Active Ranking Data:', rankingData);
-      setActiveRanking(rankingData);
-      setSelectedSport(rankingData.sport);
-      setCollapseAllTrigger(prev => prev + 1);
-    } catch (error) {
-      console.error('Error loading ranking:', error);
-      setError(error.message);
-    }
+    // Only update local ID state and call the store action
+    setActiveRankingId(rankingId); 
+    await selectAndTouchRanking(rankingId); // Call the new store action
+    setSelectedSport(activeRanking?.sport); // Update local sport based on new activeRanking from store
+    setCollapseAllTrigger(prev => prev + 1); // Collapse rows
   };
 
   // Get the appropriate dataset based on selected sport

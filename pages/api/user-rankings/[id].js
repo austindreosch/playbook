@@ -33,7 +33,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid request body: Each entry in rankings array must contain playbookId and userRank.' });
         }
         // Add timestamp for update
-        updatedData.dateUpdated = new Date();
+        updatedData.lastUpdated = new Date();
         // --- End Validation --- 
 
         let client;
