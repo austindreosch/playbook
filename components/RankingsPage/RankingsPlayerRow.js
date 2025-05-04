@@ -213,7 +213,33 @@ const RankingsPlayerRow = memo(({
     onToggleDraftStatus
 }) => {
     const rowRef = useRef(null);
-    const [imageLoadError, setImageLoadError] = useState(false);
+
+    // --- Determine sources --- 
+    const playerName = player.info?.fullName || player.name || 'Player Name';
+    const playerPosition = player.info?.primaryPosition || player.position || 'N/A'; // <<< Use correct field
+    const playerImage = player.info?.officialImageSrc; // Just get the potential source
+    const team = player.info?.teamAbbreviation || 'FA'; // <<< Use correct field + fallback
+    const age = player.info?.age || 'N/A';
+    const injuryStatus = player.info?.injuryStatus;
+    const defaultImageSrc = '/avatar-default.png';
+
+    // Log the exact info object received by the row component (for first player)
+    useEffect(() => {
+        if (player?.rank === 1) {
+            console.log(`[RankingsPlayerRow Rank ${player.rank}] Received player.info:`, player.info);
+        }
+    }, [player]); // Log when player object changes
+
+    // --- Simplified onError handler (will modify the img element directly) ---
+    const handleImageError = (event) => {
+        // Prevent infinite loop if the default image also fails
+        if (event.target.src !== defaultImageSrc) { 
+            console.warn(`Image failed to load: ${event.target.src}. Falling back to default.`);
+            event.target.src = defaultImageSrc;
+            // Optional: add a class to indicate fallback
+            event.target.classList.add('image-fallback'); 
+        }
+    };
 
     // Calculate the sum of zScores for the selected categories, applying weight for NFL PPG
     const zScoreSum = useMemo(() => {
@@ -313,26 +339,6 @@ const RankingsPlayerRow = memo(({
         }
     };
 
-    // Use player.info.fullName if available, otherwise fallback
-    const playerName = player.info?.fullName || player.name || 'Player Name';
-    const playerPosition = player.info?.position || player.position || 'N/A';
-    const playerImage = player.info?.officialImageSrc || player.info?.img; // Prefer officialImageSrc
-    const team = player.info?.team || 'N/A';
-    const age = player.info?.age || 'N/A';
-    const injuryStatus = player.info?.injuryStatus;
-
-    // Reset image error state if player image src changes
-    useEffect(() => {
-        setImageLoadError(false);
-    }, [playerImage]);
-
-    // Handle image loading errors
-    const handleImageError = () => {
-        setImageLoadError(true);
-    };
-
-    const defaultImageSrc = '/avatar-default.png'; // Path to your default image
-
     // --- Stats Section Rendering ---
     const renderStatsSection = () => (
         <StatsSection
@@ -422,35 +428,33 @@ const RankingsPlayerRow = memo(({
                         !isRankSorted ? 'bg-blue-50' : '' // Conditional background
                     )}>{rank}</div>
 
-                    {/* Player Image - Updated Logic */}
+                    {/* Player Image - SIMPLIFIED Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
-                        {playerImage && !imageLoadError ? ( // Check for valid src AND no error
-                            <img
-                                key={playerImage} // Add key to help reset if src changes
-                                src={playerImage}
-                                alt={playerName}
-                                className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
-                                loading="lazy"
-                                width="28"
-                                height="28"
-                                onError={handleImageError} // Set error state on failure
-                            />
-                        ) : (
-                            // Render fallback if no image src OR if error occurred
-                            <img
-                                src={defaultImageSrc} // <-- Use the default avatar image
-                                alt="Default Avatar"
-                                className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
-                                width="28"
-                                height="28"
-                            />
-                        )}
+                         {/* Log the image source right before rendering - Remove rank condition */}
+                         {/* {console.log(`[RankingsPlayerRow] Player ID ${player?.id} Image src: ${playerImage}`)} */}
+                         <img
+                            // Use playerImage if available, otherwise use default immediately
+                            src={playerImage || defaultImageSrc} 
+                            // src={"https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI"} // <<< TEMPORARY HARDCODED URL
+                            // Key helps React differentiate rows, use player.id for stability
+                            key={player.id} 
+                            alt={playerName}
+                            className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
+                            loading="lazy"
+                            width="28"
+                            height="28"
+                            // Use the new onError handler
+                            onError={handleImageError} 
+                        />
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-baseline gap-2 select-none"> {/* Changed items-center to items-baseline */}
+                    <div className="flex items-baseline gap-2 select-none"> 
                         <div className="font-bold text-sm">{playerName}</div>
-                        <div className="text-pb_textgray text-2xs">{playerPosition}</div>
+                         {/* Display Team - Position */}
+                         <div className="text-pb_textgray text-2xs">
+                            {playerPosition} 
+                         </div>
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}

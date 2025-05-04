@@ -117,7 +117,7 @@ export default function RankingsPage() {
       return { enabledCategoryAbbrevs: [], statPathMapping: {} };
     }
 
-    console.log('[Category Calculation] Memo: Using activeRanking.categories:', JSON.stringify(activeRanking.categories));
+    // console.log('[Category Calculation] Memo: Using activeRanking.categories:', JSON.stringify(activeRanking.categories));
 
     const mapping = currentSportConfig.statPathMapping || {};
     
@@ -130,7 +130,7 @@ export default function RankingsPage() {
       return false;
     });
     
-    console.log(`[Category Calculation] Memo: Calculated enabled for ${selectedSport}:`, JSON.stringify(finalEnabledAbbrevs));
+    // console.log(`[Category Calculation] Memo: Calculated enabled for ${selectedSport}:`, JSON.stringify(finalEnabledAbbrevs));
     
     return {
       enabledCategoryAbbrevs: finalEnabledAbbrevs,
@@ -293,15 +293,6 @@ export default function RankingsPage() {
        else if (sportKey === 'nfl') fetchNflData();
     }
 
-    console.log('[Effect 3 Check]', {
-        sport: selectedSport,
-        identitiesLoading,
-        statsLoading,
-        isMasterDataReady,
-        identitiesCount: playerIdentities.length,
-        statsKeysCount: Object.keys(seasonalStatsData).length
-    });
-
   }, [
       selectedSport,
       fetchPlayerIdentities,
@@ -356,20 +347,6 @@ export default function RankingsPage() {
         
     setIsPageLoading(currentLoading => newLoadingState !== currentLoading ? newLoadingState : currentLoading);
 
-    console.log('[Effect 3 Check]', {
-        sport: selectedSport,
-        selectedSportLoading,
-        userRankingsLoading,
-        activeRankingLoading,
-        initialRankingsLoaded,
-        activeRankingLoaded,
-        rankingsExist,
-        selectedSportError: !!selectedSportError,
-        activeRankingError: !!activeRankingError,
-        overallError: !!overallError,
-        calculatedLoadingState: newLoadingState,
-    });
-
   }, [
       selectedSportLoading, 
       selectedSportError,   
@@ -383,7 +360,7 @@ export default function RankingsPage() {
 
   useEffect(() => {
     if (activeRanking) {
-      console.log('[RankingsPage Effect Log] activeRanking updated. Categories object:', JSON.stringify(activeRanking.categories));
+      // console.log('[RankingsPage Effect Log] activeRanking updated. Categories object:', JSON.stringify(activeRanking.categories));
     } else {
       console.log('[RankingsPage Effect Log] activeRanking is null or undefined.');
     }

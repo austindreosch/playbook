@@ -90,6 +90,12 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
     }, [collapseAllTrigger]); // Depend on the trigger prop
 
+    // --- Log playerIdentities prop when it changes ---
+    useEffect(() => {
+        console.log('[RankingsPlayerListContainer] Received playerIdentities prop:', playerIdentities);
+    }, [playerIdentities]);
+    // --- End log ---
+
     // --- Create Player Identity Map (Depends on prop) ---
     const playerIdentityMap = useMemo(() => {
         const map = new Map();
@@ -98,16 +104,16 @@ const RankingsPlayerListContainer = React.forwardRef(({
              return map; 
         }
         playerIdentities.forEach((identity, index) => { 
-            if (identity && typeof identity === 'object' && identity.hasOwnProperty('playbookId') && identity.playbookId) {
+            if (identity?.playbookId) {
                 const key = String(identity.playbookId);
                 map.set(key, identity);
-            } else {
-                // console.warn(`[playerIdentityMap Memo] Invalid identity prop item at index ${index}:`, identity); // Optional: Keep if needed
-            }
+            } 
         });
-        // console.log(`[playerIdentityMap Memo] Built map with ${map.size} entries from prop.`); // Optional: Keep if needed
+        // --- Log the created map ---
+        console.log('[RankingsPlayerListContainer] Created playerIdentityMap:', map);
+        // --- End log ---
         return map;
-    }, [playerIdentities]); // <<< Dependency is now the prop
+    }, [playerIdentities]);
 
     // --- Create Seasonal Stats Map (Depends on prop) ---
     const seasonalStatsMap = useMemo(() => {
@@ -158,57 +164,69 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         const combinedPlayers = rankingEntries.map((rankingEntry, index) => {
             const rankingPlaybookId = rankingEntry.playbookId ? String(rankingEntry.playbookId) : null;
-
-            // 1. Get Base Identity
             const basePlayerIdentity = rankingPlaybookId ? playerIdentityMap.get(rankingPlaybookId) : null;
-
-            // 2. Get Stats (using msfId from identity)
             const msfIdForStatsLookup = basePlayerIdentity?.mySportsFeedsId;
-            const playerStatsObject = msfIdForStatsLookup != null ? seasonalStatsMap.get(String(msfIdForStatsLookup)) : null;
 
-            // 3. Get ECR Ranks
+            // <<< NEW: Look up the FULL player data object from the original seasonalStatsData prop >>>
+            const fullPlayerDataFromStatsSource = msfIdForStatsLookup != null ? seasonalStatsData?.[String(msfIdForStatsLookup)] : null;
+            
+            // <<< CHANGE: Get the nested stats object from the full object for downstream use >>>
+            const playerStatsObject = fullPlayerDataFromStatsSource?.stats || null; 
+            
             const standardEcrRank = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) ?? null : null;
             const redraftEcrRank = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) ?? null : null;
 
-            // 4. Construct Final Player Info Object (for display consistency)
+            // --- Log playerStatsObject when image is about to be null ---
+            // if (!playerStatsObject?.officialImageSrc) {
+            //     console.log(`[Player ID: ${rankingPlaybookId}] playerStatsObject before info construction (Image Src Missing/Null):`, playerStatsObject);
+            // }
+            // --- End log ---
+
+            // (Keep previous commented out log for reference if needed)
+            // --- TARGETED DEBUG LOG ---
+            // Log only if the identity lookup failed OR the found identity is missing the image src
+            // if (!basePlayerIdentity || (basePlayerIdentity && !basePlayerIdentity.officialImageSrc)) {
+            //     console.warn(`[Image Missing] ID: ${rankingPlaybookId}`); // Log the ID we tried to look up
+            //     console.warn('  Lookup Result (basePlayerIdentity):', basePlayerIdentity); // Log what the map returned (null, undefined, or the object without the src)
+            //     // console.warn('  Original Ranking Entry:', rankingEntry); // Optional: uncomment to see the ranking data too
+            // }
+            // --- END TARGETED DEBUG LOG ---
+
+            // 4. Construct Final Player Info Object
+            //    >>> Explicitly add officialImageSrc and teamAbbreviation <<< 
             const playerInfo = {
-                playbookId: rankingPlaybookId, // Ensure playbookId from ranking is primary
-                mySportsFeedsId: basePlayerIdentity?.mySportsFeedsId ?? null,
-                firstName: basePlayerIdentity?.firstName || rankingEntry.firstName || 'Unknown',
-                lastName: basePlayerIdentity?.lastName || rankingEntry.lastName || 'Player',
+                playbookId: rankingPlaybookId, 
+                mySportsFeedsId: msfIdForStatsLookup, // Use the ID we found
+                firstName: basePlayerIdentity?.primaryName?.split(' ')[0] || rankingEntry.firstName || 'Unknown', 
+                lastName: basePlayerIdentity?.primaryName?.split(' ').slice(1).join(' ') || rankingEntry.lastName || 'Player',
+                primaryPosition: basePlayerIdentity?.position || rankingEntry.position || 'N/A', 
+                // Explicitly pull from basePlayerIdentity or fallback
                 teamAbbreviation: basePlayerIdentity?.teamAbbreviation || rankingEntry.teamAbbreviation || 'FA',
-                primaryPosition: basePlayerIdentity?.primaryPosition || rankingEntry.position || 'N/A',
-                age: basePlayerIdentity?.age ?? null,
+                // <<< CHANGE: Look in the info object obtained from seasonalStatsData >>>
+                officialImageSrc: fullPlayerDataFromStatsSource?.info?.officialImageSrc || null, 
+                age: basePlayerIdentity?.age ?? null, // Age likely comes from identity data
                 standardEcrRank: standardEcrRank,
                 redraftEcrRank: redraftEcrRank,
-                isAvailable: rankingEntry.isAvailable ?? true, // Default to available
+                isAvailable: rankingEntry.isAvailable ?? true, 
                 notes: rankingEntry.notes || '',
-                // TODO: Add tier if available in rankingEntry
-                // tier: rankingEntry.tier ?? null,
             };
             playerInfo.fullName = `${playerInfo.firstName} ${playerInfo.lastName}`.trim();
 
-            // Generate a stable unique ID for DnD
-            // Use rankingId if present (stable within the list), else playbookId, else placeholder
             const uniqueDndId = rankingEntry.rankingId || rankingPlaybookId || `placeholder-${index}`;
 
             return {
-                id: uniqueDndId,                // Stable ID for DnD
-                rankingId: rankingEntry.rankingId, // Keep original ranking ID if needed
-                rank: rankingEntry.rank,        // The current rank from the user's list
-                info: playerInfo,               // Combined and enriched player info
-                stats: playerStatsObject || {}, // The stats object (might be empty)
-                // zScoreSum will be added in the derived state calculation
+                id: uniqueDndId, 
+                rankingId: rankingEntry.rankingId,
+                rank: rankingEntry.rank,        
+                info: playerInfo, // Pass the fully constructed info object 
+                stats: playerStatsObject || {}, // Pass the nested stats object as before
             };
         });
 
-        // Sort ONLY by user rank
         const sortedByRankPlayers = combinedPlayers.sort((a, b) => a.rank - b.rank);
-
         setRankedPlayers(sortedByRankPlayers);
 
-    // Dependencies: Only include sources of raw data and the maps derived from them
-    }, [activeRanking, playerIdentityMap, seasonalStatsMap, standardEcrMap, redraftEcrMap]);
+    }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]);
 
     // === Reinstate useMemo for playersToDisplay ===
     const playersToDisplay = useMemo(() => {
@@ -537,3 +555,4 @@ const RankingsPlayerListContainer = React.forwardRef(({
 RankingsPlayerListContainer.displayName = 'RankingsPlayerListContainer'; // Add display name for dev tools
 
 export default RankingsPlayerListContainer;
+
