@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Never for any reason make a change to the styling of a component unless my request specifically involves changing the way something looks. My UI design is already made manually, and I'm almost always only asking for logic implementations.

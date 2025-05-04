@@ -4,6 +4,8 @@ import { processNbaData } from '@/lib/utils/nbaDataProcessing';
 import { processNflData } from '@/lib/utils/nflDataProcessing'; // Returns { processedPlayers, teamTotalsContext }
 import _ from 'lodash';
 import { create } from 'zustand';
+// Re-add import for Z-Score calculation
+import { applyZScores } from '@/lib/calculations/zScoreUtil';
 // import { processNflPlayerData } from '../utilities/MasterDataset/nflAdvancedStats'; // Not used
 
 const getObjectSize = (obj) => {
@@ -22,30 +24,6 @@ const formatNumber = (value) => {
     // Always show one decimal place, even for integers
     return parseFloat(value.toFixed(1));
 };
-
-const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
-
-function hexToRgba(hex, alpha) {
-    const stripped = hex.replace('#', '');
-    const r = parseInt(stripped.substring(0, 2), 16);
-    const g = parseInt(stripped.substring(2, 4), 16);
-    const b = parseInt(stripped.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue) {
-    // If statValue is 0, force full deep red
-    if (statValue === 0) {
-        return hexToRgba(baseNeg, 1.0);
-    }
-    const clampedZ = clamp(zScore, -2, 2);
-    const ratio = Math.abs(clampedZ) / 2;
-    const minAlpha = 0.05;
-    const maxAlpha = 1.0;
-    const alpha = minAlpha + ratio * (maxAlpha - minAlpha);
-    const baseColor = zScore >= 0 ? basePos : baseNeg;
-    return hexToRgba(baseColor, alpha);
-}
 
 // =====================================================================
 //                      INITIAL STATE STRUCTURE
@@ -209,14 +187,37 @@ const useMasterDataset = create((set, get) => ({
     },
 
     // =====================================================================
-    //                     🏀 FETCH NBA DATA (Refactored) 🏀
+    //                     🏀 FETCH NBA DATA (Refactored + Z-Score) 🏀
     // =====================================================================
     fetchNbaData: async () => {
         const sportKey = 'nba';
         set(state => ({
-            loading: { ...state.loading, [sportKey]: true },
-            error: { ...state.error, [sportKey]: null }
+            // FIX: Also set identity loading state
+            loading: { ...state.loading, [sportKey]: true, [`identities_${sportKey}`]: true }, 
+            error: { ...state.error, [sportKey]: null, [`identities_${sportKey}`]: null }
         }));
+
+        // --- FIX: Ensure identities are fetched first ---
+        if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
+            console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            await get().fetchPlayerIdentities(sportKey);
+            if (get().error[`identities_${sportKey}`]) {
+                 console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
+                 set(state => ({
+                     loading: { ...state.loading, [sportKey]: false }, 
+                 }));
+                 return;
+            }
+        } else {
+             set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
+        }
+        const nbaIdentities = get().dataset[sportKey]?.identities || [];
+        const identityMap = nbaIdentities.reduce((map, identity) => {
+            if (identity.playbookId) { map[identity.playbookId] = identity; }
+            else if (identity.mySportsFeedsId) { map[identity.mySportsFeedsId] = identity; }
+            return map;
+        }, {});
+        // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
         if (!rawData) {
@@ -241,8 +242,13 @@ const useMasterDataset = create((set, get) => ({
 
         // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
         try {
-            const context = {}; // Placeholder for context
+            // --- FIX: Pass identityMap in context ---
+            const context = { identityMap };
             const processedPlayers = processNbaData(rawNbaStats, context);
+            // -------------------------------------
+
+            // *** Apply Z-Scores ***
+            applyZScores(processedPlayers, sportKey);
 
             set(state => ({
                 dataset: {
@@ -260,7 +266,7 @@ const useMasterDataset = create((set, get) => ({
             const sportLogFlag = get()._loggedSample[sportKey];
             if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
                 const firstPlayerId = Object.keys(processedPlayers)[0];
-                console.log(`[Sample ${sportKey.toUpperCase()} Player]:`, processedPlayers[firstPlayerId]);
+                console.log(`[Sample ${sportKey.toUpperCase()} Player w/ Z-Score]:`, processedPlayers[firstPlayerId]);
                 set(state => ({ _loggedSample: { ...state._loggedSample, [sportKey]: true } }));
             }
             set({ stateSize: getObjectSize(get()) }); // Update size after processing
@@ -283,14 +289,44 @@ const useMasterDataset = create((set, get) => ({
     },
 
     // =====================================================================
-    //                         🏈 FETCH NFL DATA (Refactored) 🏈
+    //                         🏈 FETCH NFL DATA (Refactored + Z-Score) 🏈
     // =====================================================================
     fetchNflData: async () => {
         const sportKey = 'nfl';
         set(state => ({
-            loading: { ...state.loading, [sportKey]: true },
-            error: { ...state.error, [sportKey]: null }
+            loading: { ...state.loading, [sportKey]: true, [`identities_${sportKey}`]: true }, // Also set identity loading true initially
+            error: { ...state.error, [sportKey]: null, [`identities_${sportKey}`]: null }
         }));
+
+        // --- FIX: Ensure identities are fetched first ---
+        if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
+            console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            await get().fetchPlayerIdentities(sportKey);
+            // Check if identity fetch failed
+            if (get().error[`identities_${sportKey}`]) {
+                 console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
+                 set(state => ({
+                     loading: { ...state.loading, [sportKey]: false }, // Stop main sport loading
+                     // Error already set by fetchPlayerIdentities
+                 }));
+                 return;
+            }
+        } else {
+             // Identities already exist, just turn off identity loading flag
+             set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
+        }
+        const nflIdentities = get().dataset[sportKey]?.identities || [];
+        // Create a map for quick lookup in processing
+        const identityMap = nflIdentities.reduce((map, identity) => {
+            if (identity.playbookId) {
+                 map[identity.playbookId] = identity; // Use playbookId as key if available
+            } else if (identity.mySportsFeedsId) {
+                 map[identity.mySportsFeedsId] = identity; // Fallback to MSF ID
+            }
+            // Consider logging if neither ID is present
+            return map;
+        }, {});
+        // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
         if (!rawData) {
@@ -321,15 +357,21 @@ const useMasterDataset = create((set, get) => ({
 
         // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
          try {
+             // --- FIX: Pass identityMap in context ---
+             const context = { identityMap }; 
              // processNflData now returns { processedPlayers, teamTotalsContext }
-             const { processedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats);
+             const { processedPlayers: initialProcessedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats, context);
+             // -------------------------------------
+
+             // *** Apply Z-Scores ***
+             applyZScores(initialProcessedPlayers, sportKey);
 
              set(state => ({
                  dataset: {
                      ...state.dataset,
                      [sportKey]: {
                          ...state.dataset[sportKey],
-                         players: processedPlayers,
+                         players: initialProcessedPlayers,
                          teamTotals: teamTotalsContext, // Store team totals
                          lastUpdated: Date.now(),
                      }
@@ -337,12 +379,13 @@ const useMasterDataset = create((set, get) => ({
                  loading: { ...state.loading, [sportKey]: false },
                  error: { ...state.error, [sportKey]: null }
              }));
-             // --- Log Sample and Update Size ---
+
+            // --- Corrected Log Sample and Update Size --- FIX
              const sportLogFlag = get()._loggedSample[sportKey];
-             if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
-                 const firstPlayerId = Object.keys(processedPlayers)[0];
-                 console.log(`[Sample ${sportKey.toUpperCase()} Player]:`, processedPlayers[firstPlayerId]);
-                 set(state => ({ _loggedSample: { ...state._loggedSample, [sportKey]: true } }));
+             if (!sportLogFlag && Object.keys(initialProcessedPlayers).length > 0) {
+                 const firstPlayerId = Object.keys(initialProcessedPlayers)[0];
+                 console.log(`[Sample ${sportKey.toUpperCase()} Player w/ Z-Score]:`, initialProcessedPlayers[firstPlayerId]);
+                 set(state => ({ _loggedSample: { ...state._loggedSample, [sportKey]: true } })); // FIX: Moved set inside the if block
              }
              set({ stateSize: getObjectSize(get()) }); // Update size after processing
              // --- Log Size with Player Counts ---
@@ -369,9 +412,32 @@ const useMasterDataset = create((set, get) => ({
     fetchMlbData: async () => {
         const sportKey = 'mlb';
         set(state => ({
-            loading: { ...state.loading, [sportKey]: true },
-            error: { ...state.error, [sportKey]: null }
+            // FIX: Also set identity loading state
+            loading: { ...state.loading, [sportKey]: true, [`identities_${sportKey}`]: true }, 
+            error: { ...state.error, [sportKey]: null, [`identities_${sportKey}`]: null }
         }));
+
+        // --- FIX: Ensure identities are fetched first ---
+        if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
+            console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            await get().fetchPlayerIdentities(sportKey);
+            if (get().error[`identities_${sportKey}`]) {
+                 console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
+                 set(state => ({
+                     loading: { ...state.loading, [sportKey]: false }, 
+                 }));
+                 return;
+            }
+        } else {
+             set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
+        }
+        const mlbIdentities = get().dataset[sportKey]?.identities || [];
+        const identityMap = mlbIdentities.reduce((map, identity) => {
+            if (identity.playbookId) { map[identity.playbookId] = identity; }
+            else if (identity.mySportsFeedsId) { map[identity.mySportsFeedsId] = identity; }
+            return map;
+        }, {});
+        // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
         if (!rawData) {
@@ -398,9 +464,14 @@ const useMasterDataset = create((set, get) => ({
 
         // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
         try {
-            const context = {}; // Add context if needed later
+            // --- FIX: Pass identityMap in context ---
+            const context = { identityMap };
             // Projections are handled inside processMlbData currently
             const processedPlayers = processMlbData(rawMlbStats, rawMlbProjections, context);
+            // -------------------------------------
+
+            // TODO: Add applyZScores for MLB when logic is defined
+            // applyZScores(processedPlayers, sportKey);
 
             set(state => ({
                 dataset: {
