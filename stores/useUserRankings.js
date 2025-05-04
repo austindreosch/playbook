@@ -90,18 +90,19 @@ const useUserRankings = create(
                             showDraftedPlayers: false
                         });
 
-                        // --- REMOVED: ECR fetch logic moved to selectAndTouchRanking ---
-                        // if (rankingData) {
-                        //     const criteria = {
-                        //         sport: rankingData.sport,
-                        //         format: rankingData.format, 
-                        //         scoring: rankingData.scoring,
-                        //         pprSetting: rankingData.pprSetting, // Access directly from root
-                        //         flexSetting: rankingData.flexSetting // Access directly from root
-                        //     };
-                        //     get().fetchConsensusRankings(criteria); 
-                        // }
-                        // --- END REMOVED --- 
+                        // --- MOVE ECR FETCH BACK HERE ---
+                        if (rankingData) {
+                            const criteria = {
+                                sport: rankingData.sport,
+                                format: rankingData.format, 
+                                scoring: rankingData.scoring,
+                                pprSetting: rankingData.pprSetting, // Access directly from root
+                                flexSetting: rankingData.flexSetting // Access directly from root
+                            };
+                            console.log('[setActiveRanking] Triggering ECR fetch with criteria:', criteria);
+                            get().fetchConsensusRankings(criteria); 
+                        }
+                        // --- END MOVE ---
                     } catch (error) {
                         setState({
                             error: error.message,
@@ -536,7 +537,7 @@ const useUserRankings = create(
                         return;
                     }
 
-                    // console.log('[fetchConsensusRankings] Fetching ECR for:', criteria);
+                    console.log('[fetchConsensusRankings] Fetching ECR for:', criteria);
                     setState({ isEcrLoading: true, ecrError: null });
 
                     const { sport, format, scoring, pprSetting, flexSetting } = criteria;
@@ -563,8 +564,8 @@ const useUserRankings = create(
                     const redraftUrl = buildApiUrl('/api/rankings/latest', redraftParams);
 
                     try {
-                        // console.log(`[fetchConsensusRankings] Fetching Standard URL: ${standardUrl}`);
-                        // console.log(`[fetchConsensusRankings] Fetching Redraft URL: ${redraftUrl}`);
+                        console.log(`[fetchConsensusRankings] Fetching Standard URL: ${standardUrl}`);
+                        console.log(`[fetchConsensusRankings] Fetching Redraft URL: ${redraftUrl}`);
 
                         const [standardResponse, redraftResponse] = await Promise.all([
                             fetch(standardUrl),
@@ -574,35 +575,40 @@ const useUserRankings = create(
                         let standardRankingsData = { rankings: [] }; // Default to empty array object
                         if (standardResponse.ok) {
                             standardRankingsData = await standardResponse.json();
-                            // console.log(`[fetchConsensusRankings] Standard fetch OK. Found ${standardRankingsData?.rankings?.length || 0} rankings.`);
+                            console.log(`[fetchConsensusRankings] Standard fetch OK. Raw Response:`, standardRankingsData);
                         } else {
-                            // console.warn(`[fetchConsensusRankings] Standard fetch failed: ${standardResponse.status}`);
+                            console.warn(`[fetchConsensusRankings] Standard fetch failed: ${standardResponse.status}`);
                              // Keep default empty array
                         }
 
                         let redraftRankingsData = { rankings: [] }; // Default
                         if (redraftResponse.ok) {
                             redraftRankingsData = await redraftResponse.json();
-                            // console.log(`[fetchConsensusRankings] Redraft fetch OK. Found ${redraftRankingsData?.rankings?.length || 0} rankings.`);
+                            console.log(`[fetchConsensusRankings] Redraft fetch OK. Raw Response:`, redraftRankingsData);
                         } else {
-                            // console.warn(`[fetchConsensusRankings] Redraft fetch failed: ${redraftResponse.status}`);
+                            console.warn(`[fetchConsensusRankings] Redraft fetch failed: ${redraftResponse.status}`);
                             // Keep default empty array
                         }
 
+                        // Log data BEFORE setting state
+                        const standardEcrToSet = standardRankingsData?.rankings || [];
+                        const redraftEcrToSet = redraftRankingsData?.rankings || [];
+                        console.log(`[fetchConsensusRankings] Data before setState:`, { standardCount: standardEcrToSet.length, redraftCount: redraftEcrToSet.length });
+
                         setState({
                             // Extract rankings array, default to empty if fetch failed or no rankings
-                            standardEcrRankings: standardRankingsData?.rankings || [], 
-                            redraftEcrRankings: redraftRankingsData?.rankings || [],
+                            standardEcrRankings: standardEcrToSet, 
+                            redraftEcrRankings: redraftEcrToSet,
                             isEcrLoading: false,
                             ecrError: null
                         });
-                        // console.log('[fetchConsensusRankings] ECR State Updated:', {
-                        //      standardCount: (standardRankingsData?.rankings || []).length,
-                        //      redraftCount: (redraftRankingsData?.rankings || []).length
-                        // });
+                        console.log('[fetchConsensusRankings] ECR State AFTER setState:', { 
+                            standard: get().standardEcrRankings, 
+                            redraft: get().redraftEcrRankings 
+                        });
 
                     } catch (error) {
-                        // console.error('[fetchConsensusRankings] Error fetching ECR data:', error); // Keep this one? Maybe. Commenting for now.
+                        console.error('[fetchConsensusRankings] Error fetching ECR data:', error);
                         setState({
                             ecrError: error.message,
                             isEcrLoading: false,
@@ -654,7 +660,6 @@ const useUserRankings = create(
                         });
 
                         // 4. Trigger ECR fetch for the newly selected ranking
-                        //    (Moved from setActiveRanking to ensure it happens after timestamp update)
                         const criteria = {
                             sport: updatedRankingData.sport,
                             format: updatedRankingData.format,
@@ -662,10 +667,13 @@ const useUserRankings = create(
                             pprSetting: updatedRankingData.pprSetting, // Access directly from root
                             flexSetting: updatedRankingData.flexSetting // Access directly from root
                         };
+                        console.log('[selectAndTouchRanking] Built criteria:', criteria);
                         get().fetchConsensusRankings(criteria);
+                        console.log('[selectAndTouchRanking] Called fetchConsensusRankings');
 
                         // 5. Save the changes (specifically the timestamp) immediately
                         await get().saveChanges(); 
+                        console.log('[selectAndTouchRanking] Called saveChanges');
 
                         // --- ADD RETURN STATEMENT --- 
                         return updatedRankingData; // Return the updated ranking

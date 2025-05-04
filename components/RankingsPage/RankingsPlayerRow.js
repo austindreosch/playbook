@@ -210,7 +210,8 @@ const RankingsPlayerRow = memo(({
     onToggleExpand,
     isRankSorted,
     isDraftMode,
-    onToggleDraftStatus
+    onToggleDraftStatus,
+    activeRanking
 }) => {
     const rowRef = useRef(null);
 
@@ -218,6 +219,10 @@ const RankingsPlayerRow = memo(({
     // if (rank <= 3) { // Only log for the first 3 players
     //     console.log(`[RankingsPlayerRow] Received rank prop: ${rank} for player: ${player?.info?.fullName}`);
     // }
+    // --- End log ---
+
+    // --- Log activeRanking format for conditional check ---
+    // console.log(`[RankingsPlayerRow] Checking format: activeRanking?.format = ${activeRanking?.format}`);
     // --- End log ---
 
     // --- Determine sources --- 
@@ -491,12 +496,15 @@ const RankingsPlayerRow = memo(({
                                 </div>
                                 <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>DEFAULT</span>
                             </div>
-                            <div className='flex flex-col items-center'>
-                                <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
-                                    <span className="font-bold text-lg">{redraftEcrRank ?? '--'}</span>
+                            {/* <<< Conditionally render Redraft ECR Box >>> */}
+                            {activeRanking?.format?.toLowerCase() === 'dynasty' && (
+                                <div className='flex flex-col items-center'>
+                                    <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
+                                        <span className="font-bold text-lg">{redraftEcrRank ?? '--'}</span>
+                                    </div>
+                                    <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>REDRAFT</span>
                                 </div>
-                                <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>REDRAFT</span>
-                            </div>
+                            )}
                         </div>
 
                         {/* middle panel */}

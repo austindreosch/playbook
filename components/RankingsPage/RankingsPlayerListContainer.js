@@ -42,7 +42,8 @@ const RankingsPlayerListContainer = React.forwardRef(({
         saveChanges,
         isDraftModeActive,
         setPlayerAvailability,
-        showDraftedPlayers
+        showDraftedPlayers,
+        selectAndTouchRanking
     } = useUserRankings();
 
     // Set up window size measurement
@@ -140,6 +141,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 map.set(String(player.playbookId), player.rank);
             }
         });
+        // --- Log created ECR map ---
+        console.log('[RankingsPlayerListContainer] Created standardEcrMap:', map);
+        // --- End log ---
         return map;
     }, [standardEcrRankings]);
 
@@ -150,6 +154,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 map.set(String(player.playbookId), player.rank);
             }
         });
+        // --- Log created ECR map ---
+        console.log('[RankingsPlayerListContainer] Created redraftEcrMap:', map);
+        // --- End log ---
         return map;
     }, [redraftEcrRankings]);
 
@@ -173,8 +180,10 @@ const RankingsPlayerListContainer = React.forwardRef(({
             // <<< CHANGE: Get the nested stats object from the full object for downstream use >>>
             const playerStatsObject = fullPlayerDataFromStatsSource?.stats || null; 
             
-            const standardEcrRank = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) ?? null : null;
-            const redraftEcrRank = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) ?? null : null;
+            const standardEcrRankLookup = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) : undefined;
+            const redraftEcrRankLookup = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) : undefined;
+            const standardEcrRank = standardEcrRankLookup ?? null;
+            const redraftEcrRank = redraftEcrRankLookup ?? null;
 
             // 4. Construct Final Player Info Object
             //    >>> Explicitly add officialImageSrc and teamAbbreviation <<< 
@@ -429,12 +438,15 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     // Key should ideally be the stable id used elsewhere
                     key={player.id}
                     player={player} // Pass the combined player object from paginatedPlayers
-                    rank={player.userRank}
+                    rank={player.userRank} // <<< CHANGE: Pass userRank as the rank prop
                     activeRanking={activeRanking} // Pass necessary context if needed by row
                     sport={sport}
                     // Pass sort config if needed by row for styling (e.g., highlighting sorted column)
                     sortConfig={sortConfig}
                     categories={enabledCategoryAbbrevs} // <<< RENAME this prop
+                    // Pass ECR ranks
+                    standardEcrRank={player.info.standardEcrRank}
+                    redraftEcrRank={player.info.redraftEcrRank}
                     // Check expansion using the stable 'id'
                     isExpanded={expandedRows.has(player.id)}
                     // Pass the stable 'id' to the toggle handler
