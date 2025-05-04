@@ -177,7 +177,7 @@ const RankingsPlayerListHeader = ({
                 </div>
 
                 {/* Stats Headers - 60% section with exact same structure */}
-                <div className="flex w-[60%] h-full gap-1 font-bold">
+                <div className="flex w-[60%] h-full gap-[3px] font-bold">
                     {enabledCategoryAbbrevs.map((abbrev) => (
                         <div
                             key={abbrev}

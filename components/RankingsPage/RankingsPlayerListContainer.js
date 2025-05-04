@@ -83,8 +83,10 @@ const RankingsPlayerListContainer = React.forwardRef(({
     sport,
     sortConfig,
     enabledCategoryAbbrevs,
-    statPathMapping,
-    collapseAllTrigger
+    collapseAllTrigger,
+    activeRanking,
+    playerIdentities,
+    seasonalStatsData
 }, ref) => {
     // Initialize state with players
     const [activeId, setActiveId] = useState(null);
@@ -95,7 +97,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const listRef = useRef(null);
 
     const {
-        activeRanking,
         standardEcrRankings,
         redraftEcrRankings,
         isEcrLoading,
@@ -105,12 +106,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
         setPlayerAvailability,
         showDraftedPlayers
     } = useUserRankings();
-
-    // --- Get data from Master Dataset Store ---
-    const { getPlayerIdentities, getSeasonalStats } = useMasterDataset();
-    const playerIdentities = getPlayerIdentities(sport);
-    const seasonalStatsData = getSeasonalStats(sport);
-    // --- END ADDED BLOCK ---
 
     // Set up window size measurement
     useEffect(() => {
@@ -157,40 +152,42 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
     }, [collapseAllTrigger]); // Depend on the trigger prop
 
-    // --- NEW: Create Player Identity Map (Key: PlaybookID String) ---
+    // --- Create Player Identity Map (Depends on prop) ---
     const playerIdentityMap = useMemo(() => {
         const map = new Map();
-        playerIdentities.forEach(identity => {
-            if (identity?.playbookId) {
-                map.set(String(identity.playbookId), identity);
+        if (!Array.isArray(playerIdentities)) {
+             console.warn('[playerIdentityMap Memo] Received playerIdentities prop is NOT an array:', playerIdentities);
+             return map; 
+        }
+        playerIdentities.forEach((identity, index) => { 
+            if (identity && typeof identity === 'object' && identity.hasOwnProperty('playbookId') && identity.playbookId) {
+                const key = String(identity.playbookId);
+                map.set(key, identity);
+            } else {
+                // console.warn(`[playerIdentityMap Memo] Invalid identity prop item at index ${index}:`, identity); // Optional: Keep if needed
             }
         });
+        // console.log(`[playerIdentityMap Memo] Built map with ${map.size} entries from prop.`); // Optional: Keep if needed
         return map;
-    }, [playerIdentities]); // Dependency: playerIdentities
-    // --- END ADDED BLOCK ---
+    }, [playerIdentities]); // <<< Dependency is now the prop
 
-    // --- NEW: Create Seasonal Stats Map (Key: PlayerID String) ---
+    // --- Create Seasonal Stats Map (Depends on prop) ---
     const seasonalStatsMap = useMemo(() => {
         const map = new Map();
-        // Check if seasonalStatsData is an object and not empty
         if (seasonalStatsData && typeof seasonalStatsData === 'object' && Object.keys(seasonalStatsData).length > 0) {
-             // Iterate over the VALUES of the object
-            Object.values(seasonalStatsData).forEach(playerData => {
-                // Use optional chaining for safety
-                const playerId = playerData?.info?.playerId;
-                if (playerId) {
-                    map.set(String(playerId), playerData.stats); // Map ID to stats object
-                }
-            });
+             Object.entries(seasonalStatsData).forEach(([playerIdKey, playerData]) => { 
+                 if (playerIdKey && playerData?.stats) { 
+                     map.set(String(playerIdKey), playerData.stats); 
+                 }
+             });
         } else {
-            // Log if data is not the expected object or empty
-            // console.warn(`[seasonalStatsMap Memo] seasonalStatsData is not a valid object for sport: ${sport}`, seasonalStatsData);
+            // console.warn(`[seasonalStatsMap Memo] Received seasonalStatsData prop is not a valid object for sport: ${sport}`, seasonalStatsData); // Optional: Keep if needed
         }
+        // console.log(`[seasonalStatsMap Memo] Built stats map with ${map.size} entries from prop.`); // Optional: Keep if needed
         return map;
-    }, [seasonalStatsData, sport]); // Dependency: seasonalStatsData & sport
-    // --- END ADDED BLOCK ---
+    }, [seasonalStatsData, sport]); // <<< Dependency is now the prop (and sport if needed)
 
-    // --- NEW: ECR Rank Maps --- ADDED BLOCK
+    // --- ECR Rank Maps ---
     const standardEcrMap = useMemo(() => {
         const map = new Map();
         (standardEcrRankings || []).forEach(player => {
@@ -211,116 +208,73 @@ const RankingsPlayerListContainer = React.forwardRef(({
         });
         return map;
     }, [redraftEcrRankings]);
-    // --- END NEW BLOCK ---
 
     // --- REFACTORED processRankingData ---
     const processRankingData = useCallback((currentActiveRanking) => {
+        // No longer need to check if identity map is waiting (should be built from props)
         // Check if ranking data is available
-        if (!currentActiveRanking?.rankings) {
-            // console.log('[processRankingData] No currentActiveRanking.rankings found.'); // Keep if needed for critical error
-            return [];
+        if (!currentActiveRanking?.rankings) { 
+            return []; 
         }
 
-        // Check if identity map is ready (avoid processing with incomplete data)
-        if (playerIdentityMap.size === 0 && playerIdentities.length > 0) {
-             // console.log('[processRankingData] Waiting for playerIdentityMap to build...'); // Keep if needed for critical error
-             return []; // Still waiting for identities map to build
-        }
-
+        // *** REMOVE LOG: Check map size (or keep for debugging) ***
+        // console.log(`[processRankingData] Running with playerIdentityMap size: ${playerIdentityMap.size}`);
+        // *** END REMOVAL ***
+        
         const rankingEntries = currentActiveRanking.rankings || [];
-
-        let loggedFirstPlayer = false; // Keep for potential future single-log debug
-
-        const combinedPlayers = rankingEntries.map((rankingEntry) => {
+        const combinedPlayers = rankingEntries.map((rankingEntry, index) => {
             let basePlayerIdentity = null;
-            let playerStatsData = null; // Holds stats (seasonal for now)
-            let finalRankingId = null; // DND/Key ID
+            let playerStatsObject = null;
+            let finalRankingId = null;
             let isPlaceholder = false;
 
             const rankingPlaybookId = rankingEntry.playbookId ? String(rankingEntry.playbookId) : null;
             const rankingMsfId = rankingEntry.mySportsFeedsId ? String(rankingEntry.mySportsFeedsId) : null; // Keep for potential placeholder use
 
-            // --- 1. Primary Lookup: Find Base Identity using PlaybookId ---
+            // --- 1. Lookup Identity --- 
             if (rankingPlaybookId) {
                 basePlayerIdentity = playerIdentityMap.get(rankingPlaybookId);
             }
-
-            // --- 2. Secondary Lookup: Find Stats using ID from base identity ---
+            // --- 2. Lookup Stats --- 
             const msfIdForStatsLookup = basePlayerIdentity?.mySportsFeedsId;
             if (msfIdForStatsLookup != null) {
-                // Currently hardcoded to use seasonal stats
-                playerStatsData = seasonalStatsMap.get(String(msfIdForStatsLookup));
-                // PLACEHOLDER: Add logic here later to choose between seasonalStatsMap, projectionsMap, etc.
+                playerStatsObject = seasonalStatsMap.get(String(msfIdForStatsLookup)); 
             }
-
-            // --- NEW: Lookup ECR Ranks ---
+            // --- 3. Lookup ECR --- 
             let standardEcrRank = null;
             let redraftEcrRank = null;
             if (rankingPlaybookId) {
                 standardEcrRank = standardEcrMap.get(rankingPlaybookId) ?? null;
                 redraftEcrRank = redraftEcrMap.get(rankingPlaybookId) ?? null;
-
-                // --- DEBUG: Log first player ECR lookup --- ADDED (Removed log)
-                // if (!loggedFirstPlayer) {
-                //     loggedFirstPlayer = true;
-                // }
-                // --- END DEBUG ---
             }
-            // --- END NEW ---
-
-            // --- 3. Combine Data ---
+            // --- 4. Combine --- 
             if (basePlayerIdentity) {
-                // Identity found, use PlaybookId as the stable DND/Key ID
                 finalRankingId = rankingPlaybookId;
-
-                // --- DEBUG LOG for specific player --- (Removed log)
-                 // if (basePlayerIdentity.primaryName === 'Lamar Jackson') {
-                 // }
-                 // --- END DEBUG LOG ---
-
                 return {
-                    // Base identity info (primary source)
                     playbookId: basePlayerIdentity.playbookId,
                     mySportsFeedsId: basePlayerIdentity.mySportsFeedsId,
-                    name: basePlayerIdentity.primaryName || 'Unknown Player', // Fallback to identity name
+                    name: basePlayerIdentity.primaryName || 'Unknown Player',
                     position: basePlayerIdentity.position || 'N/A',
                     teamId: basePlayerIdentity.teamId,
                     teamName: basePlayerIdentity.teamName,
-                    // Include other identity fields if needed (e.g., age, image)
-                    // info: basePlayerIdentity, // Could potentially pass the whole identity object
-
-                    // Ranking info from user document
                     originRank: rankingEntry.originRank,
                     userRank: rankingEntry.userRank,
                     originWeightedRank: rankingEntry.originWeightedRank,
-
-                    // Stats from stats lookup (could be null/undefined if no stats found)
-                    // Default to empty objects if stats are missing to avoid errors downstream
-                    info: playerStatsData?.info || {},
-                    stats: playerStatsData?.stats || {},
-
-                    // --- NEW: ECR Ranks --- ADDED
+                    stats: playerStatsObject || {}, // Assign stats
                     standardEcrRank: standardEcrRank,
                     redraftEcrRank: redraftEcrRank,
-                    // --- END NEW ---
-
-                    // Other essential fields
-                    rankingId: finalRankingId, // Use PlaybookID String for DND/Key
+                    rankingId: finalRankingId,
                     draftModeAvailable: rankingEntry.draftModeAvailable !== undefined ? rankingEntry.draftModeAvailable : true,
-                    isPlaceholder: false, // Not a placeholder if identity was found
-                    type: 'player', // Assume 'player' type
+                    isPlaceholder: false,
+                    type: 'player',
                 };
             } else {
-                // --- Handle case where player identity wasn't found or it's a pick ---
                 isPlaceholder = true;
-                // Generate a stable placeholder ID based on rank and name
                 const namePart = (rankingEntry.name || 'unknown').replace(/\s+/g, '-');
                 finalRankingId = `pick-${rankingEntry.userRank}-${namePart}`;
-
                 return {
-                    // Fill with data from the ranking entry itself
-                    playbookId: null, // No identity found
-                    mySportsFeedsId: rankingMsfId, // Keep original MSF ID if present
+                    playbookId: null,
+                    mySportsFeedsId: rankingMsfId,
                     name: rankingEntry.name || 'Unknown Pick',
                     position: rankingEntry.position || 'N/A',
                     teamId: null,
@@ -328,32 +282,28 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     originRank: rankingEntry.originRank,
                     userRank: rankingEntry.userRank,
                     originWeightedRank: rankingEntry.originWeightedRank,
-                    // Empty stats/info for placeholders
                     info: {},
                     stats: {},
-                    // Placeholder specific fields
-                    rankingId: finalRankingId, // Use generated pick ID for DND/Key
-                    draftModeAvailable: rankingEntry.draftModeAvailable !== undefined ? rankingEntry.draftModeAvailable : true, // Preserve availability if set
+                    rankingId: finalRankingId,
+                    draftModeAvailable: rankingEntry.draftModeAvailable !== undefined ? rankingEntry.draftModeAvailable : true,
                     isPlaceholder: true,
-                    type: rankingEntry.type || 'pick', // Use original type or default to 'pick'
-                    // --- NEW: ECR Ranks (null for placeholders) --- ADDED
+                    type: rankingEntry.type || 'pick',
                     standardEcrRank: null,
                     redraftEcrRank: null,
-                    // --- END NEW ---
                 };
             }
         });
 
         return combinedPlayers;
-    // Update dependencies: removed 'dataset', added maps and identity list
-    }, [sport, playerIdentityMap, seasonalStatsMap, playerIdentities, standardEcrMap, redraftEcrMap]);
+    // Update dependencies: remove playerIdentities, maps now depend on props
+    }, [sport, playerIdentityMap, seasonalStatsMap, standardEcrMap, redraftEcrMap]); // Dependencies are maps derived from props/other hooks
 
     // Update dependencies for the effect that calls processRankingData
     useEffect(() => {
-        const processedPlayers = processRankingData(activeRanking);
-        setRankedPlayers(processedPlayers);
-    // Update dependencies: removed 'processRankingData' (it's stable via useCallback), added maps
-    }, [activeRanking, sport, playerIdentityMap, seasonalStatsMap, standardEcrMap, redraftEcrMap]);
+        const processed = processRankingData(activeRanking);
+        // console.log('[Effect Process Triggered] Setting rankedPlayers:', processed.slice(0, 2)); // Optional log
+        setRankedPlayers(processed);
+    }, [activeRanking, processRankingData]); // Depend on activeRanking passed as prop & processRankingData callback
 
     // --- NEW: Add effect to monitor sortConfig changes ---
     useEffect(() => {
@@ -389,7 +339,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         let playersToDisplay = [...rankedPlayers]; // Start with rank-ordered players
 
         // --- REFACTORED: Use utility function for Z-Score Sum Calculation ---
-        if (activeRanking?.categories && statPathMapping && playersToDisplay.length > 0) {
+        if (activeRanking?.categories && playersToDisplay.length > 0) {
 
             // TODO: Replace hardcoded values above with actual values retrieved from activeRanking or props
             const format = activeRanking?.format
@@ -401,7 +351,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
             playersToDisplay = calculatePlayerZScoreSums(
                 playersToDisplay,               // Current player list
                 activeRanking.categories,       // Category details (enabled, multiplier)
-                statPathMapping,                // Abbreviation to path map
                 sport,                          // Current sport
                 format,                         // Pass the format
                 scoringType,                    // Pass the scoring type
@@ -426,36 +375,21 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     valueA = a.zScoreSum ?? -Infinity;
                     valueB = b.zScoreSum ?? -Infinity;
                 } else {
-                    // --- REPLACED: Use full getNestedValue logic for sorting ---
-                    const getSortValue = (playerStats, path) => {
-                        const defaultValue = -Infinity; // Default for sorting comparison
-                        if (!playerStats || typeof path !== 'string') return defaultValue;
+                    // --- Use imported getNestedValue for sorting ---
+                    const path = sortConfig.key;
+                    const defaultValue = -Infinity; 
+                    
+                    // Call getNestedValue for player A
+                    let rawValueA = getNestedValue(a.stats, path, defaultValue);
+                    valueA = (typeof rawValueA === 'number' && !isNaN(rawValueA)) ? rawValueA : defaultValue;
 
-                        let current = playerStats;
-                        const keys = path.split('.');
-
-                        for (const key of keys) {
-                            if (current && typeof current === 'object' && key in current) {
-                                current = current[key];
-                            } else {
-                                return defaultValue; // Path doesn't exist
-                            }
-                        }
-
-                        // After traversal, check if 'current' is the value or an object with .value
-                        let finalValue = current;
-                        if (finalValue && typeof finalValue === 'object' && finalValue.hasOwnProperty('value')) {
-                            finalValue = finalValue.value;
-                        }
-
-                        // Return the number or default value
-                        return (typeof finalValue === 'number' && !isNaN(finalValue)) ? finalValue : defaultValue;
-                    };
-
-                    valueA = getSortValue(a.stats, sortConfig.key);
-                    valueB = getSortValue(b.stats, sortConfig.key);
+                    // Call getNestedValue for player B
+                    let rawValueB = getNestedValue(b.stats, path, defaultValue);
+                    valueB = (typeof rawValueB === 'number' && !isNaN(rawValueB)) ? rawValueB : defaultValue;
+                    // --- End replacement ---
                 }
-                return valueB - valueA; // Descending
+                // Sorting direction (assuming descending for stats)
+                return valueB - valueA; 
             });
         }
 
@@ -466,8 +400,8 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         return playersToDisplay;
 
-        // Dependencies: Update dependencies
-    }, [rankedPlayers, sortConfig, isDraftModeActive, showDraftedPlayers, activeRanking?.categories, activeRanking?.format, activeRanking?.scoring, activeRanking?.details, sport, statPathMapping]); // Added activeRanking?.details
+        // Dependencies: REMOVED statPathMapping
+    }, [rankedPlayers, sortConfig, isDraftModeActive, showDraftedPlayers, activeRanking?.categories, activeRanking?.format, activeRanking?.scoring, activeRanking?.details, sport]); 
 
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(

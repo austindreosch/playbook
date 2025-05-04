@@ -16,14 +16,6 @@ import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
 
-    // --- ADD LOG ---
-    // console.log('[StatsSection] Received props:', {
-    //     stats: stats,
-    //     categories: categories,
-    //     sport: sport
-    // });
-    // --- END LOG ---
-
     // Define stats that need 2 decimal places (can be simplified if path is always abbreviation)
     const statsNeedingTwoDecimals = [
         // Example keys - adjust if needed based on final structure
@@ -40,99 +32,72 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
             {categories.map((categoryAbbrev) => { // Renamed loop variable for clarity
-                let statData, displayValue, title, bgColor, formattedValue, effectivePath;
+                let statData, displayValue, title, bgColor, formattedValue;
 
-                // --- Determine effectivePath based on sport ---
-                if (sport === 'mlb') {
-                    const categoryConfig = SPORT_CONFIGS.mlb?.categories?.[categoryAbbrev];
-                    const group = categoryConfig?.group; // 'hitting' or 'pitching'
-                    if (group) {
-                        effectivePath = `${group}.${categoryAbbrev}`;
-                    } else {
-                        console.warn(`[StatsSection] MLB category group not found for: ${categoryAbbrev}`);
-                        effectivePath = categoryAbbrev; // Fallback?
-                    }
-                } else {
-                    // For NBA/NFL, assume the abbreviation is the key/path within stats
-                    effectivePath = categoryAbbrev;
-                }
-                // -------------------------------------------
-
-                // --- Handle Z-Score Sum (if passed in categories array) --- 
+                // --- Handle Z-Score Sum --- (No change needed here if 'zScoreSum' is special cased)
                 if (categoryAbbrev === 'zScoreSum') {
-                    // Note: zScoreSum might be directly on player object, not necessarily in stats[effectivePath]
-                    // This check might need adjustment based on where zScoreSum is attached
-                    displayValue = stats?.zScoreSum; 
-                    title = `Z-Score Sum: ${displayValue?.toFixed(2) ?? '-'}`;
-                    bgColor = undefined; 
-                    if (typeof displayValue === 'number') {
-                        formattedValue = displayValue.toFixed(2);
-                    } else {
-                        formattedValue = '-';
-                    }
+                    // Use prop passed down
+                    displayValue = zScoreSumValue; 
+                     title = `Z-Score Sum: ${displayValue?.toFixed(2) ?? '-'}`;
+                     bgColor = undefined;
+                     if (typeof displayValue === 'number') {
+                         formattedValue = displayValue.toFixed(2);
+                     } else {
+                         formattedValue = '-';
+                     }
+
                 } else {
-                    // --- Logic for regular stats using effectivePath ---
-                    
-                    // Safely get the raw data/object at the effectivePath
-                    const getDeepValue = (obj, path, defaultValue = undefined) => {
-                        if (!obj || typeof path !== 'string') return defaultValue;
-                        const keys = path.split('.');
-                        let value = obj;
-                        for (const key of keys) {
-                            if (value && typeof value === 'object' && key in value) {
-                                value = value[key];
-                            } else {
-                                return defaultValue;
-                            }
-                        }
-                        return value;
-                    };
-                    statData = getDeepValue(stats, effectivePath);
+                    // --- Logic for regular stats using categoryAbbrev as the key ---
+                    const path = categoryAbbrev; // Use abbrev directly as path
 
-                    // Determine the value to display (check for { value: ... } structure)
-                    displayValue = '-'; // Default placeholder
-                    if (statData !== null && statData !== undefined) {
-                        if (typeof statData === 'object' && 'value' in statData) {
-                            displayValue = statData.value;
-                        } else {
-                            // Assume statData is the raw value if not the specific object structure
-                            displayValue = statData;
-                        }
-                    }
+                    if (!path) {
+                        // Render placeholder if path missing
+                        formattedValue = '?';
+                        title = `${categoryAbbrev}: Path not found`;
+                        bgColor = 'lightcoral'; // Indicate error visually
+                    } else {
+                        // Use global getNestedValue with the ABBREV as the path
+                        statData = getNestedValue(stats, path); 
 
-                    // Determine title (use abbreviation as fallback)
-                    // TODO: Get full label from config?
-                    title = `${categoryAbbrev}: ${displayValue}`;
+                        // Determine the value to display (check for { value: ... } structure)
+                        // getNestedValue already handles returning statData.value if it exists
+                        displayValue = statData; // Raw value or null/undefined
+
+                        // Format the display value
+                        formattedValue = '-'; // Default placeholder
+                         if (displayValue !== null && displayValue !== undefined) {
+                             if (typeof displayValue === 'number') {
+                                // Use categoryAbbrev for checking formatting needs
+                                if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
+                                    formattedValue = displayValue.toFixed(2);
+                                } else {
+                                    formattedValue = displayValue.toFixed(1);
+                                    if (formattedValue.endsWith('.0')) {
+                                        formattedValue = formattedValue.slice(0, -2);
+                                    }
+                                }
+                             } else {
+                                 // Handle non-numeric values if necessary (e.g., strings)
+                                 formattedValue = String(displayValue);
+                             }
+                         }
                         
-                    // Determine background color (might only apply to NBA or specific structures)
-                    // If derived stats have color, it would be in statData.color
-                    bgColor = (statData && typeof statData === 'object' && statData.color)
-                        ? statData.color
-                        : undefined; 
+                        // Determine title (use abbreviation and formatted value)
+                         // TODO: Get full label from config? Use SPORT_CONFIGS maybe?
+                         const label = SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev;
+                         title = `${label}: ${formattedValue}`;
 
-                    // Format the display value
-                    formattedValue = displayValue;
-                    if (typeof displayValue === 'number') {
-                        // Use categoryAbbrev for checking formatting needs
-                        if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
-                            formattedValue = displayValue.toFixed(2);
-                        } else {
-                            formattedValue = displayValue.toFixed(1);
-                            if (formattedValue.endsWith('.0')) {
-                                formattedValue = formattedValue.slice(0, -2);
-                            }
-                        }
-                    } else if (displayValue === null || displayValue === undefined) {
-                        formattedValue = '-'; // Use placeholder for null/undefined
+                        // Determine background color (ignoring for now)
+                        bgColor = undefined; 
                     }
                 }
 
                 return (
                     <div
-                        key={categoryAbbrev} // Use the abbreviation as the React key
+                        key={categoryAbbrev}
                         className="flex-1 text-center h-full flex items-center justify-center select-none"
                         title={title}
-                        style={{ backgroundColor: bgColor }} // Apply color if available
+                        style={{ backgroundColor: bgColor }}
                     >
                         <span className="text-sm text-pb_darkgray">
                             {formattedValue}
@@ -140,8 +105,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
                     </div>
                 );
             })}
-            {/* Z-Score Sum column - maybe remove if included in main map? */} 
-            {/* Or ensure it's NOT in categories prop if rendered separately */} 
+            {/* Z-Score Sum scaled value column (use prop) */}
             <div
                 key="zScoreSum_scaled"
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
@@ -161,57 +125,57 @@ StatsSection.displayName = 'StatsSection';
 const StatsSectionSecondary = memo(({ categories, stats }) => {
     // Define stats that need 2 decimal places (same as above)
     const statsNeedingTwoDecimals = [
-        'advanced.fantasyPointsPerSnap', // PPS
-        'advanced.opportunityEfficiency', // OPE
-        'advanced.turnoverRate'          // TO%
+        'PPS',
+        'OPE',
+        'TO%'
     ];
 
     return (
         <div className="flex w-full h-full gap-[3px]">
-            {categories.map((statPathOrKey) => {
-                // Get the data using the path or key
-                const statData = getNestedValue(stats, statPathOrKey);
+            {categories.map((categoryAbbrev) => { // <<< Loop over abbrevs
+                const path = categoryAbbrev; // Use abbrev directly as path
+                let statData, displayValue, title, bgColor, formattedValue;
 
-                let displayValue = '-';
-                if (statData !== null && statData !== undefined) {
-                    if (typeof statData === 'object' && 'value' in statData) {
-                        displayValue = statData.value;
-                    } else {
-                        displayValue = statData;
-                    }
-                }
+                 if (!path) {
+                     // Handle missing path
+                     formattedValue = '?';
+                     title = `${categoryAbbrev}: Path not found`;
+                     bgColor = undefined;
+                 } else {
+                     // Get the data using the ABBREV as the path
+                     statData = getNestedValue(stats, path); 
 
-                const title = (statData && typeof statData === 'object' && statData.abbreviation)
-                    ? `${statData.abbreviation}: ${displayValue}`
-                    : `${statPathOrKey}: ${displayValue}`;
+                     // Determine the value to display
+                     displayValue = statData; // Raw value or null/undefined
 
-                const bgColor = (statData && typeof statData === 'object' && statData.color)
-                    ? statData.color
-                    : undefined;
+                     // Format the display value
+                     formattedValue = '-'; // Default placeholder
+                      if (displayValue !== null && displayValue !== undefined) {
+                          if (typeof displayValue === 'number') {
+                             if (statsNeedingTwoDecimals.includes(categoryAbbrev)) { // Check abbrev
+                                 formattedValue = displayValue.toFixed(2);
+                             } else {
+                                 formattedValue = displayValue.toFixed(1);
+                                 if (formattedValue.endsWith('.0')) {
+                                     formattedValue = formattedValue.slice(0, -2);
+                                 }
+                             }
+                          } else {
+                              formattedValue = String(displayValue);
+                          }
+                      }
+                     
+                     // Determine title
+                      // TODO: Get full label?
+                      title = `${categoryAbbrev}: ${formattedValue}`;
+                     // Determine background color (ignoring for now)
+                     bgColor = undefined; 
+                 }
 
-                let formattedValue = displayValue;
-                if (typeof displayValue === 'number') {
-                    if (statsNeedingTwoDecimals.includes(statPathOrKey)) {
-                        // Format specific stats to 2 decimal places
-                        formattedValue = displayValue.toFixed(2);
-                        // Optionally remove trailing .00
-                        // if (formattedValue.endsWith('.00')) {
-                        //     formattedValue = formattedValue.slice(0, -3);
-                        // }
-                    } else {
-                        // Format other numbers to 1 decimal place, remove trailing .0
-                        formattedValue = displayValue.toFixed(1);
-                        if (formattedValue.endsWith('.0')) {
-                            formattedValue = formattedValue.slice(0, -2);
-                        }
-                    }
-                } else if (displayValue === null || displayValue === undefined) {
-                    formattedValue = '-';
-                }
 
                 return (
                     <div
-                        key={statPathOrKey}
+                        key={categoryAbbrev} // <<< Use abbrev as key
                         className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-white  rounded-sm relative shadow-sm border border-pb_lightergray"
                         title={title}
                     >
@@ -372,10 +336,10 @@ const RankingsPlayerRow = memo(({
     // --- Stats Section Rendering ---
     const renderStatsSection = () => (
         <StatsSection
-            categories={categories} // Pass the category abbreviations
-            stats={player.stats}      // Pass the player's stats object
-            zScoreSumValue={zScoreSumValue} // Pass the calculated sum
-            sport={sport}             // Pass the sport
+            categories={categories}
+            stats={player.stats}
+            zScoreSumValue={zScoreSumValue}
+            sport={sport}
         />
     );
 
@@ -591,7 +555,10 @@ const RankingsPlayerRow = memo(({
                         {/* right panel 1*/}
                         <div className="w-[60%]">
                             <div className="py-2 flex items-center justify-center h-[30%]">
-                                <StatsSectionSecondary categories={categories} stats={player.stats} />
+                                <StatsSectionSecondary 
+                                    categories={categories} 
+                                    stats={player.stats} 
+                                />
                             </div>
 
                             <div className="flex h-[70%] items-center justify-center">
