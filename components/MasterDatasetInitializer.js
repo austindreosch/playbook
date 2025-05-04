@@ -18,46 +18,29 @@ function MasterDatasetInitializer() {
     // PLACEHOLDER: Add loading states for other stat types if needed
     // const isProjectionLoading = useMasterDataset((state) => state.isProjectionLoading);
 
-    useEffect(() => {
-        console.log('MasterDataInitializer: Triggering data fetch...');
-        
-        const identityFetchPromises = [];
-        const statsFetchPromises = [];
-        // PLACEHOLDER: Add arrays for other fetch types
-        // const projectionFetchPromises = []; 
+    const masterDataFetched = useMasterDataset((state) => state.masterDataFetched);
 
-        SUPPORTED_SPORTS.forEach(sport => {
-            // Always fetch identities
-            identityFetchPromises.push(fetchPlayerIdentities(sport));
-            
+    useEffect(() => {
+        if (!masterDataFetched) {
+            // console.log('MasterDataInitializer: Triggering data fetch...'); // Removed log
+            // Initial fetch for all identities - could potentially be deferred
+            fetchPlayerIdentities('nfl');
+
             // Fetch seasonal stats
-            if (sport === 'nfl') statsFetchPromises.push(fetchNflData());
-            else if (sport === 'mlb') statsFetchPromises.push(fetchMlbData());
-            else if (sport === 'nba') statsFetchPromises.push(fetchNbaData());
+            if (SUPPORTED_SPORTS.includes('nfl')) fetchNflData();
+            if (SUPPORTED_SPORTS.includes('mlb')) fetchMlbData();
+            if (SUPPORTED_SPORTS.includes('nba')) fetchNbaData();
 
             // PLACEHOLDER: Trigger fetches for other stat types
             // projectionFetchPromises.push(fetchProjections(sport));
             // fetchLast30Days(sport); // Could be pushed to a promise array too
-        });
 
-        // Combine all promises
-        const allPromises = [
-            ...identityFetchPromises, 
-            ...statsFetchPromises, 
-            // ...projectionFetchPromises 
-        ];
-
-        Promise.all(allPromises)
-            .then(() => {
-                console.log('MasterDataInitializer: All data fetching/processing initiated.');
-                // Completion logging might need refinement if fetches have internal async processing
-            })
-            .catch((error) => {
-                console.error('MasterDataInitializer: Error during data fetch initiation:', error);
-            });
-
+            // Potentially fetch stats data here too if needed immediately 
+            // Example: fetchNflData(); fetchNbaData(); fetchMlbData();
+        }
+        // console.log('MasterDataInitializer: All data fetching/processing initiated.'); // Removed log
     // Update dependencies to include all fetch functions used
-    }, [fetchPlayerIdentities, fetchNflData, fetchMlbData, fetchNbaData]); 
+    }, [masterDataFetched, fetchPlayerIdentities, fetchNflData, fetchMlbData, fetchNbaData]); 
 
     return null; // This component doesn't render anything itself
 }

@@ -2,6 +2,7 @@
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
 import { calculatePlayerZScoreSums } from '@/lib/calculations/zScoreUtil';
+import { getNestedValue } from '@/lib/utils';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -74,39 +75,9 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
 
 };
 
-// --- Helper function (moved here or to utils) ---
-const getNestedValue = (obj, path, defaultValue = null) => {
-    if (!obj || typeof path !== 'string') return defaultValue;
+// --- REMOVE THE COMMENTED OUT FUNCTION BLOCK ---
 
-    // --- MODIFIED: Handle potential object structure first ---
-    let potentialValue = obj;
-    if (path.indexOf('.') === -1) {
-        // If simple path, check directly
-        potentialValue = obj.hasOwnProperty(path) ? obj[path] : defaultValue;
-    } else {
-        // If nested path, traverse
-        const keys = path.split('.');
-        for (const key of keys) {
-            if (potentialValue && typeof potentialValue === 'object' && key in potentialValue) {
-                potentialValue = potentialValue[key];
-            } else {
-                potentialValue = defaultValue; // Path doesn't fully exist
-                break; // Stop traversal
-            }
-        }
-    }
-
-    // --- NEW: Check if the final value is an object with a 'value' property ---
-    if (potentialValue !== defaultValue && potentialValue && typeof potentialValue === 'object' && potentialValue.hasOwnProperty('value')) {
-        // If it has a 'value' property, return that (potentially null/undefined)
-        return potentialValue.value;
-    }
-
-    // Otherwise, return the traversed value (could be raw value, object, or default)
-    return potentialValue;
-};
-
-// --- End Helper ---
+// --- END REMOVAL ---
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
@@ -623,7 +594,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 />
             </div>
         );
-    }, [paginatedPlayers, sport, enabledCategoryAbbrevs, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability]);
+    }, [paginatedPlayers, sport, expandedRows, handleRowExpand, sortConfig?.key, isDraftModeActive, setPlayerAvailability, enabledCategoryAbbrevs]);
 
     return (
         <div>

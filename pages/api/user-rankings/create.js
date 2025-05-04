@@ -119,28 +119,41 @@ export default async function handler(req, res) {
             sport: sourceRanking.sport.toLowerCase(),
             format: sourceRanking.format.toLowerCase(),
             scoring: sourceRanking.scoring.toLowerCase(),
+            // --- REVISED: Always generate categories from SPORT_CONFIGS --- 
             categories: (() => {
-                if (sourceRanking.categories && typeof sourceRanking.categories === 'object' && Object.keys(sourceRanking.categories).length > 0) {
-                    console.log('Using categories from source document.');
-                    return JSON.parse(JSON.stringify(sourceRanking.categories)); // Deep copy source
-                } else {
-                    console.log('Source document missing categories, falling back to SPORT_CONFIGS.');
-                    const sportKey = sourceRanking.sport?.toLowerCase();
-                    const sportConfig = SPORT_CONFIGS[sportKey];
-                    if (sportConfig && sportConfig.categories && typeof sportConfig.categories === 'object') {
-                         // Combine MLB hitting/pitching if necessary for the config structure
-                         if (sportKey === 'mlb' && sportConfig.categories.hitting && sportConfig.categories.pitching) {
-                            const combinedMLBCategories = { ...sportConfig.categories.hitting, ...sportConfig.categories.pitching };
-                            return JSON.parse(JSON.stringify(combinedMLBCategories)); // Deep copy combined MLB config
-                         } else {
-                            return JSON.parse(JSON.stringify(sportConfig.categories)); // Deep copy standard config
-                         }
+                console.log('Generating categories from SPORT_CONFIGS.');
+                const sportKey = sourceRanking.sport?.toLowerCase();
+                const sportConfig = SPORT_CONFIGS[sportKey];
+                const newCategories = {};
+
+                if (sportConfig && sportConfig.categories && typeof sportConfig.categories === 'object') {
+                    // Handle MLB structure
+                    if (sportKey === 'mlb' && sportConfig.categories.hitting && sportConfig.categories.pitching) {
+                        const combinedMLBCategories = { ...sportConfig.categories.hitting, ...sportConfig.categories.pitching };
+                         for (const [catKey, catData] of Object.entries(combinedMLBCategories)) {
+                            newCategories[catKey] = {
+                                enabled: catData.enabled || false, // Use enabled from config, default false
+                                label: catData.label || catKey, // Use label from config
+                                multiplier: 1 // Default multiplier
+                            };
+                        }
                     } else {
-                         console.warn(`No categories found in SPORT_CONFIGS for sport: ${sportKey}`);
-                         return {}; // Fallback to empty object
+                        // Handle standard structure (NBA, NFL)
+                        for (const [catKey, catData] of Object.entries(sportConfig.categories)) {
+                            newCategories[catKey] = {
+                                enabled: catData.enabled || false, // Use enabled from config, default false
+                                label: catData.label || catKey, // Use label from config
+                                multiplier: 1 // Default multiplier
+                            };
+                        }
                     }
+                } else {
+                    console.warn(`No categories found in SPORT_CONFIGS for sport: ${sportKey}`);
+                    // Return empty object if no config found
                 }
+                return newCategories; // Return the newly generated object
             })(),
+            // --- END REVISED CATEGORIES --- 
             ...(sourceRanking.sport.toLowerCase() === 'nfl' && {
                 flexSetting: sourceRanking.flexSetting?.toLowerCase(),
                 pprSetting: sourceRanking.pprSetting?.toLowerCase(),

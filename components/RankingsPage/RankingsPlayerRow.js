@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
+import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
@@ -12,103 +13,110 @@ import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
 import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 
-// Helper function to get nested values safely
-const getNestedValue = (obj, path, defaultValue = null) => {
-    // Handle cases where obj is null/undefined or path is not provided
-    if (!obj || typeof path !== 'string') return defaultValue;
-
-    // Handle non-nested paths first (simple keys like 'PPG')
-    if (path.indexOf('.') === -1) {
-        // Check if the key exists directly in the object
-        return obj.hasOwnProperty(path) ? obj[path] : defaultValue;
-    }
-
-    // Handle nested paths (like 'passing.passYards')
-    const keys = path.split('.');
-    let value = obj;
-    for (const key of keys) {
-        // Ensure value is an object and the key exists
-        if (value && typeof value === 'object' && key in value) {
-            value = value[key];
-        } else {
-            return defaultValue; // Path doesn't fully exist
-        }
-    }
-    return value; // Return the final value/object found at the path
-};
-
 // Create a specialized component just for stats to reduce re-renders
-const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
+const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
 
     // --- ADD LOG ---
     // console.log('[StatsSection] Received props:', {
     //     stats: stats,
-    //     categories: categories
+    //     categories: categories,
+    //     sport: sport
     // });
     // --- END LOG ---
 
-    // Define stats that need 2 decimal places
+    // Define stats that need 2 decimal places (can be simplified if path is always abbreviation)
     const statsNeedingTwoDecimals = [
-        'advanced.fantasyPointsPerSnap', // PPS
-        'advanced.opportunityEfficiency', // OPE
-        'advanced.turnoverRate'          // TO%
+        // Example keys - adjust if needed based on final structure
+        'PPS', // Assuming abbreviation is used now
+        'OPE',
+        'TO%',
+        // Add MLB rate stats if needed (e.g., ERA, WHIP)
+        'ERA',
+        'WHIP',
+        'K/BB',
+        'K/9'
     ];
 
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
-            {categories.map((statPathOrKey) => {
-                let statData, displayValue, title, bgColor, formattedValue;
+            {categories.map((categoryAbbrev) => { // Renamed loop variable for clarity
+                let statData, displayValue, title, bgColor, formattedValue, effectivePath;
 
-                // --- NEW: Handle Z-Score Sum --- 
-                if (statPathOrKey === 'zScoreSum') {
-                    displayValue = stats?.zScoreSum; // Directly access zScoreSum from the player stats object
+                // --- Determine effectivePath based on sport ---
+                if (sport === 'mlb') {
+                    const categoryConfig = SPORT_CONFIGS.mlb?.categories?.[categoryAbbrev];
+                    const group = categoryConfig?.group; // 'hitting' or 'pitching'
+                    if (group) {
+                        effectivePath = `${group}.${categoryAbbrev}`;
+                    } else {
+                        console.warn(`[StatsSection] MLB category group not found for: ${categoryAbbrev}`);
+                        effectivePath = categoryAbbrev; // Fallback?
+                    }
+                } else {
+                    // For NBA/NFL, assume the abbreviation is the key/path within stats
+                    effectivePath = categoryAbbrev;
+                }
+                // -------------------------------------------
+
+                // --- Handle Z-Score Sum (if passed in categories array) --- 
+                if (categoryAbbrev === 'zScoreSum') {
+                    // Note: zScoreSum might be directly on player object, not necessarily in stats[effectivePath]
+                    // This check might need adjustment based on where zScoreSum is attached
+                    displayValue = stats?.zScoreSum; 
                     title = `Z-Score Sum: ${displayValue?.toFixed(2) ?? '-'}`;
-                    bgColor = undefined; // No specific background for Z-Score Sum
-                    // Format Z-Score Sum to 2 decimal places
+                    bgColor = undefined; 
                     if (typeof displayValue === 'number') {
                         formattedValue = displayValue.toFixed(2);
                     } else {
                         formattedValue = '-';
                     }
                 } else {
-                    // --- Existing Logic for regular stats ---
-                    // Get the data using the path or key
-                    statData = getNestedValue(stats, statPathOrKey);
+                    // --- Logic for regular stats using effectivePath ---
+                    
+                    // Safely get the raw data/object at the effectivePath
+                    const getDeepValue = (obj, path, defaultValue = undefined) => {
+                        if (!obj || typeof path !== 'string') return defaultValue;
+                        const keys = path.split('.');
+                        let value = obj;
+                        for (const key of keys) {
+                            if (value && typeof value === 'object' && key in value) {
+                                value = value[key];
+                            } else {
+                                return defaultValue;
+                            }
+                        }
+                        return value;
+                    };
+                    statData = getDeepValue(stats, effectivePath);
 
-                    // Determine the value to display
+                    // Determine the value to display (check for { value: ... } structure)
                     displayValue = '-'; // Default placeholder
                     if (statData !== null && statData !== undefined) {
-                        // Check if it's the NBA-like structure { value: ..., color: ... }
                         if (typeof statData === 'object' && 'value' in statData) {
                             displayValue = statData.value;
                         } else {
-                            // Otherwise, assume statData is the raw value (NFL-like)
+                            // Assume statData is the raw value if not the specific object structure
                             displayValue = statData;
                         }
                     }
 
-                    // Determine title (use path/key as fallback)
-                    title = (statData && typeof statData === 'object' && statData.abbreviation)
-                        ? `${statData.abbreviation}: ${displayValue}`
-                        : `${statPathOrKey}: ${displayValue}`;
-
-                    // Determine background color (only if NBA-like structure)
+                    // Determine title (use abbreviation as fallback)
+                    // TODO: Get full label from config?
+                    title = `${categoryAbbrev}: ${displayValue}`;
+                        
+                    // Determine background color (might only apply to NBA or specific structures)
+                    // If derived stats have color, it would be in statData.color
                     bgColor = (statData && typeof statData === 'object' && statData.color)
                         ? statData.color
-                        : undefined; // No color for raw values
+                        : undefined; 
 
-                    // Format the display value (handle numbers, nulls, zeros)
+                    // Format the display value
                     formattedValue = displayValue;
                     if (typeof displayValue === 'number') {
-                        if (statsNeedingTwoDecimals.includes(statPathOrKey)) {
-                            // Format specific stats to 2 decimal places
+                        // Use categoryAbbrev for checking formatting needs
+                        if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
                             formattedValue = displayValue.toFixed(2);
-                            // Optionally remove trailing .00 if needed, though usually desired for these stats
-                            // if (formattedValue.endsWith('.00')) {
-                            //     formattedValue = formattedValue.slice(0, -3);
-                            // }
                         } else {
-                            // Format other numbers to 1 decimal place, remove trailing .0
                             formattedValue = displayValue.toFixed(1);
                             if (formattedValue.endsWith('.0')) {
                                 formattedValue = formattedValue.slice(0, -2);
@@ -117,12 +125,11 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
                     } else if (displayValue === null || displayValue === undefined) {
                         formattedValue = '-'; // Use placeholder for null/undefined
                     }
-                    // --- End Existing Logic ---
                 }
 
                 return (
                     <div
-                        key={statPathOrKey} // Use the path/key as the React key
+                        key={categoryAbbrev} // Use the abbreviation as the React key
                         className="flex-1 text-center h-full flex items-center justify-center select-none"
                         title={title}
                         style={{ backgroundColor: bgColor }} // Apply color if available
@@ -133,7 +140,8 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue }) => {
                     </div>
                 );
             })}
-            {/* --- NEW: Add Z-Score Sum column --- */}
+            {/* Z-Score Sum column - maybe remove if included in main map? */} 
+            {/* Or ensure it's NOT in categories prop if rendered separately */} 
             <div
                 key="zScoreSum_scaled"
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
@@ -354,6 +362,23 @@ const RankingsPlayerRow = memo(({
         setImageLoadError(false);
     }, [playerImage]);
 
+    // Handle image loading errors
+    const handleImageError = () => {
+        setImageLoadError(true);
+    };
+
+    const defaultImageSrc = '/avatar-default.png'; // Path to your default image
+
+    // --- Stats Section Rendering ---
+    const renderStatsSection = () => (
+        <StatsSection
+            categories={categories} // Pass the category abbreviations
+            stats={player.stats}      // Pass the player's stats object
+            zScoreSumValue={zScoreSumValue} // Pass the calculated sum
+            sport={sport}             // Pass the sport
+        />
+    );
+
     return (
         <div
             ref={(node) => {
@@ -444,12 +469,12 @@ const RankingsPlayerRow = memo(({
                                 loading="lazy"
                                 width="28"
                                 height="28"
-                                onError={() => setImageLoadError(true)} // Set error state on failure
+                                onError={handleImageError} // Set error state on failure
                             />
                         ) : (
                             // Render fallback if no image src OR if error occurred
                             <img
-                                src="/avatar-default.png" // <-- Use the default avatar image
+                                src={defaultImageSrc} // <-- Use the default avatar image
                                 alt="Default Avatar"
                                 className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
                                 width="28"
@@ -475,7 +500,7 @@ const RankingsPlayerRow = memo(({
                 </div>
 
                 {/* Stats section - flexible width */}
-                <StatsSection categories={categories} stats={player.stats} zScoreSumValue={zScoreSumValue} />
+                {renderStatsSection()}
             </div>
 
             {/* Only render expanded content when needed */}

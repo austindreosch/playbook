@@ -60,6 +60,27 @@ const initialSportState = () => ({
     // statsReferences: {}, // Consider if this needs nesting too, or remove if unused
 });
 
+// --- Get initial state size ---
+// Note: This is an approximation based on the initial structure, 
+// it won't include the functions/methods of the store.
+const calculateInitialStateSize = () => {
+    const initialState = {
+        dataset: {
+            nba: initialSportState(),
+            mlb: initialSportState(),
+            nfl: initialSportState(),
+        },
+        loading: { /* ... initial loading state ... */ }, // Assume initial loading states are small
+        error: { /* ... initial error state ... */ }, // Assume initial error states are small
+        rawFetchedData: null,
+        isRawDataFetched: false,
+        _loggedSample: { nfl: false, nba: false, mlb: false } // Add logging flags
+    };
+    // Manually define estimated initial size or calculate based on a representative empty state
+    // For simplicity, we can start with 0 KB or use getObjectSize on a minimal structure
+    return getObjectSize(initialState); 
+}
+
 // =====================================================================
 
 const useMasterDataset = create((set, get) => ({
@@ -92,10 +113,12 @@ const useMasterDataset = create((set, get) => ({
         rawData: null, // Error state for the initial raw fetch
     },
 
+    _loggedSample: { nfl: false, nba: false, mlb: false }, // State to track logging
+
     // --- Raw Data Cache (remains top-level for simplicity) ---
     rawFetchedData: null,
     isRawDataFetched: false,
-    stateSize: '0 KB', // This might need recalculation or removal
+    stateSize: calculateInitialStateSize(), // Set initial size
 
     // --- Helper Function for Fetching and Caching Raw Data ---
     _ensureRawDataFetched: async () => {
@@ -121,8 +144,8 @@ const useMasterDataset = create((set, get) => ({
                 loading: { ...get().loading, rawData: false }, // Stop raw data loading
                 error: { ...get().error, rawData: null },
             });
-            // Recalculate size after fetch?
-            // set({ stateSize: getObjectSize(get()) });
+            // Recalculate size after fetch
+            set({ stateSize: getObjectSize(get()) }); // Update size after raw data fetch
             return data;
         } catch (error) {
             console.error("Error fetching raw master data:", error);
@@ -147,7 +170,7 @@ const useMasterDataset = create((set, get) => ({
         const identityLoadingKey = `identities_${sportKey}`;
         const identityErrorKey = `identities_${sportKey}`;
 
-        console.log(`fetchPlayerIdentities: Fetching identities for ${sportKey}...`);
+        // console.log(`fetchPlayerIdentities: Fetching identities for ${sportKey}...`); // Removed log
         set(state => ({
             loading: { ...state.loading, [identityLoadingKey]: true },
             error: { ...state.error, [identityErrorKey]: null }
@@ -160,7 +183,7 @@ const useMasterDataset = create((set, get) => ({
                 throw new Error(errorData.error || `API request failed with status ${response.status}`);
             }
             const identities = await response.json();
-            console.log(`fetchPlayerIdentities: Received ${identities.length} identities for ${sportKey}.`);
+            // console.log(`fetchPlayerIdentities: Received ${identities.length} identities for ${sportKey}.`); // Removed log
 
             set(state => ({
                 dataset: {
@@ -174,6 +197,7 @@ const useMasterDataset = create((set, get) => ({
                 loading: { ...state.loading, [identityLoadingKey]: false },
                 error: { ...state.error, [identityErrorKey]: null }
             }));
+            set({ stateSize: getObjectSize(get()) }); // Update size after identities fetch
 
         } catch (error) {
             console.error(`Error fetching player identities for ${sportKey}:`, error);
@@ -215,7 +239,7 @@ const useMasterDataset = create((set, get) => ({
             return;
         }
 
-        console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`);
+        // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
         try {
             const context = {}; // Placeholder for context
             const processedPlayers = processNbaData(rawNbaStats, context);
@@ -232,7 +256,21 @@ const useMasterDataset = create((set, get) => ({
                 loading: { ...state.loading, [sportKey]: false },
                 error: { ...state.error, [sportKey]: null }
             }));
-            console.log(`fetch${sportKey.toUpperCase()}Data: Successfully processed and stored ${Object.keys(processedPlayers).length} ${sportKey.toUpperCase()} players.`);
+            // --- Log Sample and Update Size ---
+            const sportLogFlag = get()._loggedSample[sportKey];
+            if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
+                const firstPlayerId = Object.keys(processedPlayers)[0];
+                console.log(`[Sample ${sportKey.toUpperCase()} Player]:`, processedPlayers[firstPlayerId]);
+                set(state => ({ _loggedSample: { ...state._loggedSample, [sportKey]: true } }));
+            }
+            set({ stateSize: getObjectSize(get()) }); // Update size after processing
+            // --- Log Size with Player Counts ---
+            const finalStateNBA = get();
+            const nbaCount = Object.keys(finalStateNBA.dataset.nba.players || {}).length;
+            const mlbCountNBA = Object.keys(finalStateNBA.dataset.mlb.players || {}).length;
+            const nflCountNBA = Object.keys(finalStateNBA.dataset.nfl.players || {}).length;
+            console.log(`[Store Size Update] After ${sportKey.toUpperCase()} processing: ${finalStateNBA.stateSize} (NBA: ${nbaCount}, MLB: ${mlbCountNBA}, NFL: ${nflCountNBA} players)`);
+            // ----------------------------------
 
         } catch (processingError) {
             console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
@@ -281,7 +319,7 @@ const useMasterDataset = create((set, get) => ({
              // Proceed anyway, but context will be empty / derived stats using it will be null
          }
 
-        console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`);
+        // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
          try {
              // processNflData now returns { processedPlayers, teamTotalsContext }
              const { processedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats);
@@ -299,7 +337,21 @@ const useMasterDataset = create((set, get) => ({
                  loading: { ...state.loading, [sportKey]: false },
                  error: { ...state.error, [sportKey]: null }
              }));
-             console.log(`fetch${sportKey.toUpperCase()}Data: Successfully processed and stored ${Object.keys(processedPlayers).length} ${sportKey.toUpperCase()} players.`);
+             // --- Log Sample and Update Size ---
+             const sportLogFlag = get()._loggedSample[sportKey];
+             if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
+                 const firstPlayerId = Object.keys(processedPlayers)[0];
+                 console.log(`[Sample ${sportKey.toUpperCase()} Player]:`, processedPlayers[firstPlayerId]);
+                 set(state => ({ _loggedSample: { ...state._loggedSample, [sportKey]: true } }));
+             }
+             set({ stateSize: getObjectSize(get()) }); // Update size after processing
+             // --- Log Size with Player Counts ---
+             const finalStateNFL = get();
+             const nbaCountNFL = Object.keys(finalStateNFL.dataset.nba.players || {}).length;
+             const mlbCountNFL = Object.keys(finalStateNFL.dataset.mlb.players || {}).length;
+             const nflCountNFL = Object.keys(finalStateNFL.dataset.nfl.players || {}).length;
+             console.log(`[Store Size Update] After ${sportKey.toUpperCase()} processing: ${finalStateNFL.stateSize} (NBA: ${nbaCountNFL}, MLB: ${mlbCountNFL}, NFL: ${nflCountNFL} players)`);
+             // ----------------------------------
 
          } catch (processingError) {
              console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
@@ -344,7 +396,7 @@ const useMasterDataset = create((set, get) => ({
             return;
         }
 
-        console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`);
+        // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
         try {
             const context = {}; // Add context if needed later
             // Projections are handled inside processMlbData currently
@@ -362,7 +414,21 @@ const useMasterDataset = create((set, get) => ({
                 loading: { ...state.loading, [sportKey]: false },
                 error: { ...state.error, [sportKey]: null }
             }));
-             console.log(`fetch${sportKey.toUpperCase()}Data: Successfully processed and stored ${Object.keys(processedPlayers).length} ${sportKey.toUpperCase()} players.`);
+             // --- Log Sample and Update Size ---
+             const sportLogFlag = get()._loggedSample[sportKey];
+             if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
+                 const firstPlayerId = Object.keys(processedPlayers)[0];
+                 console.log(`[Sample ${sportKey.toUpperCase()} Player]:`, processedPlayers[firstPlayerId]);
+                 set(state => ({ _loggedSample: { ...state._loggedSample, [sportKey]: true } }));
+             }
+             set({ stateSize: getObjectSize(get()) }); // Update size after processing
+             // --- Log Size with Player Counts ---
+             const finalStateMLB = get();
+             const nbaCountMLB = Object.keys(finalStateMLB.dataset.nba.players || {}).length;
+             const mlbCountMLB = Object.keys(finalStateMLB.dataset.mlb.players || {}).length;
+             const nflCountMLB = Object.keys(finalStateMLB.dataset.nfl.players || {}).length;
+             console.log(`[Store Size Update] After ${sportKey.toUpperCase()} processing: ${finalStateMLB.stateSize} (NBA: ${nbaCountMLB}, MLB: ${mlbCountMLB}, NFL: ${nflCountMLB} players)`);
+             // ----------------------------------
 
         } catch (processingError) {
              console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
