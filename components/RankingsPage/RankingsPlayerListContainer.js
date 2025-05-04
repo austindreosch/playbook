@@ -198,17 +198,25 @@ const RankingsPlayerListContainer = React.forwardRef(({
     }, [playerIdentities]); // Dependency: playerIdentities
     // --- END ADDED BLOCK ---
 
-    // --- NEW: Create Seasonal Stats Map (Key: MySportsFeedsID String) ---
+    // --- NEW: Create Seasonal Stats Map (Key: PlayerID String) ---
     const seasonalStatsMap = useMemo(() => {
         const map = new Map();
-        seasonalStatsData.forEach(playerWithStats => {
-            const msfId = playerWithStats.info?.playerId;
-            if (msfId != null) {
-                map.set(String(msfId), playerWithStats);
-            }
-        });
+        // Check if seasonalStatsData is an object and not empty
+        if (seasonalStatsData && typeof seasonalStatsData === 'object' && Object.keys(seasonalStatsData).length > 0) {
+             // Iterate over the VALUES of the object
+            Object.values(seasonalStatsData).forEach(playerData => {
+                // Use optional chaining for safety
+                const playerId = playerData?.info?.playerId;
+                if (playerId) {
+                    map.set(String(playerId), playerData.stats); // Map ID to stats object
+                }
+            });
+        } else {
+            // Log if data is not the expected object or empty
+            // console.warn(`[seasonalStatsMap Memo] seasonalStatsData is not a valid object for sport: ${sport}`, seasonalStatsData);
+        }
         return map;
-    }, [seasonalStatsData]); // Dependency: seasonalStatsData
+    }, [seasonalStatsData, sport]); // Dependency: seasonalStatsData & sport
     // --- END ADDED BLOCK ---
 
     // --- NEW: ECR Rank Maps --- ADDED BLOCK

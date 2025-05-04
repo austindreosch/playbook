@@ -667,9 +667,13 @@ const useUserRankings = create(
                         // 5. Save the changes (specifically the timestamp) immediately
                         await get().saveChanges(); 
 
+                        // --- ADD RETURN STATEMENT --- 
+                        return updatedRankingData; // Return the updated ranking
+
                     } catch (error) {
                         console.error('[selectAndTouchRanking] Error:', error);
                         setState({ error: error.message, selectionLoading: false });
+                        return null; // Return null explicitly on error
                     }
                 },
             };

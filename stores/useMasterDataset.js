@@ -1,7 +1,10 @@
 // stores/MasterDataset.js
+import { processMlbData } from '@/lib/utils/mlbDataProcessing';
+import { processNbaData } from '@/lib/utils/nbaDataProcessing';
+import { processNflData } from '@/lib/utils/nflDataProcessing'; // Returns { processedPlayers, teamTotalsContext }
+import _ from 'lodash';
 import { create } from 'zustand';
-import { processNflPlayerData } from '../utilities/MasterDataset/nflAdvancedStats';
-
+// import { processNflPlayerData } from '../utilities/MasterDataset/nflAdvancedStats'; // Not used
 
 const getObjectSize = (obj) => {
     const json = JSON.stringify(obj);
@@ -44,53 +47,66 @@ function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', sta
     return hexToRgba(baseColor, alpha);
 }
 
+// =====================================================================
+//                      INITIAL STATE STRUCTURE
+// =====================================================================
 
-
-
-
-
+const initialSportState = () => ({
+    players: {},         // Processed player stats
+    identities: [],      // Basic player info (id, name, team, etc.)
+    teamTotals: {},      // Aggregated team stats (currently only NFL)
+    lastUpdated: null,   // Timestamp for player stats data
+    identitiesLastUpdated: null, // Timestamp for identities
+    // statsReferences: {}, // Consider if this needs nesting too, or remove if unused
+});
 
 // =====================================================================
 
 const useMasterDataset = create((set, get) => ({
-    nba: {
-        players: [],
-        lastUpdated: null,
-        statsReferences: {},
-        playerIdentities: [],
+    // --- NEW NESTED DATA STRUCTURE ---
+    dataset: {
+        nba: initialSportState(),
+        mlb: initialSportState(),
+        nfl: initialSportState(),
     },
-    mlb: {
-        players: [],
-        lastUpdated: null,
-        statsReferences: {},
-        playerIdentities: [],
-    },
-    nfl: {
-        players: [],
-        projectionsData: [],
-        last30DaysData: [],
-        lastUpdated: null,
-        statsReferences: {},
-        playerIdentities: [],
-    },
-    isLoading: false,  // Just one simple loading state
-    isIdentityLoading: false, // NEW: Specific loading state for identities
-    error: null,       // Just one simple error state
-    stateSize: '0 KB',
 
-    // --- New state for caching ---
+    // --- NEW NESTED LOADING/ERROR STATES ---
+    loading: {
+        // Specific loading states per sport/action
+        nba: false,
+        mlb: false,
+        nfl: false,
+        identities_nba: false,
+        identities_mlb: false,
+        identities_nfl: false,
+        rawData: false, // Loading state for the initial raw fetch
+    },
+    error: {
+        // Specific error states per sport/action
+        nba: null,
+        mlb: null,
+        nfl: null,
+        identities_nba: null,
+        identities_mlb: null,
+        identities_nfl: null,
+        rawData: null, // Error state for the initial raw fetch
+    },
+
+    // --- Raw Data Cache (remains top-level for simplicity) ---
     rawFetchedData: null,
     isRawDataFetched: false,
+    stateSize: '0 KB', // This might need recalculation or removal
 
-    // --- New Helper Function for Fetching and Caching ---
+    // --- Helper Function for Fetching and Caching Raw Data ---
     _ensureRawDataFetched: async () => {
         if (get().isRawDataFetched) {
-            // // console.log("Using cached raw data");
             return get().rawFetchedData;
         }
 
-        // // console.log("Fetching raw data from API...");
-        set({ isLoading: true, error: null }); // Start loading, clear previous error
+        set(state => ({
+            loading: { ...state.loading, rawData: true },
+            error: { ...state.error, rawData: null }
+        }));
         try {
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
@@ -102,1019 +118,312 @@ const useMasterDataset = create((set, get) => ({
             set({
                 rawFetchedData: data,
                 isRawDataFetched: true,
-                isLoading: false, // Stop loading on success
-                error: null
+                loading: { ...get().loading, rawData: false }, // Stop raw data loading
+                error: { ...get().error, rawData: null },
             });
+            // Recalculate size after fetch?
+            // set({ stateSize: getObjectSize(get()) });
             return data;
         } catch (error) {
-            // console.error("Error fetching raw master data:", error);
-            set({
-                error: error.message,
-                isLoading: false, // Stop loading on error
-                isRawDataFetched: false, // Ensure flag stays false on error
-                rawFetchedData: null   // Clear potentially partial data
-            });
-            return null; // Indicate fetch failure
+            console.error("Error fetching raw master data:", error);
+            set(state => ({
+                error: { ...state.error, rawData: error.message },
+                loading: { ...state.loading, rawData: false },
+                isRawDataFetched: false,
+                rawFetchedData: null
+            }));
+            return null;
         }
     },
 
-    // --- NEW: Fetch Player Identities ---
+    // --- Fetch Player Identities (Updated) ---
     fetchPlayerIdentities: async (sport) => {
-        const lowerCaseSport = sport.toLowerCase();
-        if (!lowerCaseSport || !get()[lowerCaseSport]) { // Check if sport exists in state
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !get().dataset[sportKey]) {
             console.error(`fetchPlayerIdentities: Invalid or unsupported sport provided: ${sport}`);
             return;
         }
 
-        console.log(`fetchPlayerIdentities: Fetching identities for ${lowerCaseSport}...`);
-        set({ isIdentityLoading: true, error: null }); // Use specific loading state
+        const identityLoadingKey = `identities_${sportKey}`;
+        const identityErrorKey = `identities_${sportKey}`;
+
+        console.log(`fetchPlayerIdentities: Fetching identities for ${sportKey}...`);
+        set(state => ({
+            loading: { ...state.loading, [identityLoadingKey]: true },
+            error: { ...state.error, [identityErrorKey]: null }
+        }));
 
         try {
-            const response = await fetch(`/api/players/list?sport=${lowerCaseSport}`);
+            const response = await fetch(`/api/players/list?sport=${sportKey}`);
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `API request failed with status ${response.status}`);
             }
             const identities = await response.json();
-            console.log(`fetchPlayerIdentities: Received ${identities.length} identities for ${lowerCaseSport}.`);
+            console.log(`fetchPlayerIdentities: Received ${identities.length} identities for ${sportKey}.`);
 
             set(state => ({
-                [lowerCaseSport]: {
-                    ...state[lowerCaseSport],
-                    playerIdentities: identities,
+                dataset: {
+                    ...state.dataset,
+                    [sportKey]: {
+                        ...state.dataset[sportKey],
+                        identities: identities,
+                        identitiesLastUpdated: Date.now(),
+                    }
                 },
-                isIdentityLoading: false,
-                error: null
+                loading: { ...state.loading, [identityLoadingKey]: false },
+                error: { ...state.error, [identityErrorKey]: null }
             }));
 
         } catch (error) {
-            console.error(`Error fetching player identities for ${lowerCaseSport}:`, error);
-            set({ 
-                error: `Error fetching identities for ${lowerCaseSport}: ${error.message}`, 
-                isIdentityLoading: false 
-            });
+            console.error(`Error fetching player identities for ${sportKey}:`, error);
+            set(state => ({
+                error: { ...state.error, [identityErrorKey]: `Error fetching identities for ${sportKey}: ${error.message}` },
+                loading: { ...state.loading, [identityLoadingKey]: false }
+            }));
         }
     },
-    // --- END NEW Fetch Player Identities ---
 
     // =====================================================================
-    //                     🏀 FETCH NBA DATA 🏀
+    //                     🏀 FETCH NBA DATA (Refactored) 🏀
     // =====================================================================
-
     fetchNbaData: async () => {
-        // 1. Check existing data
-        let data = get().rawFetchedData;
-        const isDataAlreadyFetched = get().isRawDataFetched; // Or use timestamp
+        const sportKey = 'nba';
+        set(state => ({
+            loading: { ...state.loading, [sportKey]: true },
+            error: { ...state.error, [sportKey]: null }
+        }));
 
-        // 2. Fetch if missing/stale
-        if (!data || !isDataAlreadyFetched) { // Adjust condition
-            // console.log("fetchNbaData: Raw data not found or stale, attempting fetch...");
-            data = await get()._ensureRawDataFetched();
-        } else {
-            // // console.log("fetchNbaData: Using existing raw data from store state.");
-        }
-
-        // 3. Check if data available
-        if (!data) {
-            // console.error("fetchNbaData: No raw data available for processing.");
+        const rawData = await get()._ensureRawDataFetched();
+        if (!rawData) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Raw data fetch failed, cannot process.`);
+            set(state => ({
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: state.error.rawData || "Failed to fetch raw master data." }
+             }));
             return;
         }
 
-        // 4. Process NBA data
+        const rawNbaStats = _.get(rawData, 'nbaStats.playerStatsTotals');
+        if (!rawNbaStats || !Array.isArray(rawNbaStats) || rawNbaStats.length === 0) {
+            console.warn(`fetch${sportKey.toUpperCase()}Data: No valid data found.`);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, lastUpdated: Date.now() } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: 'No NBA player stats found in fetched data.' }
+            }));
+            return;
+        }
+
+        console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`);
         try {
-            // // console.log("fetchNbaData: Starting processing...");
-            if (get().isLoading) set({ isLoading: false });
-
-            // First map the regular season stats
-            const regularSeasonPlayers = data.nbaStats?.playerStatsTotals?.map(playerStats => {
-                const teamAbbreviation = playerStats.team?.abbreviation ||
-                    playerStats.player?.currentTeam?.abbreviation ||
-                    'FA';
-                return {
-                    info: {
-                        playerId: playerStats.player.id,
-                        firstName: playerStats.player.firstName,
-                        lastName: playerStats.player.lastName,
-                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                        position: playerStats.player.primaryPosition,
-                        team: teamAbbreviation,
-                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
-                        height: playerStats.player.height,
-                        weight: playerStats.player.weight,
-                        jerseyNumber: playerStats.player.jerseyNumber,
-                        officialImageSrc: playerStats.player.officialImageSrc,
-                        age: playerStats.player.age,
-                        preciseAge: playerStats.player.birthDate ?
-                            ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
-                            playerStats.player.age,
-                        injuryStatus: playerStats.player.currentInjury,
-                    },
-                    stats: {
-                        //totals
-                        minutesPerGame: { value: formatNumber(Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60)), zScore: null, color: '', abbreviation: 'MPG' },
-                        gamesPlayed: { value: formatNumber(playerStats.stats.gamesPlayed), zScore: null, color: '', abbreviation: 'GP' },
-                        points: { value: formatNumber(playerStats.stats.offense.pts), zScore: null, color: '' },
-                        rebounds: { value: formatNumber(playerStats.stats.rebounds.reb), zScore: null, color: '' },
-                        assists: { value: formatNumber(playerStats.stats.offense.ast), zScore: null, color: '' },
-                        steals: { value: formatNumber(playerStats.stats.defense.stl), zScore: null, color: '' },
-                        blocks: { value: formatNumber(playerStats.stats.defense.blk), zScore: null, color: '' },
-                        turnovers: { value: formatNumber(playerStats.stats.defense.tov), zScore: null, color: '' },
-
-                        //per game
-                        pointsPerGame: { value: formatNumber(playerStats.stats.offense.ptsPerGame), zScore: null, color: '', abbreviation: 'PTS' },
-                        reboundsPerGame: { value: formatNumber(playerStats.stats.rebounds.rebPerGame), zScore: null, color: '', abbreviation: 'REB' },
-                        assistsPerGame: { value: formatNumber(playerStats.stats.offense.astPerGame), zScore: null, color: '', abbreviation: 'AST' },
-                        threePointsMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fg3PtMadePerGame), zScore: null, color: '', abbreviation: '3PM' },
-                        turnoversPerGame: { value: formatNumber(playerStats.stats.defense.tovPerGame), zScore: null, color: '', abbreviation: 'TO' },
-                        stealsPerGame: { value: formatNumber(playerStats.stats.defense.stlPerGame), zScore: null, color: '', abbreviation: 'STL' },
-                        blocksPerGame: { value: formatNumber(playerStats.stats.defense.blkPerGame), zScore: null, color: '', abbreviation: 'BLK' },
-                        fieldGoalPercentage: { value: formatNumber(playerStats.stats.fieldGoals.fgPct), zScore: null, color: '', abbreviation: 'FG%' },
-                        freeThrowPercentage: { value: formatNumber(playerStats.stats.freeThrows.ftPct), zScore: null, color: '', abbreviation: 'FT%' },
-
-                        fgAttPerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
-                        ftAttPerGame: { value: formatNumber(playerStats.stats.freeThrows.ftAttPerGame), zScore: null, color: '' },
-                        fgMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
-                        ftMadePerGame: { value: formatNumber(playerStats.stats.freeThrows.ftMadePerGame), zScore: null, color: '' },
-
-                    }
-                };
-            }) || [];
-
-            // Merge stats for duplicate players in regular season stats, ie players who were traded mid-season
-            const players = Object.values(
-                regularSeasonPlayers.reduce((acc, player) => {
-                    const id = player.info.playerId;
-                    if (!acc[id]) {
-                        acc[id] = { ...player };
-                    } else {
-                        // Merge stats (assuming all stat fields are numeric)
-                        const existingGames = acc[id].stats.gamesPlayed;
-                        const newGames = player.stats.gamesPlayed;
-                        const totalGames = existingGames + newGames;
-
-                        // Helper function for weighted averages
-                        const weightedAvg = (a, b, existingGames, newGames) => {
-                            const totalGames = existingGames + newGames;
-                            return formatNumber(((a * existingGames) + (b * newGames)) / totalGames);
-                        };
-
-                        // Update per-game stats with weighted averages
-                        acc[id].stats.pointsPerGame = { value: weightedAvg(acc[id].stats.pointsPerGame.value, player.stats.pointsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.reboundsPerGame = { value: weightedAvg(acc[id].stats.reboundsPerGame.value, player.stats.reboundsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.assistsPerGame = { value: weightedAvg(acc[id].stats.assistsPerGame.value, player.stats.assistsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.stealsPerGame = { value: weightedAvg(acc[id].stats.stealsPerGame.value, player.stats.stealsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.blocksPerGame = { value: weightedAvg(acc[id].stats.blocksPerGame.value, player.stats.blocksPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.minutesPerGame = { value: weightedAvg(acc[id].stats.minutesPerGame.value, player.stats.minutesPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.threePointsMadePerGame = { value: weightedAvg(acc[id].stats.threePointsMadePerGame.value, player.stats.threePointsMadePerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.turnoversPerGame = { value: weightedAvg(acc[id].stats.turnoversPerGame.value, player.stats.turnoversPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-
-                        // Update totals
-                        acc[id].stats.gamesPlayed = { value: totalGames, zScore: null, color: '' };
-                        acc[id].stats.points = { value: acc[id].stats.points.value + player.stats.points.value, zScore: null, color: '' };
-                        acc[id].stats.rebounds = { value: acc[id].stats.rebounds.value + player.stats.rebounds.value, zScore: null, color: '' };
-                        acc[id].stats.assists = { value: acc[id].stats.assists.value + player.stats.assists.value, zScore: null, color: '' };
-                        acc[id].stats.steals = { value: acc[id].stats.steals.value + player.stats.steals.value, zScore: null, color: '' };
-                        acc[id].stats.blocks = { value: acc[id].stats.blocks.value + player.stats.blocks.value, zScore: null, color: '' };
-                        acc[id].stats.turnovers = { value: acc[id].stats.turnovers.value + player.stats.turnovers.value, zScore: null, color: '' };
-
-                        // Update percentages with weighted averages
-                        acc[id].stats.fieldGoalPercentage = { value: weightedAvg(acc[id].stats.fieldGoalPercentage.value, player.stats.fieldGoalPercentage.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.freeThrowPercentage = { value: weightedAvg(acc[id].stats.freeThrowPercentage.value, player.stats.freeThrowPercentage.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                    }
-                    return acc;
-                }, {})
-            );
-
-            // Filter out players with no stats (points, rebounds, and assists all equal to 0)
-            const filteredPlayers = players.filter(player => {
-                const hasStats =
-                    player.stats.points.value !== 0 ||
-                    player.stats.rebounds.value !== 0 ||
-                    player.stats.assists.value !== 0;
-
-                return hasStats;
-            });
-
-            // Replace the players array with the filtered version
-            const activePlayers = filteredPlayers;
-
-
-
-            // Inject projected stats into existing players
-            const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
-                const teamAbbreviation = playerStats.team?.abbreviation ||
-                    playerStats.player?.currentTeam?.abbreviation ||
-                    'FA';
-                return {
-                    info: {
-                        playerId: playerStats.player.id,
-                        firstName: playerStats.player.firstName,
-                        lastName: playerStats.player.lastName,
-                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                        position: playerStats.player.primaryPosition,
-                        team: teamAbbreviation,
-                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
-                        height: playerStats.player.height,
-                        weight: playerStats.player.weight,
-                        jerseyNumber: playerStats.player.jerseyNumber,
-                        officialImageSrc: playerStats.player.officialImageSrc,
-                        injuryStatus: playerStats.player.currentInjury
-                    },
-                    projectedStats: {
-                        //totals
-                        gamesPlayed: { value: playerStats.projectedStats.gamesPlayed, zScore: null, color: '' },
-                        points: { value: playerStats.projectedStats.offense.pts, zScore: null, color: '' },
-                        rebounds: { value: playerStats.projectedStats.rebounds.reb, zScore: null, color: '' },
-                        assists: { value: playerStats.projectedStats.offense.ast, zScore: null, color: '' },
-                        steals: { value: playerStats.projectedStats.defense.stl, zScore: null, color: '' },
-                        blocks: { value: playerStats.projectedStats.defense.blk, zScore: null, color: '' },
-                        turnovers: { value: playerStats.projectedStats.defense.tov, zScore: null, color: '' },
-                        //per game
-                        pointsPerGame: { value: playerStats.projectedStats.offense.ptsPerGame, zScore: null, color: '' },
-                        reboundsPerGame: { value: playerStats.projectedStats.rebounds.rebPerGame, zScore: null, color: '' },
-                        assistsPerGame: { value: playerStats.projectedStats.offense.astPerGame, zScore: null, color: '' },
-                        turnoversPerGame: { value: playerStats.projectedStats.defense.tovPerGame, zScore: null, color: '' },
-                        threePointsMadePerGame: { value: playerStats.projectedStats.fieldGoals.fg3PtMadePerGame, zScore: null, color: '' },
-                        stealsPerGame: { value: playerStats.projectedStats.defense.stlPerGame, zScore: null, color: '' },
-                        blocksPerGame: { value: playerStats.projectedStats.defense.blkPerGame, zScore: null, color: '' },
-                        fieldGoalPercentage: { value: playerStats.projectedStats.fieldGoals.fgPct, zScore: null, color: '' },
-                        freeThrowPercentage: { value: playerStats.projectedStats.freeThrows.ftPct, zScore: null, color: '' },
-                        minutesPerGame: { value: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60), zScore: null, color: '' },
-
-                        fgAttPerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
-                        ftAttPerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftAttPerGame), zScore: null, color: '' },
-                        fgMadePerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
-                        ftMadePerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftMadePerGame), zScore: null, color: '' },
-
-                        //For z-scorevalidation
-                        minSeconds: { value: playerStats.projectedStats.miscellaneous.minSeconds, zScore: null, color: '' },
-                        fgAtt: { value: playerStats.projectedStats.fieldGoals.fgAtt, zScore: null, color: '' },
-                    }
-                };
-            }) || [];
-
-            // Inject projected stats into existing players
-            const playerMap = activePlayers.reduce((acc, player) => {
-                acc[player.info.playerId] = player;
-                return acc;
-            }, {});
-
-            projectedPlayers.forEach(projection => {
-                const playerId = projection.info.playerId;
-                if (playerMap[playerId]) {
-                    playerMap[playerId].projections = projection.projectedStats;
-                }
-            });
-
-            const playersWithProjections = Object.values(playerMap);
-
-            //    ------------------------------------------
-            //           Z-SCORES CALCULATION
-            //    ------------------------------------------
-
-
-            const statKeys = Object.keys(regularSeasonPlayers[0]?.stats || {}).map(key => key);
-
-            const topN = 156; //12 team standard league rostered players
-            const statsReferences = {};
-
-            // Calculate z-scores for regular stats
-            statKeys.forEach(statKey => {
-                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
-                const baselinePlayers = playersWithProjections.filter(player =>
-                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value) &&
-                    player.projections &&
-                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
-                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
-                );
-
-                if (!baselinePlayers.length) return;
-
-                // Sort descending and select top N players from baseline players
-                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => b.stats[statKey].value - a.stats[statKey].value);
-                const topPlayers = sortedBaselinePlayers.slice(0, topN);
-
-                // Calculate mean and standard deviation from top players
-                const values = topPlayers.map(player => player.stats[statKey].value);
-                const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
-                const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
-
-                // Save reference outside of each player's data
-                statsReferences[statKey] = { mean, stdDev };
-
-                // Calculate z-scores and colors for ALL players with valid stats
-                const allValidPlayers = playersWithProjections.filter(player =>
-                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value)
-                );
-
-                allValidPlayers.forEach(player => {
-                    // For turnovers, invert the z-score since lower is better
-                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
-                        player.stats[statKey].zScore = (mean - player.stats[statKey].value) / stdDev;
-                    }
-                    // For percentage-based stats, weight the z-score by volume
-                    else if (statKey === 'fieldGoalPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.stats.fgMadePerGame.value + player.stats.fgAttPerGame.value) / (15 + 30),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else if (statKey === 'freeThrowPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.stats.ftMadePerGame.value + player.stats.ftAttPerGame.value) / (4.5 + 9),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else {
-                        player.stats[statKey].zScore = (player.stats[statKey].value - mean) / stdDev;
-                    }
-                    // Calculate color based on z-score using new function
-                    const zScore = player.stats[statKey].zScore;
-                    player.stats[statKey].color = getColorForZScore(zScore);
-                });
-            });
-
-            // Calculate z-scores for projection stats if available
-            statKeys.forEach(statKey => {
-                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
-                const baselinePlayers = playersWithProjections.filter(player =>
-                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value) &&
-                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
-                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
-                );
-
-                if (!baselinePlayers.length) return;
-
-                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => {
-                    // For turnovers, sort ascending since lower is better
-                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
-                        return a.projections[statKey].value - b.projections[statKey].value;
-                    }
-                    // For all other stats, sort descending
-                    return b.projections[statKey].value - a.projections[statKey].value;
-                });
-                const topPlayers = sortedBaselinePlayers.slice(0, topN);
-
-                const values = topPlayers.map(player => player.projections[statKey].value);
-                const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
-                const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
-
-                // Save projection reference values with a prefix to distinguish
-                statsReferences[`proj_${statKey}`] = { mean, stdDev };
-
-                // Calculate z-scores and colors for ALL players with valid projection stats
-                const allValidPlayers = playersWithProjections.filter(player =>
-                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value)
-                );
-
-                allValidPlayers.forEach(player => {
-                    // For turnovers, invert the z-score since lower is better
-                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
-                        player.projections[statKey].zScore = (mean - player.projections[statKey].value) / stdDev;
-                    }
-                    // For percentage-based stats, weight the z-score by volume
-                    else if (statKey === 'fieldGoalPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.projections.fgMadePerGame.value + player.projections.fgAttPerGame.value) / (15 + 30),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else if (statKey === 'freeThrowPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.projections.ftMadePerGame.value + player.projections.ftAttPerGame.value) / (4.5 + 9),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else {
-                        player.projections[statKey].zScore = (player.projections[statKey].value - mean) / stdDev;
-                    }
-                    // Calculate color based on z-score using new function
-                    const zScore = player.projections[statKey].zScore;
-                    player.projections[statKey].color = getColorForZScore(zScore);
-                });
-            });
-
-            // Save statsReferences to state
-            set({ statsReferences });
-            // // console.log('Stats references:', statsReferences);
-
-
-
-            //    ------------------------------------------
-            //           HELPER FUNCTIONS
-            //    ------------------------------------------
-
-            const duplicates = regularSeasonPlayers.filter(p =>
-                regularSeasonPlayers.filter(p2 => p2.info.playerId === p.info.playerId).length > 1
-            );
-            if (duplicates.length > 0) {
-                // // console.log('Found duplicates for players:',
-                //     [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
-                // );
-            }
-
-            // // console.log('NBA Dataset Finalized:', playersWithProjections);/
-
-            const newState = {
-                nba: {
-                    players: playersWithProjections,
-                    injuries: [],
-                    lastUpdated: new Date(),
-                    statsReferences: statsReferences
-                },
-                isLoading: false
-            };
-
-            // Calculate state size before setting
-            const stateSize = getObjectSize(newState);
-            // console.log('NBA stats state size:', stateSize, newState);
+            const context = {}; // Placeholder for context
+            const processedPlayers = processNbaData(rawNbaStats, context);
 
             set(state => ({
-                nba: {
-                    ...state.nba,
-                    players: playersWithProjections,
-                    lastUpdated: new Date(),
-                    statsReferences: statsReferences
+                dataset: {
+                    ...state.dataset,
+                    [sportKey]: {
+                        ...state.dataset[sportKey],
+                        players: processedPlayers,
+                        lastUpdated: Date.now(),
+                    }
                 },
-                isLoading: false,
-                error: null,
-                stateSize
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: null }
             }));
-        } catch (error) {
-            // console.error('Error processing NBA data:', error);
-            set({ error: `Error processing NBA data: ${error.message}` /* isLoading: false */ }); // Handle processing error
+            console.log(`fetch${sportKey.toUpperCase()}Data: Successfully processed and stored ${Object.keys(processedPlayers).length} ${sportKey.toUpperCase()} players.`);
+
+        } catch (processingError) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {} } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: `Processing ${sportKey.toUpperCase()} data failed: ${processingError.message}` }
+            }));
         }
     },
 
-
     // =====================================================================
-    //                         🏈 FETCH NFL DATA 🏈
+    //                         🏈 FETCH NFL DATA (Refactored) 🏈
     // =====================================================================
-
     fetchNflData: async () => {
-        // 1. Check if raw data already exists in the store state
-        let data = get().rawFetchedData;
-        const isDataAlreadyFetched = get().isRawDataFetched; // Or use timestamp logic
+        const sportKey = 'nfl';
+        set(state => ({
+            loading: { ...state.loading, [sportKey]: true },
+            error: { ...state.error, [sportKey]: null }
+        }));
 
-        // 2. If raw data doesn't exist (or is considered stale), try fetching it
-        if (!data || !isDataAlreadyFetched) { // Adjust this condition based on your caching logic (e.g., check timestamp)
-            // console.log("fetchNflData: Raw data not found or stale, attempting fetch...");
-            data = await get()._ensureRawDataFetched(); // Call the central fetcher as a fallback
-        } else {
-            // // console.log("fetchNflData: Using existing raw data from store state.");
-        }
-
-        // 3. Check if data is available after potential fetch attempt
-        if (!data) {
-            // console.error("fetchNflData: No raw data available for processing.");
-            // Optionally set an error state or just return
-            // set({ isLoading: false, error: "Failed to load master data for NFL processing." });
-            return; // Exit if data couldn't be obtained
-        }
-
-        // 4. Process NFL data using the 'data' variable
-        try {
-            // console.log("fetchNflData: Starting processing...");
-            // Make sure isLoading is false if we proceed with processing existing data
-            if (get().isLoading) set({ isLoading: false });
-
-            // Access the NFL-specific part of the raw data
-            const seasonalStats = data.nflStats?.stats?.seasonalPlayerStats?.players;
-            // const teamStatsTotals = data.nflStats?.teamStatsTotals || [];
-
-            // --- DEBUG: Check raw seasonalStats for Lamar Jackson ---
-            if (seasonalStats) {
-                const rawLamar = seasonalStats.find(p => p.player?.id === 23343);
-                console.log(`[fetchNflData] Lamar Jackson (23343) found in raw seasonalStats: ${!!rawLamar}`);
-                if (rawLamar) {
-                    console.log(`[fetchNflData] Raw Lamar Jackson entry:`, JSON.stringify(rawLamar, null, 2));
-                }
-            } else {
-                console.log('[fetchNflData] seasonalStats array is missing or empty.');
-            }
-            // --- END DEBUG ---
-
-            if (!seasonalStats) {
-                // console.warn('fetchNflData: NFL seasonal player stats not found in the raw data.');
-                return;
-            }
-
-            // Step 1: Initial Mapping (Result stored in initialPlayers)
-            const initialPlayers = seasonalStats.map(playerStats => ({
-                info: {
-                    playerId: playerStats.player.id,
-                    firstName: playerStats.player.firstName,
-                    lastName: playerStats.player.lastName,
-                    fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                    team: playerStats.team?.abbreviation || 'FA',
-                    teamId: playerStats.team?.id || 'FA',
-                    officialImageSrc: playerStats.player.officialImageSrc,
-                    position: playerStats.player.primaryPosition || 'N/A',
-                    injuryStatus: playerStats.player.currentInjury,
-                    age: playerStats.player.age,
-                    birthDate: playerStats.player.birthDate,
-                    preciseAge: playerStats.player.birthDate ?
-                        ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
-                        playerStats.player.age,
-                    height: playerStats.player.height,
-                    weight: playerStats.player.weight,
-                    jerseyNumber: playerStats.player.jerseyNumber,
-                },
-                stats: {
-                    passing: {
-                        passYards: playerStats.stats?.passing?.passYards || 0,
-                        passTD: playerStats.stats?.passing?.passTD || 0,
-                        passInt: playerStats.stats?.passing?.passInt || 0,
-                        passAtt: playerStats.stats?.passing?.passAttempts || 0,
-                        passComp: playerStats.stats?.passing?.passCompletions || 0,
-                        pass20Plus: playerStats.stats?.passing?.pass20Plus || 0,
-                    },
-                    rushing: {
-                        rushYards: playerStats.stats?.rushing?.rushYards || 0,
-                        rushTD: playerStats.stats?.rushing?.rushTD || 0,
-                        rushAtt: playerStats.stats?.rushing?.rushAttempts || 0,
-                        rush20Plus: playerStats.stats?.rushing?.rush20Plus || 0,
-                    },
-                    receiving: {
-                        recYards: playerStats.stats?.receiving?.recYards || 0,
-                        recTD: playerStats.stats?.receiving?.recTD || 0,
-                        receptions: playerStats.stats?.receiving?.receptions || 0,
-                        targets: playerStats.stats?.receiving?.targets || 0,
-                        rec20Plus: playerStats.stats?.receiving?.rec20Plus || 0,
-                    },
-                    other: {
-                        gamesPlayed: playerStats.stats?.gamesPlayed || 0,
-                        gamesStarted: playerStats.stats?.miscellaneous?.gamesStarted || 0,
-                        offenseSnaps: playerStats.stats?.snapCounts?.offenseSnaps || 0,
-                        fumbles: playerStats.stats?.fumbles?.fumbles || 0,
-                        fumblesLost: playerStats.stats?.fumbles?.fumLost || 0,
-                    },
-                }
+        const rawData = await get()._ensureRawDataFetched();
+        if (!rawData) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Raw data fetch failed, cannot process.`);
+             set(state => ({
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: state.error.rawData || "Failed to fetch raw master data." }
             }));
-
-            // --- FILTER: Keep only offensive fantasy-relevant players ---
-            const offensivePositions = new Set(['QB', 'RB', 'FB', 'WR', 'TE', 'K']);
-            const offensivePlayers = initialPlayers.filter(player => 
-                offensivePositions.has(player.info.position)
-            );
-            // --- END FILTER ---
-
-            // Step 2: Handle duplicate players (aggregate stats) - USE offensivePlayers now
-            const mergedPlayersMap = offensivePlayers.reduce((acc, player) => {
-                const id = player.info.playerId;
-                const current = player.stats; // Current stint's stats
-                const currentGames = current.other?.gamesPlayed || 0;
-                // Calculate player plays for the current stint
-                const currentPlayerPlays = (current.passing?.passComp || 0) + 
-                                         (current.rushing?.rushAtt || 0) + 
-                                         (current.receiving?.receptions || 0);
-
-                // Stint data object to be added
-                const stintData = {
-                    teamId: player.info.teamId,
-                    playerPlays: currentPlayerPlays,
-                    gamesPlayed: currentGames
-                };
-
-                if (!acc[id]) {
-                    // First time seeing this player
-                    acc[id] = { 
-                        ...player, 
-                        // Initialize stints array with the first stint
-                        stints: [stintData] 
-                    };
-                } else {
-                    // Player exists, aggregate stats and add new stint data
-                    const existing = acc[id].stats;
-
-                    // Add current stint to the stints array
-                    acc[id].stints.push(stintData);
-
-                    // --- Aggregate Cumulative Stats --- 
-                    // Update games played (use the value from the current stint)
-                    existing.other.gamesPlayed += currentGames;
-
-                    // Aggregate passing stats (Simple Sum)
-                    Object.keys(existing.passing).forEach(key => {
-                        if (current.passing && typeof current.passing[key] === 'number' && !['passCompPct'].includes(key)) { 
-                            existing.passing[key] += current.passing[key];
-                        }
-                    });
-
-                    // Aggregate rushing stats (Simple Sum)
-                    Object.keys(existing.rushing).forEach(key => {
-                         if (current.rushing && typeof current.rushing[key] === 'number') { 
-                             existing.rushing[key] += current.rushing[key];
-                         }
-                    });
-                    // Aggregate receiving stats (Simple Sum)
-                    Object.keys(existing.receiving).forEach(key => {
-                         if (current.receiving && typeof current.receiving[key] === 'number') {
-                             existing.receiving[key] += current.receiving[key];
-                         }
-                    });
-                    // Aggregate other stats (Simple Sum)
-                    Object.keys(existing.other).forEach(key => {
-                        // Check if key exists and is a number before adding
-                         if (current.other && typeof current.other[key] === 'number' && key !== 'gamesPlayed') { // gamesPlayed already handled
-                             existing.other[key] += current.other[key];
-                         }
-                    });
-                    // --- End Aggregation ---
-
-                    // --- Recalculate Aggregate Rate Stats --- 
-                    if (existing.passing.passAtt > 0) {
-                        existing.passing.passCompPct = parseFloat(((existing.passing.passComp / existing.passing.passAtt) * 100).toFixed(1));
-                    } else {
-                        existing.passing.passCompPct = 0;
-                    }
-                    // TODO: Add recalculations for other rate stats if needed (e.g., YPC, YPR)
-                    // --- End Recalculation ---
-
-                    // Update player info to the latest entry encountered
-                    acc[id].info.team = player.info.team;
-                    acc[id].info.teamId = player.info.teamId;
-                }
-                return acc;
-            }, {});
-
-            // Filter out players with no meaningful stats (no receiving, rushing, or passing yards)
-            const mergedPlayers = Object.values(mergedPlayersMap).filter(player => {
-                return player.stats.receiving.recYards > 0 ||
-                    player.stats.rushing.rushYards > 0 ||
-                    player.stats.passing.passYards > 0;
-            });
-
-            // Get team stats from the raw fetched data
-            const teamStats = get().rawFetchedData?.nflStats?.teamStatsTotals || [];
-            // Process the player data with advanced stats using the utility function
-            const playersWithAdvancedStats = processNflPlayerData(mergedPlayers, teamStats);
-            // // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
-
-
-            // Now playersWithAdvancedStats contains all the advanced metrics calculated in nflAdvancedStats.js
-
-
-            // TODO: add projections stats to players, but im not doing this yet (IGNORE FOR NOW)
-
-
-
-
-
-
-
-            // Data size
-            const newState = {
-                nfl: {
-                    players: playersWithAdvancedStats,
-                    projections: [],
-                    injuries: [],
-                    lastUpdated: new Date()
-                },
-                isLoading: false
-            };
-
-            // Calculate state size before setting
-            const stateSize = getObjectSize(newState);
-            // console.log('NFL stats state size:', stateSize, newState);
-            // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
-
-            set(state => ({
-                nfl: {
-                    ...state.nfl,
-                    players: playersWithAdvancedStats,
-                    lastUpdated: new Date()
-                },
-                isLoading: false,
-                error: null
-            }));
-
-        } catch (error) {
-            // console.error("fetchNflData: Error during processing:", error);
-            set({ error: `Error processing NFL data: ${error.message}` }); // Set processing error
-        }
-    },
-
-
-
-    // =====================================================================
-    //                     ⚾️ 🧢 FETCH MLB DATA ⚾️ 🧢
-    // =====================================================================
-
-    fetchMlbData: async () => {
-        // 1. Check if raw data already exists in the store state
-        let data = get().rawFetchedData;
-        const isDataAlreadyFetched = get().isRawDataFetched; 
-
-        // 2. If raw data doesn't exist (or is considered stale), try fetching it
-        if (!data || !isDataAlreadyFetched) {
-            console.log("fetchMlbData: Raw data not found or stale, attempting fetch...");
-            data = await get()._ensureRawDataFetched(); // Call the central fetcher as a fallback
-        }
-
-        // 3. Check if data is available after potential fetch attempt
-        if (!data) {
-            console.error("fetchMlbData: No raw data available for processing.");
             return;
         }
 
-        // Log MLB data structure
-        console.log("MLB Raw Data Structure:", {
-            hasStats: !!data.mlbStats,
-            playerStatsCount: data.mlbStats?.playerStatsTotals?.length || 0,
-            projectedStatsCount: data.mlbStats?.playerStatsProjectedTotals?.length || 0
-        });
+        const rawNflPlayerStats = _.get(rawData, 'nflStats.stats.seasonalPlayerStats.players');
+        const rawNflTeamStats = _.get(rawData, 'nflStats.teamStatsTotals');
 
-        try {
-            // Access the MLB-specific part of the raw data
-            const seasonalStats = data.mlbStats?.playerStatsTotals || [];
-            const projectedStats = data.mlbStats?.playerStatsProjectedTotals || [];
-
-            if (!seasonalStats || seasonalStats.length === 0) {
-                console.warn('fetchMlbData: MLB seasonal player stats not found in the raw data or empty.');
-                return;
-            }
-
-            console.log("Processing MLB players:", seasonalStats.length);
-
-            // Step 1: Initial Mapping
-            const initialPlayers = seasonalStats.map(playerStats => {
-                // Log a sample player structure
-                if (playerStats.player.id === seasonalStats[0].player.id) {
-                    console.log("Sample Player Stats Structure:", {
-                        hasStats: !!playerStats.stats,
-                        hasBatting: !!playerStats.stats?.batting,
-                        hasPitching: !!playerStats.stats?.pitching,
-                        battingKeys: playerStats.stats?.batting ? Object.keys(playerStats.stats.batting) : [],
-                        pitchingKeys: playerStats.stats?.pitching ? Object.keys(playerStats.stats.pitching) : []
-                    });
-                }
-                return {
-                    info: {
-                        playerId: playerStats.player.id,
-                        firstName: playerStats.player.firstName,
-                        lastName: playerStats.player.lastName,
-                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                        team: playerStats.team?.abbreviation || 'FA',
-                        teamId: playerStats.team?.id || 'FA',
-                        officialImageSrc: playerStats.player.officialImageSrc,
-                        position: playerStats.player.primaryPosition || 'N/A',
-                        jerseyNumber: playerStats.player?.jerseyNumber,
-                        injuryStatus: playerStats.player.currentInjury,
-                        age: playerStats.player.age,
-                        birthDate: playerStats.player.birthDate,
-                        preciseAge: playerStats.player.birthDate ?
-                            ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
-                            playerStats.player.age,
-                        height: playerStats.player.height,
-                        weight: playerStats.player.weight,
-                        handedness: playerStats.player?.handedness || { bats: '', throws: '' },
-                    },
-                    stats: {
-                        gamesPlayed: playerStats.stats?.gamesPlayed || 0,
-                        batting: playerStats.stats?.batting ? {
-                            atBats: playerStats.stats.batting.atBats || 0,
-                            runs: playerStats.stats.batting.runs || 0,
-                            hits: playerStats.stats.batting.hits || 0,
-                            secondBaseHits: playerStats.stats.batting.secondBaseHits || 0,
-                            thirdBaseHits: playerStats.stats.batting.thirdBaseHits || 0,
-                            homeruns: playerStats.stats.batting.homeruns || 0,
-                            runsBattedIn: playerStats.stats.batting.runsBattedIn || 0,
-                            stolenBases: playerStats.stats.batting.stolenBases || 0,
-                            battingAvg: playerStats.stats.batting.battingAvg || 0,
-                            batterSluggingPct: playerStats.stats.batting.batterSluggingPct || 0,
-                            batterOnBasePlusSluggingPct: playerStats.stats.batting.batterOnBasePlusSluggingPct || 0,
-                            plateAppearances: playerStats.stats.batting.plateAppearances || 0
-                        } : null,
-                        pitching: playerStats.stats?.pitching ? {
-                            gamesStarted: playerStats.stats.miscellaneous?.gamesStarted || 0,
-                            inningsPitched: playerStats.stats.pitching.inningsPitched || 0,
-                            pitcherWalks: playerStats.stats.pitching.pitcherWalks || 0,
-                            wins: playerStats.stats.pitching.wins || 0,
-                            pitcherStrikeouts: playerStats.stats.pitching.pitcherStrikeouts || 0,
-                            earnedRunAvg: playerStats.stats.pitching.earnedRunAvg || 0,
-                            saves: playerStats.stats.pitching.saves || 0,
-                            walksAndHitsPerInningPitched: playerStats.stats.pitching.walksAndHitsPerInningPitched || 0,
-                            holds: playerStats.stats.pitching.holds || 0,
-                            strikeoutsToWalksRatio: playerStats.stats.pitching.strikeoutsToWalksRatio || 0,
-                            pitchingAvg: playerStats.stats.pitching.pitchingAvg || 0,
-                            strikeoutsPer9Innings: playerStats.stats.pitching.strikeoutsPer9Innings || 0,
-                            walksAllowedPer9Innings: playerStats.stats.pitching.walksAllowedPer9Innings || 0
-                        } : null
-                    }
-                };
-            });
-
-            // Step 2: Handle duplicate players (aggregate stats)
-            console.log("Starting MLB player merge...");
-            const mergedPlayersMap = initialPlayers.reduce((acc, player) => {
-                const id = player.info.playerId;
-                if (!acc[id]) {
-                    // First time seeing this player, add them directly
-                    acc[id] = { ...player };
-                } else {
-                    try {
-                        // Player exists, need to aggregate their stats
-                        const existing = acc[id].stats;
-                        const current = player.stats;
-
-                        // Update games played
-                        existing.gamesPlayed += current.gamesPlayed;
-
-                        // Aggregate batting stats
-                        if (existing.batting && current.batting) {
-                            Object.keys(existing.batting).forEach(key => {
-                                // For averages and percentages, we'll need weighted calculation later
-                                if (!['battingAvg', 'batterOnBasePct', 'batterSluggingPct', 'batterOnBasePlusSluggingPct'].includes(key)) {
-                                    existing.batting[key] += current.batting[key];
-                                }
-                            });
-                        }
-
-                        // Aggregate pitching stats
-                        if (existing.pitching && current.pitching) {
-                            Object.keys(existing.pitching).forEach(key => {
-                                if (!['earnedRunAvg', 'walksAndHitsPerInningPitched', 'strikeoutsPer9Innings', 'walksAllowedPer9Innings', 'hitsAllowedPer9Innings', 'strikeoutsToWalksRatio'].includes(key)) {
-                                    existing.pitching[key] += current.pitching[key];
-                                }
-                            });
-                        }
-
-                        // Recalculate batting averages/percentages
-                        if (existing.batting?.atBats > 0) {
-                            existing.batting.battingAvg = formatNumber(existing.batting.hits / existing.batting.atBats);
-                        }
-
-                        // Recalculate SLG
-                        if (existing.batting?.atBats > 0) {
-                            // Calculate total bases from individual components
-                            const totalBases = (
-                                existing.batting.hits + 
-                                existing.batting.secondBaseHits + 
-                                (2 * existing.batting.thirdBaseHits) + 
-                                (3 * existing.batting.homeruns)
-                            );
-                            existing.batting.batterSluggingPct = formatNumber(totalBases / existing.batting.atBats);
-                        }
-
-                        // Recalculate OPS (just slugging for now since we don't have OBP components)
-                        if (existing.batting) {
-                            existing.batting.batterOnBasePlusSluggingPct = existing.batting.batterSluggingPct;
-                        }
-
-                        // Recalculate ERA
-                        if (existing.pitching?.inningsPitched > 0) {
-                            existing.pitching.earnedRunAvg = formatNumber((9 * existing.pitching.earnedRunAvg * existing.pitching.inningsPitched) / existing.pitching.inningsPitched);
-                        }
-
-                        // Recalculate K/9
-                        if (existing.pitching?.inningsPitched > 0) {
-                            existing.pitching.strikeoutsPer9Innings = formatNumber((9 * existing.pitching.pitcherStrikeouts) / existing.pitching.inningsPitched);
-                        }
-
-                        // Recalculate K/BB ratio
-                        if (existing.pitching?.pitcherWalks > 0) {
-                            existing.pitching.strikeoutsToWalksRatio = formatNumber(existing.pitching.pitcherStrikeouts / existing.pitching.pitcherWalks);
-                        }
-
-                        // Update player info to the latest entry encountered
-                        acc[id].info.team = player.info.team;
-                        acc[id].info.teamId = player.info.teamId;
-                    } catch (error) {
-                        console.error("Error merging player:", id, error);
-                        // Keep the existing player data if merge fails
-                    }
-                }
-                return acc;
-            }, {});
-            console.log("MLB merge complete. Players in map:", Object.keys(mergedPlayersMap).length);
-
-            // Filter out players with minimal stats
-            const mergedPlayers = Object.values(mergedPlayersMap).filter(player => {
-                // For batters: show players with at least some plate appearances
-                const hasBattingStats = player.stats?.batting?.plateAppearances >= 10;
-                // For pitchers: show players who have pitched some innings
-                const hasPitchingStats = player.stats?.pitching?.inningsPitched >= 1;
-                
-                return hasBattingStats || hasPitchingStats;
-            });
-
-            console.log("MLB Players after filtering:", mergedPlayers.length);
-
-            // Add projections data if available
-            if (projectedStats && projectedStats.length > 0) {
-                console.log("Processing MLB projections:", projectedStats.length);
-                // Create a map of player IDs to their projections
-                const projectionsMap = projectedStats.reduce((acc, projection) => {
-                    acc[projection.player.id] = projection;
-                    return acc;
-                }, {});
-
-                // Add projections to each player
-                mergedPlayers.forEach(player => {
-                    const playerProjection = projectionsMap[player.info.playerId];
-                    if (playerProjection) {
-                        player.projections = {
-                            gamesPlayed: playerProjection.projectedStats?.gamesPlayed || 0,
-                            batting: {
-                                atBats: playerProjection.projectedStats?.batting?.atBats || 0,
-                                runs: playerProjection.projectedStats?.batting?.runs || 0,
-                                hits: playerProjection.projectedStats?.batting?.hits || 0,
-                                secondBaseHits: playerProjection.projectedStats?.batting?.secondBaseHits || 0,
-                                thirdBaseHits: playerProjection.projectedStats?.batting?.thirdBaseHits || 0,
-                                homeruns: playerProjection.projectedStats?.batting?.homeruns || 0,
-                                runsBattedIn: playerProjection.projectedStats?.batting?.runsBattedIn || 0,
-                                batterWalks: playerProjection.projectedStats?.batting?.batterWalks || 0,
-                                batterStrikeouts: playerProjection.projectedStats?.batting?.batterStrikeouts || 0,
-                                stolenBases: playerProjection.projectedStats?.batting?.stolenBases || 0,
-                                caughtBaseSteals: playerProjection.projectedStats?.batting?.caughtBaseSteals || 0,
-                                battingAvg: playerProjection.projectedStats?.batting?.battingAvg || 0,
-                                batterOnBasePct: playerProjection.projectedStats?.batting?.batterOnBasePct || 0,
-                                batterSluggingPct: playerProjection.projectedStats?.batting?.batterSluggingPct || 0,
-                                batterOnBasePlusSluggingPct: playerProjection.projectedStats?.batting?.batterOnBasePlusSluggingPct || 0,
-                                hitByPitch: playerProjection.projectedStats?.batting?.hitByPitch || 0,
-                                plateAppearances: playerProjection.projectedStats?.batting?.plateAppearances || 0,
-                            },
-                            pitching: {
-                                wins: playerProjection.projectedStats?.pitching?.wins || 0,
-                                losses: playerProjection.projectedStats?.pitching?.losses || 0,
-                                earnedRunAvg: playerProjection.projectedStats?.pitching?.earnedRunAvg || 0,
-                                saves: playerProjection.projectedStats?.pitching?.saves || 0,
-                                saveOpportunities: playerProjection.projectedStats?.pitching?.saveOpportunities || 0,
-                                inningsPitched: playerProjection.projectedStats?.pitching?.inningsPitched || 0,
-                                hitsAllowed: playerProjection.projectedStats?.pitching?.hitsAllowed || 0,
-                                runsAllowed: playerProjection.projectedStats?.pitching?.runsAllowed || 0,
-                                earnedRunsAllowed: playerProjection.projectedStats?.pitching?.earnedRunsAllowed || 0,
-                                homerunsAllowed: playerProjection.projectedStats?.pitching?.homerunsAllowed || 0,
-                                pitcherWalks: playerProjection.projectedStats?.pitching?.pitcherWalks || 0,
-                                pitcherStrikeouts: playerProjection.projectedStats?.pitching?.pitcherStrikeouts || 0,
-                                walksAndHitsPerInningPitched: playerProjection.projectedStats?.pitching?.walksAndHitsPerInningPitched || 0,
-                                gamesStarted: playerProjection.projectedStats?.miscellaneous?.gamesStarted || 0,
-                                strikeoutsPer9Innings: playerProjection.projectedStats?.pitching?.strikeoutsPer9Innings || 0,
-                                holds: playerProjection.projectedStats?.pitching?.holds || 0,
-                            }
-                        };
-                    }
-                });
-            }
-
-            // Calculate and set state size
-            const newState = {
-                mlb: {
-                    players: mergedPlayers,
-                    lastUpdated: new Date()
-                }
-            };
-
-            const stateSize = getObjectSize(newState);
-            console.log('MLB stats state size:', stateSize, newState);
-            console.log('MLB Dataset Finalized:', {
-                playerCount: mergedPlayers.length,
-                stateSize,
-                samplePlayer: mergedPlayers[0]
-            });
-            
+         if (!rawNflPlayerStats || !Array.isArray(rawNflPlayerStats) || rawNflPlayerStats.length === 0) {
+             console.warn(`fetch${sportKey.toUpperCase()}Data: No valid player data found.`);
             set(state => ({
-                mlb: {
-                    ...state.mlb,
-                    players: mergedPlayers,
-                    lastUpdated: new Date()
-                },
-                isLoading: false,
-                error: null,
-                stateSize
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, teamTotals: {}, lastUpdated: Date.now() } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: 'No NFL player stats found.' }
             }));
+            return;
+        }
+         if (!rawNflTeamStats || !Array.isArray(rawNflTeamStats)) {
+             console.warn(`fetch${sportKey.toUpperCase()}Data: No valid team data found (needed for context). Share stats may be null.`);
+             // Proceed anyway, but context will be empty / derived stats using it will be null
+         }
 
-        } catch (error) {
-            console.error("fetchMlbData Error:", error);
-            set({ error: `Error processing MLB data: ${error.message}` }); // Fixed template literal
+        console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`);
+         try {
+             // processNflData now returns { processedPlayers, teamTotalsContext }
+             const { processedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats);
+
+             set(state => ({
+                 dataset: {
+                     ...state.dataset,
+                     [sportKey]: {
+                         ...state.dataset[sportKey],
+                         players: processedPlayers,
+                         teamTotals: teamTotalsContext, // Store team totals
+                         lastUpdated: Date.now(),
+                     }
+                 },
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: null }
+             }));
+             console.log(`fetch${sportKey.toUpperCase()}Data: Successfully processed and stored ${Object.keys(processedPlayers).length} ${sportKey.toUpperCase()} players.`);
+
+         } catch (processingError) {
+             console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
+             set(state => ({
+                 dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, teamTotals: {} } },
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: `Processing ${sportKey.toUpperCase()} data failed: ${processingError.message}` }
+             }));
+         }
+    },
+
+    // =====================================================================
+    //                     ⚾️ 🧢 FETCH MLB DATA (Refactored) ⚾️ 🧢
+    // =====================================================================
+    fetchMlbData: async () => {
+        const sportKey = 'mlb';
+        set(state => ({
+            loading: { ...state.loading, [sportKey]: true },
+            error: { ...state.error, [sportKey]: null }
+        }));
+
+        const rawData = await get()._ensureRawDataFetched();
+        if (!rawData) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Raw data fetch failed, cannot process.`);
+            set(state => ({
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: state.error.rawData || "Failed to fetch raw master data." }
+            }));
+            return;
+        }
+
+        const rawMlbStats = _.get(rawData, 'mlbStats.playerStatsTotals');
+        const rawMlbProjections = _.get(rawData, 'mlbStats.playerStatsProjectedTotals');
+
+        if (!rawMlbStats || !Array.isArray(rawMlbStats) || rawMlbStats.length === 0) {
+             console.warn(`fetch${sportKey.toUpperCase()}Data: No valid data found.`);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, lastUpdated: Date.now() } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: 'No MLB player stats found.' }
+            }));
+            return;
+        }
+
+        console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`);
+        try {
+            const context = {}; // Add context if needed later
+            // Projections are handled inside processMlbData currently
+            const processedPlayers = processMlbData(rawMlbStats, rawMlbProjections, context);
+
+            set(state => ({
+                dataset: {
+                    ...state.dataset,
+                    [sportKey]: {
+                        ...state.dataset[sportKey],
+                        players: processedPlayers,
+                        lastUpdated: Date.now(),
+                    }
+                },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: null }
+            }));
+             console.log(`fetch${sportKey.toUpperCase()}Data: Successfully processed and stored ${Object.keys(processedPlayers).length} ${sportKey.toUpperCase()} players.`);
+
+        } catch (processingError) {
+             console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {} } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: `Processing ${sportKey.toUpperCase()} data failed: ${processingError.message}` }
+            }));
         }
     },
 
-    // Selectors (Re-added here)
-    getPlayerIdentities: (sport) => get()[sport.toLowerCase()]?.playerIdentities || [],
-    getSeasonalStats: (sport) => get()[sport.toLowerCase()]?.players || [],
-    getPlayerById: (sport, id) => {
-        const identity = get()[sport.toLowerCase()]?.playerIdentities.find(p => p.playbookId === id);
-        // Consider adding fallback to stats if needed
-        return identity;
+    // =====================================================================
+    //                         SELECTORS (Updated)
+    // =====================================================================
+    getPlayerIdentities: (sport) => {
+        const sportKey = sport?.toLowerCase();
+        return sportKey ? get().dataset[sportKey]?.identities || [] : [];
     },
-    getPlayersByTeam: (sport, teamId) => get()[sport.toLowerCase()]?.players.filter(p => p.info.teamId === teamId),
-    getPlayerProjections: (sport) => get()[sport.toLowerCase()]?.players.map(p => p.projections).filter(Boolean),
-    getPlayerProjectionsById: (sport, id) => get()[sport.toLowerCase()]?.players.find(p => p.info.playerId === id)?.projections,
-    // getStandings: (sport) => get()[sport.toLowerCase()]?.standings, // Assuming these don't exist yet
+    getSeasonalStats: (sport) => {
+        const sportKey = sport?.toLowerCase();
+        // Returns the map { playerId: playerObject }
+        return sportKey ? get().dataset[sportKey]?.players || {} : {};
+    },
+    getPlayerById: (sport, id) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !id) return null;
+        // First check identities (faster lookup?)
+        const identity = get().dataset[sportKey]?.identities.find(p => p.playbookId === id);
+        if (identity) return identity; // Return basic identity info
+        // Fallback: Check if full player data exists in stats (might be needed for components expecting full data)
+        const playerData = get().dataset[sportKey]?.players[id]; // Access by ID if players is a map
+        // TODO: Decide return format - just identity or merge with stats if found?
+        // Returning just identity for now, consistent with old logic.
+        return playerData ? playerData.info : null; // Return player info from stats if found
+    },
+    getPlayersByTeam: (sport, teamId) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !teamId) return [];
+        const playersMap = get().dataset[sportKey]?.players || {};
+        // Filter players map based on teamId in info
+        return Object.values(playersMap).filter(p => p.info?.teamId === teamId);
+    },
+    getPlayerProjections: (sport) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey) return [];
+        const playersMap = get().dataset[sportKey]?.players || {};
+        // Assumes projections are nested within each player object
+        return Object.values(playersMap).map(p => p.projections).filter(Boolean);
+    },
+    getPlayerProjectionsById: (sport, id) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !id) return null;
+        const player = get().dataset[sportKey]?.players[id];
+        return player?.projections || null;
+    },
+    getTeamTotals: (sport) => { // New selector for team totals
+        const sportKey = sport?.toLowerCase();
+        return sportKey ? get().dataset[sportKey]?.teamTotals || {} : {};
+    }
+    // Removed old selectors, add back if needed:
+    // getStandings: (sport) => get()[sport.toLowerCase()]?.standings,
     // getInjuries: (sport) => get()[sport.toLowerCase()]?.injuries,
     // getTeams: (sport) => get()[sport.toLowerCase()]?.teams,
 
