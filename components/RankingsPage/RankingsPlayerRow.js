@@ -207,12 +207,18 @@ const RankingsPlayerRow = memo(({
     standardEcrRank,
     redraftEcrRank,
     isExpanded,
-    onExpand,
+    onToggleExpand,
     isRankSorted,
     isDraftMode,
     onToggleDraftStatus
 }) => {
     const rowRef = useRef(null);
+
+    // --- Log the rank prop received ---
+    // if (rank <= 3) { // Only log for the first 3 players
+    //     console.log(`[RankingsPlayerRow] Received rank prop: ${rank} for player: ${player?.info?.fullName}`);
+    // }
+    // --- End log ---
 
     // --- Determine sources --- 
     const playerName = player.info?.fullName || player.name || 'Player Name';
@@ -370,7 +376,7 @@ const RankingsPlayerRow = memo(({
                         ? "bg-pb_lightergray border-pb_midgray"
                         : "bg-white hover:bg-gray-50"
                 )}
-                onClick={onExpand}
+                onClick={onToggleExpand}
             >
                 {/* Left section with fixed widths */}
                 <div className="flex items-center w-[40%] relative">

@@ -176,22 +176,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
             const standardEcrRank = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) ?? null : null;
             const redraftEcrRank = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) ?? null : null;
 
-            // --- Log playerStatsObject when image is about to be null ---
-            // if (!playerStatsObject?.officialImageSrc) {
-            //     console.log(`[Player ID: ${rankingPlaybookId}] playerStatsObject before info construction (Image Src Missing/Null):`, playerStatsObject);
-            // }
-            // --- End log ---
-
-            // (Keep previous commented out log for reference if needed)
-            // --- TARGETED DEBUG LOG ---
-            // Log only if the identity lookup failed OR the found identity is missing the image src
-            // if (!basePlayerIdentity || (basePlayerIdentity && !basePlayerIdentity.officialImageSrc)) {
-            //     console.warn(`[Image Missing] ID: ${rankingPlaybookId}`); // Log the ID we tried to look up
-            //     console.warn('  Lookup Result (basePlayerIdentity):', basePlayerIdentity); // Log what the map returned (null, undefined, or the object without the src)
-            //     // console.warn('  Original Ranking Entry:', rankingEntry); // Optional: uncomment to see the ranking data too
-            // }
-            // --- END TARGETED DEBUG LOG ---
-
             // 4. Construct Final Player Info Object
             //    >>> Explicitly add officialImageSrc and teamAbbreviation <<< 
             const playerInfo = {
@@ -212,18 +196,20 @@ const RankingsPlayerListContainer = React.forwardRef(({
             };
             playerInfo.fullName = `${playerInfo.firstName} ${playerInfo.lastName}`.trim();
 
-            const uniqueDndId = rankingEntry.rankingId || rankingPlaybookId || `placeholder-${index}`;
+            // <<< CHANGE: Use playbookId as the primary DND ID >>>
+            const uniqueDndId = rankingPlaybookId || `placeholder-${index}`;
 
             return {
-                id: uniqueDndId, 
-                rankingId: rankingEntry.rankingId,
-                rank: rankingEntry.rank,        
+                id: uniqueDndId, // This is now primarily the playbookId
+                // <<< REMOVE non-existent rankingId >>>
+                // rankingId: rankingEntry.rankingId,
+                userRank: rankingEntry.userRank, // Use userRank from DB
                 info: playerInfo, // Pass the fully constructed info object 
                 stats: playerStatsObject || {}, // Pass the nested stats object as before
             };
         });
 
-        const sortedByRankPlayers = combinedPlayers.sort((a, b) => a.rank - b.rank);
+        const sortedByRankPlayers = combinedPlayers.sort((a, b) => a.userRank - b.userRank);
         setRankedPlayers(sortedByRankPlayers);
 
     }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]);
@@ -366,20 +352,22 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 // Update ranks based on the new order
                 const playersWithNewRanks = newPlayersArray.map((player, index) => ({
                     ...player,
-                    rank: index + 1, // Recalculate rank based on position
+                    userRank: index + 1,
                 }));
 
                 // Prepare updates for the Zustand store
                 // Ensure rankingId is present and valid
                 const rankUpdates = playersWithNewRanks
-                    .filter(p => p.rankingId != null) // Filter out any potential items without rankingId
+                    // <<< CHANGE: Filter based on the player's info.playbookId which should always exist >>>
+                    .filter(p => p.info?.playbookId != null) 
                     .map(p => ({
-                        rankingId: p.rankingId, // Use the actual rankingId
-                        newRank: p.rank
+                        // <<< CHANGE: Use info.playbookId as the identifier for the update >>>
+                        rankingId: p.info.playbookId, 
+                        newRank: p.userRank // Send userRank as newRank (already correct)
                     }));
 
                 if (rankUpdates.length !== playersWithNewRanks.length) {
-                     console.warn("Some players lacked rankingId during DND update.");
+                     console.warn("Some players lacked playbookId during DND update.");
                 }
 
                 // Trigger rank update in Zustand store
@@ -441,6 +429,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     // Key should ideally be the stable id used elsewhere
                     key={player.id}
                     player={player} // Pass the combined player object from paginatedPlayers
+                    rank={player.userRank}
                     activeRanking={activeRanking} // Pass necessary context if needed by row
                     sport={sport}
                     // Pass sort config if needed by row for styling (e.g., highlighting sorted column)
@@ -451,7 +440,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     // Pass the stable 'id' to the toggle handler
                     onToggleExpand={() => toggleRowExpansion(player.id)}
                      // Pass handler - Ensure setPlayerAvailability expects playbookId or rankingId based on its implementation
-                    onAvailabilityChange={(playerId, available) => setPlayerAvailability(activeRanking._id, playerId, available)} // Assuming setPlayerAvailability needs listId, playerId, status
                     isDraftModeActive={isDraftModeActive}
                      // Pass sorting status to the row if it needs to adjust UI (e.g., hide drag handle)
                     isRankSorted={isRankSorted}
@@ -471,6 +459,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
         setPlayerAvailability,
         isDraftModeActive
     ]);
+
+    // --- REMOVE Log playersToDisplay before rendering the list ---
+    // console.log(`[RankingsPlayerListContainer] playersToDisplay length: ${playersToDisplay.length}`);
+    // if (playersToDisplay.length > 0) {
+    //     console.log('[RankingsPlayerListContainer] First player in playersToDisplay:', playersToDisplay[0]);
+    // }
+    // --- End log ---
 
     return (
         <div>
