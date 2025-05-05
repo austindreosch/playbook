@@ -13,6 +13,10 @@ import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
 import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 
+// --- DEFINE CONSTANTS --- //
+const DEFAULT_ROW_HEIGHT = 45;
+const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
+
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
 
@@ -371,15 +375,14 @@ const RankingsPlayerRow = memo(({
             className={cn(
                 `player-row border rounded-md overflow-hidden mb-1 shadow-sm`,
                 isDragging ? 'z-10' : '',
-                isDraftMode && !player.draftModeAvailable && 'border-pb_lightgray'
+                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "bg-white hover:bg-gray-50",
+                isExpanded ? `h-[${EXPANDED_ROW_HEIGHT}px]` : `h-[${DEFAULT_ROW_HEIGHT}px]`,
             )}
         >
             <div
                 className={cn(
                     "flex h-9 items-center",
-                    isDraftMode && !player.draftModeAvailable
-                        ? "bg-pb_lightergray border-pb_midgray"
-                        : "bg-white hover:bg-gray-50"
+                    isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "bg-pb_lightergray border-pb_midgray" : "bg-white hover:bg-gray-50"
                 )}
                 onClick={onToggleExpand}
             >
@@ -401,29 +404,29 @@ const RankingsPlayerRow = memo(({
                     {isDraftMode && (
                         <div className={cn(
                             "mr-2 h-7 w-8 rounded-sm flex items-center justify-center border", // Base classes + border
-                            !player.draftModeAvailable ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
+                            !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
                         )}> {/* Added flex centering */}
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 className={`h-full w-full rounded-sm flex items-center justify-center ${ // Make smaller and round
-                                    player.draftModeAvailable
+                                    (player.draftModeAvailable ?? true)
                                         ? 'text-pb_blue hover:text-pb_blue hover:border-2 hover:border-pb_blue' // Use blue shades
                                         : 'text-pb_orange  hover:bg-pb_orange hover:text-white' // Use orange shades
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent row expand/collapse
-                                    const newAvailability = !player.draftModeAvailable;
+                                    const newAvailability = !(player.draftModeAvailable ?? true);
                                     // Log if the player is being marked as drafted (newAvailability is false)
                                     if (!newAvailability) {
                                         console.log(`${playerName} has been drafted!`);
                                     }
                                     // Pass the ID and the NEW availability state
-                                    onToggleDraftStatus(player.rankingId, newAvailability);
+                                    onToggleDraftStatus(newAvailability);
                                 }}
-                                title={player.draftModeAvailable ? "Mark as Drafted" : "Mark as Available"}
+                                title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
                             >
-                                {player.draftModeAvailable ? (
+                                {(player.draftModeAvailable ?? true) ? (
                                     <SquareCheckSolidIcon className="h-5 w-5 stroke-current stroke-2" />
                                 ) : (
                                     <Undo2 className="h-5 w-5 opacity-100" />
@@ -435,7 +438,7 @@ const RankingsPlayerRow = memo(({
                     {/* Rank number */}
                     <div className={cn(
                         "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
-                        isDraftMode && !player.draftModeAvailable ? "border-pb_midgray" : "border-pb_lightergray", // Conditional border
+                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_midgray" : "border-pb_lightergray", // Conditional border
                         !isRankSorted ? 'bg-blue-50' : '' // Conditional background
                     )}>{rank}</div>
 

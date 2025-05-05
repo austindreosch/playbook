@@ -218,6 +218,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 userRank: rankingEntry.userRank, // Use userRank from DB
                 info: playerInfo, // Pass the fully constructed info object
                 stats: playerStatsObject || {}, // Pass the nested stats object as before
+                draftModeAvailable: rankingEntry.draftModeAvailable ?? true, // Default to true if undefined
             };
         });
 
@@ -311,7 +312,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         // --- Apply Draft Filtering ---
         if (isDraftModeActive && !showDraftedPlayers) {
-            processedPlayers = processedPlayers.filter(p => p.info.isAvailable);
+            processedPlayers = processedPlayers.filter(p => p.draftModeAvailable ?? true);
         }
 
         return processedPlayers; // Return the final list
@@ -426,6 +427,16 @@ const RankingsPlayerListContainer = React.forwardRef(({
         // Determine if rank sorting is active (for drag handle visibility etc.)
         const isRankSorted = sortConfig?.key === null;
 
+        // <<< Define the actual toggle handler function >>>
+        const handleToggleDraftStatus = (newAvailability) => {
+            const playerId = player.info?.mySportsFeedsId ?? player.id; // Prefer MSF ID, fallback to playbookId
+            if (playerId) {
+                setPlayerAvailability(playerId, newAvailability);
+            } else {
+                console.error("Cannot toggle draft status: Missing player ID", player.info);
+            }
+        };
+
         return (
             <div style={style}>
                 <RankingsPlayerRow
@@ -446,7 +457,8 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     // Pass the stable 'id' to the toggle handler
                     onToggleExpand={() => toggleRowExpansion(player.id)}
                      // Pass handler - Ensure setPlayerAvailability expects playbookId or rankingId based on its implementation
-                    isDraftModeActive={isDraftModeActive}
+                    isDraftMode={isDraftModeActive} // <<< CHANGE prop name to match RankingsPlayerRow
+                    onToggleDraftStatus={handleToggleDraftStatus} // <<< Pass the REAL handler
                      // Pass sorting status to the row if it needs to adjust UI (e.g., hide drag handle)
                     isRankSorted={isRankSorted}
                     // Pass other necessary derived props if needed
@@ -462,7 +474,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         enabledCategoryAbbrevs, // Keep this in dependency array
         expandedRows,
         toggleRowExpansion,
-        setPlayerAvailability,
+        setPlayerAvailability, // <<< Add setPlayerAvailability dependency
         isDraftModeActive
     ]);
 
@@ -535,7 +547,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                                      redraftEcrRank={activePlayer.info.redraftEcrRank}
                                      isExpanded={false} // Overlay is never expanded
                                      // No need for toggle/availability handlers in overlay
-                                     isDraftModeActive={isDraftModeActive}
+                                     isDraftMode={isDraftModeActive}
                                      isRankSorted={true} // Drag handle is always visible in overlay
                                  />
                              );
