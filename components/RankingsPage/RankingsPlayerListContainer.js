@@ -186,34 +186,37 @@ const RankingsPlayerListContainer = React.forwardRef(({
             const redraftEcrRank = redraftEcrRankLookup ?? null;
 
             // 4. Construct Final Player Info Object
-            //    >>> Explicitly add officialImageSrc and teamAbbreviation <<< 
+            //    Start with identity data, then merge/overwrite other sources
             const playerInfo = {
-                playbookId: rankingPlaybookId, 
-                mySportsFeedsId: msfIdForStatsLookup, // Use the ID we found
-                firstName: basePlayerIdentity?.primaryName?.split(' ')[0] || rankingEntry.firstName || 'Unknown', 
+                ...basePlayerIdentity, // Spread identity fields first
+                playbookId: rankingPlaybookId, // Ensure this is prioritized from ranking entry
+                // Construct name, prioritizing identity but falling back
+                firstName: basePlayerIdentity?.primaryName?.split(' ')[0] || rankingEntry.firstName || 'Unknown',
                 lastName: basePlayerIdentity?.primaryName?.split(' ').slice(1).join(' ') || rankingEntry.lastName || 'Player',
-                primaryPosition: basePlayerIdentity?.position || rankingEntry.position || 'N/A', 
-                // Explicitly pull from basePlayerIdentity or fallback
+                // Prioritize identity for position/team, fall back to ranking entry
+                primaryPosition: basePlayerIdentity?.position || rankingEntry.position || 'N/A',
                 teamAbbreviation: basePlayerIdentity?.teamAbbreviation || rankingEntry.teamAbbreviation || 'FA',
-                // <<< CHANGE: Look in the info object obtained from seasonalStatsData >>>
-                officialImageSrc: fullPlayerDataFromStatsSource?.info?.officialImageSrc || null, 
-                age: basePlayerIdentity?.age ?? null, // Age likely comes from identity data
+                // Add data from other sources
+                officialImageSrc: fullPlayerDataFromStatsSource?.info?.officialImageSrc || null,
+                // Age likely comes from identity (already spread), ensure it's there or null
+                age: basePlayerIdentity?.age ?? null,
                 standardEcrRank: standardEcrRank,
                 redraftEcrRank: redraftEcrRank,
-                isAvailable: rankingEntry.isAvailable ?? true, 
+                // Add user-specific ranking data
+                isAvailable: rankingEntry.isAvailable ?? true,
                 notes: rankingEntry.notes || '',
+                // Explicitly set mySportsFeedsId again in case basePlayerIdentity was empty
+                mySportsFeedsId: msfIdForStatsLookup 
             };
             playerInfo.fullName = `${playerInfo.firstName} ${playerInfo.lastName}`.trim();
 
             // <<< CHANGE: Use playbookId as the primary DND ID >>>
-            const uniqueDndId = rankingPlaybookId || `placeholder-${index}`;
+            const uniqueDndId = rankingPlaybookId; // Use the non-placeholder ID directly
 
             return {
                 id: uniqueDndId, // This is now primarily the playbookId
-                // <<< REMOVE non-existent rankingId >>>
-                // rankingId: rankingEntry.rankingId,
                 userRank: rankingEntry.userRank, // Use userRank from DB
-                info: playerInfo, // Pass the fully constructed info object 
+                info: playerInfo, // Pass the fully constructed info object
                 stats: playerStatsObject || {}, // Pass the nested stats object as before
             };
         });
@@ -364,26 +367,17 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     userRank: index + 1,
                 }));
 
-                // Prepare updates for the Zustand store
-                // Ensure rankingId is present and valid
-                const rankUpdates = playersWithNewRanks
-                    // <<< CHANGE: Filter based on the player's info.playbookId which should always exist >>>
-                    .filter(p => p.info?.playbookId != null) 
-                    .map(p => ({
-                        // <<< CHANGE: Use info.playbookId as the identifier for the update >>>
-                        rankingId: p.info.playbookId, 
-                        newRank: p.userRank // Send userRank as newRank (already correct)
-                    }));
-
-                if (rankUpdates.length !== playersWithNewRanks.length) {
-                     console.warn("Some players lacked playbookId during DND update.");
-                }
+                // Prepare JUST the IDs in the new order for the Zustand store update
+                const newOrderIds = playersWithNewRanks.map(p => p.id);
 
                 // Trigger rank update in Zustand store
-                if (activeRanking?._id && rankUpdates.length > 0) {
-                    updateAllPlayerRanks(activeRanking._id, rankUpdates);
-                     // Optionally trigger saveChanges immediately or let it be debounced/handled elsewhere
-                     // saveChanges();
+                if (activeRanking?._id && newOrderIds.length > 0) {
+                    // <<< CHANGE: Defer the Zustand update to avoid state update during render >>>
+                    setTimeout(() => {
+                        updateAllPlayerRanks(activeRanking._id, newOrderIds);
+                        // Optionally trigger saveChanges immediately or let it be debounced/handled elsewhere
+                        // saveChanges(); // If you uncomment this, it should probably also be inside the timeout
+                    }, 0);
                 } else {
                     console.error("Missing activeRanking._id or no valid rank updates for DND.");
                 }
@@ -486,23 +480,22 @@ const RankingsPlayerListContainer = React.forwardRef(({
             {/* If it's rendered elsewhere, you'll need a different way to pass props (e.g., context) */}
             {/* For now, assuming parent component renders both and passes props */}
 
-            {/* --- Temporarily COMMENT OUT DndContext and wrappers --- */}
-            {/* 
+            {/* --- RE-ENABLE DndContext and wrappers --- */}
+            
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragCancel={handleDragCancel}
-                disabled={sortConfig?.key !== null}
+                disabled={sortConfig?.key !== null} // Disable DND if sorting by column
                 modifiers={[restrictToVerticalAxis]}
             >
                 <SortableContext
-                    items={playersToDisplay.map(p => p.id)}
+                    items={playersToDisplay.map(p => p.id)} // Use the stable player IDs
                     strategy={verticalListSortingStrategy}
-                    disabled={sortConfig?.key !== null}
+                    disabled={sortConfig?.key !== null} // Disable sorting context too
                 >
-            */}
                     {playersToDisplay.length > 0 ? (
                          <List
                             ref={listRef}
@@ -521,7 +514,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                             {isEcrLoading ? "Loading rankings..." : "No players found or ranking list is empty."}
                         </div>
                     )}
-            {/*
+            
                 </SortableContext>
 
                 {typeof document !== 'undefined' && ReactDOM.createPortal(
@@ -529,14 +522,21 @@ const RankingsPlayerListContainer = React.forwardRef(({
                          {activeId ? (() => {
                              const activePlayer = playersToDisplay.find(p => p.id === activeId);
                              if (!activePlayer) return null;
+                             // Ensure the row used in overlay gets necessary props
                              return (
                                  <RankingsPlayerRow
                                      player={activePlayer}
+                                     rank={activePlayer.userRank} // Pass rank
                                      isDraggingOverlay={true}
                                      activeRanking={activeRanking}
                                      sport={sport}
-                                     enabledCategoryAbbrevs={enabledCategoryAbbrevs}
-                                     isExpanded={false}
+                                     categories={enabledCategoryAbbrevs} // Pass categories
+                                     standardEcrRank={activePlayer.info.standardEcrRank}
+                                     redraftEcrRank={activePlayer.info.redraftEcrRank}
+                                     isExpanded={false} // Overlay is never expanded
+                                     // No need for toggle/availability handlers in overlay
+                                     isDraftModeActive={isDraftModeActive}
+                                     isRankSorted={true} // Drag handle is always visible in overlay
                                  />
                              );
                          })() : null}
@@ -544,7 +544,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                      document.body
                  )}
             </DndContext>
-            */}
+            
 
             <style jsx global>{`
                 .hide-scrollbar {

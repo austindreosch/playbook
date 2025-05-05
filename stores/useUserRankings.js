@@ -379,7 +379,7 @@ const useUserRankings = create(
                 },
 
                 // Add a function to update all player ranks in the active ranking list
-                updateAllPlayerRanks: (newPlayerOrder) => {
+                updateAllPlayerRanks: (rankingId, newPlayerOrder) => {
                     const { activeRanking, rankings } = get();
                     if (!activeRanking || !activeRanking.rankings) return;
 
