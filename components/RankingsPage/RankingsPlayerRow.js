@@ -35,65 +35,66 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
 
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
+            {/* Z-Score Sum main value column (Moved to left) */}
+            <div
+                key="zScoreSum_main"
+                className="flex-1 text-center h-full flex items-center justify-center select-none"
+                title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
+            >
+                <span className="text-sm text-pb_darkgray">
+                    {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
+                </span>
+            </div>
+
+            {/* Render other category stats */}
             {categories.map((categoryAbbrev) => { // Renamed loop variable for clarity
                 let statData, displayValue, title, bgColor, formattedValue;
 
-                // --- Handle Z-Score Sum --- (No change needed here if 'zScoreSum' is special cased)
-                if (categoryAbbrev === 'zScoreSum') {
-                    // Use prop passed down
-                    displayValue = zScoreSumValue; 
-                     title = `Z-Score Sum: ${displayValue?.toFixed(2) ?? '-'}`;
-                     bgColor = undefined;
-                     if (typeof displayValue === 'number') {
-                         formattedValue = displayValue.toFixed(2);
-                     } else {
-                         formattedValue = '-';
-                     }
+                // --- Handle Z-Score Sum --- (This logic is now handled above)
+                // if (categoryAbbrev === 'zScoreSum') { ... }
 
+                // --- Logic for regular stats using categoryAbbrev as the key ---
+                const path = categoryAbbrev; // Use abbrev directly as path
+
+                if (!path) {
+                    // Render placeholder if path missing
+                    formattedValue = '?';
+                    title = `${categoryAbbrev}: Path not found`;
+                    bgColor = 'lightcoral'; // Indicate error visually
                 } else {
-                    // --- Logic for regular stats using categoryAbbrev as the key ---
-                    const path = categoryAbbrev; // Use abbrev directly as path
+                    // Use global getNestedValue with the ABBREV as the path
+                    statData = getNestedValue(stats, path); 
 
-                    if (!path) {
-                        // Render placeholder if path missing
-                        formattedValue = '?';
-                        title = `${categoryAbbrev}: Path not found`;
-                        bgColor = 'lightcoral'; // Indicate error visually
-                    } else {
-                        // Use global getNestedValue with the ABBREV as the path
-                        statData = getNestedValue(stats, path); 
+                    // Determine the value to display (check for { value: ... } structure)
+                    // getNestedValue already handles returning statData.value if it exists
+                    displayValue = statData; // Raw value or null/undefined
 
-                        // Determine the value to display (check for { value: ... } structure)
-                        // getNestedValue already handles returning statData.value if it exists
-                        displayValue = statData; // Raw value or null/undefined
-
-                        // Format the display value
-                        formattedValue = '-'; // Default placeholder
-                         if (displayValue !== null && displayValue !== undefined) {
-                             if (typeof displayValue === 'number') {
-                                // Use categoryAbbrev for checking formatting needs
-                                if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
-                                    formattedValue = displayValue.toFixed(2);
-                                } else {
-                                    formattedValue = displayValue.toFixed(1);
-                                    if (formattedValue.endsWith('.0')) {
-                                        formattedValue = formattedValue.slice(0, -2);
-                                    }
+                    // Format the display value
+                    formattedValue = '-'; // Default placeholder
+                     if (displayValue !== null && displayValue !== undefined) {
+                         if (typeof displayValue === 'number') {
+                            // Use categoryAbbrev for checking formatting needs
+                            if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
+                                formattedValue = displayValue.toFixed(2);
+                            } else {
+                                formattedValue = displayValue.toFixed(1);
+                                if (formattedValue.endsWith('.0')) {
+                                    formattedValue = formattedValue.slice(0, -2);
                                 }
-                             } else {
-                                 // Handle non-numeric values if necessary (e.g., strings)
-                                 formattedValue = String(displayValue);
-                             }
+                            }
+                         } else {
+                             // Handle non-numeric values if necessary (e.g., strings)
+                             formattedValue = String(displayValue);
                          }
-                        
-                        // Determine title (use abbreviation and formatted value)
-                         // TODO: Get full label from config? Use SPORT_CONFIGS maybe?
-                         const label = SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev;
-                         title = `${label}: ${formattedValue}`;
+                     }
+                    
+                    // Determine title (use abbreviation and formatted value)
+                     // TODO: Get full label from config? Use SPORT_CONFIGS maybe?
+                     const label = SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev;
+                     title = `${label}: ${formattedValue}`;
 
-                        // Determine background color (ignoring for now)
-                        bgColor = undefined; 
-                    }
+                    // Determine background color (ignoring for now)
+                    bgColor = undefined; 
                 }
 
                 return (
@@ -109,16 +110,6 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
                     </div>
                 );
             })}
-            {/* Z-Score Sum scaled value column (use prop) */}
-            <div
-                key="zScoreSum_scaled"
-                className="flex-1 text-center h-full flex items-center justify-center select-none"
-                title={`Scaled Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(1) : '-'}`}
-            >
-                <span className="text-xs text-pb_textgray">
-                    {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(1) : '-'}
-                </span>
-            </div>
         </div>
     );
 });

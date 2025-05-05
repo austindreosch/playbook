@@ -178,6 +178,19 @@ const RankingsPlayerListHeader = ({
 
                 {/* Stats Headers - 60% section with exact same structure */}
                 <div className="flex w-[60%] h-full gap-[3px] font-bold">
+                    {/* --- NEW: Z-Score Sum Sort Button (Moved to the left) --- */}
+                    <div
+                        key="zScoreSum"
+                        className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
+                        onClick={() => onSortChange('zScoreSum')} // Use a unique key
+                    >
+                        {/* TODO: Use a sport-agnostic label, maybe "Overall" or "Z-Sum"? */}
+                        <SigmaSquareIcon className="w-4 h-4" />
+                        {/* --- MODIFIED: Check for zScoreSum key --- */}
+                        {sortConfig?.key === 'zScoreSum' && <SortDescIcon />}
+                    </div>
+
+                    {/* --- Render other category headers --- */}
                     {enabledCategoryAbbrevs.map((abbrev) => (
                         <div
                             key={abbrev}
@@ -189,18 +202,6 @@ const RankingsPlayerListHeader = ({
                             {sortConfig?.key && statPathMapping[abbrev] === sortConfig.key && <SortDescIcon />}
                         </div>
                     ))}
-
-                    {/* --- NEW: Z-Score Sum Sort Button --- */}
-                    <div
-                        key="zScoreSum"
-                        className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
-                        onClick={() => onSortChange('zScoreSum')} // Use a unique key
-                    >
-                        {/* TODO: Use a sport-agnostic label, maybe "Overall" or "Z-Sum"? */}
-                        <SigmaSquareIcon className="w-4 h-4" />
-                        {/* --- MODIFIED: Check for zScoreSum key --- */}
-                        {sortConfig?.key === 'zScoreSum' && <SortDescIcon />}
-                    </div>
                 </div>
             </div>
 
