@@ -572,32 +572,32 @@ const useUserRankings = create(
                             fetch(redraftUrl)
                         ]);
 
-                        let standardRankingsData = { rankings: [] }; // Default to empty array object
+                        let standardRankingsData = null; // Change default
                         if (standardResponse.ok) {
                             standardRankingsData = await standardResponse.json();
-                            console.log(`[fetchConsensusRankings] Standard fetch OK. Raw Response:`, standardRankingsData);
+                            console.log(`[fetchConsensusRankings] Standard fetch OK. Raw Response Doc:`, standardRankingsData);
                         } else {
                             console.warn(`[fetchConsensusRankings] Standard fetch failed: ${standardResponse.status}`);
-                             // Keep default empty array
                         }
 
-                        let redraftRankingsData = { rankings: [] }; // Default
+                        let redraftRankingsData = null; // Change default
                         if (redraftResponse.ok) {
                             redraftRankingsData = await redraftResponse.json();
-                            console.log(`[fetchConsensusRankings] Redraft fetch OK. Raw Response:`, redraftRankingsData);
+                            console.log(`[fetchConsensusRankings] Redraft fetch OK. Raw Response Doc:`, redraftRankingsData);
                         } else {
                             console.warn(`[fetchConsensusRankings] Redraft fetch failed: ${redraftResponse.status}`);
-                            // Keep default empty array
                         }
 
                         // Log data BEFORE setting state
-                        const standardEcrToSet = standardRankingsData?.rankings || [];
-                        const redraftEcrToSet = redraftRankingsData?.rankings || [];
-                        console.log(`[fetchConsensusRankings] Data before setState:`, { standardCount: standardEcrToSet.length, redraftCount: redraftEcrToSet.length });
+                        const standardEcrToSet = standardRankingsData?.rankings || []; 
+                        const redraftEcrToSet = redraftRankingsData?.rankings || []; 
+                        console.log(`[fetchConsensusRankings] Extracted Rankings Arrays:`, { standardCount: standardEcrToSet.length, redraftCount: redraftEcrToSet.length });
+                        // Log first few entries if available
+                        if(standardEcrToSet.length > 0) console.log("Sample Standard ECR Entry:", standardEcrToSet[0]);
+                        if(redraftEcrToSet.length > 0) console.log("Sample Redraft ECR Entry:", redraftEcrToSet[0]);
 
                         setState({
-                            // Extract rankings array, default to empty if fetch failed or no rankings
-                            standardEcrRankings: standardEcrToSet, 
+                            standardEcrRankings: standardEcrToSet,
                             redraftEcrRankings: redraftEcrToSet,
                             isEcrLoading: false,
                             ecrError: null

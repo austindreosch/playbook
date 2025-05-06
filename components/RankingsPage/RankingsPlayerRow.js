@@ -197,7 +197,6 @@ const RankingsPlayerRow = memo(({
     player,
     sport,
     categories,
-    zScoreSumValue,
     rank,
     standardEcrRank,
     redraftEcrRank,
@@ -350,7 +349,7 @@ const RankingsPlayerRow = memo(({
         <StatsSection
             categories={categories}
             stats={player.stats}
-            zScoreSumValue={zScoreSumValue}
+            zScoreSumValue={player?.zScoreTotals?.overallZScoreSum}
             sport={sport}
         />
     );

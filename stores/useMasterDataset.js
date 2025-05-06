@@ -212,11 +212,23 @@ const useMasterDataset = create((set, get) => ({
              set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
         }
         const nbaIdentities = get().dataset[sportKey]?.identities || [];
-        const identityMap = nbaIdentities.reduce((map, identity) => {
-            if (identity.playbookId) { map[identity.playbookId] = identity; }
-            else if (identity.mySportsFeedsId) { map[identity.mySportsFeedsId] = identity; }
-            return map;
-        }, {});
+        // --- Create TWO Identity Maps --- 
+        const identityMapByPlaybookId = {};
+        const identityMapByMsfId = {};
+        nbaIdentities.forEach(identity => {
+            const playbookIdStr = identity?.playbookId ? String(identity.playbookId) : null;
+            const msfIdNum = identity?.mySportsFeedsId ? Number(identity.mySportsFeedsId) : null;
+            
+            if (playbookIdStr) {
+                identityMapByPlaybookId[playbookIdStr] = identity;
+            }
+            if (msfIdNum != null) {
+                identityMapByMsfId[msfIdNum] = identity;
+            }
+            // Optional: Log if an identity has neither key?
+            // if (!playbookIdStr && msfIdNum == null) { ... }
+        });
+        console.log(`[useMasterDataset NBA] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
@@ -242,13 +254,19 @@ const useMasterDataset = create((set, get) => ({
 
         // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
         try {
-            // --- FIX: Pass identityMap in context ---
-            const context = { identityMap };
+            // --- FIX: Pass BOTH maps in context --- 
+            const context = { 
+                identityMap: identityMapByPlaybookId, // Keep original name for compatibility if needed elsewhere?
+                identityMapByPlaybookId: identityMapByPlaybookId, 
+                identityMapByMsfId: identityMapByMsfId 
+            };
             const processedPlayers = processNbaData(rawNbaStats, context);
             // -------------------------------------
 
-            // *** Apply Z-Scores ***
-            applyZScores(processedPlayers, sportKey);
+            // Apply sport-specific Z-Scores
+            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Attempting to apply Z-Scores...`);
+            // applyZScores(processedPlayers, sportKey);
+            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Z-Scores applied (or skipped).`);
 
             set(state => ({
                 dataset: {
@@ -315,16 +333,16 @@ const useMasterDataset = create((set, get) => ({
              set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
         }
         const nflIdentities = get().dataset[sportKey]?.identities || [];
-        // Create a map for quick lookup in processing
-        const identityMap = nflIdentities.reduce((map, identity) => {
-            if (identity.playbookId) {
-                 map[identity.playbookId] = identity; // Use playbookId as key if available
-            } else if (identity.mySportsFeedsId) {
-                 map[identity.mySportsFeedsId] = identity; // Fallback to MSF ID
-            }
-            // Consider logging if neither ID is present
-            return map;
-        }, {});
+        // --- Create TWO Identity Maps --- 
+        const identityMapByPlaybookId = {};
+        const identityMapByMsfId = {};
+        nflIdentities.forEach(identity => {
+            const playbookIdStr = identity?.playbookId ? String(identity.playbookId) : null;
+            const msfIdNum = identity?.mySportsFeedsId ? Number(identity.mySportsFeedsId) : null;
+            if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
+            if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
+        });
+        console.log(`[useMasterDataset NFL] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
@@ -356,14 +374,19 @@ const useMasterDataset = create((set, get) => ({
 
         // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
          try {
-             // --- FIX: Pass identityMap in context ---
-             const context = { identityMap }; 
-             // processNflData now returns { processedPlayers, teamTotalsContext }
+             // --- FIX: Pass BOTH maps in context --- 
+             const context = { 
+                 identityMap: identityMapByPlaybookId, 
+                 identityMapByPlaybookId: identityMapByPlaybookId, 
+                 identityMapByMsfId: identityMapByMsfId 
+             };
              const { processedPlayers: initialProcessedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats, context);
-             // -------------------------------------
+             // ------------------------------------- 
 
-             // *** Apply Z-Scores ***
-             applyZScores(initialProcessedPlayers, sportKey);
+             // Apply sport-specific Z-Scores
+             console.log(`[MasterDataset ${sportKey.toUpperCase()}] Attempting to apply Z-Scores...`);
+             // applyZScores(initialProcessedPlayers, sportKey);
+             console.log(`[MasterDataset ${sportKey.toUpperCase()}] Z-Scores applied (or skipped).`);
 
              set(state => ({
                  dataset: {
@@ -430,11 +453,16 @@ const useMasterDataset = create((set, get) => ({
              set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
         }
         const mlbIdentities = get().dataset[sportKey]?.identities || [];
-        const identityMap = mlbIdentities.reduce((map, identity) => {
-            if (identity.playbookId) { map[identity.playbookId] = identity; }
-            else if (identity.mySportsFeedsId) { map[identity.mySportsFeedsId] = identity; }
-            return map;
-        }, {});
+        // --- Create TWO Identity Maps --- 
+        const identityMapByPlaybookId = {};
+        const identityMapByMsfId = {};
+        mlbIdentities.forEach(identity => {
+            const playbookIdStr = identity?.playbookId ? String(identity.playbookId) : null;
+            const msfIdNum = identity?.mySportsFeedsId ? Number(identity.mySportsFeedsId) : null;
+            if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
+            if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
+        });
+        console.log(`[useMasterDataset MLB] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
@@ -462,14 +490,19 @@ const useMasterDataset = create((set, get) => ({
 
         // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
         try {
-            // --- FIX: Pass identityMap in context ---
-            const context = { identityMap };
-            // Projections are handled inside processMlbData currently
+            // --- FIX: Pass BOTH maps in context --- 
+            const context = { 
+                identityMap: identityMapByPlaybookId, 
+                identityMapByPlaybookId: identityMapByPlaybookId, 
+                identityMapByMsfId: identityMapByMsfId 
+            };
             const processedPlayers = processMlbData(rawMlbStats, rawMlbProjections, context);
-            // -------------------------------------
+            // ------------------------------------- 
 
-            // TODO: Add applyZScores for MLB when logic is defined
+            // Apply sport-specific Z-Scores
+            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Attempting to apply Z-Scores...`);
             // applyZScores(processedPlayers, sportKey);
+            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Z-Scores applied (or skipped).`);
 
             set(state => ({
                 dataset: {

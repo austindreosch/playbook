@@ -1,9 +1,9 @@
 'use client';
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
-import { calculatePlayerZScoreSums } from '@/lib/calculations/zScoreUtil';
+import { calculatePlayerZScoreSums, calculateZScoresWithComparisonPool } from '@/lib/calculations/zScoreUtil';
 import { SPORT_CONFIGS } from '@/lib/config'; // Import sport configs
-import { getNestedValue } from '@/lib/utils';
+import { getNestedValue, getStatPath } from '@/lib/utils';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -28,7 +28,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
 }, ref) => {
     // Initialize state with players
     const [activeId, setActiveId] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
     const [rankedPlayers, setRankedPlayers] = useState([]);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
     const [expandedRows, setExpandedRows] = useState(new Set());
@@ -45,6 +44,11 @@ const RankingsPlayerListContainer = React.forwardRef(({
         showDraftedPlayers,
         selectAndTouchRanking
     } = useUserRankings();
+
+    // <<< Get relevant state from MasterDataset store >>>
+    const { dataset, loading: masterLoading } = useMasterDataset();
+    const masterNodes = dataset[sport?.toLowerCase()]?.players; // Get players for the current sport
+    const isMasterLoading = masterLoading[sport?.toLowerCase()]; // Get loading status for the current sport
 
     // Set up window size measurement
     useEffect(() => {
@@ -130,7 +134,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         }
         // console.log(`[seasonalStatsMap Memo] Built stats map with ${map.size} entries from prop.`); // Optional: Keep if needed
         return map;
-    }, [seasonalStatsData, sport]); // <<< Dependency is now the prop (and sport if needed)
+    }, [seasonalStatsData]); // <<< Dependency is now the prop (and sport if needed)
 
     // --- ECR Rank Maps ---
     const standardEcrMap = useMemo(() => {
@@ -147,6 +151,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         return map;
     }, [standardEcrRankings]);
 
+    // --- Create redraftEcrMap --- (Moved slightly earlier if needed for dependency)
     const redraftEcrMap = useMemo(() => {
         const map = new Map();
         (redraftEcrRankings || []).forEach(player => {
@@ -154,11 +159,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 map.set(String(player.playbookId), player.rank);
             }
         });
-        // --- Log created ECR map ---
-        console.log('[RankingsPlayerListContainer] Created redraftEcrMap:', map);
-        // --- End log ---
+        // console.log('[RankingsPlayerListContainer] Created redraftEcrMap:', map);
         return map;
-    }, [redraftEcrRankings]);
+    }, [redraftEcrRankings]); // Depends only on rankings
 
     // --- STEP 1: Process and Combine Data, Sort ONLY by User Rank ---
     useEffect(() => {
@@ -227,98 +230,307 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]);
 
-    // === Reinstate useMemo for playersToDisplay ===
-    const playersToDisplay = useMemo(() => {
-        let processedPlayers = [...rankedPlayers]; // Start with the rank-sorted list
+    // --- Memo hook to determine the comparison pool ---
+    const comparisonPoolPlayers = useMemo(() => {
+        console.log("[ComparisonPool Memo] Recalculating comparison pool...");
 
-        // --- Calculate Z-Score Sums ---        
-        if (activeRanking?.categories && processedPlayers.length > 0) {
-            // 1. Create enabledCategoriesDetailsObject
-            const categoriesObject = activeRanking.categories;
-            const enabledCategoriesDetailsObject = Object.entries(categoriesObject)
-                .filter(([abbrev, details]) => details.enabled)
-                .reduce((acc, [abbrev, details]) => {
-                    acc[abbrev] = details;
-                    return acc;
-                }, {});
+        // <<< Check BOTH loading states >>>
+        const sportKey = sport?.toLowerCase();
+        const nodes = masterNodes;
+        const isLoading = isMasterLoading || isEcrLoading;
+        const currentRankingFormat = activeRanking?.format?.toLowerCase(); // Declare only once here
 
-            // 2. Create statPathMapping OBJECT
-            const sportConfigData = SPORT_CONFIGS[sport.toLowerCase()];
-            const statPathMapping = {};
-            if (sportConfigData && categoriesObject) {
-                 Object.keys(categoriesObject).forEach(abbrev => {
-                    const categoryDetails = categoriesObject[abbrev];
-                    const configCategory = sportConfigData.categories[abbrev];
-                    
-                    if (configCategory) {
-                        let path = '';
-                        if (sport.toLowerCase() === 'mlb' && configCategory.group) {
-                            path = `${configCategory.group}.${abbrev}`;
-                        } else {
-                            path = abbrev;
-                        }
-                        statPathMapping[abbrev] = path;
-                    } else {
-                        console.warn(`No sport config found for category abbreviation: ${abbrev} in sport ${sport}`);
-                        statPathMapping[abbrev] = abbrev; // Fallback
-                    }
-                });
-            } else {
-                 console.warn(`Missing sportConfig or categories object for sport: ${sport}`);
-            }
-
-            try {
-                 processedPlayers = calculatePlayerZScoreSums(
-                    processedPlayers,
-                    enabledCategoriesDetailsObject,
-                    statPathMapping
-                );
-            } catch (error) {
-                console.error("Error calculating Z-Score sums:", error);
-                 processedPlayers = processedPlayers.map(player => ({ ...player, zScoreSum: player.zScoreSum ?? 0 }));
-            }
-        } else {
-            processedPlayers = processedPlayers.map(player => ({ ...player, zScoreSum: player.zScoreSum ?? 0 }));
+        if (isLoading || !sportKey || !currentRankingFormat || !nodes || Object.keys(nodes).length === 0 || redraftEcrMap.size === 0) {
+            console.log("[ComparisonPool Memo] Missing dependencies, data still loading, or ECR map empty.", {
+                sport: sportKey,
+                format: currentRankingFormat,
+                isMasterLoading,
+                isEcrLoading,
+                hasMasterNodes: nodes && Object.keys(nodes).length > 0,
+                ecrMapSize: redraftEcrMap?.size
+            });
+            return [];
         }
 
-        // --- Apply Display Sorting ---
-        if (sortConfig && sortConfig.key !== null) {
-            processedPlayers.sort((a, b) => {
-                let valueA, valueB;
-                if (sortConfig.key === 'zScoreSum') {
-                    valueA = a.zScoreSum ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
-                    valueB = b.zScoreSum ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
-                } else if (['rank', 'standardEcrRank', 'redraftEcrRank', 'primaryPosition', 'teamAbbreviation', 'age', 'fullName'].includes(sortConfig.key)) {
-                    valueA = getNestedValue(a.info, sortConfig.key);
-                    valueB = getNestedValue(b.info, sortConfig.key);
-                } else {
-                    const statPathA = `stats.${sortConfig.key}.value`;
-                    const statPathB = `stats.${sortConfig.key}.value`;
-                    valueA = getNestedValue(a, statPathA);
-                    valueB = getNestedValue(b, statPathB);
+        // <<< Log sample masterNode structure >>>
+        const sampleNodeKey = Object.keys(nodes)[0];
+        const sampleNode = sampleNodeKey ? nodes[sampleNodeKey] : null;
+        if (sampleNode) {
+            console.log("[ComparisonPool Memo] Sample masterNode:");
+            console.dir ? console.dir(sampleNode) : console.log(sampleNode);
+        }
+
+        const sportConfig = SPORT_CONFIGS[sportKey];
+        // const rankingFormat = activeRanking.format.toLowerCase(); // <-- REMOVE Redundant declaration
+
+        // <<< Determine the correct rule key for comparison pools >>>
+        let ruleKey = currentRankingFormat; // Use the variable declared above
+        if (sportKey === 'nba' && (currentRankingFormat === 'dynasty' || currentRankingFormat === 'redraft')) {
+            ruleKey = 'categories';
+            console.log(`[ComparisonPool Memo] Mapping NBA format '${currentRankingFormat}' to use rule key 'categories'.`);
+        }
+        const comparisonRules = sportConfig?.comparisonPools?.[ruleKey];
+
+        if (!comparisonRules) {
+            console.warn(`[ComparisonPool Memo] No comparison rules found for sport: ${sportKey}, format: ${currentRankingFormat} (resolved to rule key: ${ruleKey})`);
+            return [];
+        }
+        console.log("[ComparisonPool Memo] Using comparison rules for key:", ruleKey, comparisonRules );
+
+        // 1. Get relevant players from master dataset AND MERGE ECR
+        const sortByField = comparisonRules.sortBy || comparisonRules.groups?.[Object.keys(comparisonRules.groups)[0]]?.sortBy;
+        if (!sortByField) {
+            console.warn("[ComparisonPool Memo] No sortBy key found in comparison rules.");
+        }
+        console.log(`[ComparisonPool Memo] Determined sortBy field: ${sortByField}`);
+
+        // <<< Log the ECR Map Size >>>
+        console.log(`[ComparisonPool Memo] redraftEcrMap size: ${redraftEcrMap?.size ?? 0}`);
+        if (redraftEcrMap?.size > 0) {
+             // Log the first few entries to see keys/values
+             console.log("[ComparisonPool Memo] Sample redraftEcrMap entries:", Array.from(redraftEcrMap.entries()).slice(0, 5));
+        }
+
+        const allRelevantPlayers = Object.values(nodes).map((node, index) => {
+            const playerPlaybookId = node?.info?.playbookId;
+            const keyExists = playerPlaybookId ? redraftEcrMap.has(playerPlaybookId) : false;
+            const rankFromMap = keyExists ? redraftEcrMap.get(playerPlaybookId) : null;
+
+              // Construct the final info object for the pool player
+            const finalInfo = {
+                ...node?.info, // Spread original info (contains correct playbookId)
+                redraftEcrRank: rankFromMap ?? null, // Add/overwrite with looked-up rank
+                // Ensure essential fields like position/name exist even if node.info was minimal
+                primaryPosition: node?.info?.primaryPosition ?? null,
+                primaryName: node?.info?.primaryName ?? 'Unknown Player',
+            };
+
+            // Return the structure needed for filtering and sorting
+            return {
+                id: playerPlaybookId, // Use playbookId as the stable DND/key ID
+                info: finalInfo,
+                stats: node?.stats ?? {},
+            };
+        })
+        .filter(p => {
+            const hasPosition = !!p.info?.primaryPosition;
+            // Get the actual rank value for logging
+            const rankValue = sortByField ? getNestedValue(p.info, sortByField) : undefined;
+            // Strict check if it's a number
+            const hasSortValue = typeof rankValue === 'number'; 
+
+            if (!hasPosition || !hasSortValue) {
+                // Construct a more informative reason string
+                let reason = [];
+                if (!hasPosition) reason.push("Missing Position");
+                if (!hasSortValue) reason.push(`Invalid Rank (Value: ${rankValue}, Type: ${typeof rankValue})`);
+                
+                // Log only a few failures
+                if (Math.random() < 0.05) { 
+                    console.log(`[ComparisonPool Filter FINAL] Filtering out: ${p.info?.primaryName ?? p.id} (${reason.join(', ')})`, p.info);
                 }
-                const nullValue = sortConfig.direction === 'asc' ? Infinity : -Infinity;
-                valueA = (valueA === null || valueA === undefined) ? nullValue : valueA;
-                valueB = (valueB === null || valueB === undefined) ? nullValue : valueB;
-                if (typeof valueA === 'string' && typeof valueB === 'string') {
-                    valueA = valueA.toLowerCase();
-                    valueB = valueB.toLowerCase();
+            }
+            return hasPosition && hasSortValue;
+        });
+
+         // <<< Log count after mapping/filtering >>>
+         console.log(`[ComparisonPool Memo] Mapped ${allRelevantPlayers.length} relevant players from masterNodes after filtering.`);
+         if (allRelevantPlayers.length > 0) {
+            console.log("[ComparisonPool Memo] Sample relevant player:");
+            console.dir ? console.dir(allRelevantPlayers[0]) : console.log(allRelevantPlayers[0]);
+         }
+         if (allRelevantPlayers.length === 0) {
+             console.warn("[ComparisonPool Memo] No relevant players found after filtering masterNodes. Check filter criteria and masterNodes content.");
+             return []; // Stop if no players pass initial filter
+         }
+
+        // --- Sorting function ---
+        // Sort helper (handles null/undefined ranks -> push to bottom)
+        const sortPlayers = (a, b, sortField) => {
+            // Only sort if sortField is defined
+            if (!sortField) return 0;
+            const rankA = getNestedValue(a.info, sortField) ?? Infinity;
+            const rankB = getNestedValue(b.info, sortField) ?? Infinity;
+            // Add secondary sort by ID for stability if ranks are equal
+            if (rankA === rankB) {
+                return (a.id ?? '').localeCompare(b.id ?? '');
+            }
+            return rankA - rankB;
+        };
+
+        let finalComparisonPool = [];
+
+        // 2. Select pool based on rules type
+        if (comparisonRules.type === 'overall') {
+            finalComparisonPool = [...allRelevantPlayers]
+                .sort((a, b) => sortPlayers(a, b, sortByField)) // Pass sort field
+                .slice(0, comparisonRules.topN);
+        } else if (comparisonRules.type === 'positional' || comparisonRules.type === 'split') {
+            const groupedPlayers = {};
+             allRelevantPlayers.forEach(player => {
+                // Ensure positionGrouper exists and is a function
+                 const groupKey = typeof comparisonRules.positionGrouper === 'function'
+                                    ? comparisonRules.positionGrouper(player.info?.primaryPosition)
+                                    : null;
+
+                if (groupKey && comparisonRules.groups && comparisonRules.groups[groupKey]) { // Check rules.groups exists
+                    if (!groupedPlayers[groupKey]) {
+                        groupedPlayers[groupKey] = [];
+                    }
+                    groupedPlayers[groupKey].push(player);
                 }
+                 // else { console.log(`Player ${player.info.fullName} (Pos: ${player.info.primaryPosition}) mapped to group ${groupKey} - not in rules.groups`); }
+            });
+             console.log("[ComparisonPool Memo] Players grouped by position/split:", Object.keys(groupedPlayers).map(k => `${k}: ${groupedPlayers[k].length}`));
+
+
+            Object.keys(groupedPlayers).forEach(groupKey => {
+                 const groupRules = comparisonRules.groups[groupKey];
+                 const groupSortBy = groupRules.sortBy || sortByField; // Use group specific sort if available
+                 const sortedGroup = groupedPlayers[groupKey]
+                     .sort((a, b) => sortPlayers(a, b, groupSortBy)) // Pass correct sort field
+                     .slice(0, groupRules.topN);
+                 finalComparisonPool = finalComparisonPool.concat(sortedGroup);
+                 console.log(`[ComparisonPool Memo] Added ${sortedGroup.length} players from group ${groupKey} (Top ${groupRules.topN}, sorted by ${groupSortBy})`);
+            });
+        } else {
+            console.warn(`[ComparisonPool Memo] Unknown comparison rule type: ${comparisonRules.type}`);
+        }
+
+         // <<< Log final pool size >>>
+         console.log(`[ComparisonPool Memo] FINAL calculated pool size: ${finalComparisonPool.length}`);
+         if (finalComparisonPool.length > 0) {
+            console.log("[ComparisonPool Memo] Sample final pool player:");
+            console.dir ? console.dir(finalComparisonPool[0]) : console.log(finalComparisonPool[0]);
+         } else {
+            console.warn("[ComparisonPool Memo] FINAL COMPARISON POOL IS EMPTY.");
+         }
+        return finalComparisonPool;
+
+    }, [sport, activeRanking?.format, masterNodes, isMasterLoading, isEcrLoading, redraftEcrMap]);
+
+    // === RESTRUCTURED useMemo for playersToDisplay ===
+    const playersToDisplay = useMemo(() => {
+        // console.log("[PlayersToDisplay Memo] Starting calculation...");
+        // Start with the already processed rankedPlayers from state
+        let processedPlayers = [...rankedPlayers]; 
+
+        // Early exit if essential data is missing
+        if (!activeRanking || !activeRanking.categories || !comparisonPoolPlayers || comparisonPoolPlayers.length === 0 || processedPlayers.length === 0) {
+            // console.log("[PlayersToDisplay Memo] Early exit: Missing activeRanking, categories, comparisonPool, or rankedPlayers.");
+            // Return rankedPlayers as is if we can't calculate Z-scores
+            return processedPlayers;
+        }
+
+        // --- Prepare for Z-Score Calculation ---
+        const sportKey = sport?.toLowerCase();
+        const currentFormat = activeRanking.format?.toLowerCase();
+        const scoringType = activeRanking.scoring?.toLowerCase(); // Added scoringType
+
+        // Determine effective format for rules lookup
+        const effectiveFormat = sportKey === 'nba' && (currentFormat === 'dynasty' || currentFormat === 'redraft') ? 'categories' : currentFormat;
+        
+        // Get comparison rules - REMOVE extra [scoringType] lookup
+        const comparisonRules = SPORT_CONFIGS[sportKey]?.comparisonPools?.[effectiveFormat]; // Remove ?.[scoringType]
+        
+        // Prepare category details and path mapping (using Object.values)
+        const enabledCategoriesDetailsObject = {};
+        const statPathMapping = {};
+        if (activeRanking.categories && typeof activeRanking.categories === 'object') { // Check it's an object
+            // --- Change back to Object.entries and destructure [key, catDetails] ---
+            Object.entries(activeRanking.categories).forEach(([key, catDetails]) => { 
+                // --- Remove internal log ---
+                // console.log("[PlayersToDisplay Memo] Inspecting category item:", catDetails);
+                
+                // --- Use key and catDetails in the condition ---
+                if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) { 
+                    // Use the destructured key and catDetails object
+                    enabledCategoriesDetailsObject[key] = { ...catDetails, key: key }; // Also add the key to the details object itself
+                    // Assuming getStatPath exists and works correctly - NOTE: We already fixed this error, should be fine
+                    statPathMapping[key] = getStatPath(key, sportKey, effectiveFormat); 
+                }
+            });
+        } else {
+            console.warn("[PlayersToDisplay Memo] activeRanking.categories is not a valid object:", activeRanking.categories);
+        }
+
+        // +++ Log the created statPathMapping +++
+        console.log("[PlayersToDisplay Memo] Created Stat Path Mapping:", statPathMapping);
+        // +++ End Log +++
+
+        // Check if we have rules and a comparison pool to proceed
+        if (!comparisonRules || Object.keys(enabledCategoriesDetailsObject).length === 0) {
+            console.warn("[PlayersToDisplay Memo] Cannot calculate Z-Scores: Missing comparison rules or no enabled categories.", { comparisonRules, enabledCategoriesDetailsObject });
+            return processedPlayers; // Return unprocessed players
+        }
+        
+        // console.log("[PlayersToDisplay Memo] Data prepared for Z-score calculation:", { comparisonRules, enabledCategoriesDetailsObject, statPathMapping });
+        // console.log(`[PlayersToDisplay Memo] Scoring ${processedPlayers.length} players against ${comparisonPoolPlayers.length} comparison players.`);
+
+        // --- Calculate Z-Scores using the comparison pool ---
+        try {
+            // Pass the processed players (which have combined info/stats/id)
+            const playersWithZScores = calculateZScoresWithComparisonPool(
+                processedPlayers,          // Players from active ranking (already processed)
+                comparisonPoolPlayers,     // The calculated comparison pool
+                enabledCategoriesDetailsObject,
+                statPathMapping,
+                comparisonRules
+            );
+            processedPlayers = playersWithZScores; // Update the list with Z-score data
+            
+            // Log sample result after calculation
+            if (processedPlayers.length > 0) {
+                console.log("[PlayersToDisplay Memo] Sample Player AFTER Z-Score Calc:", processedPlayers[0]); 
+            }
+
+        } catch (error) {
+            console.error("[PlayersToDisplay Memo] Error calculating Z-Scores with comparison pool:", error);
+            // Optionally add fallback state here if calculation fails
+        }
+        
+        // --- Final Sorting & Filtering --- 
+        let sortedPlayers = [...processedPlayers]; // Start with potentially Z-score enriched list
+
+        // 1. Apply Display Sorting (Using new sortConfig structure: { column: string, direction: 'asc'|'desc' })
+        if (sortConfig.column) {
+            // console.log(`[PlayersToDisplay Memo] Applying sort: ${sortConfig.column} ${sortConfig.direction}`);
+            sortedPlayers.sort((a, b) => {
+                // Use getNestedValue, provide fallback for undefined/null
+                let valueA = getNestedValue(a, sortConfig.column) ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+                let valueB = getNestedValue(b, sortConfig.column) ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+
+                // Type handling
+                if (typeof valueA === 'string') valueA = valueA.toLowerCase();
+                if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+                // Ensure NaN numbers are treated consistently
+                if (typeof valueA === 'number' && isNaN(valueA)) valueA = (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+                if (typeof valueB === 'number' && isNaN(valueB)) valueB = (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+
+                // Comparison
                 if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
                 if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
-                return 0;
+                // Add secondary sort by ID for stability if values are equal
+                return (a.id ?? '').localeCompare(b.id ?? ''); 
             });
+        } else {
+            // Default sort by userRank if no column sort is active
+            sortedPlayers.sort((a, b) => (a.userRank || Infinity) - (b.userRank || Infinity));
         }
 
-        // --- Apply Draft Filtering ---
+        // 2. Apply Draft Mode Filtering
         if (isDraftModeActive && !showDraftedPlayers) {
-            processedPlayers = processedPlayers.filter(p => p.draftModeAvailable ?? true);
+            sortedPlayers = sortedPlayers.filter(p => p.draftModeAvailable !== false); // Keep if true or undefined
         }
 
-        return processedPlayers; // Return the final list
+        // console.log(`[PlayersToDisplay Memo] Final playersToDisplay count: ${sortedPlayers.length}`);
+        return sortedPlayers;
 
-    }, [rankedPlayers, activeRanking, sport, sortConfig, isDraftModeActive, showDraftedPlayers]); // Dependencies for the memo
+    // Dependencies: Include everything read inside the memo
+    }, [rankedPlayers, activeRanking, sport, comparisonPoolPlayers, sortConfig, isDraftModeActive, showDraftedPlayers]); 
 
+    // --- Render ---
+    // ... (rest of the component) ...
     // Set up sensors for mouse, touch, and keyboard interactions
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -422,6 +634,11 @@ const RankingsPlayerListContainer = React.forwardRef(({
     // Restore the original Row definition
     const Row = useCallback(({ index, style }) => {
         const player = playersToDisplay[index]; // Use the MEMOIZED list
+        // +++ Log the player object being passed +++
+        if (index < 5) { // Log only first few to avoid spam
+            console.log(`[Row Component] Rendering player at index ${index}:`, player);
+        }
+        // +++ End Log +++
         if (!player) return null;
 
         // Determine if rank sorting is active (for drag handle visibility etc.)
@@ -508,7 +725,10 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     strategy={verticalListSortingStrategy}
                     disabled={sortConfig?.key !== null} // Disable sorting context too
                 >
-                    {playersToDisplay.length > 0 ? (
+                    {/* <<< MODIFIED: Check combined loading state >>> */}
+                    {(isMasterLoading || isEcrLoading) ? (
+                        <div className="text-center p-8 text-gray-500">Loading player data...</div>
+                    ) : playersToDisplay.length > 0 ? (
                          <List
                             ref={listRef}
                             height={windowSize.height}
@@ -517,7 +737,19 @@ const RankingsPlayerListContainer = React.forwardRef(({
                             width="100%"
                             estimatedItemSize={DEFAULT_ROW_HEIGHT}
                             className="hide-scrollbar"
-                            itemKey={index => playersToDisplay[index].id}
+                            // Modify itemKey for robustness and logging
+                            itemKey={index => {
+                                const player = playersToDisplay[index];
+                                const key = player?.id ?? `missing-id-${index}`; // Fallback key
+                                if (!player?.id) {
+                                    // Log only once per unique missing ID index to reduce noise
+                                    if (!window[`missing_id_logged_${index}`]) {
+                                        console.warn(`[List itemKey] Player at index ${index} missing ID:`, player);
+                                        window[`missing_id_logged_${index}`] = true; // Mark as logged
+                                    }
+                                }
+                                return key;
+                            }}
                         >
                             {Row} 
                         </List>
@@ -526,7 +758,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                             {isEcrLoading ? "Loading rankings..." : "No players found or ranking list is empty."}
                         </div>
                     )}
-            
+                    {/* <<< END MODIFIED: Conditional Rendering >>> */}
                 </SortableContext>
 
                 {typeof document !== 'undefined' && ReactDOM.createPortal(
