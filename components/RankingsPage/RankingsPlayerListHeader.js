@@ -28,14 +28,6 @@ import { FilterSelector } from './Selectors/FilterSelector';
 import { PositionSelector } from './Selectors/PositionSelector';
 import { SourceSelector } from './Selectors/SourceSelector';
 
-// --- NEW: Sort Indicator Icons --- 
-// Remove SortAscIcon as it's no longer needed
-// const SortAscIcon = () => (
-//     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1">
-//         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-//     </svg>
-// );
-
 const RankingsPlayerListHeader = ({
     sport,
     sortConfig,
@@ -175,24 +167,36 @@ const RankingsPlayerListHeader = ({
                     {/* --- Z-Score Sum Sort Button --- */}
                     <div
                         key="zScoreSum"
-                        className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none gap-1"
+                        className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
                         onClick={() => onSortChange('zScoreSum')}
                     >
-                        <span className={`${sortConfig?.key === 'zScoreSum' ? 'underline underline-offset-2' : ''}`}> 
-                            <SigmaSquareIcon className="w-4 h-4 inline-block align-middle mr-1" />
+                        <span> 
+                            <SigmaSquareIcon className="w-4 h-4" /> 
                         </span>
+                        {/* Conditional Solid Triangle SVG */}
+                        {sortConfig?.key === 'zScoreSum' && (
+                            <svg className="w-2 h-2 fill-current text-white" viewBox="0 0 10 5">
+                                <polygon points="0,0 10,0 5,5" />
+                            </svg>
+                        )}
                     </div>
 
                     {/* --- Render other category headers --- */}
                     {enabledCategoryAbbrevs.map((abbrev) => (
                         <div
                             key={abbrev}
-                            className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none gap-1"
+                            className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1"
                             onClick={() => onSortChange(abbrev)}
                         >
-                            <span className={`${sortConfig?.key === abbrev ? 'underline underline-offset-2' : ''}`}> 
+                            <span>
                                 {abbrev}
                             </span>
+                            {/* Conditional Solid Triangle SVG */}
+                            {sortConfig?.key === abbrev && (
+                                <svg className="w-2 h-2 fill-current text-white" viewBox="0 0 10 5">
+                                    <polygon points="0,0 10,0 5,5" />
+                                </svg>
+                            )}
                         </div>
                     ))}
                 </div>
