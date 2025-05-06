@@ -35,12 +35,6 @@ import { SourceSelector } from './Selectors/SourceSelector';
 //         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
 //     </svg>
 // );
-const SortDescIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-    </svg>
-);
-// --- End Icons --- 
 
 const RankingsPlayerListHeader = ({
     sport,
@@ -178,28 +172,27 @@ const RankingsPlayerListHeader = ({
 
                 {/* Stats Headers - 60% section with exact same structure */}
                 <div className="flex w-[60%] h-full gap-[3px] font-bold">
-                    {/* --- NEW: Z-Score Sum Sort Button (Moved to the left) --- */}
+                    {/* --- Z-Score Sum Sort Button --- */}
                     <div
                         key="zScoreSum"
-                        className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
-                        onClick={() => onSortChange('zScoreSum')} // Use a unique key
+                        className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none gap-1"
+                        onClick={() => onSortChange('zScoreSum')}
                     >
-                        {/* TODO: Use a sport-agnostic label, maybe "Overall" or "Z-Sum"? */}
-                        <SigmaSquareIcon className="w-4 h-4" />
-                        {/* --- MODIFIED: Check for zScoreSum key --- */}
-                        {sortConfig?.key === 'zScoreSum' && <SortDescIcon />}
+                        <span className={`${sortConfig?.key === 'zScoreSum' ? 'underline underline-offset-2' : ''}`}> 
+                            <SigmaSquareIcon className="w-4 h-4 inline-block align-middle mr-1" />
+                        </span>
                     </div>
 
                     {/* --- Render other category headers --- */}
                     {enabledCategoryAbbrevs.map((abbrev) => (
                         <div
                             key={abbrev}
-                            className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
+                            className="flex-1 text-center h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none gap-1"
                             onClick={() => onSortChange(abbrev)}
                         >
-                            {abbrev}
-                            {/* --- MODIFIED: Check if sortConfig.key matches the mapped path --- */}
-                            {sortConfig?.key && statPathMapping[abbrev] === sortConfig.key && <SortDescIcon />}
+                            <span className={`${sortConfig?.key === abbrev ? 'underline underline-offset-2' : ''}`}> 
+                                {abbrev}
+                            </span>
                         </div>
                     ))}
                 </div>

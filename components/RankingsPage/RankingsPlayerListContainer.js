@@ -492,13 +492,35 @@ const RankingsPlayerListContainer = React.forwardRef(({
         // --- Final Sorting & Filtering --- 
         let sortedPlayers = [...processedPlayers]; // Start with potentially Z-score enriched list
 
-        // 1. Apply Display Sorting (Using new sortConfig structure: { column: string, direction: 'asc'|'desc' })
-        if (sortConfig.column) {
-            // console.log(`[PlayersToDisplay Memo] Applying sort: ${sortConfig.column} ${sortConfig.direction}`);
+        // 1. Apply Display Sorting (Using state: { key: string, direction: 'asc'|'desc' })
+        if (sortConfig.key) { // <<< CHANGE: Use sortConfig.key
+            // console.log(`[PlayersToDisplay Memo] Applying sort: ${sortConfig.key} ${sortConfig.direction}`);
             sortedPlayers.sort((a, b) => {
                 // Use getNestedValue, provide fallback for undefined/null
-                let valueA = getNestedValue(a, sortConfig.column) ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
-                let valueB = getNestedValue(b, sortConfig.column) ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+                // Determine path based on key
+                let path = ''; // Initialize path
+                const key = sortConfig.key;
+
+                if (key === 'zScoreSum') {
+                    path = 'zScoreTotals.overallZScoreSum';
+                } else if (key === 'rank') { // <<< ADD: Handle rank sorting
+                    path = 'userRank'; 
+                } else if (key && key.startsWith('info.')) { // <<< ADD: Handle generic info fields
+                    path = key; // Assumes key like 'info.fullName' is passed correctly
+                } else if (key) { // <<< MODIFY: Assume other keys are stat abbreviations
+                    path = `stats.${key}`; // Construct path like stats.PTS, stats.REB
+                } else {
+                     console.warn(`[Sort Logic] Invalid sort key: ${key}`);
+                     return 0; // Don't sort if path is invalid
+                }
+                
+                let valueA = getNestedValue(a, path) ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+                let valueB = getNestedValue(b, path) ?? (sortConfig.direction === 'asc' ? Infinity : -Infinity);
+
+                // Log values being compared for Z-Score column using the correct KEY
+                if (key === 'zScoreSum') { // <<< CHANGE: Check for 'zScoreSum'
+                    // console.log(`[Sort Detail] Comparing Z-Scores: A=${valueA}, B=${valueB}`); // Keep commented for now
+                }
 
                 // Type handling
                 if (typeof valueA === 'string') valueA = valueA.toLowerCase();

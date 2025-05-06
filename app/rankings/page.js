@@ -220,8 +220,14 @@ export default function RankingsPage() {
   }, [initAutoSave]);
 
   useEffect(() => {
+    // +++ Log user and initial rankings state +++
+    console.log("[Initial Fetch Effect Check]", { user: user, latestUserRankings });
+    // +++ End Log +++
     const fetchInitialRankings = async () => {
-      if (!user || latestUserRankings !== null) return;
+      if (!user || latestUserRankings !== null) {
+        console.log("[Initial Fetch Effect Check] Skipping fetch because user or latestUserRankings condition not met.");
+        return;
+      }
       
       setIsPageLoading(true);
       setPageError(null);
@@ -395,13 +401,15 @@ export default function RankingsPage() {
     if (newKey_abbreviation === 'zScoreSum') {
       sortKeyToSet = 'zScoreSum';
     } else {
-      sortKeyToSet = newKey_abbreviation; 
+      sortKeyToSet = newKey_abbreviation;
     }
     setSortConfig(currentConfig => {
-      
+      // If clicking the *same* key that's already sorted descending,
+      // reset the sort (key: null) instead of toggling to ascending.
       if (currentConfig.key === sortKeyToSet) {
-        return { ...currentConfig, direction: currentConfig.direction === 'desc' ? 'asc' : 'desc' };
+        return { key: null, direction: 'desc' }; // Reset to default sort
       } else {
+        // Otherwise, set the new key and default to descending.
         return { key: sortKeyToSet, direction: 'desc' };
       }
     });
