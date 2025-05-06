@@ -141,27 +141,39 @@ const RankingsPlayerListContainer = React.forwardRef(({
         const map = new Map();
         (standardEcrRankings || []).forEach(player => {
             if (player?.playbookId) {
-                // Store the rank associated with the playbookId
-                map.set(String(player.playbookId), player.rank);
+                const rankValue = player.userRank !== undefined ? player.userRank : player.rank;
+                map.set(String(player.playbookId), rankValue);
             }
         });
-        // --- Log created ECR map ---
-        console.log('[RankingsPlayerListContainer] Created standardEcrMap:', map);
-        // --- End log ---
+        console.log('[RankingsPlayerListContainer] Created standardEcrMap. Size:', map.size);
+        if (map.size > 0) {
+            const sampleKeys = Array.from(map.keys()).slice(0, 5);
+            console.log('[RankingsPlayerListContainer] Sample standardEcrMap keys:', sampleKeys);
+            // Log first 5 values as well
+            const sampleValues = Array.from(map.values()).slice(0,5);
+            console.log('[RankingsPlayerListContainer] Sample standardEcrMap values:', sampleValues);
+        }
         return map;
     }, [standardEcrRankings]);
 
-    // --- Create redraftEcrMap --- (Moved slightly earlier if needed for dependency)
     const redraftEcrMap = useMemo(() => {
         const map = new Map();
         (redraftEcrRankings || []).forEach(player => {
             if (player?.playbookId) {
-                map.set(String(player.playbookId), player.rank);
+                const rankValue = player.userRank !== undefined ? player.userRank : player.rank;
+                map.set(String(player.playbookId), rankValue);
             }
         });
-        // console.log('[RankingsPlayerListContainer] Created redraftEcrMap:', map);
+        console.log('[RankingsPlayerListContainer] Created redraftEcrMap. Size:', map.size);
+        if (map.size > 0) {
+            const sampleKeys = Array.from(map.keys()).slice(0, 5);
+            console.log('[RankingsPlayerListContainer] Sample redraftEcrMap keys:', sampleKeys);
+            // Log first 5 values as well
+            const sampleValues = Array.from(map.values()).slice(0,5);
+            console.log('[RankingsPlayerListContainer] Sample redraftEcrMap values:', sampleValues);
+        }
         return map;
-    }, [redraftEcrRankings]); // Depends only on rankings
+    }, [redraftEcrRankings]);
 
     // --- STEP 1: Process and Combine Data, Sort ONLY by User Rank ---
     useEffect(() => {
@@ -205,6 +217,23 @@ const RankingsPlayerListContainer = React.forwardRef(({
             const playerStatsObject = fullPlayerDataFromStatsSource?.stats || null; 
             const standardEcrRankLookup = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) : undefined;
             const redraftEcrRankLookup = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) : undefined;
+
+            // --- START DEBUG LOGGING ---
+            if (index < 5 || !redraftEcrRankLookup || !playerStatsObject || Object.keys(playerStatsObject).length === 0) { // Log for first 5 players or problematic ones
+                console.log(`[CombinedPlayers Debug] Index: ${index}, Player Name (from entry): ${rankingEntry.name || 'N/A'}`);
+                console.log(`  - rankingPlaybookId: ${rankingPlaybookId}`);
+                console.log(`  - basePlayerIdentity found: ${!!basePlayerIdentity}`);
+                if (basePlayerIdentity) {
+                    console.log(`    - basePlayerIdentity.mySportsFeedsId: ${basePlayerIdentity.mySportsFeedsId}`);
+                }
+                console.log(`  - msfIdForStatsLookup: ${msfIdForStatsLookup}`);
+                console.log(`  - fullPlayerDataFromStatsSource found: ${!!fullPlayerDataFromStatsSource}`);
+                console.log(`  - playerStatsObject keys: ${playerStatsObject ? Object.keys(playerStatsObject).length : 'null or no keys'}`);
+                console.log(`  - standardEcrRankLookup: ${standardEcrRankLookup}`);
+                console.log(`  - redraftEcrRankLookup: ${redraftEcrRankLookup}`);
+            }
+            // --- END DEBUG LOGGING ---
+
             const standardEcrRank = standardEcrRankLookup ?? null;
             const redraftEcrRank = redraftEcrRankLookup ?? null;
 

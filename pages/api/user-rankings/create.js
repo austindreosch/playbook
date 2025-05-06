@@ -84,12 +84,14 @@ export default async function handler(req, res) {
         // based on comparing customCategories to SPORT_CONFIGS[sourceRanking.sport.toLowerCase()].categories
         const processedRankings = sourceRanking.rankings.map(entry => {
             // Basic validation of entry structure
-            if (entry.rank === undefined || !entry.playbookId) {
-                console.warn("Skipping source entry due to missing rank or playbookId:", entry);
+            const rankFromSource = entry.userRank !== undefined ? entry.userRank : entry.rank;
+
+            if (rankFromSource === undefined || !entry.playbookId) {
+                console.warn("Skipping source entry due to missing rank (checked userRank, then rank) or playbookId:", entry);
                 return null; // Skip invalid entries
             }
             
-            const originRank = entry.rank;
+            const originRank = rankFromSource; // Use the determined rank from source
             // TODO: Implement actual weighting logic based on customCategories vs standard
             // For now, originWeightedRank = originRank
             const originWeightedRank = originRank; 
@@ -99,7 +101,7 @@ export default async function handler(req, res) {
                 mySportsFeedsId: entry.mySportsFeedsId || null, // Copy if exists
                 name: entry.name || 'Unknown', // Copy player name
                 originRank: originRank,
-                userRank: originRank, // Initialize userRank to originRank
+                userRank: originRank, // Initialize userRank to originRank (from rankFromSource)
                 originWeightedRank: originWeightedRank,
                 // Add type if needed
                 type: entry.type || 'player',
