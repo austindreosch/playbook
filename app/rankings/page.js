@@ -220,65 +220,36 @@ export default function RankingsPage() {
   }, [initAutoSave]);
 
   useEffect(() => {
-    const fetchInitialRankings = async () => {
-      if (!user || latestUserRankings !== null) {
-        return;
-      }
-      
-      setIsPageLoading(true);
-      setPageError(null);
-      let fetchedRankingsList = null;
-      let initialActiveData = null;
-      let initialSport = 'NBA';
-      let initialId = null;
-
-      try {
-        const listResponse = await fetch('/api/user-rankings');
-        if (!listResponse.ok) throw new Error('Failed to fetch user rankings list');
-        fetchedRankingsList = await listResponse.json();
-
-        if (fetchedRankingsList?.length > 0) {
-          const mostRecent = [...fetchedRankingsList].sort((a, b) => 
-             new Date(b.details?.dateUpdated || 0) - new Date(a.details?.dateUpdated || 0)
-          )[0];
-          
-          if (mostRecent?._id) {
-             initialId = mostRecent._id;
+    if (user && !latestUserRankings) { // Ensure user is loaded and we haven't fetched yet
+        const fetchRankings = async () => {
             try {
-              const detailResponse = await fetch(`/api/user-rankings/${initialId}`);
-              if (detailResponse.ok) {
-                 initialActiveData = await detailResponse.json();
-                 initialSport = initialActiveData?.sport || 'NBA';
-              } else {
-                 console.error(`[Effect 1] Failed to fetch initial ranking details for ${initialId}. Status: ${detailResponse.status}`);
-              }
-            } catch (detailError) {
-              console.error(`[Effect 1] Error fetching initial ranking details for ${initialId}:`, detailError);
+                const response = await fetch('/api/user-rankings');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                // --- REMOVE LOGGING ---
+                // console.log('[RankingsPage] Raw API response for /api/user-rankings:', JSON.parse(JSON.stringify(data)));
+                // data.forEach(ranking => {
+                //     if (ranking && ranking.rankings && Array.isArray(ranking.rankings)) {
+                //         const playbookIds = ranking.rankings.map(r => r.playbookId).filter(id => id);
+                //         const duplicateSourceIds = playbookIds.filter((item, index) => playbookIds.indexOf(item) !== index);
+                //         if (duplicateSourceIds.includes('680e43c3ffe1fa1d7496b83a')) {
+                //             console.warn(`[RankingsPage] SPECIFIC DUPLICATE ID '680e43c3ffe1fa1d7496b83a' FOUND IN API response for ranking _id: ${ranking._id}, name: ${ranking.rankingName}`);
+                //         }
+                //     }
+                // });
+                // --- END REMOVE LOGGING ---
+                setLatestUserRankings(data); // Set local state for side panel
+                setFetchedRankings(data); // Update Zustand store
+            } catch (error) {
+                console.error('Failed to fetch user rankings:', error);
+                // Handle error appropriately, e.g., set an error state
             }
-          }
-        }
-      } catch (err) {
-        console.error('[Effect 1] Error fetching user rankings list:', err);
-        setPageError(err.message);
-        fetchedRankingsList = []; 
-      } finally {
-        setFetchedRankings(fetchedRankingsList || []);
-        setLatestUserRankings(fetchedRankingsList || []);
-        
-        if (initialActiveData && initialId) {
-            setActiveRanking(initialActiveData);
-            setSelectedSport(initialSport); 
-            setActiveRankingId(initialId);
-        } else {
-            setActiveRanking(null);
-            setActiveRankingId(null);
-            setSelectedSport('NBA');
-        }
-      }
-    };
-
-    fetchInitialRankings();
-  }, [user]);
+        };
+        fetchRankings();
+    }
+  }, [user, latestUserRankings, setFetchedRankings]);
 
   useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();

@@ -53,13 +53,18 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
 
             if (rankingDocId) {
                 // --- Original Logic: Link and update ranking doc --- 
-                console.log("Calling link-player API...");
+                console.log("Calling link-player API with data:", {
+                    unmatchedName: player.name,
+                    unmatchedRank: player.userRank,
+                    selectedPlayerId: selectedPlayerId,
+                    rankingDocId: rankingDocId
+                });
                 response = await fetch('/api/admin/link-player', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         unmatchedName: player.name,
-                        unmatchedRank: player.rank,
+                        unmatchedRank: player.userRank,
                         selectedPlayerId: selectedPlayerId,
                         rankingDocId: rankingDocId
                     }),

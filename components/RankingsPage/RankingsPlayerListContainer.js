@@ -165,70 +165,81 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     // --- STEP 1: Process and Combine Data, Sort ONLY by User Rank ---
     useEffect(() => {
-        if (!activeRanking?.rankings) {
+        // Clear players immediately if activeRanking is null (e.g., during switch)
+        if (!activeRanking || !activeRanking.rankings) {
+            console.log("[RankedPlayers Effect] activeRanking is null or has no rankings, clearing rankedPlayers.");
             setRankedPlayers([]);
             return;
         }
 
+        // --- Add checks for map readiness --- 
+        // Ensure maps used in the mapping logic are populated before proceeding.
+        // This helps prevent errors during the transition between rankings/sports.
+        const mapsArePopulated = playerIdentityMap.size > 0 &&
+                               // seasonalStatsMap.size > 0 && // Check if seasonalStatsMap is actually used/needed below
+                               seasonalStatsData && Object.keys(seasonalStatsData).length > 0 && // Check prop directly
+                               standardEcrMap.size > 0 &&
+                               redraftEcrMap.size > 0;
+
+        if (!mapsArePopulated) {
+            console.log("[RankedPlayers Effect] Waiting for dependent maps to populate...", {
+                 identityMapSize: playerIdentityMap.size,
+                 hasSeasonalStats: !!seasonalStatsData && Object.keys(seasonalStatsData).length > 0,
+                 standardEcrMapSize: standardEcrMap.size,
+                 redraftEcrMapSize: redraftEcrMap.size
+            });
+            // Optionally clear rankedPlayers here too, or just wait
+            // setRankedPlayers([]); 
+            return; // Exit effect until maps are ready
+        }
+        // --- End map readiness checks --- 
+
+        console.log("[RankedPlayers Effect] activeRanking and maps seem ready, processing players...");
         const rankingEntries = activeRanking.rankings || [];
 
         const combinedPlayers = rankingEntries.map((rankingEntry, index) => {
             const rankingPlaybookId = rankingEntry.playbookId ? String(rankingEntry.playbookId) : null;
             const basePlayerIdentity = rankingPlaybookId ? playerIdentityMap.get(rankingPlaybookId) : null;
             const msfIdForStatsLookup = basePlayerIdentity?.mySportsFeedsId;
-
-            // <<< NEW: Look up the FULL player data object from the original seasonalStatsData prop >>>
             const fullPlayerDataFromStatsSource = msfIdForStatsLookup != null ? seasonalStatsData?.[String(msfIdForStatsLookup)] : null;
-            
-            // <<< CHANGE: Get the nested stats object from the full object for downstream use >>>
             const playerStatsObject = fullPlayerDataFromStatsSource?.stats || null; 
-            
             const standardEcrRankLookup = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) : undefined;
             const redraftEcrRankLookup = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) : undefined;
             const standardEcrRank = standardEcrRankLookup ?? null;
             const redraftEcrRank = redraftEcrRankLookup ?? null;
 
-            // 4. Construct Final Player Info Object
-            //    Start with identity data, then merge/overwrite other sources
             const playerInfo = {
-                ...basePlayerIdentity, // Spread identity fields first
-                playbookId: rankingPlaybookId, // Ensure this is prioritized from ranking entry
-                // Construct name, prioritizing identity but falling back
+                ...basePlayerIdentity,
+                playbookId: rankingPlaybookId,
                 firstName: basePlayerIdentity?.primaryName?.split(' ')[0] || rankingEntry.firstName || 'Unknown',
                 lastName: basePlayerIdentity?.primaryName?.split(' ').slice(1).join(' ') || rankingEntry.lastName || 'Player',
-                // Prioritize identity for position/team, fall back to ranking entry
                 primaryPosition: basePlayerIdentity?.position || rankingEntry.position || 'N/A',
                 teamAbbreviation: basePlayerIdentity?.teamAbbreviation || rankingEntry.teamAbbreviation || 'FA',
-                // Add data from other sources
                 officialImageSrc: fullPlayerDataFromStatsSource?.info?.officialImageSrc || null,
-                // Age likely comes from identity (already spread), ensure it's there or null
                 age: basePlayerIdentity?.age ?? null,
                 standardEcrRank: standardEcrRank,
                 redraftEcrRank: redraftEcrRank,
-                // Add user-specific ranking data
                 isAvailable: rankingEntry.isAvailable ?? true,
                 notes: rankingEntry.notes || '',
-                // Explicitly set mySportsFeedsId again in case basePlayerIdentity was empty
                 mySportsFeedsId: msfIdForStatsLookup 
             };
             playerInfo.fullName = `${playerInfo.firstName} ${playerInfo.lastName}`.trim();
-
-            // <<< CHANGE: Use playbookId as the primary DND ID >>>
-            const uniqueDndId = rankingPlaybookId; // Use the non-placeholder ID directly
+            const uniqueDndId = rankingPlaybookId;
 
             return {
-                id: uniqueDndId, // This is now primarily the playbookId
-                userRank: rankingEntry.userRank, // Use userRank from DB
-                info: playerInfo, // Pass the fully constructed info object
-                stats: playerStatsObject || {}, // Pass the nested stats object as before
-                draftModeAvailable: rankingEntry.draftModeAvailable ?? true, // Default to true if undefined
+                id: uniqueDndId,
+                userRank: rankingEntry.userRank,
+                info: playerInfo,
+                stats: playerStatsObject || {},
+                draftModeAvailable: rankingEntry.draftModeAvailable ?? true,
             };
         });
 
         const sortedByRankPlayers = combinedPlayers.sort((a, b) => a.userRank - b.userRank);
         setRankedPlayers(sortedByRankPlayers);
+        console.log("[RankedPlayers Effect] Finished setting rankedPlayers.");
 
-    }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]);
+    }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]); // Dependencies remain the same
 
     // --- Memo hook to determine the comparison pool ---
     const comparisonPoolPlayers = useMemo(() => {
@@ -325,10 +336,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 if (!hasPosition) reason.push("Missing Position");
                 if (!hasSortValue) reason.push(`Invalid Rank (Value: ${rankValue}, Type: ${typeof rankValue})`);
                 
-                // Log only a few failures
-                if (Math.random() < 0.05) { 
-                    console.log(`[ComparisonPool Filter FINAL] Filtering out: ${p.info?.primaryName ?? p.id} (${reason.join(', ')})`, p.info);
-                }
+
             }
             return hasPosition && hasSortValue;
         });
@@ -656,11 +664,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
     // Restore the original Row definition
     const Row = useCallback(({ index, style }) => {
         const player = playersToDisplay[index]; // Use the MEMOIZED list
-        // +++ Log the player object being passed +++
-        if (index < 5) { // Log only first few to avoid spam
-            console.log(`[Row Component] Rendering player at index ${index}:`, player);
-        }
-        // +++ End Log +++
+
         if (!player) return null;
 
         // Determine if rank sorting is active (for drag handle visibility etc.)
@@ -717,12 +721,15 @@ const RankingsPlayerListContainer = React.forwardRef(({
         isDraftModeActive
     ]);
 
-    // --- REMOVE Log playersToDisplay before rendering the list ---
-    // console.log(`[RankingsPlayerListContainer] playersToDisplay length: ${playersToDisplay.length}`);
-    // if (playersToDisplay.length > 0) {
-    //     console.log('[RankingsPlayerListContainer] First player in playersToDisplay:', playersToDisplay[0]);
-    // }
-    // --- End log ---
+    // +++ Log playersToDisplay before passing to List +++
+    console.log("[Container Render] playersToDisplay for List:", playersToDisplay);
+    // Find duplicates for debugging
+    const ids = playersToDisplay.map(p => p.id).filter(id => id); // Get non-null IDs
+    const duplicateIds = ids.filter((item, index) => ids.indexOf(item) !== index);
+    if (duplicateIds.length > 0) {
+        console.warn("[Container Render] Duplicate IDs found in playersToDisplay:", duplicateIds);
+    }
+    // +++ End Log +++
 
     return (
         <div>
@@ -747,7 +754,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     strategy={verticalListSortingStrategy}
                     disabled={sortConfig?.key !== null} // Disable sorting context too
                 >
-                    {/* <<< MODIFIED: Check combined loading state >>> */}
                     {(isMasterLoading || isEcrLoading) ? (
                         <div className="text-center p-8 text-gray-500">Loading player data...</div>
                     ) : playersToDisplay.length > 0 ? (
@@ -780,7 +786,6 @@ const RankingsPlayerListContainer = React.forwardRef(({
                             {isEcrLoading ? "Loading rankings..." : "No players found or ranking list is empty."}
                         </div>
                     )}
-                    {/* <<< END MODIFIED: Conditional Rendering >>> */}
                 </SortableContext>
 
                 {typeof document !== 'undefined' && ReactDOM.createPortal(

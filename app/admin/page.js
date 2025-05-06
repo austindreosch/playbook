@@ -90,7 +90,7 @@ export default function AdminPage() {
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">All Players</h2>
-              <AllPlayersBox />
+              {/* <AllPlayersBox /> */}
             </div>
           </div>
         </div>
