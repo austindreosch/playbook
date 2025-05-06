@@ -30,7 +30,7 @@ import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SPORT_CONFIGS } from '@/lib/config'; // Import SPORT_CONFIGS
 import useMasterDataset from '@/stores/useMasterDataset';
-import useUserRankings from '@/stores/useUserRankings';
+import useUserRankings, { setFetchedRankings } from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -220,12 +220,8 @@ export default function RankingsPage() {
   }, [initAutoSave]);
 
   useEffect(() => {
-    // +++ Log user and initial rankings state +++
-    console.log("[Initial Fetch Effect Check]", { user: user, latestUserRankings });
-    // +++ End Log +++
     const fetchInitialRankings = async () => {
       if (!user || latestUserRankings !== null) {
-        console.log("[Initial Fetch Effect Check] Skipping fetch because user or latestUserRankings condition not met.");
         return;
       }
       
@@ -266,7 +262,8 @@ export default function RankingsPage() {
         setPageError(err.message);
         fetchedRankingsList = []; 
       } finally {
-        setLatestUserRankings(fetchedRankingsList || []); 
+        setFetchedRankings(fetchedRankingsList || []);
+        setLatestUserRankings(fetchedRankingsList || []);
         
         if (initialActiveData && initialId) {
             setActiveRanking(initialActiveData);
@@ -281,7 +278,7 @@ export default function RankingsPage() {
     };
 
     fetchInitialRankings();
-  }, [user, setActiveRanking]);
+  }, [user]);
 
   useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();
@@ -485,17 +482,6 @@ export default function RankingsPage() {
           </div>
       );
   }
-
-  // --- ADD LOG BEFORE FINAL RETURN ---
-  // console.log('[Render Check]', {
-  //     isPageLoading,
-  //     pageError,
-  //     selectedSport,
-  //     activeRankingId: activeRanking?._id,
-  //     latestUserRankingsLength: latestUserRankings?.length,
-  //     processedPlayersLength: processedPlayers?.length
-  // });
-  // --- END LOG ---
 
   // Main Render AFTER hooks and checks
   return (

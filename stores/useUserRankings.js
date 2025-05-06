@@ -698,6 +698,12 @@ const useUserRankings = create(
     )
 );
 
+// +++ Add new action +++
+export const setFetchedRankings = (rankingsList) => {
+    useUserRankings.setState({ rankings: rankingsList });
+};
+// +++ End new action +++
+
 // Hook to initialize store fetching on mount
 export const useInitializeUserRankings = () => {
     const fetchUserRankings = useUserRankings((state) => state.fetchUserRankings);

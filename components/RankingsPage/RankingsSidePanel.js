@@ -8,27 +8,26 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useMemo } from 'react';
 
-const RankingsSidePanel = ({ onSelectRanking }) => {
+const RankingsSidePanel = ({ userRankings, onSelectRanking, activeRankingId }) => {
     const { user } = useUser();
-    const userRankings = useUserRankings(state => state.rankings);
     const activeRanking = useUserRankings(state => state.activeRanking);
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
         if (!userRankings) return [];
         // console.log('Active Ranking:', activeRanking);
-        // console.log('User Rankings:', userRankings);
+        // console.log('User Rankings (prop):', userRankings);
         return [...userRankings].sort((a, b) => {
             // If one is active, it goes first
-            if (a._id === activeRanking?._id) return -1;
-            if (b._id === activeRanking?._id) return 1;
+            if (a._id === activeRankingId) return -1;
+            if (b._id === activeRankingId) return 1;
             // Otherwise sort by date updated (using lastUpdated)
             // Ensure dates are valid before comparison
             const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0); // Fallback to epoch start
             const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0); // Fallback to epoch start
             return dateB - dateA; // Sort descending (most recent first)
         });
-    }, [userRankings, activeRanking?._id]);
+    }, [userRankings, activeRankingId]);
 
     // Format date - memoize to avoid recreating on each render
     const formatDate = useCallback((dateString) => {
@@ -39,7 +38,7 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
         return <div className="p-4 text-gray-500">Please log in to view your rankings.</div>;
     }
 
-    if (!userRankings?.length) {
+    if (!userRankings || userRankings.length === 0) {
         return <div className="p-4 text-gray-500">No rankings created yet.</div>;
     }
 
@@ -64,7 +63,7 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
                             }}
                             className={`
                                 grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-md
-                                ${activeRanking?._id === ranking._id
+                                ${activeRankingId === ranking._id
                                     ? 'bg-pb_blue text-white shadow-sm hover:bg-pb_bluehover'
                                     : 'bg-pb_backgroundgray hover:bg-pb_lightergray shadow-sm border border-pb_lightergray'
                                 }
@@ -72,18 +71,18 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
                             onClick={() => onSelectRanking(ranking._id)}
                         >
                             <div
-                                className={`h-full ${activeRanking?._id === ranking._id ? 'bg-pb_orange' : 'bg-pb_textgray hover:bg-pb_orange '}`}
+                                className={`h-full ${activeRankingId === ranking._id ? 'bg-pb_orange' : 'bg-pb_textgray hover:bg-pb_orange '}`}
                             />
                             <div className="p-3">
-                                <div className={`text-lg font-bold ${activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
+                                <div className={`text-lg font-bold ${activeRankingId === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
                                     {ranking.name}
                                 </div>
 
                                 <div className="text-2xs mt-1 flex justify-between items-center tracking-wider">
-                                    <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_textgray'}>
+                                    <div className={activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'}>
                                         {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} • {ranking.scoring.toUpperCase()}
                                     </div>
-                                    <div className={activeRanking?._id === ranking._id ? 'text-white' : 'text-pb_textgray'}>
+                                    <div className={activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'}>
                                         <HistoryIcon className="w-2 h-2 inline-block mr-1" />
                                         {ranking.lastUpdated ? formatDate(ranking.lastUpdated) : 'No Date'}
                                     </div>
