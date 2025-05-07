@@ -435,8 +435,8 @@ export default function RankingsPage() {
               {[...Array(16)].map((_, i) => ( // Simulate multiple rows
                 // Row container: flex, keep minimal styles
                 <div key={i} className="flex w-full h-[40px] mb-1 bg-white py-1">
-                  {/* Left Section (40%) */}
-                  <div className="flex items-center w-[40%] px-2 space-x-3 flex-shrink-0">
+                  {/* Left Section (30%) - CHANGED */}
+                  <div className="flex items-center w-[30%] px-2 space-x-3 flex-shrink-0"> 
                     {/* Player Rank Skeleton*/}
                     {/* <Skeleton className="pl-8 h-7 w-10 rounded-md flex-shrink-0" /> */}
                     {/* Player Image Skeleton*/}
@@ -444,8 +444,8 @@ export default function RankingsPage() {
                     {/* Player Name Skeleton*/}
                     <Skeleton className="h-4 rounded-sm w-48" />
                   </div>
-                  {/* Right Section (60%) */}
-                  <div className="flex w-[60%] h-full gap-2 flex-grow rounded-r-md">
+                  {/* Right Section (70%) - CHANGED */}
+                  <div className="flex w-[70%] h-full gap-2 flex-grow rounded-r-md"> 
                     {/* Stat Skeletons (Mimic multiple columns using flex-1) */}
                     {[...Array(9)].map((_, j) => (
                       <Skeleton key={j} className="h-full flex-1 rounded-sm" />
