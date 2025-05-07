@@ -175,7 +175,7 @@ export default function RankingsPage() {
       .map(([abbrev, _]) => abbrev);
 
     const finalEnabledAbbrevs = enabledAbbrevs.filter(abbrev => {
-      if (mapping[abbrev]) return true;
+      if (mapping[abbrev] || mapping[abbrev] === '') return true;
       return false;
     });
     
