@@ -10,6 +10,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { VariableSizeList as List } from 'react-window';
+import RankingsPlayerListSkeleton from './RankingsPlayerListSkeleton';
 
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220;
@@ -207,7 +208,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     disabled={sortConfig?.key !== null || isLoadingList}
                 >
                     {isLoadingList ? (
-                        <div className="text-center p-8 text-gray-500">Loading player data...</div>
+                        <RankingsPlayerListSkeleton />
                     ) : playersToDisplay.length > 0 ? (
                          <List
                             ref={listRef}

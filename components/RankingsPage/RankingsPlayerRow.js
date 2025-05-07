@@ -30,7 +30,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
             {/* Z-Score Sum main value column */}
             <div
                 key="zScoreSum_main"
-                className="flex-1 text-center h-full flex items-center justify-center select-none bg-gray-50" // Neutral background for Z-sum
+                className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
                 <span className="text-sm text-pb_darkgray">

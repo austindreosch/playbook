@@ -288,11 +288,11 @@ export default function RankingsPage() {
     }
   }, [user, latestUserRankings]); 
 
-  // +++ REVISED EFFECT TO SET INITIAL ACTIVE RANKING WITH DETAILED LOGGING +++
+  // Effect to set initial active ranking
   useEffect(() => {
     console.log('[InitialSelectEffect Check]', {
         initialRankingsLoaded,
-        activeRanking: !!activeRanking, // Log as boolean for clarity
+        activeRanking: !!activeRanking, 
         userRankingsLength: userRankings ? userRankings.length : 'undefined',
         activeRankingLoading,
         activeRankingId
@@ -301,22 +301,25 @@ export default function RankingsPage() {
     if (initialRankingsLoaded && !activeRanking && userRankings && userRankings.length > 0) {
         const firstRankingId = userRankings[0]._id;
         console.log(`[InitialSelectEffect] Conditions met. First ranking ID: ${firstRankingId}`);
-        
-        // Simpler condition to avoid re-triggering if already trying to load this one or it's loaded
         if (!activeRankingLoading && activeRankingId !== firstRankingId) { 
-            console.log(`[InitialSelectEffect] Not currently loading and ID doesn't match. Calling handleRankingSelect(${firstRankingId})`);
+            console.log(`[InitialSelectEffect] Calling handleRankingSelect(${firstRankingId})`);
             handleRankingSelect(firstRankingId);
         } else {
-            console.log('[InitialSelectEffect] Conditions met, but either loading or ID matches. Skipping handleRankingSelect call.', {
-                activeRankingLoading,
-                activeRankingId,
-                firstRankingId
-            });
+            console.log('[InitialSelectEffect] Skipping call.', { activeRankingLoading, activeRankingId, firstRankingId });
         }
     } else {
-        console.log('[InitialSelectEffect] Conditions NOT met for auto-selection.');
+        console.log('[InitialSelectEffect] Conditions NOT met.');
     }
   }, [initialRankingsLoaded, userRankings, activeRanking, handleRankingSelect, activeRankingLoading, activeRankingId]);
+
+  // +++ NEW EFFECT to sync local activeRankingId with store's activeRanking object +++
+  useEffect(() => {
+    if (activeRanking && activeRanking._id && activeRanking._id !== activeRankingId) {
+      console.log(`[SyncEffect] Store activeRanking._id (${activeRanking._id}) differs from local activeRankingId (${activeRankingId}). Updating local.`);
+      setActiveRankingId(activeRanking._id);
+    }
+  }, [activeRanking, activeRankingId]); // Run when store's activeRanking or local activeRankingId changes
+  // +++ END NEW EFFECT +++
 
   useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();
@@ -426,7 +429,7 @@ export default function RankingsPage() {
           {/* Skeleton Left Column (Player List Area) */}
           <div className="flex-1 space-y-2 overflow-hidden" style={{ maxWidth: 'calc(100% - 288px)' }}>
             {/* Skeleton Table Header */}
-            <Skeleton className="h-10 w-full rounded-sm mb-2" />
+            <Skeleton className="h-10 w-full rounded-sm mb-2 " />
             {/* Skeleton Table Rows - More detailed */}
             <div className="space-y-1">
               {[...Array(16)].map((_, i) => ( // Simulate multiple rows
