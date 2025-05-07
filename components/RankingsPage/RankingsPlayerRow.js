@@ -45,8 +45,8 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
 
                 let formattedValue = '-';
                 let title = `${SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev}: -`;
-                let bgColorClass = 'bg-white'; // Default background
-                let textColorClass = 'text-pb_darkgray'; // Default text color
+                let currentBgColor = '#FFFFFF'; // Default white background
+                let currentTextColor = '#1f2937'; // Default dark gray text (Tailwind gray-800)
 
                 if (statDataFromPlayer !== null && statDataFromPlayer !== undefined) {
                     let rawValueForFormatting;
@@ -55,9 +55,9 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
                     if (typeof statDataFromPlayer === 'object' && statDataFromPlayer.hasOwnProperty('value')) {
                         // Stat is in { value: ..., zScore: ..., colors: ... } structure
                         rawValueForFormatting = statDataFromPlayer.value;
-                        if (statDataFromPlayer.colors) {
-                            bgColorClass = statDataFromPlayer.colors.bgColorClass;
-                            textColorClass = statDataFromPlayer.colors.textColorClass;
+                        if (statDataFromPlayer.colors && statDataFromPlayer.colors.bgColor && statDataFromPlayer.colors.textColor) {
+                            currentBgColor = statDataFromPlayer.colors.bgColor;
+                            currentTextColor = statDataFromPlayer.colors.textColor;
                         }
                         if (typeof statDataFromPlayer.zScore === 'number') {
                             zScoreForTitle = statDataFromPlayer.zScore;
@@ -100,21 +100,22 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
                     console.log(`[StatsSection Debug] Category: ${categoryAbbrev}`);
                     console.log(`  Raw statDataFromPlayer:`, JSON.parse(JSON.stringify(statDataFromPlayer || {})));
                     console.log(`  statDataFromPlayer.colors:`, JSON.parse(JSON.stringify(statDataFromPlayer?.colors || null)));
-                    console.log(`  Derived bgColorClass: ${bgColorClass}`);
-                    console.log(`  Derived textColorClass: ${textColorClass}`);
+                    console.log(`  Derived bgColorClass: ${currentBgColor}`);
+                    console.log(`  Derived textColorClass: ${currentTextColor}`);
                 }
                 // +++ END STATSSECTION DEBUG LOG +++
 
                 return (
                     <div
                         key={categoryAbbrev}
-                        className={cn(
-                            "flex-1 text-center h-full flex items-center justify-center select-none",
-                            bgColorClass
-                        )}
+                        className="flex-1 text-center h-full flex items-center justify-center select-none"
+                        style={{ backgroundColor: currentBgColor }} // Apply dynamic background color
                         title={title}
                     >
-                        <span className={cn("text-sm", textColorClass)}>
+                        <span 
+                            className="text-sm" 
+                            style={{ color: currentTextColor }} // Apply dynamic text color
+                        >
                             {formattedValue}
                         </span>
                     </div>

@@ -3,29 +3,77 @@ import { SPORT_CONFIGS } from '@/lib/config';
 import { getNestedValue, getStatPath } from '@/lib/utils';
 import { useMemo } from 'react';
 
-// Helper function to determine color based on Z-score
-const getZScoreColors = (zScore) => {
+const PB_RED_RGB = [238, 99, 82];    // #ee6352
+const PB_GREEN_RGB = [89, 205, 144]; // #59cd90
+// Use Tailwind's gray-100 as the neutral midpoint. This is also the fallback for NaN.
+const NEUTRAL_MIDPOINT_RGB = [243, 244, 246]; // Tailwind gray-100
+const FALLBACK_GRAY_RGB = [243, 244, 246];    // Consistent fallback
+
+const MIN_Z_FOR_COLOR_SATURATION = -2.0; 
+const MAX_Z_FOR_COLOR_SATURATION = 2.0;  
+const MIN_INTERPOLATION_FACTOR = 0.15; // Ensure at least 15% tint towards the target color
+
+// Helper to convert RGB to Hex
+const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
+    const hex = Math.round(x).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+}).join('');
+
+// Helper to calculate luminance and choose text color
+const getContrastingTextColor = (r, g, b) => {
+    // Standard luminance calculation
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    // If luminance is less than 0.5, background is dark, use white text.
+    // Otherwise, background is light, use black text.
+    // Threshold of 0.5 is a common starting point.
+    return luminance < 0.5 ? '#FFFFFF' : '#000000'; 
+};
+
+const interpolateColor = (color1_rgb, color2_rgb, factor) => {
+    const r = color1_rgb[0] + factor * (color2_rgb[0] - color1_rgb[0]);
+    const g = color1_rgb[1] + factor * (color2_rgb[1] - color1_rgb[1]);
+    const b = color1_rgb[2] + factor * (color2_rgb[2] - color1_rgb[2]);
+    return [r, g, b];
+};
+
+const getZScoreColors = (zScore, impactType = 'positive') => {
     if (typeof zScore !== 'number' || isNaN(zScore)) {
-        return { bgColorClass: 'bg-gray-100', textColorClass: 'text-gray-600' }; // Default for non-numeric/NaN zScores
+        const [r,g,b] = FALLBACK_GRAY_RGB;
+        return { bgColor: rgbToHex(r,g,b), textColor: '#4b5563' }; // gray-100 bg, gray-600 text
     }
 
-    // Define thresholds and corresponding color classes
-    // Tailwind classes for positive (green) impact
-    if (zScore >= 2) return { bgColorClass: 'bg-pb_green', textColorClass: 'text-white' };
-    if (zScore >= 1.5) return { bgColorClass: 'bg-green-500', textColorClass: 'text-white' };
-    if (zScore >= 1) return { bgColorClass: 'bg-green-400', textColorClass: 'text-green-900' };
-    if (zScore >= 0.5) return { bgColorClass: 'bg-green-300', textColorClass: 'text-green-800' };
-    if (zScore > 0) return { bgColorClass: 'bg-green-100', textColorClass: 'text-green-700' };
+    let effectiveZScore = zScore;
+    if (impactType === 'negative') {
+        effectiveZScore = -zScore;
+    }
 
-    // Tailwind classes for negative (red) impact
-    if (zScore <= -2) return { bgColorClass: 'bg-pb_red', textColorClass: 'text-white' };
-    if (zScore <= -1.5) return { bgColorClass: 'bg-red-500', textColorClass: 'text-white' };
-    if (zScore <= -1) return { bgColorClass: 'bg-red-400', textColorClass: 'text-red-900' };
-    if (zScore <= -0.5) return { bgColorClass: 'bg-red-300', textColorClass: 'text-red-800' };
-    if (zScore < 0) return { bgColorClass: 'bg-red-100', textColorClass: 'text-red-700' };
+    let r, g, b;
+    let calculatedFactor;
 
-    // Neutral (close to zero)
-    return { bgColorClass: 'bg-gray-50', textColorClass: 'text-gray-700' };
+    if (effectiveZScore >= 0) {
+        const clampedPositiveZ = Math.min(effectiveZScore, MAX_Z_FOR_COLOR_SATURATION);
+        calculatedFactor = MAX_Z_FOR_COLOR_SATURATION === 0 ? 1 : clampedPositiveZ / MAX_Z_FOR_COLOR_SATURATION;
+        // Apply minimum factor if the score is not exactly zero, otherwise it's fully neutral
+        const factor = effectiveZScore === 0 ? 0 : Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
+        [r, g, b] = interpolateColor(NEUTRAL_MIDPOINT_RGB, PB_GREEN_RGB, Math.max(0, factor)); 
+    } else { // effectiveZScore < 0
+        const clampedNegativeZ = Math.max(effectiveZScore, MIN_Z_FOR_COLOR_SATURATION);
+        calculatedFactor = MIN_Z_FOR_COLOR_SATURATION === 0 ? 1 : 1 - (clampedNegativeZ / MIN_Z_FOR_COLOR_SATURATION);
+        // Apply minimum factor if the score is not exactly zero, otherwise it's fully neutral
+        const factor = effectiveZScore === 0 ? 0 : Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
+        // Interpolate from RED to NEUTRAL. Factor 0 = full RED, Factor 1 = full NEUTRAL.
+        // So, if we want minimum tint towards red, the factor passed to interpolate should be small (closer to 0).
+        // If factor from calculation is (e.g.) 0.9 (almost neutral), but MIN_INTERPOLATION_FACTOR is 0.15,
+        // we want to ensure it's not *too* neutral. The factor here represents distance from RED.
+        // So, if calculatedFactor is 0.9 (almost neutral), we want to ensure it doesn't go beyond 1 - MIN_INTERPOLATION_FACTOR = 0.85
+        const adjustedFactor = effectiveZScore === 0 ? 1 : Math.min(1 - MIN_INTERPOLATION_FACTOR, calculatedFactor);
+        [r, g, b] = interpolateColor(PB_RED_RGB, NEUTRAL_MIDPOINT_RGB, Math.min(1, Math.max(0, adjustedFactor))); 
+    }
+
+    const bgColor = rgbToHex(r, g, b);
+    const textColor = getContrastingTextColor(r, g, b);
+
+    return { bgColor, textColor };
 };
 
 export function useProcessedPlayers({
@@ -296,15 +344,22 @@ export function useProcessedPlayers({
 
                     // --- Add color information based on Z-Scores ---
                     const playersWithColorsEmbedded = playersAfterZScoreCalculation.map(player => {
-                        const newStats = { ...player.stats }; // player.stats is { STAT: {value: X}, ...}
+                        const newStats = { ...player.stats }; 
+                        const sportKey = sport?.toLowerCase(); // Get sportKey for config lookup
+
                         if (player.zScores) { 
                             Object.keys(newStats).forEach(statKey => {
                                 const statItem = newStats[statKey]; 
                                 const zScoreForStat = player.zScores[statKey]; 
+                                
+                                // Determine impact type from SPORT_CONFIGS
+                                const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
+                                const impactType = categoryConfig?.impact || 'positive'; // Default to positive
+
                                 if (statItem) { 
                                     newStats[statKey] = {
                                         ...statItem, 
-                                        colors: getZScoreColors(zScoreForStat) 
+                                        colors: getZScoreColors(zScoreForStat, impactType) // Pass impactType
                                     };
                                 }
                             });
