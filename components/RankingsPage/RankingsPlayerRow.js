@@ -26,7 +26,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
     ];
 
     return (
-        <div className="flex w-[60%] h-full gap-[3px]">
+        <div className="flex w-[70%] h-full gap-[3px]">
             {/* Z-Score Sum main value column */}
             <div
                 key="zScoreSum_main"
@@ -388,7 +388,7 @@ const RankingsPlayerRow = memo(({
                 onClick={onToggleExpand}
             >
                 {/* Left section with fixed widths */}
-                <div className="flex items-center w-[40%] relative">
+                <div className="flex items-center w-[30%] relative">
                     {/* Drag handle */}
                     <div
                         className={`px-1 text-pb_textgray ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}

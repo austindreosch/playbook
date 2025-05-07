@@ -129,7 +129,7 @@ const RankingsPlayerListHeader = ({
             {/* Header Row */}
             <div className="flex h-10 items-center">
                 {/* Left section with fixed width - must match PlayerRow */}
-                <div className="flex items-center w-[40%]">
+                <div className="flex items-center w-[30%]">
                     {/* Button 1: BarsIcon (Handles the click) */}
                     <button
                         onClick={() => {
@@ -163,7 +163,7 @@ const RankingsPlayerListHeader = ({
                 </div>
 
                 {/* Stats Headers - 60% section with exact same structure */}
-                <div className="flex w-[60%] h-full gap-[3px] font-bold">
+                <div className="flex w-[70%] h-full gap-[3px] font-bold">
                     {/* --- Z-Score Sum Sort Button --- */}
                     <div
                         key="zScoreSum"
