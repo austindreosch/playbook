@@ -188,7 +188,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         isDraftModeActive
     ]);
 
-    const isLoadingList = isMasterLoadingSportSpecific || isEcrLoading;
+    const isLoadingList = !activeRanking || isMasterLoadingSportSpecific || isEcrLoading;
 
     return (
         <div>

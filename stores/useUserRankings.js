@@ -27,6 +27,7 @@ const useUserRankings = create(
                 hasUnsavedChanges: false,  // Track if there are pending changes
                 lastSaved: null,       // Timestamp of last successful save
                 selectionLoading: false,  // Track when a ranking is being selected
+                initialRankingsLoaded: false, // <<< ADD and initialize to false
 
                 // --- DRAFT MODE STATE ---
                 isDraftModeActive: false,
@@ -44,7 +45,7 @@ const useUserRankings = create(
                 fetchUserRankings: async () => {
                     // console.log('[fetchUserRankings] ACTION CALLED');
                     // console.log('[fetchUserRankings] Starting fetch...');
-                    setState({ isLoading: true });
+                    setState({ isLoading: true, initialRankingsLoaded: false });
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
@@ -66,14 +67,14 @@ const useUserRankings = create(
                             rankings: data,
                             activeRanking: mostRecent,
                             isLoading: false,
-                            // Reset draft mode when fetching all lists initially
+                            initialRankingsLoaded: true,
                             isDraftModeActive: false,
                             showDraftedPlayers: false
                         });
                         // console.log('[fetchUserRankings] State AFTER update:', get());
                     } catch (error) {
                         // console.error('[fetchUserRankings] Error:', error);
-                        setState({ error: error.message, isLoading: false });
+                        setState({ error: error.message, isLoading: false, initialRankingsLoaded: true });
                     }
                 },
 
@@ -692,17 +693,28 @@ const useUserRankings = create(
             partialize: (state) => ({
                 rankings: state.rankings,
                 activeRanking: state.activeRanking,
+                initialRankingsLoaded: state.initialRankingsLoaded, // <<< PERSIST this flag
                 // Don't persist loading/error/ECR states
             }),
         }
     )
 );
 
-// +++ Add new action +++
+// Modify the standalone setFetchedRankings to also update initialRankingsLoaded
 export const setFetchedRankings = (rankingsList) => {
-    useUserRankings.setState({ rankings: rankingsList });
+    console.log('[setFetchedRankings] Called. Attempting to set initialRankingsLoaded to true.');
+    useUserRankings.setState({
+        rankings: rankingsList,
+        initialRankingsLoaded: true, 
+        isLoading: false 
+    });
+    // Log the state immediately after setting
+    const stateAfterSet = useUserRankings.getState();
+    console.log('[setFetchedRankings] State after set Self Call:', {
+        initialRankingsLoaded: stateAfterSet.initialRankingsLoaded,
+        rankingsLength: stateAfterSet.rankings.length
+    });
 };
-// +++ End new action +++
 
 // Hook to initialize store fetching on mount
 export const useInitializeUserRankings = () => {

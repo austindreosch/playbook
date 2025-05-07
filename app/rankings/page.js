@@ -74,7 +74,6 @@ export default function RankingsPage() {
     activeRanking,
     setActiveRanking,
     rankings: userRankings,
-    fetchUserRankings,
     rankingsLoading: userRankingsLoading,
     initialRankingsLoaded,
     activeRankingError,
@@ -85,7 +84,6 @@ export default function RankingsPage() {
     toggleDraftMode,
     toggleShowDraftedPlayers,
     resetDraftAvailability,
-    setPlayerAvailability,
     selectAndTouchRanking
   } = useUserRankings();
 
@@ -101,7 +99,58 @@ export default function RankingsPage() {
     dataset
   } = useMasterDataset();
 
-  // -- Memo Hooks --
+  // -- Callback Hooks (Define BEFORE useEffects that use them) --
+  const handleCollapseAll = useCallback(() => {
+    setCollapseAllTrigger(prev => prev + 1);
+  }, []);
+
+  const handleRankingSelect = useCallback(async (rankingId) => {
+    if (!rankingId || rankingId === activeRankingId) {
+        // If already selected or no ID, potentially just ensure loading state is false if it was true
+        if (rankingId === activeRankingId) setIsPageLoading(false);
+        return;
+    }
+
+    setIsPageLoading(true);
+    // Optimistically set activeRankingId for the side panel, but clear activeRanking object
+    setActiveRankingId(rankingId); 
+    setActiveRanking(null); // Clear out old activeRanking data while new one loads
+
+    try {
+        const newActiveRanking = await selectAndTouchRanking(rankingId);
+        if (newActiveRanking) {
+            setSelectedSport(newActiveRanking.sport); // Update sport based on the new ranking
+            // setActiveRanking(newActiveRanking); // This is already done by selectAndTouchRanking if successful
+        } else {
+            console.error(`[handleRankingSelect] Failed to fetch or set details for ranking ${rankingId}`);
+            setPageError('Failed to load selected ranking details.');
+        }
+    } catch (err) {
+        console.error(`[handleRankingSelect] Error during ranking selection for ${rankingId}:`, err);
+        setPageError('Error selecting ranking.');
+    } finally {
+        // setIsPageLoading(false); // activeRanking update from store should trigger isPageLoading recalculation
+        setCollapseAllTrigger(prev => prev + 1); // Collapse rows on new ranking select
+    }
+  }, [activeRankingId, selectAndTouchRanking, setActiveRanking, setSelectedSport /*Removed setIsPageLoading direct call*/]);
+
+  const handleSortChange = useCallback((newKey_abbreviation) => {
+    let sortKeyToSet = null;
+    if (newKey_abbreviation === 'zScoreSum') {
+      sortKeyToSet = 'zScoreSum';
+    } else {
+      sortKeyToSet = newKey_abbreviation;
+    }
+    setSortConfig(currentConfig => {
+      if (currentConfig.key === sortKeyToSet) {
+        return { key: null, direction: 'desc' }; 
+      } else {
+        return { key: sortKeyToSet, direction: 'desc' };
+      }
+    });
+  }, []);
+
+  // -- Memo Hooks (Can be after callbacks they don't depend on) --
   const currentSportConfig = useMemo(() => {
     const sportKey = selectedSport?.toLowerCase();
     return sportKey ? SPORT_CONFIGS[sportKey] : null;
@@ -220,7 +269,7 @@ export default function RankingsPage() {
   }, [initAutoSave]);
 
   useEffect(() => {
-    if (user && !latestUserRankings) { // Ensure user is loaded and we haven't fetched yet
+    if (user && !latestUserRankings) { 
         const fetchRankings = async () => {
             try {
                 const response = await fetch('/api/user-rankings');
@@ -228,28 +277,46 @@ export default function RankingsPage() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                // --- REMOVE LOGGING ---
-                // console.log('[RankingsPage] Raw API response for /api/user-rankings:', JSON.parse(JSON.stringify(data)));
-                // data.forEach(ranking => {
-                //     if (ranking && ranking.rankings && Array.isArray(ranking.rankings)) {
-                //         const playbookIds = ranking.rankings.map(r => r.playbookId).filter(id => id);
-                //         const duplicateSourceIds = playbookIds.filter((item, index) => playbookIds.indexOf(item) !== index);
-                //         if (duplicateSourceIds.includes('680e43c3ffe1fa1d7496b83a')) {
-                //             console.warn(`[RankingsPage] SPECIFIC DUPLICATE ID '680e43c3ffe1fa1d7496b83a' FOUND IN API response for ranking _id: ${ranking._id}, name: ${ranking.rankingName}`);
-                //         }
-                //     }
-                // });
-                // --- END REMOVE LOGGING ---
-                setLatestUserRankings(data); // Set local state for side panel
-                setFetchedRankings(data); // Update Zustand store
+                setLatestUserRankings(data); 
+                setFetchedRankings(data);
             } catch (error) {
                 console.error('Failed to fetch user rankings:', error);
-                // Handle error appropriately, e.g., set an error state
+                setPageError('Failed to load user rankings data.'); 
             }
         };
         fetchRankings();
     }
-  }, [user, latestUserRankings, setFetchedRankings]);
+  }, [user, latestUserRankings]); 
+
+  // +++ REVISED EFFECT TO SET INITIAL ACTIVE RANKING WITH DETAILED LOGGING +++
+  useEffect(() => {
+    console.log('[InitialSelectEffect Check]', {
+        initialRankingsLoaded,
+        activeRanking: !!activeRanking, // Log as boolean for clarity
+        userRankingsLength: userRankings ? userRankings.length : 'undefined',
+        activeRankingLoading,
+        activeRankingId
+    });
+
+    if (initialRankingsLoaded && !activeRanking && userRankings && userRankings.length > 0) {
+        const firstRankingId = userRankings[0]._id;
+        console.log(`[InitialSelectEffect] Conditions met. First ranking ID: ${firstRankingId}`);
+        
+        // Simpler condition to avoid re-triggering if already trying to load this one or it's loaded
+        if (!activeRankingLoading && activeRankingId !== firstRankingId) { 
+            console.log(`[InitialSelectEffect] Not currently loading and ID doesn't match. Calling handleRankingSelect(${firstRankingId})`);
+            handleRankingSelect(firstRankingId);
+        } else {
+            console.log('[InitialSelectEffect] Conditions met, but either loading or ID matches. Skipping handleRankingSelect call.', {
+                activeRankingLoading,
+                activeRankingId,
+                firstRankingId
+            });
+        }
+    } else {
+        console.log('[InitialSelectEffect] Conditions NOT met for auto-selection.');
+    }
+  }, [initialRankingsLoaded, userRankings, activeRanking, handleRankingSelect, activeRankingLoading, activeRankingId]);
 
   useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();
@@ -339,49 +406,6 @@ export default function RankingsPage() {
       console.log('[RankingsPage Effect Log] activeRanking is null or undefined.');
     }
   }, [activeRanking]);
-
-  // -- Callback Hooks --
-  const handleCollapseAll = useCallback(() => {
-    setCollapseAllTrigger(prev => prev + 1);
-  }, []);
-
-  const handleRankingSelect = useCallback(async (rankingId) => {
-    if (!rankingId || rankingId === activeRankingId) return;
-
-    setIsPageLoading(true);
-    setActiveRankingId(rankingId);
-    setActiveRanking(null); 
-
-    const newActiveRanking = await selectAndTouchRanking(rankingId);
-    if (newActiveRanking) {
-      setSelectedSport(newActiveRanking.sport);
-      setActiveRanking(newActiveRanking);
-    } else {
-        console.error(`[handleRankingSelect] Failed to fetch details for ranking ${rankingId}`);
-        setPageError('Failed to load selected ranking details.');
-        setIsPageLoading(false);
-    }
-    setCollapseAllTrigger(prev => prev + 1); 
-  }, [activeRankingId, selectAndTouchRanking, setActiveRanking, setSelectedSport]);
-
-  const handleSortChange = useCallback((newKey_abbreviation) => {
-    let sortKeyToSet = null;
-    if (newKey_abbreviation === 'zScoreSum') {
-      sortKeyToSet = 'zScoreSum';
-    } else {
-      sortKeyToSet = newKey_abbreviation;
-    }
-    setSortConfig(currentConfig => {
-      // If clicking the *same* key that's already sorted descending,
-      // reset the sort (key: null) instead of toggling to ascending.
-      if (currentConfig.key === sortKeyToSet) {
-        return { key: null, direction: 'desc' }; // Reset to default sort
-      } else {
-        // Otherwise, set the new key and default to descending.
-        return { key: sortKeyToSet, direction: 'desc' };
-      }
-    });
-  }, []);
 
   // == RENDER LOGIC ==
 
