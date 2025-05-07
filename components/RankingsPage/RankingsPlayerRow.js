@@ -20,25 +20,17 @@ const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
 
-    // Define stats that need 2 decimal places (can be simplified if path is always abbreviation)
+    // Define stats that need 2 decimal places
     const statsNeedingTwoDecimals = [
-        // Example keys - adjust if needed based on final structure
-        'PPS', // Assuming abbreviation is used now
-        'OPE',
-        'TO%',
-        // Add MLB rate stats if needed (e.g., ERA, WHIP)
-        'ERA',
-        'WHIP',
-        'K/BB',
-        'K/9'
+        'PPS', 'OPE', 'TO%', 'ERA', 'WHIP', 'K/BB', 'K/9'
     ];
 
     return (
         <div className="flex w-[60%] h-full gap-[3px]">
-            {/* Z-Score Sum main value column (Moved to left) */}
+            {/* Z-Score Sum main value column */}
             <div
                 key="zScoreSum_main"
-                className="flex-1 text-center h-full flex items-center justify-center select-none"
+                className="flex-1 text-center h-full flex items-center justify-center select-none bg-gray-50" // Neutral background for Z-sum
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
                 <span className="text-sm text-pb_darkgray">
@@ -47,64 +39,82 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
             </div>
 
             {/* Render other category stats */}
-            {categories.map((categoryAbbrev) => { // Renamed loop variable for clarity
-                let statData, displayValue, title, bgColor, formattedValue;
+            {categories.map((categoryAbbrev) => {
+                const path = categoryAbbrev;
+                const statDataFromPlayer = stats?.[path]; // Direct access
 
-                // --- Handle Z-Score Sum --- (This logic is now handled above)
-                // if (categoryAbbrev === 'zScoreSum') { ... }
+                let formattedValue = '-';
+                let title = `${SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev}: -`;
+                let bgColorClass = 'bg-white'; // Default background
+                let textColorClass = 'text-pb_darkgray'; // Default text color
 
-                // --- Logic for regular stats using categoryAbbrev as the key ---
-                const path = categoryAbbrev; // Use abbrev directly as path
+                if (statDataFromPlayer !== null && statDataFromPlayer !== undefined) {
+                    let rawValueForFormatting;
+                    let zScoreForTitle = null;
 
-                if (!path) {
-                    // Render placeholder if path missing
-                    formattedValue = '?';
-                    title = `${categoryAbbrev}: Path not found`;
-                    bgColor = 'lightcoral'; // Indicate error visually
-                } else {
-                    // Use global getNestedValue with the ABBREV as the path
-                    statData = getNestedValue(stats, path); 
+                    if (typeof statDataFromPlayer === 'object' && statDataFromPlayer.hasOwnProperty('value')) {
+                        // Stat is in { value: ..., zScore: ..., colors: ... } structure
+                        rawValueForFormatting = statDataFromPlayer.value;
+                        if (statDataFromPlayer.colors) {
+                            bgColorClass = statDataFromPlayer.colors.bgColorClass;
+                            textColorClass = statDataFromPlayer.colors.textColorClass;
+                        }
+                        if (typeof statDataFromPlayer.zScore === 'number') {
+                            zScoreForTitle = statDataFromPlayer.zScore;
+                        }
+                    } else {
+                        // Stat is a raw number/string or an object we should display directly as string
+                        rawValueForFormatting = statDataFromPlayer;
+                        // No specific z-score based colors, use defaults.
+                        // If it's an unexpected object, String() will handle it (e.g. "[object Object]")
+                    }
 
-                    // Determine the value to display (check for { value: ... } structure)
-                    // getNestedValue already handles returning statData.value if it exists
-                    displayValue = statData; // Raw value or null/undefined
-
-                    // Format the display value
-                    formattedValue = '-'; // Default placeholder
-                     if (displayValue !== null && displayValue !== undefined) {
-                         if (typeof displayValue === 'number') {
-                            // Use categoryAbbrev for checking formatting needs
+                    // Format the rawValueForFormatting
+                    if (rawValueForFormatting !== null && rawValueForFormatting !== undefined) {
+                        if (typeof rawValueForFormatting === 'number') {
                             if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
-                                formattedValue = displayValue.toFixed(2);
+                                formattedValue = rawValueForFormatting.toFixed(2);
                             } else {
-                                formattedValue = displayValue.toFixed(1);
+                                formattedValue = rawValueForFormatting.toFixed(1);
                                 if (formattedValue.endsWith('.0')) {
                                     formattedValue = formattedValue.slice(0, -2);
                                 }
                             }
-                         } else {
-                             // Handle non-numeric values if necessary (e.g., strings)
-                             formattedValue = String(displayValue);
-                         }
-                     }
+                        } else {
+                            formattedValue = String(rawValueForFormatting);
+                        }
+                    }
                     
-                    // Determine title (use abbreviation and formatted value)
-                     // TODO: Get full label from config? Use SPORT_CONFIGS maybe?
-                     const label = SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev;
-                     title = `${label}: ${formattedValue}`;
-
-                    // Determine background color (ignoring for now)
-                    bgColor = undefined; 
+                    const label = SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev;
+                    title = `${label}: ${formattedValue}`;
+                    if (zScoreForTitle !== null) {
+                        title += ` (Z: ${zScoreForTitle.toFixed(2)})`;
+                    }
+                } else {
+                    // statDataFromPlayer is null or undefined, formattedValue remains '-'
+                    // title remains default or specific for missing data
                 }
+
+                // +++ STATSSECTION DEBUG LOG +++
+                if (categoryAbbrev === '3PM' || categoryAbbrev === 'AST' || categoryAbbrev === 'PTS') { // Log for a few specific categories
+                    console.log(`[StatsSection Debug] Category: ${categoryAbbrev}`);
+                    console.log(`  Raw statDataFromPlayer:`, JSON.parse(JSON.stringify(statDataFromPlayer || {})));
+                    console.log(`  statDataFromPlayer.colors:`, JSON.parse(JSON.stringify(statDataFromPlayer?.colors || null)));
+                    console.log(`  Derived bgColorClass: ${bgColorClass}`);
+                    console.log(`  Derived textColorClass: ${textColorClass}`);
+                }
+                // +++ END STATSSECTION DEBUG LOG +++
 
                 return (
                     <div
                         key={categoryAbbrev}
-                        className="flex-1 text-center h-full flex items-center justify-center select-none"
+                        className={cn(
+                            "flex-1 text-center h-full flex items-center justify-center select-none",
+                            bgColorClass
+                        )}
                         title={title}
-                        style={{ backgroundColor: bgColor }}
                     >
-                        <span className="text-sm text-pb_darkgray">
+                        <span className={cn("text-sm", textColorClass)}>
                             {formattedValue}
                         </span>
                     </div>

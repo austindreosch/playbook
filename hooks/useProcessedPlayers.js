@@ -3,6 +3,31 @@ import { SPORT_CONFIGS } from '@/lib/config';
 import { getNestedValue, getStatPath } from '@/lib/utils';
 import { useMemo } from 'react';
 
+// Helper function to determine color based on Z-score
+const getZScoreColors = (zScore) => {
+    if (typeof zScore !== 'number' || isNaN(zScore)) {
+        return { bgColorClass: 'bg-gray-100', textColorClass: 'text-gray-600' }; // Default for non-numeric/NaN zScores
+    }
+
+    // Define thresholds and corresponding color classes
+    // Tailwind classes for positive (green) impact
+    if (zScore >= 2) return { bgColorClass: 'bg-pb_green', textColorClass: 'text-white' };
+    if (zScore >= 1.5) return { bgColorClass: 'bg-green-500', textColorClass: 'text-white' };
+    if (zScore >= 1) return { bgColorClass: 'bg-green-400', textColorClass: 'text-green-900' };
+    if (zScore >= 0.5) return { bgColorClass: 'bg-green-300', textColorClass: 'text-green-800' };
+    if (zScore > 0) return { bgColorClass: 'bg-green-100', textColorClass: 'text-green-700' };
+
+    // Tailwind classes for negative (red) impact
+    if (zScore <= -2) return { bgColorClass: 'bg-pb_red', textColorClass: 'text-white' };
+    if (zScore <= -1.5) return { bgColorClass: 'bg-red-500', textColorClass: 'text-white' };
+    if (zScore <= -1) return { bgColorClass: 'bg-red-400', textColorClass: 'text-red-900' };
+    if (zScore <= -0.5) return { bgColorClass: 'bg-red-300', textColorClass: 'text-red-800' };
+    if (zScore < 0) return { bgColorClass: 'bg-red-100', textColorClass: 'text-red-700' };
+
+    // Neutral (close to zero)
+    return { bgColorClass: 'bg-gray-50', textColorClass: 'text-gray-700' };
+};
+
 export function useProcessedPlayers({
     activeRanking,
     playerIdentities,
@@ -259,16 +284,50 @@ export function useProcessedPlayers({
             if (comparisonRules && Object.keys(enabledCategoriesDetailsObject).length > 0) {
                 // console.log("[useProcessedPlayers - Zscores] Calculating Z-Scores...");
                 try {
-                    const playersWithZScores = calculateZScoresWithComparisonPool(
-                        playersWithStatsAndRank, // Players from active ranking (already processed)
-                        comparisonPoolPlayers,     // The calculated comparison pool
+                    // Ensure we operate on the output of calculateZScoresWithComparisonPool
+                    const playersAfterZScoreCalculation = calculateZScoresWithComparisonPool(
+                        playersWithStatsAndRank, // Current list, stats might be raw numbers initially from initialRankedPlayers
+                        comparisonPoolPlayers,     
                         enabledCategoriesDetailsObject,
                         statPathMapping,
                         comparisonRules
                     );
-                    playersWithStatsAndRank = playersWithZScores;
+                    // playersAfterZScoreCalculation now has player.stats as { STAT: {value: X} } and player.zScores
+
+                    // --- Add color information based on Z-Scores ---
+                    const playersWithColorsEmbedded = playersAfterZScoreCalculation.map(player => {
+                        const newStats = { ...player.stats }; // player.stats is { STAT: {value: X}, ...}
+                        if (player.zScores) { 
+                            Object.keys(newStats).forEach(statKey => {
+                                const statItem = newStats[statKey]; 
+                                const zScoreForStat = player.zScores[statKey]; 
+                                if (statItem) { 
+                                    newStats[statKey] = {
+                                        ...statItem, 
+                                        colors: getZScoreColors(zScoreForStat) 
+                                    };
+                                }
+                            });
+                        }
+                        return { ...player, stats: newStats }; 
+                    });
+                    // This is the final structure to be used for display
+                    playersWithStatsAndRank = playersWithColorsEmbedded; 
+
+                    // +++ START DEBUG LOG for colors +++
+                    if (playersWithStatsAndRank.length > 0) {
+                        const firstPlayerForColorCheck = playersWithStatsAndRank[0];
+                        console.log('[useProcessedPlayers] Color Check - First player stats after color mapping:', 
+                            JSON.parse(JSON.stringify(firstPlayerForColorCheck.stats)) // Deep copy for clean logging
+                        );
+                         console.log('[useProcessedPlayers] Color Check - First player zScores (for reference):', 
+                            JSON.parse(JSON.stringify(firstPlayerForColorCheck.zScores)) // Deep copy for clean logging
+                        );
+                    }
+                    // +++ END DEBUG LOG for colors +++
+
                 } catch (error) {
-                    console.error("[useProcessedPlayers - Zscores] Error calculating Z-Scores:", error);
+                    console.error("[useProcessedPlayers - Zscores] Error calculating Z-Scores or adding colors:", error);
                 }
             } else {
                 // console.warn("[useProcessedPlayers - Zscores] Skipping Z-Score calc: Missing comparison rules or no enabled categories.");
