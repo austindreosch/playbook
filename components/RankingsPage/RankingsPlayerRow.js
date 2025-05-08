@@ -220,6 +220,13 @@ const RankingsPlayerRow = memo(({
 }) => {
     const rowRef = useRef(null);
 
+    // +++ DEBUG LOG for Z-Score Sum +++
+    if (rank <= 3) { // Log for first 3 players
+        console.log(`[RankingsPlayerRow Rank ${rank}] Player ID: ${player?.id}, Name: ${player?.info?.fullName}`);
+        console.log(`  Received player.zScoreTotals:`, JSON.parse(JSON.stringify(player?.zScoreTotals || null)));
+    }
+    // +++ END DEBUG LOG +++
+
     // --- Log the rank prop received ---
     // if (rank <= 3) { // Only log for the first 3 players
     //     console.log(`[RankingsPlayerRow] Received rank prop: ${rank} for player: ${player?.info?.fullName}`);

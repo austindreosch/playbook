@@ -156,7 +156,7 @@ export default function RankingsPage() {
     return sportKey ? SPORT_CONFIGS[sportKey] : null;
   }, [selectedSport]);
 
-  const { enabledCategoryAbbrevs, statPathMapping } = useMemo(() => {
+  const { enabledCategoryAbbrevs } = useMemo(() => {
     if (!currentSportConfig || !activeRanking?.categories) {
       console.log('[Category Calculation] Memo: Bailing out. Missing config or activeRanking.categories.', { 
           hasConfig: !!currentSportConfig, 
