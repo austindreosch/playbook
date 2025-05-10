@@ -18,7 +18,7 @@ const DEFAULT_ROW_HEIGHT = 45;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
 // Create a specialized component just for stats to reduce re-renders
-const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
+const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex }) => {
 
     // Define stats that need 2 decimal places
     const statsNeedingTwoDecimals = [
@@ -39,11 +39,11 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
             </div>
 
             {/* Render other category stats */}
-            {categories.map((categoryAbbrev) => {
+            {categories.map((categoryAbbrev, index) => {
                 const path = categoryAbbrev;
                 const statDataFromPlayer = stats?.[path]; // Direct access
 
-                let formattedValue = '-';
+                let formattedValue = '';
                 let title = `${SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev}: -`;
                 let currentBgColor = '#FFFFFF'; // Default white background
                 let currentTextColor = '#1f2937'; // Default dark gray text (Tailwind gray-800)
@@ -95,6 +95,18 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
                     // title remains default or specific for missing data
                 }
 
+                // Determine cell background color
+                let cellBackgroundColor;
+                if (formattedValue === '') {
+                    if (sport?.toLowerCase() === 'mlb' && rowIndex % 2 !== 0) { // Odd MLB row
+                        cellBackgroundColor = '#f9fafb'; // very light gray (Tailwind gray-50)
+                    } else { // Even MLB row or non-MLB sport
+                        cellBackgroundColor = '#fff'; // white
+                    }
+                } else { // Cell has data
+                    cellBackgroundColor = currentBgColor; // Use its z-score derived color
+                }
+
                 // +++ STATSSECTION DEBUG LOG +++
                 if (categoryAbbrev === '3PM' || categoryAbbrev === 'AST' || categoryAbbrev === 'PTS') { // Log for a few specific categories
                     console.log(`[StatsSection Debug] Category: ${categoryAbbrev}`);
@@ -109,15 +121,46 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport }) => {
                     <div
                         key={categoryAbbrev}
                         className="flex-1 text-center h-full flex items-center justify-center select-none"
-                        style={{ backgroundColor: currentBgColor }} // Apply dynamic background color
+                        style={{ backgroundColor: cellBackgroundColor }} // Use the determined cellBackgroundColor
                         title={title}
                     >
-                        <span 
-                            className="text-sm" 
-                            style={{ color: currentTextColor }} // Apply dynamic text color
-                        >
-                            {formattedValue}
-                        </span>
+                        {formattedValue !== '' ? (
+                            <span className="text-sm" style={{ color: currentTextColor }}>
+                                {formattedValue}
+                            </span>
+                        ) : (
+                            <span
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                    height: '100%',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        width: '30%',
+                                        height: '1px',
+                                        backgroundColor: '#e5e7eb', // Tailwind gray-200
+                                        borderRadius: '1px',
+                                        margin: '1.5px 0',
+                                        display: 'block',
+                                    }}
+                                />
+                                <span
+                                    style={{
+                                        width: '20%',
+                                        height: '1px',
+                                        backgroundColor: '#e5e7eb', // Tailwind gray-200
+                                        borderRadius: '1px',
+                                        margin: '1.5px 0',
+                                        display: 'block',
+                                    }}
+                                />
+                            </span>
+                        )}
                     </div>
                 );
             })}
@@ -155,7 +198,7 @@ const StatsSectionSecondary = memo(({ categories, stats }) => {
                      displayValue = statData; // Raw value or null/undefined
 
                      // Format the display value
-                     formattedValue = '-'; // Default placeholder
+                     formattedValue = ''; // Default placeholder
                       if (displayValue !== null && displayValue !== undefined) {
                           if (typeof displayValue === 'number') {
                              if (statsNeedingTwoDecimals.includes(categoryAbbrev)) { // Check abbrev
@@ -216,7 +259,8 @@ const RankingsPlayerRow = memo(({
     isRankSorted,
     isDraftMode,
     onToggleDraftStatus,
-    activeRanking
+    activeRanking,
+    rowIndex
 }) => {
     const rowRef = useRef(null);
 
@@ -369,6 +413,7 @@ const RankingsPlayerRow = memo(({
             stats={player.stats}
             zScoreSumValue={player?.zScoreTotals?.overallZScoreSum}
             sport={sport}
+            rowIndex={rowIndex}
         />
     );
 
@@ -383,14 +428,21 @@ const RankingsPlayerRow = memo(({
             className={cn(
                 `player-row border rounded-md overflow-hidden mb-1 shadow-sm`,
                 isDragging ? 'z-10' : '',
-                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "bg-white hover:bg-gray-50",
+                // Removed overall row striping based on isSparseRowForStriping
+                // Draft mode styling will apply to the whole row if active
+                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging 
+                    ? "border-pb_lightgray bg-pb_lightergray" // Drafted styling
+                    : "bg-white hover:bg-gray-50",    // Default row styling
                 isExpanded ? `h-[${EXPANDED_ROW_HEIGHT}px]` : `h-[${DEFAULT_ROW_HEIGHT}px]`,
             )}
         >
             <div
                 className={cn(
                     "flex h-9 items-center",
-                    isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "bg-pb_lightergray border-pb_midgray" : "bg-white hover:bg-gray-50"
+                    // Inner div styling should also not rely on the removed sparse row striping
+                    isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging 
+                        ? "bg-pb_lightergray border-pb_midgray" 
+                        : "bg-white hover:bg-gray-50"
                 )}
                 onClick={onToggleExpand}
             >

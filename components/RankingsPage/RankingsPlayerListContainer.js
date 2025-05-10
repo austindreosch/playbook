@@ -174,6 +174,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                     isDraftMode={isDraftModeActive}
                     onToggleDraftStatus={handleToggleDraftStatus}
                     isRankSorted={isRankSorted}
+                    rowIndex={index}
                 />
             </div>
         );
