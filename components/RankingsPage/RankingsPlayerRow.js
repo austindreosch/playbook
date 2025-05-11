@@ -33,7 +33,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
-                <span className="text-sm text-pb_darkgray">
+                <span className="text-sm text-pb_midgray">
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
                 </span>
             </div>
@@ -46,7 +46,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                 let formattedValue = '';
                 let title = `${SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev}: -`;
                 let currentBgColor = '#FFFFFF'; // Default white background
-                let currentTextColor = '#1f2937'; // Default dark gray text (Tailwind gray-800)
+                let currentTextColor = '#747474'; // Default dark gray text (Tailwind gray-800)
 
                 if (statDataFromPlayer !== null && statDataFromPlayer !== undefined) {
                     let rawValueForFormatting;
@@ -108,13 +108,13 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                 }
 
                 // +++ STATSSECTION DEBUG LOG +++
-                if (categoryAbbrev === '3PM' || categoryAbbrev === 'AST' || categoryAbbrev === 'PTS') { // Log for a few specific categories
-                    console.log(`[StatsSection Debug] Category: ${categoryAbbrev}`);
-                    console.log(`  Raw statDataFromPlayer:`, JSON.parse(JSON.stringify(statDataFromPlayer || {})));
-                    console.log(`  statDataFromPlayer.colors:`, JSON.parse(JSON.stringify(statDataFromPlayer?.colors || null)));
-                    console.log(`  Derived bgColorClass: ${currentBgColor}`);
-                    console.log(`  Derived textColorClass: ${currentTextColor}`);
-                }
+                // if (categoryAbbrev === '3PM' || categoryAbbrev === 'AST' || categoryAbbrev === 'PTS') { // Log for a few specific categories
+                //     console.log(`[StatsSection Debug] Category: ${categoryAbbrev}`);
+                //     console.log(`  Raw statDataFromPlayer:`, JSON.parse(JSON.stringify(statDataFromPlayer || {})));
+                //     console.log(`  statDataFromPlayer.colors:`, JSON.parse(JSON.stringify(statDataFromPlayer?.colors || null)));
+                //     console.log(`  Derived bgColorClass: ${currentBgColor}`);
+                //     console.log(`  Derived textColorClass: ${currentTextColor}`);
+                // }
                 // +++ END STATSSECTION DEBUG LOG +++
 
                 return (
@@ -125,7 +125,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                         title={title}
                     >
                         {formattedValue !== '' ? (
-                            <span className="text-sm" style={{ color: currentTextColor }}>
+                            <span className="text-sm text-pb_darkgray" >
                                 {formattedValue}
                             </span>
                         ) : (
@@ -571,7 +571,7 @@ const RankingsPlayerRow = memo(({
                         </div>
 
                         {/* middle panel */}
-                        <div className=" w-[24%] pr-3">
+                        <div className=" w-[21%] pr-3">
                             {/* Insights panel */}
                             <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
                                 <div className="w-full h-11 flex relative overflow-hidden rounded-sm mx-2">
@@ -622,11 +622,14 @@ const RankingsPlayerRow = memo(({
                             <div className="flex h-[70%] items-center justify-center ">
                                 <div className="flex items-center justify-center">
                                     <div className="flex flex-col gap-1">
-                                        <button className="text-2xs tracking-wider bg-pb_darkgrayhover text-white hover:bg-pb_midgray px-2 py-2 rounded shadow-sm transition-colors">
+                                        <button className="text-2xs tracking-wider bg-pb_darkgrayhover text-white hover:bg-pb_midgray px-3 py-2 rounded shadow-sm transition-colors">
                                             TIPS
                                         </button>
-                                        <button className="text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-2 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
+                                        <button className="text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
                                             MATCH
+                                        </button>
+                                        <button className="text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
+                                            OTHER
                                         </button>
                                     </div>
                                 </div>
@@ -634,7 +637,7 @@ const RankingsPlayerRow = memo(({
                         </div>
 
                         {/* right panel 1*/}
-                        <div className="w-[60%]">
+                        <div className="w-[63%]">
                             <div className="py-2 flex items-center justify-center h-[30%]">
                                 <StatsSectionSecondary 
                                     categories={categories} 
