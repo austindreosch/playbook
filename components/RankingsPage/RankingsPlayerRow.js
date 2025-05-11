@@ -147,9 +147,10 @@ const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
 
     return (
         <div className="flex w-full h-full gap-[3px]">
+            {/* Render category stats directly - NO placeholder here */}
             {categories.map((categoryAbbrev, index) => {
                 const path = categoryAbbrev;
-                const statObject = secondaryStatsData?.[path]; // Use secondaryStatsData
+                const statObject = secondaryStatsData?.[path];
                 const rawValue = statObject?.value; // Get the raw value directly
 
                 let title = `${path}: -`;
@@ -552,8 +553,9 @@ const RankingsPlayerRow = memo(({
                                 <span className="text-2xs tracking-wider mt-1 text-pb_textgray">PLAYBOOK SCORE</span>
                             </div> */}
 
-                            <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
-                               
+                            <div className="flex flex-col justify-center items-center h-[50%] px-2">
+                                <div className="h-[1px] w-full bg-gray-300"></div>
+                                <div className="h-[1px] w-full bg-gray-300 mt-[3px]"></div>
                             </div>
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
@@ -582,50 +584,60 @@ const RankingsPlayerRow = memo(({
                             </div>
                         </div>
 
-                        {/* right panel 0*/}
-                        <div className="w-[7%] items-center justify-center border-l border-pb_lightgray">
-                            <div className="p-2 flex flex-col h-[30%] items-center justify-center mt-0.5">
-                                <span className="text-2xs tracking-wider text-pb_textgray">
-                                    {secondaryStatsLabel} {/* Display label (will have default) */}
-                                </span>
-                                {/* Numerical Trend Indicator with Triangle */}
-                                {typeof secondaryStatsTrend === 'number' && (
-                                    <span className={`text-xs font-medium flex items-center ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}> 
-                                        {secondaryStatsTrend < 0 ? '▼' : '▲'} 
-                                        <span className="ml-1">{secondaryStatsTrend > 0 ? `+${secondaryStatsTrend}%` : `${secondaryStatsTrend}%`}</span>
+                        {/* NEW WRAPPER for the two right-most panels, taking up the remaining 70% width */}
+                        <div className="flex w-[70%]">
+                            {/* Right panel 0 (Trend/Buttons) - Dynamic Width */}
+                            <div 
+                                className="items-center justify-center border-l border-pb_lightgray flex flex-col" // Added flex flex-col for internal layout, removed w-[7%]
+                                style={{ flexBasis: `${100 / (categories.length > 0 ? categories.length + 1 : 1)}%` }}
+                            >
+                                {/* Ensure content within this panel fills its new dynamic width and maintains layout */} 
+                                <div className="p-2 flex flex-col h-[30%] items-center justify-center mt-0.5">
+                                    <span className="text-2xs tracking-wider text-pb_textgray">
+                                        {secondaryStatsLabel} {/* Display label (will have default) */}
                                     </span>
-                                )}
-                            </div>
+                                    {/* Numerical Trend Indicator with Triangle */}
+                                    {typeof secondaryStatsTrend === 'number' && (
+                                        <span className={`text-xs font-medium flex items-center ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}> 
+                                            {secondaryStatsTrend < 0 ? '▼' : '▲'} 
+                                            <span className="ml-1">{secondaryStatsTrend > 0 ? `+${secondaryStatsTrend}%` : `${secondaryStatsTrend}%`}</span>
+                                        </span>
+                                    )}
+                                </div>
 
-                            <div className="flex h-[70%] items-center justify-center ">
-                                <div className="flex items-center justify-center">
-                                    <div className="flex flex-col gap-1">
-                                        <button className="text-2xs tracking-wider bg-pb_darkgrayhover text-white hover:bg-pb_midgray px-3 py-2 rounded shadow-sm transition-colors">
-                                            TIPS
-                                        </button>
-                                        <button className="text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
-                                            MATCH
-                                        </button>
-                                        <button className="text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
-                                            OTHER
-                                        </button>
+                                <div className="flex h-[70%] items-center justify-center ">
+                                    <div className="flex items-center justify-center">
+                                        <div className="flex flex-col gap-1">
+                                            <button className="disabled text-2xs tracking-wider bg-pb_darkgrayhover text-white hover:bg-pb_midgray px-3 py-2 rounded shadow-sm transition-colors">
+                                                TIPS
+                                            </button>
+                                            <button className="disabled text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
+                                                MATCH
+                                            </button>
+                                            <button className="disabled text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
+                                                OTHER
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* right panel 1*/}
-                        <div className="w-[63%]">
-                            <div className="py-2 flex items-center justify-center h-[30%]">
-                                <StatsSectionSecondary 
-                                    categories={categories} 
-                                    secondaryStatsData={secondaryStatsData} // Pass secondaryStatsData
-                                />
-                            </div>
+                            {/* Right panel 1 (Secondary Stats) - Dynamic Width */}
+                            <div 
+                                className="flex flex-col" // Added flex flex-col for internal layout, removed w-[63%]
+                                style={{ flexBasis: `${(categories.length * 100) / (categories.length > 0 ? categories.length + 1 : 1)}%` }}
+                            >
+                                <div className="py-2 flex items-center justify-center h-[30%] w-full">
+                                    <StatsSectionSecondary 
+                                        categories={categories} 
+                                        secondaryStatsData={secondaryStatsData} // Pass secondaryStatsData
+                                    />
+                                </div>
 
-                            <div className="flex h-[70%] items-center justify-center">
-                                <span className="bg-white font-bold h-full w-full border-t border-l border-pb_lightgray rounded-tl-md"></span>
+                                <div className="flex h-[70%] items-center justify-center">
+                                    <span className="bg-white font-bold h-full w-full border-t border-l border-pb_lightgray rounded-tl-md"></span>
 
+                                </div>
                             </div>
                         </div>
                     </div>
