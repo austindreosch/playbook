@@ -6,35 +6,17 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SPORT_CONFIGS } from "@/lib/config";
+import { getCategoryEntries, getDefaultCategories } from "@/lib/rankingUtils";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { BookCopy, ListPlus } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 // Helper to get default enabled categories for a sport config
-const getDefaultCategories = (sportConfig) => {
-    if (!sportConfig || !sportConfig.categories) return [];
-    const categories = {};
-    if (sportConfig.label === 'MLB' && sportConfig.categories.hitting && sportConfig.categories.pitching) {
-        // Combine hitting and pitching for MLB
-        Object.assign(categories, sportConfig.categories.hitting, sportConfig.categories.pitching);
-    } else {
-        Object.assign(categories, sportConfig.categories);
-    }
-    return Object.entries(categories)
-        .filter(([, cat]) => cat.enabled === true)
-        .map(([key]) => key);
-};
+// const getDefaultCategories = (sportConfig) => { ... }; // REMOVED
 
 // Helper function to get category entries (handling potential MLB structure)
-const getCategoryEntries = (sportConfig) => {
-    if (!sportConfig || !sportConfig.categories) return [];
-    if (sportConfig.label === 'MLB' && sportConfig.categories.hitting && sportConfig.categories.pitching) {
-        // Combine hitting and pitching for MLB
-        return Object.entries(sportConfig.categories.hitting).concat(Object.entries(sportConfig.categories.pitching));
-    }
-    return Object.entries(sportConfig.categories);
-};
+// const getCategoryEntries = (sportConfig) => { ... }; // REMOVED
 
 const AddRankingListButton = ({ dataset }) => {
     const { user } = useUser();
@@ -42,9 +24,9 @@ const AddRankingListButton = ({ dataset }) => {
     // Form state
     const [formData, setFormData] = useState({
         sport: 'nba',
-        format: 'Dynasty',
-        scoring: 'Categories',
-        flexSetting: 'Superflex',
+        format: 'dynasty',
+        scoring: 'categories',
+        flexSetting: 'superflex',
         pprType: '1ppr',
         name: '',
         customCategories: getDefaultCategories(SPORT_CONFIGS.nba),
@@ -61,7 +43,7 @@ const AddRankingListButton = ({ dataset }) => {
             // --- Auto-adjust Scoring based on Sport --- //
             if (updates.sport) { // If sport changed...
                 if (newState.sport === 'nfl') {
-                    newState.scoring = 'Points'; // Force NFL to Points
+                    newState.scoring = 'points'; // Force NFL to Points
                     newState.pprType = '1ppr'; // Default NFL PPR to 1ppr
                 } 
                 // No need to force NBA to Categories anymore
@@ -70,7 +52,7 @@ const AddRankingListButton = ({ dataset }) => {
 
             // --- Handle Custom Categories Reset/Default --- //
             if ((updates.sport || updates.scoring)) { // If sport or scoring changed...
-                 if (newState.sport !== 'nfl' && newState.scoring === 'Categories') {
+                 if (newState.sport !== 'nfl' && newState.scoring === 'categories') {
                      // Set default categories for the new valid category combo
                      const sportConfig = SPORT_CONFIGS[newState.sport];
                      newState.customCategories = getDefaultCategories(sportConfig);
@@ -82,7 +64,7 @@ const AddRankingListButton = ({ dataset }) => {
             
             // Reset NFL specific fields if changing away from NFL
             if (updates.sport && newState.sport !== 'nfl'){
-                 newState.flexSetting = 'Superflex'; // Reset to default
+                 newState.flexSetting = 'superflex'; // Reset to default
                  newState.pprType = '1ppr'; // Reset to default (or null?)
             }
 
@@ -160,9 +142,9 @@ const AddRankingListButton = ({ dataset }) => {
             setOpen(false);
             updateFormState({
                 sport: 'nba',
-                format: 'Dynasty',
-                scoring: 'Categories',
-                flexSetting: 'Superflex',
+                format: 'dynasty',
+                scoring: 'categories',
+                flexSetting: 'superflex',
                 pprType: '1ppr',
                 name: '',
             });
@@ -223,8 +205,8 @@ const AddRankingListButton = ({ dataset }) => {
                             <Tabs value={formData.format} className="col-span-3"
                                 onValueChange={(value) => updateFormState({ format: value }) }>
                                 <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="Dynasty" className="select-none">Dynasty</TabsTrigger>
-                                    <TabsTrigger value="Redraft" className="select-none">Redraft</TabsTrigger>
+                                    <TabsTrigger value="dynasty" className="select-none">Dynasty</TabsTrigger>
+                                    <TabsTrigger value="redraft" className="select-none">Redraft</TabsTrigger>
                                 </TabsList>
                             </Tabs>
                         </div>
@@ -234,8 +216,8 @@ const AddRankingListButton = ({ dataset }) => {
                             <Tabs value={formData.scoring} className="col-span-3"
                                 onValueChange={(value) => updateFormState({ scoring: value }) }>
                                 <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="Categories" disabled={formData.sport === 'nfl'} className="select-none">Categories</TabsTrigger>
-                                    <TabsTrigger value="Points" className="select-none">Points</TabsTrigger>
+                                    <TabsTrigger value="categories" disabled={formData.sport === 'nfl'} className="select-none">Categories</TabsTrigger>
+                                    <TabsTrigger value="points" className="select-none">Points</TabsTrigger>
                                 </TabsList>
                             </Tabs>
                         </div>
@@ -320,8 +302,8 @@ const AddRankingListButton = ({ dataset }) => {
                                     <Tabs value={formData.flexSetting} className="col-span-3"
                                         onValueChange={(value) => updateFormState({ flexSetting: value })}>
                                         <TabsList className="grid w-full grid-cols-2">
-                                            <TabsTrigger value="Superflex" className="select-none">Superflex</TabsTrigger>
-                                            <TabsTrigger value="Standard" className="select-none">Standard</TabsTrigger>
+                                            <TabsTrigger value="superflex" className="select-none">Superflex</TabsTrigger>
+                                            <TabsTrigger value="standard" className="select-none">Standard</TabsTrigger>
                                         </TabsList>
                                     </Tabs>
                                 </div>

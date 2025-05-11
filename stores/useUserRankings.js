@@ -49,7 +49,15 @@ const useUserRankings = create(
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
-                        // console.log('[fetchUserRankings] RAW API Response Data:', data);
+                        
+                        // ---->>> ADD THIS CONSOLE.LOG HERE <<<----
+                        console.log('[useUserRankings - fetchUserRankings] Data received from /api/user-rankings:', data);
+                        // Specifically log the NFL ones if any
+                        const nflRankingsInData = data.filter(r => r.sport === 'nfl' || r.sport === 'NFL');
+                        if (nflRankingsInData.length > 0) {
+                            console.log('[useUserRankings - fetchUserRankings] NFL Rankings from API:', JSON.stringify(nflRankingsInData, null, 2));
+                        }
+                        // ---->>> END CONSOLE.LOG <<<----
 
                         // Find the most recent ranking first (API should handle sorting, but we can keep this as fallback/verification)
                         const mostRecent = data.length > 0
@@ -721,13 +729,25 @@ export const useInitializeUserRankings = () => {
     const fetchUserRankings = useUserRankings((state) => state.fetchUserRankings);
     const rankingsLoaded = useUserRankings((state) => state.rankings.length > 0);
     const isLoading = useUserRankings((state) => state.isLoading);
+    const initialRankingsLoadedFromStore = useUserRankings((state) => state.initialRankingsLoaded); // Get this too
 
     useEffect(() => {
+        // ---->>> ADD THESE LOGS <<<----
+        console.log('[useInitializeUserRankings] Hook running. Conditions:');
+        console.log(`  - rankingsLoaded (from rankings.length > 0): ${rankingsLoaded}`);
+        console.log(`  - isLoading: ${isLoading}`);
+        console.log(`  - initialRankingsLoaded (from store state): ${initialRankingsLoadedFromStore}`);
+        console.log(`  - Condition to fetch (!rankingsLoaded && !isLoading): ${!rankingsLoaded && !isLoading}`);
+        // ---->>> END LOGS <<<----
+
         // Fetch only if rankings haven't been loaded yet and not currently loading
         if (!rankingsLoaded && !isLoading) {
+            console.log('[useInitializeUserRankings] Calling fetchUserRankings().'); // Log before calling
             fetchUserRankings();
+        } else {
+            console.log('[useInitializeUserRankings] NOT calling fetchUserRankings() due to conditions.');
         }
-    }, [fetchUserRankings, rankingsLoaded, isLoading]);
+    }, [fetchUserRankings, rankingsLoaded, isLoading, initialRankingsLoadedFromStore]); // Add initialRankingsLoadedFromStore to dependency array
 };
 
 export default useUserRankings;

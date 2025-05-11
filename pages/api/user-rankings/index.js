@@ -38,7 +38,9 @@ export default async function handler(req, res) {
                 details: 1,
                 categories: 1,
                 rankings: 1,
-                lastUpdated: 1
+                lastUpdated: 1,
+                flexSetting: 1,
+                pprSetting: 1
             })
             .sort({ 'lastUpdated': -1 })
             .toArray();

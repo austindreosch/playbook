@@ -22,6 +22,7 @@ Key interactions:
 
 // import Footer from '@/components/Layout/Footer';
 // import Header from '@/components/Layout/Header';
+import CreateAllRankingsButton from '@/components/Admin/CreateAllRankingsButton';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
@@ -30,7 +31,7 @@ import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SPORT_CONFIGS } from '@/lib/config'; // Import SPORT_CONFIGS
 import useMasterDataset from '@/stores/useMasterDataset';
-import useUserRankings, { setFetchedRankings } from '@/stores/useUserRankings';
+import useUserRankings, { setFetchedRankings, useInitializeUserRankings } from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -52,6 +53,9 @@ const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
 
 export default function RankingsPage() {
   // == ALL HOOKS DECLARED FIRST ==
+
+  // Call the initialization hook HERE
+  useInitializeUserRankings();
 
   // -- State Hooks --
   const [latestUserRankings, setLatestUserRankings] = useState(null);
@@ -488,16 +492,19 @@ export default function RankingsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold tracking-wide">Rankings</h1>
         <div className="flex items-center gap-2">
+              <CreateAllRankingsButton />
           {activeRanking && (
-            <DraftModeButton
-              isDraftMode={isDraftModeActive}
-              onDraftModeChange={toggleDraftMode}
-              showDrafted={showDraftedPlayers}
-              onShowDraftedChange={toggleShowDraftedPlayers}
-              onResetDraft={resetDraftAvailability}
-              draftedCount={draftedCount}
-              activeRanking={activeRanking}
-            />
+            <div>
+              <DraftModeButton
+                isDraftMode={isDraftModeActive}
+                onDraftModeChange={toggleDraftMode}
+                showDrafted={showDraftedPlayers}
+                onShowDraftedChange={toggleShowDraftedPlayers}
+                onResetDraft={resetDraftAvailability}
+                draftedCount={draftedCount}
+                activeRanking={activeRanking}
+              />
+            </div>
           )}
           {/* Pass currentSportMasterData for context */}
           <AddRankingListButton dataset={currentSportMasterData} />
