@@ -175,7 +175,7 @@ const RankingsPlayerListHeader = ({
                     <div
                         // Use flex-1 to fill remaining space, add bg-transparent
                         // Add hover effect here
-                        className="flex-1 h-10 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer"
+                        className="flex-1 h-10 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer min-w-0"
                         onClick={() => setExpanded(!expanded)} // Add onClick here if this area should also trigger expand/collapse
                     >
                         {/* Intentionally Empty */}
@@ -187,7 +187,7 @@ const RankingsPlayerListHeader = ({
                     {/* --- Z-Score Sum Sort Button --- */}
                     <div
                         key="zScoreSum"
-                        className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none"
+                        className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none min-w-0"
                         onClick={() => onSortChange('zScoreSum')}
                     >
                         <span> 
@@ -205,7 +205,7 @@ const RankingsPlayerListHeader = ({
                     {enabledCategoryAbbrevs.map((abbrev) => (
                         <div
                             key={abbrev}
-                            className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1"
+                            className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1 min-w-0"
                             onClick={() => onSortChange(abbrev)}
                         >
                             <span>

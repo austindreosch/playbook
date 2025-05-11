@@ -187,8 +187,24 @@ export function useProcessedPlayers({
         const combinedPlayers = rankingEntries.map((rankingEntry, index) => {
             const rankingPlaybookId = rankingEntry.playbookId ? String(rankingEntry.playbookId) : null;
             const basePlayerIdentity = rankingPlaybookId ? playerIdentityMap.get(rankingPlaybookId) : null;
+
+            // +++ DEBUG LOG: Inspect basePlayerIdentity for age-related fields +++
+            // if (index < 3) { // Log for the first 3 players
+            //     console.log(`[useProcessedPlayers - basePlayerIdentity Debug] Index: ${index}, PlaybookID: ${rankingPlaybookId}`);
+            //     console.log('Raw basePlayerIdentity:', JSON.parse(JSON.stringify(basePlayerIdentity || {})));
+            // }
+            // +++ END DEBUG LOG +++
+
             const msfIdForStatsLookup = basePlayerIdentity?.mySportsFeedsId;
             const fullPlayerDataFromStatsSource = msfIdForStatsLookup != null ? seasonalStatsData?.[String(msfIdForStatsLookup)] : null;
+
+            // +++ DEBUG LOG: Inspect fullPlayerDataFromStatsSource for age-related fields +++
+            // if (index < 1 && fullPlayerDataFromStatsSource) { // Log for the first player if stats data exists
+            //     console.log(`[useProcessedPlayers - fullPlayerDataFromStatsSource Debug] PlaybookID: ${rankingPlaybookId}, MSFID: ${msfIdForStatsLookup}`);
+            //     console.log('Raw fullPlayerDataFromStatsSource:', JSON.parse(JSON.stringify(fullPlayerDataFromStatsSource)));
+            // }
+            // +++ END DEBUG LOG +++
+
             const playerStatsObject = fullPlayerDataFromStatsSource?.stats || null;
             const standardEcrRankLookup = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) : undefined;
             const redraftEcrRankLookup = rankingPlaybookId ? redraftEcrMap.get(rankingPlaybookId) : undefined;
@@ -203,13 +219,12 @@ export function useProcessedPlayers({
                 firstName: basePlayerIdentity?.primaryName?.split(' ')[0] || rankingEntry.firstName || 'Unknown',
                 lastName: basePlayerIdentity?.primaryName?.split(' ').slice(1).join(' ') || rankingEntry.lastName || 'Player',
                 primaryPosition: basePlayerIdentity?.position || rankingEntry.position || 'N/A',
-                teamAbbreviation: basePlayerIdentity?.teamAbbreviation || rankingEntry.teamAbbreviation || 'FA',
                 officialImageSrc: fullPlayerDataFromStatsSource?.info?.officialImageSrc || basePlayerIdentity?.officialImageSrc || null,
-                age: basePlayerIdentity?.age ?? null,
+                age: fullPlayerDataFromStatsSource?.info?.age ?? null,
+                currentInjury: fullPlayerDataFromStatsSource?.info?.currentInjury ?? null,
                 standardEcrRank: standardEcrRank,
                 redraftEcrRank: redraftEcrRank,
                 isAvailable: rankingEntry.isAvailable ?? true, // from user_ranking entry
-                notes: rankingEntry.notes || '', // from user_ranking entry
                 mySportsFeedsId: msfIdForStatsLookup
             };
             playerInfo.fullName = `${playerInfo.firstName} ${playerInfo.lastName}`.trim();

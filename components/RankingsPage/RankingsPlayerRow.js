@@ -7,6 +7,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import EmptyStatIndicator from '../common/EmptyStatIndicator';
 import BullseyeIcon from '../icons/BullseyeIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
@@ -129,37 +130,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                                 {formattedValue}
                             </span>
                         ) : (
-                            <span
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                    height: '100%',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        width: '30%',
-                                        height: '1px',
-                                        backgroundColor: '#e5e7eb', // Tailwind gray-200
-                                        borderRadius: '1px',
-                                        margin: '1.5px 0',
-                                        display: 'block',
-                                    }}
-                                />
-                                <span
-                                    style={{
-                                        width: '20%',
-                                        height: '1px',
-                                        backgroundColor: '#e5e7eb', // Tailwind gray-200
-                                        borderRadius: '1px',
-                                        margin: '1.5px 0',
-                                        display: 'block',
-                                    }}
-                                />
-                            </span>
+                            <EmptyStatIndicator />
                         )}
                     </div>
                 );
@@ -171,74 +142,64 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
 StatsSection.displayName = 'StatsSection';
 
 // Secondary stats section for last 30 etc
-const StatsSectionSecondary = memo(({ categories, stats }) => {
-    // Define stats that need 2 decimal places (same as above)
-    const statsNeedingTwoDecimals = [
-        'PPS',
-        'OPE',
-        'TO%'
-    ];
+const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
+    const statsNeedingTwoDecimals = ['PPS', 'OPE', 'TO%'];
 
     return (
         <div className="flex w-full h-full gap-[3px]">
-            {categories.map((categoryAbbrev) => { // <<< Loop over abbrevs
-                const path = categoryAbbrev; // Use abbrev directly as path
-                let statData, displayValue, title, bgColor, formattedValue;
+            {categories.map((categoryAbbrev, index) => {
+                const path = categoryAbbrev;
+                const statObject = secondaryStatsData?.[path]; // Use secondaryStatsData
+                const rawValue = statObject?.value; // Get the raw value directly
 
-                 if (!path) {
-                     // Handle missing path
-                     formattedValue = '?';
-                     title = `${categoryAbbrev}: Path not found`;
-                     bgColor = undefined;
-                 } else {
-                     // Get the data using the ABBREV as the path
-                     statData = getNestedValue(stats, path); 
+                let title = `${path}: -`;
+                let stripBgColor = '#d7d7d7';
+                let displayNode;
 
-                     // Determine the value to display
-                     displayValue = statData; // Raw value or null/undefined
-
-                     // Format the display value
-                     formattedValue = ''; // Default placeholder
-                      if (displayValue !== null && displayValue !== undefined) {
-                          if (typeof displayValue === 'number') {
-                             if (statsNeedingTwoDecimals.includes(categoryAbbrev)) { // Check abbrev
-                                 formattedValue = displayValue.toFixed(2);
-                             } else {
-                                 formattedValue = displayValue.toFixed(1);
-                                 if (formattedValue.endsWith('.0')) {
-                                     formattedValue = formattedValue.slice(0, -2);
-                                 }
-                             }
-                          } else {
-                              formattedValue = String(displayValue);
-                          }
-                      }
-                     
-                     // Determine title
-                      // TODO: Get full label?
-                      title = `${categoryAbbrev}: ${formattedValue}`;
-                     // Determine background color (ignoring for now)
-                     bgColor = undefined; 
-                 }
-
+                if (rawValue !== null && rawValue !== undefined) {
+                    let formattedValue = '';
+                    if (typeof rawValue === 'number') {
+                        if (statsNeedingTwoDecimals.includes(path)) {
+                            formattedValue = rawValue.toFixed(2);
+                        } else {
+                            formattedValue = rawValue.toFixed(1);
+                            if (formattedValue.endsWith('.0')) {
+                                formattedValue = formattedValue.slice(0, -2);
+                            }
+                        }
+                    } else {
+                        formattedValue = String(rawValue);
+                    }
+                    displayNode = formattedValue;
+                    title = `${path}: ${formattedValue}`;
+                    if (typeof statObject?.zScore === 'number') {
+                        title += ` (Z: ${statObject.zScore.toFixed(2)})`;
+                    }
+                    if (statObject?.colors && typeof statObject.colors.bgColor === 'string') {
+                        stripBgColor = statObject.colors.bgColor;
+                    }
+                } else {
+                    displayNode = <EmptyStatIndicator />;
+                    // title remains default for empty stats
+                }
 
                 return (
                     <div
-                        key={categoryAbbrev} // <<< Use abbrev as key
-                        className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-white  rounded-sm relative shadow-sm border border-pb_lightergray"
+                        key={path}
+                        className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-white rounded-sm relative shadow-sm border border-pb_lightergray"
                         title={title}
                     >
                         <div className="text-xs text-pb_midgray z-10">
                             <div className="flex items-center justify-center w-full pb-2.5">
-                                {formattedValue}
+                                {displayNode}
                             </div>
                         </div>
-                        <div style={{ backgroundColor: bgColor }} className="absolute bottom-0 w-full h-3 rounded-b-sm">
+                        <div style={{ backgroundColor: stripBgColor }} className="absolute bottom-0 w-full h-3 rounded-b-sm">
                         </div>
                     </div>
                 );
             })}
-        </div >
+        </div>
     );
 });
 
@@ -260,7 +221,11 @@ const RankingsPlayerRow = memo(({
     isDraftMode,
     onToggleDraftStatus,
     activeRanking,
-    rowIndex
+    rowIndex,
+    // --- RENAMED PROPS for secondary stats ---
+    secondaryStatsLabel = "LAST 30", // Default placeholder
+    secondaryStatsData,
+    secondaryStatsTrend = 0 // Default placeholder to "0%"
 }) => {
     const rowRef = useRef(null);
 
@@ -283,11 +248,15 @@ const RankingsPlayerRow = memo(({
 
     // --- Determine sources --- 
     const playerName = player.info?.fullName || player.name || 'Player Name';
-    const playerPosition = player.info?.primaryPosition || player.position || 'N/A'; // <<< Use correct field
-    const playerImage = player.info?.officialImageSrc; // Just get the potential source
-    const team = player.info?.teamAbbreviation || 'FA'; // <<< Use correct field + fallback
-    const age = player.info?.age || 'N/A';
-    const injuryStatus = player.info?.injuryStatus;
+    const playerPosition = player.info?.primaryPosition || player.position || 'N/A';
+    const playerImage = player.info?.officialImageSrc;
+    const team = player.info?.teamName || 'FA'; // Restored direct access
+    const age = player.info?.age || 'N/A'; // Restored direct access
+    const currentInjury = player.info?.currentInjury || null;
+    const injuryStatus = player.info?.currentInjury?.status; // Restored direct access
+    console.log(`[RankingsPlayerRow] Player ID: ${player?.id}, Name: ${player?.info?.fullName}`);
+    console.log(`  Received player.info:`, JSON.parse(JSON.stringify(player.info || null)));
+    
     const defaultImageSrc = '/avatar-default.png';
 
     // Log the exact info object received by the row component (for first player)
@@ -450,7 +419,7 @@ const RankingsPlayerRow = memo(({
                 <div className="flex items-center w-[30%] relative">
                     {/* Drag handle */}
                     <div
-                        className={`px-1 text-pb_textgray ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
+                        className={`text-pb_textgray ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
                         {...(isRankSorted ? attributes : {})}
                         {...(isRankSorted ? listeners : {})}
                         title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
@@ -523,12 +492,9 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-baseline gap-2 select-none"> 
-                        <div className="font-bold text-sm">{playerName}</div>
-                         {/* Display Team - Position */}
-                         <div className="text-pb_textgray text-2xs">
-                            {playerPosition} 
-                         </div>
+                    <div className="flex items-baseline gap-2 select-none min-w-0">
+                        <div className="font-bold text-sm truncate">{playerName}</div>
+                         <div className="text-pb_textgray text-2xs flex-shrink-0">{playerPosition}</div>
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}
@@ -573,7 +539,7 @@ const RankingsPlayerRow = memo(({
                         {/* middle panel */}
                         <div className=" w-[21%] pr-3">
                             {/* Insights panel */}
-                            <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
+                            {/* <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
                                 <div className="w-full h-11 flex relative overflow-hidden rounded-sm mx-2">
                                     <div className="bg-pb_orange h-full w-[65%]"></div>
                                     <div className="bg-pb_blue h-full flex-1"></div>
@@ -584,13 +550,17 @@ const RankingsPlayerRow = memo(({
                                     </div>
                                 </div>
                                 <span className="text-2xs tracking-wider mt-1 text-pb_textgray">PLAYBOOK SCORE</span>
+                            </div> */}
+
+                            <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
+                               
                             </div>
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <div className={`h-4 w-8 mb-3 ${injuryStatus?.playingProbability === 'OUT' ? 'bg-red-500' :
-                                        injuryStatus?.playingProbability === 'QUESTIONABLE' ? 'bg-yellow-500' :
-                                            injuryStatus?.playingProbability === 'PROBABLE' ? 'bg-green-500' :
+                                    <div className={`h-4 w-8 mb-3 rounded-xs ${currentInjury?.playingProbability === 'OUT' ? 'bg-red-500' :
+                                        currentInjury?.playingProbability === 'QUESTIONABLE' ? 'bg-yellow-500' :
+                                            currentInjury?.playingProbability === 'PROBABLE' ? 'bg-green-500' :
                                                 'bg-pb_green'
                                         }`}>
 
@@ -615,8 +585,16 @@ const RankingsPlayerRow = memo(({
                         {/* right panel 0*/}
                         <div className="w-[7%] items-center justify-center border-l border-pb_lightgray">
                             <div className="p-2 flex flex-col h-[30%] items-center justify-center mt-0.5">
-                                <span className="text-2xs tracking-wider text-pb_textgray">LAST 30</span>
-                                <span className="text-2xs tracking-wider text-pb_green">▲ 47%</span>
+                                <span className="text-2xs tracking-wider text-pb_textgray">
+                                    {secondaryStatsLabel} {/* Display label (will have default) */}
+                                </span>
+                                {/* Numerical Trend Indicator with Triangle */}
+                                {typeof secondaryStatsTrend === 'number' && (
+                                    <span className={`text-xs font-medium flex items-center ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}> 
+                                        {secondaryStatsTrend < 0 ? '▼' : '▲'} 
+                                        <span className="ml-1">{secondaryStatsTrend > 0 ? `+${secondaryStatsTrend}%` : `${secondaryStatsTrend}%`}</span>
+                                    </span>
+                                )}
                             </div>
 
                             <div className="flex h-[70%] items-center justify-center ">
@@ -641,7 +619,7 @@ const RankingsPlayerRow = memo(({
                             <div className="py-2 flex items-center justify-center h-[30%]">
                                 <StatsSectionSecondary 
                                     categories={categories} 
-                                    stats={player.stats} 
+                                    secondaryStatsData={secondaryStatsData} // Pass secondaryStatsData
                                 />
                             </div>
 
