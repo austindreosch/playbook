@@ -172,8 +172,45 @@ export default async function handler(req, res) {
             }
         };
 
-        // --- Modify the copied categories object based on user selection --- 
-        if (newUserRankingDoc.sport !== 'nfl' && newUserRankingDoc.scoring === 'categories' && Array.isArray(selectedCategoryKeys)) {
+        // --- START: Default Multipliers for Points Leagues --- 
+        if (newUserRankingDoc.scoring.toLowerCase() === 'points') {
+            const sportKey = newUserRankingDoc.sport.toLowerCase(); // Already toLowerCase from sourceRanking
+            const categoriesToUpdate = newUserRankingDoc.categories;
+            let primaryPointsKey = null;
+
+            console.log(`[Create API - Points Defaults] Applying for sport: ${sportKey}, scoring: ${newUserRankingDoc.scoring}`);
+
+            if (sportKey === 'nfl') {
+                const pprType = newUserRankingDoc.pprSetting; // e.g., '1ppr', '0.5ppr', '0ppr' (already toLowerCase)
+                if (pprType === '1ppr') primaryPointsKey = 'PPG1ppr';
+                else if (pprType === '0.5ppr') primaryPointsKey = 'PPG0.5ppr';
+                else if (pprType === '0ppr') primaryPointsKey = 'PPG0ppr';
+                console.log(`[Create API - Points Defaults] NFL pprType: ${pprType}, determined primaryPointsKey: ${primaryPointsKey}`);
+            } else if (sportKey === 'nba') {
+                primaryPointsKey = 'PPG'; // TODO: Verify this is the correct key from SPORT_CONFIGS.nba.categories for overall fantasy points
+                console.log(`[Create API - Points Defaults] NBA primaryPointsKey set to: ${primaryPointsKey}`);
+            } else if (sportKey === 'mlb') {
+                primaryPointsKey = 'PPG'; // TODO: Verify this is the correct key from SPORT_CONFIGS.mlb.categories for overall fantasy points
+                console.log(`[Create API - Points Defaults] MLB primaryPointsKey set to: ${primaryPointsKey}`);
+            }
+
+            if (typeof categoriesToUpdate === 'object' && categoriesToUpdate !== null) {
+                Object.keys(categoriesToUpdate).forEach(catKey => {
+                    if (catKey === primaryPointsKey) {
+                        categoriesToUpdate[catKey].multiplier = 1;
+                    } else {
+                        categoriesToUpdate[catKey].multiplier = 0;
+                    }
+                });
+                 console.log('[Create API - Points Defaults] Categories after points league multiplier adjustment:', JSON.stringify(categoriesToUpdate, null, 2));
+            } else {
+                console.warn('[Create API - Points Defaults] categoriesToUpdate is not an object or is null. Skipping adjustment.');
+            }
+        }
+        // --- END: Default Multipliers for Points Leagues --- 
+
+        // --- Modify the copied categories object based on user selection for CATEGORIES leagues --- 
+        if (newUserRankingDoc.sport !== 'nfl' && newUserRankingDoc.scoring.toLowerCase() === 'categories' && Array.isArray(selectedCategoryKeys)) {
             // Ensure categories is an object before modifying
             if (typeof newUserRankingDoc.categories !== 'object' || newUserRankingDoc.categories === null) {
                  newUserRankingDoc.categories = {}; // Initialize if somehow missing
