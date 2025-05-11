@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
 import { SigmaSquareIcon } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
 import { FilterSelector } from './Selectors/FilterSelector';
@@ -124,6 +124,26 @@ const RankingsPlayerListHeader = ({
         return <div className="text-center p-4 text-gray-500">Please select a ranking to view.</div>;
     }
 
+    const getMultiplierButtonStyles = (multiplier) => {
+        switch (multiplier) {
+            case 2:
+                return "bg-[#a3e6c2] hover:bg-[#8ce0b8] text-slate-700 border-[#8ce0b8]"; // Light pb_green
+            case 1.5:
+                return "bg-[#c8f0d8] hover:bg-[#a3e6c2] text-slate-700 border-[#a3e6c2]"; // Very light pb_green
+            case 1.25:
+                return "bg-[#e6f7f0] hover:bg-[#c8f0d8] text-slate-700 border-[#c8f0d8]"; // Super light pb_green
+            case 0.75:
+                return "bg-[#fdd7d3] hover:bg-[#fbc2be] text-slate-700 border-[#fbc2be]"; // Very light pb_red
+            case 0.5:
+                return "bg-[#fbc2be] hover:bg-[#f9a8a0] text-slate-700 border-[#f9a8a0]"; // Light pb_red
+            case 0:
+                return "bg-[#f7a199] hover:bg-[#f58b80] text-slate-700 border-[#f58b80]"; // Slightly darker red for x0
+            case 1:
+            default:
+                return ""; // Uses default variant="outline" styles
+        }
+    };
+
     return (
         <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
             {/* Header Row */}
@@ -204,9 +224,9 @@ const RankingsPlayerListHeader = ({
 
             {/* Expanded Content */}
             {expanded && (
-                <div className="expanded-content border-t p-1 bg-gray-50 border rounded-b-sm grid grid-cols-10 gap-2">
+                <div className="expanded-content border-t p-1 bg-gray-50 border rounded-b-sm grid grid-cols-9 gap-2">
                     {/* Details */}
-                    <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 space-y-1 flex flex-col justify-between">
+                    <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 pb-2 space-y-1 flex flex-col justify-between">
                         <div>
                             <div className='flex items-center gap-1.5 ml-0.5'>
                                 <div className='text-lg font-bold'>{activeRanking?.name || 'Rankings'}</div>
@@ -266,32 +286,32 @@ const RankingsPlayerListHeader = ({
                         </div>
 
                         <div className="space-y-2">
-                            {/* Save Button */}
-                            {isSaving ? (
-                                <ButtonLoading />
-                            ) : (
-                                <Button onClick={handleSave} className='bg-pb_orange text-pb_darkgray shadow-md hover:bg-pb_darkorange w-full'>Save Changes</Button>
-                            )}
+                            {/* Last Updated Text - MOVED HERE, ABOVE BUTTONS */}
+                            <div className='text-2xs text-pb_midgray pl-1'> {/* Added pl-1 for slight indent, pb-1 for space below */}
+                                Last Updated: {activeRanking?.details?.dateUpdated && !isNaN(new Date(activeRanking.details.dateUpdated).getTime()) 
+                                    ? new Date(activeRanking.details.dateUpdated).toLocaleDateString()
+                                    : 'N/A'}
+                            </div>
 
-                            {/* Container for Delete Icon and Last Updated Date */}
-                            <div className="flex items-center justify-between pt-1 pb-2">
+                            {/* Flex container for Save Button and Delete Icon - NOW BORDERED */}
 
-                                {/* Last Updated Text */}
-                                <div className='text-2xs text-pb_midgray pl-1'>
-                                    Last Updated: {new Date(activeRanking?.details?.dateUpdated).toLocaleDateString()}
-                                </div>
+                            <div className="flex items-center justify-start w-fit gap-x-4 border border-gray-300 bg-white rounded-md p-2">
+                                {/* Save Button */}
+                                {isSaving ? (
+                                    <ButtonLoading />
+                                ) : (
+                                    <Button onClick={handleSave} className='bg-pb_blue text-white shadow-md px-5 hover:bg-pb_bluehover'>Save Changes</Button>
+                                )}
 
                                 {/* Delete Button Area */}
                                 <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                                     <AlertDialogTrigger asChild>
-                                        {/* Restyled Trash Icon Button */}
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-gray-500 border border-gray-300 hover:bg-pb_red hover:text-white h-7 w-7 p-1"
+                                            className="text-pb_midgray border border-gray-300 hover:bg-pb_red hover:text-white h-7 w-7 p-1"
                                             aria-label="Delete ranking list"
                                         >
-                                            {/* Trash Icon SVG */}
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                             </svg>
@@ -324,13 +344,27 @@ const RankingsPlayerListHeader = ({
 
                     {/* Source Boxes */}
                     <div className="text-pb_darkgray h-full col-span-2 space-y-2 p-2 flex flex-col justify-start">
-                        <div className="space-y-1">
+                        {/* <div className="space-y-1"> // Original structure with label above
                             <h3 className='text-sm font-bold text-center'>Position</h3>
                             <PositionSelector
                                 value={selectedPosition}
                                 onValueChange={setSelectedPosition}
                                 defaultValue="all"
                             />
+                        </div> */}
+
+                        {/* Option 1: Inline Label */}
+                        <div className="flex items-center space-x-2 py-1">
+                            <label htmlFor="position-selector" className="text-sm font-bold whitespace-nowrap">Position:</label>
+                            {/* <div className="flex-grow"> */}{/* Removed flex-grow */}
+                                <PositionSelector
+                                    id="position-selector"
+                                    value={selectedPosition}
+                                    onValueChange={setSelectedPosition}
+                                    defaultValue="all"
+                                    className="w-[180px]" // Added a fixed width, adjust as needed
+                                />
+                            {/* </div> */}
                         </div>
 
                         {/* <div className="space-y-1">
@@ -355,46 +389,45 @@ const RankingsPlayerListHeader = ({
                     </div>
 
                     {/* Categories */}
-                    <div className="text-pb_darkgray h-full col-span-6">
+                    <div className="text-pb_darkgray h-full col-span-5">
                         {/* Use activeRanking.categories to render toggles/multipliers */}
-                        <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 p-2">
+                        <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-1.5 p-2">
                             {activeRanking?.categories && Object.entries(activeRanking.categories).map(([abbrev, categoryDetails]) => (
-                                <div key={abbrev} className="flex flex-col border rounded-lg p-2 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
-                                    <div className="flex items-center justify-between w-full">
-                                        <div className="flex items-center">
+                                <React.Fragment key={abbrev}>
+                                    <div className="flex flex-col border rounded-lg p-1.5 bg-white shadow-sm hover:shadow-md transition-shadow w-full">
+                                        <div className="flex items-center justify-between w-full">
                                             <Switch
-                                                // Use details from activeRanking.categories
                                                 checked={categoryDetails.enabled}
-                                                // Pass abbreviation (key) to handler
                                                 onCheckedChange={(checked) => handleCategoryToggle(abbrev, checked)}
-                                                className="flex-shrink-0 mr-2 data-[state=checked]:bg-pb_blue"
+                                                className="flex-shrink-0 data-[state=checked]:bg-pb_blue"
                                             />
-                                            {/* Display abbreviation */}
-                                            <span className="text-sm font-medium pr-4">{abbrev}</span>
+                                            <span className={`text-xs text-center flex-1 font-bold ${categoryDetails.enabled ? 'text-pb_darkgray' : 'text-pb_midgray'}`}>{abbrev}</span>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className={`h-6 px-1.5 text-xs w-auto min-w-[42px] flex-shrink-0 ${getMultiplierButtonStyles(categoryDetails.multiplier ?? 1)}`}
+                                                disabled={!categoryDetails.enabled}
+                                                onClick={() => {
+                                                    const multipliers = [0, 0.5, 0.75, 1, 1.25, 1.5, 2];
+                                                    const currentMultiplier = categoryDetails.multiplier !== undefined ? categoryDetails.multiplier : 1;
+                                                    let currentIndex = multipliers.indexOf(currentMultiplier);
+                                                    let nextIndex = (currentIndex + 1) % multipliers.length;
+                                                    if (currentIndex === -1) {
+                                                        nextIndex = multipliers.indexOf(1);
+                                                        if (nextIndex === -1) nextIndex = 0;
+                                                    }
+                                                    handleMultiplierChange(abbrev, multipliers[nextIndex]);
+                                                }}
+                                            >
+                                                x{categoryDetails.multiplier ?? 1}
+                                            </Button>
                                         </div>
-                                        <Select
-                                            // Use multiplier from activeRanking.categories
-                                            value={categoryDetails.multiplier?.toString() || '1'} // Default to '1' if undefined
-                                            // Pass abbreviation (key) to handler
-                                            onValueChange={(value) => handleMultiplierChange(abbrev, parseFloat(value))}
-                                            className="w-[52px]"
-                                        >
-                                            <SelectTrigger className="h-7">
-                                                <SelectValue className="text-xs text-center" placeholder={`x${categoryDetails.multiplier || 1}`} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="0.25">x0.25</SelectItem>
-                                                <SelectItem value="0.5">x0.5</SelectItem>
-                                                <SelectItem value="0.75">x0.75</SelectItem>
-                                                <SelectItem value="1">x1</SelectItem>
-                                                <SelectItem value="1.25">x1.25</SelectItem>
-                                                <SelectItem value="1.5">x1.5</SelectItem>
-                                                <SelectItem value="2">x2</SelectItem>
-                                                <SelectItem value="3">x3</SelectItem>
-                                            </SelectContent>
-                                        </Select>
                                     </div>
-                                </div>
+                                    {/* Add divider after 'TB' category specifically for MLB */}
+                                    {sport?.toLowerCase() === 'mlb' && abbrev === 'TB' && (
+                                        <div className="col-span-full h-px bg-pb_lightergray my-1"></div>
+                                    )}
+                                </React.Fragment>
                             ))}
                         </div>
                     </div>
