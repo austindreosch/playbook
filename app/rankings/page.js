@@ -174,12 +174,30 @@ export default function RankingsPage() {
 
     const mapping = currentSportConfig.statPathMapping || {};
     
-    const enabledAbbrevs = Object.entries(activeRanking.categories)
+    let enabledAbbrevs = Object.entries(activeRanking.categories)
       .filter(([_, catData]) => catData.enabled)
       .map(([abbrev, _]) => abbrev);
 
+    // --- START NFL PPG Filtering ---
+    const sportKey = selectedSport?.toLowerCase(); // Already available from currentSportConfig logic, but re-declaring for clarity here
+    const isNFL = sportKey === 'nfl';
+    const isPointsScoring = activeRanking?.scoring?.toLowerCase() === 'points';
+    const currentPprSetting = activeRanking?.pprSetting; // e.g., '1ppr', '0.5ppr', '0ppr'
+
+    if (isNFL && isPointsScoring && currentPprSetting) {
+        // console.log(`[Category Calculation Memo] NFL Points league with pprSetting: ${currentPprSetting}. Filtering PPG variants.`);
+        enabledAbbrevs = enabledAbbrevs.filter(abbrev => {
+            if (abbrev === 'PPG0ppr') return currentPprSetting === '0ppr';
+            if (abbrev === 'PPG0.5ppr') return currentPprSetting === '0.5ppr';
+            if (abbrev === 'PPG1ppr') return currentPprSetting === '1ppr';
+            return true; // Keep all other non-PPG-variant categories
+        });
+    }
+    // --- END NFL PPG Filtering ---
+
     const finalEnabledAbbrevs = enabledAbbrevs.filter(abbrev => {
       if (mapping[abbrev] || mapping[abbrev] === '') return true;
+      // console.warn(`[Category Calculation] Memo: Filtering out ${abbrev} because no path in statPathMapping for ${selectedSport}.`);
       return false;
     });
     

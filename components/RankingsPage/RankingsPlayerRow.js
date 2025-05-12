@@ -19,7 +19,7 @@ const DEFAULT_ROW_HEIGHT = 45;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
 // Create a specialized component just for stats to reduce re-renders
-const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex }) => {
+const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType }) => {
 
     // Define stats that need 2 decimal places
     const statsNeedingTwoDecimals = [
@@ -41,6 +41,19 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
 
             {/* Render other category stats */}
             {categories.map((categoryAbbrev, index) => {
+                // +++ ADD DEBUG LOG FOR SVH FOR A SPECIFIC HITTER (e.g., Shohei Ohtani, replace ID) +++
+                // Example: if (player?.id === '16591' && categoryAbbrev === 'SVH') { // Shohei Ohtani MSF ID for MLB
+                // For broader logging initially to catch any hitter:
+                if (sport?.toLowerCase() === 'mlb' && categoryAbbrev === 'SVH') {
+                    const primaryPosition = player?.position?.toUpperCase(); // Get from player prop of RankingsPlayerRow
+                    const isPitcher = ['P', 'SP', 'RP'].includes(primaryPosition);
+                    if (!isPitcher) { // Log only for non-pitchers
+                        console.log(`[StatsSection SVH Debug] MLB Non-Pitcher ID: ${player?.id}, Name: ${player?.name}, Position: ${primaryPosition}, Category: ${categoryAbbrev}`);
+                        console.log('  Raw stats prop for SVH from player.stats/hittingStats:', JSON.stringify(stats?.[categoryAbbrev]));
+                    }
+                }
+                // +++ END DEBUG LOG +++
+
                 const path = categoryAbbrev;
                 const statDataFromPlayer = stats?.[path]; // Direct access
 
@@ -49,7 +62,27 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                 let currentBgColor = '#FFFFFF'; // Default white background
                 let currentTextColor = '#747474'; // Default dark gray text (Tailwind gray-800)
 
-                if (statDataFromPlayer !== null && statDataFromPlayer !== undefined) {
+                // --- START MLB Hitter/Pitcher Stat Filtering ---
+                let showEmptyIndicatorForMlbMismatch = false;
+                if (sport?.toLowerCase() === 'mlb') {
+                    const playerPrimaryPosition = player?.info?.primaryPosition?.toUpperCase();
+                    const sportConfig = SPORT_CONFIGS.mlb;
+                    const categoryConfig = sportConfig?.categories?.[categoryAbbrev];
+
+                    if (playerPrimaryPosition && categoryConfig?.group) {
+                        const isPitcher = ['P', 'SP', 'RP'].includes(playerPrimaryPosition);
+                        const isHitter = !isPitcher; // Assuming anyone not P/SP/RP is a hitter for this purpose
+
+                        if ((isHitter && categoryConfig.group === 'pitching') || (isPitcher && categoryConfig.group === 'hitting')) {
+                            showEmptyIndicatorForMlbMismatch = true;
+                        }
+                    }
+                }
+                // --- END MLB Hitter/Pitcher Stat Filtering ---
+
+                if (showEmptyIndicatorForMlbMismatch) {
+                    // formattedValue remains '', title remains default. EmptyStatIndicator will be shown.
+                } else if (statDataFromPlayer !== null && statDataFromPlayer !== undefined) {
                     let rawValueForFormatting;
                     let zScoreForTitle = null;
 
@@ -126,7 +159,13 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex 
                         title={title}
                     >
                         {formattedValue !== '' ? (
-                            <span className="text-sm text-pb_darkgray" >
+                            <span className={cn(
+                                "text-sm text-pb_darkgray",
+                                (
+                                    (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
+                                    (sport?.toLowerCase() !== 'nfl' && categoryAbbrev === 'PPG')
+                                ) && activeScoringType?.toLowerCase() === 'points' && "font-bold"
+                            )} >
                                 {formattedValue}
                             </span>
                         ) : (
@@ -384,6 +423,8 @@ const RankingsPlayerRow = memo(({
             zScoreSumValue={player?.zScoreTotals?.overallZScoreSum}
             sport={sport}
             rowIndex={rowIndex}
+            player={player}
+            activeScoringType={activeRanking?.scoring}
         />
     );
 

@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
 import { SigmaSquareIcon } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -52,6 +53,13 @@ const RankingsPlayerListHeader = ({
     const [selectedPosition, setSelectedPosition] = useState("");
     const [selectedPlayoffStrength, setSelectedPlayoffStrength] = useState("");
     const [selectedDataView, setSelectedDataView] = useState("");
+
+    useEffect(() => {
+        if (sport?.toLowerCase() === 'nfl' && activeRanking?.scoring === 'points') {
+            console.log('[RankingsPlayerListHeader] NFL Points League - enabledCategoryAbbrevs:', enabledCategoryAbbrevs);
+            console.log('[RankingsPlayerListHeader] NFL Points League - activeRanking.categories:', activeRanking?.categories);
+        }
+    }, [sport, activeRanking, enabledCategoryAbbrevs]);
 
     const handleSave = async () => {
         try {
@@ -403,18 +411,38 @@ const RankingsPlayerListHeader = ({
                             {(activeRanking?.categories ? (() => {
                                 let categoryEntries = Object.entries(activeRanking.categories);
                                 
-                                const isNFL = sport?.toLowerCase() === 'nfl';
-                                // Ensure activeRanking and activeRanking.scoring are defined before calling toLowerCase()
-                                const isPointsScoring = activeRanking && activeRanking.scoring && activeRanking.scoring.toLowerCase() === 'points';
-                                const hasPPRSetting = activeRanking && !!activeRanking.pprSetting;
+                                const sportKey = sport?.toLowerCase(); // Get sportKey
+                                const isPointsScoring = activeRanking?.scoring?.toLowerCase() === 'points';
+                                const sportConfig = sportKey ? SPORT_CONFIGS[sportKey] : null;
 
                                 // Debugging logs
-                                console.log('[RankingsPlayerListHeader Toggles Debug]');
-                                console.log('  Sport Prop:', sport, '=> isNFL:', isNFL);
-                                console.log('  ActiveRanking Scoring:', activeRanking?.scoring, '=> isPointsScoring:', isPointsScoring);
-                                console.log('  ActiveRanking PPRSetting:', activeRanking?.pprSetting, '=> hasPPRSetting:', hasPPRSetting);
+                                // console.log('[RankingsPlayerListHeader Toggles Debug]');
+                                // console.log('  Sport Prop:', sport, '=> sportKey:', sportKey);
+                                // console.log('  ActiveRanking Scoring:', activeRanking?.scoring, '=> isPointsScoring:', isPointsScoring);
+                                
+                                // --- START: Filter for showInPointsView if it's a Points league ---
+                                if (isPointsScoring && sportConfig && sportConfig.categories) {
+                                    // console.log('  Applying showInPointsView filter for Points league.');
+                                    categoryEntries = categoryEntries.filter(([catAbbrev, catDetails]) => {
+                                        const configCatData = sportConfig.categories[catAbbrev];
+                                        // If showInPointsView is explicitly false, filter it out.
+                                        // If true or undefined (defaulting to show), keep it.
+                                        return configCatData?.showInPointsView !== false; 
+                                    });
+                                    // console.log('  Filtered by showInPointsView, count:', categoryEntries.length, 'Entries:', categoryEntries.map(e => e[0]));
+                                }
+                                // --- END: Filter for showInPointsView ---
+
+                                // --- Existing NFL PPR Filtering ---
+                                const isNFL = sportKey === 'nfl';
+                                // Ensure activeRanking and activeRanking.scoring are defined before calling toLowerCase()
+                                // const isPointsScoring = activeRanking && activeRanking.scoring && activeRanking.scoring.toLowerCase() === 'points'; // Already defined above
+                                const hasPPRSetting = activeRanking && !!activeRanking.pprSetting;
+
+                                // Debugging logs (can be consolidated or removed later)
+                                // console.log('  ActiveRanking PPRSetting:', activeRanking?.pprSetting, '=> hasPPRSetting:', hasPPRSetting);
                                 const shouldApplyPPRFilter = isNFL && isPointsScoring && hasPPRSetting;
-                                console.log('  => Should Apply PPR Filter?:', shouldApplyPPRFilter);
+                                // console.log('  => Should Apply PPR Filter?:', shouldApplyPPRFilter);
 
                                 if (shouldApplyPPRFilter) {
                                     const currentPprSetting = activeRanking.pprSetting;
@@ -468,8 +496,8 @@ const RankingsPlayerListHeader = ({
                                                 </Button>
                                             </div>
                                         </div>
-                                        {/* Add divider after 'TB' category specifically for MLB */}
-                                        {sport?.toLowerCase() === 'mlb' && abbrev === 'TB' && (
+                                        {/* Add divider after 'TB' category specifically for MLB Categories leagues */}
+                                        {(sport?.toLowerCase() === 'mlb' && activeRanking?.scoring?.toLowerCase() === 'categories' && abbrev === 'TB') && (
                                             <div className="col-span-full h-px bg-pb_lightergray my-1"></div>
                                         )}
                                     </React.Fragment>

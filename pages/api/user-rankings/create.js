@@ -121,41 +121,38 @@ export default async function handler(req, res) {
             sport: sourceRanking.sport.toLowerCase(),
             format: sourceRanking.format.toLowerCase(),
             scoring: sourceRanking.scoring.toLowerCase(),
-            // --- REVISED: Always generate categories from SPORT_CONFIGS --- 
             categories: (() => {
-                console.log('Generating categories from SPORT_CONFIGS.');
+                console.log('[Create API - Init Categories Block] Generating categories from SPORT_CONFIGS.');
                 const sportKey = sourceRanking.sport?.toLowerCase();
+                const currentScoringType = scoring.toLowerCase(); // Get the scoring type for the list being created
                 const sportConfig = SPORT_CONFIGS[sportKey];
                 const newCategories = {};
 
                 if (sportConfig && sportConfig.categories && typeof sportConfig.categories === 'object') {
-                    // Handle MLB structure
-                    if (sportKey === 'mlb' && sportConfig.categories.hitting && sportConfig.categories.pitching) {
-                        const combinedMLBCategories = { ...sportConfig.categories.hitting, ...sportConfig.categories.pitching };
-                         for (const [catKey, catData] of Object.entries(combinedMLBCategories)) {
-                            newCategories[catKey] = {
-                                enabled: catData.enabled || false, // Use enabled from config, default false
-                                label: catData.label || catKey, // Use label from config
-                                multiplier: 1 // Default multiplier
-                            };
+                    for (const [catKey, catData] of Object.entries(sportConfig.categories)) {
+                        let isEnabledByDefault;
+                        if (currentScoringType === 'points') {
+                            // For Points leagues, use ptsEnabled flag from config
+                            isEnabledByDefault = catData.ptsEnabled === true;
+                            // console.log(`[Create API - Init] Points league. Cat: ${catKey}, catData.ptsEnabled: ${catData.ptsEnabled}, isEnabledByDefault: ${isEnabledByDefault}`);
+                        } else {
+                            // For Categories leagues, use the original enabled flag from config
+                            isEnabledByDefault = catData.enabled === true;
+                            // console.log(`[Create API - Init] Categories league. Cat: ${catKey}, catData.enabled: ${catData.enabled}, isEnabledByDefault: ${isEnabledByDefault}`);
                         }
-                    } else {
-                        // Handle standard structure (NBA, NFL)
-                        for (const [catKey, catData] of Object.entries(sportConfig.categories)) {
-                            newCategories[catKey] = {
-                                enabled: catData.enabled || false, // Use enabled from config, default false
-                                label: catData.label || catKey, // Use label from config
-                                multiplier: 1 // Default multiplier
-                            };
-                        }
+
+                        newCategories[catKey] = {
+                            enabled: isEnabledByDefault,
+                            label: catData.label || catKey,
+                            multiplier: 1 // Default multiplier, will be adjusted later by subsequent logic
+                        };
                     }
                 } else {
-                    console.warn(`No categories found in SPORT_CONFIGS for sport: ${sportKey}`);
-                    // Return empty object if no config found
+                    console.warn(`[Create API - Init Categories Block] No categories found in SPORT_CONFIGS for sport: ${sportKey}`);
                 }
-                return newCategories; // Return the newly generated object
+                // console.log(`[Create API - Init Categories Block] Initial categories generated for ${currentScoringType} ${sportKey}:`, JSON.stringify(newCategories, null, 2));
+                return newCategories;
             })(),
-            // --- END REVISED CATEGORIES --- 
             ...(sourceRanking.sport.toLowerCase() === 'nfl' && {
                 flexSetting: sourceRanking.flexSetting?.toLowerCase(),
                 pprSetting: sourceRanking.pprSetting?.toLowerCase(),
