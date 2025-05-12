@@ -133,7 +133,7 @@ export default function RankingsPage() {
         console.error(`[handleRankingSelect] Error during ranking selection for ${rankingId}:`, err);
         setPageError('Error selecting ranking.');
     } finally {
-        // setIsPageLoading(false); // activeRanking update from store should trigger isPageLoading recalculation
+        setIsPageLoading(false); // activeRanking update from store should trigger isPageLoading recalculation
         setCollapseAllTrigger(prev => prev + 1); // Collapse rows on new ranking select
     }
   }, [activeRankingId, selectAndTouchRanking, setActiveRanking, setSelectedSport /*Removed setIsPageLoading direct call*/]);
@@ -314,23 +314,38 @@ export default function RankingsPage() {
   useEffect(() => {
     console.log('[InitialSelectEffect Check]', {
         initialRankingsLoaded,
-        activeRanking: !!activeRanking, 
+        storeActiveRanking: !!activeRanking, 
+        storeActiveRankingId: activeRanking?._id,
+        localActiveRankingId: activeRankingId,
         userRankingsLength: userRankings ? userRankings.length : 'undefined',
-        activeRankingLoading,
-        activeRankingId
+        activeRankingLoadingFromStore: activeRankingLoading, // This is selectionLoading from store
     });
 
-    if (initialRankingsLoaded && !activeRanking && userRankings && userRankings.length > 0) {
-        const firstRankingId = userRankings[0]._id;
-        console.log(`[InitialSelectEffect] Conditions met. First ranking ID: ${firstRankingId}`);
-        if (!activeRankingLoading && activeRankingId !== firstRankingId) { 
-            console.log(`[InitialSelectEffect] Calling handleRankingSelect(${firstRankingId})`);
-            handleRankingSelect(firstRankingId);
+    if (initialRankingsLoaded && userRankings && userRankings.length > 0) {
+        // Determine the ID that should be fully loaded.
+        // If store.activeRanking._id exists, that's our primary candidate.
+        // Otherwise, fall back to the first ranking in the list.
+        const idToLoad = activeRanking?._id || userRankings[0]?._id;
+
+        if (idToLoad) {
+            // We need to call handleRankingSelect if:
+            // 1. The current local activeRankingId is NOT YET this idToLoad.
+            // OR
+            // 2. The current local activeRankingId IS this idToLoad, BUT the activeRanking object from store
+            //    lacks some crucial data (e.g., categories), implying it's a summary and not fully loaded.
+            const isPotentiallySummary = activeRanking && activeRanking._id === idToLoad && !activeRanking.categories;
+
+            if ((activeRankingId !== idToLoad || isPotentiallySummary) && !activeRankingLoading) {
+                console.log(`[InitialSelectEffect] Calling handleRankingSelect for ID: ${idToLoad}. Reason: activeRankingId (${activeRankingId}) !== idToLoad (${idToLoad}) OR isPotentiallySummary (${isPotentiallySummary})`);
+                handleRankingSelect(idToLoad);
+            } else {
+                console.log(`[InitialSelectEffect] NOT calling handleRankingSelect for ID: ${idToLoad}. Conditions: activeRankingId=${activeRankingId}, isPotentiallySummary=${isPotentiallySummary}, activeRankingLoading=${activeRankingLoading}`);
+            }
         } else {
-            console.log('[InitialSelectEffect] Skipping call.', { activeRankingLoading, activeRankingId, firstRankingId });
+            console.log('[InitialSelectEffect] No idToLoad determined.');
         }
     } else {
-        console.log('[InitialSelectEffect] Conditions NOT met.');
+        console.log('[InitialSelectEffect] Conditions NOT met (initialRankingsLoaded or no userRankings).');
     }
   }, [initialRankingsLoaded, userRankings, activeRanking, handleRankingSelect, activeRankingLoading, activeRankingId]);
 
@@ -399,17 +414,17 @@ export default function RankingsPage() {
     const overallError = selectedSportError || activeRankingError?.message || null;
     setPageError(currentError => overallError !== currentError ? overallError : currentError);
 
-    const initialRankingsLoaded = latestUserRankings !== null;
-    const activeRankingLoaded = !!activeRanking;
-    const rankingsExist = latestUserRankings?.length > 0;
+    // Use initialRankingsLoaded directly from the store (already destructured earlier)
+    const activeRankingFullyLoaded = !!activeRanking && !!activeRanking.categories; // Robust check
+    const rankingsListExists = userRankings && userRankings.length > 0; // Use store's rankings list
 
     const newLoadingState = 
         !!overallError ||                 
         userRankingsLoading ||
         activeRankingLoading ||
         selectedSportLoading ||
-        !initialRankingsLoaded ||         
-        (rankingsExist && !activeRankingLoaded);
+        !initialRankingsLoaded || // Use store's initialRankingsLoaded directly
+        (rankingsListExists && !activeRankingFullyLoaded); // Check if list exists and active one is fully loaded
         
     setIsPageLoading(currentLoading => newLoadingState !== currentLoading ? newLoadingState : currentLoading);
 
@@ -419,7 +434,9 @@ export default function RankingsPage() {
       userRankingsLoading, 
       activeRankingLoading,
       activeRankingError,
-      latestUserRankings,
+      // latestUserRankings, // This local state is less direct than store values for this logic
+      userRankings, // Added: depend on the store's list of rankings
+      initialRankingsLoaded, // Added: depend on the store's flag
       activeRanking,      
       selectedSport       
     ]);
@@ -529,7 +546,7 @@ export default function RankingsPage() {
         </div>
       </div>
 
-      {latestUserRankings.length === 0 ? (
+      {!latestUserRankings || latestUserRankings.length === 0 ? (
          // ... Keep your existing Get Started UI ...
          <div className="text-center py-12 px-4 bg-white border-t border-gray-100">
            <div className="max-w-md mx-auto">

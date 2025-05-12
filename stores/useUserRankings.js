@@ -51,11 +51,11 @@ const useUserRankings = create(
                         const data = await response.json();
                         
                         // ---->>> ADD THIS CONSOLE.LOG HERE <<<----
-                        console.log('[useUserRankings - fetchUserRankings] Data received from /api/user-rankings:', data);
+                        // console.log('[useUserRankings - fetchUserRankings] Data received from /api/user-rankings:', data);
                         // Specifically log the NFL ones if any
                         const nflRankingsInData = data.filter(r => r.sport === 'nfl' || r.sport === 'NFL');
                         if (nflRankingsInData.length > 0) {
-                            console.log('[useUserRankings - fetchUserRankings] NFL Rankings from API:', JSON.stringify(nflRankingsInData, null, 2));
+                            // console.log('[useUserRankings - fetchUserRankings] NFL Rankings from API:', JSON.stringify(nflRankingsInData, null, 2));
                         }
                         // ---->>> END CONSOLE.LOG <<<----
 
@@ -573,8 +573,8 @@ const useUserRankings = create(
                     const redraftUrl = buildApiUrl('/api/rankings/latest', redraftParams);
 
                     try {
-                        console.log(`[fetchConsensusRankings] Fetching Standard URL: ${standardUrl}`);
-                        console.log(`[fetchConsensusRankings] Fetching Redraft URL: ${redraftUrl}`);
+                        // console.log(`[fetchConsensusRankings] Fetching Standard URL: ${standardUrl}`);
+                        // console.log(`[fetchConsensusRankings] Fetching Redraft URL: ${redraftUrl}`);
 
                         const [standardResponse, redraftResponse] = await Promise.all([
                             fetch(standardUrl),
@@ -600,10 +600,10 @@ const useUserRankings = create(
                         // Log data BEFORE setting state
                         const standardEcrToSet = standardRankingsData?.rankings || []; 
                         const redraftEcrToSet = redraftRankingsData?.rankings || []; 
-                        console.log(`[fetchConsensusRankings] Extracted Rankings Arrays:`, { standardCount: standardEcrToSet.length, redraftCount: redraftEcrToSet.length });
+                        // console.log(`[fetchConsensusRankings] Extracted Rankings Arrays:`, { standardCount: standardEcrToSet.length, redraftCount: redraftEcrToSet.length });
                         // Log first few entries if available
-                        if(standardEcrToSet.length > 0) console.log("Sample Standard ECR Entry:", standardEcrToSet[0]);
-                        if(redraftEcrToSet.length > 0) console.log("Sample Redraft ECR Entry:", redraftEcrToSet[0]);
+                        // if(standardEcrToSet.length > 0) console.log("Sample Standard ECR Entry:", standardEcrToSet[0]);
+                        // if(redraftEcrToSet.length > 0) console.log("Sample Redraft ECR Entry:", redraftEcrToSet[0]);
 
                         setState({
                             standardEcrRankings: standardEcrToSet,
@@ -611,10 +611,10 @@ const useUserRankings = create(
                             isEcrLoading: false,
                             ecrError: null
                         });
-                        console.log('[fetchConsensusRankings] ECR State AFTER setState:', { 
-                            standard: get().standardEcrRankings, 
-                            redraft: get().redraftEcrRankings 
-                        });
+                        // console.log('[fetchConsensusRankings] ECR State AFTER setState:', { 
+                        //     standard: get().standardEcrRankings, 
+                        //     redraft: get().redraftEcrRankings 
+                        // });
 
                     } catch (error) {
                         console.error('[fetchConsensusRankings] Error fetching ECR data:', error);
@@ -676,13 +676,13 @@ const useUserRankings = create(
                             pprSetting: updatedRankingData.pprSetting, // Access directly from root
                             flexSetting: updatedRankingData.flexSetting // Access directly from root
                         };
-                        console.log('[selectAndTouchRanking] Built criteria:', criteria);
+                        // console.log('[selectAndTouchRanking] Built criteria:', criteria);
                         get().fetchConsensusRankings(criteria);
-                        console.log('[selectAndTouchRanking] Called fetchConsensusRankings');
+                        // console.log('[selectAndTouchRanking] Called fetchConsensusRankings');
 
                         // 5. Save the changes (specifically the timestamp) immediately
                         await get().saveChanges(); 
-                        console.log('[selectAndTouchRanking] Called saveChanges');
+                        // console.log('[selectAndTouchRanking] Called saveChanges');
 
                         // --- ADD RETURN STATEMENT --- 
                         return updatedRankingData; // Return the updated ranking
@@ -710,7 +710,7 @@ const useUserRankings = create(
 
 // Modify the standalone setFetchedRankings to also update initialRankingsLoaded
 export const setFetchedRankings = (rankingsList) => {
-    console.log('[setFetchedRankings] Called. Attempting to set initialRankingsLoaded to true.');
+    // console.log('[setFetchedRankings] Called. Attempting to set initialRankingsLoaded to true.');
     useUserRankings.setState({
         rankings: rankingsList,
         initialRankingsLoaded: true, 
@@ -718,10 +718,10 @@ export const setFetchedRankings = (rankingsList) => {
     });
     // Log the state immediately after setting
     const stateAfterSet = useUserRankings.getState();
-    console.log('[setFetchedRankings] State after set Self Call:', {
-        initialRankingsLoaded: stateAfterSet.initialRankingsLoaded,
-        rankingsLength: stateAfterSet.rankings.length
-    });
+    // console.log('[setFetchedRankings] State after set Self Call:', {
+    //     initialRankingsLoaded: stateAfterSet.initialRankingsLoaded,
+    //     rankingsLength: stateAfterSet.rankings.length
+    // });
 };
 
 // Hook to initialize store fetching on mount
@@ -733,19 +733,19 @@ export const useInitializeUserRankings = () => {
 
     useEffect(() => {
         // ---->>> ADD THESE LOGS <<<----
-        console.log('[useInitializeUserRankings] Hook running. Conditions:');
-        console.log(`  - rankingsLoaded (from rankings.length > 0): ${rankingsLoaded}`);
-        console.log(`  - isLoading: ${isLoading}`);
-        console.log(`  - initialRankingsLoaded (from store state): ${initialRankingsLoadedFromStore}`);
-        console.log(`  - Condition to fetch (!rankingsLoaded && !isLoading): ${!rankingsLoaded && !isLoading}`);
-        // ---->>> END LOGS <<<----
+        // console.log('[useInitializeUserRankings] Hook running. Conditions:');
+        // console.log(`  - rankingsLoaded (from rankings.length > 0): ${rankingsLoaded}`);
+        // console.log(`  - isLoading: ${isLoading}`);
+        // console.log(`  - initialRankingsLoaded (from store state): ${initialRankingsLoadedFromStore}`);
+        // console.log(`  - Condition to fetch (!rankingsLoaded && !isLoading): ${!rankingsLoaded && !isLoading}`);
+        // // ---->>> END LOGS <<<----
 
         // Fetch only if rankings haven't been loaded yet and not currently loading
         if (!rankingsLoaded && !isLoading) {
-            console.log('[useInitializeUserRankings] Calling fetchUserRankings().'); // Log before calling
+            // console.log('[useInitializeUserRankings] Calling fetchUserRankings().'); // Log before calling
             fetchUserRankings();
         } else {
-            console.log('[useInitializeUserRankings] NOT calling fetchUserRankings() due to conditions.');
+            // console.log('[useInitializeUserRankings] NOT calling fetchUserRankings() due to conditions.');
         }
     }, [fetchUserRankings, rankingsLoaded, isLoading, initialRankingsLoadedFromStore]); // Add initialRankingsLoadedFromStore to dependency array
 };
