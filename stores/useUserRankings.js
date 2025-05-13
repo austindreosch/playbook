@@ -635,62 +635,87 @@ const useUserRankings = create(
                     // Implementation needed
                 },
 
-                // --- NEW: Select Ranking and Update Timestamp --- 
+                // --- NEW: Select and Fetch Full Ranking Details ---
                 selectAndTouchRanking: async (rankingId) => {
-                    if (!rankingId) return;
-                    setState({ selectionLoading: true, error: null }); // Indicate loading
+                    // console.log(`[selectAndTouchRanking] ACTION CALLED for ID: ${rankingId}`);
+                    if (!rankingId) {
+                        console.error("[selectAndTouchRanking] No rankingId provided.");
+                        setState({ activeRanking: null, selectionLoading: false, error: 'No ranking ID provided for selection.' });
+                        return null; // Return null indication failure/no data
+                    }
+                    
+                    // Set loading state immediately
+                    setState({ selectionLoading: true, error: null });
 
                     try {
-                        // 1. Find the ranking in the current state list
-                        const currentRankings = get().rankings;
-                        const rankingToSelect = currentRankings.find(r => r._id === rankingId);
+                        // Find the summary in the current list first (useful for optimistic UI?)
+                        const existingSummary = get().rankings.find(r => r._id === rankingId);
+                        // Optionally set the summary as activeRanking optimistically IF it exists
+                        // if (existingSummary) {
+                        //     setState({ activeRanking: existingSummary }); 
+                        // } else {
+                        //     // If not even summary exists, maybe clear active? Or wait for fetch?
+                        //     // setState({ activeRanking: null }); 
+                        // }
 
-                        if (!rankingToSelect) {
-                            throw new Error(`Ranking with ID ${rankingId} not found in local state.`);
+                        // console.log(`[selectAndTouchRanking] Fetching full details for ${rankingId}...`);
+                        const response = await fetch(`/api/user-rankings/${rankingId}`);
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({})); // Try to get error details
+                            throw new Error(errorData.error || `API request failed with status ${response.status}`);
+                        }
+                        const fullRankingData = await response.json();
+                        // console.log(`[selectAndTouchRanking] Received full data for ${rankingId}:`, fullRankingData);
+
+                        // Validate if the expected 'rankings' array exists
+                        if (!fullRankingData || !Array.isArray(fullRankingData.rankings)) {
+                             const errorMsg = `Fetched data for ranking ${rankingId} is incomplete (missing 'rankings' array).`;
+                             console.error(`[selectAndTouchRanking] ${errorMsg}`, fullRankingData);
+                             setState({
+                                 error: errorMsg,
+                                 selectionLoading: false, 
+                                 activeRanking: existingSummary || null 
+                             });
+                             return null; 
                         }
 
-                        // 2. Create the updated version with the new timestamp
-                        const updatedRankingData = {
-                            ...rankingToSelect,
-                            lastUpdated: new Date() // Set timestamp to now
-                        };
-
-                        // 3. Update the store state
+                        // --- Update Active Ranking & Trigger ECR Fetch ---
                         setState({
-                            activeRanking: updatedRankingData, // Set as active
-                            rankings: currentRankings.map(r => 
-                                r._id === rankingId ? updatedRankingData : r // Update in the main list
-                            ),
-                            hasUnsavedChanges: true, // Mark for saving
-                            selectionLoading: false,
+                            activeRanking: fullRankingData, // Set the FULL data
+                            // selectionLoading: false, // Moved below logging
                             // Reset draft mode when selecting
-                            isDraftModeActive: false,
-                            showDraftedPlayers: false
+                            isDraftModeActive: false, 
+                            showDraftedPlayers: false,
+                            error: null // Clear previous errors
                         });
-
-                        // 4. Trigger ECR fetch for the newly selected ranking
+                        console.log(`[selectAndTouchRanking] Successfully updated state for ${rankingId}. Setting selectionLoading: false.`);
+                        setState({ selectionLoading: false }); // Set loading false AFTER state update confirmation
+                        
+                        // Trigger ECR fetch based on the NEWLY fetched full data
                         const criteria = {
-                            sport: updatedRankingData.sport,
-                            format: updatedRankingData.format,
-                            scoring: updatedRankingData.scoring,
-                            pprSetting: updatedRankingData.pprSetting, // Access directly from root
-                            flexSetting: updatedRankingData.flexSetting // Access directly from root
+                            sport: fullRankingData.sport,
+                            format: fullRankingData.format,
+                            scoring: fullRankingData.scoring,
+                            pprSetting: fullRankingData.pprSetting, 
+                            flexSetting: fullRankingData.flexSetting 
                         };
-                        // console.log('[selectAndTouchRanking] Built criteria:', criteria);
+                        // console.log(\'[selectAndTouchRanking] Triggering ECR fetch with criteria:\', criteria);
                         get().fetchConsensusRankings(criteria);
-                        // console.log('[selectAndTouchRanking] Called fetchConsensusRankings');
+                        // --- End ECR Fetch ---
 
-                        // 5. Save the changes (specifically the timestamp) immediately
-                        await get().saveChanges(); 
-                        // console.log('[selectAndTouchRanking] Called saveChanges');
-
-                        // --- ADD RETURN STATEMENT --- 
-                        return updatedRankingData; // Return the updated ranking
+                        return fullRankingData; // Return the fetched data
 
                     } catch (error) {
-                        console.error('[selectAndTouchRanking] Error:', error);
-                        setState({ error: error.message, selectionLoading: false });
-                        return null; // Return null explicitly on error
+                        console.error(`[selectAndTouchRanking] Error fetching ranking ${rankingId}:`, error);
+                        setState({
+                            error: `Failed to load ranking ${rankingId}: ${error.message}`,
+                            // selectionLoading: false // Moved below logging
+                            // Decide if activeRanking should be cleared or kept as summary
+                            // activeRanking: existingSummary || null // Revert to summary? or null?
+                        });
+                        console.log(`[selectAndTouchRanking] Error occurred for ${rankingId}. Setting selectionLoading: false.`);
+                        setState({ selectionLoading: false }); // Set loading false AFTER state update confirmation
+                        return null; // Return null indication failure
                     }
                 },
             };
