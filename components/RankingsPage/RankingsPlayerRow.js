@@ -272,7 +272,7 @@ const RankingsPlayerRow = memo(({
     const handleImageError = (event) => {
         // Prevent infinite loop if the default image also fails
         if (event.target.src !== defaultImageSrc) { 
-            console.warn(`Image failed to load: ${event.target.src}. Falling back to default.`);
+            // console.warn(`Image failed to load: ${event.target.src}. Falling back to default.`);
             event.target.src = defaultImageSrc;
             // Optional: add a class to indicate fallback
             event.target.classList.add('image-fallback'); 

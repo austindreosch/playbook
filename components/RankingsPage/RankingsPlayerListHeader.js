@@ -22,7 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
 import { SigmaSquareIcon } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
 import { FilterSelector } from './Selectors/FilterSelector';
@@ -54,12 +54,6 @@ const RankingsPlayerListHeader = ({
     const [selectedPlayoffStrength, setSelectedPlayoffStrength] = useState("");
     const [selectedDataView, setSelectedDataView] = useState("");
 
-    useEffect(() => {
-        if (sport?.toLowerCase() === 'nfl' && activeRanking?.scoring === 'points') {
-            console.log('[RankingsPlayerListHeader] NFL Points League - enabledCategoryAbbrevs:', enabledCategoryAbbrevs);
-            console.log('[RankingsPlayerListHeader] NFL Points League - activeRanking.categories:', activeRanking?.categories);
-        }
-    }, [sport, activeRanking, enabledCategoryAbbrevs]);
 
     const handleSave = async () => {
         try {
@@ -415,21 +409,18 @@ const RankingsPlayerListHeader = ({
                                 const isPointsScoring = activeRanking?.scoring?.toLowerCase() === 'points';
                                 const sportConfig = sportKey ? SPORT_CONFIGS[sportKey] : null;
 
-                                // Debugging logs
-                                // console.log('[RankingsPlayerListHeader Toggles Debug]');
-                                // console.log('  Sport Prop:', sport, '=> sportKey:', sportKey);
-                                // console.log('  ActiveRanking Scoring:', activeRanking?.scoring, '=> isPointsScoring:', isPointsScoring);
+
                                 
                                 // --- START: Filter for showInPointsView if it's a Points league ---
                                 if (isPointsScoring && sportConfig && sportConfig.categories) {
-                                    // console.log('  Applying showInPointsView filter for Points league.');
+
                                     categoryEntries = categoryEntries.filter(([catAbbrev, catDetails]) => {
                                         const configCatData = sportConfig.categories[catAbbrev];
                                         // If showInPointsView is explicitly false, filter it out.
                                         // If true or undefined (defaulting to show), keep it.
                                         return configCatData?.showInPointsView !== false; 
                                     });
-                                    // console.log('  Filtered by showInPointsView, count:', categoryEntries.length, 'Entries:', categoryEntries.map(e => e[0]));
+     
                                 }
                                 // --- END: Filter for showInPointsView ---
 
@@ -438,24 +429,17 @@ const RankingsPlayerListHeader = ({
                                 // Ensure activeRanking and activeRanking.scoring are defined before calling toLowerCase()
                                 // const isPointsScoring = activeRanking && activeRanking.scoring && activeRanking.scoring.toLowerCase() === 'points'; // Already defined above
                                 const hasPPRSetting = activeRanking && !!activeRanking.pprSetting;
-
-                                // Debugging logs (can be consolidated or removed later)
-                                // console.log('  ActiveRanking PPRSetting:', activeRanking?.pprSetting, '=> hasPPRSetting:', hasPPRSetting);
                                 const shouldApplyPPRFilter = isNFL && isPointsScoring && hasPPRSetting;
-                                // console.log('  => Should Apply PPR Filter?:', shouldApplyPPRFilter);
+        
 
                                 if (shouldApplyPPRFilter) {
                                     const currentPprSetting = activeRanking.pprSetting;
-                                    console.log('  Applying PPR filter. Current pprSetting:', currentPprSetting);
                                     categoryEntries = categoryEntries.filter(([catAbbrev, catDetails]) => {
                                         if (catAbbrev === 'PPG0ppr') return currentPprSetting === '0ppr';
                                         if (catAbbrev === 'PPG0.5ppr') return currentPprSetting === '0.5ppr';
                                         if (catAbbrev === 'PPG1ppr') return currentPprSetting === '1ppr';
                                         return true; // Keep all other non-PPR-specific categories
                                     });
-                                    console.log('  Filtered categoryEntries count:', categoryEntries.length, 'Entries:', categoryEntries.map(e => e[0]));
-                                } else {
-                                    console.log('  NOT applying PPR filter. Original categoryEntries count:', categoryEntries.length);
                                 }
                                 return categoryEntries;
                             })() : []).map(([abbrev, categoryDetails]) => {

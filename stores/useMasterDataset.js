@@ -145,7 +145,7 @@ const useMasterDataset = create((set, get) => ({
         const identityLoadingKey = `identities_${sportKey}`;
         const identityErrorKey = `identities_${sportKey}`;
 
-        // console.log(`fetchPlayerIdentities: Fetching identities for ${sportKey}...`); // Removed log
+
         set(state => ({
             loading: { ...state.loading, [identityLoadingKey]: true },
             error: { ...state.error, [identityErrorKey]: null }
@@ -158,7 +158,7 @@ const useMasterDataset = create((set, get) => ({
                 throw new Error(errorData.error || `API request failed with status ${response.status}`);
             }
             const identities = await response.json();
-            // console.log(`fetchPlayerIdentities: Received ${identities.length} identities for ${sportKey}.`); // Removed log
+
 
             set(state => ({
                 dataset: {
@@ -196,7 +196,6 @@ const useMasterDataset = create((set, get) => ({
 
         // --- FIX: Ensure identities are fetched first ---
         if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
-            console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
             await get().fetchPlayerIdentities(sportKey);
             if (get().error[`identities_${sportKey}`]) {
                  console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
@@ -225,7 +224,7 @@ const useMasterDataset = create((set, get) => ({
             // Optional: Log if an identity has neither key?
             // if (!playbookIdStr && msfIdNum == null) { ... }
         });
-        console.log(`[useMasterDataset NBA] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
+        // console.log(`[useMasterDataset NBA] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
@@ -310,7 +309,7 @@ const useMasterDataset = create((set, get) => ({
 
         // --- FIX: Ensure identities are fetched first ---
         if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
-            console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            // console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
             await get().fetchPlayerIdentities(sportKey);
             // Check if identity fetch failed
             if (get().error[`identities_${sportKey}`]) {
@@ -335,6 +334,7 @@ const useMasterDataset = create((set, get) => ({
             if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
             if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
         });
+        // console.log(`[useMasterDataset NFL] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
@@ -428,7 +428,7 @@ const useMasterDataset = create((set, get) => ({
 
         // --- FIX: Ensure identities are fetched first ---
         if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
-            console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            // console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
             await get().fetchPlayerIdentities(sportKey);
             if (get().error[`identities_${sportKey}`]) {
                  console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
@@ -450,7 +450,7 @@ const useMasterDataset = create((set, get) => ({
             if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
             if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
         });
-        console.log(`[useMasterDataset MLB] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
+        // console.log(`[useMasterDataset MLB] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();

@@ -265,27 +265,24 @@ export default function RankingsPage() {
   // Effect to set initial active ranking
   useEffect(() => {
     if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
-        // console.log('[InitialLoadEffect Ref - Simpler] Running.');
         initialLoadEffectRan.current = true; 
 
         // Determine the ranking to load - Use the one from store (restored or set by fetchUserRankings)
         const rankingToLoad = activeRanking || userRankings[0]; 
         const idToLoad = rankingToLoad?._id;
 
-        // console.log('[InitialLoadEffect Ref - Simpler] Determined rankingToLoad ID:', idToLoad);
         
         if (idToLoad) {
             // Set sport early if needed
             if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
-                // console.log(`[InitialLoadEffect Ref - Simpler] Setting selectedSport: ${rankingToLoad.sport}`);
+
                 setSelectedSport(rankingToLoad.sport);
             }
 
             // ALWAYS call handleRankingSelect on initial load to ensure fresh, full data
-            console.log(`[InitialLoadEffect Ref - Simpler] DECISION: Unconditionally calling handleRankingSelect for ${idToLoad} to ensure fresh data.`);
             handleRankingSelect(idToLoad);
         } else {
-             console.log('[InitialLoadEffect Ref - Simpler] No idToLoad determined.');
+             console.log('[InitialLoadEffect Ref ] No idToLoad determined.');
         }
     }
   }, [initialRankingsLoaded, userRankings, activeRanking, selectedSport, activeRankingId, handleRankingSelect, activeRankingLoading, setSelectedSport]); // Keep dependencies
@@ -374,12 +371,6 @@ export default function RankingsPage() {
       selectedSport       
     ]);
 
-  useEffect(() => {
-    if (activeRanking) {
-    } else {
-      console.log('[RankingsPage Effect Log] activeRanking is null or undefined.');
-    }
-  }, [activeRanking]);
 
   // == RENDER LOGIC ==
 
