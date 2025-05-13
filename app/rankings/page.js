@@ -221,17 +221,6 @@ export default function RankingsPage() {
     });
   }, [activeRanking?.rankings, currentSportMasterData, selectedSport]);
 
-  // === Add logging for processedPlayers ===
-  useEffect(() => {
-    console.log('[ProcessedPlayers Check]', {
-      selectedSport,
-      activeRankingRankingsCount: activeRanking?.rankings?.length, // UPDATED KEY NAME
-      hasCurrentSportMasterData: !!currentSportMasterData,
-      masterDataPlayersKeysCount: currentSportMasterData?.players ? Object.keys(currentSportMasterData.players).length : 'N/A',
-      processedPlayersCount: processedPlayers.length
-    });
-  }, [processedPlayers, selectedSport, activeRanking, currentSportMasterData]);
-  // =====================================
 
   const draftedCount = useMemo(() => {
     if (!activeRanking?.rankings) return 0; // CHANGED to .rankings

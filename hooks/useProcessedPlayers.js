@@ -94,7 +94,7 @@ export function useProcessedPlayers({
     const playerIdentityMap = useMemo(() => {
         const map = new Map();
         if (!Array.isArray(playerIdentities)) {
-            // console.warn('[useProcessedPlayers - playerIdentityMap] Received playerIdentities prop is NOT an array:', playerIdentities);
+            console.warn('[useProcessedPlayers - playerIdentityMap] Received playerIdentities prop is NOT an array:', playerIdentities);
             return map;
         }
         playerIdentities.forEach((identity) => {
@@ -103,7 +103,6 @@ export function useProcessedPlayers({
                 map.set(key, identity);
             }
         });
-        // console.log('[useProcessedPlayers - playerIdentityMap] Created playerIdentityMap. Size:', map.size);
         return map;
     }, [playerIdentities]);
 
@@ -116,11 +115,6 @@ export function useProcessedPlayers({
                 map.set(String(player.playbookId), rankValue);
             }
         });
-        // console.log('[useProcessedPlayers - standardEcrMap] Created. Size:', map.size);
-        // if (map.size > 0) {
-        //     const sampleValues = Array.from(map.values()).slice(0,5);
-        //     console.log('[useProcessedPlayers - standardEcrMap] Sample values:', sampleValues);
-        // }
         return map;
     }, [standardEcrRankings]);
 
@@ -145,17 +139,10 @@ export function useProcessedPlayers({
                 }
             } else {
                 // Optional: Log if a player in ECR data lacks a valid rank
-                // console.warn(`[ECR Map Build] Player with PlaybookID ${playbookIdStr || 'N/A'} / MSFID ${msfIdStr || 'N/A'} has invalid rank: ${rankValue}`);
+                console.warn(`[ECR Map Build] Player with PlaybookID ${playbookIdStr || 'N/A'} / MSFID ${msfIdStr || 'N/A'} has invalid rank: ${rankValue}`);
             }
         });
         
-        // +++ DEBUG LOG for redraftEcrMap +++
-        console.log(`[ECR Map Debug] redraftEcrMap created. Size: ${map.size}`);
-        if (map.size > 0) {
-            const sampleEntries = Array.from(map.entries()).slice(0, 5);
-            console.log('[ECR Map Debug] Sample entries (first 5):', sampleEntries);
-        }
-        // +++ END DEBUG LOG +++
 
         return map;
     }, [redraftEcrRankings]);
@@ -172,38 +159,13 @@ export function useProcessedPlayers({
                                standardEcrMap.size > 0 &&
                                redraftEcrMap.size > 0;
 
-        if (!mapsArePopulated && playerIdentities && playerIdentities.length > 0) { // Only log if playerIdentities has been received
-            // console.log("[useProcessedPlayers - initialRankedPlayers] Waiting for dependent maps to populate or data to load...", {
-            //      identityMapSize: playerIdentityMap.size,
-            //      hasSeasonalStats: !!seasonalStatsData && Object.keys(seasonalStatsData).length > 0,
-            //      standardEcrMapSize: standardEcrMap.size,
-            //      redraftEcrMapSize: redraftEcrMap.size
-            // });
-            return [];
-        }
-        // console.log("[useProcessedPlayers - initialRankedPlayers] Processing players...");
 
         const rankingEntries = activeRanking.rankings || [];
         const combinedPlayers = rankingEntries.map((rankingEntry, index) => {
             const rankingPlaybookId = rankingEntry.playbookId ? String(rankingEntry.playbookId) : null;
             const basePlayerIdentity = rankingPlaybookId ? playerIdentityMap.get(rankingPlaybookId) : null;
-
-            // +++ DEBUG LOG: Inspect basePlayerIdentity for age-related fields +++
-            // if (index < 3) { // Log for the first 3 players
-            //     console.log(`[useProcessedPlayers - basePlayerIdentity Debug] Index: ${index}, PlaybookID: ${rankingPlaybookId}`);
-            //     console.log('Raw basePlayerIdentity:', JSON.parse(JSON.stringify(basePlayerIdentity || {})));
-            // }
-            // +++ END DEBUG LOG +++
-
             const msfIdForStatsLookup = basePlayerIdentity?.mySportsFeedsId;
             const fullPlayerDataFromStatsSource = msfIdForStatsLookup != null ? seasonalStatsData?.[String(msfIdForStatsLookup)] : null;
-
-            // +++ DEBUG LOG: Inspect fullPlayerDataFromStatsSource for age-related fields +++
-            // if (index < 1 && fullPlayerDataFromStatsSource) { // Log for the first player if stats data exists
-            //     console.log(`[useProcessedPlayers - fullPlayerDataFromStatsSource Debug] PlaybookID: ${rankingPlaybookId}, MSFID: ${msfIdForStatsLookup}`);
-            //     console.log('Raw fullPlayerDataFromStatsSource:', JSON.parse(JSON.stringify(fullPlayerDataFromStatsSource)));
-            // }
-            // +++ END DEBUG LOG +++
 
             const playerStatsObject = fullPlayerDataFromStatsSource?.stats || null;
             const standardEcrRankLookup = rankingPlaybookId ? standardEcrMap.get(rankingPlaybookId) : undefined;
@@ -240,28 +202,18 @@ export function useProcessedPlayers({
             };
         });
         const sortedByRankPlayers = combinedPlayers.sort((a, b) => (a.userRank || Infinity) - (b.userRank || Infinity));
-        // console.log("[useProcessedPlayers - initialRankedPlayers] Finished processing initial players. Count:", sortedByRankPlayers.length);
         return sortedByRankPlayers;
     }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]);
 
     // 4. Comparison Pool - RESTORED
     const comparisonPoolPlayers = useMemo(() => {
-        // console.log("[useProcessedPlayers - ComparisonPool] Recalculating comparison pool...");
         const sportKey = sport?.toLowerCase();
         const nodes = masterNodes; 
         const isLoading = isMasterLoading || isEcrLoading; 
         const currentRankingFormat = activeRanking?.format?.toLowerCase();
 
-        // console.log("[Pool Calc Debug] Dependencies:", {
-        //     isLoading,
-        //     sportKey,
-        //     currentRankingFormat,
-        //     nodesCount: nodes ? Object.keys(nodes).length : 'undefined',
-        //     redraftEcrMapSize: redraftEcrMap?.size ?? 'undefined'
-        // });
 
         if (isLoading || !sportKey || !currentRankingFormat || !nodes || Object.keys(nodes).length === 0 || !redraftEcrMap || redraftEcrMap.size === 0) {
-            // console.log("[Pool Calc Debug] Returning EMPTY due to dependencies.");
             return []; 
         }
 
@@ -280,7 +232,6 @@ export function useProcessedPlayers({
         }
         
         const sortByField = comparisonRules.sortBy || comparisonRules.groups?.[Object.keys(comparisonRules.groups)[0]]?.sortBy;
-        // console.log(`[Pool Calc Debug] Using sortBy field: ${sortByField}`);
 
         const allRelevantPlayers = Object.values(nodes).map((node) => {
             const playerPlaybookId = node?.info?.playbookId;
@@ -310,7 +261,6 @@ export function useProcessedPlayers({
             return hasPosition && hasSortValue;
         });
 
-        // console.log(`[Pool Calc Debug] Players remaining after position/ECR filter: ${allRelevantPlayers.length}`);
         if (allRelevantPlayers.length === 0) return []; 
 
         const sortPlayersInternal = (a, b, sortFld) => {
@@ -346,7 +296,6 @@ export function useProcessedPlayers({
                 finalComparisonPool = finalComparisonPool.concat(sortedGroup);
             });
         }
-        // console.log(`[Pool Calc Debug] Final comparison pool length: ${finalComparisonPool.length}`);
         return finalComparisonPool;
     }, [sport, activeRanking?.format, activeRanking?.scoring, masterNodes, isMasterLoading, isEcrLoading, redraftEcrMap]);
     // const comparisonPoolPlayers = []; // Placeholder - remove calculation for now
@@ -359,7 +308,6 @@ export function useProcessedPlayers({
             return playersWithStatsAndRank; 
         }
         
-        // console.log(`[useProcessedPlayers Z-Score Check] comparisonPoolPlayers length: ${comparisonPoolPlayers?.length ?? 'undefined'}`);
 
         // --- Z-Score Calculation RESTORED ---
         const sportKey = sport?.toLowerCase(); // Defined here for use in this block
@@ -500,7 +448,6 @@ export function useProcessedPlayers({
         if (isDraftModeActive && !showDraftedPlayers) {
             sortedPlayers = sortedPlayers.filter(p => p.draftModeAvailable !== false);
         }
-        // console.log(`[useProcessedPlayers - playersToDisplay] Final players count: ${sortedPlayers.length}`);
         return sortedPlayers;
 
     }, [initialRankedPlayers, activeRanking, sport, comparisonPoolPlayers, sortConfig, isDraftModeActive, showDraftedPlayers]);

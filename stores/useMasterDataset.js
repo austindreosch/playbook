@@ -4,9 +4,6 @@ import { processNbaData } from '@/lib/utils/nbaDataProcessing';
 import { processNflData } from '@/lib/utils/nflDataProcessing'; // Returns { processedPlayers, teamTotalsContext }
 import _ from 'lodash';
 import { create } from 'zustand';
-// Re-add import for Z-Score calculation
-import { applyZScores } from '@/lib/calculations/zScoreUtil';
-// import { processNflPlayerData } from '../utilities/MasterDataset/nflAdvancedStats'; // Not used
 
 const getObjectSize = (obj) => {
     const json = JSON.stringify(obj);
@@ -263,10 +260,6 @@ const useMasterDataset = create((set, get) => ({
             const processedPlayers = processNbaData(rawNbaStats, context);
             // -------------------------------------
 
-            // Apply sport-specific Z-Scores
-            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Attempting to apply Z-Scores...`);
-            applyZScores(processedPlayers, sportKey);
-            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Z-Scores applied (or skipped).`);
 
             set(state => ({
                 dataset: {
@@ -342,7 +335,6 @@ const useMasterDataset = create((set, get) => ({
             if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
             if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
         });
-        console.log(`[useMasterDataset NFL] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
         // ---------------------------------------------
 
         const rawData = await get()._ensureRawDataFetched();
@@ -383,10 +375,6 @@ const useMasterDataset = create((set, get) => ({
              const { processedPlayers: initialProcessedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats, context);
              // ------------------------------------- 
 
-             // Apply sport-specific Z-Scores
-             console.log(`[MasterDataset ${sportKey.toUpperCase()}] Attempting to apply Z-Scores...`);
-             applyZScores(initialProcessedPlayers, sportKey);
-             console.log(`[MasterDataset ${sportKey.toUpperCase()}] Z-Scores applied (or skipped).`);
 
              set(state => ({
                  dataset: {
@@ -500,9 +488,6 @@ const useMasterDataset = create((set, get) => ({
             // ------------------------------------- 
 
             // Apply sport-specific Z-Scores
-            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Attempting to apply Z-Scores...`);
-            applyZScores(processedPlayers, sportKey);
-            console.log(`[MasterDataset ${sportKey.toUpperCase()}] Z-Scores applied (or skipped).`);
 
             set(state => ({
                 dataset: {
