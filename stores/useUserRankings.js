@@ -70,15 +70,15 @@ const useUserRankings = create(
 
                         // console.log('[fetchUserRankings] Most Recent Ranking Found:', mostRecent);
 
-                        // Set both rankings and active ranking in one update to avoid multiple rerenders
-                        setState({
+                        // Set rankings, and set activeRanking ONLY if it wasn't already populated (e.g., from persist middleware)
+                        setState(prevState => ({
                             rankings: data,
-                            activeRanking: mostRecent,
+                            activeRanking: prevState.activeRanking || mostRecent, // Keep persisted activeRanking if it exists
                             isLoading: false,
                             initialRankingsLoaded: true,
-                            isDraftModeActive: false,
-                            showDraftedPlayers: false
-                        });
+                            // Only reset draft mode if we are actually setting a new activeRanking from mostRecent
+                            ...(prevState.activeRanking ? {} : { isDraftModeActive: false, showDraftedPlayers: false }) 
+                        }));
                         // console.log('[fetchUserRankings] State AFTER update:', get());
                     } catch (error) {
                         // console.error('[fetchUserRankings] Error:', error);

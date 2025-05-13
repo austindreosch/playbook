@@ -51,7 +51,7 @@ export default function RankingsPage() {
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
   const [selectedSport, setSelectedSport] = useState('NBA');
-  const [initialSelectionMade, setInitialSelectionMade] = useState(false);
+  const initialLoadEffectRan = useRef(false);
 
   // -- Ref Hooks --
   const listContainerRef = useRef(null);
@@ -95,12 +95,12 @@ export default function RankingsPage() {
   }, []);
 
   const handleRankingSelect = useCallback(async (rankingId) => {
-    if (!rankingId || rankingId === activeRankingId) {
-        if (rankingId === activeRankingId) setIsPageLoading(false);
-        return;
+    if (!rankingId) { 
+        return; 
     }
+
     setIsPageLoading(true);
-    setActiveRankingId(rankingId); 
+    setActiveRankingId(rankingId);
 
     try {
         await selectAndTouchRanking(rankingId);
@@ -111,7 +111,7 @@ export default function RankingsPage() {
         setIsPageLoading(false); 
         setCollapseAllTrigger(prev => prev + 1); 
     }
-  }, [activeRankingId, selectAndTouchRanking]);
+  }, [selectAndTouchRanking]);
 
   const handleSortChange = useCallback((newKey_abbreviation) => {
     let sortKeyToSet = null;
@@ -275,33 +275,32 @@ export default function RankingsPage() {
 
   // Effect to set initial active ranking
   useEffect(() => {
-    if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialSelectionMade && !activeRankingLoading) {
-        const rankingToLoadInitially = activeRanking || userRankings[0]; 
-        const idToLoad = rankingToLoadInitially?._id;
+    if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
+        // console.log('[InitialLoadEffect Ref - Simpler] Running.');
+        initialLoadEffectRan.current = true; 
 
+        // Determine the ranking to load - Use the one from store (restored or set by fetchUserRankings)
+        const rankingToLoad = activeRanking || userRankings[0]; 
+        const idToLoad = rankingToLoad?._id;
+
+        // console.log('[InitialLoadEffect Ref - Simpler] Determined rankingToLoad ID:', idToLoad);
+        
         if (idToLoad) {
-            if (rankingToLoadInitially.sport && rankingToLoadInitially.sport !== selectedSport) {
-              // console.log(`[InitialSelectEffect] Setting selectedSport: ${rankingToLoadInitially.sport}`);
-              setSelectedSport(rankingToLoadInitially.sport);
+            // Set sport early if needed
+            if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
+                // console.log(`[InitialLoadEffect Ref - Simpler] Setting selectedSport: ${rankingToLoad.sport}`);
+                setSelectedSport(rankingToLoad.sport);
             }
-            
-            // Check if full details are needed for the one we intend to load initially
-            // This condition is primarily for the scenario where activeRanking from store is already set (e.g. from persist) but might be a summary.
-            const needsFullLoadForInitial = !rankingToLoadInitially.categories || !rankingToLoadInitially.rankings;
 
-            // If activeRankingId is not set OR if the initial one needs full load (and isn't already the one being loaded by activeRankingId match)
-            if (activeRankingId !== idToLoad || needsFullLoadForInitial ) {
-                 console.log(`[InitialSelectEffect] Calling handleRankingSelect for ID: ${idToLoad}. InitialSelectionMade: false.`);
-                 handleRankingSelect(idToLoad);
-                 setInitialSelectionMade(true); // <<< SET FLAG AFTER CALLING
-            }
+            // ALWAYS call handleRankingSelect on initial load to ensure fresh, full data
+            console.log(`[InitialLoadEffect Ref - Simpler] DECISION: Unconditionally calling handleRankingSelect for ${idToLoad} to ensure fresh data.`);
+            handleRankingSelect(idToLoad);
         } else {
-            // console.log('[InitialSelectEffect] No idToLoad for initial selection.');
+             console.log('[InitialLoadEffect Ref - Simpler] No idToLoad determined.');
         }
-    } 
-    // This effect depends on many things to correctly determine initial state. The !initialSelectionMade flag is the gatekeeper.
-  }, [initialRankingsLoaded, userRankings, activeRanking, selectedSport, activeRankingId, activeRankingLoading, handleRankingSelect, initialSelectionMade]);
-
+    }
+  }, [initialRankingsLoaded, userRankings, activeRanking, selectedSport, activeRankingId, handleRankingSelect, activeRankingLoading, setSelectedSport]); // Keep dependencies
+  
   // +++ NEW EFFECT to sync local activeRankingId with store's activeRanking object +++
   useEffect(() => {
     if (activeRanking && activeRanking._id && activeRanking._id !== activeRankingId) {
