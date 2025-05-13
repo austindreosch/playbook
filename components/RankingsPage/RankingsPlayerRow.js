@@ -47,10 +47,6 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                 if (sport?.toLowerCase() === 'mlb' && categoryAbbrev === 'SVH') {
                     const primaryPosition = player?.position?.toUpperCase(); // Get from player prop of RankingsPlayerRow
                     const isPitcher = ['P', 'SP', 'RP'].includes(primaryPosition);
-                    if (!isPitcher) { // Log only for non-pitchers
-                        console.log(`[StatsSection SVH Debug] MLB Non-Pitcher ID: ${player?.id}, Name: ${player?.name}, Position: ${primaryPosition}, Category: ${categoryAbbrev}`);
-                        console.log('  Raw stats prop for SVH from player.stats/hittingStats:', JSON.stringify(stats?.[categoryAbbrev]));
-                    }
                 }
                 // +++ END DEBUG LOG +++
 
@@ -141,15 +137,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     cellBackgroundColor = currentBgColor; // Use its z-score derived color
                 }
 
-                // +++ STATSSECTION DEBUG LOG +++
-                // if (categoryAbbrev === '3PM' || categoryAbbrev === 'AST' || categoryAbbrev === 'PTS') { // Log for a few specific categories
-                //     console.log(`[StatsSection Debug] Category: ${categoryAbbrev}`);
-                //     console.log(`  Raw statDataFromPlayer:`, JSON.parse(JSON.stringify(statDataFromPlayer || {})));
-                //     console.log(`  statDataFromPlayer.colors:`, JSON.parse(JSON.stringify(statDataFromPlayer?.colors || null)));
-                //     console.log(`  Derived bgColorClass: ${currentBgColor}`);
-                //     console.log(`  Derived textColorClass: ${currentTextColor}`);
-                // }
-                // +++ END STATSSECTION DEBUG LOG +++
+                
 
                 return (
                     <div
@@ -269,22 +257,6 @@ const RankingsPlayerRow = memo(({
 }) => {
     const rowRef = useRef(null);
 
-    // +++ DEBUG LOG for Z-Score Sum +++
-    if (rank <= 3) { // Log for first 3 players
-        console.log(`[RankingsPlayerRow Rank ${rank}] Player ID: ${player?.id}, Name: ${player?.info?.fullName}`);
-        console.log(`  Received player.zScoreTotals:`, JSON.parse(JSON.stringify(player?.zScoreTotals || null)));
-    }
-    // +++ END DEBUG LOG +++
-
-    // --- Log the rank prop received ---
-    // if (rank <= 3) { // Only log for the first 3 players
-    //     console.log(`[RankingsPlayerRow] Received rank prop: ${rank} for player: ${player?.info?.fullName}`);
-    // }
-    // --- End log ---
-
-    // --- Log activeRanking format for conditional check ---
-    // console.log(`[RankingsPlayerRow] Checking format: activeRanking?.format = ${activeRanking?.format}`);
-    // --- End log ---
 
     // --- Determine sources --- 
     const playerName = player.info?.fullName || player.name || 'Player Name';
@@ -293,18 +265,8 @@ const RankingsPlayerRow = memo(({
     const team = player.info?.teamName || 'FA'; // Restored direct access
     const age = player.info?.age || 'N/A'; // Restored direct access
     const currentInjury = player.info?.currentInjury || null;
-    const injuryStatus = player.info?.currentInjury?.status; // Restored direct access
-    console.log(`[RankingsPlayerRow] Player ID: ${player?.id}, Name: ${player?.info?.fullName}`);
-    console.log(`  Received player.info:`, JSON.parse(JSON.stringify(player.info || null)));
-    
     const defaultImageSrc = '/avatar-default.png';
 
-    // Log the exact info object received by the row component (for first player)
-    useEffect(() => {
-        if (player?.rank === 1) {
-            console.log(`[RankingsPlayerRow Rank ${player.rank}] Received player.info:`, player.info);
-        }
-    }, [player]); // Log when player object changes
 
     // --- Simplified onError handler (will modify the img element directly) ---
     const handleImageError = (event) => {
@@ -318,30 +280,30 @@ const RankingsPlayerRow = memo(({
     };
 
     // Calculate the sum of zScores for the selected categories, applying weight for NFL PPG
-    const zScoreSum = useMemo(() => {
-        const ppgKey = 'advanced.fantasyPointsPerGame';
-        const nflPpgWeight = 3; // Adjust this weight as needed
-        let sum = 0;
+    // const zScoreSum = useMemo(() => {
+    //     const ppgKey = 'advanced.fantasyPointsPerGame';
+    //     const nflPpgWeight = 3; // Adjust this weight as needed
+    //     let sum = 0;
 
-        if (player?.stats && categories?.length > 0) {
-            categories.forEach(statPathOrKey => {
-                const statData = getNestedValue(player.stats, statPathOrKey);
+    //     if (player?.stats && categories?.length > 0) {
+    //         categories.forEach(statPathOrKey => {
+    //             const statData = getNestedValue(player.stats, statPathOrKey);
 
-                if (statData && typeof statData === 'object' && typeof statData.zScore === 'number') {
-                    let scoreToAdd = statData.zScore;
+    //             if (statData && typeof statData === 'object' && typeof statData.zScore === 'number') {
+    //                 let scoreToAdd = statData.zScore;
 
-                    // Apply weight only for NFL and only for the PPG stat
-                    if (sport === 'NFL' && statPathOrKey === ppgKey) {
-                        scoreToAdd *= nflPpgWeight;
-                    }
-                    // Add the (potentially weighted) score to the sum
-                    sum += scoreToAdd;
-                }
-            });
-        }
-        // Format to two decimal places for potentially larger sums
-        return sum.toFixed(2);
-    }, [player?.stats, categories, sport]); // Add sport as dependency
+    //                 // Apply weight only for NFL and only for the PPG stat
+    //                 if (sport === 'NFL' && statPathOrKey === ppgKey) {
+    //                     scoreToAdd *= nflPpgWeight;
+    //                 }
+    //                 // Add the (potentially weighted) score to the sum
+    //                 sum += scoreToAdd;
+    //             }
+    //         });
+    //     }
+    //     // Format to two decimal places for potentially larger sums
+    //     return sum.toFixed(2);
+    // }, [player?.stats, categories, sport]); // Add sport as dependency
 
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -360,8 +322,8 @@ const RankingsPlayerRow = memo(({
     };
 
     // Only compute these when expanded changes
-    const detailPanelRef = useRef(null);
-    const insightPanelRef = useRef(null);
+    // const detailPanelRef = useRef(null);
+    // const insightPanelRef = useRef(null);
 
     // Use intersection observer to only render when visible
     useEffect(() => {
@@ -489,9 +451,7 @@ const RankingsPlayerRow = memo(({
                                     e.stopPropagation(); // Prevent row expand/collapse
                                     const newAvailability = !(player.draftModeAvailable ?? true);
                                     // Log if the player is being marked as drafted (newAvailability is false)
-                                    if (!newAvailability) {
-                                        console.log(`${playerName} has been drafted!`);
-                                    }
+                             
                                     // Pass the ID and the NEW availability state
                                     onToggleDraftStatus(newAvailability);
                                 }}
@@ -516,7 +476,6 @@ const RankingsPlayerRow = memo(({
                     {/* Player Image - SIMPLIFIED Logic */}
                     <div className="w-12 text-center select-none flex items-center justify-center">
                          {/* Log the image source right before rendering - Remove rank condition */}
-                         {/* {console.log(`[RankingsPlayerRow] Player ID ${player?.id} Image src: ${playerImage}`)} */}
                          <img
                             // Use playerImage if available, otherwise use default immediately
                             src={playerImage || defaultImageSrc} 

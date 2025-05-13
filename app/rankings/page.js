@@ -552,7 +552,6 @@ export default function RankingsPage() {
            <div className="max-w-md mx-auto">
              <h2 className="text-2xl font-bold text-pb_blue mb-4">Welcome to the Rankings Hub!</h2>
              <p className="text-gray-600 mb-6">Build your own fantasy sports rankings. Start from expert opinions then tailor them to your own values and strategy.</p>
- 
              <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
                <h3 className="font-semibold text-gray-800 mb-3">Getting Started:</h3>
                <ol className="text-left text-gray-600 space-y-2 mb-4">
