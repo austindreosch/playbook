@@ -234,8 +234,6 @@ const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
 StatsSectionSecondary.displayName = 'StatsSectionSecondary';
 
 
-//
-
 const RankingsPlayerRow = memo(({
     player,
     sport,
@@ -266,7 +264,6 @@ const RankingsPlayerRow = memo(({
     const age = player.info?.age || 'N/A'; // Restored direct access
     const currentInjury = player.info?.currentInjury || null;
     const defaultImageSrc = '/avatar-default.png';
-
 
     // --- Simplified onError handler (will modify the img element directly) ---
     const handleImageError = (event) => {
