@@ -244,7 +244,7 @@ export function useProcessedPlayers({
         return sortedByRankPlayers;
     }, [activeRanking, playerIdentityMap, seasonalStatsData, standardEcrMap, redraftEcrMap, playerIdentities]);
 
-    // 4. Comparison Pool
+    // 4. Comparison Pool - RESTORED
     const comparisonPoolPlayers = useMemo(() => {
         // console.log("[useProcessedPlayers - ComparisonPool] Recalculating comparison pool...");
         const sportKey = sport?.toLowerCase();
@@ -252,18 +252,16 @@ export function useProcessedPlayers({
         const isLoading = isMasterLoading || isEcrLoading; 
         const currentRankingFormat = activeRanking?.format?.toLowerCase();
 
-        // +++ DEBUG: Log dependencies +++
-        console.log("[Pool Calc Debug] Dependencies:", {
-            isLoading,
-            sportKey,
-            currentRankingFormat,
-            nodesCount: nodes ? Object.keys(nodes).length : 'undefined',
-            redraftEcrMapSize: redraftEcrMap?.size ?? 'undefined'
-        });
-        // +++ END DEBUG +++
+        // console.log("[Pool Calc Debug] Dependencies:", {
+        //     isLoading,
+        //     sportKey,
+        //     currentRankingFormat,
+        //     nodesCount: nodes ? Object.keys(nodes).length : 'undefined',
+        //     redraftEcrMapSize: redraftEcrMap?.size ?? 'undefined'
+        // });
 
-        if (isLoading || !sportKey || !currentRankingFormat || !nodes || Object.keys(nodes).length === 0 || redraftEcrMap.size === 0) {
-            console.log("[Pool Calc Debug] Returning EMPTY due to dependencies.");
+        if (isLoading || !sportKey || !currentRankingFormat || !nodes || Object.keys(nodes).length === 0 || !redraftEcrMap || redraftEcrMap.size === 0) {
+            // console.log("[Pool Calc Debug] Returning EMPTY due to dependencies.");
             return []; 
         }
 
@@ -272,38 +270,31 @@ export function useProcessedPlayers({
         if (sportKey === 'nfl') {
             ruleKey = 'points'; // NFL always uses 'points' rules for z-score baseline
         } else {
-            // Other sports use the scoring type ('categories' or 'points')
             ruleKey = activeRanking.scoring?.toLowerCase();
         }
         const comparisonRules = sportConfig?.comparisonPools?.[ruleKey];
 
         if (!comparisonRules) {
-            console.warn(`[Pool Calc Debug] No comparison rules found for sport: ${sportKey}, format: ${currentRankingFormat} (rule key: ${ruleKey}). Returning EMPTY.`);
+            // console.warn(`[Pool Calc Debug] No comparison rules found for sport: ${sportKey}, format: ${currentRankingFormat} (rule key: ${ruleKey}). Returning EMPTY.`);
             return [];
         }
         
         const sortByField = comparisonRules.sortBy || comparisonRules.groups?.[Object.keys(comparisonRules.groups)[0]]?.sortBy;
-        console.log(`[Pool Calc Debug] Using sortBy field: ${sortByField}`);
+        // console.log(`[Pool Calc Debug] Using sortBy field: ${sortByField}`);
 
         const allRelevantPlayers = Object.values(nodes).map((node) => {
             const playerPlaybookId = node?.info?.playbookId;
-            const playerMsfId = node?.info?.mySportsFeedsId; // Get MSF ID from the master node
-            
-            // --- Attempt Lookup with Fallback --- 
+            const playerMsfId = node?.info?.mySportsFeedsId;
             let rankFromMap = undefined;
-            // Try playbookId first
             if (playerPlaybookId) {
                 rankFromMap = redraftEcrMap.get(String(playerPlaybookId));
             }
-            // If playbookId lookup failed AND msfId exists, try msfId
             if (rankFromMap === undefined && playerMsfId) {
                 rankFromMap = redraftEcrMap.get(String(playerMsfId));
             }
-            // --- End Lookup --- 
-            
             const finalInfo = {
                 ...(node?.info || {}),
-                redraftEcrRank: rankFromMap ?? null, // Assign the result (could still be null)
+                redraftEcrRank: rankFromMap ?? null,
                 primaryPosition: node?.info?.primaryPosition ?? null,
             };
             return {
@@ -314,22 +305,12 @@ export function useProcessedPlayers({
         })
         .filter(p => {
             const hasPosition = !!p.info?.primaryPosition;
-            // Directly access the rank value we just added to p.info
             const rankValue = p.info?.redraftEcrRank; 
             const hasSortValue = typeof rankValue === 'number' && isFinite(rankValue); 
-            // +++ DEBUG: Log filter check for first few +++
-            // Let's log players that FAIL the sort value check specifically
-            if (hasPosition && !hasSortValue && Math.random() < 0.05) { // Log ~5% of players failing the sort check
-                console.log(`[Pool Filter Debug] Player ${p.id} (${p.info?.primaryPosition}) FAILS sort value check. Rank value:`, rankValue, typeof rankValue);
-            }
-            // +++ END DEBUG +++
             return hasPosition && hasSortValue;
         });
 
-        // +++ DEBUG: Log filtered count +++
-        console.log(`[Pool Calc Debug] Players remaining after position/ECR filter: ${allRelevantPlayers.length}`);
-        // +++ END DEBUG +++
-
+        // console.log(`[Pool Calc Debug] Players remaining after position/ECR filter: ${allRelevantPlayers.length}`);
         if (allRelevantPlayers.length === 0) return []; 
 
         const sortPlayersInternal = (a, b, sortFld) => {
@@ -365,128 +346,124 @@ export function useProcessedPlayers({
                 finalComparisonPool = finalComparisonPool.concat(sortedGroup);
             });
         }
-        
-        // +++ DEBUG: Log final count +++
-        console.log(`[Pool Calc Debug] Final comparison pool length: ${finalComparisonPool.length}`);
-        // +++ END DEBUG +++
-
+        // console.log(`[Pool Calc Debug] Final comparison pool length: ${finalComparisonPool.length}`);
         return finalComparisonPool;
-
-    }, [sport, activeRanking?.format, masterNodes, isMasterLoading, isEcrLoading, redraftEcrMap]);
+    }, [sport, activeRanking?.format, activeRanking?.scoring, masterNodes, isMasterLoading, isEcrLoading, redraftEcrMap]);
+    // const comparisonPoolPlayers = []; // Placeholder - remove calculation for now
 
     // 5. Final processing: Z-Scores, Sorting, Filtering
     const playersToDisplay = useMemo(() => {
         let playersWithStatsAndRank = [...initialRankedPlayers];
 
         if (!activeRanking || !activeRanking.categories || playersWithStatsAndRank.length === 0) {
-            // console.log("[useProcessedPlayers - playersToDisplay] Early exit: Missing activeRanking.categories or no initial players.");
-            return playersWithStatsAndRank; // Return initial players if no categories or z-score calc needed
+            return playersWithStatsAndRank; 
         }
         
-        // +++ DEBUG LOG for Comparison Pool +++
-        console.log(`[useProcessedPlayers Z-Score Check] comparisonPoolPlayers length: ${comparisonPoolPlayers?.length ?? 'undefined'}`);
-        // +++ END DEBUG LOG +++
+        // console.log(`[useProcessedPlayers Z-Score Check] comparisonPoolPlayers length: ${comparisonPoolPlayers?.length ?? 'undefined'}`);
 
-        // --- Z-Score Calculation (only if comparison pool is available) ---
+        // --- Z-Score Calculation RESTORED ---
+        const sportKey = sport?.toLowerCase(); // Defined here for use in this block
+        const currentScoring = activeRanking.scoring?.toLowerCase(); // Defined here
+
+        let playersAfterZScoreCalculation = playersWithStatsAndRank; // Default to initial if no calculation happens
+
         if (comparisonPoolPlayers && comparisonPoolPlayers.length > 0) {
-            const sportKey = sport?.toLowerCase();
-            const currentFormat = activeRanking.format?.toLowerCase();
-            const currentScoring = activeRanking.scoring?.toLowerCase();
-            
-            // Determine the key for lookup in comparisonPools
-            let ruleKey;
-            if (sportKey === 'nfl') {
-                ruleKey = 'points'; // NFL always uses 'points' rules for z-score baseline
-            } else {
-                // Other sports use the scoring type ('categories' or 'points')
-                ruleKey = currentScoring;
-            }
-
-            // const effectiveFormat = sportKey === 'nba' && (currentFormat === 'dynasty' || currentFormat === 'redraft') ? 'categories' : currentFormat;
-            const comparisonRules = SPORT_CONFIGS[sportKey]?.comparisonPools?.[ruleKey]; // Use the determined ruleKey
-            const enabledCategoriesDetailsObject = {};
-            const statPathMapping = {};
+            const enabledCategoriesDetailsObjectForZScore = {};
+            const statPathMappingForZScore = {};
 
             if (activeRanking.categories && typeof activeRanking.categories === 'object') {
                 Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
                     if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
-                        enabledCategoriesDetailsObject[key] = { ...catDetails, key: key };
-                        // Pass the determined ruleKey (scoring type) to getStatPath
-                        statPathMapping[key] = getStatPath(key, sportKey, ruleKey); 
+                        enabledCategoriesDetailsObjectForZScore[key] = { ...catDetails, key: key };
+                        // Determine ruleKey for getStatPath based on sport and scoring
+                        let ruleKeyForPath = currentScoring;
+                        if (sportKey === 'nfl') ruleKeyForPath = 'points';
+                        statPathMappingForZScore[key] = getStatPath(key, sportKey, ruleKeyForPath); 
                     }
                 });
             }
+            
+            let ruleKeyForComparison = currentScoring;
+            if (sportKey === 'nfl') ruleKeyForComparison = 'points';
+            const comparisonRulesToUse = SPORT_CONFIGS[sportKey]?.comparisonPools?.[ruleKeyForComparison];
 
-            if (comparisonRules && Object.keys(enabledCategoriesDetailsObject).length > 0) {
-                // console.log("[useProcessedPlayers - Zscores] Calculating Z-Scores...");
+            if (comparisonRulesToUse && Object.keys(enabledCategoriesDetailsObjectForZScore).length > 0) {
                 try {
-                    // Ensure we operate on the output of calculateZScoresWithComparisonPool
-                    const playersAfterZScoreCalculation = calculateZScoresWithComparisonPool(
-                        playersWithStatsAndRank, // Current list, stats might be raw numbers initially from initialRankedPlayers
+                    playersAfterZScoreCalculation = calculateZScoresWithComparisonPool(
+                        playersWithStatsAndRank, 
                         comparisonPoolPlayers,     
-                        enabledCategoriesDetailsObject,
-                        statPathMapping,
-                        comparisonRules
+                        enabledCategoriesDetailsObjectForZScore,
+                        statPathMappingForZScore,
+                        comparisonRulesToUse
                     );
-                    // playersAfterZScoreCalculation now has player.stats as { STAT: {value: X} } and player.zScores
-
-                    // --- Add color information based on Z-Scores ---
-                    const playersWithColorsEmbedded = playersAfterZScoreCalculation.map(player => {
-                        const newStats = { ...player.stats }; 
-                        const sportKey = sport?.toLowerCase(); 
-
-                        if (player.zScores) { 
-                            Object.keys(newStats).forEach(statKey => {
-                                const statItem = newStats[statKey]; // This is { value: X } or just X
-                                const zScoreForStat = player.zScores[statKey]; 
-                                
-                                const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
-                                const impactType = categoryConfig?.lowerIsBetter === true ? 'negative' : 'positive'; // Use lowerIsBetter
-
-                                if (statItem !== undefined && zScoreForStat !== undefined) { // Check if statItem and zScoreForStat exist
-                                    const currentValue = (typeof statItem === 'object' && statItem !== null && statItem.hasOwnProperty('value')) 
-                                                         ? statItem.value 
-                                                         : statItem; // Handle if statItem is raw value or {value: X}
-
-                                    newStats[statKey] = {
-                                        value: currentValue,
-                                        zScore: zScoreForStat, // Add the zScore here
-                                        colors: getZScoreColors(zScoreForStat, impactType)
-                                    };
-                                }
-                            });
-                        }
-                        // Explicitly return the calculated totals along with the modified stats
-                        return { 
-                            ...player, // Spread original player data (including id, info, userRank etc. AND zScores)
-                            stats: newStats, // Add the stats object with embedded colors and zScores
-                            zScoreTotals: player.zScoreTotals // Explicitly include zScoreTotals
-                         }; 
-                    });
-                    // This is the final structure to be used for display
-                    playersWithStatsAndRank = playersWithColorsEmbedded; 
-
-                    // +++ START DEBUG LOG for colors +++
-                    if (playersWithStatsAndRank.length > 0) {
-                        const firstPlayerForColorCheck = playersWithStatsAndRank[0];
-                        console.log('[useProcessedPlayers] Color Check - First player stats after color mapping:', 
-                            JSON.parse(JSON.stringify(firstPlayerForColorCheck.stats)) // Deep copy for clean logging
-                        );
-                         console.log('[useProcessedPlayers] Color Check - First player zScores (for reference):', 
-                            JSON.parse(JSON.stringify(firstPlayerForColorCheck.zScores)) // Deep copy for clean logging
-                        );
-                    }
-                    // +++ END DEBUG LOG for colors +++
-
                 } catch (error) {
-                    console.error("[useProcessedPlayers - Zscores] Error calculating Z-Scores or adding colors:", error);
+                    console.error("[useProcessedPlayers - Zscores] Error calculating Z-Scores:", error);
+                    // Keep playersAfterZScoreCalculation as is (playersWithStatsAndRank)
                 }
-            } else {
-                // console.warn("[useProcessedPlayers - Zscores] Skipping Z-Score calc: Missing comparison rules or no enabled categories.");
             }
-        } else {
-            // console.warn("[useProcessedPlayers - Zscores] Skipping Z-Score calc: Comparison pool is empty.");
         }
+        
+        // --- Apply colors and calculate final zScoreSum (based on zScores from calculateZScoresWithComparisonPool) ---
+        const enabledCategoriesDetailsObject = {}; // For final iteration and weighting
+        if (activeRanking.categories && typeof activeRanking.categories === 'object') {
+            Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
+                if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
+                    enabledCategoriesDetailsObject[key] = { ...catDetails, key: key };
+                }
+            });
+        }
+
+        const playersWithColorsAndSum = playersAfterZScoreCalculation.map(player => {
+            const newStats = { ...player.stats }; 
+            const precalculatedZScores = player.zScores || {}; // zScores object from calculateZScoresWithComparisonPool
+            let weightedZScoreSum = 0;
+            let sumOfWeights = 0;
+
+            Object.keys(enabledCategoriesDetailsObject).forEach(statKey => {
+                 const catDetails = enabledCategoriesDetailsObject[statKey];
+                 const zScoreForStat = precalculatedZScores[statKey]; 
+                 
+                 const currentStatValue = (newStats[statKey] !== undefined && newStats[statKey] !== null && typeof newStats[statKey] === 'object' && newStats[statKey].hasOwnProperty('value'))
+                                         ? newStats[statKey].value
+                                         : newStats[statKey];
+
+                 if (typeof zScoreForStat === 'number' && isFinite(zScoreForStat)) {
+                     const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
+                     const impactType = categoryConfig?.lowerIsBetter === true ? 'negative' : 'positive';
+                     
+                     newStats[statKey] = {
+                         value: currentStatValue, // Preserve original value if it was wrapped
+                         zScore: zScoreForStat, 
+                         colors: getZScoreColors(zScoreForStat, impactType) // Use local getZScoreColors
+                     };
+                     
+                     const weight = typeof catDetails.weight === 'number' ? catDetails.weight : 1; 
+                     weightedZScoreSum += (zScoreForStat * weight);
+                     sumOfWeights += weight;
+                 } else {
+                     newStats[statKey] = {
+                         value: currentStatValue,
+                         zScore: null,
+                         colors: getZScoreColors(NaN) 
+                     };
+                 }
+             });
+
+             const overallZScoreSum = player.zScoreTotals?.overallZScoreSum ?? (sumOfWeights > 0 ? weightedZScoreSum / sumOfWeights : 0);
+
+
+             return { 
+                 ...player, 
+                 stats: newStats, 
+                 zScoreTotals: { 
+                     overallZScoreSum: overallZScoreSum, 
+                     rawWeightedSum: weightedZScoreSum, 
+                     sumOfWeights: sumOfWeights
+                 }
+              }; 
+         });
+         
+         playersWithStatsAndRank = playersWithColorsAndSum;
         
         // --- Final Sorting ---
         let sortedPlayers = [...playersWithStatsAndRank];
