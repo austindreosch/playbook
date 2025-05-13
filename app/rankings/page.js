@@ -316,53 +316,43 @@ export default function RankingsPage() {
   }, [activeRanking, selectedSport]);
   // +++ END NEW EFFECT +++
 
+  // Effect to fetch master data (identities and stats) for the selected sport
+  // CONSOLIDATED from two previous effects to prevent redundant fetches.
   useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();
-    if (!sportKey) return;
+    if (!sportKey || !SPORT_CONFIGS[sportKey]) return; // Exit if sport is invalid
 
-    const currentIdentities = getPlayerIdentities(sportKey);
-    if (!masterLoading[`identities_${sportKey}`] && (!currentIdentities || currentIdentities.length === 0)) {
-       fetchPlayerIdentities(sportKey);
+    const state = useMasterDataset.getState(); // Get current store state directly
+
+    // --- Fetch Player Identities --- 
+    const identitiesLoading = state.loading[`identities_${sportKey}`];
+    const identitiesExist = Array.isArray(state.dataset[sportKey]?.playerIdentities) && state.dataset[sportKey].playerIdentities.length > 0;
+    if (!identitiesLoading && !identitiesExist) {
+        // console.log(`[MasterDataFetchEffect Consolidated] Fetching identities for ${sportKey}`);
+        fetchPlayerIdentities(sportKey);
     }
 
-    const currentStats = getSeasonalStats(sportKey);
-    if (!masterLoading[sportKey] && (!currentStats || Object.keys(currentStats).length === 0)) {
-       if (sportKey === 'nba') fetchNbaData();
-       else if (sportKey === 'mlb') fetchMlbData();
-       else if (sportKey === 'nfl') fetchNflData();
+    // --- Fetch Seasonal Stats --- 
+    const statsLoading = state.loading[sportKey];
+    // Check based on the structure created by processing (e.g., a 'players' object)
+    const statsExist = state.dataset[sportKey]?.players && Object.keys(state.dataset[sportKey].players).length > 0; 
+    if (!statsLoading && !statsExist) {
+        // console.log(`[MasterDataFetchEffect Consolidated] Fetching stats for ${sportKey}`);
+        if (sportKey === 'nba') fetchNbaData();
+        else if (sportKey === 'mlb') fetchMlbData();
+        else if (sportKey === 'nfl') fetchNflData();
+        else console.error(`[MasterDataFetchEffect Consolidated] Unknown sport: ${sportKey}`);
     }
 
   }, [
-      selectedSport,
-      fetchPlayerIdentities,
-      fetchNbaData,
-      fetchMlbData,
-      fetchNflData,
-      getPlayerIdentities,
-      getSeasonalStats,
-      masterLoading
+      selectedSport, 
+      fetchPlayerIdentities, 
+      fetchNbaData, 
+      fetchMlbData, 
+      fetchNflData 
+      // Removed store selectors and loading states as direct dependencies
+      // We get the state directly inside the effect now.
   ]);
-
-  useEffect(() => {
-      const sportKey = selectedSport?.toLowerCase();
-      if (!sportKey || !SPORT_CONFIGS[sportKey]) return;
-
-      const masterDataState = useMasterDataset.getState();
-      const currentData = masterDataState.dataset[sportKey];
-      const needsFetch = !currentData || _.isEmpty(currentData.players);
-      
-      if (needsFetch) {
-          if (sportKey === 'nba') {
-              fetchNbaData();
-          } else if (sportKey === 'mlb') {
-              fetchMlbData();
-          } else if (sportKey === 'nfl') {
-              fetchNflData();
-          } else {
-              console.error(`[MasterDataFetchEffect] Unknown sport selected: ${selectedSport}`);
-          }
-      }
-  }, [selectedSport, fetchNbaData, fetchMlbData, fetchNflData]); // Removed dataset dependency to avoid loop
 
   useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();
