@@ -1,7 +1,9 @@
 // stores/MasterDataset.js
+import { processMlbData } from '@/lib/utils/mlbDataProcessing';
+import { processNbaData } from '@/lib/utils/nbaDataProcessing';
+import { processNflData } from '@/lib/utils/nflDataProcessing'; // Returns { processedPlayers, teamTotalsContext }
+import _ from 'lodash';
 import { create } from 'zustand';
-import { processNflPlayerData } from '../utilities/MasterDataset/nflAdvancedStats';
-
 
 const getObjectSize = (obj) => {
     const json = JSON.stringify(obj);
@@ -20,71 +22,89 @@ const formatNumber = (value) => {
     return parseFloat(value.toFixed(1));
 };
 
-const clamp = (num, min, max) => Math.max(min, Math.min(num, max));
+// =====================================================================
+//                      INITIAL STATE STRUCTURE
+// =====================================================================
 
-function hexToRgba(hex, alpha) {
-    const stripped = hex.replace('#', '');
-    const r = parseInt(stripped.substring(0, 2), 16);
-    const g = parseInt(stripped.substring(2, 4), 16);
-    const b = parseInt(stripped.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+const initialSportState = () => ({
+    players: {},         // Processed player stats
+    identities: [],      // Basic player info (id, name, team, etc.)
+    teamTotals: {},      // Aggregated team stats (currently only NFL)
+    lastUpdated: null,   // Timestamp for player stats data
+    identitiesLastUpdated: null, // Timestamp for identities
+    // statsReferences: {}, // Consider if this needs nesting too, or remove if unused
+});
+
+// --- Get initial state size ---
+// Note: This is an approximation based on the initial structure, 
+// it won't include the functions/methods of the store.
+const calculateInitialStateSize = () => {
+    const initialState = {
+        dataset: {
+            nba: initialSportState(),
+            mlb: initialSportState(),
+            nfl: initialSportState(),
+        },
+        loading: { /* ... initial loading state ... */ }, // Assume initial loading states are small
+        error: { /* ... initial error state ... */ }, // Assume initial error states are small
+        rawFetchedData: null,
+        isRawDataFetched: false,
+        _loggedSample: { nfl: false, nba: false, mlb: false } // Add logging flags
+    };
+    // Manually define estimated initial size or calculate based on a representative empty state
+    // For simplicity, we can start with 0 KB or use getObjectSize on a minimal structure
+    return getObjectSize(initialState); 
 }
-
-function getColorForZScore(zScore, basePos = '#59cd90', baseNeg = '#ee6352', statValue) {
-    // If statValue is 0, force full deep red
-    if (statValue === 0) {
-        return hexToRgba(baseNeg, 1.0);
-    }
-    const clampedZ = clamp(zScore, -2, 2);
-    const ratio = Math.abs(clampedZ) / 2;
-    const minAlpha = 0.05;
-    const maxAlpha = 1.0;
-    const alpha = minAlpha + ratio * (maxAlpha - minAlpha);
-    const baseColor = zScore >= 0 ? basePos : baseNeg;
-    return hexToRgba(baseColor, alpha);
-}
-
-
-
-
-
-
 
 // =====================================================================
 
 const useMasterDataset = create((set, get) => ({
-    nba: {
-        players: [],
-        lastUpdated: null,
-        statsReferences: {},
+    // --- NEW NESTED DATA STRUCTURE ---
+    dataset: {
+        nba: initialSportState(),
+        mlb: initialSportState(),
+        nfl: initialSportState(),
     },
-    mlb: {
-        players: [],
-        lastUpdated: null,
-        statsReferences: {},
-    },
-    nfl: {
-        players: [],
-        lastUpdated: null,
-        statsReferences: {},
-    },
-    isLoading: false,  // Just one simple loading state
-    error: null,       // Just one simple error state
-    stateSize: '0 KB',
 
-    // --- New state for caching ---
+    // --- NEW NESTED LOADING/ERROR STATES ---
+    loading: {
+        // Specific loading states per sport/action
+        nba: false,
+        mlb: false,
+        nfl: false,
+        identities_nba: false,
+        identities_mlb: false,
+        identities_nfl: false,
+        rawData: false, // Loading state for the initial raw fetch
+    },
+    error: {
+        // Specific error states per sport/action
+        nba: null,
+        mlb: null,
+        nfl: null,
+        identities_nba: null,
+        identities_mlb: null,
+        identities_nfl: null,
+        rawData: null, // Error state for the initial raw fetch
+    },
+
+    _loggedSample: { nfl: false, nba: false, mlb: false }, // State to track logging
+
+    // --- Raw Data Cache (remains top-level for simplicity) ---
     rawFetchedData: null,
     isRawDataFetched: false,
+    stateSize: calculateInitialStateSize(), // Set initial size
 
-    // --- New Helper Function for Fetching and Caching ---
+    // --- Helper Function for Fetching and Caching Raw Data ---
     _ensureRawDataFetched: async () => {
         if (get().isRawDataFetched) {
-            // // console.log("Using cached raw data");
             return get().rawFetchedData;
         }
 
-        // // console.log("Fetching raw data from API...");
-        set({ isLoading: true, error: null }); // Start loading, clear previous error
+        set(state => ({
+            loading: { ...state.loading, rawData: true },
+            error: { ...state.error, rawData: null }
+        }));
         try {
             const response = await fetch('/api/load/MasterDatasetFetch');
             const data = await response.json();
@@ -96,717 +116,468 @@ const useMasterDataset = create((set, get) => ({
             set({
                 rawFetchedData: data,
                 isRawDataFetched: true,
-                isLoading: false, // Stop loading on success
-                error: null
+                loading: { ...get().loading, rawData: false }, // Stop raw data loading
+                error: { ...get().error, rawData: null },
             });
+            // Recalculate size after fetch
+            set({ stateSize: getObjectSize(get()) }); // Update size after raw data fetch
             return data;
         } catch (error) {
-            // console.error("Error fetching raw master data:", error);
-            set({
-                error: error.message,
-                isLoading: false, // Stop loading on error
-                isRawDataFetched: false, // Ensure flag stays false on error
-                rawFetchedData: null   // Clear potentially partial data
-            });
-            return null; // Indicate fetch failure
+            console.error("Error fetching raw master data:", error);
+            set(state => ({
+                error: { ...state.error, rawData: error.message },
+                loading: { ...state.loading, rawData: false },
+                isRawDataFetched: false,
+                rawFetchedData: null
+            }));
+            return null;
         }
     },
 
-
-    // =====================================================================
-    //                     🏀 FETCH NBA DATA 🏀
-    // =====================================================================
-
-    fetchNbaData: async () => {
-        // 1. Check existing data
-        let data = get().rawFetchedData;
-        const isDataAlreadyFetched = get().isRawDataFetched; // Or use timestamp
-
-        // 2. Fetch if missing/stale
-        if (!data || !isDataAlreadyFetched) { // Adjust condition
-            // console.log("fetchNbaData: Raw data not found or stale, attempting fetch...");
-            data = await get()._ensureRawDataFetched();
-        } else {
-            // // console.log("fetchNbaData: Using existing raw data from store state.");
-        }
-
-        // 3. Check if data available
-        if (!data) {
-            // console.error("fetchNbaData: No raw data available for processing.");
+    // --- Fetch Player Identities (Updated) ---
+    fetchPlayerIdentities: async (sport) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !get().dataset[sportKey]) {
+            console.error(`fetchPlayerIdentities: Invalid or unsupported sport provided: ${sport}`);
             return;
         }
 
-        // 4. Process NBA data
+        const identityLoadingKey = `identities_${sportKey}`;
+        const identityErrorKey = `identities_${sportKey}`;
+
+
+        set(state => ({
+            loading: { ...state.loading, [identityLoadingKey]: true },
+            error: { ...state.error, [identityErrorKey]: null }
+        }));
+
         try {
-            // // console.log("fetchNbaData: Starting processing...");
-            if (get().isLoading) set({ isLoading: false });
-
-            // First map the regular season stats
-            const regularSeasonPlayers = data.nbaStats?.playerStatsTotals?.map(playerStats => {
-                const teamAbbreviation = playerStats.team?.abbreviation ||
-                    playerStats.player?.currentTeam?.abbreviation ||
-                    'FA';
-                return {
-                    info: {
-                        playerId: playerStats.player.id,
-                        firstName: playerStats.player.firstName,
-                        lastName: playerStats.player.lastName,
-                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                        position: playerStats.player.primaryPosition,
-                        team: teamAbbreviation,
-                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
-                        height: playerStats.player.height,
-                        weight: playerStats.player.weight,
-                        jerseyNumber: playerStats.player.jerseyNumber,
-                        officialImageSrc: playerStats.player.officialImageSrc,
-                        age: playerStats.player.age,
-                        preciseAge: playerStats.player.birthDate ?
-                            ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
-                            playerStats.player.age,
-                        injuryStatus: playerStats.player.currentInjury,
-                    },
-                    stats: {
-                        //totals
-                        minutesPerGame: { value: formatNumber(Math.round(playerStats.stats.miscellaneous.minSecondsPerGame / 60)), zScore: null, color: '', abbreviation: 'MPG' },
-                        gamesPlayed: { value: formatNumber(playerStats.stats.gamesPlayed), zScore: null, color: '', abbreviation: 'GP' },
-                        points: { value: formatNumber(playerStats.stats.offense.pts), zScore: null, color: '' },
-                        rebounds: { value: formatNumber(playerStats.stats.rebounds.reb), zScore: null, color: '' },
-                        assists: { value: formatNumber(playerStats.stats.offense.ast), zScore: null, color: '' },
-                        steals: { value: formatNumber(playerStats.stats.defense.stl), zScore: null, color: '' },
-                        blocks: { value: formatNumber(playerStats.stats.defense.blk), zScore: null, color: '' },
-                        turnovers: { value: formatNumber(playerStats.stats.defense.tov), zScore: null, color: '' },
-
-                        //per game
-                        pointsPerGame: { value: formatNumber(playerStats.stats.offense.ptsPerGame), zScore: null, color: '', abbreviation: 'PTS' },
-                        reboundsPerGame: { value: formatNumber(playerStats.stats.rebounds.rebPerGame), zScore: null, color: '', abbreviation: 'REB' },
-                        assistsPerGame: { value: formatNumber(playerStats.stats.offense.astPerGame), zScore: null, color: '', abbreviation: 'AST' },
-                        threePointsMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fg3PtMadePerGame), zScore: null, color: '', abbreviation: '3PM' },
-                        turnoversPerGame: { value: formatNumber(playerStats.stats.defense.tovPerGame), zScore: null, color: '', abbreviation: 'TO' },
-                        stealsPerGame: { value: formatNumber(playerStats.stats.defense.stlPerGame), zScore: null, color: '', abbreviation: 'STL' },
-                        blocksPerGame: { value: formatNumber(playerStats.stats.defense.blkPerGame), zScore: null, color: '', abbreviation: 'BLK' },
-                        fieldGoalPercentage: { value: formatNumber(playerStats.stats.fieldGoals.fgPct), zScore: null, color: '', abbreviation: 'FG%' },
-                        freeThrowPercentage: { value: formatNumber(playerStats.stats.freeThrows.ftPct), zScore: null, color: '', abbreviation: 'FT%' },
-
-                        fgAttPerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
-                        ftAttPerGame: { value: formatNumber(playerStats.stats.freeThrows.ftAttPerGame), zScore: null, color: '' },
-                        fgMadePerGame: { value: formatNumber(playerStats.stats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
-                        ftMadePerGame: { value: formatNumber(playerStats.stats.freeThrows.ftMadePerGame), zScore: null, color: '' },
-
-                    }
-                };
-            }) || [];
-
-            // Merge stats for duplicate players in regular season stats, ie players who were traded mid-season
-            const players = Object.values(
-                regularSeasonPlayers.reduce((acc, player) => {
-                    const id = player.info.playerId;
-                    if (!acc[id]) {
-                        acc[id] = { ...player };
-                    } else {
-                        // Merge stats (assuming all stat fields are numeric)
-                        const existingGames = acc[id].stats.gamesPlayed;
-                        const newGames = player.stats.gamesPlayed;
-                        const totalGames = existingGames + newGames;
-
-                        // Helper function for weighted averages
-                        const weightedAvg = (a, b, existingGames, newGames) => {
-                            const totalGames = existingGames + newGames;
-                            return formatNumber(((a * existingGames) + (b * newGames)) / totalGames);
-                        };
-
-                        // Update per-game stats with weighted averages
-                        acc[id].stats.pointsPerGame = { value: weightedAvg(acc[id].stats.pointsPerGame.value, player.stats.pointsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.reboundsPerGame = { value: weightedAvg(acc[id].stats.reboundsPerGame.value, player.stats.reboundsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.assistsPerGame = { value: weightedAvg(acc[id].stats.assistsPerGame.value, player.stats.assistsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.stealsPerGame = { value: weightedAvg(acc[id].stats.stealsPerGame.value, player.stats.stealsPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.blocksPerGame = { value: weightedAvg(acc[id].stats.blocksPerGame.value, player.stats.blocksPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.minutesPerGame = { value: weightedAvg(acc[id].stats.minutesPerGame.value, player.stats.minutesPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.threePointsMadePerGame = { value: weightedAvg(acc[id].stats.threePointsMadePerGame.value, player.stats.threePointsMadePerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.turnoversPerGame = { value: weightedAvg(acc[id].stats.turnoversPerGame.value, player.stats.turnoversPerGame.value, existingGames.value, newGames.value), zScore: null, color: '' };
-
-                        // Update totals
-                        acc[id].stats.gamesPlayed = { value: totalGames, zScore: null, color: '' };
-                        acc[id].stats.points = { value: acc[id].stats.points.value + player.stats.points.value, zScore: null, color: '' };
-                        acc[id].stats.rebounds = { value: acc[id].stats.rebounds.value + player.stats.rebounds.value, zScore: null, color: '' };
-                        acc[id].stats.assists = { value: acc[id].stats.assists.value + player.stats.assists.value, zScore: null, color: '' };
-                        acc[id].stats.steals = { value: acc[id].stats.steals.value + player.stats.steals.value, zScore: null, color: '' };
-                        acc[id].stats.blocks = { value: acc[id].stats.blocks.value + player.stats.blocks.value, zScore: null, color: '' };
-                        acc[id].stats.turnovers = { value: acc[id].stats.turnovers.value + player.stats.turnovers.value, zScore: null, color: '' };
-
-                        // Update percentages with weighted averages
-                        acc[id].stats.fieldGoalPercentage = { value: weightedAvg(acc[id].stats.fieldGoalPercentage.value, player.stats.fieldGoalPercentage.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                        acc[id].stats.freeThrowPercentage = { value: weightedAvg(acc[id].stats.freeThrowPercentage.value, player.stats.freeThrowPercentage.value, existingGames.value, newGames.value), zScore: null, color: '' };
-                    }
-                    return acc;
-                }, {})
-            );
-
-            // Filter out players with no stats (points, rebounds, and assists all equal to 0)
-            const filteredPlayers = players.filter(player => {
-                const hasStats =
-                    player.stats.points.value !== 0 ||
-                    player.stats.rebounds.value !== 0 ||
-                    player.stats.assists.value !== 0;
-
-                return hasStats;
-            });
-
-            // Replace the players array with the filtered version
-            const activePlayers = filteredPlayers;
-
-
-
-            // Inject projected stats into existing players
-            const projectedPlayers = data.nbaStats?.playerStatsProjectedTotals?.map(playerStats => {
-                const teamAbbreviation = playerStats.team?.abbreviation ||
-                    playerStats.player?.currentTeam?.abbreviation ||
-                    'FA';
-                return {
-                    info: {
-                        playerId: playerStats.player.id,
-                        firstName: playerStats.player.firstName,
-                        lastName: playerStats.player.lastName,
-                        fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                        position: playerStats.player.primaryPosition,
-                        team: teamAbbreviation,
-                        teamId: playerStats.team?.id || playerStats.player?.currentTeam?.id,
-                        height: playerStats.player.height,
-                        weight: playerStats.player.weight,
-                        jerseyNumber: playerStats.player.jerseyNumber,
-                        officialImageSrc: playerStats.player.officialImageSrc,
-                        injuryStatus: playerStats.player.currentInjury
-                    },
-                    projectedStats: {
-                        //totals
-                        gamesPlayed: { value: playerStats.projectedStats.gamesPlayed, zScore: null, color: '' },
-                        points: { value: playerStats.projectedStats.offense.pts, zScore: null, color: '' },
-                        rebounds: { value: playerStats.projectedStats.rebounds.reb, zScore: null, color: '' },
-                        assists: { value: playerStats.projectedStats.offense.ast, zScore: null, color: '' },
-                        steals: { value: playerStats.projectedStats.defense.stl, zScore: null, color: '' },
-                        blocks: { value: playerStats.projectedStats.defense.blk, zScore: null, color: '' },
-                        turnovers: { value: playerStats.projectedStats.defense.tov, zScore: null, color: '' },
-                        //per game
-                        pointsPerGame: { value: playerStats.projectedStats.offense.ptsPerGame, zScore: null, color: '' },
-                        reboundsPerGame: { value: playerStats.projectedStats.rebounds.rebPerGame, zScore: null, color: '' },
-                        assistsPerGame: { value: playerStats.projectedStats.offense.astPerGame, zScore: null, color: '' },
-                        turnoversPerGame: { value: playerStats.projectedStats.defense.tovPerGame, zScore: null, color: '' },
-                        threePointsMadePerGame: { value: playerStats.projectedStats.fieldGoals.fg3PtMadePerGame, zScore: null, color: '' },
-                        stealsPerGame: { value: playerStats.projectedStats.defense.stlPerGame, zScore: null, color: '' },
-                        blocksPerGame: { value: playerStats.projectedStats.defense.blkPerGame, zScore: null, color: '' },
-                        fieldGoalPercentage: { value: playerStats.projectedStats.fieldGoals.fgPct, zScore: null, color: '' },
-                        freeThrowPercentage: { value: playerStats.projectedStats.freeThrows.ftPct, zScore: null, color: '' },
-                        minutesPerGame: { value: Math.round(playerStats.projectedStats.miscellaneous.minSecondsPerGame / 60), zScore: null, color: '' },
-
-                        fgAttPerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgAttPerGame), zScore: null, color: '' },
-                        ftAttPerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftAttPerGame), zScore: null, color: '' },
-                        fgMadePerGame: { value: formatNumber(playerStats.projectedStats.fieldGoals.fgMadePerGame), zScore: null, color: '' },
-                        ftMadePerGame: { value: formatNumber(playerStats.projectedStats.freeThrows.ftMadePerGame), zScore: null, color: '' },
-
-                        //For z-scorevalidation
-                        minSeconds: { value: playerStats.projectedStats.miscellaneous.minSeconds, zScore: null, color: '' },
-                        fgAtt: { value: playerStats.projectedStats.fieldGoals.fgAtt, zScore: null, color: '' },
-                    }
-                };
-            }) || [];
-
-            // Inject projected stats into existing players
-            const playerMap = activePlayers.reduce((acc, player) => {
-                acc[player.info.playerId] = player;
-                return acc;
-            }, {});
-
-            projectedPlayers.forEach(projection => {
-                const playerId = projection.info.playerId;
-                if (playerMap[playerId]) {
-                    playerMap[playerId].projections = projection.projectedStats;
-                }
-            });
-
-            const playersWithProjections = Object.values(playerMap);
-
-            //    ------------------------------------------
-            //           Z-SCORES CALCULATION
-            //    ------------------------------------------
-
-
-            const statKeys = Object.keys(regularSeasonPlayers[0]?.stats || {}).map(key => key);
-
-            const topN = 156; //12 team standard league rostered players
-            const statsReferences = {};
-
-            // Calculate z-scores for regular stats
-            statKeys.forEach(statKey => {
-                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
-                const baselinePlayers = playersWithProjections.filter(player =>
-                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value) &&
-                    player.projections &&
-                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
-                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
-                );
-
-                if (!baselinePlayers.length) return;
-
-                // Sort descending and select top N players from baseline players
-                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => b.stats[statKey].value - a.stats[statKey].value);
-                const topPlayers = sortedBaselinePlayers.slice(0, topN);
-
-                // Calculate mean and standard deviation from top players
-                const values = topPlayers.map(player => player.stats[statKey].value);
-                const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
-                const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
-
-                // Save reference outside of each player's data
-                statsReferences[statKey] = { mean, stdDev };
-
-                // Calculate z-scores and colors for ALL players with valid stats
-                const allValidPlayers = playersWithProjections.filter(player =>
-                    player.stats && player.stats[statKey] && !isNaN(player.stats[statKey].value)
-                );
-
-                allValidPlayers.forEach(player => {
-                    // For turnovers, invert the z-score since lower is better
-                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
-                        player.stats[statKey].zScore = (mean - player.stats[statKey].value) / stdDev;
-                    }
-                    // For percentage-based stats, weight the z-score by volume
-                    else if (statKey === 'fieldGoalPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.stats.fgMadePerGame.value + player.stats.fgAttPerGame.value) / (15 + 30),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else if (statKey === 'freeThrowPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.stats.ftMadePerGame.value + player.stats.ftAttPerGame.value) / (4.5 + 9),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.stats[statKey].zScore = ((player.stats[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else {
-                        player.stats[statKey].zScore = (player.stats[statKey].value - mean) / stdDev;
-                    }
-                    // Calculate color based on z-score using new function
-                    const zScore = player.stats[statKey].zScore;
-                    player.stats[statKey].color = getColorForZScore(zScore);
-                });
-            });
-
-            // Calculate z-scores for projection stats if available
-            statKeys.forEach(statKey => {
-                // Filter players with valid stat values for this key AND meeting minutes/attempts criteria
-                const baselinePlayers = playersWithProjections.filter(player =>
-                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value) &&
-                    player.projections.minSeconds && player.projections.minSeconds.value >= 110000 && // At least 1000 minutes
-                    player.projections.fgAtt && player.projections.fgAtt.value >= 300    // At least 300 field goal attempts
-                );
-
-                if (!baselinePlayers.length) return;
-
-                const sortedBaselinePlayers = [...baselinePlayers].sort((a, b) => {
-                    // For turnovers, sort ascending since lower is better
-                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
-                        return a.projections[statKey].value - b.projections[statKey].value;
-                    }
-                    // For all other stats, sort descending
-                    return b.projections[statKey].value - a.projections[statKey].value;
-                });
-                const topPlayers = sortedBaselinePlayers.slice(0, topN);
-
-                const values = topPlayers.map(player => player.projections[statKey].value);
-                const mean = values.reduce((acc, val) => acc + val, 0) / values.length;
-                const stdDev = Math.sqrt(values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / values.length);
-
-                // Save projection reference values with a prefix to distinguish
-                statsReferences[`proj_${statKey}`] = { mean, stdDev };
-
-                // Calculate z-scores and colors for ALL players with valid projection stats
-                const allValidPlayers = playersWithProjections.filter(player =>
-                    player.projections && player.projections[statKey] && !isNaN(player.projections[statKey].value)
-                );
-
-                allValidPlayers.forEach(player => {
-                    // For turnovers, invert the z-score since lower is better
-                    if (statKey === 'turnoversPerGame' || statKey === 'turnovers') {
-                        player.projections[statKey].zScore = (mean - player.projections[statKey].value) / stdDev;
-                    }
-                    // For percentage-based stats, weight the z-score by volume
-                    else if (statKey === 'fieldGoalPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.projections.fgMadePerGame.value + player.projections.fgAttPerGame.value) / (15 + 30),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else if (statKey === 'freeThrowPercentage') {
-                        // Weight by both makes and attempts
-                        const volumeWeight = Math.min(
-                            (player.projections.ftMadePerGame.value + player.projections.ftAttPerGame.value) / (4.5 + 9),
-                            1
-                        );
-                        const weightedFactor = 0.5 + 0.5 * volumeWeight;
-                        player.projections[statKey].zScore = ((player.projections[statKey].value - mean) / stdDev) * weightedFactor;
-                    }
-                    else {
-                        player.projections[statKey].zScore = (player.projections[statKey].value - mean) / stdDev;
-                    }
-                    // Calculate color based on z-score using new function
-                    const zScore = player.projections[statKey].zScore;
-                    player.projections[statKey].color = getColorForZScore(zScore);
-                });
-            });
-
-            // Save statsReferences to state
-            set({ statsReferences });
-            // // console.log('Stats references:', statsReferences);
-
-
-
-            //    ------------------------------------------
-            //           HELPER FUNCTIONS
-            //    ------------------------------------------
-
-            const duplicates = regularSeasonPlayers.filter(p =>
-                regularSeasonPlayers.filter(p2 => p2.info.playerId === p.info.playerId).length > 1
-            );
-            if (duplicates.length > 0) {
-                // // console.log('Found duplicates for players:',
-                //     [...new Set(duplicates.map(p => `${p.info.firstName} ${p.info.lastName} (${p.info.playerId})`))]
-                // );
+            const response = await fetch(`/api/players/list?sport=${sportKey}`);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `API request failed with status ${response.status}`);
             }
+            const identities = await response.json();
 
-            // // console.log('NBA Dataset Finalized:', playersWithProjections);/
 
-            const newState = {
-                nba: {
-                    players: playersWithProjections,
-                    injuries: [],
-                    lastUpdated: new Date(),
-                    statsReferences: statsReferences
+            set(state => ({
+                dataset: {
+                    ...state.dataset,
+                    [sportKey]: {
+                        ...state.dataset[sportKey],
+                        identities: identities,
+                        identitiesLastUpdated: Date.now(),
+                    }
                 },
-                isLoading: false
-            };
-
-            // Calculate state size before setting
-            const stateSize = getObjectSize(newState);
-            // console.log('NBA stats state size:', stateSize, newState);
-
-            set({
-                ...newState,
-                stateSize
-            });
-        } catch (error) {
-            // console.error('Error processing NBA data:', error);
-            set({ error: `Error processing NBA data: ${error.message}` /* isLoading: false */ }); // Handle processing error
-        }
-    },
-
-
-    // =====================================================================
-    //                         🏈 FETCH NFL DATA 🏈
-    // =====================================================================
-
-    fetchNflData: async () => {
-        // 1. Check if raw data already exists in the store state
-        let data = get().rawFetchedData;
-        const isDataAlreadyFetched = get().isRawDataFetched; // Or use timestamp logic
-
-        // 2. If raw data doesn't exist (or is considered stale), try fetching it
-        if (!data || !isDataAlreadyFetched) { // Adjust this condition based on your caching logic (e.g., check timestamp)
-            // console.log("fetchNflData: Raw data not found or stale, attempting fetch...");
-            data = await get()._ensureRawDataFetched(); // Call the central fetcher as a fallback
-        } else {
-            // // console.log("fetchNflData: Using existing raw data from store state.");
-        }
-
-        // 3. Check if data is available after potential fetch attempt
-        if (!data) {
-            // console.error("fetchNflData: No raw data available for processing.");
-            // Optionally set an error state or just return
-            // set({ isLoading: false, error: "Failed to load master data for NFL processing." });
-            return; // Exit if data couldn't be obtained
-        }
-
-        // 4. Process NFL data using the 'data' variable
-        try {
-            // console.log("fetchNflData: Starting processing...");
-            // Make sure isLoading is false if we proceed with processing existing data
-            if (get().isLoading) set({ isLoading: false });
-
-            // Access the NFL-specific part of the raw data
-            const seasonalStats = data.nflStats?.stats?.seasonalPlayerStats?.players;
-            const teamStatsTotals = data.nflStats?.teamStatsTotals || [];
-
-            if (!seasonalStats) {
-                // console.warn('fetchNflData: NFL seasonal player stats not found in the raw data.');
-                // Optionally set error or just return
-                return;
-            }
-
-            // Step 1: Initial Mapping (Result stored in initialPlayers)
-            const initialPlayers = seasonalStats.map(playerStats => ({
-                info: {
-                    playerId: playerStats.player.id,
-                    firstName: playerStats.player.firstName,
-                    lastName: playerStats.player.lastName,
-                    fullName: `${playerStats.player.firstName} ${playerStats.player.lastName}`,
-                    // Store the team info from this specific entry for now
-                    team: playerStats.team?.abbreviation || 'FA',
-                    teamId: playerStats.team?.id || 'FA',
-                    officialImageSrc: playerStats.player.officialImageSrc,
-                    position: playerStats.player.primaryPosition || 'N/A',
-                    injuryStatus: playerStats.player.currentInjury,
-                    age: playerStats.player.age,
-                    birthDate: playerStats.player.birthDate,
-                    // age: playerStats.player.age, // Duplicate age key removed
-                    preciseAge: playerStats.player.birthDate ?
-                        ((new Date() - new Date(playerStats.player.birthDate)) / (365.25 * 24 * 60 * 60 * 1000)).toFixed(1) :
-                        playerStats.player.age,
-                    height: playerStats.player.height,
-                    weight: playerStats.player.weight,
-                    jerseyNumber: playerStats.player.jerseyNumber,
-                },
-                // Keep stats nested as they are from the API initially
-                stats: {
-                    passing: {
-                        passYards: playerStats.stats?.passing?.passYards || 0,
-                        passTD: playerStats.stats?.passing?.passTD || 0,
-                        passInt: playerStats.stats?.passing?.passInt || 0,
-                        passAtt: playerStats.stats?.passing?.passAttempts || 0,
-                        passComp: playerStats.stats?.passing?.passCompletions || 0,
-                        pass20Plus: playerStats.stats?.passing?.pass20Plus || 0,
-                    },
-                    rushing: {
-                        rushYards: playerStats.stats?.rushing?.rushYards || 0,
-                        rushTD: playerStats.stats?.rushing?.rushTD || 0,
-                        rushAtt: playerStats.stats?.rushing?.rushAttempts || 0,
-                        rush20Plus: playerStats.stats?.rushing?.rush20Plus || 0,
-                    },
-                    receiving: {
-                        recYards: playerStats.stats?.receiving?.recYards || 0,
-                        recTD: playerStats.stats?.receiving?.recTD || 0,
-                        receptions: playerStats.stats?.receiving?.receptions || 0,
-                        targets: playerStats.stats?.receiving?.targets || 0,
-                        rec20Plus: playerStats.stats?.receiving?.rec20Plus || 0,
-                    },
-                    other: {
-                        gamesPlayed: playerStats.stats?.gamesPlayed || 0,
-                        gamesStarted: playerStats.stats?.miscellaneous?.gamesStarted || 0,
-                        offenseSnaps: playerStats.stats?.snapCounts?.offenseSnaps || 0,
-                        fumbles: playerStats.stats?.fumbles?.fumbles || 0,
-                        fumblesLost: playerStats.stats?.fumbles?.fumLost || 0,
-                    },
-                }
+                loading: { ...state.loading, [identityLoadingKey]: false },
+                error: { ...state.error, [identityErrorKey]: null }
             }));
-
-            // Step 2: Handle duplicate players (aggregate stats)
-            const mergedPlayersMap = initialPlayers.reduce((acc, player) => {
-                const id = player.info.playerId;
-                if (!acc[id]) {
-                    // First time seeing this player, add them directly
-                    acc[id] = { ...player };
-                    // Optional: Recalculate PassCompPct if Comp/Att are present
-                    if (acc[id].stats.passing.passAtt > 0) {
-                        acc[id].stats.passing.passCompPct = parseFloat(((acc[id].stats.passing.passComp / acc[id].stats.passing.passAtt) * 100).toFixed(1));
-                    } else {
-                        acc[id].stats.passing.passCompPct = 0;
-                    }
-                } else {
-                    // Player exists, accumulate stats
-                    const existing = acc[id].stats;
-                    const current = player.stats;
-
-                    // Sum passing stats
-                    existing.passing.passYards += current.passing.passYards;
-                    existing.passing.passTD += current.passing.passTD;
-                    existing.passing.passInt += current.passing.passInt;
-                    existing.passing.passAtt += current.passing.passAtt;
-                    existing.passing.passComp += current.passing.passComp;
-                    existing.passing.pass20Plus += current.passing.pass20Plus;
-
-                    // Sum rushing stats
-                    existing.rushing.rushYards += current.rushing.rushYards;
-                    existing.rushing.rushTD += current.rushing.rushTD;
-                    existing.rushing.rushAtt += current.rushing.rushAtt;
-                    existing.rushing.rush20Plus += current.rushing.rush20Plus;
-
-                    // Sum receiving stats
-                    existing.receiving.recYards += current.receiving.recYards;
-                    existing.receiving.recTD += current.receiving.recTD;
-                    existing.receiving.receptions += current.receiving.receptions;
-                    existing.receiving.targets += current.receiving.targets;
-                    existing.receiving.rec20Plus += current.receiving.rec20Plus;
-
-                    // Sum other stats
-                    existing.other.gamesPlayed += current.other.gamesPlayed;
-                    existing.other.gamesStarted += current.other.gamesStarted; // Make sure this is correct, might just take latest? Summing for now.
-                    existing.other.offenseSnaps += current.other.offenseSnaps;
-                    existing.other.fumbles += current.other.fumbles;
-                    existing.other.fumblesLost += current.other.fumblesLost;
-
-                    // Recalculate PassCompPct based on accumulated totals
-                    if (existing.passing.passAtt > 0) {
-                        existing.passing.passCompPct = parseFloat(((existing.passing.passComp / existing.passing.passAtt) * 100).toFixed(1));
-                    } else {
-                        existing.passing.passCompPct = 0;
-                    }
-
-
-                    // Update player info (team, teamId) to the latest entry encountered
-                    acc[id].info.team = player.info.team;
-                    acc[id].info.teamId = player.info.teamId;
-                }
-                return acc;
-            }, {});
-
-            // Filter out players with no meaningful stats (no receiving, rushing, or passing yards)
-            const mergedPlayers = Object.values(mergedPlayersMap).filter(player => {
-                return player.stats.receiving.recYards > 0 ||
-                    player.stats.rushing.rushYards > 0 ||
-                    player.stats.passing.passYards > 0;
-            });
-
-            // Get team stats from the raw fetched data
-            const teamStats = get().rawFetchedData?.nflStats?.teamStatsTotals || [];
-            // Process the player data with advanced stats using the utility function
-            const playersWithAdvancedStats = processNflPlayerData(mergedPlayers, teamStats);
-            // // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
-
-
-            // Now playersWithAdvancedStats contains all the advanced metrics calculated in nflAdvancedStats.js
-
-
-            // TODO: add projections stats to players, but im not doing this yet (IGNORE FOR NOW)
-
-
-
-
-
-
-
-            // Data size
-            const newState = {
-                nfl: {
-                    players: playersWithAdvancedStats,
-                    projections: [],
-                    injuries: [],
-                    lastUpdated: new Date()
-                },
-                isLoading: false
-            };
-
-            // Calculate state size before setting
-            const stateSize = getObjectSize(newState);
-            // console.log('NFL stats state size:', stateSize, newState);
-            // console.log('NFL Dataset Finalized:', playersWithAdvancedStats);
-
-            set({
-                nfl: {
-                    players: playersWithAdvancedStats,
-                    projections: [],
-                    injuries: [],
-                    lastUpdated: new Date()
-                },
-                error: null
-            });
+            set({ stateSize: getObjectSize(get()) }); // Update size after identities fetch
 
         } catch (error) {
-            // console.error("fetchNflData: Error during processing:", error);
-            set({ error: `Error processing NFL data: ${error.message}` }); // Set processing error
+            console.error(`Error fetching player identities for ${sportKey}:`, error);
+            set(state => ({
+                error: { ...state.error, [identityErrorKey]: `Error fetching identities for ${sportKey}: ${error.message}` },
+                loading: { ...state.loading, [identityLoadingKey]: false }
+            }));
         }
     },
 
-
-
     // =====================================================================
-    //                     ⚾️ 🧢 FETCH MLB DATA ⚾️ 🧢
+    //                     🏀 FETCH NBA DATA (Refactored + Z-Score) 🏀
     // =====================================================================
+    fetchNbaData: async () => {
+        const sportKey = 'nba';
+        set(state => ({
+            // FIX: Also set identity loading state
+            loading: { ...state.loading, [sportKey]: true, [`identities_${sportKey}`]: true }, 
+            error: { ...state.error, [sportKey]: null, [`identities_${sportKey}`]: null }
+        }));
 
-    fetchMlbData: async () => {
-        // 1. Check existing data
-        // let data = get().rawFetchedData;
-        // const isDataAlreadyFetched = get().isRawDataFetched; // Or use timestamp
+        // --- FIX: Ensure identities are fetched first ---
+        if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
+            await get().fetchPlayerIdentities(sportKey);
+            if (get().error[`identities_${sportKey}`]) {
+                 console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
+                 set(state => ({
+                     loading: { ...state.loading, [sportKey]: false }, 
+                 }));
+                 return;
+            }
+        } else {
+             set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
+        }
+        const nbaIdentities = get().dataset[sportKey]?.identities || [];
+        // --- Create TWO Identity Maps --- 
+        const identityMapByPlaybookId = {};
+        const identityMapByMsfId = {};
+        nbaIdentities.forEach(identity => {
+            const playbookIdStr = identity?.playbookId ? String(identity.playbookId) : null;
+            const msfIdNum = identity?.mySportsFeedsId ? Number(identity.mySportsFeedsId) : null;
+            
+            if (playbookIdStr) {
+                identityMapByPlaybookId[playbookIdStr] = identity;
+            }
+            if (msfIdNum != null) {
+                identityMapByMsfId[msfIdNum] = identity;
+            }
+            // Optional: Log if an identity has neither key?
+            // if (!playbookIdStr && msfIdNum == null) { ... }
+        });
+        // console.log(`[useMasterDataset NBA] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
+        // ---------------------------------------------
 
-        // // 2. Fetch if missing/stale
-        // if (!data || !isDataAlreadyFetched) { // Adjust condition
-        //     // console.log("fetchMlbData: Raw data not found or stale, attempting fetch...");
-        //     data = await get()._ensureRawDataFetched();
-        // } else {
-        //     // // console.log("fetchMlbData: Using existing raw data from store state.");
-        // }
+        const rawData = await get()._ensureRawDataFetched();
+        if (!rawData) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Raw data fetch failed, cannot process.`);
+            set(state => ({
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: state.error.rawData || "Failed to fetch raw master data." }
+             }));
+            return;
+        }
 
-        // // 3. Check if data available
-        // if (!data) {
-        //     // console.error("fetchMlbData: No raw data available for processing.");
-        //     return;
-        // }
+        const rawNbaStats = _.get(rawData, 'nbaStats.playerStatsTotals');
+        if (!rawNbaStats || !Array.isArray(rawNbaStats) || rawNbaStats.length === 0) {
+            console.warn(`fetch${sportKey.toUpperCase()}Data: No valid data found.`);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, lastUpdated: Date.now() } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: 'No NBA player stats found in fetched data.' }
+            }));
+            return;
+        }
 
-        // // 4. Process MLB data
-        // try {
-        //     // console.log("fetchMlbData: Starting processing...");
-        //     if (get().isLoading) set({ isLoading: false });
-        //     // NOTE: Use 'data' variable from the helper function
-        //     const seasonalStats = data.mlbStats?.stats?.seasonalPlayerStats?.players;
+        // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
+        try {
+            // --- FIX: Pass BOTH maps in context --- 
+            const context = { 
+                identityMap: identityMapByPlaybookId, // Keep original name for compatibility if needed elsewhere?
+                identityMapByPlaybookId: identityMapByPlaybookId, 
+                identityMapByMsfId: identityMapByMsfId 
+            };
+            const processedPlayers = processNbaData(rawNbaStats, context);
+            // -------------------------------------
 
-        //     if (!seasonalStats) {
-        //         // console.warn('fetchMlbData: MLB seasonal player stats not found in the raw data.');
-        //         // set({ isLoading: false }); // Stop loading if set above
-        //         return; // Exit if data is missing
-        //     }
 
-        //     const players = seasonalStats.map(playerStats => ({
-        //         // ... (Map MLB player info and stats here) ...
-        //         info: {
-        //             id: playerStats.player.id,
-        //             // ... other info fields ...
-        //         },
-        //         stats: {
-        //             // ... MLB stats ...
-        //         }
-        //     })) || [];
+            set(state => ({
+                dataset: {
+                    ...state.dataset,
+                    [sportKey]: {
+                        ...state.dataset[sportKey],
+                        players: processedPlayers,
+                        lastUpdated: Date.now(),
+                    }
+                },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: null }
+            }));
+            // --- Log Sample and Update Size ---
+            const sportLogFlag = get()._loggedSample[sportKey];
+            if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
+                const firstPlayerId = Object.keys(processedPlayers)[0];
+                const samplePlayer = processedPlayers[firstPlayerId];
+                // samplePlayer && console.log(`[Sample ${sportKey.toUpperCase()} Player w/ Z-Score]:`, samplePlayer)
+            }
+            set({ stateSize: getObjectSize(get()) }); // Update size after processing
+            // --- Log Size with Player Counts ---
+            const finalStateNBA = get();
+            const nbaCount = Object.keys(finalStateNBA.dataset.nba.players || {}).length;
+            const mlbCountNBA = Object.keys(finalStateNBA.dataset.mlb.players || {}).length;
+            const nflCountNBA = Object.keys(finalStateNBA.dataset.nfl.players || {}).length;
+            // console.log(`[Store Size Update] After ${sportKey.toUpperCase()} processing: ${finalStateNBA.stateSize} (NBA: ${nbaCount}, MLB: ${mlbCountNBA}, NFL: ${nflCountNBA} players)`);
 
-        //     set({
-        //         mlb: {
-        //             players,
-        //             projections: [],
-        //             injuries: [],
-        //             lastUpdated: new Date()
-        //             // statsReferences can be added if MLB gets Z-scores later
-        //         },
-        //         // isLoading: false // Stop loading if set above
-        //         error: null // Clear any previous processing error
-        //     });
-
-        // } catch (error) {
-        //     // console.error("fetchMlbData: Error during processing:", error);
-        //     set({ error: `Error processing MLB data: ${error.message}` }); // Handle processing error
-        // }
+        } catch (processingError) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {} } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: `Processing ${sportKey.toUpperCase()} data failed: ${processingError.message}` }
+            }));
+        }
     },
 
+    // =====================================================================
+    //                         🏈 FETCH NFL DATA (Refactored + Z-Score) 🏈
+    // =====================================================================
+    fetchNflData: async () => {
+        const sportKey = 'nfl';
+        set(state => ({
+            loading: { ...state.loading, [sportKey]: true, [`identities_${sportKey}`]: true }, // Also set identity loading true initially
+            error: { ...state.error, [sportKey]: null, [`identities_${sportKey}`]: null }
+        }));
+
+        // --- FIX: Ensure identities are fetched first ---
+        if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
+            // console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            await get().fetchPlayerIdentities(sportKey);
+            // Check if identity fetch failed
+            if (get().error[`identities_${sportKey}`]) {
+                 console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
+                 set(state => ({
+                     loading: { ...state.loading, [sportKey]: false }, // Stop main sport loading
+                     // Error already set by fetchPlayerIdentities
+                 }));
+                 return;
+            }
+        } else {
+             // Identities already exist, just turn off identity loading flag
+             set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
+        }
+        const nflIdentities = get().dataset[sportKey]?.identities || [];
+        // --- Create TWO Identity Maps --- 
+        const identityMapByPlaybookId = {};
+        const identityMapByMsfId = {};
+        nflIdentities.forEach(identity => {
+            const playbookIdStr = identity?.playbookId ? String(identity.playbookId) : null;
+            const msfIdNum = identity?.mySportsFeedsId ? Number(identity.mySportsFeedsId) : null;
+            if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
+            if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
+        });
+        // console.log(`[useMasterDataset NFL] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
+        // ---------------------------------------------
+
+        const rawData = await get()._ensureRawDataFetched();
+        if (!rawData) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Raw data fetch failed, cannot process.`);
+             set(state => ({
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: state.error.rawData || "Failed to fetch raw master data." }
+            }));
+            return;
+        }
+
+        const rawNflPlayerStats = _.get(rawData, 'nflStats.stats.seasonalPlayerStats.players');
+        const rawNflTeamStats = _.get(rawData, 'nflStats.teamStatsTotals');
+
+         if (!rawNflPlayerStats || !Array.isArray(rawNflPlayerStats) || rawNflPlayerStats.length === 0) {
+             console.warn(`fetch${sportKey.toUpperCase()}Data: No valid player data found.`);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, teamTotals: {}, lastUpdated: Date.now() } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: 'No NFL player stats found.' }
+            }));
+            return;
+        }
+         if (!rawNflTeamStats || !Array.isArray(rawNflTeamStats)) {
+             console.warn(`fetch${sportKey.toUpperCase()}Data: No valid team data found (needed for context). Share stats may be null.`);
+             // Proceed anyway, but context will be empty / derived stats using it will be null
+         }
+
+        // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
+         try {
+             // --- FIX: Pass BOTH maps in context --- 
+             const context = { 
+                 identityMap: identityMapByPlaybookId, 
+                 identityMapByPlaybookId: identityMapByPlaybookId, 
+                 identityMapByMsfId: identityMapByMsfId 
+             };
+             const { processedPlayers: initialProcessedPlayers, teamTotalsContext } = processNflData(rawNflPlayerStats, rawNflTeamStats, context);
+             // ------------------------------------- 
 
 
+             set(state => ({
+                 dataset: {
+                     ...state.dataset,
+                     [sportKey]: {
+                         ...state.dataset[sportKey],
+                         players: initialProcessedPlayers,
+                         teamTotals: teamTotalsContext, // Store team totals
+                         lastUpdated: Date.now(),
+                     }
+                 },
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: null }
+             }));
 
+            // --- Corrected Log Sample and Update Size --- FIX
+             const sportLogFlag = get()._loggedSample[sportKey];
+             if (!sportLogFlag && Object.keys(initialProcessedPlayers).length > 0) {
+                 const firstPlayerId = Object.keys(initialProcessedPlayers)[0];
+                 const samplePlayer = initialProcessedPlayers[firstPlayerId];
+                 // samplePlayer && console.log(`[Sample ${sportKey.toUpperCase()} Player w/ Z-Score]:`, samplePlayer)
+             }
+             set({ stateSize: getObjectSize(get()) }); // Update size after processing
+             // --- Log Size with Player Counts ---
+             const finalStateNFL = get();
+             const nbaCountNFL = Object.keys(finalStateNFL.dataset.nba.players || {}).length;
+             const mlbCountNFL = Object.keys(finalStateNFL.dataset.mlb.players || {}).length;
+             const nflCountNFL = Object.keys(finalStateNFL.dataset.nfl.players || {}).length;
+             // console.log(`[Store Size Update] After ${sportKey.toUpperCase()} processing: ${finalStateNFL.stateSize} (NBA: ${nbaCountNFL}, MLB: ${mlbCountNFL}, NFL: ${nflCountNFL} players)`);
 
-    // Selectors
-    getPlayers: (sport) => get()[sport].players,
-    getPlayerById: (sport, id) => get()[sport].players.find(p => p.info.playerId === id),
-    getPlayersByTeam: (sport, teamId) => get()[sport].players.filter(p => p.info.teamId === teamId),
-    getPlayerProjections: (sport) => get()[sport].players.map(p => p.projections).filter(Boolean),
-    getPlayerProjectionsById: (sport, id) => get()[sport].players.find(p => p.info.playerId === id)?.projections,
-    getStandings: (sport) => get()[sport].standings,
-    getInjuries: (sport) => get()[sport].injuries,
-    getTeams: (sport) => get()[sport].teams,
+         } catch (processingError) {
+             console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
+             set(state => ({
+                 dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, teamTotals: {} } },
+                 loading: { ...state.loading, [sportKey]: false },
+                 error: { ...state.error, [sportKey]: `Processing ${sportKey.toUpperCase()} data failed: ${processingError.message}` }
+             }));
+         }
+    },
 
+    // =====================================================================
+    //                     ⚾️ 🧢 FETCH MLB DATA (Refactored) ⚾️ 🧢
+    // =====================================================================
+    fetchMlbData: async () => {
+        const sportKey = 'mlb';
+        set(state => ({
+            // FIX: Also set identity loading state
+            loading: { ...state.loading, [sportKey]: true, [`identities_${sportKey}`]: true }, 
+            error: { ...state.error, [sportKey]: null, [`identities_${sportKey}`]: null }
+        }));
 
+        // --- FIX: Ensure identities are fetched first ---
+        if (!get().dataset[sportKey]?.identities || get().dataset[sportKey]?.identities.length === 0) {
+            // console.log(`[${sportKey.toUpperCase()}] Identities not found, fetching...`);
+            await get().fetchPlayerIdentities(sportKey);
+            if (get().error[`identities_${sportKey}`]) {
+                 console.error(`fetch${sportKey.toUpperCase()}Data: Identity fetch failed, cannot process.`);
+                 set(state => ({
+                     loading: { ...state.loading, [sportKey]: false }, 
+                 }));
+                 return;
+            }
+        } else {
+             set(state => ({ loading: { ...state.loading, [`identities_${sportKey}`]: false } }));
+        }
+        const mlbIdentities = get().dataset[sportKey]?.identities || [];
+        // --- Create TWO Identity Maps --- 
+        const identityMapByPlaybookId = {};
+        const identityMapByMsfId = {};
+        mlbIdentities.forEach(identity => {
+            const playbookIdStr = identity?.playbookId ? String(identity.playbookId) : null;
+            const msfIdNum = identity?.mySportsFeedsId ? Number(identity.mySportsFeedsId) : null;
+            if (playbookIdStr) identityMapByPlaybookId[playbookIdStr] = identity;
+            if (msfIdNum != null) identityMapByMsfId[msfIdNum] = identity;
+        });
+        // console.log(`[useMasterDataset MLB] Created identityMapByPlaybookId (${Object.keys(identityMapByPlaybookId).length}) and identityMapByMsfId (${Object.keys(identityMapByMsfId).length})`);
+        // ---------------------------------------------
 
+        const rawData = await get()._ensureRawDataFetched();
+        if (!rawData) {
+            console.error(`fetch${sportKey.toUpperCase()}Data: Raw data fetch failed, cannot process.`);
+            set(state => ({
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: state.error.rawData || "Failed to fetch raw master data." }
+            }));
+            return;
+        }
 
+        const rawMlbStats = _.get(rawData, 'mlbStats.playerStatsTotals');
+        const rawMlbProjections = _.get(rawData, 'mlbStats.playerStatsProjectedTotals');
 
+        if (!rawMlbStats || !Array.isArray(rawMlbStats) || rawMlbStats.length === 0) {
+             console.warn(`fetch${sportKey.toUpperCase()}Data: No valid data found.`);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {}, lastUpdated: Date.now() } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: 'No MLB player stats found.' }
+            }));
+            return;
+        }
+
+        // console.log(`fetch${sportKey.toUpperCase()}Data: Processing raw ${sportKey.toUpperCase()} data...`); // Removed log
+        try {
+            // --- FIX: Pass BOTH maps in context --- 
+            const context = { 
+                identityMap: identityMapByPlaybookId, 
+                identityMapByPlaybookId: identityMapByPlaybookId, 
+                identityMapByMsfId: identityMapByMsfId 
+            };
+            const processedPlayers = processMlbData(rawMlbStats, rawMlbProjections, context);
+            // ------------------------------------- 
+
+            // Apply sport-specific Z-Scores
+
+            set(state => ({
+                dataset: {
+                    ...state.dataset,
+                    [sportKey]: {
+                        ...state.dataset[sportKey],
+                        players: processedPlayers,
+                        lastUpdated: Date.now(),
+                    }
+                },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: null }
+            }));
+             // --- Log Sample and Update Size ---
+             const sportLogFlag = get()._loggedSample[sportKey];
+             if (!sportLogFlag && Object.keys(processedPlayers).length > 0) {
+                 const firstPlayerId = Object.keys(processedPlayers)[0];
+                 const samplePlayer = processedPlayers[firstPlayerId];
+                 // samplePlayer && console.log(`[Sample ${sportKey.toUpperCase()} Player]:`, samplePlayer)
+             }
+             set({ stateSize: getObjectSize(get()) }); // Update size after processing
+             // --- Log Size with Player Counts ---
+             const finalStateMLB = get();
+             const nbaCountMLB = Object.keys(finalStateMLB.dataset.nba.players || {}).length;
+             const mlbCountMLB = Object.keys(finalStateMLB.dataset.mlb.players || {}).length;
+             const nflCountMLB = Object.keys(finalStateMLB.dataset.nfl.players || {}).length;
+             // console.log(`[Store Size Update] After ${sportKey.toUpperCase()} processing: ${finalStateMLB.stateSize} (NBA: ${nbaCountMLB}, MLB: ${mlbCountMLB}, NFL: ${nflCountMLB} players)`);
+
+        } catch (processingError) {
+             console.error(`fetch${sportKey.toUpperCase()}Data: Error processing ${sportKey.toUpperCase()} data:`, processingError);
+            set(state => ({
+                dataset: { ...state.dataset, [sportKey]: { ...state.dataset[sportKey], players: {} } },
+                loading: { ...state.loading, [sportKey]: false },
+                error: { ...state.error, [sportKey]: `Processing ${sportKey.toUpperCase()} data failed: ${processingError.message}` }
+            }));
+        }
+    },
+
+    // =====================================================================
+    //                         SELECTORS (Updated)
+    // =====================================================================
+    getPlayerIdentities: (sport) => {
+        const sportKey = sport?.toLowerCase();
+        return sportKey ? get().dataset[sportKey]?.identities || [] : [];
+    },
+    getSeasonalStats: (sport) => {
+        const sportKey = sport?.toLowerCase();
+        // Returns the map { playerId: playerObject }
+        return sportKey ? get().dataset[sportKey]?.players || {} : {};
+    },
+    getPlayerById: (sport, id) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !id) return null;
+        // First check identities (faster lookup?)
+        const identity = get().dataset[sportKey]?.identities.find(p => p.playbookId === id);
+        if (identity) return identity; // Return basic identity info
+        // Fallback: Check if full player data exists in stats (might be needed for components expecting full data)
+        const playerData = get().dataset[sportKey]?.players[id]; // Access by ID if players is a map
+        // TODO: Decide return format - just identity or merge with stats if found?
+        // Returning just identity for now, consistent with old logic.
+        return playerData ? playerData.info : null; // Return player info from stats if found
+    },
+    getPlayersByTeam: (sport, teamId) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !teamId) return [];
+        const playersMap = get().dataset[sportKey]?.players || {};
+        // Filter players map based on teamId in info
+        return Object.values(playersMap).filter(p => p.info?.teamId === teamId);
+    },
+    getPlayerProjections: (sport) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey) return [];
+        const playersMap = get().dataset[sportKey]?.players || {};
+        // Assumes projections are nested within each player object
+        return Object.values(playersMap).map(p => p.projections).filter(Boolean);
+    },
+    getPlayerProjectionsById: (sport, id) => {
+        const sportKey = sport?.toLowerCase();
+        if (!sportKey || !id) return null;
+        const player = get().dataset[sportKey]?.players[id];
+        return player?.projections || null;
+    },
+    getTeamTotals: (sport) => { // New selector for team totals
+        const sportKey = sport?.toLowerCase();
+        return sportKey ? get().dataset[sportKey]?.teamTotals || {} : {};
+    }
+    // Removed old selectors, add back if needed:
+    // getStandings: (sport) => get()[sport.toLowerCase()]?.standings,
+    // getInjuries: (sport) => get()[sport.toLowerCase()]?.injuries,
+    // getTeams: (sport) => get()[sport.toLowerCase()]?.teams,
 
 }));
 

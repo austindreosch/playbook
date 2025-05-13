@@ -1,7 +1,10 @@
 'use client';
-
 import AllPlayersBox from '@/components/admin/AllPlayersBox';
 import CleanupRankingsButton from '@/components/admin/CleanupRankingsButton';
+import CsvRankingsSyncManager from '@/components/admin/CsvRankingsSyncManager';
+import FantasyCalcSyncManager from '@/components/admin/FantasyCalcSyncManager';
+import SyncPlayersButton from '@/components/admin/SyncPlayersButton';
+import UpdateMLBStatsButton from '@/components/admin/UpdateMLBStatsButton';
 import UpdateNBAStatsButton from '@/components/admin/UpdateNBAStatsButton';
 import UpdateNFLStatsButton from '@/components/admin/UpdateNFLStatsButton';
 import UpdateRankingsButton from '@/components/admin/UpdateRankingsButton';
@@ -27,19 +30,22 @@ export default function AdminPage() {
     );
   }
 
-  async function handleRefresh(endpoint) {
-    setLoading(true);
-    setMessage('Refreshing...');
-    try {
-      const res = await fetch(endpoint, { method: 'POST' });
-      const data = await res.json();
-      setMessage(`✅ Success:\n${JSON.stringify(data, null, 2)}`);
-    } catch (err) {
-      setMessage(`❌ Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Note: The handleRefresh function is currently unused as buttons
+  // like SyncPlayersButton handle their own state and API calls.
+  // It could be removed or repurposed if needed later.
+  // async function handleRefresh(endpoint) {
+  //   setLoading(true);
+  //   setMessage('Refreshing...');
+  //   try {
+  //     const res = await fetch(endpoint, { method: 'POST' });
+  //     const data = await res.json();
+  //     setMessage(`✅ Success:\n${JSON.stringify(data, null, 2)}`);
+  //   } catch (err) {
+  //     setMessage(`❌ Error: ${err.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,41 +56,48 @@ export default function AdminPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {/* Renamed Card Title and Added SyncPlayersButton */}
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Stats</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Data Updates & Sync</h2>
               <div className="space-y-4">
+                <SyncPlayersButton />
+                <hr/> {/* Optional separator */}
+                <h3 className="text-md font-medium text-gray-700 pt-2">Update Stats Data Lake</h3>
                 <UpdateNBAStatsButton />
                 <UpdateNFLStatsButton />
+                <UpdateMLBStatsButton />
               </div>
             </div>
           </div>
 
           <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Expert Rankings</h2>
-              <div className="space-y-4">
-                {/* <CleanupRankingsButton /> */}
-                <UpdateRankingsButton sport="NBA" format="Dynasty" scoring="Categories" />
-                <UpdateRankingsButton sport="NBA" format="Redraft" scoring="Categories" />
-                {/* <UpdateRankingsButton sport="NFL" format="Dynasty" scoring="Points" /> */}
-                <h1>NFL</h1>
-                <UpdateRankingsNFLButton />
-              </div>
-            </div>
+            {/*  Other Section */}
           </div>
+        </div>
+
+        {/* Add new section for CSV Sync */}
+        <div className="mt-8">
+          <CsvRankingsSyncManager />
+        </div>
+
+        {/* FantasyCalc Sync Manager */}
+        <div className="mt-8">
+          <FantasyCalcSyncManager />
         </div>
 
         <div className="mt-8">
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">All Players</h2>
-              <AllPlayersBox />
+              {/* <AllPlayersBox /> */}
             </div>
           </div>
         </div>
 
-        {message && (
+
+        {/* Removed the generic message display as individual buttons now show status */}
+        {/* {message && (
           <div className="mt-8 bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Status Messages</h2>
@@ -93,7 +106,7 @@ export default function AdminPage() {
               </pre>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

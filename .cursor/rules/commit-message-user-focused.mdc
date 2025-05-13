@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+    "guidelines": [
+      "**Goal:** Generate commit messages that prioritize the user-facing problem solved or feature added, not just the technical implementation details.",
+      "**1. Identify User Problem/Goal:** Analyze the user's most recent request and the conversation context. What specific bug, UI issue, or feature request was being addressed? (e.g., 'ECR ranks not showing correctly', 'drag reorder broken', 'add delete button').",
+      "**2. Conventional Commit Prefix:** Determine the primary nature of the change (fix, feature, refactor, chore, etc.) based on the user's goal and prepend the appropriate Conventional Commit prefix (e.g., `fix:`, `feat:`) to the subject line.",
+      "**3. Subject Line (User Perspective):** Create a concise subject line (under 60 characters if possible) describing the *fix* or *feature outcome* from the user's viewpoint. Use clear language related to the UI or functionality affected. If multiple distinct user-facing issues were fixed, mention the most significant ones briefly. Example: 'fix: correct ECR display and restore drag reordering'.",
+      "**4. Body (Technical Context - Optional & Brief):** *Briefly* mention the key technical changes (e.g., main functions/files modified) in the commit body *only* if it adds essential context to the fix described in the subject. Keep it concise. Example: 'Updated lookup logic in `updateAllPlayerRanks`. Adjusted ECR fetch criteria in `useUserRankings`. Avoid simply listing all changes or repeating the subject.",
+      "**Contrast:** Do NOT primarily describe *how* the code was changed (e.g., 'refactored X', 'updated Y', 'integrated Z'). Focus on *what problem was solved* or *what feature was added* for the user."
+
+    ]

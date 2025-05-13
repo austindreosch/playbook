@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Refrain from ever creating testing logs that loop through every player and logs 1000000 lines.
+

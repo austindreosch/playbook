@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Regarding the 'rankings' collection that contains all the expert rankings. Please never expose the "source" data field to the app in any way.

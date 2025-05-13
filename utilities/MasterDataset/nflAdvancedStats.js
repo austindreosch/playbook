@@ -161,8 +161,45 @@ function _calculateAdvancedNflStats(player, teamStats = {}) {
     advancedStats.opportunityEfficiency = totalOpportunities > 0 ? (totalFantasyPointsPPR / totalOpportunities) : 0.0;
     advancedStats.opportunityEfficiencyNoPPR = totalOpportunities > 0 ? (totalFantasyPointsNoPPR / totalOpportunities) : 0.0;
 
-    // Production Share %
-    advancedStats.productionShare = teamActionPlays > 0 ? ((totalPlays / teamActionPlays) * 100) : 0.0;
+    // --- Production Share % Calculation (Handles Trades) ---
+    if (player.stints && player.stints.length > 1) {
+        // Player was traded, calculate weighted average production share
+        let totalWeightedShare = 0;
+        let totalGamesAcrossStints = 0;
+
+        player.stints.forEach(stint => {
+            const stintTeamId = stint.teamId;
+            const stintPlayerPlays = stint.playerPlays;
+            const stintGamesPlayed = stint.gamesPlayed;
+
+            // Find the full-season team stats for the stint's team
+            const stintTeamStats = teamStats[stintTeamId] || {}; // Use teamStats passed into the function
+            const stintTeamActionPlays = (stintTeamStats.teamPassCompletions || 0) + 
+                                         (stintTeamStats.teamRushAtt || 0) + 
+                                         (stintTeamStats.teamReceptions || 0);
+
+            let stintShare = 0;
+            if (stintTeamActionPlays > 0) {
+                stintShare = (stintPlayerPlays / stintTeamActionPlays) * 100;
+            }
+
+            // Weight the share by games played during that stint
+            totalWeightedShare += stintShare * stintGamesPlayed;
+            totalGamesAcrossStints += stintGamesPlayed;
+        });
+
+        // Calculate the final weighted average share
+        if (totalGamesAcrossStints > 0) {
+            advancedStats.productionShare = totalWeightedShare / totalGamesAcrossStints;
+        } else {
+            advancedStats.productionShare = 0.0; // Avoid division by zero if total games is somehow 0
+        }
+
+    } else {
+        // Player was not traded (or no stint data available), use the standard calculation
+        advancedStats.productionShare = teamActionPlays > 0 ? ((totalPlays / teamActionPlays) * 100) : 0.0;
+    }
+    // --- End Production Share % ---
 
     // Turnover Rate % (using actionPlays as denominator)
     advancedStats.turnoverRate = actionPlays > 0 ? ((totalPlayerTurnovers / actionPlays) * 100) : 0.0;
@@ -321,6 +358,19 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
 
     // Step 2: Calculate raw advanced stats for each player
     let playersWithAdvancedStats = mergedPlayers.map(player => {
+
+        // --- Simple Manual Override for Caleb Williams Snaps ---
+        if (player.info?.fullName === "Caleb Williams") {
+            if (player.stats?.other) {
+                const originalSnaps = player.stats.other.offenseSnaps;
+                player.stats.other.offenseSnaps = 1123; // Correct snap count
+                console.log(`Applied manual snap override for Caleb Williams: ${originalSnaps} -> 1123`);
+            } else {
+                console.warn("Could not apply Caleb Williams snap override: player.stats.other not found.");
+            }
+        }
+        // --- End Override ---
+
         const teamId = player.info.teamId;
         const relevantTeamStats = teamStatsMap[teamId] || {};
         const advancedStats = _calculateAdvancedNflStats(player, relevantTeamStats);
@@ -350,7 +400,7 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         QB: 36,     // All starters + 1–2 backups per team, useful in bye weeks or superflex
         RB: 60,     // 4–5 per team rostered (including backups, stashes)
         WR: 72,     // 6 per team (3 starters + 2–3 stashes)
-        TE: 36,     // 2–3 per team max (starter + streamer or rookie stash)
+        TE: 24,     // 2 per team max (starter + streamer or rookie stash)
         Unknown: 0
     };
     const MIN_GAMES = 5;

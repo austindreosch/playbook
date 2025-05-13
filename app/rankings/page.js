@@ -20,386 +20,368 @@ Key interactions:
   - RankingsSidePanel - Shows list of saved rankings
 */
 
+// import Footer from '@/components/Layout/Footer';
+// import Header from '@/components/Layout/Header';
+import CreateAllRankingsButton from '@/components/Admin/CreateAllRankingsButton';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
 import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerListHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SPORT_CONFIGS } from '@/lib/config'; // Import SPORT_CONFIGS
 import useMasterDataset from '@/stores/useMasterDataset';
-import useUserRankings from '@/stores/useUserRankings';
+import useUserRankings, { useInitializeUserRankings } from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import _ from 'lodash';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-// --- NEW: Add NFL Mapping (or import from shared location) ---
-const NFL_STAT_ABBREVIATION_TO_PATH_MAP = {
-  // --- Advanced / Other --- 
-  'PPG': 'advanced.fantasyPointsPerGame',
-  'PPS': 'advanced.fantasyPointsPerSnap',
-  'OPG': 'advanced.opportunitiesPerGame',
-  'OPE': 'advanced.opportunityEfficiency',
-  'YD%': 'advanced.yardShare',
-  'PR%': 'advanced.productionShare',
-  'TD%': 'advanced.touchdownRate',
-  'BP%': 'advanced.bigPlayRate',
-  'TO%': 'advanced.turnoverRate',
-  // Add other categories from your map if needed...
-};
 
 export default function RankingsPage() {
+  // == ALL HOOKS DECLARED FIRST ==
+
+  // Call the initialization hook HERE
+  useInitializeUserRankings();
+
+  // -- State Hooks --
   const [latestUserRankings, setLatestUserRankings] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [pageError, setPageError] = useState(null);
   const [activeRankingId, setActiveRankingId] = useState(null);
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
-  const [statPathMapping, setStatPathMapping] = useState({});
-  const [chosenCategoryPaths, setChosenCategoryPaths] = useState([]);
-  const [enabledCategoryAbbrevs, setEnabledCategoryAbbrevs] = useState([]);
+  const [selectedSport, setSelectedSport] = useState('NBA');
+  const initialLoadEffectRan = useRef(false);
+
+  // -- Ref Hooks --
   const listContainerRef = useRef(null);
+  const playerListRef = useRef(null);
+
+  // -- Auth Hook --
   const { user } = useUser();
 
-  const {
-    nba, mlb, nfl,
-    fetchNbaData, fetchMlbData, fetchNflData,
-    isLoading: masterDatasetLoading,
-    error: masterDatasetError
-  } = useMasterDataset();
-
+  // -- Store Hooks --
   const {
     activeRanking,
-    setActiveRanking,
-    isLoading: rankingsLoading,
-    error: rankingsError,
+    rankings: userRankings,
+    rankingsLoading: userRankingsLoading,
+    initialRankingsLoaded,
+    activeRankingError,
+    activeRankingLoading,
     initAutoSave,
     isDraftModeActive,
     showDraftedPlayers,
     toggleDraftMode,
     toggleShowDraftedPlayers,
     resetDraftAvailability,
-    setPlayerAvailability
+    selectAndTouchRanking
   } = useUserRankings();
 
-  const [selectedSport, setSelectedSport] = useState('NBA');
+  const {
+    getPlayerIdentities,
+    getSeasonalStats,
+    loading: masterLoading,
+    error: masterError,
+    fetchPlayerIdentities,
+    fetchNbaData,
+    fetchMlbData,
+    fetchNflData,
+    dataset
+  } = useMasterDataset();
 
-  // Initialize auto-save
+  // -- Callback Hooks (Define BEFORE useEffects that use them) --
+  const handleCollapseAll = useCallback(() => {
+    setCollapseAllTrigger(prev => prev + 1);
+  }, []);
+
+  const handleRankingSelect = useCallback(async (rankingId) => {
+    if (!rankingId) { 
+        return; 
+    }
+
+    setIsPageLoading(true);
+    setActiveRankingId(rankingId);
+
+    try {
+        await selectAndTouchRanking(rankingId);
+    } catch (err) {
+        console.error(`[handleRankingSelect] Error during ranking selection for ${rankingId}:`, err);
+        setPageError('Error selecting ranking.');
+    } finally {
+        setIsPageLoading(false); 
+        setCollapseAllTrigger(prev => prev + 1); 
+    }
+  }, [selectAndTouchRanking]);
+
+  const handleSortChange = useCallback((newKey_abbreviation) => {
+    let sortKeyToSet = null;
+    if (newKey_abbreviation === 'zScoreSum') {
+      sortKeyToSet = 'zScoreSum';
+    } else {
+      sortKeyToSet = newKey_abbreviation;
+    }
+    setSortConfig(currentConfig => {
+      if (currentConfig.key === sortKeyToSet) {
+        return { key: null, direction: 'desc' }; 
+      } else {
+        return { key: sortKeyToSet, direction: 'desc' };
+      }
+    });
+  }, []);
+
+  // -- Memo Hooks (Can be after callbacks they don't depend on) --
+  const currentSportConfig = useMemo(() => {
+    const sportKey = selectedSport?.toLowerCase();
+    return sportKey ? SPORT_CONFIGS[sportKey] : null;
+  }, [selectedSport]);
+
+  const { enabledCategoryAbbrevs } = useMemo(() => {
+    if (!currentSportConfig || !activeRanking?.categories) {
+      return { enabledCategoryAbbrevs: [], statPathMapping: {} };
+    }
+    const mapping = currentSportConfig.statPathMapping || {};
+    let enabledAbbrevs = Object.entries(activeRanking.categories)
+      .filter(([_, catData]) => catData.enabled)
+      .map(([abbrev, _]) => abbrev);
+
+    const sportKey = selectedSport?.toLowerCase(); 
+    const isNFL = sportKey === 'nfl';
+    const isPointsScoring = activeRanking?.scoring?.toLowerCase() === 'points';
+    const currentPprSetting = activeRanking?.pprSetting;
+
+    if (isNFL && isPointsScoring && currentPprSetting) {
+        enabledAbbrevs = enabledAbbrevs.filter(abbrev => {
+            if (abbrev === 'PPG0ppr') return currentPprSetting === '0ppr';
+            if (abbrev === 'PPG0.5ppr') return currentPprSetting === '0.5ppr';
+            if (abbrev === 'PPG1ppr') return currentPprSetting === '1ppr';
+            return true; 
+        });
+    }
+    const finalEnabledAbbrevs = enabledAbbrevs.filter(abbrev => {
+      if (mapping[abbrev] || mapping[abbrev] === '') return true;
+      return false;
+    });
+    return {
+      enabledCategoryAbbrevs: finalEnabledAbbrevs,
+      statPathMapping: mapping
+    };
+  }, [currentSportConfig, activeRanking?.categories, selectedSport, activeRanking?.scoring, activeRanking?.pprSetting]); // Added potentially missing deps
+
+  const currentSportMasterData = useMemo(() => {
+    const sportKey = selectedSport?.toLowerCase();
+    return sportKey && dataset ? dataset[sportKey] : null;
+  }, [selectedSport, dataset]);
+
+  const selectedSportLoading = useMemo(() => {
+      const sportKey = selectedSport?.toLowerCase();
+      return !sportKey || !!(masterLoading[sportKey] || masterLoading[`identities_${sportKey}`]);
+  }, [selectedSport, masterLoading]);
+
+  const selectedSportError = useMemo(() => {
+      const sportKey = selectedSport?.toLowerCase();
+      return sportKey ? (masterError[sportKey] || masterError[`identities_${sportKey}`]) : null;
+  }, [selectedSport, masterError]);
+
+  const processedPlayers = useMemo(() => {
+    const sportKey = selectedSport?.toLowerCase();
+    if (!activeRanking?.rankings || activeRanking.rankings.length === 0 || !currentSportMasterData || _.isEmpty(currentSportMasterData.players)) {
+       return [];
+    }
+    const masterPlayersData = currentSportMasterData.players;
+    return activeRanking.rankings.map((rankingEntry, index) => {
+      const playerId = rankingEntry.playerId; 
+      const playerData = masterPlayersData[playerId];
+      if (!playerData) {
+        return {
+            ...rankingEntry,
+            rank: rankingEntry.userRank || index + 1, 
+            name: rankingEntry.name || 'Player Not Found',
+            position: rankingEntry.position || 'N/A', 
+            team: 'N/A',
+            age: 'N/A',
+            stats: {},
+            hittingStats: {},
+            pitchingStats: {},
+            isPlaceholder: true, 
+            rawPlayerData: null
+        };
+      }
+      return {
+        ...rankingEntry, 
+        rank: rankingEntry.userRank || index + 1, 
+        name: playerData.info.fullName || `${playerData.info.firstName || ''} ${playerData.info.lastName || ''}`.trim(),
+        position: playerData.info.primaryPosition || 'N/A',
+        team: playerData.info.teamAbbreviation || 'N/A',
+        age: playerData.info.age ?? 'N/A',
+        officialImageSrc: playerData.info.officialImageSrc,
+        stats: playerData.stats || {},
+        isPlaceholder: false,
+        rawPlayerData: null 
+      };
+    });
+  }, [activeRanking?.rankings, currentSportMasterData, selectedSport]);
+
+
+  const draftedCount = useMemo(() => {
+    if (!activeRanking?.rankings) return 0; // CHANGED to .rankings
+    return activeRanking.rankings.filter(p => !p.draftModeAvailable).length;
+  }, [activeRanking?.rankings]); // CHANGED to .rankings
+
+  // === DERIVED STATE FROM STORE ===
+  const playerIdentities = getPlayerIdentities(selectedSport);
+  const seasonalStatsData = getSeasonalStats(selectedSport);
+  const identitiesLoading = masterLoading[`identities_${selectedSport?.toLowerCase()}`] ?? false;
+  const statsLoading = masterLoading[selectedSport?.toLowerCase()] ?? false;
+  const isMasterDataLoading = identitiesLoading || statsLoading;
+  const isMasterDataReady = !isMasterDataLoading && 
+                            Array.isArray(playerIdentities) && playerIdentities.length > 0 && 
+                            typeof seasonalStatsData === 'object' && seasonalStatsData !== null && Object.keys(seasonalStatsData).length > 0;
+
+  // -- Effect Hooks --
   useEffect(() => {
     const cleanup = initAutoSave();
     return () => cleanup();
   }, [initAutoSave]);
 
-  // Handle saving when user tries to leave the page
   useEffect(() => {
-    const { hasUnsavedChanges, saveChanges } = useUserRankings.getState();
-
-    const handleBeforeUnload = (e) => {
-      if (hasUnsavedChanges) {
-        saveChanges();
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
-
-  useEffect(() => {
-    const fetchUserRankings = async () => {
-      setIsLoading(true); // Ensure loading starts true
-      let fetchedRankingsList = null;
-      let initialActiveData = null;
-
-      try {
-        // 1. Fetch the list of rankings
-        const listResponse = await fetch('/api/user-rankings');
-        if (!listResponse.ok) {
-          throw new Error('Failed to fetch user rankings list');
-        }
-        fetchedRankingsList = await listResponse.json();
-        // console.log('Fetched User Rankings List:', fetchedRankingsList);
-
-        // 2. Determine the most recent ranking ID
-        if (fetchedRankingsList?.length > 0) {
-          const mostRecent = [...fetchedRankingsList].sort((a, b) =>
-            new Date(b.details?.dateUpdated) - new Date(a.details?.dateUpdated)
-          )[0];
-
-          // 3. Fetch the full data for the most recent ranking
-          if (mostRecent?._id) {
+    if (user && !latestUserRankings) { 
+        const fetchRankings = async () => {
             try {
-              // console.log(`Fetching initial active ranking: ${mostRecent._id}`);
-              const detailResponse = await fetch(`/api/user-rankings/${mostRecent._id}`);
-              if (detailResponse.ok) {
-                initialActiveData = await detailResponse.json();
-                // console.log('Fetched Initial Active Ranking Data:', initialActiveData);
-              } else {
-                console.error(`Failed to fetch initial ranking details for ${mostRecent._id}, status: ${detailResponse.status}`);
-                // Proceed without initial active data, list will still load
-              }
-            } catch (detailError) {
-              console.error(`Error fetching initial ranking details for ${mostRecent._id}:`, detailError);
-              // Proceed without initial active data
+                const response = await fetch('/api/user-rankings');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setLatestUserRankings(data); 
+            } catch (error) {
+                console.error('Failed to fetch user rankings:', error);
+                setPageError('Failed to load user rankings data.'); 
             }
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching user rankings list:', err);
-        setError(err.message);
-        // Ensure list state is cleared on error
-        setLatestUserRankings(null);
-        setActiveRanking(null); // Clear active ranking on error
-      } finally {
-        // 4. Update state AFTER all fetching (or errors) are done
-        setLatestUserRankings(fetchedRankingsList || []); // Set the list (or empty array)
+        };
+        fetchRankings();
+    }
+  }, [user, latestUserRankings]); 
 
-        if (initialActiveData) {
-          const sport = initialActiveData.sport; // Get the sport
+  // Effect to set initial active ranking
+  useEffect(() => {
+    if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
+        initialLoadEffectRan.current = true; 
 
-          // 5. Trigger the master data fetch for the determined sport
-          // Check if data already exists before fetching
-          const sportKey = sport.toLowerCase();
-          let existingData = null;
-          if (sportKey === 'nba') existingData = nba;
-          else if (sportKey === 'mlb') existingData = mlb;
-          else if (sportKey === 'nfl') existingData = nfl;
+        // Determine the ranking to load - Use the one from store (restored or set by fetchUserRankings)
+        const rankingToLoad = activeRanking || userRankings[0]; 
+        const idToLoad = rankingToLoad?._id;
 
-          if (!existingData?.players?.length) {
-            // console.log(`Triggering master fetch for initial sport: ${sport}`);
-            if (sport === 'NBA') {
-              fetchNbaData();
-            } else if (sport === 'MLB') {
-              fetchMlbData();
-            } else if (sport === 'NFL') {
-              fetchNflData();
-            } else {
-              console.warn("Unknown sport for initial fetch:", sport);
+        
+        if (idToLoad) {
+            // Set sport early if needed
+            if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
+
+                setSelectedSport(rankingToLoad.sport);
             }
-          } else {
-            // console.log(`Master data for initial sport ${sport} already present.`);
-          }
 
-          // 6. Set the active ranking and sport states
-          setActiveRanking(initialActiveData);          // Update store
-          setSelectedSport(sport);                     // Update local sport state
-          setActiveRankingId(initialActiveData._id);   // Update local ID state
+            // ALWAYS call handleRankingSelect on initial load to ensure fresh, full data
+            handleRankingSelect(idToLoad);
         } else {
-          // If no initial active data could be fetched (empty list, error, etc.)
-          setActiveRanking(null); // Ensure store is cleared
-          setActiveRankingId(null);
+             console.log('[InitialLoadEffect Ref ] No idToLoad determined.');
         }
-      }
-    };
-
-    fetchUserRankings();
-    // Dependencies: Added fetch functions and master data states
-  }, [setActiveRanking, fetchNbaData, fetchMlbData, fetchNflData, nba, mlb, nfl]);
-
-  // --- NEW useEffect to determine final loading state --- 
+    }
+  }, [initialRankingsLoaded, userRankings, activeRanking, selectedSport, activeRankingId, handleRankingSelect, activeRankingLoading, setSelectedSport]); // Keep dependencies
+  
+  // +++ NEW EFFECT to sync local activeRankingId with store's activeRanking object +++
   useEffect(() => {
-    // Determine if the master dataset for the *currently selected* sport is loaded
-    let isMasterDataReady = false;
+    if (activeRanking && activeRanking._id && activeRanking._id !== activeRankingId) {
+      setActiveRankingId(activeRanking._id);
+    }
+  }, [activeRanking, activeRankingId]); 
+  
+  // +++ NEW EFFECT to derive selectedSport from activeRanking.sport +++
+  useEffect(() => {
+    if (activeRanking && activeRanking.sport && activeRanking.sport !== selectedSport) {
+      setSelectedSport(activeRanking.sport);
+    }
+  }, [activeRanking, selectedSport]);
+  // +++ END NEW EFFECT +++
+
+  // Effect to fetch master data (identities and stats) for the selected sport
+  // CONSOLIDATED from two previous effects to prevent redundant fetches.
+  useEffect(() => {
     const sportKey = selectedSport?.toLowerCase();
-    if (sportKey === 'nba') isMasterDataReady = !!nba?.players?.length;
-    else if (sportKey === 'mlb') isMasterDataReady = !!mlb?.players?.length;
-    else if (sportKey === 'nfl') isMasterDataReady = !!nfl?.players?.length;
-    // If sport is not set or unknown, treat master data as not ready (or adjust logic as needed)
+    if (!sportKey || !SPORT_CONFIGS[sportKey]) return; // Exit if sport is invalid
 
-    // Check if we have the rankings list
-    const isRankingsListReady = latestUserRankings !== null;
+    const state = useMasterDataset.getState(); // Get current store state directly
 
-    // Check if activeRanking is ready (only required if list is not empty)
-    const isActiveRankingReady = (latestUserRankings?.length === 0) || (latestUserRankings?.length > 0 && activeRanking !== null);
-
-    // Set loading to false only when all necessary data is confirmed
-    if (isRankingsListReady && isActiveRankingReady && isMasterDataReady) {
-      setIsLoading(false);
+    // --- Fetch Player Identities --- 
+    const identitiesLoading = state.loading[`identities_${sportKey}`];
+    const identitiesExist = Array.isArray(state.dataset[sportKey]?.playerIdentities) && state.dataset[sportKey].playerIdentities.length > 0;
+    if (!identitiesLoading && !identitiesExist) {
+        // console.log(`[MasterDataFetchEffect Consolidated] Fetching identities for ${sportKey}`);
+        fetchPlayerIdentities(sportKey);
     }
-    // Optional: You could explicitly set isLoading back to true here if dependencies change 
-    // in a way that requires reloading, but be cautious of loops.
-    // else {
-    //   setIsLoading(true); 
-    // }
 
-  }, [latestUserRankings, activeRanking, selectedSport, nba, mlb, nfl]); // Watch all relevant data points
+    // --- Fetch Seasonal Stats --- 
+    const statsLoading = state.loading[sportKey];
+    // Check based on the structure created by processing (e.g., a 'players' object)
+    const statsExist = state.dataset[sportKey]?.players && Object.keys(state.dataset[sportKey].players).length > 0; 
+    if (!statsLoading && !statsExist) {
+        // console.log(`[MasterDataFetchEffect Consolidated] Fetching stats for ${sportKey}`);
+        if (sportKey === 'nba') fetchNbaData();
+        else if (sportKey === 'mlb') fetchMlbData();
+        else if (sportKey === 'nfl') fetchNflData();
+        else console.error(`[MasterDataFetchEffect Consolidated] Unknown sport: ${sportKey}`);
+    }
 
-  // --- MOVED & UPDATED: useEffect for Category Mapping --- 
+  }, [
+      selectedSport, 
+      fetchPlayerIdentities, 
+      fetchNbaData, 
+      fetchMlbData, 
+      fetchNflData 
+      // Removed store selectors and loading states as direct dependencies
+      // We get the state directly inside the effect now.
+  ]);
+
   useEffect(() => {
-    const currentSportLower = selectedSport.toLowerCase();
+    const sportKey = selectedSport?.toLowerCase();
 
-    // --- NEW: Determine which dataset source to use INSIDE the effect ---
-    let sourceDataset;
-    if (currentSportLower === 'nba') sourceDataset = nba;
-    else if (currentSportLower === 'mlb') sourceDataset = mlb;
-    else if (currentSportLower === 'nfl') sourceDataset = nfl;
-    else sourceDataset = null;
+    const overallError = selectedSportError || activeRankingError?.message || null;
+    setPageError(currentError => overallError !== currentError ? overallError : currentError);
 
-    // Ensure necessary data exists before proceeding
-    // Check activeRanking, categories, AND that the source dataset for the sport is loaded
-    if (!activeRanking?.categories || !sourceDataset?.players?.length) {
-      setStatPathMapping({});
-      setChosenCategoryPaths([]);
-      setEnabledCategoryAbbrevs([]);
-      // Reset sort if categories/data disappear
-      setSortConfig({ key: null, direction: 'desc' });
-      return;
-    }
+    const activeRankingFullyLoaded = !!activeRanking && !!activeRanking.categories && !!activeRanking.rankings; // ADDED .rankings check
+    const rankingsListExists = userRankings && userRankings.length > 0; 
 
-    // 1. Determine the mapping strategy
-    let currentMapping = {};
-    let currentEnabledAbbrevs = [];
+    const newLoadingState = 
+        !!overallError ||                 
+        userRankingsLoading ||
+        activeRankingLoading ||
+        selectedSportLoading ||
+        !initialRankingsLoaded || 
+        (rankingsListExists && !activeRankingFullyLoaded); 
+        
+    setIsPageLoading(currentLoading => newLoadingState !== currentLoading ? newLoadingState : currentLoading);
 
-    if (currentSportLower === 'nfl') {
-      // Strategy for NFL: Use the predefined manual map
-      currentMapping = NFL_STAT_ABBREVIATION_TO_PATH_MAP;
-      // console.log('[NFL Mapping] Using manual stat paths:', currentMapping);
-    } else {
-      // Strategy for NBA/Other: Generate from abbreviations in the first player's stats
-      const firstPlayerStats = sourceDataset.players[0]?.stats;
-      if (firstPlayerStats) {
-        Object.entries(firstPlayerStats).forEach(([key, stat]) => {
-          // Check if stat is an object with 'abbreviation' property
-          if (stat && typeof stat === 'object' && stat.abbreviation) {
-            currentMapping[stat.abbreviation] = key; // Map abbrev -> key (e.g., 'PTS' -> 'pointsPerGame')
-          }
-          // TODO: Add handling for potential raw values if structure varies?
-        });
-        // console.log(`[${selectedSport} Mapping] Generated paths from abbreviations:`, currentMapping);
-      } else {
-        console.warn(`[${selectedSport} Mapping] Could not generate paths: No stats found for the first player.`);
-      }
-    }
-
-    setStatPathMapping(currentMapping); // Store the calculated map
-
-    // 2. Get all enabled abbreviations from the active ranking definition
-    const enabledAbbrevsFromRanking = Object.entries(activeRanking.categories)
-      .filter(([_, value]) => value.enabled)
-      .map(([abbrev]) => abbrev);
-
-    // --- NEW: Filter these based on what actually exists in the current sport's mapping --- 
-    const finalEnabledAbbrevs = enabledAbbrevsFromRanking.filter(abbrev => {
-      const pathExists = currentMapping.hasOwnProperty(abbrev);
-      if (!pathExists) {
-        console.warn(`[Category Calculation] Enabled abbreviation "${abbrev}" from ranking definition does not exist in generated map for ${selectedSport}. Excluding.`);
-      }
-      return pathExists;
-    });
-
-    // 3. Calculate chosenCategoryPaths using only the filtered, valid abbreviations
-    const enabledPaths = finalEnabledAbbrevs.map(abbrev => currentMapping[abbrev]);
-
-    setChosenCategoryPaths(enabledPaths); // State now holds actual paths/keys for valid stats
-    setEnabledCategoryAbbrevs(finalEnabledAbbrevs); // State holds valid abbrevs for header
-
-    // Reset sort if categories change (check based on valid paths)
-    setSortConfig(currentConfig => {
-      // --- REVERTED: Restore check for zScoreSum --- 
-      if (currentConfig.key !== null && currentConfig.key !== 'zScoreSum' && !enabledPaths.includes(currentConfig.key)) {
-        // console.log(`[Sort Reset] Current sort key ${currentConfig.key} no longer enabled. Resetting.`);
-        return { key: null, direction: 'desc' };
-      }
-      return currentConfig; // Keep current sort otherwise
-    });
-
-  }, [activeRanking?.categories, selectedSport, nba, mlb, nfl]); // Depend on source data
-
-  // Add handler function to trigger collapse
-  const handleCollapseAll = () => {
-    setCollapseAllTrigger(prev => prev + 1);
-  };
-
-  const handleRankingSelect = async (rankingId) => {
-    if (!rankingId) return;
-
-    try {
-      setActiveRankingId(rankingId);
-      const response = await fetch(`/api/user-rankings/${rankingId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch ranking');
-      }
-      const rankingData = await response.json();
-      // console.log('Active Ranking Data:', rankingData);
-      setActiveRanking(rankingData);
-      setSelectedSport(rankingData.sport);
-      setCollapseAllTrigger(prev => prev + 1);
-    } catch (error) {
-      console.error('Error loading ranking:', error);
-      setError(error.message);
-    }
-  };
-
-  // Get the appropriate dataset based on selected sport
-  const getDatasetForSelectedSport = () => {
-    switch (selectedSport) {
-      case 'NBA':
-        return { nba: nba };
-      case 'MLB':
-        return { mlb: mlb };
-      case 'NFL':
-        return { nfl: nfl };
-      default:
-        return { players: [] };
-    }
-  };
-
-  const datasetForSelectedSport = getDatasetForSelectedSport();
+  }, [
+      selectedSportLoading, 
+      selectedSportError,   
+      userRankingsLoading, 
+      activeRankingLoading,
+      activeRankingError,
+      userRankings, 
+      initialRankingsLoaded, 
+      activeRanking,      
+      selectedSport       
+    ]);
 
 
-  // useEffect(() => {
-  //   // console.log('Current Sport Data:', datasetForSelectedSport);
-  // }, [datasetForSelectedSport]);
+  // == RENDER LOGIC ==
 
-  const handleSortChange = useCallback((newKey_abbreviation) => {
-    // --- REVERTED: Restore check for zScoreSum --- 
-    let sortKeyToSet = null;
-
-    if (newKey_abbreviation === 'zScoreSum') {
-      sortKeyToSet = 'zScoreSum';
-    } else {
-      // --- Existing Logic for regular stats ---
-      let fullPath = statPathMapping[newKey_abbreviation];
-      if (!fullPath) {
-        console.warn(`[Sort Warning] No path found in statPathMapping for abbreviation: ${newKey_abbreviation}. Sorting might not work.`);
-        // Prevent setting an invalid key
-        return;
-      }
-      sortKeyToSet = fullPath;
-    }
-
-    // console.log(`[Sort] Header clicked: ${newKey_abbreviation}, Setting sort key: ${sortKeyToSet}`);
-
-    setSortConfig(currentConfig => {
-      if (currentConfig.key === sortKeyToSet) {
-        return { key: null, direction: 'desc' };
-      } else {
-        return { key: sortKeyToSet, direction: 'desc' };
-      }
-    });
-
-    // Removed listContainerRef call here - let container handle its own updates on sortConfig change
-
-  }, [statPathMapping]); // Depend on the generated mapping
-
-  // --- Calculate Draft Counts --- 
-  const draftedCount = useMemo(() => {
-    if (!activeRanking?.players) return 0;
-    return activeRanking.players.filter(p => !p.draftModeAvailable).length;
-  }, [activeRanking?.players]);
-
-  // --- Loading Skeleton UI --- 
-  if (isLoading || masterDatasetLoading || rankingsLoading) {
-    // Return the existing Skeleton UI
+  if (isPageLoading) {
     return (
       <div className="container mx-auto p-4">
-        {/* Skeleton Header */}
         <div className="flex justify-between items-center mb-8 pt-2">
-          <Skeleton className="h-4 w-48" /> {/* Skeleton for "RANKINGS" title */}
+          <Skeleton className="h-4 w-48" />
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-4 w-32" />
-            {/* <Skeleton className="h-8 w-28" /> 
-            <Skeleton className="h-8 w-32" />  */}
           </div>
         </div>
 
@@ -407,14 +389,14 @@ export default function RankingsPage() {
           {/* Skeleton Left Column (Player List Area) */}
           <div className="flex-1 space-y-2 overflow-hidden" style={{ maxWidth: 'calc(100% - 288px)' }}>
             {/* Skeleton Table Header */}
-            <Skeleton className="h-10 w-full rounded-sm mb-2" />
+            <Skeleton className="h-10 w-full rounded-sm mb-2 " />
             {/* Skeleton Table Rows - More detailed */}
             <div className="space-y-1">
               {[...Array(16)].map((_, i) => ( // Simulate multiple rows
                 // Row container: flex, keep minimal styles
                 <div key={i} className="flex w-full h-[40px] mb-1 bg-white py-1">
-                  {/* Left Section (40%) */}
-                  <div className="flex items-center w-[40%] px-2 space-x-3 flex-shrink-0">
+                  {/* Left Section (30%) - CHANGED */}
+                  <div className="flex items-center w-[30%] px-2 space-x-3 flex-shrink-0"> 
                     {/* Player Rank Skeleton*/}
                     {/* <Skeleton className="pl-8 h-7 w-10 rounded-md flex-shrink-0" /> */}
                     {/* Player Image Skeleton*/}
@@ -422,8 +404,8 @@ export default function RankingsPage() {
                     {/* Player Name Skeleton*/}
                     <Skeleton className="h-4 rounded-sm w-48" />
                   </div>
-                  {/* Right Section (60%) */}
-                  <div className="flex w-[60%] h-full gap-2 flex-grow rounded-r-md">
+                  {/* Right Section (70%) - CHANGED */}
+                  <div className="flex w-[70%] h-full gap-2 flex-grow rounded-r-md"> 
                     {/* Stat Skeletons (Mimic multiple columns using flex-1) */}
                     {[...Array(9)].map((_, j) => (
                       <Skeleton key={j} className="h-full flex-1 rounded-sm" />
@@ -432,14 +414,11 @@ export default function RankingsPage() {
                 </div> // End Row div
               ))}
             </div>
-
-            {/* <AddRankingListButton dataset={datasetForSelectedSp-sm} /> */}
           </div> {/* End flex-1 */}
 
           {/* Skeleton Right Column (Side Panel) */}
           <div className="w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
-            {/* <Skeleton className="h-10 w-full" />  */}
-            <div className="space-y-1">
+            <div className="space-y-2">
               {[...Array(2)].map((_, i) => ( // Simulate a few saved ranking items
                 <Skeleton key={i} className="h-20 w-full" />
               ))}
@@ -450,96 +429,137 @@ export default function RankingsPage() {
     );
   }
 
+  // Error check AFTER hooks - Also simplify to rely on pageError first
+  if (pageError) { // Use the derived pageError state
+      return (
+          <div className="container mx-auto p-4 text-red-500">
+              Error: {pageError} 
+          </div>
+      );
+  }
+
+  // Main Render AFTER hooks and checks
   return (
     <div className="container mx-auto p-4">
+       {/* <Header /> */}
       <div className="flex justify-between items-center mb-6">
-        {/* <h1 className="text-2xl font-bold">Welcome {user?.name?.split(' ')[0]}!</h1> */}
         <h1 className="text-2xl font-bold tracking-wide">Rankings</h1>
-        {/* Button container for future expansion */}
         <div className="flex items-center gap-2">
-          {/* Render DraftModeButton only if there's an active ranking */}
+              <CreateAllRankingsButton />
           {activeRanking && (
-            <DraftModeButton
-              isDraftMode={isDraftModeActive}
-              onDraftModeChange={toggleDraftMode}
-              showDrafted={showDraftedPlayers}
-              onShowDraftedChange={toggleShowDraftedPlayers}
-              onResetDraft={resetDraftAvailability}
-              draftedCount={draftedCount}
-              activeRanking={activeRanking} // Pass the whole object for details
-            />
+            <div>
+              <DraftModeButton
+                isDraftMode={isDraftModeActive}
+                onDraftModeChange={toggleDraftMode}
+                showDrafted={showDraftedPlayers}
+                onShowDraftedChange={toggleShowDraftedPlayers}
+                onResetDraft={resetDraftAvailability}
+                draftedCount={draftedCount}
+                activeRanking={activeRanking}
+              />
+            </div>
           )}
-          <AddRankingListButton dataset={datasetForSelectedSport} />
+          {/* Pass currentSportMasterData for context */}
+          <AddRankingListButton dataset={currentSportMasterData} />
         </div>
       </div>
 
-      {(error || masterDatasetError || rankingsError) && (
-        <div className="text-red-500 mb-4 p-4 bg-red-50 rounded-md">
-          {error || masterDatasetError || rankingsError}
-        </div>
-      )}
-
-      {latestUserRankings.length === 0 ? (
-        <div className="text-center py-12 px-4 bg-white border-t border-gray-100">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-2xl font-bold text-pb_blue mb-4">Welcome to the Rankings Hub!</h2>
-            <p className="text-gray-600 mb-6">Build your own fantasy sports rankings. Start from expert opinions then tailor them to your own values and strategy.</p>
-
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
-              <h3 className="font-semibold text-gray-800 mb-3">Getting Started:</h3>
-              <ol className="text-left text-gray-600 space-y-2 mb-4">
-                <li className="flex items-start">
-                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">1</span>
-                  <span>Click the &quot;Create New Rankings&quot; button above.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">2</span>
-                  <span>Choose your desired Sport, Format, and Scoring settings.</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">3</span>
-                  <span>Generate your customized rankings sheet to start tailoring.</span>
-                </li>
-              </ol>
-            </div>
-
-            <AddRankingListButton dataset={datasetForSelectedSport} />
-          </div>
-        </div>
+      {!latestUserRankings || latestUserRankings.length === 0 ? (
+         // ... Get Started UI ...
+         <div className="text-center py-12 px-4 bg-white border-t border-gray-100">
+           <div className="max-w-md mx-auto">
+             <h2 className="text-2xl font-bold text-pb_blue mb-4">Welcome to the Rankings Hub!</h2>
+             <p className="text-gray-600 mb-6">Build your own fantasy sports rankings. Start from expert opinions then tailor them to your own values and strategy.</p>
+             <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
+               <h3 className="font-semibold text-gray-800 mb-3">Getting Started:</h3>
+               <ol className="text-left text-gray-600 space-y-2 mb-4">
+                 <li className="flex items-start">
+                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">1</span>
+                   <span>Click the &quot;Create New Rankings&quot; button above.</span>
+                 </li>
+                 <li className="flex items-start">
+                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">2</span>
+                   <span>Choose your desired Sport, Format, and Scoring settings.</span>
+                 </li>
+                 <li className="flex items-start">
+                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">3</span>
+                   <span>Generate your customized rankings sheet to start tailoring.</span>
+                 </li>
+               </ol>
+             </div>
+ 
+             <AddRankingListButton dataset={currentSportMasterData} />
+           </div>
+         </div>
       ) : (
         <div className="flex gap-6 relative">
           <div className="flex-1 space-y-2 overflow-x-auto" style={{ maxWidth: 'calc(100% - 288px)' }}>
             <RankingsPlayerListHeader
               sport={selectedSport}
-              userRankings={latestUserRankings}
               activeRanking={activeRanking}
               sortConfig={sortConfig}
               onSortChange={handleSortChange}
               enabledCategoryAbbrevs={enabledCategoryAbbrevs}
-              statPathMapping={statPathMapping}
               onCollapseAll={handleCollapseAll}
             />
-
-            <RankingsPlayerListContainer
-              ref={listContainerRef}
-              sport={selectedSport}
-              dataset={datasetForSelectedSport}
-              activeRanking={activeRanking}
-              sortConfig={sortConfig}
-              chosenCategoryPaths={chosenCategoryPaths}
-              statPathMapping={statPathMapping}
-              collapseAllTrigger={collapseAllTrigger}
-            />
+            <div className="flex-grow overflow-hidden">
+              {!activeRanking ? (
+                <div className="flex justify-center items-center h-full">
+                  <p>Select or create a ranking to get started.</p>
+                </div>
+              ) : isMasterDataLoading ? (
+                 <div className="space-y-2 mt-4">
+                    <p className="text-center text-gray-500">Loading core player data...</p>
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                 </div>
+              ) : !isMasterDataReady ? (
+                 <div className="flex justify-center items-center h-full">
+                   <p className="text-red-500">Error loading core player data for {selectedSport}. Check console.</p>
+                 </div>
+              ) : userRankingsLoading || activeRankingLoading || !activeRanking?.rankings ? (
+                 <div className="space-y-2 mt-4">
+                    <p className="text-center text-gray-500">Loading ranking details...</p> 
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                 </div>
+              ) : activeRanking.rankings.length > 0 && 
+                  (!currentSportMasterData || !currentSportMasterData.players || _.isEmpty(currentSportMasterData.players)) ? (
+                <div className="space-y-2 mt-4">
+                    <p className="text-center text-gray-500">Preparing player data for {selectedSport}...</p>
+                    <Skeleton className="h-10 w-full opacity-50" />
+                    <Skeleton className="h-8 w-full opacity-50" />
+                    <Skeleton className="h-8 w-full opacity-50" />
+                </div>
+              ) : activeRanking.rankings && activeRanking.rankings.length === 0 && currentSportMasterData?.players && !_.isEmpty(currentSportMasterData.players) ? ( 
+                <div className="flex justify-center items-center h-full p-4"> 
+                  <p className="text-gray-600">No players found in this ranking list yet.</p>
+                </div>
+              ) : (
+                <RankingsPlayerListContainer
+                  ref={playerListRef}
+                  sport={selectedSport}
+                  activeRanking={activeRanking}
+                  sortConfig={sortConfig}
+                  collapseAllTrigger={collapseAllTrigger}
+                  enabledCategoryAbbrevs={enabledCategoryAbbrevs}
+                  playerIdentities={playerIdentities}
+                  seasonalStatsData={seasonalStatsData}
+                />
+              )}
+            </div>
           </div>
-
           <div className="w-72 sticky top-4">
             <RankingsSidePanel
+              userRankings={latestUserRankings}
+              activeRankingId={activeRankingId}
               onSelectRanking={handleRankingSelect}
-              collapseAllTrigger={collapseAllTrigger}
             />
           </div>
         </div>
       )}
+       {/* <Footer /> */}
     </div>
   );
 }

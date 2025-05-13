@@ -37,9 +37,12 @@ export default async function handler(req, res) {
                 scoring: 1,
                 details: 1,
                 categories: 1,
-                rankings: 1
+                rankings: 1,
+                lastUpdated: 1,
+                flexSetting: 1,
+                pprSetting: 1
             })
-            .sort({ 'details.dateUpdated': -1 })
+            .sort({ 'lastUpdated': -1 })
             .toArray();
 
         console.log(`Found ${userRankings.length} rankings for user`);

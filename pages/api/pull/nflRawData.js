@@ -177,35 +177,35 @@ export default async function handler(req, res) {
 
         // TODO: UNCOMMENT WHEN DONE TESTING
 
-        // // Seasonal games
-        // const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/games.json`, 'seasonalGames');
-        // if (seasonalGames && validateData(seasonalGames, 'seasonalGames', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalGames', seasonalGames, errors);
-        // }
+        // Seasonal games
+        const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/games.json`, 'seasonalGames');
+        if (seasonalGames && validateData(seasonalGames, 'seasonalGames', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalGames', seasonalGames, errors);
+        }
 
-        // // Daily games
-        // const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
-        // if (dailyGames && validateData(dailyGames, 'dailyGames', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'dailyGames', dailyGames, errors);
-        // }
+        // Daily games
+        const dailyGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/games.json`, 'dailyGames');
+        if (dailyGames && validateData(dailyGames, 'dailyGames', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'core', 'dailyGames', dailyGames, errors);
+        }
 
-        // // Current season
-        // const currentSeason = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/current_season.json`, 'currentSeason');
-        // if (currentSeason && validateData(currentSeason, 'currentSeason', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'currentSeason', currentSeason, errors);
-        // }
+        // Current season
+        const currentSeasonData = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/current_season.json`, 'currentSeason');
+        if (currentSeasonData && validateData(currentSeasonData, 'currentSeason', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'core', 'currentSeason', currentSeasonData, errors);
+        }
 
-        // // Latest updates
-        // const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/latest_updates.json`, 'latestUpdates');
-        // if (latestUpdates && validateData(latestUpdates, 'latestUpdates', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'latestUpdates', latestUpdates, errors);
-        // }
+        // Latest updates
+        const latestUpdates = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/latest_updates.json`, 'latestUpdates');
+        if (latestUpdates && validateData(latestUpdates, 'latestUpdates', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'core', 'latestUpdates', latestUpdates, errors);
+        }
 
-        // // Seasonal venues
-        // const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/venues.json`, 'seasonalVenues');
-        // if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalVenues', seasonalVenues, errors);
-        // }
+        // Seasonal venues
+        const seasonalVenues = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/venues.json`, 'seasonalVenues');
+        if (seasonalVenues && validateData(seasonalVenues, 'seasonalVenues', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'core', 'seasonalVenues', seasonalVenues, errors);
+        }
 
         //=============================================================================
         //                    2. FETCH AND STORE STATS DATA
@@ -214,26 +214,26 @@ export default async function handler(req, res) {
         console.log('Fetching and storing STATS data...');
 
 
-        // // Seasonal player stats (remove defensive players)
-        // const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
+        // Seasonal player stats (remove defensive players)
+        const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
 
-        // // Define defensive positions to filter out 
-        // const defensivePositions = new Set(['DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT', 'MLB', 'K']);
+        // Define defensive positions to filter out 
+        const defensivePositions = new Set(['DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT', 'MLB', 'K']);
 
-        // // Filter out defensive players if data exists
-        // if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) { // Adjust 'playerStatsTotals' if the key is different
-        //     const offensivePlayers = seasonalPlayerStats.playerStatsTotals.filter(playerStat => {
-        //         const position = playerStat.player?.primaryPosition?.toUpperCase(); // Check position safely
-        //         return position && !defensivePositions.has(position);
-        //     });
-        //     // Replace the original player list with the filtered one
-        //     seasonalPlayerStats.playerStatsTotals = offensivePlayers;
-        // }
+        // Filter out defensive players if data exists
+        if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) { // Adjust 'playerStatsTotals' if the key is different
+            const offensivePlayers = seasonalPlayerStats.playerStatsTotals.filter(playerStat => {
+                const position = playerStat.player?.primaryPosition?.toUpperCase(); // Check position safely
+                return position && !defensivePositions.has(position);
+            });
+            // Replace the original player list with the filtered one
+            seasonalPlayerStats.playerStatsTotals = offensivePlayers;
+        }
 
-        // // Proceed with validation and saving using the potentially filtered data
-        // if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
-        // }
+        // Proceed with validation and saving using the potentially filtered data
+        if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
+        }
 
         // ---------------------------------------------------------------------
 
@@ -245,29 +245,29 @@ export default async function handler(req, res) {
 
         // ----------------------------------------------------------------------
 
-        // // Daily player gamelogs
-        // const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
-        // if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'stats', 'dailyPlayerGamelogs', dailyPlayerGamelogs, errors);
-        // }
+        // Daily player gamelogs
+        const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
+        if (dailyPlayerGamelogs && validateData(dailyPlayerGamelogs, 'dailyPlayerGamelogs', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'stats', 'dailyPlayerGamelogs', dailyPlayerGamelogs, errors);
+        }
 
-        // // Daily team gamelogs
-        // const dailyTeamGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/team_gamelogs.json`, 'dailyTeamGamelogs');
-        // if (dailyTeamGamelogs && validateData(dailyTeamGamelogs, 'dailyTeamGamelogs', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'stats', 'dailyTeamGamelogs', dailyTeamGamelogs, errors);
-        // }
+        // Daily team gamelogs
+        const dailyTeamGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/date/${formatDate(new Date())}/team_gamelogs.json`, 'dailyTeamGamelogs');
+        if (dailyTeamGamelogs && validateData(dailyTeamGamelogs, 'dailyTeamGamelogs', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'stats', 'dailyTeamGamelogs', dailyTeamGamelogs, errors);
+        }
 
-        // // Seasonal team stats
-        // const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
-        // if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalTeamStats', seasonalTeamStats, errors);
-        // }
+        // Seasonal team stats
+        const seasonalTeamStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/team_stats_totals.json`, 'seasonalTeamStats');
+        if (seasonalTeamStats && validateData(seasonalTeamStats, 'seasonalTeamStats', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalTeamStats', seasonalTeamStats, errors);
+        }
 
-        // // Seasonal standings
-        // const seasonalStandings = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/standings.json`, 'seasonalStandings');
-        // if (seasonalStandings && validateData(seasonalStandings, 'seasonalStandings', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalStandings', seasonalStandings, errors);
-        // }
+        // Seasonal standings
+        const seasonalStandings = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/standings.json`, 'seasonalStandings');
+        if (seasonalStandings && validateData(seasonalStandings, 'seasonalStandings', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'stats', 'seasonalStandings', seasonalStandings, errors);
+        }
 
         //=============================================================================
         //                    3. FETCH AND STORE DETAILED DATA
@@ -289,24 +289,44 @@ export default async function handler(req, res) {
 
 
         // Players
-        // const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/players.json`, 'players');
-        // if (players && validateData(players, 'players', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'detailed', 'players', players, errors);
-        // }
+        const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/players.json`, 'players');
 
-        // // Injuries
-        // const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injuries.json`, 'injuries');
-        // if (injuries && validateData(injuries, 'injuries', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'detailed', 'playerInjuries', injuries, errors);
-        // }
+        // Filter out defensive/non-offensive players if data exists (assuming data.players is the array)
+        if (players && players.players) { // Check if the 'players' object and its nested 'players' array exist
+            const initialCount = players.players.length;
+            console.log(`Filtering detailed players. Initial count: ${initialCount}`);
 
-        // // Injury history
-        // const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injury_history.json`, 'injuryHistory');
-        // if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'detailed', 'injuryHistory', injuryHistory, errors);
-        // }
+            // Use the SAME defensivePositions Set defined earlier for seasonalPlayerStats (around line 222)
+            const offensivePlayers = players.players.filter(playerEntry => {
+                const position = playerEntry.player?.primaryPosition?.toUpperCase(); // Check position safely
+                // Keep player if position is NOT in the defensive/non-offensive set
+                return position && !defensivePositions.has(position);
+            });
+            // Replace the original player list with the filtered one
+            players.players = offensivePlayers;
+            console.log(`Filtering detailed players. Final count: ${offensivePlayers.length}`);
+        } else {
+            console.log('Skipping detailed player filtering - players.players array not found.');
+        }
 
-        // Define the specific positions to filter out FOR PROJECTIONS (Def + K/P)
+        // Proceed with validation and saving using the potentially filtered data
+        if (players && validateData(players, 'players', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'detailed', 'players', players, errors);
+        }
+
+        // Injuries
+        const injuries = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injuries.json`, 'injuries');
+        if (injuries && validateData(injuries, 'injuries', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'detailed', 'playerInjuries', injuries, errors);
+        }
+
+        // Injury history
+        const injuryHistory = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/injury_history.json`, 'injuryHistory');
+        if (injuryHistory && validateData(injuryHistory, 'injuryHistory', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'detailed', 'injuryHistory', injuryHistory, errors);
+        }
+
+        // Define the specific positions to filter out FOR PROJECTIONS(Def + K / P)
 
         //=============================================================================
         //                    4. FETCH AND STORE PROJECTIONS DATA (Uses projectionSeason)
@@ -319,43 +339,43 @@ export default async function handler(req, res) {
         ]);
 
         // ---------------------------------------------------------------------
-        // // Daily player gamelogs projections
-        // const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
+        // Daily player gamelogs projections
+        const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
 
-        // // Filter out defensive players if data exists (assuming structure like gamelogs)
-        // if (dailyPlayerGamelogsProjections && dailyPlayerGamelogsProjections.gamelogs) { // Adjust 'gamelogs' if the key is different
-        //     const offensivePlayers = dailyPlayerGamelogsProjections.gamelogs.filter(gamelog => {
-        //         const position = gamelog.player?.primaryPosition?.toUpperCase(); // Check position safely
-        //         return position && !projectionFilterPositions.has(position); // Use the new Set
-        //     });
-        //     // Replace the original player list with the filtered one
-        //     dailyPlayerGamelogsProjections.gamelogs = offensivePlayers;
-        // }
-        // // Proceed with validation and saving using the potentially filtered data
-        // if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'projections', 'dailyPlayerGamelogsProjections', dailyPlayerGamelogsProjections, errors);
-        // }
+        // Filter out defensive players if data exists (assuming structure like gamelogs)
+        if (dailyPlayerGamelogsProjections && dailyPlayerGamelogsProjections.gamelogs) { // Adjust 'gamelogs' if the key is different
+            const offensivePlayers = dailyPlayerGamelogsProjections.gamelogs.filter(gamelog => {
+                const position = gamelog.player?.primaryPosition?.toUpperCase(); // Check position safely
+                return position && !projectionFilterPositions.has(position); // Use the new Set
+            });
+            // Replace the original player list with the filtered one
+            dailyPlayerGamelogsProjections.gamelogs = offensivePlayers;
+        }
+        // Proceed with validation and saving using the potentially filtered data
+        if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'projections', 'dailyPlayerGamelogsProjections', dailyPlayerGamelogsProjections, errors);
+        }
 
 
         // ---------------------------------------------------------------------
-        // // Daily dfs projections
-        // const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
-        // // Filter out defensive players if data exists (assuming similar structure)
-        // // Adjust 'dfsEntries' if the actual key for the list is different.
-        // // Note: This might remove D/ST units if they are not handled differently.
-        // if (dailyDfsProjections && dailyDfsProjections.dfsEntries) {
-        //     const offensiveEntries = dailyDfsProjections.dfsEntries.filter(entry => {
-        //         const position = entry.player?.primaryPosition?.toUpperCase(); // Check position safely
-        //         return !position || !projectionFilterPositions.has(position); // Use the new Set
-        //     });
-        //     // Replace the original list with the filtered one
-        //     dailyDfsProjections.dfsEntries = offensiveEntries;
-        // }
+        // Daily dfs projections
+        const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
+        // Filter out defensive players if data exists (assuming similar structure)
+        // Adjust 'dfsEntries' if the actual key for the list is different.
+        // Note: This might remove D/ST units if they are not handled differently.
+        if (dailyDfsProjections && dailyDfsProjections.dfsEntries) {
+            const offensiveEntries = dailyDfsProjections.dfsEntries.filter(entry => {
+                const position = entry.player?.primaryPosition?.toUpperCase(); // Check position safely
+                return !position || !projectionFilterPositions.has(position); // Use the new Set
+            });
+            // Replace the original list with the filtered one
+            dailyDfsProjections.dfsEntries = offensiveEntries;
+        }
 
-        // // Proceed with validation and saving using the potentially filtered data
-        // if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections', errors)) {
-        //     await updateEndpoint(statsCollection, 'nfl', 'projections', 'dailyDfsProjections', dailyDfsProjections, errors);
-        // }
+        // Proceed with validation and saving using the potentially filtered data
+        if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections', errors)) {
+            await updateEndpoint(statsCollection, 'nfl', 'projections', 'dailyDfsProjections', dailyDfsProjections, errors);
+        }
 
 
         // ---------------------------------------------------------------------
