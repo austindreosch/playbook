@@ -22,7 +22,7 @@ Key interactions:
 
 // import Footer from '@/components/Layout/Footer';
 // import Header from '@/components/Layout/Header';
-import CreateAllRankingsButton from '@/components/Admin/CreateAllRankingsButton.jsx';
+import CreateAllRankingsButton from '@/components/admin/CreateAllRankingsButton.jsx';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
