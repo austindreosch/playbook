@@ -13,17 +13,46 @@ export default function Features() {
   const tabs = useRef(null)
 
   const heightFix = () => {
-    if (tabs.current && tabs.current.parentElement) {
-      tabs.current.parentElement.style.height = `${tabs.current.clientHeight}px`
+    if (tabs.current) {
+      // Find the currently shown Transition component's inner div
+      // This assumes the active (non-leaving) Transition component will not have opacity-0
+      // and will be part of the normal layout flow to measure clientHeight correctly.
+      let activeContent = null;
+      if (tabs.current.children) {
+        for (const transitionWrapper of Array.from(tabs.current.children[0].children)) {
+          // Check the `show` prop based on the `tab` state for each Transition
+          // This is a bit of a hack as we don't have direct access to Transition's internal state
+          // We infer which Transition is active by its structure and the current `tab`.
+          // This example assumes tab 1 maps to first Transition, tab 2 to second, etc.
+          let correspondingTabState = 0;
+          if (transitionWrapper.outerHTML.includes('show={tab === 1}')) correspondingTabState = 1;
+          else if (transitionWrapper.outerHTML.includes('show={tab === 2}')) correspondingTabState = 2;
+          else if (transitionWrapper.outerHTML.includes('show={tab === 3}')) correspondingTabState = 3;
+
+          if (correspondingTabState === tab && transitionWrapper.firstElementChild) {
+            activeContent = transitionWrapper.firstElementChild; // This is the div inside Transition
+            break;
+          }
+        }
+      }
+
+      if (activeContent) {
+        tabs.current.style.height = `${activeContent.clientHeight}px`;
+      } else if (tabs.current.firstElementChild?.firstElementChild?.firstElementChild) {
+        // Fallback if specific active content isn't found, use the first one's inner div
+        tabs.current.style.height = `${tabs.current.firstElementChild.firstElementChild.firstElementChild.clientHeight}px`;
+      }
     }
   }
 
   useEffect(() => {
-    heightFix()
-    // It might also need to run when `tab` changes and on resize:
+    const timer = setTimeout(() => heightFix(), 50); // Run after a short delay
     window.addEventListener('resize', heightFix);
-    return () => window.removeEventListener('resize', heightFix);
-  }, [tab]) // Add tab as a dependency, and run on mount initially
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', heightFix);
+    };
+  }, [tab]);
 
   return (
     <section className="relative">
@@ -102,7 +131,7 @@ export default function Features() {
 
             {/* Tabs items */}
             <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 mb-8 md:mb-0 md:order-1 overflow-hidden" data-aos="zoom-y-out" ref={tabs}>
-              <div className="relative flex flex-col text-center lg:text-right w-full">
+              <div className="relative flex flex-col text-center lg:text-right">
                 {/* Item 1 */}
                 <Transition
                   show={tab === 1}
@@ -115,8 +144,8 @@ export default function Features() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 -translate-y-16"
                 >
-                  <div className="relative inline-flex flex-col w-full">
-                    <Image className="md:max-w-none mx-auto rounded w-full" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                  <div className="relative inline-flex flex-col">
+                    <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
                     <Image className="md:max-w-none absolute w-full left-0 transform animate-float" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
                   </div>
                 </Transition>
@@ -132,8 +161,8 @@ export default function Features() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 -translate-y-16"
                 >
-                  <div className="relative inline-flex flex-col w-full">
-                    <Image className="md:max-w-none mx-auto rounded w-full" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                  <div className="relative inline-flex flex-col">
+                    <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
                     <Image className="md:max-w-none absolute w-full left-0 transform animate-float" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
                   </div>
                 </Transition>
@@ -149,8 +178,8 @@ export default function Features() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 -translate-y-16"
                 >
-                  <div className="relative inline-flex flex-col w-full">
-                    <Image className="md:max-w-none mx-auto rounded w-full" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                  <div className="relative inline-flex flex-col">
+                    <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
                     <Image className="md:max-w-none absolute w-full left-0 transform animate-float" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
                   </div>
                 </Transition>
