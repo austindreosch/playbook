@@ -1,3 +1,4 @@
+import AOSInitializer from '@/components/LandingPage/internal/AOSInitializer';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
     <UserProvider>
       <html lang="en">
         <body className={DMSans.className}>
+          <AOSInitializer />
           <NavBar />
           <MasterDatasetInitializer />
           {children}

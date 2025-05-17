@@ -204,9 +204,14 @@ module.exports = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(-4%)' },
+          '50%': { transform: 'translateY(4%)' },
+        }
       },
       animation: {
         shimmer: 'shimmer 5s linear infinite',
+        float: 'float 6s ease-in-out infinite',
       },
     }
   },

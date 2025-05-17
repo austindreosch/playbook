@@ -1,0 +1,195 @@
+'use client'
+
+import FeaturesBg from '@/public/images/features-bg.png'
+import FeaturesElement from '@/public/images/features-element.png'
+import { Transition } from '@headlessui/react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+
+export default function Features() {
+  
+  const [tab, setTab] = useState(1)
+
+  const tabs = useRef(null)
+
+  const heightFix = () => {
+    if (tabs.current) {
+      // Find the currently shown Transition component's inner div
+      // This assumes the active (non-leaving) Transition component will not have opacity-0
+      // and will be part of the normal layout flow to measure clientHeight correctly.
+      let activeContent = null;
+      if (tabs.current.children) {
+        for (const transitionWrapper of Array.from(tabs.current.children[0].children)) {
+          // Check the `show` prop based on the `tab` state for each Transition
+          // This is a bit of a hack as we don't have direct access to Transition's internal state
+          // We infer which Transition is active by its structure and the current `tab`.
+          // This example assumes tab 1 maps to first Transition, tab 2 to second, etc.
+          let correspondingTabState = 0;
+          if (transitionWrapper.outerHTML.includes('show={tab === 1}')) correspondingTabState = 1;
+          else if (transitionWrapper.outerHTML.includes('show={tab === 2}')) correspondingTabState = 2;
+          else if (transitionWrapper.outerHTML.includes('show={tab === 3}')) correspondingTabState = 3;
+
+          if (correspondingTabState === tab && transitionWrapper.firstElementChild) {
+            activeContent = transitionWrapper.firstElementChild; // This is the div inside Transition
+            break;
+          }
+        }
+      }
+
+      if (activeContent) {
+        tabs.current.style.height = `${activeContent.clientHeight}px`;
+      } else if (tabs.current.firstElementChild?.firstElementChild?.firstElementChild) {
+        // Fallback if specific active content isn't found, use the first one's inner div
+        tabs.current.style.height = `${tabs.current.firstElementChild.firstElementChild.firstElementChild.clientHeight}px`;
+      }
+    }
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => heightFix(), 50); // Run after a short delay
+    window.addEventListener('resize', heightFix);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', heightFix);
+    };
+  }, [tab]);
+
+  return (
+    <section className="relative">
+
+      {/* Section background (needs .relative class on parent and next sibling elements) */}
+      <div className="absolute inset-0 bg-gray-100 pointer-events-none mb-16" aria-hidden="true"></div>
+      <div className="absolute left-0 right-0 m-auto w-px p-px h-20 bg-gray-200 transform -translate-y-1/2"></div>
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="pt-12 md:pt-20">
+
+          {/* Section header */}
+          <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
+            <h1 className="h2 font-bold mb-4 text-2xl sm:text-3xl">The Ultimate Command Center for Fantasy</h1>
+            <p className="text-base sm:text-lg text-gray-600">Ditch the scattered spreadsheets, trade calculators, and talking heads. Playbook gives you everything you need to analyze, strategize, and dominate in one place.</p>
+          </div>
+
+          {/* Section content */}
+          <div className="md:grid md:grid-cols-12 md:gap-6">
+
+            {/* Content */}
+            <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6 md:mt-6" data-aos="fade-right">
+              <div className="md:pr-4 lg:pr-12 xl:pr-16 mb-8">
+                <h3 className="h3 mb-3 text-xl sm:text-2xl">A new standard for fantasy tools.</h3>
+                <p className="text-base sm:text-lg text-gray-600">Playbook is a first-of-its-kind platform leveraging artificial intelligence to provide unprecedented insights and smart suggestions based on personalized data.</p>
+              </div>
+              {/* Tabs buttons */}
+              <div className="mb-8 md:mb-0">
+                <a
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
+                  href="#0"
+                  onClick={(e) => { e.preventDefault(); setTab(1); }}
+                >
+                  <div>
+                    <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">One Dashboard. Every Answer.</div>
+                    <div className={`text-sm md:text-base ${tab === 1 ? 'text-blue-100' : 'text-gray-600'}`}>Everything you need to know about all your leagues, centralized in one clear view. See trends, expert consensus, and hidden opportunities to make league winning moves fast. </div>
+                  </div>
+                  <div className="flex justify-center items-center w-8 h-8 bg-white rounded-full shadow flex-shrink-0 ml-3">
+                    <svg className={`w-3 h-3 ${tab === 1 ? 'text-gray-700' : 'fill-current'}`} viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11.953 4.29a.5.5 0 00-.454-.292H6.14L6.984.62A.5.5 0 006.12.173l-6 7a.5.5 0 00.379.825h5.359l-.844 3.38a.5.5 0 00.864.445l6-7a.5.5 0 00.075-.534z" />
+                    </svg>
+                  </div>
+                </a>
+                <a
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
+                  href="#0"
+                  onClick={(e) => { e.preventDefault(); setTab(2); }}
+                >
+                  <div>
+                    <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">Instant insights with personalized intelligence.</div>
+                    <div className={`text-sm md:text-base ${tab === 2 ? 'text-blue-100' : 'text-gray-600'}`}>Turn hours of scattered research into seconds. Get key analytics and intelligent suggestions for trades, waivers, and matchups all tailored to your individual league and strategy.</div>
+                  </div>
+                  <div className="flex justify-center items-center w-8 h-8 bg-white rounded-full shadow flex-shrink-0 ml-3">
+                    <svg className={`w-3 h-3 ${tab === 2 ? 'text-gray-700' : 'fill-current'}`} viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11.854.146a.5.5 0 00-.525-.116l-11 4a.5.5 0 00-.015.934l4.8 1.921 1.921 4.8A.5.5 0 007.5 12h.008a.5.5 0 00.462-.329l4-11a.5.5 0 00-.116-.525z" fillRule="nonzero" />
+                    </svg>
+                  </div>
+                </a>
+                <a
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
+                  href="#0"
+                  onClick={(e) => { e.preventDefault(); setTab(3); }}
+                >
+                  <div>
+                    <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">Find opportunities to exploit hidden value.</div>
+                    <div className={`text-sm md:text-base ${tab === 3 ? 'text-blue-100' : 'text-gray-600'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness&rsquo; and undervalued players using AI and your personalized data. </div>
+                  </div>
+                  <div className="flex justify-center items-center w-8 h-8 bg-white rounded-full shadow flex-shrink-0 ml-3">
+                    <svg className="w-3 h-3 fill-current" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11.334 8.06a.5.5 0 00-.421-.237 6.023 6.023 0 01-5.905-6c0-.41.042-.82.125-1.221a.5.5 0 00-.614-.586 6 6 0 106.832 8.529.5.5 0 00-.017-.485z" fill="#191919" fillRule="nonzero" />
+                    </svg>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            {/* Tabs items */}
+            <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 mb-8 md:mb-0 md:order-1 overflow-hidden" data-aos="zoom-y-out" ref={tabs}>
+              <div className="relative flex flex-col text-center lg:text-right">
+                {/* Item 1 */}
+                <Transition
+                  show={tab === 1}
+                  appear={true}
+                  className="w-full"
+                  enter="transition ease-in-out duration-700 transform order-first"
+                  enterFrom="opacity-0 translate-y-24"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in-out duration-500 transform absolute"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 -translate-y-24"
+                >
+                  <div className="relative inline-flex flex-col">
+                    <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                    <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
+                  </div>
+                </Transition>
+                {/* Item 2 */}
+                <Transition
+                  show={tab === 2}
+                  appear={true}
+                  className="w-full"
+                  enter="transition ease-in-out duration-700 transform order-first"
+                  enterFrom="opacity-0 translate-y-24"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in-out duration-500 transform absolute"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 -translate-y-24"
+                >
+                  <div className="relative inline-flex flex-col">
+                    <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                    <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
+                  </div>
+                </Transition>
+                {/* Item 3 */}
+                <Transition
+                  show={tab === 3}
+                  appear={true}
+                  className="w-full"
+                  enter="transition ease-in-out duration-700 transform order-first"
+                  enterFrom="opacity-0 translate-y-24"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in-out duration-500 transform absolute"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 -translate-y-24"
+                >
+                  <div className="relative inline-flex flex-col">
+                    <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                    <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
+                  </div>
+                </Transition>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+  )
+}
