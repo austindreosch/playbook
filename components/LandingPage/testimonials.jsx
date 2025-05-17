@@ -25,7 +25,7 @@ export default function Testimonials() {
         <div className="py-12 md:py-20">
 
           {/* Section header */}
-          <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
+          <div className="max-w-3xl mx-auto text-center pb-12 md:pb-12">
             <h2 className="h2 mb-4 text-lg font-bold">Get an early look at Playbook and help shape where it goes</h2>
             <p className="text-xl text-gray-600" data-aos="zoom-y-out">
             Playbook started as something I always wished existed thats now made possible with the incredible advancements in AI — a complete revolation towards a smarter, cleaner way to manage fantasy teams that eliminates the hours of looking back and forth betweens endless spreadsheets, videos and trade calculators second guessing the best moves to make.  I’m excited to finally share it with others and I’m building fast - so now’s the time to try it out and help shape what comes next.

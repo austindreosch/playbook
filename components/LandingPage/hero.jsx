@@ -1,6 +1,7 @@
 import ModalVideo from '@/components/LandingPage/internal/modal-video'
 import { Button } from '@/components/ui/button'
 import VideoThumb from '@/public/images/hero-image.png'
+import ModalImage from './internal/modal-image'
 
 export default function Hero() {
   return (
@@ -30,7 +31,7 @@ export default function Hero() {
 
           {/* Section header */}
           <div className="text-center pb-12 md:pb-16">
-            <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">faster.</span></h1>
+            <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-sky-400">faster.</span></h1>
             <div className="max-w-3xl mx-auto">
               <p className="text-xl text-gray-600 mb-8" data-aos="zoom-y-out" data-aos-delay="150">Fantasy sports strategy made simple. Intelligent data-driven insights tailored to your leagues, all in one dashboard.</p>
               <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center" data-aos="zoom-y-out" data-aos-delay="300">
@@ -38,7 +39,7 @@ export default function Hero() {
                   <Button className="w-full p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0">Get Started</Button>
                 </div>
                 <div>
-                  <Button variant="secondary" className="w-full p-5 shadow-md font-bold bg-pb_lightergray text-pb_darkgray hover:bg-pb_lightgray sm:w-auto sm:ml-4">Learn more</Button>
+                  <Button variant="secondary" className="w-full p-5 shadow-md font-bold bg-pb_lightergray text-pb_darkgray hover:bg-gray-300 sm:w-auto sm:ml-4">Learn more</Button>
                 </div>
               </div>
             </div>
@@ -53,6 +54,17 @@ export default function Hero() {
             video="/videos/video.mp4"
             videoWidth={1920}
             videoHeight={1080} /> */}
+
+            <ModalImage
+              thumb={VideoThumb}
+              thumbWidth={1920}
+              thumbHeight={1080}
+              thumbAlt="Modal video thumbnail"
+              fullImage={VideoThumb}
+              fullImageWidth={1920}
+              fullImageHeight={1080}
+              className="border-2 border-gray-300 shadow-md"
+            />
 
         </div>
 

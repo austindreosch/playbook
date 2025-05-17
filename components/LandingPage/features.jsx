@@ -118,7 +118,7 @@ export default function Features() {
                 >
                   <div>
                     <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">Find opportunities to exploit hidden value.</div>
-                    <div className={`text-sm md:text-base ${tab === 3 ? 'text-blue-100' : 'text-gray-600'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness’ and undervalued players using AI and your personalized data. </div>
+                    <div className={`text-sm md:text-base ${tab === 3 ? 'text-blue-100' : 'text-gray-600'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness&rsquo; and undervalued players using AI and your personalized data. </div>
                   </div>
                   <div className="flex justify-center items-center w-8 h-8 bg-white rounded-full shadow flex-shrink-0 ml-3">
                     <svg className="w-3 h-3 fill-current" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">

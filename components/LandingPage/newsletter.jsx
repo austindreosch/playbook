@@ -5,7 +5,7 @@ export default function Newsletter() {
         <div className="pb-12 md:pb-20">
 
           {/* CTA box */}
-          <div className="relative bg-gray-900 rounded py-8 px-4 md:py-16 md:px-12 shadow-2xl overflow-hidden" data-aos="zoom-y-out">
+          <div className="relative bg-pb_blue rounded py-8 px-4 md:py-16 md:px-12 shadow-2xl overflow-hidden rounded-lg" data-aos="zoom-y-out">
 
             {/* Background illustration */}
             <div className="absolute right-0 bottom-0 pointer-events-none hidden lg:block" aria-hidden="true">
@@ -37,13 +37,13 @@ export default function Newsletter() {
 
               {/* CTA content */}
               <div className="text-center lg:text-left lg:max-w-xl">
-                <h3 className="h3 text-white mb-2">Ready to see what Playbook can do?</h3>
-                <p className="text-gray-300 text-lg mb-6">Start using the tools now and see how it changes the way you manage your fantasy teams.</p>
+                <h3 className="h3 text-white mb-2 font-bold">Ready to see what Playbook can do?</h3>
+                <p className="text-white text-lg mb-6">Start using the tools now and see how it changes the way you manage your fantasy teams.</p>
 
                 {/* CTA buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a className="btn text-white bg-blue-600 hover:bg-blue-700 shadow px-8 py-3 rounded-sm" href="#0">Sign Up Now</a>
-                  <a className="btn text-white bg-gray-700 hover:bg-gray-600 shadow px-8 py-3 rounded-sm" href="#0">Learn More</a>
+                  <a className="btn bg-pb_orange hover:bg-pb_orangehover shadow px-8 py-3 rounded-sm" href="#0">Sign Up Now</a>
+                  <a className="btn bg-pb_lightergray text-pb_darkgray hover:bg-gray-300 shadow px-8 py-3 rounded-sm" href="#0">Learn More</a>
                 </div>
                 {/* <p className="text-sm text-gray-400 mt-3">No spam. You can unsubscribe at any time.</p> */}
               </div>
