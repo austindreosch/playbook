@@ -82,7 +82,7 @@ export default function Features() {
               {/* Tabs buttons */}
               <div className="mb-8 md:mb-0">
                 <a
-                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-blue-500 text-white shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(1); }}
                 >
@@ -97,7 +97,7 @@ export default function Features() {
                   </div>
                 </a>
                 <a
-                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-blue-500 text-white shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(2); }}
                 >
@@ -112,7 +112,7 @@ export default function Features() {
                   </div>
                 </a>
                 <a
-                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-blue-500 text-white shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(3); }}
                 >
