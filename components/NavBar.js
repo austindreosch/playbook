@@ -49,7 +49,7 @@ function NavBar() {
                                 </div>
                             ) : (
                                 <div className='tracking rounded-md mx-1'>
-                                    <Link href="/api/auth/login" className="text-black font-medium hover:text-white px-3 py-2 rounded-md text-sm">
+                                    <Link href="/api/auth/login" className="text-black font-bold text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm">
                                         LOGIN
                                     </Link>
                                 </div>
