@@ -5,7 +5,7 @@ export default function Newsletter() {
         <div className="pb-12 md:pb-20">
 
           {/* CTA box */}
-          <div className="relative bg-pb_blue rounded py-8 px-4 md:py-16 md:px-12 shadow-2xl overflow-hidden rounded-lg" data-aos="zoom-y-out">
+          <div className="relative bg-blue-500  py-8 px-4 md:py-16 md:px-12 shadow-2xl overflow-hidden rounded-lg" data-aos="zoom-y-out">
 
             {/* Background illustration */}
             <div className="absolute right-0 bottom-0 pointer-events-none hidden lg:block" aria-hidden="true">
@@ -42,10 +42,10 @@ export default function Newsletter() {
 
                 {/* CTA buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a className="btn bg-pb_orange hover:bg-pb_orangehover shadow px-8 py-3 rounded-sm" href="#0">Sign Up Now</a>
-                  <a className="btn bg-pb_lightergray text-pb_darkgray hover:bg-gray-300 shadow px-8 py-3 rounded-sm" href="#0">Learn More</a>
+                  <a className="btn font-medium bg-pb_orange hover:bg-pb_orangehover shadow px-8 py-3 rounded-sm" href="#0">Sign Up Now</a>
+                  <a className="btn font-medium bg-white text-pb_darkgray hover:bg-gray-300 shadow px-8 py-3 rounded-sm" href="#0">Learn More</a>
                 </div>
-                {/* <p className="text-sm text-gray-400 mt-3">No spam. You can unsubscribe at any time.</p> */}
+                <p className="text-sm text-white/80 mt-3">No charge for now. Sign up and see the difference.</p>
               </div>
 
             </div>

@@ -31,12 +31,12 @@ export default function Hero() {
 
           {/* Section header */}
           <div className="text-center pb-12 md:pb-16">
-            <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-sky-400">faster.</span></h1>
+            <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4" data-aos="zoom-y-out">Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">faster.</span></h1>
             <div className="max-w-3xl mx-auto">
               <p className="text-xl text-gray-600 mb-8" data-aos="zoom-y-out" data-aos-delay="150">Fantasy sports strategy made simple. Intelligent data-driven insights tailored to your leagues, all in one dashboard.</p>
               <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center" data-aos="zoom-y-out" data-aos-delay="300">
                 <div>
-                  <Button className="w-full p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0">Get Started</Button>
+                  <Button className="w-full p-5 shadow-md font-bold bg-blue-500 text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0">Get Started</Button>
                 </div>
                 <div>
                   <Button variant="secondary" className="w-full p-5 shadow-md font-bold bg-pb_lightergray text-pb_darkgray hover:bg-gray-300 sm:w-auto sm:ml-4">Learn more</Button>
