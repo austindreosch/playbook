@@ -596,10 +596,11 @@ export const useInitializeUserRankings = () => {
     const initialRankingsLoadedFromStore = useUserRankings((state) => state.initialRankingsLoaded); 
 
     useEffect(() => {
-        if (!rankingsLoaded && !isLoading) {
+        // Only fetch if we haven't loaded rankings yet and we're not currently loading
+        if (!initialRankingsLoadedFromStore && !isLoading) {
             fetchUserRankings();
         }
-    }, [fetchUserRankings, rankingsLoaded, isLoading, initialRankingsLoadedFromStore]); 
+    }, [fetchUserRankings, initialRankingsLoadedFromStore, isLoading]); 
 };
 
 export default useUserRankings;

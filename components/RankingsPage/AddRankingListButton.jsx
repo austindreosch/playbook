@@ -9,7 +9,7 @@ import { SPORT_CONFIGS } from "@/lib/config";
 import { getCategoryEntries, getDefaultCategories } from "@/lib/rankingUtils";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { BookCopy, ListPlus } from 'lucide-react';
+import { BookCopy } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 // Helper to get default enabled categories for a sport config
@@ -46,8 +46,6 @@ const AddRankingListButton = ({ dataset }) => {
                     newState.scoring = 'points'; // Force NFL to Points
                     newState.pprType = '1ppr'; // Default NFL PPR to 1ppr
                 } 
-                // No need to force NBA to Categories anymore
-                // MLB can be either, let existing/previous selection persist or default logic handle it
             }
 
             // --- Handle Custom Categories Reset/Default --- //
@@ -100,7 +98,7 @@ const AddRankingListButton = ({ dataset }) => {
             sport: formData.sport,
             format: formData.format,
             scoring: formData.scoring,
-            ...(formData.sport !== 'nfl' && formData.scoring === 'Categories' && { selectedCategoryKeys: formData.customCategories }),
+            ...(formData.sport !== 'nfl' && formData.scoring === 'categories' && { selectedCategoryKeys: formData.customCategories }),
             ...(formData.sport === 'nfl' && {
                 flexSetting: formData.flexSetting,
                 pprSetting: formData.pprType,
@@ -237,14 +235,14 @@ const AddRankingListButton = ({ dataset }) => {
                     </div>
 
                     <div className="space-y-4">
-                        {formData.sport !== 'nfl' && formData.scoring === 'Categories' && currentSportConfig && (
+                        {formData.sport !== 'nfl' && formData.scoring === 'categories' && currentSportConfig && (
                             <div className="p-4 border rounded-md space-y-4">
                                 {formData.sport === 'mlb' && (
                                     <>
                                         <div>
                                             <Label className="text-sm text-muted-foreground block mb-2">Hitting</Label>
                                             <div className="flex flex-wrap gap-x-4 gap-y-3">
-                                                {mlbHittingCategories.map(([key, cat]) => (
+                                                {mlbHittingCategories.filter(([key]) => key !== 'PPG').map(([key, cat]) => (
                                                     <div key={key} className="flex items-center space-x-2 p-1 border rounded-md">
                                                         <Switch 
                                                             id={`cat-switch-${key}-h`} 
@@ -260,7 +258,7 @@ const AddRankingListButton = ({ dataset }) => {
                                         <div>
                                              <Label className="text-sm text-muted-foreground block mb-2">Pitching</Label>
                                              <div className="flex flex-wrap gap-x-4 gap-y-3">
-                                                {mlbPitchingCategories.map(([key, cat]) => (
+                                                {mlbPitchingCategories.filter(([key]) => key !== 'PPG').map(([key, cat]) => (
                                                      <div key={key} className="flex items-center space-x-2 p-1 border rounded-md">
                                                         <Switch 
                                                             id={`cat-switch-${key}-p`} 
@@ -278,7 +276,7 @@ const AddRankingListButton = ({ dataset }) => {
 
                                 {formData.sport !== 'mlb' && (
                                      <div className="flex flex-wrap gap-x-4 gap-y-3">
-                                        {categoryEntries.map(([key, cat]) => (
+                                        {categoryEntries.filter(([key]) => key !== 'PPG').map(([key, cat]) => (
                                             <div key={key} className="flex items-center space-x-2 p-1 border rounded-md">
                                                 <Switch 
                                                     id={`cat-switch-${key}`} 
@@ -321,13 +319,13 @@ const AddRankingListButton = ({ dataset }) => {
                             </div>
                         )}
 
-                        {formData.sport !== 'nfl' && formData.scoring === 'Points' && (
+                        {formData.sport !== 'nfl' && formData.scoring === 'points' && (
                             <div className="p-4 border rounded-md text-center text-sm text-muted-foreground h-full flex items-center justify-center">
                                 <span>No specific options for Points scoring in this sport.</span>
                             </div>
                         )}
 
-                        {formData.sport === 'nfl' && formData.scoring === 'Categories' && (
+                        {formData.sport === 'nfl' && formData.scoring === 'categories' && (
                             <div className="p-4 border rounded-md text-center text-sm text-muted-foreground h-full flex items-center justify-center">
                                 <span>Category selection not applicable for NFL.</span>
                             </div>

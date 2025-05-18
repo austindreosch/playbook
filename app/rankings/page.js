@@ -245,25 +245,6 @@ export default function RankingsPage() {
     return () => cleanup();
   }, [initAutoSave]);
 
-  useEffect(() => {
-    if (user && !latestUserRankings) { 
-        const fetchRankings = async () => {
-            try {
-                const response = await fetch('/api/user-rankings');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setLatestUserRankings(data); 
-            } catch (error) {
-                console.error('Failed to fetch user rankings:', error);
-                setPageError('Failed to load user rankings data.'); 
-            }
-        };
-        fetchRankings();
-    }
-  }, [user, latestUserRankings]); 
-
   // Effect to set initial active ranking
   useEffect(() => {
     if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
@@ -493,7 +474,7 @@ export default function RankingsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold tracking-wide">Rankings</h1>
         <div className="flex items-center gap-2">
-          {user && <CreateAllRankingsButton />}
+          {/* {user && <CreateAllRankingsButton />} */}
           {user && activeRanking && (
             <div>
               <DraftModeButton
@@ -535,9 +516,10 @@ export default function RankingsPage() {
                    <span>Generate your customized rankings sheet to start tailoring.</span>
                  </li>
                </ol>
+               <div className="flex justify-center mt-6">
+                 <AddRankingListButton dataset={currentSportMasterData} />
+               </div>
              </div>
- 
-             <AddRankingListButton dataset={currentSportMasterData} />
            </div>
          </div>
       ) : (
