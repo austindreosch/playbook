@@ -1,7 +1,7 @@
 'use client'
 
-import FeaturesBg from '@/public/images/features-bg.png'
 import FeaturesElement from '@/public/images/features-element.png'
+import FeaturesBg from '@/public/images/temp.png'
 import { Transition } from '@headlessui/react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
@@ -55,7 +55,7 @@ export default function Features() {
   }, [tab]);
 
   return (
-    <section className="relative">
+    <section className="relative ">
 
       {/* Section background (needs .relative class on parent and next sibling elements) */}
       <div className="absolute inset-0 bg-gray-100 pointer-events-none mb-16" aria-hidden="true"></div>
@@ -67,7 +67,7 @@ export default function Features() {
           {/* Section header */}
           <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
             <h1 className="h2 font-bold mb-4 text-2xl sm:text-3xl">The Ultimate Command Center for Fantasy</h1>
-            <p className="text-base sm:text-lg text-gray-600">Ditch the scattered spreadsheets, trade calculators, and talking heads. Playbook gives you everything you need to analyze, strategize, and dominate in one place.</p>
+            <p className="text-base sm:text-lg text-gray-600">Get rid of the scattered spreadsheets, trade calculators, and talking heads. Playbook gives you everything you need to analyze, strategize, and dominate in one place.</p>
           </div>
 
           {/* Section content */}
@@ -76,13 +76,13 @@ export default function Features() {
             {/* Content */}
             <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6 md:mt-6" data-aos="fade-right">
               <div className="md:pr-4 lg:pr-12 xl:pr-16 mb-8">
-                <h3 className="h3 mb-3 text-xl sm:text-2xl">A new standard for fantasy tools.</h3>
-                <p className="text-base sm:text-lg text-gray-600">Playbook is a first-of-its-kind platform leveraging artificial intelligence to provide unprecedented insights and smart suggestions based on personalized data.</p>
+                <h3 className="h3 mb-3 text-lg sm:text-2xl">A new standard for fantasy tools.</h3>
+                <p className="text-base text-md text-gray-600">Playbook is a first-of-its-kind platform leveraging artificial intelligence to provide unprecedented insights and smart suggestions based on personalized data.</p>
               </div>
               {/* Tabs buttons */}
               <div className="mb-8 md:mb-0">
                 <a
-                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-blue-500 text-white shadow-lg border-transparent'}`}
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(1); }}
                 >
@@ -97,7 +97,7 @@ export default function Features() {
                   </div>
                 </a>
                 <a
-                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-blue-500 text-white shadow-lg border-transparent'}`}
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(2); }}
                 >
@@ -112,7 +112,7 @@ export default function Features() {
                   </div>
                 </a>
                 <a
-                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-blue-500 text-white shadow-lg border-transparent'}`}
+                  className={`flex items-center text-base md:text-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-white shadow-md border-gray-200 hover:shadow-lg' : 'bg-pb_blue text-white shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(3); }}
                 >
@@ -146,7 +146,7 @@ export default function Features() {
                 >
                   <div className="relative inline-flex flex-col">
                     <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
-                    <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
+                    {/* <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} /> */}
                   </div>
                 </Transition>
                 {/* Item 2 */}
@@ -163,7 +163,7 @@ export default function Features() {
                 >
                   <div className="relative inline-flex flex-col">
                     <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
-                    <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
+                    {/* <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} /> */}
                   </div>
                 </Transition>
                 {/* Item 3 */}
@@ -180,7 +180,7 @@ export default function Features() {
                 >
                   <div className="relative inline-flex flex-col">
                     <Image className="md:max-w-none mx-auto rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
-                    <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} />
+                    {/* <Image className="md:max-w-none absolute w-full left-0 transform animate-float will-change-transform" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} /> */}
                   </div>
                 </Transition>
               </div>

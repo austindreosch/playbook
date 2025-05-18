@@ -23,7 +23,7 @@ function NavBar() {
 
 
                     <div className="flex items-center group font-bold">
-                        <img src="/playbookicon.png" alt="Playbook Icon" className="h-8 w-8" />
+                        <img src="/logo-tpfull.png" alt="Playbook Icon" className="h-8 w-8" />
                         <a href="/rankings" className="px-3 py-2 flex items-center">
                             <div className={`text-3xl font-bold group-hover:text-white`}>
                                 Playbook
