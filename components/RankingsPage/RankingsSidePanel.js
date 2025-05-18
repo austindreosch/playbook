@@ -8,28 +8,24 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useMemo } from 'react';
 
-const RankingsSidePanel = ({ userRankings, onSelectRanking, activeRankingId }) => {
+const RankingsSidePanel = ({ onSelectRanking }) => {
     const { user } = useUser();
+    const userRankings = useUserRankings(state => state.rankings);
     const activeRanking = useUserRankings(state => state.activeRanking);
+    const activeRankingId = activeRanking?._id;
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
         if (!userRankings) return [];
-        // console.log('Active Ranking:', activeRanking);
-        // console.log('User Rankings (prop):', userRankings);
         return [...userRankings].sort((a, b) => {
-            // If one is active, it goes first
             if (a._id === activeRankingId) return -1;
             if (b._id === activeRankingId) return 1;
-            // Otherwise sort by date updated (using lastUpdated)
-            // Ensure dates are valid before comparison
-            const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0); // Fallback to epoch start
-            const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0); // Fallback to epoch start
-            return dateB - dateA; // Sort descending (most recent first)
+            const dateA = a.lastUpdated ? new Date(a.lastUpdated) : new Date(0);
+            const dateB = b.lastUpdated ? new Date(b.lastUpdated) : new Date(0);
+            return dateB - dateA;
         });
     }, [userRankings, activeRankingId]);
 
-    // Format date - memoize to avoid recreating on each render
     const formatDate = useCallback((dateString) => {
         return new Date(dateString).toLocaleDateString();
     }, []);

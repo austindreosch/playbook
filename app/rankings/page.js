@@ -46,7 +46,6 @@ export default function RankingsPage() {
   useInitializeUserRankings();
 
   // -- State Hooks --
-  const [latestUserRankings, setLatestUserRankings] = useState(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [pageError, setPageError] = useState(null);
   const [activeRankingId, setActiveRankingId] = useState(null);
@@ -477,15 +476,17 @@ export default function RankingsPage() {
           {/* {user && <CreateAllRankingsButton />} */}
           {user && activeRanking && (
             <div>
-              <DraftModeButton
-                isDraftMode={isDraftModeActive}
-                onDraftModeChange={toggleDraftMode}
-                showDrafted={showDraftedPlayers}
-                onShowDraftedChange={toggleShowDraftedPlayers}
-                onResetDraft={resetDraftAvailability}
-                draftedCount={draftedCount}
-                activeRanking={activeRanking}
-              />
+              {activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
+                <DraftModeButton
+                  isDraftMode={isDraftModeActive}
+                  onDraftModeChange={toggleDraftMode}
+                  showDrafted={showDraftedPlayers}
+                  onShowDraftedChange={toggleShowDraftedPlayers}
+                  onResetDraft={resetDraftAvailability}
+                  draftedCount={draftedCount}
+                  activeRanking={activeRanking}
+                />
+              )}
             </div>
           )}
           {user && (
@@ -494,7 +495,7 @@ export default function RankingsPage() {
         </div>
       </div>
 
-      {!latestUserRankings || latestUserRankings.length === 0 ? (
+      {!userRankings || userRankings.length === 0 ? (
          // ... Get Started UI ...
          <div className="text-center py-12 px-4 bg-white border-t border-gray-100">
            <div className="max-w-md mx-auto">
@@ -582,11 +583,7 @@ export default function RankingsPage() {
             </div>
           </div>
           <div className="w-72 sticky top-4">
-            <RankingsSidePanel
-              userRankings={latestUserRankings}
-              activeRankingId={activeRankingId}
-              onSelectRanking={handleRankingSelect}
-            />
+            <RankingsSidePanel onSelectRanking={handleRankingSelect} />
           </div>
         </div>
       )}
