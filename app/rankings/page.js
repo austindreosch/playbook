@@ -339,16 +339,62 @@ export default function RankingsPage() {
 
   // Show loading state while checking auth
   if (authLoading) {
+    // Render detailed page skeletons while authentication is in progress
     return (
       <div className="container mx-auto p-4">
-        <div className="flex justify-center items-center h-screen">
-          <Skeleton className="h-8 w-48" />
+        <div className="flex justify-between items-center mb-8 pt-2">
+          <Skeleton className="h-4 w-48" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+
+        <div className="flex gap-6 relative pt-1">
+          {/* Skeleton Left Column (Player List Area) */}
+          <div className="flex-1 space-y-2 overflow-hidden" style={{ maxWidth: 'calc(100% - 288px)' }}>
+            {/* Skeleton Table Header */}
+            <Skeleton className="h-10 w-full rounded-sm mb-2 " />
+            {/* Skeleton Table Rows - More detailed */}
+            <div className="space-y-1">
+              {[...Array(16)].map((_, i) => ( // Simulate multiple rows
+                // Row container: flex, keep minimal styles
+                <div key={i} className="flex w-full h-[40px] mb-1 bg-white py-1">
+                  {/* Left Section (30%) - CHANGED */}
+                  <div className="flex items-center w-[30%] px-2 space-x-3 flex-shrink-0">
+                    {/* Player Rank Skeleton*/}
+                    {/* <Skeleton className="pl-8 h-7 w-10 rounded-md flex-shrink-0" /> */}
+                    {/* Player Image Skeleton*/}
+                    <Skeleton className="h-7 w-7 rounded-md flex-shrink-0" />
+                    {/* Player Name Skeleton*/}
+                    <Skeleton className="h-4 rounded-sm w-48" />
+                  </div>
+                  {/* Right Section (70%) - CHANGED */}
+                  <div className="flex w-[70%] h-full gap-2 flex-grow rounded-r-md">
+                    {/* Stat Skeletons (Mimic multiple columns using flex-1) */}
+                    {[...Array(9)].map((_, j) => (
+                      <Skeleton key={j} className="h-full flex-1 rounded-sm" />
+                    ))}
+                  </div>
+                </div> // End Row div
+              ))}
+            </div>
+          </div> {/* End flex-1 */}
+
+          {/* Skeleton Right Column (Side Panel) */}
+          <div className="w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
+            <div className="space-y-2">
+              {[...Array(2)].map((_, i) => ( // Simulate a few saved ranking items
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Show sign-up card if not authenticated
+  // Show sign-up card if not authenticated (and auth is no longer loading)
   if (!user) {
     return (
       <div className="container mx-auto p-4">

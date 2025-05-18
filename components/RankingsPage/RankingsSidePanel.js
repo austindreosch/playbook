@@ -6,14 +6,14 @@ import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-const RankingsSidePanel = ({ onSelectRanking }) => {
+const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
     const { user } = useUser();
     const userRankings = useUserRankings(state => state.rankings);
     const activeRanking = useUserRankings(state => state.activeRanking);
     const activeRankingId = activeRanking?._id;
-    console.log('Side panel rankings:', userRankings); // DEBUG: Log rankings in side panel
+    // console.log('Side panel rankings:', userRankings); // DEBUG: Log rankings in side panel
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {
@@ -91,6 +91,8 @@ const RankingsSidePanel = ({ onSelectRanking }) => {
             </motion.div>
         </div>
     );
-};
+});
+
+RankingsSidePanel.displayName = 'RankingsSidePanel';
 
 export default RankingsSidePanel;

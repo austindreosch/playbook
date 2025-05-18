@@ -537,7 +537,7 @@ const RankingsPlayerRow = memo(({
                         {/* middle panel */}
                         <div className=" w-[21%] pr-3">
                             {/* Insights panel */}
-                            <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
+                            {/* <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
                                 <div className="w-full h-11 flex relative overflow-hidden rounded-sm mx-2">
                                     <div className="bg-pb_orange h-full w-[65%]"></div>
                                     <div className="bg-pb_blue h-full flex-1"></div>
@@ -548,12 +548,12 @@ const RankingsPlayerRow = memo(({
                                     </div>
                                 </div>
                                 <span className="text-2xs tracking-wider mt-1 text-pb_textgray">PLAYBOOK SCORE</span>
-                            </div>
+                            </div> */}
 
-                            {/* <div className="flex flex-col justify-center items-center h-[50%] px-2">
+                            <div className="flex flex-col justify-center items-center h-[50%] px-2">
                                 <div className="h-[1px] w-full bg-gray-300"></div>
                                 <div className="h-[1px] w-full bg-gray-300 mt-[3px]"></div>
-                            </div> */}
+                            </div>
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
                                 <div className="flex-1 flex flex-col items-center justify-center">

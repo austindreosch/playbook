@@ -174,9 +174,9 @@ const AddRankingListButton = ({ dataset }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button variant="outline" className="flex items-center gap-2" disabled={isSubmitting}>
                     <BookCopy className="h-4 w-4" />
-                    <span>Create New Rankings</span>
+                    <span>{isSubmitting ? 'Creating...' : 'Create New Rankings'}</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px]">
