@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         console.log(`Found ${userRankings.length} rankings for user`);
         
         // Add cache control headers
-        res.setHeader('Cache-Control', 'private, max-age=30'); // Cache for 30 seconds
+        res.setHeader('Cache-Control', 'no-store'); // Always return fresh data
         return res.status(200).json(userRankings);
     } catch (error) {
         console.error('Error details:', {

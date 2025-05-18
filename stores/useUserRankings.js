@@ -42,6 +42,8 @@ const useUserRankings = create(
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
+                        console.log('[DEBUG] Raw API response from /api/user-rankings:', data);
+                        console.log('Fetched rankings:', data); // DEBUG: Log all rankings fetched
                         
                         const nflRankingsInData = data.filter(r => r.sport === 'nfl' || r.sport === 'NFL');
                         if (nflRankingsInData.length > 0) {
