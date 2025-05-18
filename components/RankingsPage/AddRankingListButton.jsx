@@ -10,6 +10,7 @@ import { getCategoryEntries, getDefaultCategories } from "@/lib/rankingUtils";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { BookCopy } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 // Helper to get default enabled categories for a sport config
@@ -21,6 +22,7 @@ import { useCallback, useEffect, useState } from 'react';
 const AddRankingListButton = ({ dataset }) => {
     const { user } = useUser();
     const { fetchUserRankings } = useUserRankings();
+    const router = useRouter();
     // Form state
     const [formData, setFormData] = useState({
         sport: 'nba',
@@ -132,6 +134,9 @@ const AddRankingListButton = ({ dataset }) => {
                     useUserRankings.getState().setActiveRanking(newRankingData);
                     await fetchUserRankings();
                 }
+                // --- Force navigation to rankings page to trigger UI refresh ---
+                router.refresh && router.refresh(); // Next.js 13+ App Router
+                router.push && router.push('/rankings'); // fallback for older router
             } else {
                 console.warn("Could not get new list ID from creation response.");
                 await fetchUserRankings();
