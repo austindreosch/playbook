@@ -37,7 +37,7 @@ export default function Newsletter() {
 
               {/* CTA content */}
               <div className="text-center lg:text-left lg:max-w-xl">
-                <h3 className="h3 text-white mb-2 font-bold">Ready to see what Playbook can do?</h3>
+                <h3 className="h3 text-2xl text-white mb-2 font-bold">Ready to see what Playbook can do?</h3>
                 <p className="text-white text-lg mb-6">Start using the tools now and see how it changes the way you manage your fantasy teams.</p>
 
                 {/* CTA buttons */}
