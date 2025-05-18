@@ -587,11 +587,23 @@ export default function RankingsPage() {
                 </div>
               ) : isMasterDataLoading ? (
                  <div className="space-y-2 mt-4">
-                    <p className="text-center text-gray-500">Loading core player data...</p>
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                 </div>
+                    {/* Skeleton Table Rows - More detailed */}
+                    <div className="space-y-1">
+                      {[...Array(16)].map((_, i) => ( // Simulate multiple rows
+                        <div key={i} className="flex w-full h-[40px] mb-1 bg-white py-1">
+                          <div className="flex items-center w-[30%] px-2 space-x-3 flex-shrink-0">
+                            <Skeleton className="h-7 w-7 rounded-md flex-shrink-0" />
+                            <Skeleton className="h-4 rounded-sm w-48" />
+                          </div>
+                          <div className="flex w-[70%] h-full gap-2 flex-grow rounded-r-md">
+                            {[...Array(9)].map((_, j) => (
+                              <Skeleton key={j} className="h-full flex-1 rounded-sm" />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
               ) : !isMasterDataReady ? (
                  <div className="flex justify-center items-center h-full">
                    <p className="text-red-500">Error loading core player data for {selectedSport}. Check console.</p>
