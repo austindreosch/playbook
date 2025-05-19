@@ -406,7 +406,8 @@ export function useProcessedPlayers({
                  }
              });
 
-             const overallZScoreSum = sumOfWeights > 0 ? weightedZScoreSum / sumOfWeights : 0;
+             // Use the raw weighted sum for overallZScoreSum (not the average)
+             const overallZScoreSum = weightedZScoreSum;
 
              return { 
                  ...player, 
