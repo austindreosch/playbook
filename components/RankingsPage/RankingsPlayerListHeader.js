@@ -280,6 +280,12 @@ const RankingsPlayerListHeader = ({
                                                 onChange={(e) => setEditingName(e.target.value)}
                                                 placeholder="Enter ranking name"
                                                 className="h-8"
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && editingName.trim()) {
+                                                        updateRankingName(editingName.trim());
+                                                        setNamePopoverOpen(false);
+                                                    }
+                                                }}
                                             />
                                             <div className="flex justify-end gap-2 mt-2">
                                                 <Button

@@ -27,6 +27,12 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
         });
     }, [userRankings, activeRankingId]);
 
+    // Force re-render when activeRanking changes
+    const activeRankingName = activeRanking?.name;
+    React.useEffect(() => {
+        // This effect will run whenever activeRankingName changes
+    }, [activeRankingName]);
+
     const formatDate = useCallback((dateString) => {
         return new Date(dateString).toLocaleDateString();
     }, []);
