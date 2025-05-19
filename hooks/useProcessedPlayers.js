@@ -318,11 +318,12 @@ export function useProcessedPlayers({
             if (activeRanking.categories && typeof activeRanking.categories === 'object') {
                 Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
                     if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
-                        // Use the weight from activeRanking.categories as the multiplier for z-score calculation
+                        const configLowerIsBetter = SPORT_CONFIGS[sportKey]?.categories?.[key]?.lowerIsBetter;
                         enabledCategoriesDetailsObjectForZScore[key] = { 
                             ...catDetails, 
                             key: key,
-                            multiplier: typeof catDetails.multiplier === 'number' ? catDetails.multiplier : 1
+                            multiplier: typeof catDetails.multiplier === 'number' ? catDetails.multiplier : 1,
+                            lowerIsBetter: typeof catDetails.lowerIsBetter === 'boolean' ? catDetails.lowerIsBetter : configLowerIsBetter
                         };
                         // Determine ruleKey for getStatPath based on sport and scoring
                         let ruleKeyForPath = currentScoring;
