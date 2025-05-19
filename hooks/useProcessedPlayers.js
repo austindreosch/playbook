@@ -304,7 +304,6 @@ export function useProcessedPlayers({
         if (!activeRanking || !activeRanking.categories || playersWithStatsAndRank.length === 0) {
             return playersWithStatsAndRank; 
         }
-        
 
         // --- Z-Score Calculation RESTORED ---
         const sportKey = sport?.toLowerCase(); // Defined here for use in this block
@@ -319,7 +318,12 @@ export function useProcessedPlayers({
             if (activeRanking.categories && typeof activeRanking.categories === 'object') {
                 Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
                     if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
-                        enabledCategoriesDetailsObjectForZScore[key] = { ...catDetails, key: key };
+                        // Use the weight from activeRanking.categories as the multiplier for z-score calculation
+                        enabledCategoriesDetailsObjectForZScore[key] = { 
+                            ...catDetails, 
+                            key: key,
+                            multiplier: typeof catDetails.multiplier === 'number' ? catDetails.multiplier : 1
+                        };
                         // Determine ruleKey for getStatPath based on sport and scoring
                         let ruleKeyForPath = currentScoring;
                         if (sportKey === 'nfl') ruleKeyForPath = 'points';
@@ -353,7 +357,11 @@ export function useProcessedPlayers({
         if (activeRanking.categories && typeof activeRanking.categories === 'object') {
             Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
                 if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
-                    enabledCategoriesDetailsObject[key] = { ...catDetails, key: key };
+                    enabledCategoriesDetailsObject[key] = { 
+                        ...catDetails, 
+                        key: key,
+                        multiplier: typeof catDetails.multiplier === 'number' ? catDetails.multiplier : 1
+                    };
                 }
             });
         }
@@ -372,10 +380,11 @@ export function useProcessedPlayers({
                                          ? newStats[statKey].value
                                          : newStats[statKey];
 
+                 const multiplier = catDetails.multiplier;
                  if (typeof zScoreForStat === 'number' && isFinite(zScoreForStat)) {
+                     console.log('SUM DEBUG', { statKey, multiplier, zScoreForStat });
                      const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
                      const impactType = categoryConfig?.lowerIsBetter === true ? 'negative' : 'positive';
-                     
                      const minSaturation = categoryConfig?.zscoreColorMin ?? -1.5;
                      const maxSaturation = categoryConfig?.zscoreColorMax ?? 1.5;
                      newStats[statKey] = {
@@ -383,10 +392,11 @@ export function useProcessedPlayers({
                          zScore: zScoreForStat, 
                          colors: getZScoreColors(zScoreForStat, impactType, minSaturation, maxSaturation) // Use config min/max
                      };
-                     
-                     const weight = typeof catDetails.weight === 'number' ? catDetails.weight : 1; 
-                     weightedZScoreSum += (zScoreForStat * weight);
-                     sumOfWeights += weight;
+                     // Only include in sum if multiplier > 0
+                     if (multiplier > 0) {
+                         weightedZScoreSum += (zScoreForStat * multiplier);
+                         sumOfWeights += multiplier;
+                     }
                  } else {
                      newStats[statKey] = {
                          value: currentStatValue,
@@ -396,8 +406,7 @@ export function useProcessedPlayers({
                  }
              });
 
-             const overallZScoreSum = player.zScoreTotals?.overallZScoreSum ?? (sumOfWeights > 0 ? weightedZScoreSum / sumOfWeights : 0);
-
+             const overallZScoreSum = sumOfWeights > 0 ? weightedZScoreSum / sumOfWeights : 0;
 
              return { 
                  ...player, 
