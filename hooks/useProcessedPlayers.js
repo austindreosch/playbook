@@ -368,34 +368,32 @@ export function useProcessedPlayers({
 
         const playersWithColorsAndSum = playersAfterZScoreCalculation.map(player => {
             const newStats = { ...player.stats }; 
-            const precalculatedZScores = player.zScores || {}; // zScores object from calculateZScoresWithComparisonPool
             let weightedZScoreSum = 0;
-            let sumOfWeights = 0;
 
             Object.keys(enabledCategoriesDetailsObject).forEach(statKey => {
                  const catDetails = enabledCategoriesDetailsObject[statKey];
-                 const zScoreForStat = precalculatedZScores[statKey]; 
-                 
-                 const currentStatValue = (newStats[statKey] !== undefined && newStats[statKey] !== null && typeof newStats[statKey] === 'object' && newStats[statKey].hasOwnProperty('value'))
-                                         ? newStats[statKey].value
-                                         : newStats[statKey];
-
                  const multiplier = catDetails.multiplier;
+                 // Use player.zScores[statKey] for the z-score value
+                 const zScoreForStat = player.zScores ? player.zScores[statKey] : undefined;
+                 // Use statPathMappingForZScore if available, otherwise fallback to statKey for the stat value
+                 let statPath = statKey;
+                 if (typeof statPathMappingForZScore !== 'undefined' && statPathMappingForZScore[statKey]) {
+                     statPath = statPathMappingForZScore[statKey];
+                 }
+                 const currentStatValue = getNestedValue(player.stats, `${statPath}.value`);
+
                  if (typeof zScoreForStat === 'number' && isFinite(zScoreForStat)) {
-                     console.log('SUM DEBUG', { statKey, multiplier, zScoreForStat });
                      const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
                      const impactType = categoryConfig?.lowerIsBetter === true ? 'negative' : 'positive';
                      const minSaturation = categoryConfig?.zscoreColorMin ?? -1.5;
                      const maxSaturation = categoryConfig?.zscoreColorMax ?? 1.5;
                      newStats[statKey] = {
-                         value: currentStatValue, // Preserve original value if it was wrapped
+                         value: currentStatValue,
                          zScore: zScoreForStat, 
-                         colors: getZScoreColors(zScoreForStat, impactType, minSaturation, maxSaturation) // Use config min/max
+                         colors: getZScoreColors(zScoreForStat, impactType, minSaturation, maxSaturation)
                      };
-                     // Only include in sum if multiplier > 0
                      if (multiplier > 0) {
                          weightedZScoreSum += (zScoreForStat * multiplier);
-                         sumOfWeights += multiplier;
                      }
                  } else {
                      newStats[statKey] = {
@@ -406,7 +404,6 @@ export function useProcessedPlayers({
                  }
              });
 
-             // Use the raw weighted sum for overallZScoreSum (not the average)
              const overallZScoreSum = weightedZScoreSum;
 
              return { 
@@ -414,8 +411,7 @@ export function useProcessedPlayers({
                  stats: newStats, 
                  zScoreTotals: { 
                      overallZScoreSum: overallZScoreSum, 
-                     rawWeightedSum: weightedZScoreSum, 
-                     sumOfWeights: sumOfWeights
+                     rawWeightedSum: weightedZScoreSum
                  }
               }; 
          });
