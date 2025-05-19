@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
 import { SigmaSquareIcon } from 'lucide-react';
@@ -211,22 +212,40 @@ const RankingsPlayerListHeader = ({
                                 displayAbbrev = 'PPG';
                             }
                         }
+
+                        // Get the tooltip text from the config
+                        const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                        const categoryConfig = sportConfig?.categories?.[abbrev];
+                        const tooltipText = categoryConfig?.tooltip || '';
+                        const categoryLabel = categoryConfig?.label || displayAbbrev;
+
                         return (
-                            <div
-                                key={abbrev}
-                                className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1 min-w-0"
-                                onClick={() => onSortChange(abbrev)}
-                            >
-                                <span>
-                                    {displayAbbrev}
-                                </span>
-                                {/* Conditional Solid Triangle SVG */}
-                                {sortConfig?.key === abbrev && (
-                                    <svg className="w-2 h-2 fill-current text-white" viewBox="0 0 10 5">
-                                        <polygon points="0,0 10,0 5,5" />
-                                    </svg>
-                                )}
-                            </div>
+                            <TooltipProvider key={abbrev}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div
+                                            className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1 min-w-0"
+                                            onClick={() => onSortChange(abbrev)}
+                                        >
+                                            <span>
+                                                {displayAbbrev}
+                                            </span>
+                                            {/* Conditional Solid Triangle SVG */}
+                                            {sortConfig?.key === abbrev && (
+                                                <svg className="w-2 h-2 fill-current text-white" viewBox="0 0 10 5">
+                                                    <polygon points="0,0 10,0 5,5" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-[300px]">
+                                        <div className="space-y-1">
+                                            <p className="font-semibold">{categoryLabel}</p>
+                                            <p className="text-xs text-white/90">{tooltipText}</p>
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         );
                     })}
                 </div>
