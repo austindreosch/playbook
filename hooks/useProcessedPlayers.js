@@ -46,10 +46,8 @@ const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, 
         return { bgColor: rgbToHex(r,g,b), textColor: '#4b5563' }; // gray-100 bg, gray-600 text
     }
 
+    // Do NOT flip z-score for negative impactType; it is already flipped in calculation
     let effectiveZScore = zScore;
-    if (impactType === 'negative') {
-        effectiveZScore = -zScore;
-    }
 
     let r, g, b;
     let calculatedFactor;
@@ -385,7 +383,8 @@ export function useProcessedPlayers({
 
                  if (typeof zScoreForStat === 'number' && isFinite(zScoreForStat)) {
                      const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
-                     const impactType = categoryConfig?.lowerIsBetter === true ? 'negative' : 'positive';
+                     const lowerIsBetter = categoryConfig?.lowerIsBetter === true;
+                     const impactType = lowerIsBetter ? 'negative' : 'positive';
                      const minSaturation = categoryConfig?.zscoreColorMin ?? -1.5;
                      const maxSaturation = categoryConfig?.zscoreColorMax ?? 1.5;
                      newStats[statKey] = {
@@ -397,10 +396,13 @@ export function useProcessedPlayers({
                          weightedZScoreSum += (zScoreForStat * multiplier);
                      }
                  } else {
+                     const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
+                     const lowerIsBetter = categoryConfig?.lowerIsBetter === true;
+                     const impactType = lowerIsBetter ? 'negative' : 'positive';
                      newStats[statKey] = {
                          value: currentStatValue,
                          zScore: null,
-                         colors: getZScoreColors(NaN) 
+                         colors: getZScoreColors(NaN, impactType)
                      };
                  }
              });
