@@ -114,6 +114,7 @@ export function useProcessedPlayers({
     }, [standardEcrRankings]);
 
     const redraftEcrMap = useMemo(() => {
+        console.log(`[useProcessedPlayers DEBUG - redraftEcrMap] Calculating. redraftEcrRankings length: ${redraftEcrRankings ? redraftEcrRankings.length : 'null'}`);
         const map = new Map();
         (redraftEcrRankings || []).forEach(player => { 
             const rankValue = player.userRank !== undefined ? player.userRank : player.rank;
@@ -138,12 +139,13 @@ export function useProcessedPlayers({
             }
         });
         
-
+        console.log(`[useProcessedPlayers DEBUG - redraftEcrMap] Calculated. Map size: ${map.size}`);
         return map;
     }, [redraftEcrRankings]);
 
     // 3. Initial processing of activeRanking.rankings
     const initialRankedPlayers = useMemo(() => {
+        console.log(`[useProcessedPlayers DEBUG - initialRankedPlayers] Calculating. seasonalStatsData keys: ${seasonalStatsData ? Object.keys(seasonalStatsData).length : 'null'}, playerIdentityMap size: ${playerIdentityMap.size}`);
         if (!activeRanking || !activeRanking.rankings) {
             // console.log("[useProcessedPlayers - initialRankedPlayers] activeRanking is null or has no rankings, returning empty array.");
             return [];
@@ -209,6 +211,7 @@ export function useProcessedPlayers({
 
 
         if (isLoading || !sportKey || !currentRankingFormat || !nodes || Object.keys(nodes).length === 0 || !redraftEcrMap || redraftEcrMap.size === 0) {
+            console.log(`[useProcessedPlayers DEBUG - comparisonPoolPlayers] Early exit. isLoading: ${isLoading} (master: ${isMasterLoading}, ecr: ${isEcrLoading}), sportKey: ${!!sportKey}, format: ${!!currentRankingFormat}, nodes.length: ${nodes ? Object.keys(nodes).length : 'null'}, redraftEcrMap.size: ${redraftEcrMap ? redraftEcrMap.size : 'null'}. Returning EMPTY.`);
             return []; 
         }
 
@@ -291,15 +294,18 @@ export function useProcessedPlayers({
                 finalComparisonPool = finalComparisonPool.concat(sortedGroup);
             });
         }
+        console.log(`[useProcessedPlayers DEBUG - comparisonPoolPlayers] Populated. Length: ${finalComparisonPool.length}`);
         return finalComparisonPool;
     }, [sport, activeRanking?.format, activeRanking?.scoring, masterNodes, isMasterLoading, isEcrLoading, redraftEcrMap]);
     // const comparisonPoolPlayers = []; // Placeholder - remove calculation for now
 
     // 5. Final processing: Z-Scores, Sorting, Filtering
     const playersToDisplay = useMemo(() => {
+        console.log('[useProcessedPlayers DEBUG] Entering playersToDisplay useMemo. initialRankedPlayers.length:', initialRankedPlayers.length, 'activeRanking?.categories exist:', !!activeRanking?.categories);
         let playersWithStatsAndRank = [...initialRankedPlayers];
 
         if (!activeRanking || !activeRanking.categories || playersWithStatsAndRank.length === 0) {
+            // console.log("[useProcessedPlayers - playersToDisplay] Early exit: activeRanking, categories, or initial players missing.");
             return playersWithStatsAndRank; 
         }
 
@@ -308,6 +314,9 @@ export function useProcessedPlayers({
         const currentScoring = activeRanking.scoring?.toLowerCase(); // Defined here
 
         let playersAfterZScoreCalculation = playersWithStatsAndRank; // Default to initial if no calculation happens
+
+        // --- DEBUG LOG: Check comparisonPoolPlayers length before the condition ---
+        console.log('[useProcessedPlayers DEBUG] Before Z-score calc block. comparisonPoolPlayers.length:', comparisonPoolPlayers ? comparisonPoolPlayers.length : 'undefined');
 
         if (comparisonPoolPlayers && comparisonPoolPlayers.length > 0) {
             const enabledCategoriesDetailsObjectForZScore = {};
@@ -337,6 +346,19 @@ export function useProcessedPlayers({
 
             if (comparisonRulesToUse && Object.keys(enabledCategoriesDetailsObjectForZScore).length > 0) {
                 try {
+                    // --- DEBUG LOGS START ---
+                    if (playersWithStatsAndRank.length > 0) {
+                        console.log('[useProcessedPlayers DEBUG] Stats of first player in playersWithStatsAndRank (before Z-calc):', JSON.parse(JSON.stringify(playersWithStatsAndRank[0]?.stats)));
+                    } else {
+                        console.log('[useProcessedPlayers DEBUG] playersWithStatsAndRank is empty before Z-calc.');
+                    }
+                    if (comparisonPoolPlayers.length > 0) {
+                        console.log('[useProcessedPlayers DEBUG] Stats of first player in comparisonPoolPlayers (before Z-calc):', JSON.parse(JSON.stringify(comparisonPoolPlayers[0]?.stats)));
+                    } else {
+                        console.log('[useProcessedPlayers DEBUG] comparisonPoolPlayers is empty before Z-calc.');
+                    }
+                    // --- DEBUG LOGS END ---
+
                     playersAfterZScoreCalculation = calculateZScoresWithComparisonPool(
                         playersWithStatsAndRank, 
                         comparisonPoolPlayers,     
@@ -344,6 +366,14 @@ export function useProcessedPlayers({
                         statPathMappingForZScore,
                         comparisonRulesToUse
                     );
+
+                    // --- DEBUG LOGS START ---
+                    if (playersAfterZScoreCalculation.length > 0) {
+                        console.log('[useProcessedPlayers DEBUG] zScores of first player in playersAfterZScoreCalculation (after Z-calc):', JSON.parse(JSON.stringify(playersAfterZScoreCalculation[0]?.zScores)));
+                    } else {
+                        console.log('[useProcessedPlayers DEBUG] playersAfterZScoreCalculation is empty after Z-calc.');
+                    }
+                    // --- DEBUG LOGS END ---
                 } catch (error) {
                     console.error("[useProcessedPlayers - Zscores] Error calculating Z-Scores:", error);
                     // Keep playersAfterZScoreCalculation as is (playersWithStatsAndRank)
@@ -379,7 +409,7 @@ export function useProcessedPlayers({
                  if (typeof statPathMappingForZScore !== 'undefined' && statPathMappingForZScore[statKey]) {
                      statPath = statPathMappingForZScore[statKey];
                  }
-                 const currentStatValue = getNestedValue(player.stats, `${statPath}.value`);
+                 const currentStatValue = getNestedValue(player.stats, statPath);
 
                  if (typeof zScoreForStat === 'number' && isFinite(zScoreForStat)) {
                      const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];

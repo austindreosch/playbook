@@ -483,6 +483,7 @@ const useUserRankings = create(
 
                 // --- NEW: Fetch Consensus Rankings Action --- ADDED
                 fetchConsensusRankings: async (criteria) => {
+                    console.log('[useUserRankings DEBUG - fetchConsensusRankings] Called with criteria:', JSON.parse(JSON.stringify(criteria))); // Log received criteria
                     if (!criteria || !criteria.sport || !criteria.format || !criteria.scoring) {
                         setState({ ecrError: 'Missing required criteria for ECR fetch', isEcrLoading: false });
                         return;
@@ -525,12 +526,15 @@ const useUserRankings = create(
                         let redraftRankingsData = null; 
                         if (redraftResponse.ok) {
                             redraftRankingsData = await redraftResponse.json();
+                            console.log('[useUserRankings DEBUG - fetchConsensusRankings] Raw redraftRankingsData from API:', JSON.parse(JSON.stringify(redraftRankingsData))); // Log API response
                         } else {
+                            console.warn('[useUserRankings - fetchConsensusRankings] Redraft ECR fetch failed. Status:', redraftResponse.status); // Log failure
                             // Redraft fetch failed
                         }
 
                         const standardEcrToSet = standardRankingsData?.rankings || []; 
                         const redraftEcrToSet = redraftRankingsData?.rankings || []; 
+                        console.log('[useUserRankings DEBUG - fetchConsensusRankings] redraftEcrToSet (before setState):', JSON.parse(JSON.stringify(redraftEcrToSet))); // Log data being set
 
                         setState({
                             standardEcrRankings: standardEcrToSet,
@@ -560,6 +564,7 @@ const useUserRankings = create(
 
                 // --- NEW: Select and Fetch Full Ranking Details ---
                 selectAndTouchRanking: async (rankingId) => {
+                    console.log('[useUserRankings DEBUG - selectAndTouchRanking] Called with rankingId:', rankingId); // Log entry and rankingId
                     if (!rankingId) {
                         console.error("[selectAndTouchRanking] No rankingId provided."); // Keep critical errors
                         setState({ activeRanking: null, selectionLoading: false, error: 'No ranking ID provided for selection.' });
@@ -577,6 +582,7 @@ const useUserRankings = create(
                             throw new Error(errorData.error || `API request failed with status ${response.status}`);
                         }
                         const fullRankingData = await response.json();
+                        console.log('[useUserRankings DEBUG - selectAndTouchRanking] Fetched fullRankingData:', JSON.parse(JSON.stringify(fullRankingData))); // Log fetched data
 
                         if (!fullRankingData || !Array.isArray(fullRankingData.rankings)) {
                              const errorMsg = `Fetched data for ranking ${rankingId} is incomplete (missing 'rankings' array).`;
@@ -604,12 +610,14 @@ const useUserRankings = create(
                             pprSetting: fullRankingData.pprSetting, 
                             flexSetting: fullRankingData.flexSetting 
                         };
+                        console.log('[useUserRankings DEBUG - selectAndTouchRanking] About to call fetchConsensusRankings with criteria:', JSON.parse(JSON.stringify(criteria))); // Log before call
                         get().fetchConsensusRankings(criteria);
 
                         return fullRankingData; 
 
                     } catch (error) {
                         console.error(`[selectAndTouchRanking] Error fetching ranking ${rankingId}:`, error); // Keep critical errors
+                        console.error('[useUserRankings DEBUG - selectAndTouchRanking] Error caught:', error); // Log caught error
                         setState({
                             error: `Failed to load ranking ${rankingId}: ${error.message}`,
                         });

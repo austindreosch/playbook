@@ -22,7 +22,7 @@ Key interactions:
 
 // import Footer from '@/components/Layout/Footer';
 // import Header from '@/components/Layout/Header';
-import CreateAllRankingsButton from '@/components/admin/CreateAllRankingsButton.jsx';
+// import CreateAllRankingsButton from '@/components/admin/CreateAllRankingsButton.jsx';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
@@ -76,7 +76,10 @@ export default function RankingsPage() {
     toggleDraftMode,
     toggleShowDraftedPlayers,
     resetDraftAvailability,
-    selectAndTouchRanking
+    selectAndTouchRanking,
+    isEcrLoading,
+    standardEcrRankings,
+    redraftEcrRankings
   } = useUserRankings();
 
   const {
@@ -99,11 +102,13 @@ export default function RankingsPage() {
   // Memoize handleRankingSelect to stabilize its reference for the initial load useEffect
   const handleRankingSelect = useCallback(async (rankingIdToSelect) => {
     const currentStoreActiveRankingId = useUserRankings.getState().activeRanking?._id;
+    console.log('[handleRankingSelect DEBUG] Called with rankingIdToSelect:', rankingIdToSelect, 'Current store activeId:', currentStoreActiveRankingId); // Log entry
 
     // console.log(`[handleRankingSelect] Called with: ${rankingIdToSelect}. Current store activeId: ${currentStoreActiveRankingId}`);
 
     // Do nothing if the target ranking is already active in the store, or if no ID is provided.
     if (!rankingIdToSelect || rankingIdToSelect === currentStoreActiveRankingId) {
+        console.log('[handleRankingSelect DEBUG] Early exit: New rankingId is null or already active.'); // Log early exit
         // console.log('[handleRankingSelect] New rankingId is null or already active. Aborting select.');
         // If it's the same, ensure loading is false if it was somehow set true
         setIsPageLoading(false);
@@ -131,6 +136,7 @@ export default function RankingsPage() {
     }
 
     // console.log(`[handleRankingSelect] Proceeding to selectAndTouchRanking for new ranking: ${rankingIdToSelect}`);
+    console.log('[handleRankingSelect DEBUG] Proceeding to call selectAndTouchRanking for rankingIdToSelect:', rankingIdToSelect); // Log before call
     try {
         await selectAndTouchRanking(rankingIdToSelect); // This should update activeRanking in the store
         // console.log(`[handleRankingSelect] selectAndTouchRanking completed for ${rankingIdToSelect}`);
@@ -279,55 +285,40 @@ export default function RankingsPage() {
 
   // Effect to set initial active ranking
   useEffect(() => {
-    // console.log('[InitialLoadEffect] Running. initialRankingsLoaded:', initialRankingsLoaded, 'userRankings count:', userRankings?.length, 'initialLoadEffectRan.current:', initialLoadEffectRan.current);
-    // console.log('[InitialLoadEffect] Store activeRanking on entry:', activeRanking);
-    // console.log('[InitialLoadEffect] Store userRankings[0] on entry:', userRankings && userRankings[0]);
+    console.log('[InitialLoadEffect DEBUG] Running. initialRankingsLoaded:', initialRankingsLoaded, 'userRankings?.length:', userRankings?.length, 'initialLoadEffectRan.current:', initialLoadEffectRan.current, 'activeRanking?._id:', activeRanking?._id);
 
     if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
+        console.log('[InitialLoadEffect DEBUG] Main condition MET.');
         initialLoadEffectRan.current = true; 
-        // console.log('[InitialLoadEffect] Conditions met, proceeding to select.');
-
-        // Get the activeRanking from the store at this exact moment.
-        // This is important because the `activeRanking` in the dependency array might be stale if this effect
-        // is triggered by other dependency changes rapidly.
         const currentPersistedActiveRanking = useUserRankings.getState().activeRanking;
         const firstRankingInList = userRankings[0];
-
-        // console.log('[InitialLoadEffect] Persisted activeRanking from store (direct access):', currentPersistedActiveRanking);
-        // console.log('[InitialLoadEffect] userRankings[0] from store:', firstRankingInList);
-
         const rankingToLoad = (currentPersistedActiveRanking && currentPersistedActiveRanking._id) 
                               ? currentPersistedActiveRanking 
                               : firstRankingInList;
-        
-        // console.log('[InitialLoadEffect] rankingToLoad determined as:', rankingToLoad);
-        
         const idToLoad = rankingToLoad?._id;
-        // console.log('[InitialLoadEffect] idToLoad determined as:', idToLoad);
+        console.log('[InitialLoadEffect DEBUG] idToLoad:', idToLoad, 'rankingToLoad?.sport:', rankingToLoad?.sport, 'selectedSport:', selectedSport);
 
         if (idToLoad) {
-            // console.log(`[InitialLoadEffect] Calling handleRankingSelect with id: ${idToLoad}`);
+            // console.log('[InitialLoadEffect DEBUG] idToLoad is present. Comparing activeRanking?._id (', activeRanking?._id, ') !== idToLoad (', idToLoad, '). Result:', activeRanking?._id !== idToLoad);
             if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
-                // console.log(`[InitialLoadEffect] Setting sport from rankingToLoad: ${rankingToLoad.sport}`);
+                console.log(`[InitialLoadEffect DEBUG] Setting sport from rankingToLoad: ${rankingToLoad.sport}`);
                 setSelectedSport(rankingToLoad.sport);
             }
-            // Check if the idToLoad is already the one effectively active in the page's current context
-            // to prevent unnecessary re-selection if selectedSport change triggers this effect again.
-            if (activeRanking?._id !== idToLoad) {
-                 handleRankingSelect(idToLoad);
-            }
+            // Directly call selectAndTouchRanking to ensure ECR data is fetched for the initial ranking
+            console.log('[InitialLoadEffect DEBUG] Directly calling selectAndTouchRanking with idToLoad:', idToLoad);
+            selectAndTouchRanking(idToLoad);
+            // The old condition: if (activeRanking?._id !== idToLoad) {
+            //      console.log('[InitialLoadEffect DEBUG] Condition to call handleRankingSelect MET. Calling handleRankingSelect with idToLoad:', idToLoad);
+            //      handleRankingSelect(idToLoad);
+            // } else {
+            //      console.log('[InitialLoadEffect DEBUG] Condition to call handleRankingSelect NOT MET (activeRanking?._id === idToLoad).');
+            // }
         } else {
-            //  console.log('[InitialLoadEffect Ref ] No idToLoad determined. rankingToLoad was:', rankingToLoad);
+             console.log('[InitialLoadEffect DEBUG] idToLoad is NULL or UNDEFINED.');
         }
-    } 
-    // else if (!initialLoadEffectRan.current) {
-    //     console.log('[InitialLoadEffect] Conditions NOT met or already ran. Details:', {
-    //         initialRankingsLoaded,
-    //         userRankingsCount: userRankings?.length,
-    //         userRankingsNotEmpty: userRankings && userRankings.length > 0,
-    //         initialLoadEffectRan: initialLoadEffectRan.current
-    //     });
-    // }
+    } else {
+        console.log('[InitialLoadEffect DEBUG] Main condition NOT MET.');
+    }
   }, [
     initialRankingsLoaded, 
     userRankings, 
@@ -390,6 +381,7 @@ export default function RankingsPage() {
         userRankingsLoading ||
         activeRankingLoading ||
         selectedSportLoading ||
+        isEcrLoading ||
         !initialRankingsLoaded || 
         (rankingsListExists && !activeRankingFullyLoaded); 
         
@@ -403,7 +395,8 @@ export default function RankingsPage() {
       userRankings, 
       initialRankingsLoaded, 
       activeRanking,      
-      selectedSport       
+      selectedSport,
+      isEcrLoading
     ]);
 
   // Show loading state while checking auth
@@ -705,6 +698,8 @@ export default function RankingsPage() {
                   enabledCategoryAbbrevs={enabledCategoryAbbrevs}
                   playerIdentities={playerIdentities}
                   seasonalStatsData={seasonalStatsData}
+                  standardEcrRankings={standardEcrRankings}
+                  redraftEcrRankings={redraftEcrRankings}
                 />
               )}
             </div>
