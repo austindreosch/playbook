@@ -42,7 +42,7 @@ const interpolateColor = (color1_rgb, color2_rgb, factor) => {
 const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, maxSaturation = 1.5) => {
     if (typeof zScore !== 'number' || isNaN(zScore)) {
         const [r,g,b] = FALLBACK_GRAY_RGB;
-        console.log('ZCOLOR', { zScore, reason: 'fallback', bgColor: rgbToHex(r,g,b) });
+        // console.log('ZCOLOR', { zScore, reason: 'fallback', bgColor: rgbToHex(r,g,b) });
         return { bgColor: rgbToHex(r,g,b), textColor: '#4b5563' }; // gray-100 bg, gray-600 text
     }
 
@@ -57,13 +57,13 @@ const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, 
         calculatedFactor = maxSaturation === 0 ? 1 : clampedPositiveZ / maxSaturation;
         const factor = Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
         [r, g, b] = interpolateColor(NEUTRAL_MIDPOINT_RGB, PB_GREEN_RGB, Math.max(0, factor)); 
-        console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
+        // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     } else { // effectiveZScore < 0
         const clampedNegativeZ = Math.max(effectiveZScore, minSaturation);
         calculatedFactor = minSaturation === 0 ? 1 : (clampedNegativeZ - minSaturation) / (0 - minSaturation);
         const factor = Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
         [r, g, b] = interpolateColor(PB_RED_RGB, NEUTRAL_MIDPOINT_RGB, Math.min(1, Math.max(0, factor)));
-        console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
+        // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     }
 
     const bgColor = rgbToHex(r, g, b);

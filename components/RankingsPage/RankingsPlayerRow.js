@@ -5,7 +5,7 @@ import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
+import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import EmptyStatIndicator from '../common/EmptyStatIndicator';
 import BullseyeIcon from '../icons/BullseyeIcon';
@@ -433,7 +433,7 @@ const RankingsPlayerRow = memo(({
                     {/* CONDITIONAL DRAFT BUTTON - Show only if isDraftMode is true */}
                     {isDraftMode && (
                         <div className={cn(
-                            "mr-2 h-7 w-8 rounded-sm flex items-center justify-center border", // Base classes + border
+                            "ml-0.5 mr-1 h-6 w-6 rounded-sm flex items-center justify-center border", // Base classes + border
                             !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
                         )}> {/* Added flex centering */}
                             <Button
@@ -441,8 +441,8 @@ const RankingsPlayerRow = memo(({
                                 size="icon"
                                 className={`h-full w-full rounded-sm flex items-center justify-center ${ // Make smaller and round
                                     (player.draftModeAvailable ?? true)
-                                        ? 'text-pb_blue hover:text-pb_blue hover:border-2 hover:border-pb_blue' // Use blue shades
-                                        : 'text-pb_orange  hover:bg-pb_orange hover:text-white' // Use orange shades
+                                        ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover' // Use blue shades
+                                        : 'text-pb_orange-600  hover:bg-pb_orange hover:text-white' // Use orange shades
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent row expand/collapse
@@ -455,9 +455,9 @@ const RankingsPlayerRow = memo(({
                                 title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
                             >
                                 {(player.draftModeAvailable ?? true) ? (
-                                    <SquareCheckSolidIcon className="h-5 w-5 stroke-current stroke-2" />
+                                    <Check className="h-4 w-4 stroke-current stroke-2" />
                                 ) : (
-                                    <Undo2 className="h-5 w-5 opacity-100" />
+                                    <RotateCcw className="h-4 w-4 opacity-100" />
                                 )}
                             </Button>
                         </div>
@@ -465,8 +465,8 @@ const RankingsPlayerRow = memo(({
 
                     {/* Rank number */}
                     <div className={cn(
-                        "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
-                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_midgray" : "border-pb_lightergray", // Conditional border
+                        "w-9 h-6 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
+                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray", // Conditional border
                         !isRankSorted ? 'bg-blue-50' : '' // Conditional background
                     )}>{rank}</div>
 

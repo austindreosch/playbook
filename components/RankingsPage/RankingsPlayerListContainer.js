@@ -149,9 +149,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         const handleToggleDraftStatus = (newAvailability) => {
             if (player.id && activeRanking?._id) {
-                setPlayerAvailability(activeRanking._id, player.id, newAvailability);
+                setPlayerAvailability(player.id, newAvailability);
             } else {
-                console.error("Cannot toggle draft status: Missing player.id or activeRanking._id", { 
+                console.error("Cannot toggle draft status: Missing player.id or activeRanking?._id", { 
                     playerId: player.id, 
                     activeRankingId: activeRanking?._id 
                 });

@@ -112,29 +112,45 @@ const useUserRankings = create(
                     setState(state => ({ showDraftedPlayers: !state.showDraftedPlayers }));
                 },
 
-                setPlayerAvailability: (rankingIdToUpdate, isAvailable) => {
+                setPlayerAvailability: (playerId, isAvailable) => {
                     const { activeRanking, rankings } = get();
-                    if (!activeRanking || !activeRanking.rankings) return;
+                    if (!activeRanking || !activeRanking.rankings) {
+                        console.error("[setPlayerAvailability] No activeRanking or activeRanking.rankings found.");
+                        return;
+                    }
 
                     let playerFound = false;
-                    const updatedRankings = activeRanking.rankings.map(p => {
-                        
-                        const incomingIdStr = String(rankingIdToUpdate);
+                    const targetPlayerIdStr = String(playerId); // The ID from the row, could be any format
+
+                    const updatedPlayerList = activeRanking.rankings.map(p => {
                         let isMatch = false;
 
-                        if (incomingIdStr.startsWith('pick-')) {
-                            if (p.mySportsFeedsId == null) { 
-                                const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
-                                const incomingParts = incomingIdStr.split('-');
-                                if (incomingParts.length >= 3) {
-                                    const incomingNameRaw = incomingParts.slice(2).join('-');
-                                    const storedNameRaw = p.originalName || p.name || 'unknown';
-                                    isMatch = normalizeName(storedNameRaw) === normalizeName(incomingNameRaw);
+                        // Attempt to match with various ID fields present on the player object `p`
+                        if (p.id && String(p.id) === targetPlayerIdStr) {
+                            isMatch = true;
+                        } else if (p.playbookId && String(p.playbookId) === targetPlayerIdStr) {
+                            isMatch = true;
+                        } else if (p.mySportsFeedsId && String(p.mySportsFeedsId) === targetPlayerIdStr) {
+                            isMatch = true;
+                        }
+                        
+                        // Handle 'pick-' style IDs by name matching as a fallback, 
+                        // especially if other IDs didn't match or aren't present on `p` for this type of entry.
+                        // This is similar to the old logic's intent but placed in a clearer sequence.
+                        if (!isMatch && targetPlayerIdStr.startsWith('pick-')) {
+                            // Check if player 'p' might be a pick-style entry (e.g., doesn't have other firm IDs)
+                            // The original logic had `p.mySportsFeedsId == null`, which might be a way to identify such an entry.
+                            // Let's adapt that: if it's a pick and we haven't matched on other IDs, try name.
+                            if (p.mySportsFeedsId == null && p.playbookId == null) { // Condition to ensure we only name-match potential picks
+                                const normalizeName = (name) => name ? String(name).toLowerCase().trim().replace(/[^a-z0-9]/gi, '') : '';
+                                const incomingParts = targetPlayerIdStr.split('-'); // e.g., "pick-1-some-player-name"
+                                if (incomingParts.length >= 3) { // Expecting at least pick-round-name
+                                    const incomingNameRaw = incomingParts.slice(2).join('-'); // Get "some-player-name"
+                                    const storedNameRaw = p.originalName || p.name || 'unknown_player_in_store';
+                                    if (normalizeName(storedNameRaw) === normalizeName(incomingNameRaw)) {
+                                        isMatch = true;
+                                    }
                                 }
-                            }
-                        } else {
-                            if (p.mySportsFeedsId != null) { 
-                                isMatch = String(p.mySportsFeedsId) === incomingIdStr;
                             }
                         }
 
@@ -146,10 +162,11 @@ const useUserRankings = create(
                     });
 
                     if (!playerFound) {
+                        console.warn(`[setPlayerAvailability] Player with ID/Name '${targetPlayerIdStr}' not found or did not match in activeRanking.rankings.`);
                         return; 
                     }
 
-                    const updatedActiveRanking = { ...activeRanking, rankings: updatedRankings };
+                    const updatedActiveRanking = { ...activeRanking, rankings: updatedPlayerList };
 
                     setState({
                         activeRanking: updatedActiveRanking,
@@ -157,11 +174,7 @@ const useUserRankings = create(
                         hasUnsavedChanges: true
                     });
 
-                    if (!isAvailable) {
-                        // Player drafted logic (logging removed)
-                    }
-
-                    get().saveChanges();
+                    get().saveChanges(); // Consider if auto-save is desired on every toggle
                 },
 
                 resetDraftAvailability: () => {
