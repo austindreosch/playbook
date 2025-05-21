@@ -96,24 +96,57 @@ export default function RankingsPage() {
     setCollapseAllTrigger(prev => prev + 1);
   }, []);
 
-  const handleRankingSelect = useCallback(async (rankingId) => {
-    if (!rankingId) { 
-        return; 
+  // Memoize handleRankingSelect to stabilize its reference for the initial load useEffect
+  const handleRankingSelect = useCallback(async (rankingIdToSelect) => {
+    const currentStoreActiveRankingId = useUserRankings.getState().activeRanking?._id;
+
+    // console.log(`[handleRankingSelect] Called with: ${rankingIdToSelect}. Current store activeId: ${currentStoreActiveRankingId}`);
+
+    // Do nothing if the target ranking is already active in the store, or if no ID is provided.
+    if (!rankingIdToSelect || rankingIdToSelect === currentStoreActiveRankingId) {
+        // console.log('[handleRankingSelect] New rankingId is null or already active. Aborting select.');
+        // If it's the same, ensure loading is false if it was somehow set true
+        setIsPageLoading(false);
+        return;
     }
 
-    setIsPageLoading(true);
-    setActiveRankingId(rankingId);
+    setIsPageLoading(true); // Set loading true for the page
 
+    // Attempt to save changes for the outgoing ranking first
+    if (currentStoreActiveRankingId) {
+        // console.log(`[handleRankingSelect] Attempting to flush changes for outgoing ranking: ${currentStoreActiveRankingId}`);
+        try {
+            const { flushPendingChanges } = useUserRankings.getState();
+            if (typeof flushPendingChanges === 'function') {
+                await flushPendingChanges();
+                // console.log(`[handleRankingSelect] Flush completed for ${currentStoreActiveRankingId}`);
+            } else {
+                // console.warn('[handleRankingSelect] flushPendingChanges function not found.');
+            }
+        } catch (err) {
+            console.error(`[handleRankingSelect] Error flushing changes for ${currentStoreActiveRankingId}:`, err);
+            // Potentially set pageError here, but continue to try loading the new one
+            setPageError(`Error saving previous ranking: ${err.message}. `);
+        }
+    }
+
+    // console.log(`[handleRankingSelect] Proceeding to selectAndTouchRanking for new ranking: ${rankingIdToSelect}`);
     try {
-        await selectAndTouchRanking(rankingId);
+        await selectAndTouchRanking(rankingIdToSelect); // This should update activeRanking in the store
+        // console.log(`[handleRankingSelect] selectAndTouchRanking completed for ${rankingIdToSelect}`);
+        // Clear any previous error related to flushing if new ranking loads successfully
+        setPageError(null); 
     } catch (err) {
-        console.error(`[handleRankingSelect] Error during ranking selection for ${rankingId}:`, err);
-        setPageError('Error selecting ranking.');
+        console.error(`[handleRankingSelect] Error during selectAndTouchRanking for ${rankingIdToSelect}:`, err);
+        setPageError(currentError => 
+            (currentError || '') + `Error selecting ranking ${rankingIdToSelect}: ${err.message}`
+        );
     } finally {
-        setIsPageLoading(false); 
-        setCollapseAllTrigger(prev => prev + 1); 
+        setIsPageLoading(false); // Set loading false for the page
+        setCollapseAllTrigger(prev => prev + 1); // Collapse rows after new ranking is selected
+        // console.log(`[handleRankingSelect] Finalized selection for ${rankingIdToSelect}`);
     }
-  }, [selectAndTouchRanking]);
+  }, [selectAndTouchRanking, setPageError]); // selectAndTouchRanking and setPageError are dependencies
 
   const handleSortChange = useCallback((newKey_abbreviation) => {
     let sortKeyToSet = null;
@@ -246,46 +279,63 @@ export default function RankingsPage() {
 
   // Effect to set initial active ranking
   useEffect(() => {
-    console.log('[InitialLoadEffect] Running. initialRankingsLoaded:', initialRankingsLoaded, 'userRankings count:', userRankings?.length, 'initialLoadEffectRan.current:', initialLoadEffectRan.current);
-    console.log('[InitialLoadEffect] Store activeRanking on entry:', activeRanking);
-    console.log('[InitialLoadEffect] Store userRankings[0] on entry:', userRankings && userRankings[0]);
+    // console.log('[InitialLoadEffect] Running. initialRankingsLoaded:', initialRankingsLoaded, 'userRankings count:', userRankings?.length, 'initialLoadEffectRan.current:', initialLoadEffectRan.current);
+    // console.log('[InitialLoadEffect] Store activeRanking on entry:', activeRanking);
+    // console.log('[InitialLoadEffect] Store userRankings[0] on entry:', userRankings && userRankings[0]);
 
     if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
         initialLoadEffectRan.current = true; 
-        console.log('[InitialLoadEffect] Conditions met, proceeding to select.');
+        // console.log('[InitialLoadEffect] Conditions met, proceeding to select.');
 
-        const persistedActiveRanking = activeRanking; // Capture store's activeRanking at this point
+        // Get the activeRanking from the store at this exact moment.
+        // This is important because the `activeRanking` in the dependency array might be stale if this effect
+        // is triggered by other dependency changes rapidly.
+        const currentPersistedActiveRanking = useUserRankings.getState().activeRanking;
         const firstRankingInList = userRankings[0];
 
-        console.log('[InitialLoadEffect] Persisted activeRanking from store:', persistedActiveRanking);
-        console.log('[InitialLoadEffect] userRankings[0] from store:', firstRankingInList);
+        // console.log('[InitialLoadEffect] Persisted activeRanking from store (direct access):', currentPersistedActiveRanking);
+        // console.log('[InitialLoadEffect] userRankings[0] from store:', firstRankingInList);
 
-        const rankingToLoad = persistedActiveRanking || firstRankingInList;
-        console.log('[InitialLoadEffect] rankingToLoad determined as:', rankingToLoad);
+        const rankingToLoad = (currentPersistedActiveRanking && currentPersistedActiveRanking._id) 
+                              ? currentPersistedActiveRanking 
+                              : firstRankingInList;
+        
+        // console.log('[InitialLoadEffect] rankingToLoad determined as:', rankingToLoad);
         
         const idToLoad = rankingToLoad?._id;
-        console.log('[InitialLoadEffect] idToLoad determined as:', idToLoad);
+        // console.log('[InitialLoadEffect] idToLoad determined as:', idToLoad);
 
         if (idToLoad) {
-            console.log(`[InitialLoadEffect] Calling handleRankingSelect with id: ${idToLoad}`);
-            // Set sport early if needed
+            // console.log(`[InitialLoadEffect] Calling handleRankingSelect with id: ${idToLoad}`);
             if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
-                console.log(`[InitialLoadEffect] Setting sport from rankingToLoad: ${rankingToLoad.sport}`);
+                // console.log(`[InitialLoadEffect] Setting sport from rankingToLoad: ${rankingToLoad.sport}`);
                 setSelectedSport(rankingToLoad.sport);
             }
-            handleRankingSelect(idToLoad);
+            // Check if the idToLoad is already the one effectively active in the page's current context
+            // to prevent unnecessary re-selection if selectedSport change triggers this effect again.
+            if (activeRanking?._id !== idToLoad) {
+                 handleRankingSelect(idToLoad);
+            }
         } else {
-             console.log('[InitialLoadEffect Ref ] No idToLoad determined. rankingToLoad was:', rankingToLoad);
+            //  console.log('[InitialLoadEffect Ref ] No idToLoad determined. rankingToLoad was:', rankingToLoad);
         }
-    } else if (!initialLoadEffectRan.current) {
-        console.log('[InitialLoadEffect] Conditions NOT met. Details:', {
-            initialRankingsLoaded,
-            userRankingsCount: userRankings?.length,
-            userRankingsNotEmpty: userRankings && userRankings.length > 0,
-            initialLoadEffectRan: initialLoadEffectRan.current
-        });
-    }
-  }, [initialRankingsLoaded, userRankings, activeRanking, selectedSport, activeRankingId, handleRankingSelect, activeRankingLoading, setSelectedSport]);
+    } 
+    // else if (!initialLoadEffectRan.current) {
+    //     console.log('[InitialLoadEffect] Conditions NOT met or already ran. Details:', {
+    //         initialRankingsLoaded,
+    //         userRankingsCount: userRankings?.length,
+    //         userRankingsNotEmpty: userRankings && userRankings.length > 0,
+    //         initialLoadEffectRan: initialLoadEffectRan.current
+    //     });
+    // }
+  }, [
+    initialRankingsLoaded, 
+    userRankings, 
+    handleRankingSelect, // Now stable due to useCallback
+    setSelectedSport,    // Assuming setSelectedSport from useState is stable
+    selectedSport,       // Needed to compare sport before calling handleRankingSelect
+    activeRanking        // Needed to compare if idToLoad is already active
+  ]);
 
   // Effect to sync local activeRankingId with store's activeRanking object
   useEffect(() => {
