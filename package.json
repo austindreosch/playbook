@@ -57,6 +57,7 @@
     "fs": "^0.0.1-security",
     "fuse.js": "^7.1.0",
     "kerberos": "^2.0.1",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.485.0",
     "mongodb": "^5.8.0",
     "mongodb-client-encryption": "^2.9.0",

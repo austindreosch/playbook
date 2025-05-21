@@ -246,25 +246,44 @@ export default function RankingsPage() {
 
   // Effect to set initial active ranking
   useEffect(() => {
+    console.log('[InitialLoadEffect] Running. initialRankingsLoaded:', initialRankingsLoaded, 'userRankings count:', userRankings?.length, 'initialLoadEffectRan.current:', initialLoadEffectRan.current);
+    console.log('[InitialLoadEffect] Store activeRanking on entry:', activeRanking);
+    console.log('[InitialLoadEffect] Store userRankings[0] on entry:', userRankings && userRankings[0]);
+
     if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
         initialLoadEffectRan.current = true; 
+        console.log('[InitialLoadEffect] Conditions met, proceeding to select.');
 
-        // Determine the ranking to load - Use the one from store (restored or set by fetchUserRankings)
-        const rankingToLoad = activeRanking || userRankings[0]; 
-        const idToLoad = rankingToLoad?._id;
+        const persistedActiveRanking = activeRanking; // Capture store's activeRanking at this point
+        const firstRankingInList = userRankings[0];
 
+        console.log('[InitialLoadEffect] Persisted activeRanking from store:', persistedActiveRanking);
+        console.log('[InitialLoadEffect] userRankings[0] from store:', firstRankingInList);
+
+        const rankingToLoad = persistedActiveRanking || firstRankingInList;
+        console.log('[InitialLoadEffect] rankingToLoad determined as:', rankingToLoad);
         
+        const idToLoad = rankingToLoad?._id;
+        console.log('[InitialLoadEffect] idToLoad determined as:', idToLoad);
+
         if (idToLoad) {
+            console.log(`[InitialLoadEffect] Calling handleRankingSelect with id: ${idToLoad}`);
             // Set sport early if needed
             if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
+                console.log(`[InitialLoadEffect] Setting sport from rankingToLoad: ${rankingToLoad.sport}`);
                 setSelectedSport(rankingToLoad.sport);
             }
-
-            // ALWAYS call handleRankingSelect on initial load to ensure fresh, full data
             handleRankingSelect(idToLoad);
         } else {
-             console.log('[InitialLoadEffect Ref ] No idToLoad determined.');
+             console.log('[InitialLoadEffect Ref ] No idToLoad determined. rankingToLoad was:', rankingToLoad);
         }
+    } else if (!initialLoadEffectRan.current) {
+        console.log('[InitialLoadEffect] Conditions NOT met. Details:', {
+            initialRankingsLoaded,
+            userRankingsCount: userRankings?.length,
+            userRankingsNotEmpty: userRankings && userRankings.length > 0,
+            initialLoadEffectRan: initialLoadEffectRan.current
+        });
     }
   }, [initialRankingsLoaded, userRankings, activeRanking, selectedSport, activeRankingId, handleRankingSelect, activeRankingLoading, setSelectedSport]);
 
