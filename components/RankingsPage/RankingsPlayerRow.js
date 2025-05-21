@@ -425,14 +425,12 @@ const RankingsPlayerRow = memo(({
                             "text-pb_textgray",
                             (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
                         )}
-                        {...attributes} // Always spread attributes for ARIA etc.
-                        // Temporarily removed spreading dnd-kit listeners to isolate toast logic
-                        // {...((isRankSorted && !isDraftMode) ? listeners : {})}
+                        {...attributes} 
+                        // {...((isRankSorted && !isDraftMode) ? listeners : {})} // Keep listeners commented out if that was part of the stable state, or restore if needed
                         onPointerDown={(event) => {
                             if (isDraftMode && isRankSorted) {
-                                // Disabled due to draft mode: show toast and prevent default/propagation
-                                event.preventDefault(); // Try to prevent any default browser action
-                                event.stopPropagation(); // Stop event from bubbling further or reaching other handlers
+                                event.preventDefault(); 
+                                event.stopPropagation(); 
                                 
                                 toast({
                                     title: "Re-ordering Disabled",
@@ -440,17 +438,13 @@ const RankingsPlayerRow = memo(({
                                     variant: "destructive",
                                     duration: 3000,
                                 });
-                                console.log('Toast attempt for draft mode disabled drag'); // DEBUG LOG
+                                console.log('Toast attempt for draft mode disabled drag'); 
 
                             } else if (isRankSorted && !isDraftMode && listeners && listeners.onPointerDown) {
-                                // If dragging is allowed, and dnd-kit has a pointerdown listener, call it.
-                                // This line was previously removed in a thought process but should be here if we intend dnd-kit to work when not showing toast.
                                 listeners.onPointerDown(event);
                             } else if (isRankSorted && !isDraftMode && listeners && listeners.onMouseDown) {
-                                // Fallback for onMouseDown if onPointerDown is not available in listeners
                                 listeners.onMouseDown(event);
                             }
-                            // If not in draft mode and no specific dnd-kit listener, default browser behavior occurs.
                         }}
                         title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
                     >

@@ -167,11 +167,23 @@ module.exports = {
         float: {
           '0%, 100%': { transform: 'translateY(-4%)' },
           '50%': { transform: 'translateY(4%)' },
+        },
+        "pop-bounce-in": {
+          '0%': { opacity: '0', transform: 'scale(0.5) translateY(25%)' },
+          '50%': { opacity: '1', transform: 'scale(1.05) translateY(0)' },
+          '80%': { transform: 'scale(0.95) translateY(5%)' },
+          '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+        },
+        "fade-out": {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
         }
       },
       animation: {
         shimmer: 'shimmer 5s linear infinite',
         float: 'float 6s ease-in-out infinite',
+        "pop-bounce-in": 'pop-bounce-in 0.35s ease-out',
+        "toast-hide": 'fade-out 0.3s ease-in-out forwards',
       },
     }
   },
