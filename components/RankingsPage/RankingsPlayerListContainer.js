@@ -111,6 +111,12 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
             const newOrderedPlayerIds = arrayMove(playersToDisplay.map(p => p.id), oldIndex, newIndex);
 
+            // Collapse all rows immediately after a successful re-order operation
+            setExpandedRows(new Set());
+            if (listRef.current) {
+                listRef.current.resetAfterIndex(0);
+            }
+
             if (activeRanking?._id && newOrderedPlayerIds.length > 0) {
                 setTimeout(() => {
                     updateAllPlayerRanks(activeRanking._id, newOrderedPlayerIds);
@@ -119,7 +125,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 console.error("Missing activeRanking._id or no valid player IDs for DND update.");
             }
         }
-    }, [activeRanking?._id, updateAllPlayerRanks, sortConfig?.key, playersToDisplay]);
+    }, [activeRanking?._id, updateAllPlayerRanks, playersToDisplay]);
 
     const handleDragCancel = useCallback(() => {
         document.body.style.cursor = '';

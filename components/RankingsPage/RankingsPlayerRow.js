@@ -429,10 +429,10 @@ const RankingsPlayerRow = memo(({
                         {...attributes}
                         {...(isRankSorted && !isDraftMode ? listeners : {})}
                         onPointerDownCapture={(event) => {
-                            console.log(`[DragHandle/ForcedEvents] onPointerDownCapture triggered. isRankSorted: ${isRankSorted}, isDraftMode: ${isDraftMode}`);
+                            // console.log(`[DragHandle/ForcedEvents] onPointerDownCapture triggered. isRankSorted: ${isRankSorted}, isDraftMode: ${isDraftMode}`);
 
                             if (!isRankSorted) {
-                                console.log('[DragHandle/ForcedEvents] Condition: !isRankSorted === true. Attempting to show toast for stat sort.');
+                                // console.log('[DragHandle/ForcedEvents] Condition: !isRankSorted === true. Attempting to show toast for stat sort.');
                                 event.preventDefault();
                                 event.stopPropagation();
                                 toast({
@@ -442,7 +442,7 @@ const RankingsPlayerRow = memo(({
                                     duration: 3000,
                                 });
                             } else if (isDraftMode) {
-                                console.log('[DragHandle/ForcedEvents] Condition: isDraftMode === true (and isRankSorted is true). Attempting to show toast for draft mode.');
+                                // console.log('[DragHandle/ForcedEvents] Condition: isDraftMode === true (and isRankSorted is true). Attempting to show toast for draft mode.');
                                 event.preventDefault();
                                 event.stopPropagation();
                                 toast({
@@ -452,7 +452,7 @@ const RankingsPlayerRow = memo(({
                                     duration: 3000,
                                 });
                             } else {
-                                console.log('[DragHandle/ForcedEvents] Conditions for toast not met. Allowing event to proceed for potential dnd-kit drag.');
+                                // console.log('[DragHandle/ForcedEvents] Conditions for toast not met. Allowing event to proceed for potential dnd-kit drag.');
                             }
                         }}
                         title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
