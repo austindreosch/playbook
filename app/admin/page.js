@@ -3,6 +3,7 @@ import AllPlayersBox from '@/components/admin/AllPlayersBox';
 import CleanupRankingsButton from '@/components/admin/CleanupRankingsButton';
 import CsvRankingsSyncManager from '@/components/admin/CsvRankingsSyncManager';
 import FantasyCalcSyncManager from '@/components/admin/FantasyCalcSyncManager';
+import MasterPlayerEditor from '@/components/admin/MasterPlayerEditor';
 import SyncPlayersButton from '@/components/admin/SyncPlayersButton';
 import UpdateMLBStatsButton from '@/components/admin/UpdateMLBStatsButton';
 import UpdateNBAStatsButton from '@/components/admin/UpdateNBAStatsButton';
@@ -89,8 +90,8 @@ export default function AdminPage() {
         <div className="mt-8">
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">All Players</h2>
-              {/* <AllPlayersBox /> */}
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Master Player Database Editor</h2>
+              <MasterPlayerEditor />
             </div>
           </div>
         </div>
