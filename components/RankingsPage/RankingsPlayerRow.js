@@ -425,25 +425,34 @@ const RankingsPlayerRow = memo(({
                             "text-pb_textgray",
                             (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
                         )}
-                        {...attributes} 
-                        // {...((isRankSorted && !isDraftMode) ? listeners : {})} // Keep listeners commented out if that was part of the stable state, or restore if needed
-                        onPointerDown={(event) => {
-                            if (isDraftMode && isRankSorted) {
-                                event.preventDefault(); 
-                                event.stopPropagation(); 
-                                
+                        style={{ pointerEvents: 'auto' }}
+                        {...attributes}
+                        {...(isRankSorted && !isDraftMode ? listeners : {})}
+                        onPointerDownCapture={(event) => {
+                            console.log(`[DragHandle/ForcedEvents] onPointerDownCapture triggered. isRankSorted: ${isRankSorted}, isDraftMode: ${isDraftMode}`);
+
+                            if (!isRankSorted) {
+                                console.log('[DragHandle/ForcedEvents] Condition: !isRankSorted === true. Attempting to show toast for stat sort.');
+                                event.preventDefault();
+                                event.stopPropagation();
+                                toast({
+                                    title: "Re-ordering Disabled",
+                                    description: "You cannot re-order players while sorting by a stat. Clear stat sorting to enable drag-to-rank.",
+                                    variant: "destructive",
+                                    duration: 3000,
+                                });
+                            } else if (isDraftMode) {
+                                console.log('[DragHandle/ForcedEvents] Condition: isDraftMode === true (and isRankSorted is true). Attempting to show toast for draft mode.');
+                                event.preventDefault();
+                                event.stopPropagation();
                                 toast({
                                     title: "Re-ordering Disabled",
                                     description: "You cannot re-order players while in Draft Mode.",
                                     variant: "destructive",
                                     duration: 3000,
                                 });
-                                console.log('Toast attempt for draft mode disabled drag'); 
-
-                            } else if (isRankSorted && !isDraftMode && listeners && listeners.onPointerDown) {
-                                listeners.onPointerDown(event);
-                            } else if (isRankSorted && !isDraftMode && listeners && listeners.onMouseDown) {
-                                listeners.onMouseDown(event);
+                            } else {
+                                console.log('[DragHandle/ForcedEvents] Conditions for toast not met. Allowing event to proceed for potential dnd-kit drag.');
                             }
                         }}
                         title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
@@ -519,10 +528,6 @@ const RankingsPlayerRow = memo(({
                     {/* <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div> */}
-
-                    {!isRankSorted && (
-                        <div className="absolute inset-0 bg-transparent z-20" title="Sorting by stat, drag disabled"></div>
-                    )}
                 </div>
 
                 {/* Stats section - flexible width */}
