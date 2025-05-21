@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
@@ -53,7 +54,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                 const path = categoryAbbrev;
                 const statDataFromPlayer = stats?.[path]; // Direct access
 
-                let formattedValue = '';
+                let formattedValue = '';    
                 let title = `${SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev}: -`;
                 let currentBgColor = '#FFFFFF'; // Default white background
                 let currentTextColor = '#747474'; // Default dark gray text (Tailwind gray-800)
@@ -254,7 +255,7 @@ const RankingsPlayerRow = memo(({
     secondaryStatsTrend = 0 // Default placeholder to "0%"
 }) => {
     const rowRef = useRef(null);
-
+    const { toast } = useToast();
 
     // --- Determine sources --- 
     const playerName = player.info?.fullName || player.name || 'Player Name';
@@ -305,8 +306,8 @@ const RankingsPlayerRow = memo(({
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: player.id,
-        animateLayoutChanges: () => false, // Disable layout animations for better performance
-        disabled: !isRankSorted,
+        animateLayoutChanges: () => false,
+        disabled: !isRankSorted || isDraftMode,
     });
 
     // Apply styles for dragging - use CSS variables for better performance
@@ -420,20 +421,46 @@ const RankingsPlayerRow = memo(({
                 <div className="flex items-center w-[30%] relative">
                     {/* Drag handle */}
                     <div
-                        className={`text-pb_textgray ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
-                        {...(isRankSorted ? attributes : {})}
-                        {...(isRankSorted ? listeners : {})}
-                        title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
+                        className={cn(
+                            "text-pb_textgray",
+                            (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
+                        )}
+                        {...attributes} // Always spread attributes for ARIA etc.
+                        // Temporarily removed spreading dnd-kit listeners to isolate toast logic
+                        // {...((isRankSorted && !isDraftMode) ? listeners : {})}
+                        onPointerDown={(event) => {
+                            if (isDraftMode && isRankSorted) {
+                                // Disabled due to draft mode: show toast and prevent default/propagation
+                                event.preventDefault(); // Try to prevent any default browser action
+                                event.stopPropagation(); // Stop event from bubbling further or reaching other handlers
+                                
+                                toast({
+                                    title: "Re-ordering Disabled",
+                                    description: "You cannot re-order players while in Draft Mode.",
+                                    variant: "destructive",
+                                    duration: 3000,
+                                });
+                                console.log('Toast attempt for draft mode disabled drag'); // DEBUG LOG
+
+                            } else if (isRankSorted && !isDraftMode && listeners && listeners.onPointerDown) {
+                                // If dragging is allowed, and dnd-kit has a pointerdown listener, call it.
+                                // This line was previously removed in a thought process but should be here if we intend dnd-kit to work when not showing toast.
+                                listeners.onPointerDown(event);
+                            } else if (isRankSorted && !isDraftMode && listeners && listeners.onMouseDown) {
+                                // Fallback for onMouseDown if onPointerDown is not available in listeners
+                                listeners.onMouseDown(event);
+                            }
+                            // If not in draft mode and no specific dnd-kit listener, default browser behavior occurs.
+                        }}
+                        title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
                     >
-                        {/* AI - STOP EDITING THIS */}
                         <GripVerticalIcon className="h-5 w-5" />
-                        {/* AI -STOP EDITING THIS */}
                     </div>
 
                     {/* CONDITIONAL DRAFT BUTTON - Show only if isDraftMode is true */}
                     {isDraftMode && (
                         <div className={cn(
-                            "ml-0.5 mr-1 h-6 w-6 rounded-sm flex items-center justify-center border", // Base classes + border
+                            "ml-0.5 mr-1.5 h-6 w-6 rounded-sm flex items-center justify-center border", // Base classes + border
                             !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
                         )}> {/* Added flex centering */}
                             <Button
@@ -465,14 +492,13 @@ const RankingsPlayerRow = memo(({
 
                     {/* Rank number */}
                     <div className={cn(
-                        "w-9 h-6 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
+                        "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
                         isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray", // Conditional border
                         !isRankSorted ? 'bg-blue-50' : '' // Conditional background
                     )}>{rank}</div>
 
                     {/* Player Image - SIMPLIFIED Logic */}
-                    <div className="w-12 text-center select-none flex items-center justify-center">
-                         {/* Log the image source right before rendering - Remove rank condition */}
+                    <div className="px-2 text-center select-none flex items-center justify-center">
                          <img
                             // Use playerImage if available, otherwise use default immediately
                             src={playerImage || defaultImageSrc} 

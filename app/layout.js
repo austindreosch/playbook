@@ -1,4 +1,5 @@
 import AOSInitializer from '@/components/LandingPage/internal/AOSInitializer';
+import { Toaster } from "@/components/ui/toaster";
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
           <NavBar />
           <MasterDatasetInitializer />
           {children}
+          <Toaster />
         </body>
       </html>
     </UserProvider>

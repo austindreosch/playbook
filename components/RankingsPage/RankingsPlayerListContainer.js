@@ -200,13 +200,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragCancel={handleDragCancel}
-                disabled={sortConfig?.key !== null || isLoadingList}
+                disabled={sortConfig?.key !== null || isLoadingList || isDraftModeActive}
                 modifiers={[restrictToVerticalAxis]}
             >
                 <SortableContext
                     items={playersToDisplay.map(p => p.id)}
                     strategy={verticalListSortingStrategy}
-                    disabled={sortConfig?.key !== null || isLoadingList}
+                    disabled={sortConfig?.key !== null || isLoadingList || isDraftModeActive}
                 >
                     {isLoadingList ? (
                         <RankingsPlayerListSkeleton />
