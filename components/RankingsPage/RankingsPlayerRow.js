@@ -22,11 +22,6 @@ const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 // Create a specialized component just for stats to reduce re-renders
 const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType }) => {
 
-    // Define stats that need 2 decimal places
-    const statsNeedingTwoDecimals = [
-        'PPS', 'OPE', 'TO%', 'ERA', 'WHIP', 'K/BB', 'K/9'
-    ];
-
     return (
         <div className="flex w-[70%] h-full gap-[3px]">
             {/* Z-Score Sum main value column */}
@@ -103,12 +98,32 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     // Format the rawValueForFormatting
                     if (rawValueForFormatting !== null && rawValueForFormatting !== undefined) {
                         if (typeof rawValueForFormatting === 'number') {
-                            if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
-                                formattedValue = rawValueForFormatting.toFixed(2);
+                            const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                            const categoryConfig = sportConfig?.categories?.[categoryAbbrev];
+                            const statDisplayConfig = categoryConfig?.statDisplay;
+
+                            // Default formatting rules
+                            let decimals = 1;
+                            let trimTrailingZeros = true;
+                            let showLeadingZero = true;
+
+                            if (statDisplayConfig) {
+                                decimals = typeof statDisplayConfig.decimals === 'number' ? statDisplayConfig.decimals : decimals;
+                                trimTrailingZeros = typeof statDisplayConfig.trimTrailingZeros === 'boolean' ? statDisplayConfig.trimTrailingZeros : trimTrailingZeros;
+                                showLeadingZero = typeof statDisplayConfig.showLeadingZero === 'boolean' ? statDisplayConfig.showLeadingZero : showLeadingZero;
+                            }
+
+                            if (trimTrailingZeros) {
+                                formattedValue = parseFloat(rawValueForFormatting.toFixed(decimals)).toString();
                             } else {
-                                formattedValue = rawValueForFormatting.toFixed(1);
-                                if (formattedValue.endsWith('.0')) {
-                                    formattedValue = formattedValue.slice(0, -2);
+                                formattedValue = rawValueForFormatting.toFixed(decimals);
+                            }
+                
+                            if (!showLeadingZero) {
+                                if (formattedValue.startsWith("0.")) {
+                                    formattedValue = formattedValue.substring(1);
+                                } else if (formattedValue.startsWith("-0.")) {
+                                    formattedValue = "-" + formattedValue.substring(2);
                                 }
                             }
                         } else {
@@ -170,9 +185,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
 StatsSection.displayName = 'StatsSection';
 
 // Secondary stats section for last 30 etc
-const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
-    const statsNeedingTwoDecimals = ['PPS', 'OPE', 'TO%'];
-
+const StatsSectionSecondary = memo(({ categories, secondaryStatsData, sport }) => {
     return (
         <div className="flex w-full h-full gap-[3px]">
             {/* Render category stats directly - NO placeholder here */}
@@ -186,21 +199,41 @@ const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
                 let displayNode;
 
                 if (rawValue !== null && rawValue !== undefined) {
-                    let formattedValue = '';
+                    let formattedValueString = '';
                     if (typeof rawValue === 'number') {
-                        if (statsNeedingTwoDecimals.includes(path)) {
-                            formattedValue = rawValue.toFixed(2);
+                        const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                        const categoryConfig = sportConfig?.categories?.[path];
+                        const statDisplayConfig = categoryConfig?.statDisplay;
+
+                        // Default formatting rules
+                        let decimals = 1;
+                        let trimTrailingZeros = true;
+                        let showLeadingZero = true;
+
+                        if (statDisplayConfig) {
+                            decimals = typeof statDisplayConfig.decimals === 'number' ? statDisplayConfig.decimals : decimals;
+                            trimTrailingZeros = typeof statDisplayConfig.trimTrailingZeros === 'boolean' ? statDisplayConfig.trimTrailingZeros : trimTrailingZeros;
+                            showLeadingZero = typeof statDisplayConfig.showLeadingZero === 'boolean' ? statDisplayConfig.showLeadingZero : showLeadingZero;
+                        }
+
+                        if (trimTrailingZeros) {
+                            formattedValueString = parseFloat(rawValue.toFixed(decimals)).toString();
                         } else {
-                            formattedValue = rawValue.toFixed(1);
-                            if (formattedValue.endsWith('.0')) {
-                                formattedValue = formattedValue.slice(0, -2);
+                            formattedValueString = rawValue.toFixed(decimals);
+                        }
+            
+                        if (!showLeadingZero) {
+                            if (formattedValueString.startsWith("0.")) {
+                                formattedValueString = formattedValueString.substring(1);
+                            } else if (formattedValueString.startsWith("-0.")) {
+                                formattedValueString = "-" + formattedValueString.substring(2);
                             }
                         }
                     } else {
-                        formattedValue = String(rawValue);
+                        formattedValueString = String(rawValue);
                     }
-                    displayNode = formattedValue;
-                    title = `${path}: ${formattedValue}`;
+                    displayNode = formattedValueString;
+                    title = `${path}: ${formattedValueString}`;
                     if (typeof statObject?.zScore === 'number') {
                         title += ` (Z: ${statObject.zScore.toFixed(2)})`;
                     }
@@ -652,7 +685,8 @@ const RankingsPlayerRow = memo(({
                                 <div className="py-2 flex items-center justify-center h-[30%] w-full">
                                     <StatsSectionSecondary 
                                         categories={categories} 
-                                        secondaryStatsData={secondaryStatsData} // Pass secondaryStatsData
+                                        secondaryStatsData={secondaryStatsData}
+                                        sport={sport}
                                     />
                                 </div>
 

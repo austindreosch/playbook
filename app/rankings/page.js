@@ -102,14 +102,9 @@ export default function RankingsPage() {
   // Memoize handleRankingSelect to stabilize its reference for the initial load useEffect
   const handleRankingSelect = useCallback(async (rankingIdToSelect) => {
     const currentStoreActiveRankingId = useUserRankings.getState().activeRanking?._id;
-    console.log('[handleRankingSelect DEBUG] Called with rankingIdToSelect:', rankingIdToSelect, 'Current store activeId:', currentStoreActiveRankingId); // Log entry
-
-    // console.log(`[handleRankingSelect] Called with: ${rankingIdToSelect}. Current store activeId: ${currentStoreActiveRankingId}`);
 
     // Do nothing if the target ranking is already active in the store, or if no ID is provided.
     if (!rankingIdToSelect || rankingIdToSelect === currentStoreActiveRankingId) {
-        console.log('[handleRankingSelect DEBUG] Early exit: New rankingId is null or already active.'); // Log early exit
-        // console.log('[handleRankingSelect] New rankingId is null or already active. Aborting select.');
         // If it's the same, ensure loading is false if it was somehow set true
         setIsPageLoading(false);
         return;
@@ -119,12 +114,10 @@ export default function RankingsPage() {
 
     // Attempt to save changes for the outgoing ranking first
     if (currentStoreActiveRankingId) {
-        // console.log(`[handleRankingSelect] Attempting to flush changes for outgoing ranking: ${currentStoreActiveRankingId}`);
         try {
             const { flushPendingChanges } = useUserRankings.getState();
             if (typeof flushPendingChanges === 'function') {
                 await flushPendingChanges();
-                // console.log(`[handleRankingSelect] Flush completed for ${currentStoreActiveRankingId}`);
             } else {
                 // console.warn('[handleRankingSelect] flushPendingChanges function not found.');
             }
@@ -135,11 +128,8 @@ export default function RankingsPage() {
         }
     }
 
-    // console.log(`[handleRankingSelect] Proceeding to selectAndTouchRanking for new ranking: ${rankingIdToSelect}`);
-    console.log('[handleRankingSelect DEBUG] Proceeding to call selectAndTouchRanking for rankingIdToSelect:', rankingIdToSelect); // Log before call
     try {
         await selectAndTouchRanking(rankingIdToSelect); // This should update activeRanking in the store
-        // console.log(`[handleRankingSelect] selectAndTouchRanking completed for ${rankingIdToSelect}`);
         // Clear any previous error related to flushing if new ranking loads successfully
         setPageError(null); 
     } catch (err) {
@@ -150,7 +140,6 @@ export default function RankingsPage() {
     } finally {
         setIsPageLoading(false); // Set loading false for the page
         setCollapseAllTrigger(prev => prev + 1); // Collapse rows after new ranking is selected
-        // console.log(`[handleRankingSelect] Finalized selection for ${rankingIdToSelect}`);
     }
   }, [selectAndTouchRanking, setPageError]); // selectAndTouchRanking and setPageError are dependencies
 
@@ -285,10 +274,7 @@ export default function RankingsPage() {
 
   // Effect to set initial active ranking
   useEffect(() => {
-    console.log('[InitialLoadEffect DEBUG] Running. initialRankingsLoaded:', initialRankingsLoaded, 'userRankings?.length:', userRankings?.length, 'initialLoadEffectRan.current:', initialLoadEffectRan.current, 'activeRanking?._id:', activeRanking?._id);
-
     if (initialRankingsLoaded && userRankings && userRankings.length > 0 && !initialLoadEffectRan.current) {
-        console.log('[InitialLoadEffect DEBUG] Main condition MET.');
         initialLoadEffectRan.current = true; 
         const currentPersistedActiveRanking = useUserRankings.getState().activeRanking;
         const firstRankingInList = userRankings[0];
@@ -296,29 +282,17 @@ export default function RankingsPage() {
                               ? currentPersistedActiveRanking 
                               : firstRankingInList;
         const idToLoad = rankingToLoad?._id;
-        console.log('[InitialLoadEffect DEBUG] idToLoad:', idToLoad, 'rankingToLoad?.sport:', rankingToLoad?.sport, 'selectedSport:', selectedSport);
 
         if (idToLoad) {
-            // console.log('[InitialLoadEffect DEBUG] idToLoad is present. Comparing activeRanking?._id (', activeRanking?._id, ') !== idToLoad (', idToLoad, '). Result:', activeRanking?._id !== idToLoad);
             if (rankingToLoad.sport && rankingToLoad.sport !== selectedSport) {
-                console.log(`[InitialLoadEffect DEBUG] Setting sport from rankingToLoad: ${rankingToLoad.sport}`);
                 setSelectedSport(rankingToLoad.sport);
             }
             // Directly call selectAndTouchRanking to ensure ECR data is fetched for the initial ranking
-            console.log('[InitialLoadEffect DEBUG] Directly calling selectAndTouchRanking with idToLoad:', idToLoad);
             selectAndTouchRanking(idToLoad);
-            // The old condition: if (activeRanking?._id !== idToLoad) {
-            //      console.log('[InitialLoadEffect DEBUG] Condition to call handleRankingSelect MET. Calling handleRankingSelect with idToLoad:', idToLoad);
-            //      handleRankingSelect(idToLoad);
-            // } else {
-            //      console.log('[InitialLoadEffect DEBUG] Condition to call handleRankingSelect NOT MET (activeRanking?._id === idToLoad).');
-            // }
         } else {
-             console.log('[InitialLoadEffect DEBUG] idToLoad is NULL or UNDEFINED.');
+            //  console.log('[InitialLoadEffect Ref ] No idToLoad determined. rankingToLoad was:', rankingToLoad);
         }
-    } else {
-        console.log('[InitialLoadEffect DEBUG] Main condition NOT MET.');
-    }
+    } 
   }, [
     initialRankingsLoaded, 
     userRankings, 
