@@ -37,7 +37,7 @@ const DraftModeButton = ({
                     className={cn(
                         "flex items-center gap-2  duration-400 ease-in-out",
                         isDraftMode &&
-                        `bg-gradient-to-r from-pb-orange-400 via-pb-orange-300 to-pb-orange-500 
+                        `bg-gradient-to-r from-pb_orange-400 via-pb_orange-300 to-pb_orange-500 
                        bg-[length:200%_auto] animate-shimmer 
                         text-white border-transparent 
                        shadow-md`
