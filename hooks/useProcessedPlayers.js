@@ -58,10 +58,18 @@ const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, 
         [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.neutral, ZSCORE_COLOR_CONFIG.colors.positive, Math.max(0, factor));
         // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     } else { // effectiveZScore < 0
-        const clampedNegativeZ = Math.max(effectiveZScore, minSaturation);
-        calculatedFactor = minSaturation === 0 ? 1 : (clampedNegativeZ - minSaturation) / (0 - minSaturation);
+        const clampedNegativeZ = Math.max(effectiveZScore, minSaturation); // e.g. Math.max(-0.01, -1.5) = -0.01
+        
+        // CORRECTED calculation for negative factor:
+        // Should be close to 0 when clampedNegativeZ is near 0
+        // Should be close to 1 when clampedNegativeZ is near minSaturation
+        calculatedFactor = minSaturation === 0 ? 1 : (clampedNegativeZ / minSaturation); 
+        // Ensure factor is between 0 and 1, as minSaturation is negative.
+        calculatedFactor = Math.max(0, Math.min(1, calculatedFactor));
+
         const factor = Math.max(ZSCORE_COLOR_CONFIG.interpolation.minFactor, calculatedFactor);
-        [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.negative, ZSCORE_COLOR_CONFIG.colors.neutral, Math.min(1, Math.max(0, factor)));
+        
+        [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.neutral, ZSCORE_COLOR_CONFIG.colors.negative, Math.min(1, Math.max(0, factor)));
         // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     }
 
