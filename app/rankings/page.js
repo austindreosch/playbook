@@ -170,6 +170,8 @@ export default function RankingsPage() {
       return { enabledCategoryAbbrevs: [], statPathMapping: {} };
     }
     const mapping = currentSportConfig.statPathMapping || {};
+    const derivedDefinitions = currentSportConfig.derivedStatDefinitions || {}; // Get derived stat definitions
+
     let enabledAbbrevs = Object.entries(activeRanking.categories)
       .filter(([_, catData]) => catData.enabled)
       .map(([abbrev, _]) => abbrev);
@@ -187,13 +189,19 @@ export default function RankingsPage() {
             return true; 
         });
     }
+
+    // Adjusted filter logic to include stats defined in statPathMapping OR derivedStatDefinitions
     const finalEnabledAbbrevs = enabledAbbrevs.filter(abbrev => {
-      if (mapping[abbrev] || mapping[abbrev] === '') return true;
+      // Check if it has a direct path, an explicit empty string path, or is a defined derived stat
+      if (mapping.hasOwnProperty(abbrev) || derivedDefinitions.hasOwnProperty(abbrev)) {
+        return true;
+      }
       return false;
     });
+
     return {
       enabledCategoryAbbrevs: finalEnabledAbbrevs,
-      statPathMapping: mapping
+      statPathMapping: mapping // Keep original statPathMapping for other uses
     };
   }, [currentSportConfig, activeRanking?.categories, selectedSport, activeRanking?.scoring, activeRanking?.pprSetting]);
 
