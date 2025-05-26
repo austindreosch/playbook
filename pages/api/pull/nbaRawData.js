@@ -27,7 +27,9 @@
 // nba > dailyDfsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/dfs_projections.json
 // nba > seasonalPlayerStatsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/player_stats_totals_projections.json
 
+import { set } from 'lodash'; // IMPORT LODASH.SET
 import { MongoClient } from 'mongodb';
+import { MANUAL_STAT_OVERRIDES } from '../../../lib/config'; // IMPORT OVERRIDES
 
 
 //=============================================================================
@@ -225,6 +227,33 @@ export default async function handler(req, res) {
 
         // Seasonal player stats
         const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
+        
+        // +++ APPLY MANUAL STAT OVERRIDES FOR NBA +++
+        if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) {
+            const currentProcessingSeason = process.env.MYSPORTSFEEDS_NBA_SEASON;
+            if (MANUAL_STAT_OVERRIDES && MANUAL_STAT_OVERRIDES.length > 0) {
+                console.log(`Checking for manual stat overrides for NBA season: ${currentProcessingSeason}...`);
+                seasonalPlayerStats.playerStatsTotals.forEach(playerStat => {
+                    if (!playerStat.player || !playerStat.stats) return;
+                    const msfId = String(playerStat.player.id);
+                    const overrideRule = MANUAL_STAT_OVERRIDES.find(rule => 
+                        rule.sport === 'nba' && // Ensure sport is 'nba'
+                        rule.mySportsFeedsId === msfId &&
+                        rule.targetSeason === currentProcessingSeason
+                    );
+                    if (overrideRule && overrideRule.statOverrides) {
+                        console.log(`Applying override for player MSF ID: ${msfId} for NBA season ${currentProcessingSeason}`);
+                        Object.entries(overrideRule.statOverrides).forEach(([statPath, correctedValue]) => {
+                            console.log(`  Overriding stat ${statPath} for player ${msfId}. Old value: ${playerStat.stats[statPath]}, New value: ${correctedValue}`);
+                            set(playerStat.stats, statPath, correctedValue);
+                        });
+                    }
+                });
+                console.log('NBA manual stat overrides application complete.');
+            }
+        }
+        // +++ END MANUAL STAT OVERRIDES FOR NBA +++
+        
         if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
             await updateEndpoint(statsCollection, 'nba', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
         }

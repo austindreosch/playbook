@@ -1,4 +1,6 @@
+import { set } from 'lodash';
 import { MongoClient } from 'mongodb';
+import { MANUAL_STAT_OVERRIDES } from '../../../lib/config';
 
 //=============================================================================
 //                            HELPER FUNCTIONS
@@ -329,6 +331,33 @@ export default async function handler(req, res) {
 
         // Seasonal player stats
         const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/mlb/${currentSeason}/player_stats_totals.json`, 'seasonalPlayerStats');
+
+        // +++ APPLY MANUAL STAT OVERRIDES FOR MLB +++
+        if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) {
+            const currentProcessingSeason = process.env.MYSPORTSFEEDS_MLB_SEASON;
+            if (MANUAL_STAT_OVERRIDES && MANUAL_STAT_OVERRIDES.length > 0) {
+                console.log(`Checking for manual stat overrides for MLB season: ${currentProcessingSeason}...`);
+                seasonalPlayerStats.playerStatsTotals.forEach(playerStat => {
+                    if (!playerStat.player || !playerStat.stats) return;
+                    const msfId = String(playerStat.player.id);
+                    const overrideRule = MANUAL_STAT_OVERRIDES.find(rule => 
+                        rule.sport === 'mlb' && // Ensure sport is 'mlb'
+                        rule.mySportsFeedsId === msfId &&
+                        rule.targetSeason === currentProcessingSeason
+                    );
+                    if (overrideRule && overrideRule.statOverrides) {
+                        console.log(`Applying override for player MSF ID: ${msfId} for MLB season ${currentProcessingSeason}`);
+                        Object.entries(overrideRule.statOverrides).forEach(([statPath, correctedValue]) => {
+                            console.log(`  Overriding stat ${statPath} for player ${msfId}. Old value: ${playerStat.stats[statPath]}, New value: ${correctedValue}`);
+                            set(playerStat.stats, statPath, correctedValue);
+                        });
+                    }
+                });
+                console.log('MLB manual stat overrides application complete.');
+            }
+        }
+        // +++ END MANUAL STAT OVERRIDES FOR MLB +++
+
         if (seasonalPlayerStats && validateData(seasonalPlayerStats, 'seasonalPlayerStats', errors)) {
             const updateResult = await updateEndpoint(statsCollection, 'mlb', 'stats', 'seasonalPlayerStats', seasonalPlayerStats, errors);
             summary.endpoints.seasonalPlayerStats = { 

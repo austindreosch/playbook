@@ -28,7 +28,9 @@
 // nfl > seasonalPlayerStatsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nfl/2024-2025-regular/player_stats_totals_projections.json
 
 
+import { set } from 'lodash'; // IMPORT LODASH.SET
 import { MongoClient } from 'mongodb';
+import { MANUAL_STAT_OVERRIDES } from '../../../lib/config'; // IMPORT OVERRIDES
 
 
 //=============================================================================
@@ -228,6 +230,35 @@ export default async function handler(req, res) {
             });
             // Replace the original player list with the filtered one
             seasonalPlayerStats.playerStatsTotals = offensivePlayers;
+
+            // +++ APPLY MANUAL STAT OVERRIDES +++
+            const currentProcessingSeason = process.env.MYSPORTSFEEDS_NFL_SEASON;
+            if (MANUAL_STAT_OVERRIDES && MANUAL_STAT_OVERRIDES.length > 0) {
+                console.log(`Checking for manual stat overrides for NFL season: ${currentProcessingSeason}...`);
+                seasonalPlayerStats.playerStatsTotals.forEach(playerStat => {
+                    if (!playerStat.player || !playerStat.stats) return;
+
+                    const msfId = String(playerStat.player.id); 
+
+                    const overrideRule = MANUAL_STAT_OVERRIDES.find(rule => 
+                        rule.sport === 'nfl' &&
+                        rule.mySportsFeedsId === msfId &&
+                        rule.targetSeason === currentProcessingSeason // CHECK TARGET SEASON
+                    );
+
+                    if (overrideRule && overrideRule.statOverrides) {
+                        console.log(`Applying override for player MSF ID: ${msfId} for season ${currentProcessingSeason}`);
+                        Object.entries(overrideRule.statOverrides).forEach(([statPath, correctedValue]) => {
+                            // 'statPath' is relative to playerStat.stats object
+                            // e.g., 'snapCounts.offenseSnaps'
+                            console.log(`  Overriding stat ${statPath} for player ${msfId}. Old value: ${playerStat.stats[statPath]}, New value: ${correctedValue}`);
+                            set(playerStat.stats, statPath, correctedValue);
+                        });
+                    }
+                });
+                console.log('Manual stat overrides application complete.');
+            }
+            // +++ END APPLY MANUAL STAT OVERRIDES +++
         }
 
         // Proceed with validation and saving using the potentially filtered data
