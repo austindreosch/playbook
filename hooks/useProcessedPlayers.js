@@ -1,20 +1,19 @@
 import { calculateZScoresWithComparisonPool } from '@/lib/calculations/zScoreUtil';
-import { SPORT_CONFIGS } from '@/lib/config';
+import { SPORT_CONFIGS, ZSCORE_COLOR_CONFIG } from '@/lib/config';
 import { getNestedValue, getStatPath } from '@/lib/utils';
 import { useMemo } from 'react';
 
-const PB_RED_RGB = [238, 99, 82];    // #ee6352
-const PB_GREEN_RGB = [89, 205, 144]; // #59cd90
-// Use Tailwind's gray-100 as the neutral midpoint. This is also the fallback for NaN.
-const NEUTRAL_MIDPOINT_RGB = [243, 244, 246]; // gray-100
-const FALLBACK_GRAY_RGB = [243, 244, 246];    // Consistent fallback
+// const PB_RED_RGB = [238, 99, 82];    // #ee6352
+// const PB_GREEN_RGB = [89, 205, 144]; // #59cd90
+// const NEUTRAL_MIDPOINT_RGB = [255, 255, 255]; // gray-100
+// const FALLBACK_GRAY_RGB = [243, 244, 246];    // Consistent fallback
 
 // const PASTEL_GREEN_RGB = [200, 240, 220];
 // const PASTEL_RED_RGB = [255, 220, 220];
 
 // const MIN_Z_FOR_COLOR_SATURATION = -2.0; 
 // const MAX_Z_FOR_COLOR_SATURATION = 2.0;  
-const MIN_INTERPOLATION_FACTOR = 0.2; // Ensure at least 15% tint towards the target color
+// const MIN_INTERPOLATION_FACTOR = 0.2; // Ensure at least 15% tint towards the target color
 
 // Helper to convert RGB to Hex
 const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
@@ -41,7 +40,7 @@ const interpolateColor = (color1_rgb, color2_rgb, factor) => {
 
 const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, maxSaturation = 1.5) => {
     if (typeof zScore !== 'number' || isNaN(zScore)) {
-        const [r,g,b] = FALLBACK_GRAY_RGB;
+        const [r,g,b] = ZSCORE_COLOR_CONFIG.colors.fallback;
         // console.log('ZCOLOR', { zScore, reason: 'fallback', bgColor: rgbToHex(r,g,b) });
         return { bgColor: rgbToHex(r,g,b), textColor: '#4b5563' }; // gray-100 bg, gray-600 text
     }
@@ -55,14 +54,14 @@ const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, 
     if (effectiveZScore >= 0) {
         const clampedPositiveZ = Math.min(effectiveZScore, maxSaturation);
         calculatedFactor = maxSaturation === 0 ? 1 : clampedPositiveZ / maxSaturation;
-        const factor = Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
-        [r, g, b] = interpolateColor(NEUTRAL_MIDPOINT_RGB, PB_GREEN_RGB, Math.max(0, factor)); 
+        const factor = Math.max(ZSCORE_COLOR_CONFIG.interpolation.minFactor, calculatedFactor);
+        [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.neutral, ZSCORE_COLOR_CONFIG.colors.positive, Math.max(0, factor));
         // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     } else { // effectiveZScore < 0
         const clampedNegativeZ = Math.max(effectiveZScore, minSaturation);
         calculatedFactor = minSaturation === 0 ? 1 : (clampedNegativeZ - minSaturation) / (0 - minSaturation);
-        const factor = Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
-        [r, g, b] = interpolateColor(PB_RED_RGB, NEUTRAL_MIDPOINT_RGB, Math.min(1, Math.max(0, factor)));
+        const factor = Math.max(ZSCORE_COLOR_CONFIG.interpolation.minFactor, calculatedFactor);
+        [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.negative, ZSCORE_COLOR_CONFIG.colors.neutral, Math.min(1, Math.max(0, factor)));
         // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     }
 
