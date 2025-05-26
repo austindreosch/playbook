@@ -43,8 +43,9 @@ function DuplicatePlayerResolver({ duplicates, onDelete, onConfirm }) {
                 <div key={group.name} className="mb-4">
                     <h4 className="font-semibold">{group.name}</h4>
                     {group.players.map((player, idx) => (
-                        <div key={player.id || idx} className="flex items-center space-x-2 mb-1">
-                            <span>{player.team || player.info?.team || ''} | {player.position || player.info?.position || ''}</span>
+                        <div key={player.id || idx} className="flex items-center space-x-2 mb-1 text-xs">
+                            <span className="font-semibold mr-1">Rk: {player.userRank || 'N/A'} |</span>
+                            <span className="mr-1">Matched ID: {player.matched && player.id ? player.id : 'Unmatched'} |</span>
                             <button className="text-red-600 underline" onClick={() => onDelete(player, group.name)}>Delete</button>
                             <button className="text-blue-600 underline" onClick={() => onConfirm(player, group.name)}>Confirm as Different</button>
                         </div>

@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         const rankingUpdateResult = await rankingsCollection.updateOne(
             {
                 _id: rankingDocObjectId,
-                'rankings.rank': unmatchedRank,       // Match the specific rank
+                'rankings.userRank': unmatchedRank,   // Match the specific userRank
                 'rankings.name': unmatchedName        // Match the specific name
             },
             {
