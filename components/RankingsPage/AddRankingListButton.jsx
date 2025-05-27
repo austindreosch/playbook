@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SPORT_CONFIGS } from "@/lib/config";
 import { getCategoryEntries, getDefaultCategories } from "@/lib/rankingUtils";
+import { cn } from "@/lib/utils";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { BookCopy } from 'lucide-react';
@@ -19,7 +20,7 @@ import { useCallback, useEffect, useState } from 'react';
 // Helper function to get category entries (handling potential MLB structure)
 // const getCategoryEntries = (sportConfig) => { ... }; // REMOVED
 
-const AddRankingListButton = ({ dataset }) => {
+const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => {
     const { user } = useUser();
     const { fetchUserRankings } = useUserRankings();
     const router = useRouter();
@@ -174,9 +175,23 @@ const AddRankingListButton = ({ dataset }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2" disabled={isSubmitting}>
-                    <BookCopy className="h-4 w-4" />
-                    <span>{isSubmitting ? 'Creating...' : 'Create New Rankings'}</span>
+                <Button 
+                    variant="outline" 
+                    className={cn(
+                        "flex items-center gap-2", 
+                        iconOnly && "px-2 py-2", // Minimal padding for icon-only
+                        className // Merge with external className
+                    )} 
+                    disabled={isSubmitting}
+                    title={iconOnly ? "Create New Rankings" : undefined} // Tooltip for icon-only
+                >
+                    <BookCopy className={cn(
+                        "h-4 w-4",
+                        iconOnly && "h-5 w-5" // Slightly larger icon when iconOnly
+                        )} />
+                    {!iconOnly && (
+                        <span>{isSubmitting ? 'Creating...' : 'Create New Rankings'}</span>
+                    )}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[900px]">

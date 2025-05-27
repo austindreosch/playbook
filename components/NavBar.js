@@ -2,6 +2,7 @@
 import { BullseyeIcon } from '@/components/icons/BullseyeIcon';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
@@ -18,10 +19,8 @@ function NavBar() {
 
     return (
         <nav className="bg-pb_orange shadow-md ">
-            <div className="container mx-auto px-2 pr-3">
+            <div className="container mx-auto">
                 <div className="flex items-center justify-between h-16 align-content my-auto">
-
-
                     <div className="flex items-center group font-bold">
                         <img src="/logo-tpfull.png" alt="Playbook Icon" className="h-8 w-8" />
                         <a href="/rankings" className="px-3 py-2 flex items-center">
@@ -31,35 +30,23 @@ function NavBar() {
                         </a>
                     </div>
 
+                    {/* Desktop Navigation Links - hidden on mobile (screens smaller than md) */}
+                    <div className="hidden md:flex items-center space-x-4 ml-10">
+                        <span className={`text-pb_orangedisabled font-bold px-3 py-2 rounded-md text-sm cursor-not-allowed tracking-wider select-none`}>DASHBOARD</span>
+                        <Link href="/rankings" className={`text-pb_darkgray font-bold hover:text-white px-3 py-2 rounded-md text-sm tracking-wider select-none`}>RANKINGS</Link>
+                        <Link href="/landing" className={`text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm font-bold tracking-wider select-none`}>ABOUT</Link>
 
-
-
-                    <div className="hidden md:block">
-
-                        <div className="ml-10 flex items-center space-x-4">
-                            {/* Disabled Dashboard Link */}
-                            <span className={`text-pb_orangedisabled font-bold px-3 py-2 rounded-md text-sm cursor-not-allowed tracking-wider select-none `}>DASHBOARD</span>
-                            <Link href="/rankings" className={`text-pb_darkgray font-bold hover:text-white px-3 py-2 rounded-md text-sm  tracking-wider select-none`}>RANKINGS</Link>
-                            <Link href="/landing" className={`text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm font-bold tracking-wider select-none`}>ABOUT</Link>
-                            {/* <Link href="/about" className={`text-black font-bold hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>Feature Roadmap</Link> */}
-
-                            {user ? (
-                                <div className="py-2 pl-2 pr-3">
-                                    <UserProfileDropdown user={user} />
-                                </div>
-                            ) : (
-                                <div className='tracking rounded-md mx-1'>
-                                    <Link href="/api/auth/login" className="text-black font-bold text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm">
-                                        LOGIN
-                                    </Link>
-                                </div>
-                            )}
-
-                        </div>
-
-
-
-
+                        {user ? (
+                            <div className="py-2 pl-2 pr-3">
+                                <UserProfileDropdown user={user} />
+                            </div>
+                        ) : (
+                            <div className='tracking rounded-md mx-1'>
+                                <Link href="/api/auth/login" className="text-black font-bold text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm">
+                                    LOGIN
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

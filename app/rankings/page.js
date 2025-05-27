@@ -34,6 +34,7 @@ import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings, { useInitializeUserRankings } from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import _ from 'lodash';
+import { Menu } from 'lucide-react'; // Import Menu icon
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -52,6 +53,7 @@ export default function RankingsPage() {
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
   const [selectedSport, setSelectedSport] = useState('NBA');
+  const [isMobileRankingsPanelOpen, setIsMobileRankingsPanelOpen] = useState(false); // State for mobile panel
   const initialLoadEffectRan = useRef(false);
 
   // -- Ref Hooks --
@@ -558,29 +560,57 @@ export default function RankingsPage() {
 
   // Main Render AFTER hooks and checks
   return (
-    <div className="container mx-auto p-4">
-       {/* <Header /> */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold tracking-wide">Rankings</h1>
-        <div className="flex items-center gap-2">
-          {/* {user && <CreateAllRankingsButton />} */}
-          {user && activeRanking && (
-            <div>
-              {activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
-                <DraftModeButton
-                  isDraftMode={isDraftModeActive}
-                  onDraftModeChange={toggleDraftMode}
-                  showDrafted={showDraftedPlayers}
-                  onShowDraftedChange={toggleShowDraftedPlayers}
-                  onResetDraft={resetDraftAvailability}
-                  draftedCount={draftedCount}
-                  activeRanking={activeRanking}
-                />
-              )}
-            </div>
+    <div className="container mx-auto px-0 pt-2 md:pt-2"> {/* Changed py-4 to py-2 for mobile */}
+      {/* Top bar: Hamburger, (hidden) Title, Desktop Buttons / Mobile Icon Buttons */}
+      <div className="flex justify-between items-center mb-4 md:mb-6">
+        {/* Left side: Hamburger and (hidden on mobile) Title */}
+        <div className="flex items-center gap-2"> {/* Reduced gap for mobile icon buttons */}
+          <button
+            className="md:hidden text-gray-600 hover:text-gray-900 p-1" /* Added padding to button */
+            onClick={() => setIsMobileRankingsPanelOpen(!isMobileRankingsPanelOpen)}
+            aria-label="Toggle rankings list"
+          >
+            <Menu size={28} />
+          </button>
+          <h1 className="hidden md:block text-2xl font-bold tracking-wide">Rankings</h1> {/* Hidden on mobile */}
+        </div>
+
+        {/* Right side: Desktop Buttons OR Mobile Icon Buttons */}
+        {/* Desktop Buttons Container (visible md and up) */}
+        <div className="hidden md:flex items-center gap-2">
+          {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
+            <DraftModeButton
+              isDraftMode={isDraftModeActive}
+              onDraftModeChange={toggleDraftMode}
+              showDrafted={showDraftedPlayers}
+              onShowDraftedChange={toggleShowDraftedPlayers}
+              onResetDraft={resetDraftAvailability}
+              draftedCount={draftedCount}
+              activeRanking={activeRanking}
+              iconOnly={false} // Explicitly false for desktop
+            />
           )}
           {user && (
-            <AddRankingListButton dataset={currentSportMasterData} />
+            <AddRankingListButton dataset={currentSportMasterData} iconOnly={false} /> // Explicitly false for desktop
+          )}
+        </div>
+
+        {/* Mobile Icon Buttons Container (visible below md) */}
+        <div className="md:hidden flex items-center gap-1"> {/* Reduced gap for mobile icon buttons */}
+          {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
+            <DraftModeButton
+              isDraftMode={isDraftModeActive}
+              onDraftModeChange={toggleDraftMode}
+              showDrafted={showDraftedPlayers}
+              onShowDraftedChange={toggleShowDraftedPlayers}
+              onResetDraft={resetDraftAvailability}
+              draftedCount={draftedCount}
+              activeRanking={activeRanking}
+              iconOnly={true} // True for mobile
+            />
+          )}
+          {user && (
+            <AddRankingListButton dataset={currentSportMasterData} iconOnly={true} /> // True for mobile
           )}
         </div>
       </div>
@@ -614,8 +644,21 @@ export default function RankingsPage() {
            </div>
          </div>
       ) : (
-        <div className="flex gap-6 relative">
-          <div className="flex-1 space-y-2 overflow-x-auto" style={{ maxWidth: 'calc(100% - 288px)' }}>
+        <div className="flex flex-col md:flex-row gap-6 relative">
+          {/* Mobile Rankings Panel - Absolute positioned, full width, shown/hidden */}
+          {isMobileRankingsPanelOpen && (
+            <div className="md:hidden absolute top-0 left-0 right-0 z-20 bg-white shadow-lg p-4 rounded-md border max-h-[70vh] overflow-y-auto">
+              <RankingsSidePanel
+                onSelectRanking={(rankingId) => {
+                  handleRankingSelect(rankingId);
+                  setIsMobileRankingsPanelOpen(false); // Close panel on selection
+                }}
+              />
+            </div>
+          )}
+
+          {/* Player List Area - takes full width on mobile, constrained on desktop */}
+          <div className="flex-1 space-y-2 overflow-x-auto md:max-w-[calc(100%-288px)]">
             <RankingsPlayerListHeader
               sport={selectedSport}
               activeRanking={activeRanking}
@@ -686,7 +729,9 @@ export default function RankingsPage() {
               )}
             </div>
           </div>
-          <div className="w-72 sticky top-4">
+
+          {/* Desktop Side Panel - sticky, hidden on mobile */}
+          <div className="hidden md:block w-72 sticky top-4 self-start"> {/* Added self-start for proper sticky behavior with flex-col */}
             <RankingsSidePanel onSelectRanking={handleRankingSelect} />
           </div>
         </div>
