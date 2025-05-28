@@ -33,8 +33,12 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
         // This effect will run whenever activeRankingName changes
     }, [activeRankingName]);
 
-    const formatDate = useCallback((dateString) => {
-        return new Date(dateString).toLocaleDateString();
+    const formatDate = useCallback((dateString, shortFormat = false) => {
+        const date = new Date(dateString);
+        if (shortFormat) {
+            return `${date.getMonth() + 1}/${date.getDate()}`;
+        }
+        return date.toLocaleDateString();
     }, []);
 
     if (!user) {
@@ -76,18 +80,33 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
                             <div
                                 className={`h-full ${activeRankingId === ranking._id ? 'bg-pb_orange' : 'bg-pb_textgray hover:bg-pb_orange '}`}
                             />
-                            <div className="p-3">
-                                <div className={`text-lg font-bold ${activeRankingId === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
+                            <div className="lg:p-2 xl:p-3">
+                                <div className={`font-bold lg:text-sm xl:text-base lg:tracking-normal xl:tracking-wider ${activeRankingId === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
                                     {ranking.name}
                                 </div>
 
-                                <div className="text-2xs mt-1 flex justify-between items-center tracking-wider">
-                                    <div className={activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'}>
-                                        {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} • {ranking.scoring.toUpperCase()}
+                                <div className="mt-1 flex flex-row justify-between items-center">
+                                    <div className={`${activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'} lg:text-2xs xl:text-2xs font-semibold xl:tracking-wider truncate`}>
+                                        {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} • 
+                                        {(() => {
+                                            const scoringUpper = ranking.scoring.toUpperCase();
+                                            if (scoringUpper === 'CATEGORIES') {
+                                                return <><span className="xl:hidden"> CATS</span><span className="hidden xl:inline"> CATEGORIES</span></>;
+                                            }
+                                            if (scoringUpper === 'POINTS') {
+                                                return <><span className="xl:hidden"> PTS</span><span className="hidden xl:inline"> POINTS</span></>;
+                                            }
+                                            return ` ${scoringUpper}`;
+                                        })()}
                                     </div>
-                                    <div className={activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'}>
-                                        <HistoryIcon className="w-2 h-2 inline-block mr-1" />
-                                        {ranking.lastUpdated ? formatDate(ranking.lastUpdated) : 'No Date'}
+                                    <div className={`${activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'} lg:text-[9px] xl:text-[10px] xl:tracking-wider whitespace-nowrap flex items-center`}>
+                                        <HistoryIcon className={`lg:w-1.5 lg:h-1.5 xl:w-1.5 xl:h-1.5 mr-1 ${activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'}`} />
+                                        {ranking.lastUpdated ? (
+                                            <>
+                                                <span className="">{formatDate(ranking.lastUpdated, true)}</span>
+                                                {/* <span className="hidden xl:inline">{formatDate(ranking.lastUpdated, false)}</span> */}
+                                            </>
+                                        ) : 'No Date'}
                                     </div>
                                 </div>
                             </div>

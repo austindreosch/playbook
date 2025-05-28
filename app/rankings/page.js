@@ -658,7 +658,7 @@ export default function RankingsPage() {
           )}
 
           {/* Player List Area - takes full width on mobile, constrained on desktop */}
-          <div className="flex-1 space-y-2 overflow-x-auto md:max-w-[calc(100%-288px)]">
+          <div className="flex-1 space-y-2 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)]">
             <RankingsPlayerListHeader
               sport={selectedSport}
               activeRanking={activeRanking}
@@ -731,7 +731,7 @@ export default function RankingsPage() {
           </div>
 
           {/* Desktop Side Panel - sticky, hidden on mobile */}
-          <div className="hidden md:block w-72 sticky top-4 self-start"> {/* Added self-start for proper sticky behavior with flex-col */}
+          <div className="hidden lg:block lg:w-56 xl:w-64 sticky top-4 self-start">
             <RankingsSidePanel onSelectRanking={handleRankingSelect} />
           </div>
         </div>

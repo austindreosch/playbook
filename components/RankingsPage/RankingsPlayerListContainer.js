@@ -1,6 +1,7 @@
 'use client';
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { useProcessedPlayers } from '@/hooks/useProcessedPlayers';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
@@ -14,6 +15,7 @@ import RankingsPlayerListSkeleton from './RankingsPlayerListSkeleton';
 
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220;
+const MOBILE_ROW_HEIGHT = 60;
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
@@ -28,6 +30,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
     const [expandedRows, setExpandedRows] = useState(new Set());
     const listRef = useRef(null);
+    const isMobile = useMediaQuery('(max-width: 768px)');
 
     const {
         standardEcrRankings,
@@ -65,6 +68,10 @@ const RankingsPlayerListContainer = React.forwardRef(({
             listRef.current?.resetAfterIndex(0);
         }
     }, [collapseAllTrigger]);
+
+    useEffect(() => {
+        listRef.current?.resetAfterIndex(0);
+    }, [isMobile]);
 
     const playersToDisplay = useProcessedPlayers({
         activeRanking,
@@ -144,8 +151,15 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     const getRowHeight = useCallback(index => {
         const player = playersToDisplay[index];
-        return player && expandedRows.has(player.id) ? EXPANDED_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
-    }, [playersToDisplay, expandedRows]);
+        if (!player) return isMobile ? MOBILE_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
+
+        const isExpanded = expandedRows.has(player.id);
+
+        if (isExpanded) {
+            return EXPANDED_ROW_HEIGHT;
+        }
+        return isMobile ? MOBILE_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
+    }, [playersToDisplay, expandedRows, isMobile]);
 
     const Row = useCallback(({ index, style }) => {
         const player = playersToDisplay[index];

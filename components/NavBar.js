@@ -1,14 +1,18 @@
 'use client'
 import { BullseyeIcon } from '@/components/icons/BullseyeIcon';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Menu } from 'lucide-react';
+import { CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, Settings as SettingsIcon, Shield, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
 
 function NavBar() {
     const { user } = useUser();
+    const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID; // Get admin ID
+    const isAdmin = user && user.sub === adminSub; // Determine if user is admin
 
     // Only log user changes if needed for debugging
     useEffect(() => {
@@ -20,11 +24,11 @@ function NavBar() {
     return (
         <nav className="bg-pb_orange shadow-md ">
             <div className="container mx-auto">
-                <div className="flex items-center justify-between h-16 align-content my-auto">
+                <div className="flex items-center justify-between h-11 md:h-16 align-content my-auto">
                     <div className="flex items-center group font-bold">
-                        <img src="/logo-tpfull.png" alt="Playbook Icon" className="h-8 w-8" />
-                        <a href="/rankings" className="px-3 py-2 flex items-center">
-                            <div className={`text-3xl font-bold group-hover:text-white`}>
+                        <img src="/logo-tpfull.png" alt="Playbook Icon" className="h-6 w-6 md:h-8 md:w-8" />
+                        <a href="/rankings" className="px-2 md:px-3 py-2 flex items-center">
+                            <div className={`text-xl md:text-3xl font-bold group-hover:text-white`}>
                                 Playbook
                             </div>
                         </a>
@@ -47,6 +51,83 @@ function NavBar() {
                                 </Link>
                             </div>
                         )}
+                    </div>
+
+                    {/* Hamburger Menu for mobile - hidden on md and larger screens */}
+                    <div className="md:hidden">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    className="hover:bg-pb_orangehover focus-visible:ring-0 focus-visible:ring-offset-0 text-pb_darkgray hover:text-white"
+                                >
+                                    <Menu className="h-6 w-6" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent 
+                                className="w-screen bg-white shadow-lg border-t mt-1 border-pb_lightgray md:hidden rounded-none"
+                                align="start"
+                                sideOffset={0}
+                            >
+                                <DropdownMenuItem className="text-pb_midgray font-bold cursor-not-allowed select-none text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50">
+                                    <LayoutDashboard className="h-5 w-5 mr-2.5 text-pb_midgray" />Dashboard
+                                </DropdownMenuItem>
+                                
+                                <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
+                                    <Link href="/rankings" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
+                                        <ListOrdered className="h-5 w-5 mr-2.5 text-pb_darkgray" />Rankings
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
+                                    <Link href="/landing" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
+                                        <Info className="h-5 w-5 mr-2.5 text-pb_darkgray" />About
+                                    </Link>
+                                </DropdownMenuItem>
+                                
+                                {user ? (
+                                    <>
+                                        <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                                        <DropdownMenuItem 
+                                            className="text-pb_midgray font-bold text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50 cursor-not-allowed"
+                                        >
+                                            <CreditCard className="h-5 w-5 mr-2.5 text-pb_midgray" />Imports
+                                        </DropdownMenuItem>
+
+                                        {isAdmin && (
+                                            <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none hover:bg-pb_lightgray hover:text-pb_darkgray">
+                                                <span className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full cursor-pointer flex items-center">
+                                                    <UserPlus className="h-5 w-5 mr-2.5 text-pb_darkgray" />Admin Panel
+                                                </span>
+                                            </DropdownMenuItem>
+                                        )}
+
+                                        <DropdownMenuItem 
+                                            className="text-pb_midgray font-bold text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50 cursor-not-allowed"
+                                        >
+                                            <SettingsIcon className="h-5 w-5 mr-2.5 text-pb_midgray" />Settings
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                                        <DropdownMenuItem 
+                                            className="text-pb_darkgray font-bold text-base px-3 py-3 focus:bg-pb_lightgray focus:text-pb_darkgray cursor-pointer flex items-center rounded-none"
+                                            onSelect={() => window.location.pathname = '/api/auth/logout'}
+                                        >
+                                            <LogOut className="h-5 w-5 mr-2.5 text-pb_darkgray" />Logout
+                                        </DropdownMenuItem>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                                        <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
+                                            <Link href="/api/auth/login" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
+                                                <LogIn className="h-5 w-5 mr-2.5 text-pb_darkgray" />Login
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>

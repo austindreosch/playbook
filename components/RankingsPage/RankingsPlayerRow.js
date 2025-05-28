@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import useMediaQuery from '@/hooks/useMediaQuery'; // Import the new hook
 import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
@@ -20,17 +21,17 @@ const DEFAULT_ROW_HEIGHT = 45;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
 // Create a specialized component just for stats to reduce re-renders
-const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType }) => {
+const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType, isMobile }) => {
 
     return (
-        <div className="flex w-[70%] h-full gap-[3px]">
+        <div className={cn("flex w-full h-full", isMobile ? "gap-0" : "gap-[3px]")}>
             {/* Z-Score Sum main value column */}
             <div
                 key="zScoreSum_main"
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
-                <span className="text-sm text-pb_midgray">
+                <span className={cn(isMobile ? "text-2xs" : "text-sm", "text-pb_midgray")}>
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
                 </span>
             </div>
@@ -164,7 +165,8 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     >
                         {formattedValue !== '' ? (
                             <span className={cn(
-                                "text-sm text-pb_darkgray",
+                                isMobile ? "text-2xs" : "text-sm",
+                                "text-pb_darkgray",
                                 (
                                     (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
                                     (sport?.toLowerCase() !== 'nfl' && categoryAbbrev === 'PPG')
@@ -289,58 +291,30 @@ const RankingsPlayerRow = memo(({
 }) => {
     const rowRef = useRef(null);
     const { toast } = useToast();
+    const isMobile = useMediaQuery('(max-width: 768px)'); // Check for mobile screen size
 
     // --- Determine sources --- 
     const playerName = player.info?.fullName || player.name || 'Player Name';
     const playerPosition = player.info?.primaryPosition || player.position || 'N/A';
     const playerImage = player.info?.officialImageSrc;
-    const team = player.info?.teamName || 'FA'; // Restored direct access
-    const age = player.info?.age || 'N/A'; // Restored direct access
+    const teamAbbreviation = player.info?.teamAbbreviation || player.info?.teamName || 'FA'; // Prefer abbreviation
+    const age = player.info?.age || 'N/A';
     const currentInjury = player.info?.currentInjury || null;
     const defaultImageSrc = '/avatar-default.png';
 
     // --- Simplified onError handler (will modify the img element directly) ---
     const handleImageError = (event) => {
-        // Prevent infinite loop if the default image also fails
-        if (event.target.src !== defaultImageSrc) { 
-            // console.warn(`Image failed to load: ${event.target.src}. Falling back to default.`);
+        if (event.target.src !== defaultImageSrc) {
             event.target.src = defaultImageSrc;
-            // Optional: add a class to indicate fallback
-            event.target.classList.add('image-fallback'); 
+            event.target.classList.add('image-fallback');
         }
     };
-
-    // Calculate the sum of zScores for the selected categories, applying weight for NFL PPG
-    // const zScoreSum = useMemo(() => {
-    //     const ppgKey = 'advanced.fantasyPointsPerGame';
-    //     const nflPpgWeight = 3; // Adjust this weight as needed
-    //     let sum = 0;
-
-    //     if (player?.stats && categories?.length > 0) {
-    //         categories.forEach(statPathOrKey => {
-    //             const statData = getNestedValue(player.stats, statPathOrKey);
-
-    //             if (statData && typeof statData === 'object' && typeof statData.zScore === 'number') {
-    //                 let scoreToAdd = statData.zScore;
-
-    //                 // Apply weight only for NFL and only for the PPG stat
-    //                 if (sport === 'NFL' && statPathOrKey === ppgKey) {
-    //                     scoreToAdd *= nflPpgWeight;
-    //                 }
-    //                 // Add the (potentially weighted) score to the sum
-    //                 sum += scoreToAdd;
-    //             }
-    //         });
-    //     }
-    //     // Format to two decimal places for potentially larger sums
-    //     return sum.toFixed(2);
-    // }, [player?.stats, categories, sport]); // Add sport as dependency
 
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: player.id,
         animateLayoutChanges: () => false,
-        disabled: !isRankSorted || isDraftMode,
+        disabled: !isRankSorted || isDraftMode, // Ensure disabled matches desktop logic
     });
 
     // Apply styles for dragging - use CSS variables for better performance
@@ -348,13 +322,9 @@ const RankingsPlayerRow = memo(({
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-        willChange: 'transform', // Hint to browser for optimization
-        contain: 'content', // Improve rendering performance
+        willChange: 'transform',
+        contain: 'content',
     };
-
-    // Only compute these when expanded changes
-    // const detailPanelRef = useRef(null);
-    // const insightPanelRef = useRef(null);
 
     // Use intersection observer to only render when visible
     useEffect(() => {
@@ -418,9 +388,118 @@ const RankingsPlayerRow = memo(({
             rowIndex={rowIndex}
             player={player}
             activeScoringType={activeRanking?.scoring}
+            isMobile={isMobile}
         />
     );
 
+    // --- Mobile View ---
+    if (isMobile) {
+        const zScoreSumValue = player?.zScoreTotals?.overallZScoreSum;
+
+        return (
+            <div
+                ref={(node) => {
+                    setNodeRef(node);
+                    rowRef.current = node;
+                }}
+                style={style}
+                className={cn(
+                    `player-row-mobile border rounded-md overflow-hidden mb-1 shadow-sm flex flex-col`,
+                    isDragging ? 'z-10 opacity-50' : '',
+                    isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging
+                        ? "border-pb_lightgray bg-pb_lightergray"
+                        : "bg-white hover:bg-gray-50",
+                    // `h-auto` is fine, or a fixed height if preferred for mobile rows
+                )}
+            >
+                {/* Top section: Player Info */}
+                <div className="flex items-center p-0.5 ">
+                    <div
+                        className={cn(
+                            "text-pb_textgray mr-1",
+                            (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
+                        )}
+                        style={{ pointerEvents: 'auto' }} // Ensure this is set
+                        {...attributes}
+                        {...(isRankSorted && !isDraftMode ? listeners : {})}
+                        onPointerDownCapture={(event) => {
+                            if (!isRankSorted) {
+                                event.preventDefault(); event.stopPropagation();
+                                toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while sorting by a stat.", variant: "destructive", duration: 3000 });
+                            } else if (isDraftMode) {
+                                event.preventDefault(); event.stopPropagation();
+                                toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while in Draft Mode.", variant: "destructive", duration: 3000 });
+                            }
+                        }}
+                        title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
+                    >
+                        <GripVerticalIcon className="h-5 w-5" />
+                    </div>
+
+                    {isDraftMode && (
+                        <div className={cn(
+                            "mr-1.5 h-6 w-6 rounded-sm flex items-center justify-center border",
+                            !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray"
+                        )}>
+                            <Button
+                                variant="ghost" size="icon"
+                                className={`h-full w-full rounded-sm flex items-center justify-center ${
+                                    (player.draftModeAvailable ?? true)
+                                        ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover'
+                                        : 'text-pb_orange-600 hover:bg-pb_orange hover:text-white'
+                                    }`}
+                                onClick={(e) => { e.stopPropagation(); onToggleDraftStatus(!(player.draftModeAvailable ?? true)); }}
+                                title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
+                            >
+                                {(player.draftModeAvailable ?? true) ? <Check className="h-4 w-4 stroke-current stroke-2" /> : <RotateCcw className="h-4 w-4 opacity-100" />}
+                            </Button>
+                        </div>
+                    )}
+
+                    <div className={cn(
+                        "w-6 h-6 text-xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
+                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray",
+                        !isRankSorted ? 'bg-blue-50' : ''
+                    )}>{rank}</div>
+
+                    <img
+                        src={playerImage || defaultImageSrc}
+                        alt={playerName}
+                        className="w-6 h-6 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
+                        loading="lazy" width="24" height="24"
+                        onError={handleImageError}
+                    />
+
+                    <div className="flex-grow min-w-0 mr-2">
+                        <div className="font-bold text-xs truncate">{playerName}</div>
+                    </div>
+
+                    <div className="flex items-center text-2xs text-pb_textgray flex-shrink-0">
+                        <span className="mr-1.5">{playerPosition}</span>
+                        <span className="mr-1.5">{age}</span>
+                        <span>{teamAbbreviation}</span>
+                    </div>
+                </div>
+
+                {/* Bottom section: Stats */}
+                <div className="flex w-full h-7 items-center bg-white gap-0">
+                    {/* Use StatsSection directly for mobile, ensuring it fills the width */}
+                    <StatsSection 
+                        categories={categories}
+                        stats={player.stats}
+                        zScoreSumValue={zScoreSumValue} // This is player?.zScoreTotals?.overallZScoreSum
+                        sport={sport}
+                        rowIndex={rowIndex}
+                        player={player}
+                        activeScoringType={activeRanking?.scoring}
+                        isMobile={isMobile}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    // --- Desktop View (Existing Code) ---
     return (
         <div
             ref={(node) => {
@@ -451,7 +530,7 @@ const RankingsPlayerRow = memo(({
                 onClick={onToggleExpand}
             >
                 {/* Left section with fixed widths */}
-                <div className="flex items-center w-[30%] relative">
+                <div className="flex items-center w-[30%] flex-shrink-0 relative h-full">
                     {/* Drag handle */}
                     <div
                         className={cn(
@@ -534,7 +613,7 @@ const RankingsPlayerRow = memo(({
                     )}>{rank}</div>
 
                     {/* Player Image - SIMPLIFIED Logic */}
-                    <div className="px-2 text-center select-none flex items-center justify-center">
+                    <div className="hidden lg:flex pl-2 text-center select-none items-center justify-center">
                          <img
                             // Use playerImage if available, otherwise use default immediately
                             src={playerImage || defaultImageSrc} 
@@ -542,7 +621,7 @@ const RankingsPlayerRow = memo(({
                             // Key helps React differentiate rows, use player.id for stability
                             key={player.id} 
                             alt={playerName}
-                            className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
+                            className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm lg:block"
                             loading="lazy"
                             width="28"
                             height="28"
@@ -552,7 +631,7 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-baseline gap-2 select-none min-w-0">
+                    <div className="flex items-baseline gap-2 select-none min-w-0 pl-2">
                         <div className="font-bold text-sm truncate">{playerName}</div>
                          <div className="text-pb_textgray text-2xs flex-shrink-0">{playerPosition}</div>
                     </div>
@@ -564,7 +643,9 @@ const RankingsPlayerRow = memo(({
                 </div>
 
                 {/* Stats section - flexible width */}
-                {renderStatsSection()}
+                <div className="flex flex-grow min-w-0 h-full">
+                    {renderStatsSection()}
+                </div>
             </div>
 
             {/* Only render expanded content when needed */}
@@ -625,7 +706,7 @@ const RankingsPlayerRow = memo(({
                                     <FlagIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{team}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{teamAbbreviation}</span>
                                     <PeopleGroupIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
