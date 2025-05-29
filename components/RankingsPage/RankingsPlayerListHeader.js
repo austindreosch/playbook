@@ -22,7 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
-import { SigmaSquareIcon } from 'lucide-react';
+import { ArrowUpNarrowWideIcon, Loader2, SigmaSquareIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
@@ -166,9 +166,9 @@ const RankingsPlayerListHeader = ({
                     >
                         <div className="w-10 h-10 flex items-center justify-center">
                             {isCollapsing ? (
-                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                <Loader2 className="animate-spin h-6 w-6 text-white" />
                             ) : (
-                                <SigmaSquareIcon className={`h-6 w-6 text-white`} />
+                                <ArrowUpNarrowWideIcon className={`h-6 w-6 text-white`} />
                             )}
                         </div>
                     </button>
