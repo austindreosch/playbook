@@ -400,7 +400,7 @@ export default function RankingsPage() {
 
         <div className="flex gap-6 relative pt-1">
           {/* Skeleton Left Column (Player List Area) */}
-          <div className="flex-1 space-y-2 overflow-hidden" style={{ maxWidth: 'calc(100% - 288px)' }}>
+          <div className="flex-1 space-y-2 overflow-hidden w-full lg:max-w-[calc(100%-288px)]">
             {/* Skeleton Table Header */}
             <Skeleton className="h-10 w-full rounded-sm mb-2 " />
             {/* Skeleton Table Rows - More detailed */}
@@ -430,7 +430,7 @@ export default function RankingsPage() {
           </div> {/* End flex-1 */}
 
           {/* Skeleton Right Column (Side Panel) */}
-          <div className="w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
+          <div className="hidden lg:block w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
             <div className="space-y-2">
               {[...Array(2)].map((_, i) => ( // Simulate a few saved ranking items
                 <Skeleton key={i} className="h-20 w-full" />
@@ -509,7 +509,7 @@ export default function RankingsPage() {
 
         <div className="flex gap-6 relative pt-1">
           {/* Skeleton Left Column (Player List Area) */}
-          <div className="flex-1 space-y-2 overflow-hidden" style={{ maxWidth: 'calc(100% - 288px)' }}>
+          <div className="flex-1 space-y-2 overflow-hidden w-full lg:max-w-[calc(100%-288px)]">
             {/* Skeleton Table Header */}
             <Skeleton className="h-10 w-full rounded-sm mb-2 " />
             {/* Skeleton Table Rows - More detailed */}
@@ -539,7 +539,7 @@ export default function RankingsPage() {
           </div> {/* End flex-1 */}
 
           {/* Skeleton Right Column (Side Panel) */}
-          <div className="w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
+          <div className="hidden lg:block w-72 space-y-2"> {/* Width matches RankingsSidePanel */}
             <div className="space-y-2">
               {[...Array(2)].map((_, i) => ( // Simulate a few saved ranking items
                 <Skeleton key={i} className="h-20 w-full" />
