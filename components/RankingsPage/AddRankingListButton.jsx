@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { SPORT_CONFIGS } from "@/lib/config";
 import { getCategoryEntries, getDefaultCategories } from "@/lib/rankingUtils";
 import { cn } from "@/lib/utils";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { BookCopy } from 'lucide-react';
+import { BookPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -22,8 +24,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => {
     const { user } = useUser();
-    const { fetchUserRankings } = useUserRankings();
+    const { fetchUserRankings, setActiveRanking } = useUserRankings();
     const router = useRouter();
+    const isMobile = useMediaQuery('(max-width: 768px)');
+
     // Form state
     const [formData, setFormData] = useState({
         sport: 'nba',
@@ -106,6 +110,9 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
                 flexSetting: formData.flexSetting,
                 pprSetting: formData.pprType,
             }),
+            // Add default position weights if they don't exist for the sport and format
+            // This is a placeholder, actual default weights should come from SPORT_CONFIGS
+            positionWeights: SPORT_CONFIGS[formData.sport.toLowerCase()]?.formats?.[formData.format.toLowerCase()]?.defaultPositionWeights || {},
         };
 
         console.log("Submitting payload:", payload);
@@ -126,18 +133,30 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
             const newListId = createResult.userRankingId;
 
             if (newListId) {
+                // Fetch the newly created ranking to get its full data, including players
                 const fetchNewRankingResponse = await fetch(`/api/user-rankings/${newListId}`);
                 if (!fetchNewRankingResponse.ok) {
                     console.error(`Failed to fetch newly created ranking (${fetchNewRankingResponse.status})`);
-                    await fetchUserRankings();
+                    // Even if fetching the full new ranking fails, update the list from the store
+                    await fetchUserRankings(); // This re-fetches all rankings, which will include the new one by ID
+                    // Try to find the new ranking in the updated list and set it active if store didn't handle it
+                    const updatedRankings = useUserRankings.getState().rankings;
+                    const newRankingFromList = updatedRankings.find(r => r._id === newListId);
+                    if (newRankingFromList) {
+                        setActiveRanking(newRankingFromList);
+                    }
+
                 } else {
                     const newRankingData = await fetchNewRankingResponse.json();
-                    useUserRankings.getState().setActiveRanking(newRankingData);
-                    await fetchUserRankings();
+                    setActiveRanking(newRankingData); // Set the newly created and fetched ranking as active
+                                                        // fetchUserRankings might not be strictly needed here if setActiveRanking updates the list correctly
+                                                        // but calling it ensures the local list is in sync if other changes happened.
+                    await fetchUserRankings(); 
                 }
-                // --- Force navigation to rankings page to trigger UI refresh ---
-                router.refresh && router.refresh(); // Next.js 13+ App Router
-                router.push && router.push('/rankings'); // fallback for older router
+                
+                // router.refresh(); // Removed as it might be too aggressive
+                if (router.push) router.push('/rankings', { scroll: false });
+
             } else {
                 console.warn("Could not get new list ID from creation response.");
                 await fetchUserRankings();
@@ -172,196 +191,343 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
 
     if (!user) return null;
 
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button 
-                    variant="outline" 
-                    className={cn(
-                        "flex items-center gap-2", 
-                        iconOnly && "px-2 py-2", // Minimal padding for icon-only
-                        className // Merge with external className
-                    )} 
-                    disabled={isSubmitting}
-                    title={iconOnly ? "Create New Rankings" : undefined} // Tooltip for icon-only
-                >
-                    <BookCopy className={cn(
-                        "h-4 w-4",
-                        iconOnly && "h-5 w-5" // Slightly larger icon when iconOnly
-                        )} />
-                    {!iconOnly && (
-                        <span>{isSubmitting ? 'Creating...' : 'Create New Rankings'}</span>
-                    )}
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[900px]">
-                <DialogHeader>
-                    <DialogTitle className="select-none">Build Your Customizable Rankings</DialogTitle>
-                    <DialogDescription className="select-none">
-                        Tailor your perfect rankings list with just a few clicks. Choose your sport, format, scoring below to
-                        generate a customized rankings sheet for your fantasy league.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
-                    <div className="space-y-4 flex flex-col justify-center">
-                        <div className="grid grid-cols-4 items-center gap-6">
-                            <Label htmlFor="sport" className="text-right select-none"> Sport </Label>
-                            <Tabs value={formData.sport} className="col-span-3"
-                                onValueChange={(value) => {
-                                    updateFormState({ sport: value });
-                                }}>
-                                <TabsList className="grid w-full grid-cols-3">
-                                    <TabsTrigger value="nba" className="select-none">NBA</TabsTrigger>
-                                    <TabsTrigger value="mlb" className="select-none">MLB</TabsTrigger>
-                                    <TabsTrigger value="nfl" className="select-none">NFL</TabsTrigger>
-                                </TabsList>
-                            </Tabs>
-                        </div>
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="format" className="text-right select-none"> Format </Label>
-                            <Tabs value={formData.format} className="col-span-3"
-                                onValueChange={(value) => updateFormState({ format: value }) }>
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="dynasty" className="select-none">Dynasty</TabsTrigger>
-                                    <TabsTrigger value="redraft" className="select-none">Redraft</TabsTrigger>
-                                </TabsList>
-                            </Tabs>
-                        </div>
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="scoring" className="text-right select-none"> Scoring </Label>
-                            <Tabs value={formData.scoring} className="col-span-3"
-                                onValueChange={(value) => updateFormState({ scoring: value }) }>
-                                <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="categories" disabled={formData.sport === 'nfl'} className="select-none">Categories</TabsTrigger>
-                                    <TabsTrigger value="points" className="select-none">Points</TabsTrigger>
-                                </TabsList>
-                            </Tabs>
-                        </div>
-
-                        <Separator className="my-4" />
-
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right select-none"> Name </Label>
-                            <Input
-                                id="name"
-                                value={formData.name}
-                                onChange={(e) => updateFormState({ name: e.target.value })}
-                                placeholder="e.g., My NBA Dynasty Ranks"
-                                className="col-span-3"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        {formData.sport !== 'nfl' && formData.scoring === 'categories' && currentSportConfig && (
-                            <div className="p-4 border rounded-md space-y-4">
-                                {formData.sport === 'mlb' && (
-                                    <>
-                                        <div>
-                                            <Label className="text-sm text-muted-foreground block mb-2">Hitting</Label>
-                                            <div className="flex flex-wrap gap-x-4 gap-y-3">
-                                                {mlbHittingCategories.filter(([key]) => key !== 'PPG').map(([key, cat]) => (
-                                                    <div key={key} className="flex items-center space-x-2 p-1 border rounded-md">
-                                                        <Switch 
-                                                            id={`cat-switch-${key}-h`} 
-                                                            checked={formData.customCategories.includes(key)} 
-                                                            onCheckedChange={(checked) => handleCategoryChange(key, checked)} 
-                                                            className="data-[state=checked]:bg-pb_blue"
-                                                        />
-                                                        <label htmlFor={`cat-switch-${key}-h`} className="text-sm font-medium leading-none select-none">{key}</label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div>
-                                             <Label className="text-sm text-muted-foreground block mb-2">Pitching</Label>
-                                             <div className="flex flex-wrap gap-x-4 gap-y-3">
-                                                {mlbPitchingCategories.filter(([key]) => key !== 'PPG').map(([key, cat]) => (
-                                                     <div key={key} className="flex items-center space-x-2 p-1 border rounded-md">
-                                                        <Switch 
-                                                            id={`cat-switch-${key}-p`} 
-                                                            checked={formData.customCategories.includes(key)} 
-                                                            onCheckedChange={(checked) => handleCategoryChange(key, checked)} 
-                                                            className="data-[state=checked]:bg-pb_blue"
-                                                        />
-                                                        <label htmlFor={`cat-switch-${key}-p`} className="text-sm font-medium leading-none select-none">{key}</label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-
-                                {formData.sport !== 'mlb' && (
-                                     <div className="flex flex-wrap gap-x-4 gap-y-3">
-                                        {categoryEntries.filter(([key]) => key !== 'PPG').map(([key, cat]) => (
-                                            <div key={key} className="flex items-center space-x-2 p-1 border rounded-md">
-                                                <Switch 
-                                                    id={`cat-switch-${key}`} 
-                                                    checked={formData.customCategories.includes(key)} 
-                                                    onCheckedChange={(checked) => handleCategoryChange(key, checked)} 
-                                                    className="data-[state=checked]:bg-pb_blue"
-                                                />
-                                                <label htmlFor={`cat-switch-${key}`} className="text-sm font-medium leading-none select-none">{key}</label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {formData.sport === 'nfl' && (
-                            <div className="space-y-4 p-4 border rounded-md">
-                                <Label className="text-left font-medium select-none block mb-3">NFL Options</Label>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="flexSetting" className="text-right select-none col-span-1"> Flex </Label>
-                                    <Tabs value={formData.flexSetting} className="col-span-3"
-                                        onValueChange={(value) => updateFormState({ flexSetting: value })}>
-                                        <TabsList className="grid w-full grid-cols-2">
-                                            <TabsTrigger value="superflex" className="select-none">Superflex</TabsTrigger>
-                                            <TabsTrigger value="standard" className="select-none">Standard</TabsTrigger>
-                                        </TabsList>
-                                    </Tabs>
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="pprType" className="text-right select-none col-span-1"> PPR </Label>
-                                    <Tabs value={formData.pprType} className="col-span-3"
-                                        onValueChange={(value) => updateFormState({ pprType: value })}>
-                                        <TabsList className="grid w-full grid-cols-3">
-                                            <TabsTrigger value="0ppr" className="select-none">Non</TabsTrigger>
-                                            <TabsTrigger value="0.5ppr" className="select-none">Half</TabsTrigger>
-                                            <TabsTrigger value="1ppr" className="select-none">Full</TabsTrigger>
-                                        </TabsList>
-                                    </Tabs>
-                                </div>
-                            </div>
-                        )}
-
-                        {formData.sport !== 'nfl' && formData.scoring === 'points' && (
-                            <div className="p-4 border rounded-md text-center text-sm text-muted-foreground h-full flex items-center justify-center">
-                                <span>No specific options for Points scoring in this sport.</span>
-                            </div>
-                        )}
-
-                        {formData.sport === 'nfl' && formData.scoring === 'categories' && (
-                            <div className="p-4 border rounded-md text-center text-sm text-muted-foreground h-full flex items-center justify-center">
-                                <span>Category selection not applicable for NFL.</span>
-                            </div>
-                        )}
-                    </div>
+    const formContent = (
+        <>
+            <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right select-none">Name</Label>
+                    <Input id="name" value={formData.name} onChange={(e) => updateFormState({ name: e.target.value })} className="col-span-3" placeholder="e.g., My Awesome Dynasty Sheet" />
                 </div>
+            </div>
 
-                {error && <p className="text-red-500 text-sm mt-2 text-center select-none">{error}</p>}
+            <Tabs value={formData.sport} onValueChange={(value) => updateFormState({ sport: value })} className="w-full select-none">
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="nba">NBA</TabsTrigger>
+                    <TabsTrigger value="mlb">MLB</TabsTrigger>
+                    <TabsTrigger value="nfl">NFL</TabsTrigger>
+                </TabsList>
 
-                <DialogFooter className="mt-4 pt-4 border-t">
-                    <Button type="button" onClick={handleSubmit} disabled={isSubmitting || !formData.name.trim()}>
-                        {isSubmitting ? 'Creating...' : 'Create Rankings List'}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                {/* Content for NBA */}
+                <TabsContent value="nba">
+                    {/* Format Selection */}
+                    <div className="mt-4">
+                        <Label className="block mb-2 text-sm font-medium select-none">Format</Label>
+                        <Tabs value={formData.format} onValueChange={(value) => updateFormState({ format: value })} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="dynasty">Dynasty</TabsTrigger>
+                                <TabsTrigger value="redraft">Redraft</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                    {/* Scoring Selection for NBA */}
+                    <div className="mt-6">
+                        <Label className="block mb-2 text-sm font-medium select-none">Scoring Type</Label>
+                        <Tabs value={formData.scoring} onValueChange={(value) => updateFormState({ scoring: value })} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="categories">Categories</TabsTrigger>
+                                <TabsTrigger value="points">Points</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                </TabsContent>
+
+                {/* Content for MLB */}
+                <TabsContent value="mlb">
+                    {/* Format Selection */}
+                    <div className="mt-4">
+                        <Label className="block mb-2 text-sm font-medium select-none">Format</Label>
+                        <Tabs value={formData.format} onValueChange={(value) => updateFormState({ format: value })} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="dynasty">Dynasty</TabsTrigger>
+                                <TabsTrigger value="redraft">Redraft</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                    {/* Scoring Selection for MLB */}
+                    <div className="mt-6">
+                        <Label className="block mb-2 text-sm font-medium select-none">Scoring Type</Label>
+                        <Tabs value={formData.scoring} onValueChange={(value) => updateFormState({ scoring: value })} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="categories">Categories</TabsTrigger>
+                                <TabsTrigger value="points">Points</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                </TabsContent>
+
+                {/* Content for NFL */}
+                <TabsContent value="nfl">
+                    {/* Format Selection */}
+                    <div className="mt-4">
+                        <Label className="block mb-2 text-sm font-medium select-none">Format</Label>
+                        <Tabs value={formData.format} onValueChange={(value) => updateFormState({ format: value })} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="dynasty">Dynasty</TabsTrigger>
+                                <TabsTrigger value="redraft">Redraft</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+
+                    {/* Flex Setting for NFL */}
+                    <div className="mt-6">
+                        <Label className="block mb-2 text-sm font-medium select-none">Flex Setting</Label>
+                        <Tabs value={formData.flexSetting} onValueChange={(value) => updateFormState({ flexSetting: value })} className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="superflex">Superflex</TabsTrigger>
+                                <TabsTrigger value="1qb">1 QB</TabsTrigger>
+                            </TabsList>
+                        </Tabs>
+                    </div>
+
+                    {/* PPR Type Selection for NFL (Only if scoring is 'points') */}
+                    {formData.scoring === 'points' && (
+                        <div className="mt-6">
+                            <Label className="block mb-2 text-sm font-medium select-none">PPR Setting (Points Leagues)</Label>
+                            <Tabs value={formData.pprType} onValueChange={(value) => updateFormState({ pprType: value })} className="w-full">
+                                <TabsList className="grid w-full grid-cols-3">
+                                    <TabsTrigger value="0ppr">0 PPR</TabsTrigger>
+                                    <TabsTrigger value="0.5ppr">0.5 PPR</TabsTrigger>
+                                    <TabsTrigger value="1ppr">1 PPR</TabsTrigger>
+                                </TabsList>
+                            </Tabs>
+                        </div>
+                    )}
+                </TabsContent>
+            </Tabs>
+
+            {/* Category Selection (Only if not NFL and scoring is 'categories') */}
+            {formData.sport !== 'nfl' && formData.scoring === 'categories' && (
+                <div className="mt-6 select-none">
+                    <Separator className="my-4" />
+                    <h4 className="mb-4 text-md font-medium">Select Categories</h4>
+                    {/* For MLB, show Hitting and Pitching sections */}
+                    {formData.sport === 'mlb' ? (
+                        <>
+                            <div className="mb-4">
+                                <h5 className="mb-2 text-sm font-medium text-gray-600">Hitting Categories</h5>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    {mlbHittingCategories.map(([key, cat]) => (
+                                        <div key={`${key}-h-drawer`} className="flex items-center space-x-2">
+                                            <Switch id={`${key}-switch-h-drawer`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} />
+                                            <Label htmlFor={`${key}-switch-h-drawer`} className="text-xs cursor-pointer">{key}</Label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <h5 className="mb-2 text-sm font-medium text-gray-600">Pitching Categories</h5>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    {mlbPitchingCategories.map(([key, cat]) => (
+                                        <div key={`${key}-p-drawer`} className="flex items-center space-x-2">
+                                            <Switch id={`${key}-switch-p-drawer`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} />
+                                            <Label htmlFor={`${key}-switch-p-drawer`} className="text-xs cursor-pointer">{key}</Label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        // For other sports (NBA currently)
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                            {categoryEntries.map(([key, cat]) => (
+                                <div key={`${key}-drawer`} className="flex items-center space-x-2">
+                                    <Switch id={`${key}-switch-drawer`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} />
+                                    <Label htmlFor={`${key}-switch-drawer`} className="text-xs cursor-pointer">{key}</Label>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+        </>
+    );
+
+    const triggerButton = (
+        <Button
+            variant="outline"
+            className={cn(
+                "flex items-center gap-2",
+                iconOnly && "p-2.5",
+                className
+            )}
+            disabled={isSubmitting}
+            title={iconOnly ? "Create New Rankings" : undefined}
+            onClick={() => setOpen(true)}
+        >
+            <BookPlus className={cn("h-4 w-4", iconOnly && "h-5 w-5")} />
+            {!iconOnly && (
+                <span>{isSubmitting ? 'Creating...' : 'Create New Rankings'}</span>
+            )}
+        </Button>
+    );
+
+    if (isMobile) {
+        return (
+            <>
+                {triggerButton}
+                <Drawer open={open} onOpenChange={setOpen}>
+                    <DrawerContent>
+                        <DrawerHeader className="text-left">
+                            <DrawerTitle>Build Your Rankings</DrawerTitle>
+                            <DrawerDescription>
+                                Set up your new ranking list with the options below.
+                            </DrawerDescription>
+                        </DrawerHeader>
+                        <div className="p-4 max-h-[70vh] overflow-y-auto">
+                            {formContent}
+                        </div>
+                        <DrawerFooter className="pt-2">
+                            <Button onClick={handleSubmit} disabled={isSubmitting || !formData.name.trim()}>
+                                {isSubmitting ? 'Creating...' : 'Create Rankings'}
+                            </Button>
+                            <DrawerClose asChild>
+                                <Button variant="outline">Cancel</Button>
+                            </DrawerClose>
+                        </DrawerFooter>
+                    </DrawerContent>
+                </Drawer>
+            </>
+        );
+    }
+
+    return (
+        <>
+            {triggerButton}
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-[900px]">
+                    <DialogHeader>
+                        <DialogTitle className="select-none">Build Your Customizable Rankings</DialogTitle>
+                        <DialogDescription className="select-none">
+                            Tailor your perfect rankings list with just a few clicks. Choose your sport, format, scoring below to
+                            generate a customized rankings sheet for your fantasy league.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                        <div className="space-y-4 flex flex-col justify-center">
+                            <div className="grid grid-cols-4 items-center gap-6">
+                                <Label htmlFor="sport-dialog" className="text-right select-none">Sport</Label>
+                                <Tabs value={formData.sport} className="col-span-3" onValueChange={(value) => updateFormState({ sport: value })}>
+                                    <TabsList className="grid w-full grid-cols-3">
+                                        <TabsTrigger value="nba">NBA</TabsTrigger>
+                                        <TabsTrigger value="mlb">MLB</TabsTrigger>
+                                        <TabsTrigger value="nfl">NFL</TabsTrigger>
+                                    </TabsList>
+                                </Tabs>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="format-dialog" className="text-right select-none">Format</Label>
+                                <Tabs value={formData.format} className="col-span-3" onValueChange={(value) => updateFormState({ format: value })}>
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="dynasty">Dynasty</TabsTrigger>
+                                        <TabsTrigger value="redraft">Redraft</TabsTrigger>
+                                    </TabsList>
+                                </Tabs>
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="scoring-dialog" className="text-right select-none">Scoring</Label>
+                                <Tabs value={formData.scoring} className="col-span-3" onValueChange={(value) => updateFormState({ scoring: value })}>
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="categories" disabled={formData.sport === 'nfl'}>Categories</TabsTrigger>
+                                        <TabsTrigger value="points">Points</TabsTrigger>
+                                    </TabsList>
+                                </Tabs>
+                            </div>
+                            <Separator className="my-4" />
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="name-dialog" className="text-right select-none">Name</Label>
+                                <Input id="name-dialog" value={formData.name} onChange={(e) => updateFormState({ name: e.target.value })} placeholder="e.g., My NBA Dynasty Ranks" className="col-span-3" />
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            {formData.sport !== 'nfl' && formData.scoring === 'categories' && currentSportConfig && (
+                                <div className="p-4 border rounded-md space-y-4">
+                                    {formData.sport === 'mlb' ? (
+                                        <>
+                                            <div>
+                                                <Label className="text-sm text-muted-foreground block mb-2">Hitting</Label>
+                                                <div className="flex flex-wrap gap-x-4 gap-y-3">
+                                                    {mlbHittingCategories.filter(([,catData]) => catData.group === 'hitting').map(([key]) => (
+                                                        <div key={`${key}-h-dialog`} className="flex items-center space-x-2 p-1 border rounded-md">
+                                                            <Switch id={`cat-switch-${key}-h-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-pb_blue" />
+                                                            <label htmlFor={`cat-switch-${key}-h-dialog`} className="text-sm font-medium leading-none select-none">{key}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm text-muted-foreground block mb-2">Pitching</Label>
+                                                <div className="flex flex-wrap gap-x-4 gap-y-3">
+                                                    {mlbPitchingCategories.filter(([,catData]) => catData.group === 'pitching').map(([key]) => (
+                                                        <div key={`${key}-p-dialog`} className="flex items-center space-x-2 p-1 border rounded-md">
+                                                            <Switch id={`cat-switch-${key}-p-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-pb_blue" />
+                                                            <label htmlFor={`cat-switch-${key}-p-dialog`} className="text-sm font-medium leading-none select-none">{key}</label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="flex flex-wrap gap-x-4 gap-y-3">
+                                            {categoryEntries.map(([key]) => (
+                                                <div key={`${key}-dialog`} className="flex items-center space-x-2 p-1 border rounded-md">
+                                                    <Switch id={`cat-switch-${key}-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-pb_blue" />
+                                                    <label htmlFor={`cat-switch-${key}-dialog`} className="text-sm font-medium leading-none select-none">{key}</label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {formData.sport === 'nfl' && (
+                                <div className="space-y-4 p-4 border rounded-md">
+                                    <Label className="text-left font-medium select-none block mb-3">NFL Options</Label>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="flexSetting-dialog" className="text-right select-none col-span-1">Flex</Label>
+                                        <Tabs value={formData.flexSetting} className="col-span-3" onValueChange={(value) => updateFormState({ flexSetting: value })}>
+                                            <TabsList className="grid w-full grid-cols-2">
+                                                <TabsTrigger value="superflex">Superflex</TabsTrigger>
+                                                <TabsTrigger value="1qb">1 QB</TabsTrigger>
+                                            </TabsList>
+                                        </Tabs>
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="pprType-dialog" className="text-right select-none col-span-1">PPR</Label>
+                                        <Tabs value={formData.pprType} className="col-span-3" onValueChange={(value) => updateFormState({ pprType: value })}>
+                                            <TabsList className="grid w-full grid-cols-3">
+                                                <TabsTrigger value="0ppr">Non</TabsTrigger>
+                                                <TabsTrigger value="0.5ppr">Half</TabsTrigger>
+                                                <TabsTrigger value="1ppr">Full</TabsTrigger>
+                                            </TabsList>
+                                        </Tabs>
+                                    </div>
+                                </div>
+                            )}
+                            {( (formData.sport !== 'nfl' && formData.scoring === 'points') || (formData.sport === 'nfl' && formData.scoring === 'categories') ) && (
+                                <div className="p-4 border rounded-md text-center text-sm text-muted-foreground h-full flex items-center justify-center">
+                                    <span>
+                                        {formData.sport === 'nfl' && formData.scoring === 'categories'
+                                            ? "Category selection not applicable for NFL."
+                                            : "No specific options for Points scoring in this sport."
+                                        }
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {error && <p className="text-red-500 text-sm mt-2 text-center select-none">{error}</p>}
+                    <DialogFooter className="mt-4 pt-4 border-t">
+                        {error && <p className="text-red-500 text-sm mr-auto self-center">{error}</p>}
+                        <Button variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>Cancel</Button>
+                        <Button type="submit" onClick={handleSubmit} disabled={isSubmitting || !formData.name.trim()}>
+                            {isSubmitting ? 'Creating...' : 'Create Rankings List'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 

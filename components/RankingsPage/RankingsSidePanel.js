@@ -50,68 +50,73 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
     }
 
     return (
-        <div className="rankings-selector max-w-24 rounded-lg">
+        <div className="rankings-selector rounded-lg w-full">
             <motion.div
-                className="space-y-1"
+                className="space-y-1 w-full"
                 layout="position"
             >
                 <AnimatePresence>
-                    {sortedRankings.map((ranking) => (
+                    {sortedRankings.map((ranking) => {
+                        return (
                         <motion.div
                             key={ranking._id}
-                            layout="position"
+                            layoutId={ranking._id}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{
                                 opacity: { duration: 0.2 },
                                 height: { duration: 0.2 },
-                                layout: { duration: 0.2 }
+                                layout: { duration: 0.3, type: "spring", stiffness: 500, damping: 30 }
                             }}
                             className={`
-                                grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-md
+                                group w-full grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-sm 
                                 ${activeRankingId === ranking._id
-                                    ? 'bg-pb_blue text-white shadow-sm hover:bg-pb_bluehover'
-                                    : 'bg-pb_backgroundgray hover:bg-pb_lightergray shadow-sm border border-pb_lightergray'
+                                    ? 'bg-pb_blue text-white'
+                                    : 'bg-pb_backgroundgray hover:bg-pb_lightergray text-gray-900 border border-pb_gray'
                                 }
                             `}
                             onClick={() => onSelectRanking(ranking._id)}
                         >
                             <div
-                                className={`h-full ${activeRankingId === ranking._id ? 'bg-pb_orange' : 'bg-pb_textgray hover:bg-pb_orange '}`}
+                                className={`h-full transition-colors duration-150 ease-in-out 
+                                    ${activeRankingId === ranking._id 
+                                        ? 'bg-pb_orange' 
+                                        : 'bg-gray-300 group-hover:bg-pb_orange'
+                                    }
+                                `}
                             />
-                            <div className="lg:p-2 xl:p-3">
-                                <div className={`font-bold lg:text-sm xl:text-base lg:tracking-normal xl:tracking-wider ${activeRankingId === ranking._id ? 'text-white' : 'text-pb_darkgray'}`}>
+                            <div className="px-3 py-2">
+                                <div className={`text-sm font-semibold truncate ${activeRankingId === ranking._id ? 'text-white' : 'text-gray-800'}`}>
                                     {ranking.name}
                                 </div>
 
-                                <div className="mt-1 flex flex-row justify-between items-center">
-                                    <div className={`${activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'} lg:text-2xs xl:text-2xs font-semibold xl:tracking-wider truncate`}>
-                                        {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} • 
+                                <div className="mt-1 flex flex-row justify-between items-center tracking-wide font-bold">
+                                    <div className={`text-xs lg:text-3xs truncate ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
+                                        {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} •
                                         {(() => {
                                             const scoringUpper = ranking.scoring.toUpperCase();
                                             if (scoringUpper === 'CATEGORIES') {
-                                                return <><span className="xl:hidden"> CATS</span><span className="hidden xl:inline"> CATEGORIES</span></>;
+                                                return ' CATEGORIES';
                                             }
                                             if (scoringUpper === 'POINTS') {
-                                                return <><span className="xl:hidden"> PTS</span><span className="hidden xl:inline"> POINTS</span></>;
+                                                return ' POINTS';
                                             }
                                             return ` ${scoringUpper}`;
                                         })()}
                                     </div>
-                                    <div className={`${activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'} lg:text-[9px] xl:text-[10px] xl:tracking-wider whitespace-nowrap flex items-center`}>
-                                        <HistoryIcon className={`lg:w-1.5 lg:h-1.5 xl:w-1.5 xl:h-1.5 mr-1 ${activeRankingId === ranking._id ? 'text-white' : 'text-pb_textgray'}`} />
+                                    <div className={`text-xs lg:text-3xs whitespace-nowrap flex items-center ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
+                                        <HistoryIcon className={`w-3 h-3 mr-1 ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-400'}`} />
                                         {ranking.lastUpdated ? (
                                             <>
                                                 <span className="">{formatDate(ranking.lastUpdated, true)}</span>
-                                                {/* <span className="hidden xl:inline">{formatDate(ranking.lastUpdated, false)}</span> */}
                                             </>
                                         ) : 'No Date'}
                                     </div>
                                 </div>
                             </div>
                         </motion.div>
-                    ))}
+                    );})}
                 </AnimatePresence>
             </motion.div>
         </div>

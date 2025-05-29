@@ -25,16 +25,19 @@ Key interactions:
 // import CreateAllRankingsButton from '@/components/admin/CreateAllRankingsButton.jsx';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
+import HelpButton from "@/components/RankingsPage/HelpButton"; // ADDED
+import MyRankingsButton from "@/components/RankingsPage/MyRankingsButton"; // ADDED
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
 import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerListHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"; // ADDED
 import { Skeleton } from '@/components/ui/skeleton';
 import { SPORT_CONFIGS } from '@/lib/config'; // Import SPORT_CONFIGS
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings, { useInitializeUserRankings } from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import _ from 'lodash';
-import { Menu } from 'lucide-react'; // Import Menu icon
+import { HelpCircle, LibraryBig, Menu } from 'lucide-react'; // MODIFIED: Added LibraryBig, Menu, HelpCircle
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -53,7 +56,6 @@ export default function RankingsPage() {
   const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
   const [selectedSport, setSelectedSport] = useState('NBA');
-  const [isMobileRankingsPanelOpen, setIsMobileRankingsPanelOpen] = useState(false); // State for mobile panel
   const initialLoadEffectRan = useRef(false);
 
   // -- Ref Hooks --
@@ -560,58 +562,76 @@ export default function RankingsPage() {
 
   // Main Render AFTER hooks and checks
   return (
-    <div className="container mx-auto px-0 pt-2 md:pt-2"> {/* Changed py-4 to py-2 for mobile */}
-      {/* Top bar: Hamburger, (hidden) Title, Desktop Buttons / Mobile Icon Buttons */}
-      <div className="flex justify-between items-center mb-4 md:mb-6">
-        {/* Left side: Hamburger and (hidden on mobile) Title */}
-        <div className="flex items-center gap-2"> {/* Reduced gap for mobile icon buttons */}
+    <div className="container mx-auto px-0"> {/* Changed py-4 to py-2 for mobile */}
+      {/* Top bar: Title, Desktop Buttons / Mobile Icon Buttons */}
+      <div className="flex justify-between items-center pt-0.5 md:pt-0 my-2 md:my-3">
+        {/* Left side: Title */}
+        <div className="flex items-center gap-2">
+          {/* REMOVED old hamburger button that toggled isMobileRankingsPanelOpen
           <button
-            className="md:hidden text-gray-600 hover:text-gray-900 p-1" /* Added padding to button */
+            className="lg:hidden text-gray-600 hover:text-gray-900 p-1"
             onClick={() => setIsMobileRankingsPanelOpen(!isMobileRankingsPanelOpen)}
             aria-label="Toggle rankings list"
           >
             <Menu size={28} />
           </button>
-          <h1 className="hidden md:block text-2xl font-bold tracking-wide">Rankings</h1> {/* Hidden on mobile */}
+          */}
+          <h1 className="hidden sm:block text-2xl font-bold tracking-wide">Rankings</h1>
         </div>
 
-        {/* Right side: Desktop Buttons OR Mobile Icon Buttons */}
-        {/* Desktop Buttons Container (visible md and up) */}
-        <div className="hidden md:flex items-center gap-2">
-          {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
-            <DraftModeButton
-              isDraftMode={isDraftModeActive}
-              onDraftModeChange={toggleDraftMode}
-              showDrafted={showDraftedPlayers}
-              onShowDraftedChange={toggleShowDraftedPlayers}
-              onResetDraft={resetDraftAvailability}
-              draftedCount={draftedCount}
-              activeRanking={activeRanking}
-              iconOnly={false} // Explicitly false for desktop
-            />
-          )}
-          {user && (
-            <AddRankingListButton dataset={currentSportMasterData} iconOnly={false} /> // Explicitly false for desktop
-          )}
-        </div>
+        {/* Right side: Buttons Container */}
+        <div className="flex items-center gap-2">
+          {/* "Draft Mode" & "Create New Rankings" Buttons (MD screens and UP - text + icon) */}
+          <div className="hidden md:flex items-center gap-2">
+            {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
+              <DraftModeButton
+                isDraftMode={isDraftModeActive}
+                onDraftModeChange={toggleDraftMode}
+                showDrafted={showDraftedPlayers}
+                onShowDraftedChange={toggleShowDraftedPlayers}
+                onResetDraft={resetDraftAvailability}
+                draftedCount={draftedCount}
+                activeRanking={activeRanking}
+                iconOnly={false} 
+              />
+            )}
+            {user && (
+              <AddRankingListButton dataset={currentSportMasterData} iconOnly={false} />
+            )}
+            {/* ADDED Help Button for MD+ */}
+            <HelpButton iconOnly={false} />
+          </div>
 
-        {/* Mobile Icon Buttons Container (visible below md) */}
-        <div className="md:hidden flex items-center gap-1"> {/* Reduced gap for mobile icon buttons */}
-          {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
-            <DraftModeButton
-              isDraftMode={isDraftModeActive}
-              onDraftModeChange={toggleDraftMode}
-              showDrafted={showDraftedPlayers}
-              onShowDraftedChange={toggleShowDraftedPlayers}
-              onResetDraft={resetDraftAvailability}
-              draftedCount={draftedCount}
-              activeRanking={activeRanking}
-              iconOnly={true} // True for mobile
-            />
+          {/* "My Rankings" Button (MD screens ONLY - text + icon) */}
+          {user && userRankings && userRankings.length > 0 && (
+            <div className="hidden md:inline-flex lg:hidden">
+              <MyRankingsButton onRankingSelect={handleRankingSelect} text="My Rankings" useIconOnlyStyles={false} />
+            </div>
           )}
-          {user && (
-            <AddRankingListButton dataset={currentSportMasterData} iconOnly={true} /> // True for mobile
-          )}
+
+          {/* Icon-only buttons for XS/SM screens (including "My Rankings" icon) */}
+          <div className="flex md:hidden items-center gap-1">
+            {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
+              <DraftModeButton
+                isDraftMode={isDraftModeActive}
+                onDraftModeChange={toggleDraftMode}
+                showDrafted={showDraftedPlayers}
+                onShowDraftedChange={toggleShowDraftedPlayers}
+                onResetDraft={resetDraftAvailability}
+                draftedCount={draftedCount}
+                activeRanking={activeRanking}
+                iconOnly={true}
+              />
+            )}
+            {user && (
+              <AddRankingListButton dataset={currentSportMasterData} iconOnly={true} />
+            )}
+            {/* ADDED Help Button for XS/SM - MOVED BEFORE MyRankingsButton */}
+            <HelpButton iconOnly={true} />
+            {user && userRankings && userRankings.length > 0 && (
+              <MyRankingsButton onRankingSelect={handleRankingSelect} text="Rankings" useIconOnlyStyles={true} />
+            )}
+          </div>
         </div>
       </div>
 
@@ -644,97 +664,87 @@ export default function RankingsPage() {
            </div>
          </div>
       ) : (
-        <div className="flex flex-col md:flex-row gap-6 relative">
-          {/* Mobile Rankings Panel - Absolute positioned, full width, shown/hidden */}
-          {isMobileRankingsPanelOpen && (
-            <div className="md:hidden absolute top-0 left-0 right-0 z-20 bg-white shadow-lg p-4 rounded-md border max-h-[70vh] overflow-y-auto">
-              <RankingsSidePanel
-                onSelectRanking={(rankingId) => {
-                  handleRankingSelect(rankingId);
-                  setIsMobileRankingsPanelOpen(false); // Close panel on selection
-                }}
+        <> {/* Added fragment to wrap main content and conditional panel */}
+          <div className="flex flex-col md:flex-row gap-4 relative">
+            {/* Player List Area - takes full width on mobile, constrained on desktop */}
+            <div className="flex-1 space-y-2 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)]">
+              <RankingsPlayerListHeader
+                sport={selectedSport}
+                activeRanking={activeRanking}
+                sortConfig={sortConfig}
+                onSortChange={handleSortChange}
+                enabledCategoryAbbrevs={enabledCategoryAbbrevs}
+                onCollapseAll={handleCollapseAll}
               />
-            </div>
-          )}
-
-          {/* Player List Area - takes full width on mobile, constrained on desktop */}
-          <div className="flex-1 space-y-2 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)]">
-            <RankingsPlayerListHeader
-              sport={selectedSport}
-              activeRanking={activeRanking}
-              sortConfig={sortConfig}
-              onSortChange={handleSortChange}
-              enabledCategoryAbbrevs={enabledCategoryAbbrevs}
-              onCollapseAll={handleCollapseAll}
-            />
-            <div className="flex-grow overflow-hidden">
-              {!activeRanking ? (
-                <div className="flex justify-center items-center h-full">
-                  <p>Select or create a ranking to get started.</p>
-                </div>
-              ) : isMasterDataLoading ? (
-                 <div className="space-y-2 mt-4">
-                    {/* Skeleton Table Rows - More detailed */}
-                    <div className="space-y-1">
-                      {[...Array(16)].map((_, i) => ( // Simulate multiple rows
-                        <div key={i} className="flex w-full h-[40px] mb-1 bg-white py-1">
-                          <div className="flex items-center w-[30%] px-2 space-x-3 flex-shrink-0">
-                            <Skeleton className="h-7 w-7 rounded-md flex-shrink-0" />
-                            <Skeleton className="h-4 rounded-sm w-48" />
-                          </div>
-                          <div className="flex w-[70%] h-full gap-2 flex-grow rounded-r-md">
-                            {[...Array(9)].map((_, j) => (
-                              <Skeleton key={j} className="h-full flex-1 rounded-sm" />
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+              <div className="flex-grow overflow-hidden">
+                {!activeRanking ? (
+                  <div className="flex justify-center items-center h-full">
+                    <p>Select or create a ranking to get started.</p>
                   </div>
-              ) : !isMasterDataReady ? (
-                 <div className="flex justify-center items-center h-full">
-                   <p className="text-red-500">Error loading core player data for {selectedSport}. Check console.</p>
-                 </div>
-              ) : userRankingsLoading || activeRankingLoading || !activeRanking?.rankings ? (
-                 <div className="space-y-2 mt-4">
-                    <p className="text-center text-gray-500">Loading ranking details...</p> 
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                 </div>
-              ) : activeRanking.rankings.length > 0 && 
-                  (!currentSportMasterData || !currentSportMasterData.players || _.isEmpty(currentSportMasterData.players)) ? (
-                <div className="space-y-2 mt-4">
-                    <p className="text-center text-gray-500">Preparing player data for {selectedSport}...</p>
-                    <Skeleton className="h-10 w-full opacity-50" />
-                    <Skeleton className="h-8 w-full opacity-50" />
-                    <Skeleton className="h-8 w-full opacity-50" />
-                </div>
-              ) : activeRanking.rankings && activeRanking.rankings.length === 0 && currentSportMasterData?.players && !_.isEmpty(currentSportMasterData.players) ? ( 
-                <div className="flex justify-center items-center h-full p-4"> 
-                  <p className="text-gray-600">No players found in this ranking list yet.</p>
-                </div>
-              ) : (
-                <RankingsPlayerListContainer
-                  ref={playerListRef}
-                  sport={selectedSport}
-                  activeRanking={activeRanking}
-                  sortConfig={sortConfig}
-                  collapseAllTrigger={collapseAllTrigger}
-                  enabledCategoryAbbrevs={enabledCategoryAbbrevs}
-                  playerIdentities={playerIdentities}
-                  seasonalStatsData={seasonalStatsData}
-                  standardEcrRankings={standardEcrRankings}
-                  redraftEcrRankings={redraftEcrRankings}
-                />
-              )}
+                ) : isMasterDataLoading ? (
+                   <div className="space-y-2 mt-4">
+                      {/* Skeleton Table Rows - More detailed */}
+                      <div className="space-y-1">
+                        {[...Array(16)].map((_, i) => ( // Simulate multiple rows
+                          <div key={i} className="flex w-full h-[40px] mb-1 bg-white py-1">
+                            <div className="flex items-center w-[30%] px-2 space-x-3 flex-shrink-0">
+                              <Skeleton className="h-7 w-7 rounded-md flex-shrink-0" />
+                              <Skeleton className="h-4 rounded-sm w-48" />
+                            </div>
+                            <div className="flex w-[70%] h-full gap-2 flex-grow rounded-r-md">
+                              {[...Array(9)].map((_, j) => (
+                                <Skeleton key={j} className="h-full flex-1 rounded-sm" />
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                ) : !isMasterDataReady ? (
+                   <div className="flex justify-center items-center h-full">
+                     <p className="text-red-500">Error loading core player data for {selectedSport}. Check console.</p>
+                   </div>
+                ) : userRankingsLoading || activeRankingLoading || !activeRanking?.rankings ? (
+                   <div className="space-y-2 mt-4">
+                      <p className="text-center text-gray-500">Loading ranking details...</p> 
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-8 w-full" />
+                   </div>
+                ) : activeRanking.rankings.length > 0 && 
+                    (!currentSportMasterData || !currentSportMasterData.players || _.isEmpty(currentSportMasterData.players)) ? (
+                  <div className="space-y-2 mt-4">
+                      <p className="text-center text-gray-500">Preparing player data for {selectedSport}...</p>
+                      <Skeleton className="h-10 w-full opacity-50" />
+                      <Skeleton className="h-8 w-full opacity-50" />
+                      <Skeleton className="h-8 w-full opacity-50" />
+                  </div>
+                ) : activeRanking.rankings && activeRanking.rankings.length === 0 && currentSportMasterData?.players && !_.isEmpty(currentSportMasterData.players) ? ( 
+                  <div className="flex justify-center items-center h-full p-4"> 
+                    <p className="text-gray-600">No players found in this ranking list yet.</p>
+                  </div>
+                ) : (
+                  <RankingsPlayerListContainer
+                    ref={playerListRef}
+                    sport={selectedSport}
+                    activeRanking={activeRanking}
+                    sortConfig={sortConfig}
+                    collapseAllTrigger={collapseAllTrigger}
+                    enabledCategoryAbbrevs={enabledCategoryAbbrevs}
+                    playerIdentities={playerIdentities}
+                    seasonalStatsData={seasonalStatsData}
+                    standardEcrRankings={standardEcrRankings}
+                    redraftEcrRankings={redraftEcrRankings}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Desktop Side Panel - sticky, hidden on mobile */}
+            <div className="hidden lg:block lg:w-56 xl:w-64 sticky top-4 self-start">
+              <RankingsSidePanel onSelectRanking={handleRankingSelect} />
             </div>
           </div>
-
-          {/* Desktop Side Panel - sticky, hidden on mobile */}
-          <div className="hidden lg:block lg:w-56 xl:w-64 sticky top-4 self-start">
-            <RankingsSidePanel onSelectRanking={handleRankingSelect} />
-          </div>
-        </div>
+        </>
       )}
        {/* <Footer /> */}
     </div>

@@ -42,7 +42,7 @@ const DraftModeButton = ({
                         `bg-gradient-to-r from-pb_orange-400 via-pb_orange-300 to-pb_orange-500 
                         text-white border-transparent 
                        shadow-md`,
-                       iconOnly && "px-2 py-2",
+                       iconOnly && "p-2.5",
                        className
                     )}
                     title={iconOnly ? "Draft Mode" : undefined}
