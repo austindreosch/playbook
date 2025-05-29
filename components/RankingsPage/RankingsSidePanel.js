@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { AnimatePresence, motion } from 'framer-motion';
 import React, { useCallback, useMemo } from 'react';
 
 const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
@@ -51,74 +50,62 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
 
     return (
         <div className="rankings-selector rounded-lg w-full">
-            <motion.div
+            <div
                 className="space-y-1 w-full"
-                layout="position"
             >
-                <AnimatePresence>
-                    {sortedRankings.map((ranking) => {
-                        return (
-                        <motion.div
-                            key={ranking._id}
-                            layoutId={ranking._id}
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{
-                                opacity: { duration: 0.2 },
-                                height: { duration: 0.2 },
-                                layout: { duration: 0.3, type: "spring", stiffness: 500, damping: 30 }
-                            }}
-                            className={`
-                                group w-full grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-sm 
-                                ${activeRankingId === ranking._id
-                                    ? 'bg-pb_blue text-white'
-                                    : 'bg-pb_backgroundgray hover:bg-pb_lightergray text-gray-900 border border-pb_gray'
+                {sortedRankings.map((ranking) => {
+                    return (
+                    <div
+                        key={ranking._id}
+                        className={`
+                            group w-full grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-sm 
+                            ${activeRankingId === ranking._id
+                                ? 'bg-pb_blue text-white'
+                                : 'bg-pb_backgroundgray hover:bg-pb_lightergray text-gray-900 border border-pb_gray'
+                            }
+                        `}
+                        onClick={() => onSelectRanking(ranking._id)}
+                    >
+                        <div
+                            className={`h-full transition-colors duration-150 ease-in-out 
+                                ${activeRankingId === ranking._id 
+                                    ? 'bg-pb_orange' 
+                                    : 'bg-gray-300 group-hover:bg-pb_orange'
                                 }
                             `}
-                            onClick={() => onSelectRanking(ranking._id)}
-                        >
-                            <div
-                                className={`h-full transition-colors duration-150 ease-in-out 
-                                    ${activeRankingId === ranking._id 
-                                        ? 'bg-pb_orange' 
-                                        : 'bg-gray-300 group-hover:bg-pb_orange'
-                                    }
-                                `}
-                            />
-                            <div className="px-3 py-2">
-                                <div className={`text-sm font-semibold truncate ${activeRankingId === ranking._id ? 'text-white' : 'text-gray-800'}`}>
-                                    {ranking.name}
-                                </div>
+                        />
+                        <div className="px-3 py-2">
+                            <div className={`text-sm font-semibold truncate ${activeRankingId === ranking._id ? 'text-white' : 'text-gray-800'}`}>
+                                {ranking.name}
+                            </div>
 
-                                <div className="mt-1 flex flex-row justify-between items-center tracking-wide font-bold">
-                                    <div className={`text-xs lg:text-3xs truncate ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
-                                        {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} •
-                                        {(() => {
-                                            const scoringUpper = ranking.scoring.toUpperCase();
-                                            if (scoringUpper === 'CATEGORIES') {
-                                                return ' CATEGORIES';
-                                            }
-                                            if (scoringUpper === 'POINTS') {
-                                                return ' POINTS';
-                                            }
-                                            return ` ${scoringUpper}`;
-                                        })()}
-                                    </div>
-                                    <div className={`text-xs lg:text-3xs whitespace-nowrap flex items-center ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
-                                        <HistoryIcon className={`w-3 h-3 mr-1 ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-400'}`} />
-                                        {ranking.lastUpdated ? (
-                                            <>
-                                                <span className="">{formatDate(ranking.lastUpdated, true)}</span>
-                                            </>
-                                        ) : 'No Date'}
-                                    </div>
+                            <div className="mt-1 flex flex-row justify-between items-center tracking-wide font-bold">
+                                <div className={`text-xs lg:text-3xs truncate ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
+                                    {ranking.sport.toUpperCase()} • {ranking.format.toUpperCase()} •
+                                    {(() => {
+                                        const scoringUpper = ranking.scoring.toUpperCase();
+                                        if (scoringUpper === 'CATEGORIES') {
+                                            return ' CATEGORIES';
+                                        }
+                                        if (scoringUpper === 'POINTS') {
+                                            return ' POINTS';
+                                        }
+                                        return ` ${scoringUpper}`;
+                                    })()}
+                                </div>
+                                <div className={`text-xs lg:text-3xs whitespace-nowrap flex items-center ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
+                                    <HistoryIcon className={`w-3 h-3 mr-1 ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-400'}`} />
+                                    {ranking.lastUpdated ? (
+                                        <>
+                                            <span className="">{formatDate(ranking.lastUpdated, true)}</span>
+                                        </>
+                                    ) : 'No Date'}
                                 </div>
                             </div>
-                        </motion.div>
-                    );})}
-                </AnimatePresence>
-            </motion.div>
+                        </div>
+                    </div>
+                );})}
+            </div>
         </div>
     );
 });
