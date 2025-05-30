@@ -22,7 +22,7 @@ export default function Testimonials() {
               <span className='ml-2 font-bold'>Have ideas, questions, or feedback?</span>
             </div>
             <span className="text-gray-700 text-base mt-2">
-              I'd love to hear from you — {' '}
+              I&apos;d love to hear from you — {' '}
               <a
                 href="mailto:austin@playbookfantasy.com"
                 className="text-pb_blue break-all"
