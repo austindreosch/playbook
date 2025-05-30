@@ -15,7 +15,7 @@ import RankingsPlayerListSkeleton from './RankingsPlayerListSkeleton';
 
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220;
-const MOBILE_ROW_HEIGHT = 60;
+const MOBILE_ROW_HEIGHT = 48;
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,

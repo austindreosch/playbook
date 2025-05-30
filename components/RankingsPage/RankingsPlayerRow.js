@@ -7,7 +7,7 @@ import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
+import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import EmptyStatIndicator from '../common/EmptyStatIndicator';
 import BullseyeIcon from '../icons/BullseyeIcon';
@@ -175,7 +175,9 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                                 {formattedValue}
                             </span>
                         ) : (
-                            <EmptyStatIndicator />
+                            <div className="flex items-center justify-center w-full h-full">
+                                <EmptyStatIndicator />
+                            </div>
                         )}
                     </div>
                 );
@@ -412,74 +414,108 @@ const RankingsPlayerRow = memo(({
                     // `h-auto` is fine, or a fixed height if preferred for mobile rows
                 )}
             >
-                {/* Top section: Player Info */}
-                <div className="flex items-center py-0.5">
-                    <div
-                        className={cn(
-                            "text-pb_textgray mr-1",
-                            (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
-                        )}
-                        style={{ pointerEvents: 'auto' }} // Ensure this is set
-                        {...attributes}
-                        {...(isRankSorted && !isDraftMode ? listeners : {})}
-                        onPointerDownCapture={(event) => {
-                            if (!isRankSorted) {
-                                event.preventDefault(); event.stopPropagation();
-                                toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while sorting by a stat.", variant: "destructive", duration: 3000 });
-                            } else if (isDraftMode) {
-                                event.preventDefault(); event.stopPropagation();
-                                toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while in Draft Mode.", variant: "destructive", duration: 3000 });
-                            }
-                        }}
-                        title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
-                    >
-                        <GripVerticalIcon className="h-5 w-5" />
-                    </div>
+                {/* Top section: Player Info - MODIFIED HERE */}
+                {(() => {
+                    const numCategories = categories?.length || 0;
+                    const totalCellsInStatBar = numCategories + 1;
 
-                    {isDraftMode && (
-                        <div className={cn(
-                            "mr-1.5 h-4 w-4 rounded-sm flex items-center justify-center border",
-                            !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray"
-                        )}>
-                            <Button
-                                variant="ghost" size="icon"
-                                className={`h-full w-full rounded-sm flex items-center justify-center ${
-                                    (player.draftModeAvailable ?? true)
-                                        ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover'
-                                        : 'text-pb_orange-600 hover:bg-pb_orange hover:text-white'
-                                    }`}
-                                onClick={(e) => { e.stopPropagation(); onToggleDraftStatus(!(player.draftModeAvailable ?? true)); }}
-                                title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
-                            >
-                                {(player.draftModeAvailable ?? true) ? <Check className="h-4 w-4 stroke-current stroke-2" /> : <RotateCcw className="h-4 w-4 opacity-100" />}
-                            </Button>
+                    const dragHandleElement = (
+                        <div
+                            className={cn(
+                                "text-pb_textgray h-full flex items-center justify-center", // Ensure full height and centered for grid cell
+                                (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
+                            )}
+                            style={{ pointerEvents: 'auto' }}
+                            {...attributes}
+                            {...(isRankSorted && !isDraftMode ? listeners : {})}
+                            onPointerDownCapture={(event) => {
+                                if (!isRankSorted) {
+                                    event.preventDefault(); event.stopPropagation();
+                                    toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while sorting by a stat.", variant: "destructive", duration: 3000 });
+                                } else if (isDraftMode) {
+                                    event.preventDefault(); event.stopPropagation();
+                                    toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while in Draft Mode.", variant: "destructive", duration: 3000 });
+                                }
+                            }}
+                            title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
+                        >
+                            <GripHorizontalIcon className="h-5 w-5" />
                         </div>
-                    )}
+                    );
 
-                    <div className={cn(
-                        "w-6 h-4 text-2xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
-                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray",
-                        !isRankSorted ? 'bg-blue-50' : ''
-                    )}>{rank}</div>
+                    const playerInfoRestContent = (
+                        <>
+                            {isDraftMode && (
+                                <div className={cn(
+                                    "mr-1.5 h-4 w-4 rounded-sm flex items-center justify-center border",
+                                    !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray"
+                                )}>
+                                    <Button
+                                        variant="ghost" size="icon"
+                                        className={`h-full w-full rounded-sm flex items-center justify-center ${
+                                            (player.draftModeAvailable ?? true)
+                                                ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover'
+                                                : 'text-pb_orange-600 hover:bg-pb_orange hover:text-white'
+                                            }`}
+                                        onClick={(e) => { e.stopPropagation(); onToggleDraftStatus(!(player.draftModeAvailable ?? true)); }}
+                                        title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
+                                    >
+                                        {(player.draftModeAvailable ?? true) ? <Check className="h-4 w-4 stroke-current stroke-2" /> : <RotateCcw className="h-4 w-4 opacity-100" />}
+                                    </Button>
+                                </div>
+                            )}
 
-                    <img
-                        src={playerImage || defaultImageSrc}
-                        alt={playerName}
-                        className="w-4 h-4 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
-                        loading="lazy" width="24" height="24"
-                        onError={handleImageError}
-                    />
+                            <div className={cn(
+                                "w-6 h-4 text-2xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
+                                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray",
+                                !isRankSorted ? 'bg-blue-50' : ''
+                            )}>{rank}</div>
 
-                    <div className="flex-grow min-w-0 mr-2">
-                        <div className="font-bold text-2xs truncate">{playerName}</div>
-                    </div>
+                            <img
+                                src={playerImage || defaultImageSrc}
+                                alt={playerName}
+                                className="w-4 h-4 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
+                                loading="lazy" width="24" height="24"
+                                onError={handleImageError}
+                            />
 
-                    <div className="grid grid-cols-3 items-center text-3xs text-pb_textlightgray flex-shrink-0 w-24 pr-2">
-                        <span className="text-center tracking-wider">{playerPosition}</span>
-                        <span className="text-center tracking-wider">{age}</span>
-                        <span className="text-center tracking-wider">{teamAbbreviation}</span>
-                    </div>
-                </div>
+                            <div className="flex-grow min-w-0 mr-2">
+                                <div className="font-bold text-2xs truncate">{playerName}</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 items-center text-3xs text-pb_textlightgray flex-shrink-0 w-24 pr-2">
+                                <span className="text-center tracking-wider">{playerPosition}</span>
+                                <span className="text-center tracking-wider">{age}</span>
+                                <span className="text-center tracking-wider">{teamAbbreviation}</span>
+                            </div>
+                        </>
+                    );
+
+                    if (totalCellsInStatBar > 1) {
+                        return (
+                            <div // Top bar - GRID version
+                                className="grid items-center py-0.5"
+                                style={{ gridTemplateColumns: `repeat(${totalCellsInStatBar}, minmax(0, 1fr))` }}
+                            >
+                                {dragHandleElement} {/* Drag handle in column 1 */}
+                                <div // Wrapper for the rest of player info, starting column 2
+                                    className="flex items-center" 
+                                    style={{ gridColumn: `2 / span ${totalCellsInStatBar - 1}` }}
+                                >
+                                    {playerInfoRestContent}
+                                </div>
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div className="flex items-center py-0.5"> {/* Top bar - original FLEX version */}
+                                {dragHandleElement}
+                                {playerInfoRestContent}
+                            </div>
+                        );
+                    }
+                })()}
+                {/* End of Top section: Player Info */}
 
                 {/* Bottom section: Stats */}
                 <div className="flex w-full h-5 items-center bg-white gap-0">
