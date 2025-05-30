@@ -671,7 +671,7 @@ export default function RankingsPage() {
         <> {/* Added fragment to wrap main content and conditional panel */}
           <div className="flex flex-col md:flex-row gap-4 relative">
             {/* Player List Area - takes full width on mobile, constrained on desktop */}
-            <div className="flex-1 space-y-2 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)]">
+            <div className="flex-1 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)]">
               <RankingsPlayerListHeader
                 sport={selectedSport}
                 activeRanking={activeRanking}
@@ -682,7 +682,7 @@ export default function RankingsPage() {
                 isHeaderOptionsExpanded={isHeaderOptionsExpanded}
                 onToggleHeaderOptions={() => setIsHeaderOptionsExpanded(!isHeaderOptionsExpanded)}
               />
-              <div className="flex-grow overflow-hidden">
+              <div className="flex-grow overflow-hidden pt-1">
                 {!activeRanking ? (
                   <div className="flex justify-center items-center h-full">
                     <p>Select or create a ranking to get started.</p>

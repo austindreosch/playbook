@@ -16,6 +16,8 @@ import RankingsPlayerListSkeleton from './RankingsPlayerListSkeleton';
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220;
 const MOBILE_ROW_HEIGHT = 48;
+const MOBILE_EXPANDED_ROW_HEIGHT = 158
+;
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
@@ -155,10 +157,11 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         const isExpanded = expandedRows.has(player.id);
 
-        if (isExpanded) {
-            return EXPANDED_ROW_HEIGHT;
+        if (isMobile) {
+            return isExpanded ? MOBILE_EXPANDED_ROW_HEIGHT : MOBILE_ROW_HEIGHT;
         }
-        return isMobile ? MOBILE_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
+        // Desktop
+        return isExpanded ? EXPANDED_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
     }, [playersToDisplay, expandedRows, isMobile]);
 
     const Row = useCallback(({ index, style }) => {

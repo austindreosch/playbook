@@ -40,6 +40,19 @@ module.exports = {
         '11.5': '2.875rem',
         '12.5': '3.125rem',
       },
+      height: {
+        '2.5': '0.625rem',
+        '3.5': '0.875rem',
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+        '6.5': '1.625rem',
+        '7.5': '1.875rem',
+        '8.5': '2.125rem',
+        '9.5': '2.375rem',
+        '10.5': '2.625rem',
+        '11.5': '2.875rem',
+        '12.5': '3.125rem',
+      },
       gridTemplateColumns: {
         '13': 'repeat(13, minmax(0, 1fr))',
         '14': 'repeat(14, minmax(0, 1fr))',
@@ -77,7 +90,12 @@ module.exports = {
       fontSize: {
         '2xs': '.650rem',
         '3xs': '.600rem',
-        '4xs': '.550rem'
+        '4xs': '.550rem',
+        '5xs': '.500rem',
+        '6xs': '.450rem',
+        '7xs': '.400rem',
+        '8xs': '.350rem',
+        '9xs': '.300rem',
       },
       fontFamily: {},
       colors: {

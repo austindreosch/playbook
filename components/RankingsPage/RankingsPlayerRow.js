@@ -413,6 +413,7 @@ const RankingsPlayerRow = memo(({
                         : "bg-white hover:bg-gray-50",
                     // `h-auto` is fine, or a fixed height if preferred for mobile rows
                 )}
+                onClick={onToggleExpand}
             >
                 {/* Top section: Player Info - MODIFIED HERE */}
                 {(() => {
@@ -531,6 +532,147 @@ const RankingsPlayerRow = memo(({
                         isMobile={isMobile}
                     />
                 </div>
+
+                {/* --- NEW MOBILE EXPANDED SECTION --- */}
+                {isMobile && isExpanded && (() => {
+                    const numCategories = categories?.length || 0;
+                    const totalStatColumns = numCategories + 1; // For Z-Score slot + Category slots
+
+                    return (
+                        <div className="border-t border-pb_lightgray bg-gray-50 text-xs">
+                            {/* Row 1: Secondary Stats Display */}
+                            <div 
+                                className="grid items-stretch h-auto mb-1.5 gap-px mt-1"
+                                style={{ gridTemplateColumns: `repeat(${totalStatColumns}, minmax(0, 1fr))` }}
+                            >
+                                {/* Cell 1: "LAST 30" text & trend */} 
+                                <div className="flex flex-col items-center justify-center text-6xs px-0.5 py-0.5">
+                                    <span className="text-pb_textgray leading-tight font-medium">{secondaryStatsLabel}</span>
+                                    {typeof secondaryStatsTrend === 'number' && (
+                                        <span className={`font-semibold flex items-center leading-tight ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}>
+                                            {secondaryStatsTrend !== 0 && (secondaryStatsTrend < 0 ? '▼' : '▲')}
+                                            <span className="ml-0.5">{Math.abs(secondaryStatsTrend)}%</span>
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Cells 2 to N+1: Secondary Stat Values */} 
+                                {categories.map(categoryAbbrev => {
+                                    const statObject = secondaryStatsData?.[categoryAbbrev];
+                                    const rawValue = statObject?.value;
+                                    let displayNode;
+                                    let stripBgColor = '#E0E0E0'; // Default light gray for strip
+
+                                    if (rawValue !== null && rawValue !== undefined) {
+                                        let formattedValueString = '';
+                                        if (typeof rawValue === 'number') {
+                                            const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                                            const categoryConfig = sportConfig?.categories?.[categoryAbbrev];
+                                            const statDisplayConfig = categoryConfig?.statDisplay;
+                                            let decimals = (categoryAbbrev === 'AVG' || categoryAbbrev === 'OBP' || categoryAbbrev === 'SLG') ? 3 : 1;
+                                            let trimTrailingZeros = true;
+                                            let showLeadingZero = !(categoryAbbrev === 'AVG' || categoryAbbrev === 'OBP' || categoryAbbrev === 'SLG');
+
+                                            if (statDisplayConfig) {
+                                                decimals = typeof statDisplayConfig.decimals === 'number' ? statDisplayConfig.decimals : decimals;
+                                                trimTrailingZeros = typeof statDisplayConfig.trimTrailingZeros === 'boolean' ? statDisplayConfig.trimTrailingZeros : trimTrailingZeros;
+                                                showLeadingZero = typeof statDisplayConfig.showLeadingZero === 'boolean' ? statDisplayConfig.showLeadingZero : showLeadingZero;
+                                            }
+                                            if (trimTrailingZeros) {
+                                                formattedValueString = parseFloat(rawValue.toFixed(decimals)).toString();
+                                            } else {
+                                                formattedValueString = rawValue.toFixed(decimals);
+                                            }
+                                            if (!showLeadingZero) {
+                                                if (formattedValueString.startsWith("0.")) {
+                                                    formattedValueString = formattedValueString.substring(1);
+                                                } else if (formattedValueString.startsWith("-0.")) {
+                                                    formattedValueString = "-" + formattedValueString.substring(2);
+                                                }
+                                            }
+                                        } else {
+                                            formattedValueString = String(rawValue);
+                                        }
+                                        displayNode = formattedValueString;
+                                        if (statObject?.colors && typeof statObject.colors.bgColor === 'string') {
+                                            stripBgColor = statObject.colors.bgColor;
+                                        }
+                                    } else {
+                                        displayNode = <EmptyStatIndicator />;
+                                    }
+
+                                    return (
+                                        <div 
+                                            key={categoryAbbrev} 
+                                            className="flex flex-col items-center justify-end select-none relative text-3xs rounded-t-sm h-full bg-white rounded-b-sm border-t border-x border-pb_lightergray "
+                                        >
+                                            <span className="text-pb_midgray pb-0.5 pt-1 leading-none ">{displayNode}</span>
+                                            <div style={{ backgroundColor: stripBgColor }} className="w-full h-2 self-end rounded-b-sm border-b border-pb_lightergray"></div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Row 2: ECRs, Player Icons, Action Buttons - Revised Layout */}
+                            <div className="flex flex-row items-start mt-2"> {/* Main flex container */} 
+                                {/* Left Content Area (ECRs & Flag Button) - on gray background */}
+                                <div className="flex flex-col space-y-2 mx-2 shrink-0 items-start"> {/* Changed items-center to items-start */} 
+                                    {/* ECRs - side-by-side */}
+                                    <div className="flex flex-row space-x-2 items-start"> {/* ECRs in a row, items-start for labels */} 
+                                        {/* Standard ECR */}
+                                        <div className="flex flex-col items-center">
+                                            <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-pb_lightergray w-7 h-4'> 
+                                                <span className="font-bold text-3xs">{standardEcrRank ?? '--'}</span> 
+                                            </div>
+                                            <div className='text-7xs tracking-wider text-pb_textgray uppercase'>Default</div> 
+                                        </div>
+
+                                        {/* Redraft ECR (Conditional) */}
+                                        {activeRanking?.format?.toLowerCase() === 'dynasty' && (
+                                            <div className="flex flex-col items-center">
+                                                <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-pb_lightergray w-7 h-4'> 
+                                                    <span className="font-bold text-3xs">{redraftEcrRank ?? '--'}</span> 
+                                                </div>
+                                                <div className='text-7xs tracking-wider text-pb_textgray uppercase'>Redraft</div> 
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Flag Button - below ECRs, centered if ECRs don't take full width or using w-auto for flag button */}
+                                    <div>
+                                        <div className="bg-pb_green hover:bg-pb_green_darker text-white font-medium rounded-sm shadow-sm w-7 h-4 flex items-center justify-center">
+                                            <FlagIcon className={`w-3 h-3 text-white`} /> 
+                                        </div>
+                                        <div className='text-7xs tracking-wider text-pb_textgray uppercase items-center justify-center' >STATUS</div> 
+                                    </div>
+                                </div>
+
+                                {/* Right White Box Area (Buttons & Empty Space) */}
+                                <div className="flex-grow bg-white shadow-xs border-t border-l border-pb_lightergray h-full">
+                                    <div className="flex flex-row items-start"> {/* Inner flex for buttons and empty space */}
+                                        {/* Column 1 of White Box: Action Buttons (NEWS, TIPS, TRENDS) */}
+                                        <div className="flex flex-col mr-1.5 shrink-0">
+                                            <button className="text-6xs tracking-wide bg-gray-700 text-white hover:bg-gray-600 px-1.5 py-1 rounded-tl-sm w-full text-center disabled">
+                                                NEWS
+                                            </button>
+                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1  border-r border-y border-pb_lightergray w-full text-center disabled">
+                                                TIPS
+                                            </button>
+                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1 border-r border-pb_lightergray w-full text-center disabled">
+                                                TRENDS
+                                            </button>
+                                        </div>
+                                        {/* Column 2 of White Box: Empty space */}
+                                        <div className="flex-grow min-h-[60px]"> {/* Ensures white box has some height */} 
+                                            {/* This div is intentionally empty */}
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    );
+                })()}
+                {/* --- END MOBILE EXPANDED SECTION --- */}
             </div>
         );
     }
