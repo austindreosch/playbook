@@ -22,7 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
-import { ArrowUpNarrowWideIcon, Loader2, SigmaSquareIcon } from 'lucide-react';
+import { ArrowUpNarrowWideIcon, Loader2, MoreHorizontal, SigmaSquareIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
@@ -38,10 +38,11 @@ const RankingsPlayerListHeader = ({
     onCollapseAll = () => { },
     enabledCategoryAbbrevs = [],
     activeRanking,
-    statPathMapping = {}
+    statPathMapping = {},
+    isHeaderOptionsExpanded,
+    onToggleHeaderOptions,
 }) => {
     const { updateCategories, updateRankingName, deleteRanking } = useUserRankings();
-    const [expanded, setExpanded] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
     const [namePopoverOpen, setNamePopoverOpen] = useState(false);
@@ -58,18 +59,16 @@ const RankingsPlayerListHeader = ({
 
     const handleSave = async () => {
         try {
-            // Save changes to the database
             setIsSaving(true);
             try {
                 await onSave();
-                // Add minimum delay of 200ms
                 await new Promise(resolve => setTimeout(resolve, 300));
             } finally {
                 setIsSaving(false);
             }
-
-            // Collapse the component
-            setExpanded(false);
+            if (isHeaderOptionsExpanded && typeof onToggleHeaderOptions === 'function') {
+                onToggleHeaderOptions();
+            }
         } catch (error) {
             console.error('Error saving changes:', error);
         }
@@ -176,7 +175,7 @@ const RankingsPlayerListHeader = ({
                     {/* Header Settings Expand Trigger: Empty, hoverable space - DESKTOP ONLY */}
                     <div
                         className="flex flex-1 h-10 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer min-w-0"
-                        onClick={() => setExpanded(!expanded)}
+                        onClick={onToggleHeaderOptions}
                     >
                         {/* Intentionally Empty */}
                     </div>
@@ -243,7 +242,7 @@ const RankingsPlayerListHeader = ({
             </div>
 
             {/* Expanded Content (for desktop header settings) */}
-            {expanded && (
+            {isHeaderOptionsExpanded && (
                 <div className="expanded-content border-t p-1 bg-gray-50 border rounded-b-sm grid grid-cols-9 gap-2">
                     {/* Details */}
                     <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 pb-2 space-y-1 flex flex-col justify-between">

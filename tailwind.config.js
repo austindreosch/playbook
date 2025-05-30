@@ -27,6 +27,19 @@ module.exports = {
   },
   theme: {
     extend: {
+      width: {
+        '2.5': '0.625rem',
+        '3.5': '0.875rem',
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+        '6.5': '1.625rem',
+        '7.5': '1.875rem',
+        '8.5': '2.125rem',
+        '9.5': '2.375rem',
+        '10.5': '2.625rem',
+        '11.5': '2.875rem',
+        '12.5': '3.125rem',
+      },
       gridTemplateColumns: {
         '13': 'repeat(13, minmax(0, 1fr))',
         '14': 'repeat(14, minmax(0, 1fr))',
@@ -63,7 +76,8 @@ module.exports = {
       },
       fontSize: {
         '2xs': '.650rem',
-        '3xs': '.600rem'
+        '3xs': '.600rem',
+        '4xs': '.550rem'
       },
       fontFamily: {},
       colors: {
@@ -71,6 +85,7 @@ module.exports = {
         pb_darkgrayhover: '#4c4c4c',
         pb_midgray: '#747474',
         pb_textgray: '#888888',
+        pb_textlightgray: '#999999',
         pb_lightgray: '#d7d7d7',
         pb_lightergray: '#ebebeb',
         pb_backgroundgray: '#f4f4f4',

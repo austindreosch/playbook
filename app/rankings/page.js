@@ -25,19 +25,21 @@ Key interactions:
 // import CreateAllRankingsButton from '@/components/admin/CreateAllRankingsButton.jsx';
 import AddRankingListButton from '@/components/RankingsPage/AddRankingListButton';
 import DraftModeButton from '@/components/RankingsPage/DraftModeButton';
-import HelpButton from "@/components/RankingsPage/HelpButton"; // ADDED
-import MyRankingsButton from "@/components/RankingsPage/MyRankingsButton"; // ADDED
+import HelpButton from "@/components/RankingsPage/HelpButton";
+import MobileCollapseButton from '@/components/RankingsPage/MobileCollapseButton';
+import MobileHeaderOptionsButton from '@/components/RankingsPage/MobileHeaderOptionsButton';
+import MyRankingsButton from "@/components/RankingsPage/MyRankingsButton";
 import RankingsPlayerListContainer from '@/components/RankingsPage/RankingsPlayerListContainer';
 import RankingsPlayerListHeader from '@/components/RankingsPage/RankingsPlayerListHeader';
 import RankingsSidePanel from '@/components/RankingsPage/RankingsSidePanel';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"; // ADDED
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from '@/components/ui/skeleton';
-import { SPORT_CONFIGS } from '@/lib/config'; // Import SPORT_CONFIGS
+import { SPORT_CONFIGS } from '@/lib/config';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings, { useInitializeUserRankings } from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import _ from 'lodash';
-import { HelpCircle, LibraryBig, Menu } from 'lucide-react'; // MODIFIED: Added LibraryBig, Menu, HelpCircle
+import { HelpCircle, LibraryBig, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -57,6 +59,8 @@ export default function RankingsPage() {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
   const [selectedSport, setSelectedSport] = useState('NBA');
   const initialLoadEffectRan = useRef(false);
+  const [isCollapsingRows, setIsCollapsingRows] = useState(false);
+  const [isHeaderOptionsExpanded, setIsHeaderOptionsExpanded] = useState(false);
 
   // -- Ref Hooks --
   const listContainerRef = useRef(null);
@@ -100,7 +104,9 @@ export default function RankingsPage() {
 
   // -- Callback Hooks (Define BEFORE useEffects that use them) --
   const handleCollapseAll = useCallback(() => {
+    setIsCollapsingRows(true);
     setCollapseAllTrigger(prev => prev + 1);
+    setTimeout(() => setIsCollapsingRows(false), 700);
   }, []);
 
   // Memoize handleRankingSelect to stabilize its reference for the initial load useEffect
@@ -145,7 +151,7 @@ export default function RankingsPage() {
         setIsPageLoading(false); // Set loading false for the page
         setCollapseAllTrigger(prev => prev + 1); // Collapse rows after new ranking is selected
     }
-  }, [selectAndTouchRanking, setPageError]); // selectAndTouchRanking and setPageError are dependencies
+  }, [selectAndTouchRanking, setPageError]);
 
   const handleSortChange = useCallback((newKey_abbreviation) => {
     let sortKeyToSet = null;
@@ -174,7 +180,7 @@ export default function RankingsPage() {
       return { enabledCategoryAbbrevs: [], statPathMapping: {} };
     }
     const mapping = currentSportConfig.statPathMapping || {};
-    const derivedDefinitions = currentSportConfig.derivedStatDefinitions || {}; // Get derived stat definitions
+    const derivedDefinitions = currentSportConfig.derivedStatDefinitions || {};
 
     let enabledAbbrevs = Object.entries(activeRanking.categories)
       .filter(([_, catData]) => catData.enabled)
@@ -205,7 +211,7 @@ export default function RankingsPage() {
 
     return {
       enabledCategoryAbbrevs: finalEnabledAbbrevs,
-      statPathMapping: mapping // Keep original statPathMapping for other uses
+      statPathMapping: mapping
     };
   }, [currentSportConfig, activeRanking?.categories, selectedSport, activeRanking?.scoring, activeRanking?.pprSetting]);
 
@@ -567,20 +573,11 @@ export default function RankingsPage() {
       <div className="flex justify-between items-center pt-0.5 md:pt-0 my-2 md:my-3">
         {/* Left side: Title */}
         <div className="flex items-center gap-2">
-          {/* REMOVED old hamburger button that toggled isMobileRankingsPanelOpen
-          <button
-            className="lg:hidden text-gray-600 hover:text-gray-900 p-1"
-            onClick={() => setIsMobileRankingsPanelOpen(!isMobileRankingsPanelOpen)}
-            aria-label="Toggle rankings list"
-          >
-            <Menu size={28} />
-          </button>
-          */}
-          <h1 className="hidden sm:block text-2xl font-bold tracking-wide">Rankings</h1>
+          <h1 className="hidden md:block text-2xl font-bold tracking-wide">Rankings</h1>
         </div>
 
-        {/* Right side: Buttons Container */}
-        <div className="flex items-center gap-2">
+        {/* Right side: Buttons Container - MODIFIED HERE */}
+        <div className="flex flex-1 items-center justify-end gap-2">
           {/* "Draft Mode" & "Create New Rankings" Buttons (MD screens and UP - text + icon) */}
           <div className="hidden md:flex items-center gap-2">
             {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
@@ -592,13 +589,12 @@ export default function RankingsPage() {
                 onResetDraft={resetDraftAvailability}
                 draftedCount={draftedCount}
                 activeRanking={activeRanking}
-                iconOnly={false} 
+                iconOnly={false}
               />
             )}
             {user && (
               <AddRankingListButton dataset={currentSportMasterData} iconOnly={false} />
             )}
-            {/* ADDED Help Button for MD+ */}
             <HelpButton iconOnly={false} />
           </div>
 
@@ -609,28 +605,36 @@ export default function RankingsPage() {
             </div>
           )}
 
-          {/* Icon-only buttons for XS/SM screens (including "My Rankings" icon) */}
-          <div className="flex md:hidden items-center gap-1">
-            {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
-              <DraftModeButton
-                isDraftMode={isDraftModeActive}
-                onDraftModeChange={toggleDraftMode}
-                showDrafted={showDraftedPlayers}
-                onShowDraftedChange={toggleShowDraftedPlayers}
-                onResetDraft={resetDraftAvailability}
-                draftedCount={draftedCount}
-                activeRanking={activeRanking}
-                iconOnly={true}
-              />
-            )}
-            {user && (
-              <AddRankingListButton dataset={currentSportMasterData} iconOnly={true} />
-            )}
-            {/* ADDED Help Button for XS/SM - MOVED BEFORE MyRankingsButton */}
-            <HelpButton iconOnly={true} />
-            {user && userRankings && userRankings.length > 0 && (
-              <MyRankingsButton onRankingSelect={handleRankingSelect} text="Rankings" useIconOnlyStyles={true} />
-            )}
+          {/* Mobile icon buttons container */}
+          <div className="flex md:hidden items-center w-full justify-between gap-1">
+            {/* Left-justified group */}
+            <div className="flex items-center gap-1">
+              <MobileCollapseButton onClick={handleCollapseAll} isCollapsing={isCollapsingRows} />
+              <MobileHeaderOptionsButton onClick={() => setIsHeaderOptionsExpanded(!isHeaderOptionsExpanded)} />
+            </div>
+
+            {/* Right-justified group */}
+            <div className="flex items-center gap-1">
+              {user && activeRanking && activeRanking.rankings && activeRanking.rankings.length > 0 && (
+                <DraftModeButton
+                  isDraftMode={isDraftModeActive}
+                  onDraftModeChange={toggleDraftMode}
+                  showDrafted={showDraftedPlayers}
+                  onShowDraftedChange={toggleShowDraftedPlayers}
+                  onResetDraft={resetDraftAvailability}
+                  draftedCount={draftedCount}
+                  activeRanking={activeRanking}
+                  iconOnly={true}
+                />
+              )}
+              {user && (
+                <AddRankingListButton dataset={currentSportMasterData} iconOnly={true} />
+              )}
+              <HelpButton iconOnly={true} />
+              {user && userRankings && userRankings.length > 0 && (
+                <MyRankingsButton onRankingSelect={handleRankingSelect} text="Rankings" useIconOnlyStyles={true} />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -675,6 +679,8 @@ export default function RankingsPage() {
                 onSortChange={handleSortChange}
                 enabledCategoryAbbrevs={enabledCategoryAbbrevs}
                 onCollapseAll={handleCollapseAll}
+                isHeaderOptionsExpanded={isHeaderOptionsExpanded}
+                onToggleHeaderOptions={() => setIsHeaderOptionsExpanded(!isHeaderOptionsExpanded)}
               />
               <div className="flex-grow overflow-hidden">
                 {!activeRanking ? (

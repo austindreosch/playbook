@@ -31,7 +31,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
-                <span className={cn(isMobile ? "text-2xs" : "text-sm", "text-pb_midgray")}>
+                <span className={cn(isMobile ? "text-4xs" : "text-sm", "text-pb_midgray")}>
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
                 </span>
             </div>
@@ -165,7 +165,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     >
                         {formattedValue !== '' ? (
                             <span className={cn(
-                                isMobile ? "text-2xs" : "text-sm",
+                                isMobile ? "text-4xs" : "text-sm",
                                 "text-pb_darkgray",
                                 (
                                     (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
@@ -413,7 +413,7 @@ const RankingsPlayerRow = memo(({
                 )}
             >
                 {/* Top section: Player Info */}
-                <div className="flex items-center p-0.5 ">
+                <div className="flex items-center py-0.5">
                     <div
                         className={cn(
                             "text-pb_textgray mr-1",
@@ -438,7 +438,7 @@ const RankingsPlayerRow = memo(({
 
                     {isDraftMode && (
                         <div className={cn(
-                            "mr-1.5 h-6 w-6 rounded-sm flex items-center justify-center border",
+                            "mr-1.5 h-4 w-4 rounded-sm flex items-center justify-center border",
                             !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray"
                         )}>
                             <Button
@@ -457,7 +457,7 @@ const RankingsPlayerRow = memo(({
                     )}
 
                     <div className={cn(
-                        "w-6 h-6 text-xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
+                        "w-6 h-4 text-2xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
                         isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray",
                         !isRankSorted ? 'bg-blue-50' : ''
                     )}>{rank}</div>
@@ -465,24 +465,24 @@ const RankingsPlayerRow = memo(({
                     <img
                         src={playerImage || defaultImageSrc}
                         alt={playerName}
-                        className="w-6 h-6 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
+                        className="w-4 h-4 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
                         loading="lazy" width="24" height="24"
                         onError={handleImageError}
                     />
 
                     <div className="flex-grow min-w-0 mr-2">
-                        <div className="font-bold text-xs truncate">{playerName}</div>
+                        <div className="font-bold text-2xs truncate">{playerName}</div>
                     </div>
 
-                    <div className="flex items-center text-2xs text-pb_textgray flex-shrink-0">
-                        <span className="mr-1.5">{playerPosition}</span>
-                        <span className="mr-1.5">{age}</span>
-                        <span>{teamAbbreviation}</span>
+                    <div className="grid grid-cols-3 items-center text-3xs text-pb_textlightgray flex-shrink-0 w-24 pr-2">
+                        <span className="text-center tracking-wider">{playerPosition}</span>
+                        <span className="text-center tracking-wider">{age}</span>
+                        <span className="text-center tracking-wider">{teamAbbreviation}</span>
                     </div>
                 </div>
 
                 {/* Bottom section: Stats */}
-                <div className="flex w-full h-7 items-center bg-white gap-0">
+                <div className="flex w-full h-5 items-center bg-white gap-0">
                     {/* Use StatsSection directly for mobile, ensuring it fills the width */}
                     <StatsSection 
                         categories={categories}
