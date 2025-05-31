@@ -96,11 +96,17 @@ module.exports = {
         '7xs': '.400rem',
         '8xs': '.350rem',
         '9xs': '.300rem',
+        'smd': '.925rem', // Added between sm (0.875rem) and md (1rem)
       },
-      fontFamily: {},
+      fontFamily: {
+        sans: ['din-2014', 'sans-serif'],
+        // If you want to use DIN 2014 Narrow as well, you can add it here:
+        // narrow: ['"DIN 2014 Narrow"', 'sans-serif'],
+      },
       colors: {
         pb_darkgray: '#383838',
         pb_darkgrayhover: '#4c4c4c',
+        pb_mddarkgray: '#606060',
         pb_midgray: '#747474',
         pb_textgray: '#888888',
         pb_textlightgray: '#999999',

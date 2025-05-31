@@ -165,8 +165,8 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     >
                         {formattedValue !== '' ? (
                             <span className={cn(
-                                isMobile ? "text-4xs" : "text-sm",
-                                "text-pb_darkgray",
+                                isMobile ? "text-3xs" : "text-sm lg:text-smd",
+                                "text-pb_darkgrayhover font-medium",
                                 (
                                     (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
                                     (sport?.toLowerCase() !== 'nfl' && categoryAbbrev === 'PPG')
@@ -809,9 +809,13 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-baseline gap-2 select-none min-w-0 pl-2">
-                        <div className="font-bold text-sm truncate">{playerName}</div>
-                         <div className="text-pb_textgray text-2xs flex-shrink-0">{playerPosition}</div>
+                    <div className="flex items-baseline gap-2 select-none min-w-0 pl-3">
+                        <div className="font-semibold text-smd truncate text-pb_darkgray">
+                            {playerName}
+                        </div>
+                         <div className="text-pb_textgray text-2xs flex-shrink-0">
+                            {playerPosition}
+                         </div>
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}
