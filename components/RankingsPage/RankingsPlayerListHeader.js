@@ -219,7 +219,7 @@ const RankingsPlayerListHeader = ({
                                             className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-[10px] md:text-sm text-white select-none py-1 px-px md:px-0" // Mobile: text-[10px]. Desktop: md:text-sm.
                                             onClick={() => onSortChange(abbrev)}
                                         >
-                                            <span>{displayAbbrev}</span>
+                                            <span className="lg:text-smd font-black tracking-wide">{displayAbbrev}</span>
                                             {sortConfig?.key === abbrev && (
                                                 <svg className="w-2 h-2 fill-current text-white mt-0.5" viewBox="0 0 10 5">
                                                     <polygon points="0,0 10,0 5,5" />

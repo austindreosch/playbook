@@ -35,18 +35,18 @@ function NavBar() {
                     </div>
 
                     {/* Desktop Navigation Links - hidden on mobile (screens smaller than md) */}
-                    <div className="hidden md:flex items-center space-x-4 ml-10">
-                        <span className={`text-pb_orangedisabled font-bold px-3 py-2 rounded-md text-sm cursor-not-allowed tracking-wider select-none`}>DASHBOARD</span>
-                        <Link href="/rankings" className={`text-pb_darkgray font-bold hover:text-white px-3 py-2 rounded-md text-sm tracking-wider select-none`}>RANKINGS</Link>
-                        <Link href="/landing" className={`text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm font-bold tracking-wider select-none`}>ABOUT</Link>
+                    <div className="hidden md:flex items-center space-x-4 ml-10 text-smd font-extrabold tracking-wider text-pb_darkgray ">
+                        <span className={`text-pb_orangedisabled  px-3 py-2 rounded-md cursor-not-allowed  select-none`}>DASHBOARD</span>
+                        <Link href="/rankings" className={` hover:text-white px-3 py-2 rounded-md  select-none  `}>RANKINGS</Link>
+                        <Link href="/landing" className={` hover:text-white px-3 py-2 rounded-md select-none  `}>ABOUT</Link>
 
                         {user ? (
                             <div className="py-2 pl-2 pr-3">
                                 <UserProfileDropdown user={user} />
                             </div>
                         ) : (
-                            <div className='tracking rounded-md mx-1'>
-                                <Link href="/api/auth/login" className="text-black font-bold text-pb_darkgray hover:text-white px-3 py-2 rounded-md text-sm">
+                            <div className='rounded-md mx-1'>
+                                <Link href="/api/auth/login" className="  hover:text-white px-3 py-2 rounded-md">
                                     LOGIN
                                 </Link>
                             </div>

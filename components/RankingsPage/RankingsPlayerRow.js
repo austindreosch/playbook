@@ -24,14 +24,17 @@ const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType, isMobile }) => {
 
     return (
-        <div className={cn("flex w-full h-full", isMobile ? "gap-0" : "gap-[3px]")}>
+        <div className={cn("flex w-full h-full gap-0.5")}>
             {/* Z-Score Sum main value column */}
             <div
                 key="zScoreSum_main"
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
-                <span className={cn(isMobile ? "text-4xs" : "text-sm", "text-pb_midgray")}>
+                <span className={cn(
+                    isMobile ? "text-3xs" : "text-sm lg:text-smd",
+                    "text-pb_textgray font-medium"
+                )}>
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
                 </span>
             </div>
@@ -166,7 +169,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                         {formattedValue !== '' ? (
                             <span className={cn(
                                 isMobile ? "text-3xs" : "text-sm lg:text-smd",
-                                "text-pb_darkgrayhover font-medium",
+                                "text-pb_darkgray/80 font-medium",
                                 (
                                     (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
                                     (sport?.toLowerCase() !== 'nfl' && categoryAbbrev === 'PPG')
@@ -519,7 +522,7 @@ const RankingsPlayerRow = memo(({
                 {/* End of Top section: Player Info */}
 
                 {/* Bottom section: Stats */}
-                <div className="flex w-full h-5 items-center bg-white gap-0">
+                <div className="flex w-full h-5 items-center bg-white gap-0 border-t border-pb_lightergray">
                     {/* Use StatsSection directly for mobile, ensuring it fills the width */}
                     <StatsSection 
                         categories={categories}
