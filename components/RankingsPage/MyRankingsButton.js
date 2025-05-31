@@ -2,21 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from "@/lib/utils";
@@ -45,10 +45,10 @@ const MyRankingsButton = ({ onRankingSelect, text, useIconOnlyStyles = false, cl
         className
       )}
       aria-label={text || "Select ranking"}
-      title={text || (useIconOnlyStyles ? "My Rankings" : undefined)}
+      title={text || (useIconOnlyStyles ? "Rankings" : undefined)}
     >
       <BookCopy className={cn(useIconOnlyStyles ? "h-5 w-5" : "h-4 w-4")} />
-      {text && <span>{text}</span>}
+      {text && <span className="text-xs md:text-sm lg:hidden">{text}</span>}
     </Button>
   );
 

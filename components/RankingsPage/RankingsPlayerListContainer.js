@@ -182,7 +182,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         };
 
         return (
-            <div style={style}>
+            <div style={style} className="w-full">
                 <RankingsPlayerRow
                     key={player.id}
                     player={player}

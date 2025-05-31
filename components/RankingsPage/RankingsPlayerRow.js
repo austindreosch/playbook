@@ -409,7 +409,7 @@ const RankingsPlayerRow = memo(({
                 }}
                 style={style}
                 className={cn(
-                    `player-row-mobile border rounded-md overflow-hidden mb-1 shadow-sm flex flex-col`,
+                    `player-row-mobile border rounded-md overflow-hidden mb-1 shadow-sm flex flex-col w-full`,
                     isDragging ? 'z-10 opacity-50' : '',
                     isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging
                         ? "border-pb_lightgray bg-pb_lightergray"
