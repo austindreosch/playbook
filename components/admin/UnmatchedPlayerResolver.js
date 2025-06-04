@@ -131,7 +131,7 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
                     sport: sport,
                     // Only include these if rankingDocId is present
                     ...(rankingDocId && { 
-                        unmatchedRank: player.rank,
+                        unmatchedRank: player.userRank,
                         rankingDocId: rankingDocId 
                     })
                 }),
@@ -164,7 +164,7 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
         <li className="py-4 px-3 border-b last:border-b-0 bg-white rounded shadow-sm space-y-2">
             <div>
                 <span className="text-xs font-medium">
-                    Rank {player.rank}: <span className="text-blue-700 font-semibold">{player.name}</span>
+                    Rank {player.userRank}: <span className="text-blue-700 font-semibold">{player.name}</span>
                 </span>
             </div>
 

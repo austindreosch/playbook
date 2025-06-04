@@ -3,8 +3,20 @@ import { MongoClient } from 'mongodb';
 
 const mongoUri = process.env.MONGODB_URI;
 
-// Get all user rankings
+// Create a connection pool
+let client = null;
+let db = null;
 
+async function getDb() {
+    if (!client) {
+        client = new MongoClient(mongoUri);
+        await client.connect();
+        db = client.db('playbook');
+    }
+    return db;
+}
+
+// Get all user rankings
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -16,15 +28,8 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    let client;
     try {
-        // Log connection attempt
-        console.log('Attempting to connect to MongoDB...');
-        client = new MongoClient(mongoUri);
-        await client.connect();
-        console.log('Successfully connected to MongoDB');
-
-        const db = client.db('playbook');
+        const db = await getDb();
         console.log('Querying user rankings for user:', session.user.sub);
 
         const userRankings = await db.collection('user_rankings')
@@ -46,6 +51,9 @@ export default async function handler(req, res) {
             .toArray();
 
         console.log(`Found ${userRankings.length} rankings for user`);
+        
+        // Add cache control headers
+        res.setHeader('Cache-Control', 'no-store'); // Always return fresh data
         return res.status(200).json(userRankings);
     } catch (error) {
         console.error('Error details:', {
@@ -58,10 +66,5 @@ export default async function handler(req, res) {
             error: 'Failed to fetch user rankings',
             details: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
-    } finally {
-        if (client?.topology?.isConnected()) {
-            await client.close();
-            console.log('MongoDB connection closed');
-        }
     }
 }

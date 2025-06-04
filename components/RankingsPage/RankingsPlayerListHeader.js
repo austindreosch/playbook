@@ -19,9 +19,10 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
-import { SigmaSquareIcon } from 'lucide-react';
+import { ArrowUpNarrowWideIcon, Loader2, MoreHorizontal, SigmaSquareIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { Label } from '../ui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
@@ -37,10 +38,11 @@ const RankingsPlayerListHeader = ({
     onCollapseAll = () => { },
     enabledCategoryAbbrevs = [],
     activeRanking,
-    statPathMapping = {}
+    statPathMapping = {},
+    isHeaderOptionsExpanded,
+    onToggleHeaderOptions,
 }) => {
     const { updateCategories, updateRankingName, deleteRanking } = useUserRankings();
-    const [expanded, setExpanded] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [editingName, setEditingName] = useState('');
     const [namePopoverOpen, setNamePopoverOpen] = useState(false);
@@ -57,18 +59,16 @@ const RankingsPlayerListHeader = ({
 
     const handleSave = async () => {
         try {
-            // Save changes to the database
             setIsSaving(true);
             try {
                 await onSave();
-                // Add minimum delay of 200ms
                 await new Promise(resolve => setTimeout(resolve, 300));
             } finally {
                 setIsSaving(false);
             }
-
-            // Collapse the component
-            setExpanded(false);
+            if (isHeaderOptionsExpanded && typeof onToggleHeaderOptions === 'function') {
+                onToggleHeaderOptions();
+            }
         } catch (error) {
             console.error('Error saving changes:', error);
         }
@@ -149,15 +149,14 @@ const RankingsPlayerListHeader = ({
     return (
         <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
             {/* Header Row */}
-            <div className="flex h-10 items-center">
-                {/* Left section with fixed width - must match PlayerRow */}
-                <div className="flex items-center w-[30%]">
-                    {/* Button 1: BarsIcon (Handles the click) */}
+            <div className="flex h-8 md:h-10 items-center md:px-0"> {/* Removed px-1 for mobile, stats will go edge-to-edge */}
+                {/* Left section: Collapse button & Desktop expand trigger - HIDDEN ON MOBILE */}
+                <div className="hidden md:flex items-center w-[30%]"> {/* Changed from w-auto md:w-[30%] to hidden md:flex w-[30%] */}
+                    {/* Collapse/Expand All Rows Button */}
                     <button
                         onClick={() => {
                             setIsCollapsing(true);
                             onCollapseAll();
-                            // Reset spinner after a short delay
                             setTimeout(() => setIsCollapsing(false), 500);
                         }}
                         disabled={isCollapsing}
@@ -166,36 +165,32 @@ const RankingsPlayerListHeader = ({
                     >
                         <div className="w-10 h-10 flex items-center justify-center">
                             {isCollapsing ? (
-                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                <Loader2 className="animate-spin h-6 w-6 text-white" />
                             ) : (
-                                <BarsIcon className={`h-6 w-6 `} />
+                                <ArrowUpNarrowWideIcon className={`h-6 w-6 text-white`} />
                             )}
                         </div>
                     </button>
 
-                    {/* Div 2: Empty, hoverable space (Not a button) */}
+                    {/* Header Settings Expand Trigger: Empty, hoverable space - DESKTOP ONLY */}
                     <div
-                        // Use flex-1 to fill remaining space, add bg-transparent
-                        // Add hover effect here
-                        className="flex-1 h-10 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer min-w-0"
-                        onClick={() => setExpanded(!expanded)} // Add onClick here if this area should also trigger expand/collapse
+                        className="flex flex-1 h-10 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer min-w-0"
+                        onClick={onToggleHeaderOptions}
                     >
                         {/* Intentionally Empty */}
                     </div>
                 </div>
 
-                {/* Stats Headers - 60% section with exact same structure */}
-                <div className="flex w-[70%] h-full gap-[3px] font-bold">
-                    {/* --- Z-Score Sum Sort Button --- */}
+                {/* Stats Headers: Full width on mobile (flex-1), md:w-[70%] on desktop */}
+                <div className="flex flex-1 md:w-[70%] h-full gap-[1px] md:gap-[3px] font-bold md:overflow-visible px-0 md:px-0"> {/* Mobile: no horizontal padding on container, gap reduced. Desktop: original gap, no padding. */}
+                    {/* Z-Score Sum Sort Button */}
                     <div
                         key="zScoreSum"
-                        className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none min-w-0"
+                        className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-[10px] md:text-sm text-white select-none px-px md:px-0" // Mobile: text-[10px]. Desktop: md:text-sm.
                         onClick={() => onSortChange('zScoreSum')}
+                        title="Sort by Z-Score Sum"
                     >
-                        <span> 
-                            <SigmaSquareIcon className="w-4 h-4" /> 
-                        </span>
-                        {/* Conditional Solid Triangle SVG */}
+                        <SigmaSquareIcon className="w-3.5 h-3.5 md:w-4 md:h-4" /> {/* Adjusted icon size for smaller text */}
                         {sortConfig?.key === 'zScoreSum' && (
                             <svg className="w-2 h-2 fill-current text-white" viewBox="0 0 10 5">
                                 <polygon points="0,0 10,0 5,5" />
@@ -203,7 +198,7 @@ const RankingsPlayerListHeader = ({
                         )}
                     </div>
 
-                    {/* --- Render other category headers --- */}
+                    {/* Render other category headers */}
                     {enabledCategoryAbbrevs.map((abbrev) => {
                         let displayAbbrev = abbrev;
                         if (sport?.toLowerCase() === 'nfl') {
@@ -211,29 +206,43 @@ const RankingsPlayerListHeader = ({
                                 displayAbbrev = 'PPG';
                             }
                         }
+                        const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                        const categoryConfig = sportConfig?.categories?.[abbrev];
+                        const tooltipText = categoryConfig?.tooltip || '';
+                        const categoryLabel = categoryConfig?.label || displayAbbrev;
+
                         return (
-                            <div
-                                key={abbrev}
-                                className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1 min-w-0"
-                                onClick={() => onSortChange(abbrev)}
-                            >
-                                <span>
-                                    {displayAbbrev}
-                                </span>
-                                {/* Conditional Solid Triangle SVG */}
-                                {sortConfig?.key === abbrev && (
-                                    <svg className="w-2 h-2 fill-current text-white" viewBox="0 0 10 5">
-                                        <polygon points="0,0 10,0 5,5" />
-                                    </svg>
-                                )}
-                            </div>
+                            <TooltipProvider key={abbrev} delayDuration={300}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div
+                                            className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-[10px] md:text-sm text-white select-none py-1 px-px md:px-0" // Mobile: text-[10px]. Desktop: md:text-sm.
+                                            onClick={() => onSortChange(abbrev)}
+                                        >
+                                            <span>{displayAbbrev}</span>
+                                            {sortConfig?.key === abbrev && (
+                                                <svg className="w-2 h-2 fill-current text-white mt-0.5" viewBox="0 0 10 5">
+                                                    <polygon points="0,0 10,0 5,5" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-[300px] bg-pb_darkgray text-white border-pb_lightgray">
+                                        <div className="space-y-1 p-2">
+                                            <p className="font-semibold">{categoryLabel}</p>
+                                            <p className="text-xs text-gray-300">{tooltipText}</p>
+                                        </div>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
                         );
                     })}
                 </div>
+                {/* NO additional icons on the right for the main header bar itself */}
             </div>
 
-            {/* Expanded Content */}
-            {expanded && (
+            {/* Expanded Content (for desktop header settings) */}
+            {isHeaderOptionsExpanded && (
                 <div className="expanded-content border-t p-1 bg-gray-50 border rounded-b-sm grid grid-cols-9 gap-2">
                     {/* Details */}
                     <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 pb-2 space-y-1 flex flex-col justify-between">
@@ -261,6 +270,12 @@ const RankingsPlayerListHeader = ({
                                                 onChange={(e) => setEditingName(e.target.value)}
                                                 placeholder="Enter ranking name"
                                                 className="h-8"
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && editingName.trim()) {
+                                                        updateRankingName(editingName.trim());
+                                                        setNamePopoverOpen(false);
+                                                    }
+                                                }}
                                             />
                                             <div className="flex justify-end gap-2 mt-2">
                                                 <Button

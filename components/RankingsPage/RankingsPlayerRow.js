@@ -1,11 +1,13 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import useMediaQuery from '@/hooks/useMediaQuery'; // Import the new hook
 import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
+import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import EmptyStatIndicator from '../common/EmptyStatIndicator';
 import BullseyeIcon from '../icons/BullseyeIcon';
@@ -19,22 +21,17 @@ const DEFAULT_ROW_HEIGHT = 45;
 const EXPANDED_ROW_HEIGHT = 220; // Height when row is expanded
 
 // Create a specialized component just for stats to reduce re-renders
-const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType }) => {
-
-    // Define stats that need 2 decimal places
-    const statsNeedingTwoDecimals = [
-        'PPS', 'OPE', 'TO%', 'ERA', 'WHIP', 'K/BB', 'K/9'
-    ];
+const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex, player, activeScoringType, isMobile }) => {
 
     return (
-        <div className="flex w-[70%] h-full gap-[3px]">
+        <div className={cn("flex w-full h-full", isMobile ? "gap-0" : "gap-[3px]")}>
             {/* Z-Score Sum main value column */}
             <div
                 key="zScoreSum_main"
                 className="flex-1 text-center h-full flex items-center justify-center select-none"
                 title={`Z-Score Sum: ${typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}`}
             >
-                <span className="text-sm text-pb_midgray">
+                <span className={cn(isMobile ? "text-4xs" : "text-sm", "text-pb_midgray")}>
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
                 </span>
             </div>
@@ -53,7 +50,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                 const path = categoryAbbrev;
                 const statDataFromPlayer = stats?.[path]; // Direct access
 
-                let formattedValue = '';
+                let formattedValue = '';    
                 let title = `${SPORT_CONFIGS[sport.toLowerCase()]?.categories?.[categoryAbbrev]?.label || categoryAbbrev}: -`;
                 let currentBgColor = '#FFFFFF'; // Default white background
                 let currentTextColor = '#747474'; // Default dark gray text (Tailwind gray-800)
@@ -102,12 +99,32 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     // Format the rawValueForFormatting
                     if (rawValueForFormatting !== null && rawValueForFormatting !== undefined) {
                         if (typeof rawValueForFormatting === 'number') {
-                            if (statsNeedingTwoDecimals.includes(categoryAbbrev)) {
-                                formattedValue = rawValueForFormatting.toFixed(2);
+                            const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                            const categoryConfig = sportConfig?.categories?.[categoryAbbrev];
+                            const statDisplayConfig = categoryConfig?.statDisplay;
+
+                            // Default formatting rules
+                            let decimals = 1;
+                            let trimTrailingZeros = true;
+                            let showLeadingZero = true;
+
+                            if (statDisplayConfig) {
+                                decimals = typeof statDisplayConfig.decimals === 'number' ? statDisplayConfig.decimals : decimals;
+                                trimTrailingZeros = typeof statDisplayConfig.trimTrailingZeros === 'boolean' ? statDisplayConfig.trimTrailingZeros : trimTrailingZeros;
+                                showLeadingZero = typeof statDisplayConfig.showLeadingZero === 'boolean' ? statDisplayConfig.showLeadingZero : showLeadingZero;
+                            }
+
+                            if (trimTrailingZeros) {
+                                formattedValue = parseFloat(rawValueForFormatting.toFixed(decimals)).toString();
                             } else {
-                                formattedValue = rawValueForFormatting.toFixed(1);
-                                if (formattedValue.endsWith('.0')) {
-                                    formattedValue = formattedValue.slice(0, -2);
+                                formattedValue = rawValueForFormatting.toFixed(decimals);
+                            }
+                
+                            if (!showLeadingZero) {
+                                if (formattedValue.startsWith("0.")) {
+                                    formattedValue = formattedValue.substring(1);
+                                } else if (formattedValue.startsWith("-0.")) {
+                                    formattedValue = "-" + formattedValue.substring(2);
                                 }
                             }
                         } else {
@@ -148,7 +165,8 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                     >
                         {formattedValue !== '' ? (
                             <span className={cn(
-                                "text-sm text-pb_darkgray",
+                                isMobile ? "text-3xs" : "text-sm lg:text-smd",
+                                "text-pb_darkgrayhover font-medium",
                                 (
                                     (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
                                     (sport?.toLowerCase() !== 'nfl' && categoryAbbrev === 'PPG')
@@ -157,7 +175,9 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                                 {formattedValue}
                             </span>
                         ) : (
-                            <EmptyStatIndicator />
+                            <div className="flex items-center justify-center w-full h-full">
+                                <EmptyStatIndicator />
+                            </div>
                         )}
                     </div>
                 );
@@ -169,9 +189,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
 StatsSection.displayName = 'StatsSection';
 
 // Secondary stats section for last 30 etc
-const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
-    const statsNeedingTwoDecimals = ['PPS', 'OPE', 'TO%'];
-
+const StatsSectionSecondary = memo(({ categories, secondaryStatsData, sport }) => {
     return (
         <div className="flex w-full h-full gap-[3px]">
             {/* Render category stats directly - NO placeholder here */}
@@ -185,21 +203,41 @@ const StatsSectionSecondary = memo(({ categories, secondaryStatsData }) => {
                 let displayNode;
 
                 if (rawValue !== null && rawValue !== undefined) {
-                    let formattedValue = '';
+                    let formattedValueString = '';
                     if (typeof rawValue === 'number') {
-                        if (statsNeedingTwoDecimals.includes(path)) {
-                            formattedValue = rawValue.toFixed(2);
+                        const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                        const categoryConfig = sportConfig?.categories?.[path];
+                        const statDisplayConfig = categoryConfig?.statDisplay;
+
+                        // Default formatting rules
+                        let decimals = 1;
+                        let trimTrailingZeros = true;
+                        let showLeadingZero = true;
+
+                        if (statDisplayConfig) {
+                            decimals = typeof statDisplayConfig.decimals === 'number' ? statDisplayConfig.decimals : decimals;
+                            trimTrailingZeros = typeof statDisplayConfig.trimTrailingZeros === 'boolean' ? statDisplayConfig.trimTrailingZeros : trimTrailingZeros;
+                            showLeadingZero = typeof statDisplayConfig.showLeadingZero === 'boolean' ? statDisplayConfig.showLeadingZero : showLeadingZero;
+                        }
+
+                        if (trimTrailingZeros) {
+                            formattedValueString = parseFloat(rawValue.toFixed(decimals)).toString();
                         } else {
-                            formattedValue = rawValue.toFixed(1);
-                            if (formattedValue.endsWith('.0')) {
-                                formattedValue = formattedValue.slice(0, -2);
+                            formattedValueString = rawValue.toFixed(decimals);
+                        }
+            
+                        if (!showLeadingZero) {
+                            if (formattedValueString.startsWith("0.")) {
+                                formattedValueString = formattedValueString.substring(1);
+                            } else if (formattedValueString.startsWith("-0.")) {
+                                formattedValueString = "-" + formattedValueString.substring(2);
                             }
                         }
                     } else {
-                        formattedValue = String(rawValue);
+                        formattedValueString = String(rawValue);
                     }
-                    displayNode = formattedValue;
-                    title = `${path}: ${formattedValue}`;
+                    displayNode = formattedValueString;
+                    title = `${path}: ${formattedValueString}`;
                     if (typeof statObject?.zScore === 'number') {
                         title += ` (Z: ${statObject.zScore.toFixed(2)})`;
                     }
@@ -254,59 +292,31 @@ const RankingsPlayerRow = memo(({
     secondaryStatsTrend = 0 // Default placeholder to "0%"
 }) => {
     const rowRef = useRef(null);
-
+    const { toast } = useToast();
+    const isMobile = useMediaQuery('(max-width: 768px)'); // Check for mobile screen size
 
     // --- Determine sources --- 
     const playerName = player.info?.fullName || player.name || 'Player Name';
     const playerPosition = player.info?.primaryPosition || player.position || 'N/A';
     const playerImage = player.info?.officialImageSrc;
-    const team = player.info?.teamName || 'FA'; // Restored direct access
-    const age = player.info?.age || 'N/A'; // Restored direct access
+    const teamAbbreviation = player.info?.teamAbbreviation || player.info?.teamName || 'FA'; // Prefer abbreviation
+    const age = player.info?.age || 'N/A';
     const currentInjury = player.info?.currentInjury || null;
     const defaultImageSrc = '/avatar-default.png';
 
     // --- Simplified onError handler (will modify the img element directly) ---
     const handleImageError = (event) => {
-        // Prevent infinite loop if the default image also fails
-        if (event.target.src !== defaultImageSrc) { 
-            // console.warn(`Image failed to load: ${event.target.src}. Falling back to default.`);
+        if (event.target.src !== defaultImageSrc) {
             event.target.src = defaultImageSrc;
-            // Optional: add a class to indicate fallback
-            event.target.classList.add('image-fallback'); 
+            event.target.classList.add('image-fallback');
         }
     };
-
-    // Calculate the sum of zScores for the selected categories, applying weight for NFL PPG
-    // const zScoreSum = useMemo(() => {
-    //     const ppgKey = 'advanced.fantasyPointsPerGame';
-    //     const nflPpgWeight = 3; // Adjust this weight as needed
-    //     let sum = 0;
-
-    //     if (player?.stats && categories?.length > 0) {
-    //         categories.forEach(statPathOrKey => {
-    //             const statData = getNestedValue(player.stats, statPathOrKey);
-
-    //             if (statData && typeof statData === 'object' && typeof statData.zScore === 'number') {
-    //                 let scoreToAdd = statData.zScore;
-
-    //                 // Apply weight only for NFL and only for the PPG stat
-    //                 if (sport === 'NFL' && statPathOrKey === ppgKey) {
-    //                     scoreToAdd *= nflPpgWeight;
-    //                 }
-    //                 // Add the (potentially weighted) score to the sum
-    //                 sum += scoreToAdd;
-    //             }
-    //         });
-    //     }
-    //     // Format to two decimal places for potentially larger sums
-    //     return sum.toFixed(2);
-    // }, [player?.stats, categories, sport]); // Add sport as dependency
 
     // Set up the sortable hook with optimization options
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: player.id,
-        animateLayoutChanges: () => false, // Disable layout animations for better performance
-        disabled: !isRankSorted,
+        animateLayoutChanges: () => false,
+        disabled: !isRankSorted || isDraftMode, // Ensure disabled matches desktop logic
     });
 
     // Apply styles for dragging - use CSS variables for better performance
@@ -314,13 +324,9 @@ const RankingsPlayerRow = memo(({
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-        willChange: 'transform', // Hint to browser for optimization
-        contain: 'content', // Improve rendering performance
+        willChange: 'transform',
+        contain: 'content',
     };
-
-    // Only compute these when expanded changes
-    // const detailPanelRef = useRef(null);
-    // const insightPanelRef = useRef(null);
 
     // Use intersection observer to only render when visible
     useEffect(() => {
@@ -384,9 +390,294 @@ const RankingsPlayerRow = memo(({
             rowIndex={rowIndex}
             player={player}
             activeScoringType={activeRanking?.scoring}
+            isMobile={isMobile}
         />
     );
 
+    // --- Mobile View ---
+    if (isMobile) {
+        const zScoreSumValue = player?.zScoreTotals?.overallZScoreSum;
+
+        return (
+            <div
+                ref={(node) => {
+                    setNodeRef(node);
+                    rowRef.current = node;
+                }}
+                style={style}
+                className={cn(
+                    `player-row-mobile border rounded-md overflow-hidden mb-1 shadow-sm flex flex-col`,
+                    isDragging ? 'z-10 opacity-50' : '',
+                    isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging
+                        ? "border-pb_lightgray bg-pb_lightergray"
+                        : "bg-white hover:bg-gray-50",
+                    // `h-auto` is fine, or a fixed height if preferred for mobile rows
+                )}
+                onClick={onToggleExpand}
+            >
+                {/* Top section: Player Info - MODIFIED HERE */}
+                {(() => {
+                    const numCategories = categories?.length || 0;
+                    const totalCellsInStatBar = numCategories + 1;
+
+                    const dragHandleElement = (
+                        <div
+                            className={cn(
+                                "text-pb_textgray h-full flex items-center justify-center", // Ensure full height and centered for grid cell
+                                (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
+                            )}
+                            style={{ pointerEvents: 'auto' }}
+                            {...attributes}
+                            {...(isRankSorted && !isDraftMode ? listeners : {})}
+                            onPointerDownCapture={(event) => {
+                                if (!isRankSorted) {
+                                    event.preventDefault(); event.stopPropagation();
+                                    toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while sorting by a stat.", variant: "destructive", duration: 3000 });
+                                } else if (isDraftMode) {
+                                    event.preventDefault(); event.stopPropagation();
+                                    toast({ title: "Re-ordering Disabled", description: "You cannot re-order players while in Draft Mode.", variant: "destructive", duration: 3000 });
+                                }
+                            }}
+                            title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
+                        >
+                            <GripHorizontalIcon className="h-5 w-5" />
+                        </div>
+                    );
+
+                    const playerInfoRestContent = (
+                        <>
+                            {isDraftMode && (
+                                <div className={cn(
+                                    "mr-1.5 h-4 w-4 rounded-sm flex items-center justify-center border",
+                                    !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray"
+                                )}>
+                                    <Button
+                                        variant="ghost" size="icon"
+                                        className={`h-full w-full rounded-sm flex items-center justify-center ${
+                                            (player.draftModeAvailable ?? true)
+                                                ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover'
+                                                : 'text-pb_orange-600 hover:bg-pb_orange hover:text-white'
+                                            }`}
+                                        onClick={(e) => { e.stopPropagation(); onToggleDraftStatus(!(player.draftModeAvailable ?? true)); }}
+                                        title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
+                                    >
+                                        {(player.draftModeAvailable ?? true) ? <Check className="h-4 w-4 stroke-current stroke-2" /> : <RotateCcw className="h-4 w-4 opacity-100" />}
+                                    </Button>
+                                </div>
+                            )}
+
+                            <div className={cn(
+                                "w-6 h-4 text-2xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
+                                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray",
+                                !isRankSorted ? 'bg-blue-50' : ''
+                            )}>{rank}</div>
+
+                            <img
+                                src={playerImage || defaultImageSrc}
+                                alt={playerName}
+                                className="w-4 h-4 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
+                                loading="lazy" width="24" height="24"
+                                onError={handleImageError}
+                            />
+
+                            <div className="flex-grow min-w-0 mr-2">
+                                <div className="font-bold text-2xs truncate">{playerName}</div>
+                            </div>
+
+                            <div className="grid grid-cols-3 items-center text-3xs text-pb_textlightgray flex-shrink-0 w-24 pr-2">
+                                <span className="text-center tracking-wider">{playerPosition}</span>
+                                <span className="text-center tracking-wider">{age}</span>
+                                <span className="text-center tracking-wider">{teamAbbreviation}</span>
+                            </div>
+                        </>
+                    );
+
+                    if (totalCellsInStatBar > 1) {
+                        return (
+                            <div // Top bar - GRID version
+                                className="grid items-center py-0.5"
+                                style={{ gridTemplateColumns: `repeat(${totalCellsInStatBar}, minmax(0, 1fr))` }}
+                            >
+                                {dragHandleElement} {/* Drag handle in column 1 */}
+                                <div // Wrapper for the rest of player info, starting column 2
+                                    className="flex items-center" 
+                                    style={{ gridColumn: `2 / span ${totalCellsInStatBar - 1}` }}
+                                >
+                                    {playerInfoRestContent}
+                                </div>
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div className="flex items-center py-0.5"> {/* Top bar - original FLEX version */}
+                                {dragHandleElement}
+                                {playerInfoRestContent}
+                            </div>
+                        );
+                    }
+                })()}
+                {/* End of Top section: Player Info */}
+
+                {/* Bottom section: Stats */}
+                <div className="flex w-full h-5 items-center bg-white gap-0">
+                    {/* Use StatsSection directly for mobile, ensuring it fills the width */}
+                    <StatsSection 
+                        categories={categories}
+                        stats={player.stats}
+                        zScoreSumValue={zScoreSumValue} // This is player?.zScoreTotals?.overallZScoreSum
+                        sport={sport}
+                        rowIndex={rowIndex}
+                        player={player}
+                        activeScoringType={activeRanking?.scoring}
+                        isMobile={isMobile}
+                    />
+                </div>
+
+                {/* --- NEW MOBILE EXPANDED SECTION --- */}
+                {isMobile && isExpanded && (() => {
+                    const numCategories = categories?.length || 0;
+                    const totalStatColumns = numCategories + 1; // For Z-Score slot + Category slots
+
+                    return (
+                        <div className="border-t border-pb_lightgray bg-gray-50 text-xs">
+                            {/* Row 1: Secondary Stats Display */}
+                            <div 
+                                className="grid items-stretch h-auto mb-1.5 gap-px mt-1"
+                                style={{ gridTemplateColumns: `repeat(${totalStatColumns}, minmax(0, 1fr))` }}
+                            >
+                                {/* Cell 1: "LAST 30" text & trend */} 
+                                <div className="flex flex-col items-center justify-center text-6xs px-0.5 py-0.5">
+                                    <span className="text-pb_textgray leading-tight font-medium">{secondaryStatsLabel}</span>
+                                    {typeof secondaryStatsTrend === 'number' && (
+                                        <span className={`font-semibold flex items-center leading-tight ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}>
+                                            {secondaryStatsTrend !== 0 && (secondaryStatsTrend < 0 ? '▼' : '▲')}
+                                            <span className="ml-0.5">{Math.abs(secondaryStatsTrend)}%</span>
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Cells 2 to N+1: Secondary Stat Values */} 
+                                {categories.map(categoryAbbrev => {
+                                    const statObject = secondaryStatsData?.[categoryAbbrev];
+                                    const rawValue = statObject?.value;
+                                    let displayNode;
+                                    let stripBgColor = '#E0E0E0'; // Default light gray for strip
+
+                                    if (rawValue !== null && rawValue !== undefined) {
+                                        let formattedValueString = '';
+                                        if (typeof rawValue === 'number') {
+                                            const sportConfig = SPORT_CONFIGS[sport?.toLowerCase()];
+                                            const categoryConfig = sportConfig?.categories?.[categoryAbbrev];
+                                            const statDisplayConfig = categoryConfig?.statDisplay;
+                                            let decimals = (categoryAbbrev === 'AVG' || categoryAbbrev === 'OBP' || categoryAbbrev === 'SLG') ? 3 : 1;
+                                            let trimTrailingZeros = true;
+                                            let showLeadingZero = !(categoryAbbrev === 'AVG' || categoryAbbrev === 'OBP' || categoryAbbrev === 'SLG');
+
+                                            if (statDisplayConfig) {
+                                                decimals = typeof statDisplayConfig.decimals === 'number' ? statDisplayConfig.decimals : decimals;
+                                                trimTrailingZeros = typeof statDisplayConfig.trimTrailingZeros === 'boolean' ? statDisplayConfig.trimTrailingZeros : trimTrailingZeros;
+                                                showLeadingZero = typeof statDisplayConfig.showLeadingZero === 'boolean' ? statDisplayConfig.showLeadingZero : showLeadingZero;
+                                            }
+                                            if (trimTrailingZeros) {
+                                                formattedValueString = parseFloat(rawValue.toFixed(decimals)).toString();
+                                            } else {
+                                                formattedValueString = rawValue.toFixed(decimals);
+                                            }
+                                            if (!showLeadingZero) {
+                                                if (formattedValueString.startsWith("0.")) {
+                                                    formattedValueString = formattedValueString.substring(1);
+                                                } else if (formattedValueString.startsWith("-0.")) {
+                                                    formattedValueString = "-" + formattedValueString.substring(2);
+                                                }
+                                            }
+                                        } else {
+                                            formattedValueString = String(rawValue);
+                                        }
+                                        displayNode = formattedValueString;
+                                        if (statObject?.colors && typeof statObject.colors.bgColor === 'string') {
+                                            stripBgColor = statObject.colors.bgColor;
+                                        }
+                                    } else {
+                                        displayNode = <EmptyStatIndicator />;
+                                    }
+
+                                    return (
+                                        <div 
+                                            key={categoryAbbrev} 
+                                            className="flex flex-col items-center justify-end select-none relative text-3xs rounded-t-sm h-full bg-white rounded-b-sm border-t border-x border-pb_lightergray "
+                                        >
+                                            <span className="text-pb_midgray pb-0.5 pt-1 leading-none ">{displayNode}</span>
+                                            <div style={{ backgroundColor: stripBgColor }} className="w-full h-2 self-end rounded-b-sm border-b border-pb_lightergray"></div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Row 2: ECRs, Player Icons, Action Buttons - Revised Layout */}
+                            <div className="flex flex-row items-start mt-2"> {/* Main flex container */} 
+                                {/* Left Content Area (ECRs & Flag Button) - on gray background */}
+                                <div className="flex flex-col space-y-2 mx-2 shrink-0 items-start"> {/* Changed items-center to items-start */} 
+                                    {/* ECRs - side-by-side */}
+                                    <div className="flex flex-row space-x-2 items-start"> {/* ECRs in a row, items-start for labels */} 
+                                        {/* Standard ECR */}
+                                        <div className="flex flex-col items-center">
+                                            <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-pb_lightergray w-7 h-4'> 
+                                                <span className="font-bold text-3xs">{standardEcrRank ?? '--'}</span> 
+                                            </div>
+                                            <div className='text-7xs tracking-wider text-pb_textgray uppercase'>Default</div> 
+                                        </div>
+
+                                        {/* Redraft ECR (Conditional) */}
+                                        {activeRanking?.format?.toLowerCase() === 'dynasty' && (
+                                            <div className="flex flex-col items-center">
+                                                <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-pb_lightergray w-7 h-4'> 
+                                                    <span className="font-bold text-3xs">{redraftEcrRank ?? '--'}</span> 
+                                                </div>
+                                                <div className='text-7xs tracking-wider text-pb_textgray uppercase'>Redraft</div> 
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Flag Button - below ECRs, centered if ECRs don't take full width or using w-auto for flag button */}
+                                    <div>
+                                        <div className="bg-pb_green hover:bg-pb_green_darker text-white font-medium rounded-sm shadow-sm w-7 h-4 flex items-center justify-center">
+                                            <FlagIcon className={`w-3 h-3 text-white`} /> 
+                                        </div>
+                                        <div className='text-7xs tracking-wider text-pb_textgray uppercase items-center justify-center' >STATUS</div> 
+                                    </div>
+                                </div>
+
+                                {/* Right White Box Area (Buttons & Empty Space) */}
+                                <div className="flex-grow bg-white shadow-xs border-t border-l border-pb_lightergray h-full">
+                                    <div className="flex flex-row items-start"> {/* Inner flex for buttons and empty space */}
+                                        {/* Column 1 of White Box: Action Buttons (NEWS, TIPS, TRENDS) */}
+                                        <div className="flex flex-col mr-1.5 shrink-0">
+                                            <button className="text-6xs tracking-wide bg-gray-700 text-white hover:bg-gray-600 px-1.5 py-1 rounded-tl-sm w-full text-center disabled">
+                                                NEWS
+                                            </button>
+                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1  border-r border-y border-pb_lightergray w-full text-center disabled">
+                                                TIPS
+                                            </button>
+                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1 border-r border-pb_lightergray w-full text-center disabled">
+                                                TRENDS
+                                            </button>
+                                        </div>
+                                        {/* Column 2 of White Box: Empty space */}
+                                        <div className="flex-grow min-h-[60px]"> {/* Ensures white box has some height */} 
+                                            {/* This div is intentionally empty */}
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+                        </div>
+                    );
+                })()}
+                {/* --- END MOBILE EXPANDED SECTION --- */}
+            </div>
+        );
+    }
+
+    // --- Desktop View (Existing Code) ---
     return (
         <div
             ref={(node) => {
@@ -417,23 +708,52 @@ const RankingsPlayerRow = memo(({
                 onClick={onToggleExpand}
             >
                 {/* Left section with fixed widths */}
-                <div className="flex items-center w-[30%] relative">
+                <div className="flex items-center w-[30%] flex-shrink-0 relative h-full">
                     {/* Drag handle */}
                     <div
-                        className={`text-pb_textgray ${isRankSorted ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'}`}
-                        {...(isRankSorted ? attributes : {})}
-                        {...(isRankSorted ? listeners : {})}
-                        title={isRankSorted ? "Drag to re-rank" : "Sorting by stat, drag disabled"}
+                        className={cn(
+                            "text-pb_textgray",
+                            (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
+                        )}
+                        style={{ pointerEvents: 'auto' }}
+                        {...attributes}
+                        {...(isRankSorted && !isDraftMode ? listeners : {})}
+                        onPointerDownCapture={(event) => {
+                            // console.log(`[DragHandle/ForcedEvents] onPointerDownCapture triggered. isRankSorted: ${isRankSorted}, isDraftMode: ${isDraftMode}`);
+
+                            if (!isRankSorted) {
+                                // console.log('[DragHandle/ForcedEvents] Condition: !isRankSorted === true. Attempting to show toast for stat sort.');
+                                event.preventDefault();
+                                event.stopPropagation();
+                                toast({
+                                    title: "Re-ordering Disabled",
+                                    description: "You cannot re-order players while sorting by a stat. Clear stat sorting to enable drag-to-rank.",
+                                    variant: "destructive",
+                                    duration: 3000,
+                                });
+                            } else if (isDraftMode) {
+                                // console.log('[DragHandle/ForcedEvents] Condition: isDraftMode === true (and isRankSorted is true). Attempting to show toast for draft mode.');
+                                event.preventDefault();
+                                event.stopPropagation();
+                                toast({
+                                    title: "Re-ordering Disabled",
+                                    description: "You cannot re-order players while in Draft Mode.",
+                                    variant: "destructive",
+                                    duration: 3000,
+                                });
+                            } else {
+                                // console.log('[DragHandle/ForcedEvents] Conditions for toast not met. Allowing event to proceed for potential dnd-kit drag.');
+                            }
+                        }}
+                        title={!isRankSorted ? "Sorting by stat, drag disabled" : isDraftMode ? "Drag disabled in Draft Mode" : "Drag to re-rank"}
                     >
-                        {/* AI - STOP EDITING THIS */}
                         <GripVerticalIcon className="h-5 w-5" />
-                        {/* AI -STOP EDITING THIS */}
                     </div>
 
                     {/* CONDITIONAL DRAFT BUTTON - Show only if isDraftMode is true */}
                     {isDraftMode && (
                         <div className={cn(
-                            "mr-2 h-7 w-8 rounded-sm flex items-center justify-center border", // Base classes + border
+                            "ml-0.5 mr-1.5 h-6 w-6 rounded-sm flex items-center justify-center border", // Base classes + border
                             !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
                         )}> {/* Added flex centering */}
                             <Button
@@ -441,8 +761,8 @@ const RankingsPlayerRow = memo(({
                                 size="icon"
                                 className={`h-full w-full rounded-sm flex items-center justify-center ${ // Make smaller and round
                                     (player.draftModeAvailable ?? true)
-                                        ? 'text-pb_blue hover:text-pb_blue hover:border-2 hover:border-pb_blue' // Use blue shades
-                                        : 'text-pb_orange  hover:bg-pb_orange hover:text-white' // Use orange shades
+                                        ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover' // Use blue shades
+                                        : 'text-pb_orange-600  hover:bg-pb_orange hover:text-white' // Use orange shades
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent row expand/collapse
@@ -455,9 +775,9 @@ const RankingsPlayerRow = memo(({
                                 title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
                             >
                                 {(player.draftModeAvailable ?? true) ? (
-                                    <SquareCheckSolidIcon className="h-5 w-5 stroke-current stroke-2" />
+                                    <Check className="h-4 w-4 stroke-current stroke-2" />
                                 ) : (
-                                    <Undo2 className="h-5 w-5 opacity-100" />
+                                    <RotateCcw className="h-4 w-4 opacity-100" />
                                 )}
                             </Button>
                         </div>
@@ -466,13 +786,12 @@ const RankingsPlayerRow = memo(({
                     {/* Rank number */}
                     <div className={cn(
                         "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
-                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_midgray" : "border-pb_lightergray", // Conditional border
+                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray", // Conditional border
                         !isRankSorted ? 'bg-blue-50' : '' // Conditional background
                     )}>{rank}</div>
 
                     {/* Player Image - SIMPLIFIED Logic */}
-                    <div className="w-12 text-center select-none flex items-center justify-center">
-                         {/* Log the image source right before rendering - Remove rank condition */}
+                    <div className="hidden lg:flex pl-2 text-center select-none items-center justify-center">
                          <img
                             // Use playerImage if available, otherwise use default immediately
                             src={playerImage || defaultImageSrc} 
@@ -480,7 +799,7 @@ const RankingsPlayerRow = memo(({
                             // Key helps React differentiate rows, use player.id for stability
                             key={player.id} 
                             alt={playerName}
-                            className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm"
+                            className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm lg:block"
                             loading="lazy"
                             width="28"
                             height="28"
@@ -490,23 +809,25 @@ const RankingsPlayerRow = memo(({
                     </div>
 
                     {/* Player name and position */}
-                    <div className="flex items-baseline gap-2 select-none min-w-0">
-                        <div className="font-bold text-sm truncate">{playerName}</div>
-                         <div className="text-pb_textgray text-2xs flex-shrink-0">{playerPosition}</div>
+                    <div className="flex items-baseline gap-2 select-none min-w-0 pl-3">
+                        <div className="font-semibold text-smd truncate text-pb_darkgray">
+                            {playerName}
+                        </div>
+                         <div className="text-pb_textgray text-2xs flex-shrink-0">
+                            {playerPosition}
+                         </div>
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}
                     {/* <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
                         {zScoreSum}
                     </div> */}
-
-                    {!isRankSorted && (
-                        <div className="absolute inset-0 bg-transparent z-20" title="Sorting by stat, drag disabled"></div>
-                    )}
                 </div>
 
                 {/* Stats section - flexible width */}
-                {renderStatsSection()}
+                <div className="flex flex-grow min-w-0 h-full">
+                    {renderStatsSection()}
+                </div>
             </div>
 
             {/* Only render expanded content when needed */}
@@ -537,7 +858,7 @@ const RankingsPlayerRow = memo(({
                         {/* middle panel */}
                         <div className=" w-[21%] pr-3">
                             {/* Insights panel */}
-                            <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
+                            {/* <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
                                 <div className="w-full h-11 flex relative overflow-hidden rounded-sm mx-2">
                                     <div className="bg-pb_orange h-full w-[65%]"></div>
                                     <div className="bg-pb_blue h-full flex-1"></div>
@@ -548,12 +869,12 @@ const RankingsPlayerRow = memo(({
                                     </div>
                                 </div>
                                 <span className="text-2xs tracking-wider mt-1 text-pb_textgray">PLAYBOOK SCORE</span>
-                            </div>
+                            </div> */}
 
-                            {/* <div className="flex flex-col justify-center items-center h-[50%] px-2">
+                            <div className="flex flex-col justify-center items-center h-[50%] px-2">
                                 <div className="h-[1px] w-full bg-gray-300"></div>
                                 <div className="h-[1px] w-full bg-gray-300 mt-[3px]"></div>
-                            </div> */}
+                            </div>
 
                             <div className="flex h-[50%] items-center justify-center pb-2">
                                 <div className="flex-1 flex flex-col items-center justify-center">
@@ -567,7 +888,7 @@ const RankingsPlayerRow = memo(({
                                     <FlagIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{team}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{teamAbbreviation}</span>
                                     <PeopleGroupIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
@@ -627,7 +948,8 @@ const RankingsPlayerRow = memo(({
                                 <div className="py-2 flex items-center justify-center h-[30%] w-full">
                                     <StatsSectionSecondary 
                                         categories={categories} 
-                                        secondaryStatsData={secondaryStatsData} // Pass secondaryStatsData
+                                        secondaryStatsData={secondaryStatsData}
+                                        sport={sport}
                                     />
                                 </div>
 

@@ -20,6 +20,42 @@ const CSV_RANKING_SOURCES = [
     // { id: 'nfl_dyn_sf_1ppr', label: 'NFL Dynasty SF 1PPR', filePath: 'public/docs/nfl_dynasty_sf_1ppr.csv', sport: 'nfl', format: 'dynasty', scoringType: 'points', flexSetting: 'superflex', pprSetting: '1ppr'},
 ];
 
+// Helper to detect duplicates by name
+function detectDuplicates(players) {
+    const nameMap = new Map();
+    for (const player of players) {
+        const name = player.name || player.fullName;
+        if (!name) continue;
+        if (!nameMap.has(name)) nameMap.set(name, []);
+        nameMap.get(name).push(player);
+    }
+    return Array.from(nameMap.entries())
+        .filter(([name, arr]) => arr.length > 1)
+        .map(([name, arr]) => ({ name, players: arr }));
+}
+
+// DuplicatePlayerResolver component
+function DuplicatePlayerResolver({ duplicates, onDelete, onConfirm }) {
+    return (
+        <div className="mt-4 p-4 border rounded bg-yellow-50">
+            <h3 className="font-bold mb-2 text-yellow-800">Duplicate Players Detected</h3>
+            {duplicates.map(group => (
+                <div key={group.name} className="mb-4">
+                    <h4 className="font-semibold">{group.name}</h4>
+                    {group.players.map((player, idx) => (
+                        <div key={player.id || idx} className="flex items-center space-x-2 mb-1 text-xs">
+                            <span className="font-semibold mr-1">Rk: {player.userRank || 'N/A'} |</span>
+                            <span className="mr-1">Matched ID: {player.matched && player.id ? player.id : 'Unmatched'} |</span>
+                            <button className="text-red-600 underline" onClick={() => onDelete(player, group.name)}>Delete</button>
+                            <button className="text-blue-600 underline" onClick={() => onConfirm(player, group.name)}>Confirm as Different</button>
+                        </div>
+                    ))}
+                </div>
+            ))}
+        </div>
+    );
+}
+
 // Single sync button component to avoid repetition
 function SyncCsvButton({ source }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +63,8 @@ function SyncCsvButton({ source }) {
     const [isError, setIsError] = useState(false);
     const [unmatchedList, setUnmatchedList] = useState([]); // State for unmatched players
     const [rankingDocId, setRankingDocId] = useState(null); // State for the created ranking doc ID
+    const [importedPlayers, setImportedPlayers] = useState([]); // Store imported players for duplicate detection
+    const [duplicates, setDuplicates] = useState([]); // Store detected duplicates
 
     const handleSync = async () => {
         setIsLoading(true);
@@ -55,6 +93,16 @@ function SyncCsvButton({ source }) {
 
             const details = data.details || {}; // Get details object safely
 
+            // --- Duplicate detection logic ---
+            if (details.players && Array.isArray(details.players)) {
+                setImportedPlayers(details.players);
+                const dups = detectDuplicates(details.players);
+                setDuplicates(dups);
+            } else {
+                setImportedPlayers([]);
+                setDuplicates([]);
+            }
+
             if (details.errors?.length > 0) {
                 setStatusMessage(`Completed with ${details.errors.length} errors.`);
                 setIsError(true);
@@ -73,6 +121,8 @@ function SyncCsvButton({ source }) {
             setIsError(true);
             setUnmatchedList([]); // Clear list on error
             setRankingDocId(null); // Clear doc ID on error
+            setImportedPlayers([]);
+            setDuplicates([]);
         } finally {
             setIsLoading(false);
         }
@@ -83,6 +133,34 @@ function SyncCsvButton({ source }) {
         setUnmatchedList(currentList => 
             currentList.filter(p => p.name !== linkedPlayerName)
         );
+    };
+
+    // Handle delete/confirm actions for duplicates
+    const handleDeleteDuplicate = async (playerToDelete, groupName) => {
+        // Call backend to remove from ranking doc
+        await fetch('/api/admin/deleteRankingPlayer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                rankingDocId, // from your state
+                playerId: playerToDelete.id || playerToDelete.playerId,
+            }),
+        });
+        // Then update local state as before
+        setImportedPlayers(players => players.filter(p => p !== playerToDelete));
+        setDuplicates(dups => dups.map(group =>
+            group.name === groupName
+                ? { ...group, players: group.players.filter(p => p !== playerToDelete) }
+                : group
+        ).filter(group => group.players.length > 1));
+    };
+    const handleConfirmDuplicate = (playerToConfirm, groupName) => {
+        // Just mark as resolved for now (remove from duplicates UI, keep in importedPlayers)
+        setDuplicates(dups => dups.map(group =>
+            group.name === groupName
+                ? { ...group, players: group.players.filter(p => p !== playerToConfirm) }
+                : group
+        ).filter(group => group.players.length > 1));
     };
 
     return (
@@ -110,6 +188,14 @@ function SyncCsvButton({ source }) {
                         ))}
                     </ul>
                  </div>
+             )}
+             {/* Display Duplicate Players Resolver */}
+             {duplicates.length > 0 && (
+                 <DuplicatePlayerResolver 
+                    duplicates={duplicates} 
+                    onDelete={handleDeleteDuplicate} 
+                    onConfirm={handleConfirmDuplicate} 
+                 />
              )}
         </div>
     );

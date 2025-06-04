@@ -1,16 +1,30 @@
+import debounce from 'lodash.debounce'; // Import debounce
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { buildApiUrl } from '../lib/utils'; // Assuming you have a helper for this
 
+const SAVE_DEBOUNCE_MILLISECONDS = 3000; // 3 seconds
+
 const useUserRankings = create(
     persist(
         (set, get) => {
+            // Debounced save function - will be initialized in initAutoSave
+            let debouncedSaveChanges = null;
+
             // Add a wrapped set function that logs changes
             const setState = (updates) => {
                 // const prevState = get();
                 set(updates);
                 // const newState = get();
+            };
+
+            // Helper to trigger debounced save if there are changes
+            const triggerDebouncedSave = () => {
+                if (get().hasUnsavedChanges && debouncedSaveChanges) {
+                    // console.log('[useUserRankings] Triggering debounced save.');
+                    debouncedSaveChanges();
+                }
             };
 
             return {
@@ -42,6 +56,8 @@ const useUserRankings = create(
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
+                        // console.log('[DEBUG] Raw API response from /api/user-rankings:', data);
+                        // console.log('Fetched rankings:', data); // DEBUG: Log all rankings fetched
                         
                         const nflRankingsInData = data.filter(r => r.sport === 'nfl' || r.sport === 'NFL');
                         if (nflRankingsInData.length > 0) {
@@ -80,7 +96,9 @@ const useUserRankings = create(
                             selectionLoading: false,
                             // Always reset draft mode when setting/changing active ranking
                             isDraftModeActive: false,
-                            showDraftedPlayers: false
+                            showDraftedPlayers: false,
+                            hasUnsavedChanges: false, // Reset when a new ranking is loaded
+                            activeRankingIsDirty: false // Reset as well
                         });
 
                         if (rankingData) {
@@ -110,29 +128,45 @@ const useUserRankings = create(
                     setState(state => ({ showDraftedPlayers: !state.showDraftedPlayers }));
                 },
 
-                setPlayerAvailability: (rankingIdToUpdate, isAvailable) => {
+                setPlayerAvailability: (playerId, isAvailable) => {
                     const { activeRanking, rankings } = get();
-                    if (!activeRanking || !activeRanking.rankings) return;
+                    if (!activeRanking || !activeRanking.rankings) {
+                        console.error("[setPlayerAvailability] No activeRanking or activeRanking.rankings found.");
+                        return;
+                    }
 
                     let playerFound = false;
-                    const updatedRankings = activeRanking.rankings.map(p => {
-                        
-                        const incomingIdStr = String(rankingIdToUpdate);
+                    const targetPlayerIdStr = String(playerId); // The ID from the row, could be any format
+
+                    const updatedPlayerList = activeRanking.rankings.map(p => {
                         let isMatch = false;
 
-                        if (incomingIdStr.startsWith('pick-')) {
-                            if (p.mySportsFeedsId == null) { 
-                                const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
-                                const incomingParts = incomingIdStr.split('-');
-                                if (incomingParts.length >= 3) {
-                                    const incomingNameRaw = incomingParts.slice(2).join('-');
-                                    const storedNameRaw = p.originalName || p.name || 'unknown';
-                                    isMatch = normalizeName(storedNameRaw) === normalizeName(incomingNameRaw);
+                        // Attempt to match with various ID fields present on the player object `p`
+                        if (p.id && String(p.id) === targetPlayerIdStr) {
+                            isMatch = true;
+                        } else if (p.playbookId && String(p.playbookId) === targetPlayerIdStr) {
+                            isMatch = true;
+                        } else if (p.mySportsFeedsId && String(p.mySportsFeedsId) === targetPlayerIdStr) {
+                            isMatch = true;
+                        }
+                        
+                        // Handle 'pick-' style IDs by name matching as a fallback, 
+                        // especially if other IDs didn't match or aren't present on `p` for this type of entry.
+                        // This is similar to the old logic's intent but placed in a clearer sequence.
+                        if (!isMatch && targetPlayerIdStr.startsWith('pick-')) {
+                            // Check if player 'p' might be a pick-style entry (e.g., doesn't have other firm IDs)
+                            // The original logic had `p.mySportsFeedsId == null`, which might be a way to identify such an entry.
+                            // Let's adapt that: if it's a pick and we haven't matched on other IDs, try name.
+                            if (p.mySportsFeedsId == null && p.playbookId == null) { // Condition to ensure we only name-match potential picks
+                                const normalizeName = (name) => name ? String(name).toLowerCase().trim().replace(/[^a-z0-9]/gi, '') : '';
+                                const incomingParts = targetPlayerIdStr.split('-'); // e.g., "pick-1-some-player-name"
+                                if (incomingParts.length >= 3) { // Expecting at least pick-round-name
+                                    const incomingNameRaw = incomingParts.slice(2).join('-'); // Get "some-player-name"
+                                    const storedNameRaw = p.originalName || p.name || 'unknown_player_in_store';
+                                    if (normalizeName(storedNameRaw) === normalizeName(incomingNameRaw)) {
+                                        isMatch = true;
+                                    }
                                 }
-                            }
-                        } else {
-                            if (p.mySportsFeedsId != null) { 
-                                isMatch = String(p.mySportsFeedsId) === incomingIdStr;
                             }
                         }
 
@@ -144,10 +178,11 @@ const useUserRankings = create(
                     });
 
                     if (!playerFound) {
+                        console.warn(`[setPlayerAvailability] Player with ID/Name '${targetPlayerIdStr}' not found or did not match in activeRanking.rankings.`);
                         return; 
                     }
 
-                    const updatedActiveRanking = { ...activeRanking, rankings: updatedRankings };
+                    const updatedActiveRanking = { ...activeRanking, rankings: updatedPlayerList };
 
                     setState({
                         activeRanking: updatedActiveRanking,
@@ -155,11 +190,7 @@ const useUserRankings = create(
                         hasUnsavedChanges: true
                     });
 
-                    if (!isAvailable) {
-                        // Player drafted logic (logging removed)
-                    }
-
-                    get().saveChanges();
+                    get()._markChangesAndSaveDebounced(); // Use new helper
                 },
 
                 resetDraftAvailability: () => {
@@ -179,7 +210,7 @@ const useUserRankings = create(
                         hasUnsavedChanges: true 
                     });
 
-                    get().saveChanges();
+                    get()._markChangesAndSaveDebounced(); // Use new helper
                 },
                 // --- END DRAFT MODE ACTIONS ---
 
@@ -202,13 +233,19 @@ const useUserRankings = create(
                         ),
                         hasUnsavedChanges: true
                     });
+
+                    get()._markChangesAndSaveDebounced(); // Use new helper
                 },
 
                 // Save changes to the database
                 saveChanges: async () => {
-                    const { activeRanking, hasUnsavedChanges } = get();
-                    if (!hasUnsavedChanges || !activeRanking) return;
-
+                    const { activeRanking, activeRankingIsDirty } = get();
+                    // console.log('[saveChanges] Called. IsDirty:', activeRankingIsDirty, 'ActiveRanking:', !!activeRanking);
+                    if (!activeRankingIsDirty || !activeRanking) {
+                        return Promise.resolve();
+                    }
+                    // console.log('[saveChanges] Proceeding with save for ranking:', activeRanking._id);
+                    // setState({ isLoading: true }); // Optional
                     try {
                         const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
                             method: 'PUT',
@@ -216,26 +253,90 @@ const useUserRankings = create(
                             body: JSON.stringify(activeRanking)
                         });
 
-                        if (!response.ok) throw new Error('Failed to save changes');
+                        if (!response.ok) {
+                            // Consider how to handle error propagation if needed by flushPendingChanges
+                            const errorData = await response.json().catch(() => ({})); // Try to get error details
+                            const errorMessage = errorData.error || `Failed to save changes (status: ${response.status})`;
+                            throw new Error(errorMessage);
+                        }
+
+                        const savedData = await response.json(); // Assuming the backend returns the saved ranking or a success message
 
                         setState({
                             hasUnsavedChanges: false,
-                            lastSaved: new Date()
+                            activeRankingIsDirty: false,
+                            lastSaved: new Date().toISOString(), // Use ISOString for consistency
+                            // isLoading: false, // Reset loading state
+                            activeRanking: savedData, // Update activeRanking with potentially updated data from backend (e.g., timestamps)
+                            rankings: get().rankings.map(r => r._id === savedData._id ? savedData : r), // Update in the main list too
+                            error: null // Clear any previous error
                         });
+                        return savedData; // Resolve with the saved data or success indication
                     } catch (error) {
-                        setState({ error: error.message });
+                        setState({
+                            error: error.message,
+                            // isLoading: false // Reset loading state
+                        });
+                        return Promise.reject(error); // Reject the promise on error
                     }
                 },
 
-                initAutoSave: () => {
-                    const saveInterval = setInterval(() => {
-                        const { hasUnsavedChanges } = get();
-                        if (hasUnsavedChanges) {
-                            get().saveChanges();
-                        }
-                    }, 30000);
+                // --- NEW: Flush Pending Changes ---
+                flushPendingChanges: async () => {
+                    if (debouncedSaveChanges && typeof debouncedSaveChanges.cancel === 'function') {
+                        // console.log('[flushPendingChanges] Cancelling pending debounced save.');
+                        debouncedSaveChanges.cancel(); // Cancel any scheduled debounced save
+                    }
+                    const { activeRankingIsDirty, activeRanking } = get();
+                    if (activeRankingIsDirty && activeRanking) {
+                        // console.log('[flushPendingChanges] Flushing pending changes for activeRanking:', activeRanking._id);
+                        return get().saveChanges(); // saveChanges now returns a promise
+                    }
+                    // console.log('[flushPendingChanges] No pending changes to flush or no active ranking.');
+                    return Promise.resolve(); // If no changes or no active ranking, resolve immediately
+                },
+                // --- END NEW ---
 
-                    return () => clearInterval(saveInterval);
+                initAutoSave: () => {
+                    // console.log('[initAutoSave] Initializing debounced auto-save.');
+                    debouncedSaveChanges = debounce(() => {
+                        // console.log('[debouncedSaveChanges] Debounced function triggered.');
+                        get().saveChanges();
+                    }, SAVE_DEBOUNCE_MILLISECONDS);
+
+                    // Listener for page unload using sendBeacon (more reliable for unload)
+                    const handlePageUnload = () => {
+                        const { activeRankingIsDirty, activeRanking } = get();
+                        if (activeRankingIsDirty && activeRanking && navigator.sendBeacon) {
+                            // console.log('[handlePageUnload] Sending beacon for unsaved changes for ranking:', activeRanking._id);
+                            const status = navigator.sendBeacon(
+                                `/api/user-rankings/beacon-save/${activeRanking._id}`,
+                                JSON.stringify(activeRanking)
+                            );
+                            // console.log('[handlePageUnload] Beacon status:', status);
+                            if (status) {
+                                // If beacon is sent, assume it will work (fire and forget)
+                                // Optionally, clear dirty status here, but it's tricky because we don't get a response
+                                // For now, leave dirty state as is; it will be cleared if user reloads and data was saved.
+                            }
+                        } else if (activeRankingIsDirty && activeRanking) {
+                            // Fallback for browsers not supporting sendBeacon, or if a synchronous save is desired (less reliable)
+                            // console.log('[handlePageUnload] sendBeacon not supported or not used, attempting synchronous save (less reliable).');
+                            // Note: A full saveChanges() here is unlikely to complete during unload.
+                        }
+                    };
+
+                    window.addEventListener('pagehide', handlePageUnload);
+
+                    // Cleanup function
+                    return () => {
+                        // console.log('[initAutoSave] Cleaning up auto-save (cancelling debounced save and removing unload listener).');
+                        if (debouncedSaveChanges && typeof debouncedSaveChanges.cancel === 'function') {
+                            debouncedSaveChanges.cancel();
+                        }
+                        window.removeEventListener('pagehide', handlePageUnload);
+                        debouncedSaveChanges = null; // Clear the reference
+                    };
                 },
 
                 // Add updateCategories function to the store
@@ -260,24 +361,7 @@ const useUserRankings = create(
                         hasUnsavedChanges: true
                     });
 
-                    try {
-                        const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedRanking)
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Failed to save category changes');
-                        }
-
-                        setState({
-                            hasUnsavedChanges: false,
-                            lastSaved: new Date().toISOString()
-                        });
-                    } catch (error) {
-                        setState({ error: error.message });
-                    }
+                    get()._markChangesAndSaveDebounced(); // Use new helper
                 },
 
                 // Add updateRankingName function
@@ -302,24 +386,7 @@ const useUserRankings = create(
                         hasUnsavedChanges: true
                     });
 
-                    try {
-                        const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(updatedRanking)
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Failed to save name change');
-                        }
-
-                        setState({
-                            hasUnsavedChanges: false,
-                            lastSaved: new Date().toISOString()
-                        });
-                    } catch (error) {
-                        setState({ error: error.message });
-                    }
+                    get()._markChangesAndSaveDebounced(); // Use new helper
                 },
 
                 // Add a function to update all player ranks in the active ranking list
@@ -327,51 +394,31 @@ const useUserRankings = create(
                     const { activeRanking, rankings } = get();
                     if (!activeRanking || !activeRanking.rankings) return;
 
-                    const updatedPlayers = newPlayerOrder.map((rankingId, index) => {
-                        const incomingIdStr = String(rankingId);
-                        let player = null;
-
-                        if (incomingIdStr.startsWith('pick-')) {
-                            const normalizeName = (name) => name ? String(name).toLowerCase().trim() : '';
+                    const updatedPlayers = newPlayerOrder.map((playerIdFromOrder, index) => {
+                        const incomingIdStr = String(playerIdFromOrder);
+                        let player = activeRanking.rankings.find(p => 
+                            String(p.id) === incomingIdStr || // Check primary `id` field if it exists
+                            (p.playbookId && String(p.playbookId) === incomingIdStr) ||
+                            (p.mySportsFeedsId && String(p.mySportsFeedsId) === incomingIdStr)
+                        );
+                        // Fallback for 'pick-' type IDs by name (if necessary and specific conditions met)
+                        if (!player && incomingIdStr.startsWith('pick-')) {
+                            const normalizeName = (name) => name ? String(name).toLowerCase().trim().replace(/[^a-z0-9]/gi, '') : '';
                             const incomingParts = incomingIdStr.split('-');
-                            if (incomingParts.length < 3) {
-                                player = null; 
-                            } else {
+                            if (incomingParts.length >= 3) {
                                 const incomingNameRaw = incomingParts.slice(2).join('-');
                                 const normalizedIncomingName = normalizeName(incomingNameRaw);
-                        
                                 player = activeRanking.rankings.find(p => {
-                                    const storedNameRaw = p.originalName || p.name || 'unknown';
-                                    const normalizedStoredName = normalizeName(storedNameRaw);
-                                    return normalizedStoredName === normalizedIncomingName;
+                                    if (p.mySportsFeedsId == null && p.playbookId == null) { // Only for potential pick entries
+                                        const storedNameRaw = p.originalName || p.name || 'unknown';
+                                        return normalizeName(storedNameRaw) === normalizedIncomingName;
+                                    }
+                                    return false;
                                 });
-                        
-                                if (!player) {
-                                    // Player not found by name
-                                }
                             }
-                        } else {
-                            player = activeRanking.rankings.find(p => {
-                                if (p.playbookId && String(p.playbookId) === incomingIdStr) {
-                                    return true;
-                                }
-                                if (p.mySportsFeedsId && String(p.mySportsFeedsId) === incomingIdStr) {
-                                    return true;
-                                }
-                                return false;
-                            }); 
                         }
-
-                        if (!player) {
-                            return null; 
-                        }
-                        return { ...player, userRank: index + 1 }; 
-                    }); 
-                    
-                    const failedLookups = newPlayerOrder.filter((_, index) => !updatedPlayers[index]);
-                    if (failedLookups.length > 0) {
-                        // Failed to find some players
-                    }
+                        return player ? { ...player, userRank: index + 1 } : null;
+                    });
                     
                     const validUpdatedPlayers = updatedPlayers.filter(p => p !== null); 
 
@@ -391,6 +438,8 @@ const useUserRankings = create(
                         ),
                         hasUnsavedChanges: true
                     });
+
+                    get()._markChangesAndSaveDebounced(); // Use new helper
                 },
 
                 // --- NEW: Delete Ranking Function ---
@@ -434,6 +483,7 @@ const useUserRankings = create(
 
                 // --- NEW: Fetch Consensus Rankings Action --- ADDED
                 fetchConsensusRankings: async (criteria) => {
+                    console.log('[useUserRankings DEBUG - fetchConsensusRankings] Called with criteria:', JSON.parse(JSON.stringify(criteria))); // Log received criteria
                     if (!criteria || !criteria.sport || !criteria.format || !criteria.scoring) {
                         setState({ ecrError: 'Missing required criteria for ECR fetch', isEcrLoading: false });
                         return;
@@ -476,12 +526,15 @@ const useUserRankings = create(
                         let redraftRankingsData = null; 
                         if (redraftResponse.ok) {
                             redraftRankingsData = await redraftResponse.json();
+                            console.log('[useUserRankings DEBUG - fetchConsensusRankings] Raw redraftRankingsData from API:', JSON.parse(JSON.stringify(redraftRankingsData))); // Log API response
                         } else {
+                            console.warn('[useUserRankings - fetchConsensusRankings] Redraft ECR fetch failed. Status:', redraftResponse.status); // Log failure
                             // Redraft fetch failed
                         }
 
                         const standardEcrToSet = standardRankingsData?.rankings || []; 
                         const redraftEcrToSet = redraftRankingsData?.rankings || []; 
+                        console.log('[useUserRankings DEBUG - fetchConsensusRankings] redraftEcrToSet (before setState):', JSON.parse(JSON.stringify(redraftEcrToSet))); // Log data being set
 
                         setState({
                             standardEcrRankings: standardEcrToSet,
@@ -511,6 +564,7 @@ const useUserRankings = create(
 
                 // --- NEW: Select and Fetch Full Ranking Details ---
                 selectAndTouchRanking: async (rankingId) => {
+                    console.log('[useUserRankings DEBUG - selectAndTouchRanking] Called with rankingId:', rankingId); // Log entry and rankingId
                     if (!rankingId) {
                         console.error("[selectAndTouchRanking] No rankingId provided."); // Keep critical errors
                         setState({ activeRanking: null, selectionLoading: false, error: 'No ranking ID provided for selection.' });
@@ -528,6 +582,7 @@ const useUserRankings = create(
                             throw new Error(errorData.error || `API request failed with status ${response.status}`);
                         }
                         const fullRankingData = await response.json();
+                        console.log('[useUserRankings DEBUG - selectAndTouchRanking] Fetched fullRankingData:', JSON.parse(JSON.stringify(fullRankingData))); // Log fetched data
 
                         if (!fullRankingData || !Array.isArray(fullRankingData.rankings)) {
                              const errorMsg = `Fetched data for ranking ${rankingId} is incomplete (missing 'rankings' array).`;
@@ -555,18 +610,26 @@ const useUserRankings = create(
                             pprSetting: fullRankingData.pprSetting, 
                             flexSetting: fullRankingData.flexSetting 
                         };
+                        console.log('[useUserRankings DEBUG - selectAndTouchRanking] About to call fetchConsensusRankings with criteria:', JSON.parse(JSON.stringify(criteria))); // Log before call
                         get().fetchConsensusRankings(criteria);
 
                         return fullRankingData; 
 
                     } catch (error) {
                         console.error(`[selectAndTouchRanking] Error fetching ranking ${rankingId}:`, error); // Keep critical errors
+                        console.error('[useUserRankings DEBUG - selectAndTouchRanking] Error caught:', error); // Log caught error
                         setState({
                             error: `Failed to load ranking ${rankingId}: ${error.message}`,
                         });
                         setState({ selectionLoading: false }); 
                         return null; 
                     }
+                },
+
+                // Function to mark changes and trigger debounced save
+                _markChangesAndSaveDebounced: () => {
+                    setState({ hasUnsavedChanges: true, activeRankingIsDirty: true });
+                    triggerDebouncedSave();
                 },
             };
         },
@@ -590,16 +653,22 @@ export const setFetchedRankings = (rankingsList) => {
 };
 
 export const useInitializeUserRankings = () => {
+    const initAutoSave = useUserRankings((state) => state.initAutoSave);
     const fetchUserRankings = useUserRankings((state) => state.fetchUserRankings);
-    const rankingsLoaded = useUserRankings((state) => state.rankings.length > 0);
+    const initialRankingsLoadedFromStore = useUserRankings((state) => state.initialRankingsLoaded);
     const isLoading = useUserRankings((state) => state.isLoading);
-    const initialRankingsLoadedFromStore = useUserRankings((state) => state.initialRankingsLoaded); 
 
     useEffect(() => {
-        if (!rankingsLoaded && !isLoading) {
+        if (!initialRankingsLoadedFromStore && !isLoading) {
             fetchUserRankings();
         }
-    }, [fetchUserRankings, rankingsLoaded, isLoading, initialRankingsLoadedFromStore]); 
+        // Setup auto-save and cleanup
+        const cleanupAutoSave = initAutoSave();
+        return () => {
+            cleanupAutoSave();
+        };
+    }, [fetchUserRankings, initialRankingsLoadedFromStore, isLoading, initAutoSave]);
 };
 
 export default useUserRankings;
+

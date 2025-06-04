@@ -19,18 +19,19 @@ export default async function handler(req, res) {
         }
 
         const updatedData = req.body;
-        // Remove _id if it exists in updatedData
+        // Remove _id if it exists in updatedData to prevent trying to update the immutable _id field
         delete updatedData._id;
 
         // --- Add Validation for rankings array --- 
         if (!updatedData.rankings || !Array.isArray(updatedData.rankings)) {
             return res.status(400).json({ error: 'Invalid request body: Missing or invalid rankings array.' });
         }
+        // A more robust check might be needed depending on what constitutes a valid player object in the rankings array
         const isValidStructure = updatedData.rankings.every(p => 
-            p && typeof p === 'object' && p.playbookId && typeof p.userRank === 'number'
+            p && typeof p === 'object' && (p.playbookId || p.id) && typeof p.userRank === 'number' // Allow p.id as well
         );
         if (!isValidStructure) {
-            return res.status(400).json({ error: 'Invalid request body: Each entry in rankings array must contain playbookId and userRank.' });
+            return res.status(400).json({ error: 'Invalid request body: Each entry in rankings array must contain playbookId (or id) and userRank.' });
         }
         // Add timestamp for update
         updatedData.lastUpdated = new Date();
@@ -43,41 +44,44 @@ export default async function handler(req, res) {
             const db = client.db('playbook');
             const collection = db.collection('user_rankings');
 
-            // --- START COUNT CHECK ---
             const currentDoc = await collection.findOne({ _id: new ObjectId(id), userId: session.user.sub });
 
             if (!currentDoc) {
                 return res.status(404).json({ error: 'Ranking not found for this user.' });
             }
 
-            // Ensure both current and incoming rankings exist and are arrays before comparing length
             const currentRankingsLength = Array.isArray(currentDoc.rankings) ? currentDoc.rankings.length : 0;
-            const incomingRankingsLength = Array.isArray(updatedData.rankings) ? updatedData.rankings.length : -1; // Use -1 to fail check if not array
+            const incomingRankingsLength = Array.isArray(updatedData.rankings) ? updatedData.rankings.length : -1;
 
             if (incomingRankingsLength < 0) {
-                 return res.status(400).json({ error: 'Invalid request body: Missing or invalid rankings array.' }); // Re-check for safety
+                 return res.status(400).json({ error: 'Invalid request body: Missing or invalid rankings array after initial check.' });
             }
 
+            // --- COUNT CHECK MODIFICATION: Allow update if counts are same or greater, or if it's a new ranking (though PUT is for update)
+            // This check might be too strict if players can be removed. Consider your business logic.
+            // For now, keeping the logic that incoming should not be shorter.
             if (incomingRankingsLength < currentRankingsLength) {
-                // Prevent update if the incoming list is shorter than the current one
                 return res.status(400).json({
                     error: `Potential data loss prevented. Incoming ranking count (${incomingRankingsLength}) is less than current count (${currentRankingsLength}).`
                 });
             }
-            // --- END COUNT CHECK ---
 
-            // If checks pass, proceed with the update
-            const result = await collection.updateOne(
+            const updateResult = await collection.updateOne(
                 { _id: new ObjectId(id), userId: session.user.sub },
                 { $set: updatedData }
             );
 
-            if (result.modifiedCount === 0) {
-                // This might happen if the data sent is identical to the stored data
-                return res.status(200).json({ message: 'No changes detected or ranking not found.' }); // Changed status to 200 as it's not necessarily an error
+            // Fetch and return the updated document to ensure the client has the latest version
+            const savedRanking = await collection.findOne({ _id: new ObjectId(id), userId: session.user.sub });
+
+            if (!savedRanking) {
+                // This case implies the document was deleted between the updateOne and findOne, or an issue with ObjectId/userId matching.
+                // Or, if updateResult.modifiedCount was 0 and no document matched the initial find for currentDoc (already handled).
+                return res.status(404).json({ error: 'Ranking not found after update attempt. This should be rare.' });
             }
 
-            res.status(200).json({ message: 'Ranking updated successfully' });
+            res.status(200).json(savedRanking); // Return the full saved/updated ranking object
+
         } catch (error) {
             console.error('Error updating ranking:', {
                 message: error.message,
@@ -118,7 +122,8 @@ export default async function handler(req, res) {
                 await client.close();
             }
         }
-    } else if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+    } else {
+        res.setHeader('Allow', ['GET', 'PUT']);
+        return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
     }
 }

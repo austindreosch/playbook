@@ -24,7 +24,9 @@ const DraftModeButton = ({
     onShowDraftedChange,
     onResetDraft,
     draftedCount,
-    activeRanking
+    activeRanking,
+    iconOnly = false,
+    className = ""
 }) => {
     // Unique ID for the switch inside the menu
     const enableSwitchId = React.useId();
@@ -35,22 +37,27 @@ const DraftModeButton = ({
                 <Button
                     variant="outline"
                     className={cn(
-                        "flex items-center gap-2  duration-400 ease-in-out",
+                        "flex items-center gap-2 duration-400 ease-in-out",
                         isDraftMode &&
-                        `bg-gradient-to-r from-pb-orange-400 via-pb-orange-300 to-pb-orange-500 
-                       bg-[length:200%_auto] animate-shimmer 
+                        `bg-gradient-to-r from-pb_orange-400 via-pb_orange-300 to-pb_orange-500 
                         text-white border-transparent 
-                       shadow-md`
+                       shadow-md`,
+                       iconOnly && "p-2.5",
+                       className
                     )}
+                    title={iconOnly ? "Draft Mode" : undefined}
                 >
                     <ScrollText className={cn(
-                        "h-4 w-4"
+                        "h-4 w-4",
+                        iconOnly && "h-5 w-5"
                     )} />
-                    <span className={cn(
-                        isDraftMode && "font-bold"
-                    )}>
-                        Draft Mode
-                    </span>
+                    {!iconOnly && (
+                        <span className={cn(
+                            isDraftMode && "font-bold"
+                        )}>
+                            Draft Mode
+                        </span>
+                    )}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">

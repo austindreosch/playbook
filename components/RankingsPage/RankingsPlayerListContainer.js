@@ -1,6 +1,7 @@
 'use client';
 
 import RankingsPlayerRow from '@/components/RankingsPage/RankingsPlayerRow';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { useProcessedPlayers } from '@/hooks/useProcessedPlayers';
 import useMasterDataset from '@/stores/useMasterDataset';
 import useUserRankings from '@/stores/useUserRankings';
@@ -14,6 +15,9 @@ import RankingsPlayerListSkeleton from './RankingsPlayerListSkeleton';
 
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220;
+const MOBILE_ROW_HEIGHT = 48;
+const MOBILE_EXPANDED_ROW_HEIGHT = 158
+;
 
 const RankingsPlayerListContainer = React.forwardRef(({
     sport,
@@ -28,6 +32,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
     const [windowSize, setWindowSize] = useState({ width: 0, height: 600 });
     const [expandedRows, setExpandedRows] = useState(new Set());
     const listRef = useRef(null);
+    const isMobile = useMediaQuery('(max-width: 768px)');
 
     const {
         standardEcrRankings,
@@ -65,6 +70,10 @@ const RankingsPlayerListContainer = React.forwardRef(({
             listRef.current?.resetAfterIndex(0);
         }
     }, [collapseAllTrigger]);
+
+    useEffect(() => {
+        listRef.current?.resetAfterIndex(0);
+    }, [isMobile]);
 
     const playersToDisplay = useProcessedPlayers({
         activeRanking,
@@ -111,6 +120,12 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
             const newOrderedPlayerIds = arrayMove(playersToDisplay.map(p => p.id), oldIndex, newIndex);
 
+            // Collapse all rows immediately after a successful re-order operation
+            setExpandedRows(new Set());
+            if (listRef.current) {
+                listRef.current.resetAfterIndex(0);
+            }
+
             if (activeRanking?._id && newOrderedPlayerIds.length > 0) {
                 setTimeout(() => {
                     updateAllPlayerRanks(activeRanking._id, newOrderedPlayerIds);
@@ -119,7 +134,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 console.error("Missing activeRanking._id or no valid player IDs for DND update.");
             }
         }
-    }, [activeRanking?._id, updateAllPlayerRanks, sortConfig?.key, playersToDisplay]);
+    }, [activeRanking?._id, updateAllPlayerRanks, playersToDisplay]);
 
     const handleDragCancel = useCallback(() => {
         document.body.style.cursor = '';
@@ -138,8 +153,16 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
     const getRowHeight = useCallback(index => {
         const player = playersToDisplay[index];
-        return player && expandedRows.has(player.id) ? EXPANDED_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
-    }, [playersToDisplay, expandedRows]);
+        if (!player) return isMobile ? MOBILE_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
+
+        const isExpanded = expandedRows.has(player.id);
+
+        if (isMobile) {
+            return isExpanded ? MOBILE_EXPANDED_ROW_HEIGHT : MOBILE_ROW_HEIGHT;
+        }
+        // Desktop
+        return isExpanded ? EXPANDED_ROW_HEIGHT : DEFAULT_ROW_HEIGHT;
+    }, [playersToDisplay, expandedRows, isMobile]);
 
     const Row = useCallback(({ index, style }) => {
         const player = playersToDisplay[index];
@@ -149,9 +172,9 @@ const RankingsPlayerListContainer = React.forwardRef(({
 
         const handleToggleDraftStatus = (newAvailability) => {
             if (player.id && activeRanking?._id) {
-                setPlayerAvailability(activeRanking._id, player.id, newAvailability);
+                setPlayerAvailability(player.id, newAvailability);
             } else {
-                console.error("Cannot toggle draft status: Missing player.id or activeRanking._id", { 
+                console.error("Cannot toggle draft status: Missing player.id or activeRanking?._id", { 
                     playerId: player.id, 
                     activeRankingId: activeRanking?._id 
                 });
@@ -200,13 +223,13 @@ const RankingsPlayerListContainer = React.forwardRef(({
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragCancel={handleDragCancel}
-                disabled={sortConfig?.key !== null || isLoadingList}
+                disabled={sortConfig?.key !== null || isLoadingList || isDraftModeActive}
                 modifiers={[restrictToVerticalAxis]}
             >
                 <SortableContext
                     items={playersToDisplay.map(p => p.id)}
                     strategy={verticalListSortingStrategy}
-                    disabled={sortConfig?.key !== null || isLoadingList}
+                    disabled={sortConfig?.key !== null || isLoadingList || isDraftModeActive}
                 >
                     {isLoadingList ? (
                         <RankingsPlayerListSkeleton />

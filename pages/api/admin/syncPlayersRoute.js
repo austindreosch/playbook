@@ -42,17 +42,19 @@ export default async function handler(req, res) {
         console.log("syncPlayersFromStatsCollection finished execution.");
 
         if (result.errors && result.errors.length > 0) {
-             console.error("Sync completed with errors:", result.errors);
-             return res.status(500).json({
-                 message: `Sync completed with ${result.errors.length} errors.`,
-                 details: result
+             console.warn("Sync completed, but with informational messages/conflicts:", result.errors);
+             return res.status(200).json({
+                 message: `Sync task completed. Found ${result.errors.length} informational messages/conflicts. Please check details.`,
+                 details: result,
+                 hasInformationalMessages: true
              });
         }
 
-        console.log("Sync completed successfully.");
+        console.log("Sync completed successfully without any warnings/conflicts from the task.");
         return res.status(200).json({
             message: 'Player synchronization task completed successfully.',
-            details: result
+            details: result,
+            hasInformationalMessages: false
         });
 
     } catch (error) {

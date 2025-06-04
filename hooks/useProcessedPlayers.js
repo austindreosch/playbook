@@ -1,17 +1,19 @@
 import { calculateZScoresWithComparisonPool } from '@/lib/calculations/zScoreUtil';
-import { SPORT_CONFIGS } from '@/lib/config';
+import { SPORT_CONFIGS, ZSCORE_COLOR_CONFIG } from '@/lib/config';
 import { getNestedValue, getStatPath } from '@/lib/utils';
 import { useMemo } from 'react';
 
-const PB_RED_RGB = [238, 99, 82];    // #ee6352
-const PB_GREEN_RGB = [89, 205, 144]; // #59cd90
-// Use Tailwind's gray-100 as the neutral midpoint. This is also the fallback for NaN.
-const NEUTRAL_MIDPOINT_RGB = [243, 244, 246]; // Tailwind gray-100
-const FALLBACK_GRAY_RGB = [243, 244, 246];    // Consistent fallback
+// const PB_RED_RGB = [238, 99, 82];    // #ee6352
+// const PB_GREEN_RGB = [89, 205, 144]; // #59cd90
+// const NEUTRAL_MIDPOINT_RGB = [255, 255, 255]; // gray-100
+// const FALLBACK_GRAY_RGB = [243, 244, 246];    // Consistent fallback
 
-const MIN_Z_FOR_COLOR_SATURATION = -2.0; 
-const MAX_Z_FOR_COLOR_SATURATION = 2.0;  
-const MIN_INTERPOLATION_FACTOR = 0.15; // Ensure at least 15% tint towards the target color
+// const PASTEL_GREEN_RGB = [200, 240, 220];
+// const PASTEL_RED_RGB = [255, 220, 220];
+
+// const MIN_Z_FOR_COLOR_SATURATION = -2.0; 
+// const MAX_Z_FOR_COLOR_SATURATION = 2.0;  
+// const MIN_INTERPOLATION_FACTOR = 0.2; // Ensure at least 15% tint towards the target color
 
 // Helper to convert RGB to Hex
 const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
@@ -36,43 +38,43 @@ const interpolateColor = (color1_rgb, color2_rgb, factor) => {
     return [r, g, b];
 };
 
-const getZScoreColors = (zScore, impactType = 'positive') => {
+const getZScoreColors = (zScore, impactType = 'positive', minSaturation = -1.5, maxSaturation = 1.5) => {
     if (typeof zScore !== 'number' || isNaN(zScore)) {
-        const [r,g,b] = FALLBACK_GRAY_RGB;
+        const [r,g,b] = ZSCORE_COLOR_CONFIG.colors.fallback;
+        // console.log('ZCOLOR', { zScore, reason: 'fallback', bgColor: rgbToHex(r,g,b) });
         return { bgColor: rgbToHex(r,g,b), textColor: '#4b5563' }; // gray-100 bg, gray-600 text
     }
 
+    // Do NOT flip z-score for negative impactType; it is already flipped in calculation
     let effectiveZScore = zScore;
-    if (impactType === 'negative') {
-        effectiveZScore = -zScore;
-    }
 
     let r, g, b;
     let calculatedFactor;
 
     if (effectiveZScore >= 0) {
-        const clampedPositiveZ = Math.min(effectiveZScore, MAX_Z_FOR_COLOR_SATURATION);
-        calculatedFactor = MAX_Z_FOR_COLOR_SATURATION === 0 ? 1 : clampedPositiveZ / MAX_Z_FOR_COLOR_SATURATION;
-        // Apply minimum factor if the score is not exactly zero, otherwise it's fully neutral
-        const factor = effectiveZScore === 0 ? 0 : Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
-        [r, g, b] = interpolateColor(NEUTRAL_MIDPOINT_RGB, PB_GREEN_RGB, Math.max(0, factor)); 
+        const clampedPositiveZ = Math.min(effectiveZScore, maxSaturation);
+        calculatedFactor = maxSaturation === 0 ? 1 : clampedPositiveZ / maxSaturation;
+        const factor = Math.max(ZSCORE_COLOR_CONFIG.interpolation.minFactor, calculatedFactor);
+        [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.neutral, ZSCORE_COLOR_CONFIG.colors.positive, Math.max(0, factor));
+        // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     } else { // effectiveZScore < 0
-        const clampedNegativeZ = Math.max(effectiveZScore, MIN_Z_FOR_COLOR_SATURATION);
-        calculatedFactor = MIN_Z_FOR_COLOR_SATURATION === 0 ? 1 : 1 - (clampedNegativeZ / MIN_Z_FOR_COLOR_SATURATION);
-        // Apply minimum factor if the score is not exactly zero, otherwise it's fully neutral
-        const factor = effectiveZScore === 0 ? 0 : Math.max(MIN_INTERPOLATION_FACTOR, calculatedFactor);
-        // Interpolate from RED to NEUTRAL. Factor 0 = full RED, Factor 1 = full NEUTRAL.
-        // So, if we want minimum tint towards red, the factor passed to interpolate should be small (closer to 0).
-        // If factor from calculation is (e.g.) 0.9 (almost neutral), but MIN_INTERPOLATION_FACTOR is 0.15,
-        // we want to ensure it's not *too* neutral. The factor here represents distance from RED.
-        // So, if calculatedFactor is 0.9 (almost neutral), we want to ensure it doesn't go beyond 1 - MIN_INTERPOLATION_FACTOR = 0.85
-        const adjustedFactor = effectiveZScore === 0 ? 1 : Math.min(1 - MIN_INTERPOLATION_FACTOR, calculatedFactor);
-        [r, g, b] = interpolateColor(PB_RED_RGB, NEUTRAL_MIDPOINT_RGB, Math.min(1, Math.max(0, adjustedFactor))); 
+        const clampedNegativeZ = Math.max(effectiveZScore, minSaturation); // e.g. Math.max(-0.01, -1.5) = -0.01
+        
+        // CORRECTED calculation for negative factor:
+        // Should be close to 0 when clampedNegativeZ is near 0
+        // Should be close to 1 when clampedNegativeZ is near minSaturation
+        calculatedFactor = minSaturation === 0 ? 1 : (clampedNegativeZ / minSaturation); 
+        // Ensure factor is between 0 and 1, as minSaturation is negative.
+        calculatedFactor = Math.max(0, Math.min(1, calculatedFactor));
+
+        const factor = Math.max(ZSCORE_COLOR_CONFIG.interpolation.minFactor, calculatedFactor);
+        
+        [r, g, b] = interpolateColor(ZSCORE_COLOR_CONFIG.colors.neutral, ZSCORE_COLOR_CONFIG.colors.negative, Math.min(1, Math.max(0, factor)));
+        // console.log('ZCOLOR', { zScore, factor, bgColor: rgbToHex(r, g, b) });
     }
 
     const bgColor = rgbToHex(r, g, b);
     const textColor = getContrastingTextColor(r, g, b);
-
     return { bgColor, textColor };
 };
 
@@ -119,6 +121,7 @@ export function useProcessedPlayers({
     }, [standardEcrRankings]);
 
     const redraftEcrMap = useMemo(() => {
+        console.log(`[useProcessedPlayers DEBUG - redraftEcrMap] Calculating. redraftEcrRankings length: ${redraftEcrRankings ? redraftEcrRankings.length : 'null'}`);
         const map = new Map();
         (redraftEcrRankings || []).forEach(player => { 
             const rankValue = player.userRank !== undefined ? player.userRank : player.rank;
@@ -143,12 +146,13 @@ export function useProcessedPlayers({
             }
         });
         
-
+        console.log(`[useProcessedPlayers DEBUG - redraftEcrMap] Calculated. Map size: ${map.size}`);
         return map;
     }, [redraftEcrRankings]);
 
     // 3. Initial processing of activeRanking.rankings
     const initialRankedPlayers = useMemo(() => {
+        console.log(`[useProcessedPlayers DEBUG - initialRankedPlayers] Calculating. seasonalStatsData keys: ${seasonalStatsData ? Object.keys(seasonalStatsData).length : 'null'}, playerIdentityMap size: ${playerIdentityMap.size}`);
         if (!activeRanking || !activeRanking.rankings) {
             // console.log("[useProcessedPlayers - initialRankedPlayers] activeRanking is null or has no rankings, returning empty array.");
             return [];
@@ -214,6 +218,7 @@ export function useProcessedPlayers({
 
 
         if (isLoading || !sportKey || !currentRankingFormat || !nodes || Object.keys(nodes).length === 0 || !redraftEcrMap || redraftEcrMap.size === 0) {
+            console.log(`[useProcessedPlayers DEBUG - comparisonPoolPlayers] Early exit. isLoading: ${isLoading} (master: ${isMasterLoading}, ecr: ${isEcrLoading}), sportKey: ${!!sportKey}, format: ${!!currentRankingFormat}, nodes.length: ${nodes ? Object.keys(nodes).length : 'null'}, redraftEcrMap.size: ${redraftEcrMap ? redraftEcrMap.size : 'null'}. Returning EMPTY.`);
             return []; 
         }
 
@@ -296,24 +301,29 @@ export function useProcessedPlayers({
                 finalComparisonPool = finalComparisonPool.concat(sortedGroup);
             });
         }
+        console.log(`[useProcessedPlayers DEBUG - comparisonPoolPlayers] Populated. Length: ${finalComparisonPool.length}`);
         return finalComparisonPool;
     }, [sport, activeRanking?.format, activeRanking?.scoring, masterNodes, isMasterLoading, isEcrLoading, redraftEcrMap]);
     // const comparisonPoolPlayers = []; // Placeholder - remove calculation for now
 
     // 5. Final processing: Z-Scores, Sorting, Filtering
     const playersToDisplay = useMemo(() => {
+        console.log('[useProcessedPlayers DEBUG] Entering playersToDisplay useMemo. initialRankedPlayers.length:', initialRankedPlayers.length, 'activeRanking?.categories exist:', !!activeRanking?.categories);
         let playersWithStatsAndRank = [...initialRankedPlayers];
 
         if (!activeRanking || !activeRanking.categories || playersWithStatsAndRank.length === 0) {
+            // console.log("[useProcessedPlayers - playersToDisplay] Early exit: activeRanking, categories, or initial players missing.");
             return playersWithStatsAndRank; 
         }
-        
 
         // --- Z-Score Calculation RESTORED ---
         const sportKey = sport?.toLowerCase(); // Defined here for use in this block
         const currentScoring = activeRanking.scoring?.toLowerCase(); // Defined here
 
         let playersAfterZScoreCalculation = playersWithStatsAndRank; // Default to initial if no calculation happens
+
+        // --- DEBUG LOG: Check comparisonPoolPlayers length before the condition ---
+        console.log('[useProcessedPlayers DEBUG] Before Z-score calc block. comparisonPoolPlayers.length:', comparisonPoolPlayers ? comparisonPoolPlayers.length : 'undefined');
 
         if (comparisonPoolPlayers && comparisonPoolPlayers.length > 0) {
             const enabledCategoriesDetailsObjectForZScore = {};
@@ -322,7 +332,13 @@ export function useProcessedPlayers({
             if (activeRanking.categories && typeof activeRanking.categories === 'object') {
                 Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
                     if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
-                        enabledCategoriesDetailsObjectForZScore[key] = { ...catDetails, key: key };
+                        const configLowerIsBetter = SPORT_CONFIGS[sportKey]?.categories?.[key]?.lowerIsBetter;
+                        enabledCategoriesDetailsObjectForZScore[key] = { 
+                            ...catDetails, 
+                            key: key,
+                            multiplier: typeof catDetails.multiplier === 'number' ? catDetails.multiplier : 1,
+                            lowerIsBetter: typeof catDetails.lowerIsBetter === 'boolean' ? catDetails.lowerIsBetter : configLowerIsBetter
+                        };
                         // Determine ruleKey for getStatPath based on sport and scoring
                         let ruleKeyForPath = currentScoring;
                         if (sportKey === 'nfl') ruleKeyForPath = 'points';
@@ -337,6 +353,19 @@ export function useProcessedPlayers({
 
             if (comparisonRulesToUse && Object.keys(enabledCategoriesDetailsObjectForZScore).length > 0) {
                 try {
+                    // --- DEBUG LOGS START ---
+                    if (playersWithStatsAndRank.length > 0) {
+                        console.log('[useProcessedPlayers DEBUG] Stats of first player in playersWithStatsAndRank (before Z-calc):', JSON.parse(JSON.stringify(playersWithStatsAndRank[0]?.stats)));
+                    } else {
+                        console.log('[useProcessedPlayers DEBUG] playersWithStatsAndRank is empty before Z-calc.');
+                    }
+                    if (comparisonPoolPlayers.length > 0) {
+                        console.log('[useProcessedPlayers DEBUG] Stats of first player in comparisonPoolPlayers (before Z-calc):', JSON.parse(JSON.stringify(comparisonPoolPlayers[0]?.stats)));
+                    } else {
+                        console.log('[useProcessedPlayers DEBUG] comparisonPoolPlayers is empty before Z-calc.');
+                    }
+                    // --- DEBUG LOGS END ---
+
                     playersAfterZScoreCalculation = calculateZScoresWithComparisonPool(
                         playersWithStatsAndRank, 
                         comparisonPoolPlayers,     
@@ -344,6 +373,14 @@ export function useProcessedPlayers({
                         statPathMappingForZScore,
                         comparisonRulesToUse
                     );
+
+                    // --- DEBUG LOGS START ---
+                    if (playersAfterZScoreCalculation.length > 0) {
+                        console.log('[useProcessedPlayers DEBUG] zScores of first player in playersAfterZScoreCalculation (after Z-calc):', JSON.parse(JSON.stringify(playersAfterZScoreCalculation[0]?.zScores)));
+                    } else {
+                        console.log('[useProcessedPlayers DEBUG] playersAfterZScoreCalculation is empty after Z-calc.');
+                    }
+                    // --- DEBUG LOGS END ---
                 } catch (error) {
                     console.error("[useProcessedPlayers - Zscores] Error calculating Z-Scores:", error);
                     // Keep playersAfterZScoreCalculation as is (playersWithStatsAndRank)
@@ -356,57 +393,65 @@ export function useProcessedPlayers({
         if (activeRanking.categories && typeof activeRanking.categories === 'object') {
             Object.entries(activeRanking.categories).forEach(([key, catDetails]) => {
                 if (key && catDetails && typeof catDetails === 'object' && catDetails.enabled) {
-                    enabledCategoriesDetailsObject[key] = { ...catDetails, key: key };
+                    enabledCategoriesDetailsObject[key] = { 
+                        ...catDetails, 
+                        key: key,
+                        multiplier: typeof catDetails.multiplier === 'number' ? catDetails.multiplier : 1
+                    };
                 }
             });
         }
 
         const playersWithColorsAndSum = playersAfterZScoreCalculation.map(player => {
             const newStats = { ...player.stats }; 
-            const precalculatedZScores = player.zScores || {}; // zScores object from calculateZScoresWithComparisonPool
             let weightedZScoreSum = 0;
-            let sumOfWeights = 0;
 
             Object.keys(enabledCategoriesDetailsObject).forEach(statKey => {
                  const catDetails = enabledCategoriesDetailsObject[statKey];
-                 const zScoreForStat = precalculatedZScores[statKey]; 
-                 
-                 const currentStatValue = (newStats[statKey] !== undefined && newStats[statKey] !== null && typeof newStats[statKey] === 'object' && newStats[statKey].hasOwnProperty('value'))
-                                         ? newStats[statKey].value
-                                         : newStats[statKey];
+                 const multiplier = catDetails.multiplier;
+                 // Use player.zScores[statKey] for the z-score value
+                 const zScoreForStat = player.zScores ? player.zScores[statKey] : undefined;
+                 // Use statPathMappingForZScore if available, otherwise fallback to statKey for the stat value
+                 let statPath = statKey;
+                 if (typeof statPathMappingForZScore !== 'undefined' && statPathMappingForZScore[statKey]) {
+                     statPath = statPathMappingForZScore[statKey];
+                 }
+                 const currentStatValue = getNestedValue(player.stats, statPath);
 
                  if (typeof zScoreForStat === 'number' && isFinite(zScoreForStat)) {
                      const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
-                     const impactType = categoryConfig?.lowerIsBetter === true ? 'negative' : 'positive';
-                     
+                     const lowerIsBetter = categoryConfig?.lowerIsBetter === true;
+                     const impactType = lowerIsBetter ? 'negative' : 'positive';
+                     const minSaturation = categoryConfig?.zscoreColorMin ?? -1.5;
+                     const maxSaturation = categoryConfig?.zscoreColorMax ?? 1.5;
                      newStats[statKey] = {
-                         value: currentStatValue, // Preserve original value if it was wrapped
+                         value: currentStatValue,
                          zScore: zScoreForStat, 
-                         colors: getZScoreColors(zScoreForStat, impactType) // Use local getZScoreColors
+                         colors: getZScoreColors(zScoreForStat, impactType, minSaturation, maxSaturation)
                      };
-                     
-                     const weight = typeof catDetails.weight === 'number' ? catDetails.weight : 1; 
-                     weightedZScoreSum += (zScoreForStat * weight);
-                     sumOfWeights += weight;
+                     if (multiplier > 0) {
+                         weightedZScoreSum += (zScoreForStat * multiplier);
+                     }
                  } else {
+                     const categoryConfig = SPORT_CONFIGS[sportKey]?.categories?.[statKey];
+                     const lowerIsBetter = categoryConfig?.lowerIsBetter === true;
+                     const impactType = lowerIsBetter ? 'negative' : 'positive';
                      newStats[statKey] = {
                          value: currentStatValue,
                          zScore: null,
-                         colors: getZScoreColors(NaN) 
+                         colors: getZScoreColors(NaN, impactType)
                      };
                  }
              });
 
-             const overallZScoreSum = player.zScoreTotals?.overallZScoreSum ?? (sumOfWeights > 0 ? weightedZScoreSum / sumOfWeights : 0);
-
+             const overallZScoreSum = weightedZScoreSum;
 
              return { 
                  ...player, 
                  stats: newStats, 
                  zScoreTotals: { 
                      overallZScoreSum: overallZScoreSum, 
-                     rawWeightedSum: weightedZScoreSum, 
-                     sumOfWeights: sumOfWeights
+                     rawWeightedSum: weightedZScoreSum
                  }
               }; 
          });
