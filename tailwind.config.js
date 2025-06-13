@@ -6,7 +6,6 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // plugins: [require("daisyui"), ['prettier-plugin-tailwindcss']],
   plugins: ['prettier-plugin-tailwindcss', require("tailwindcss-animate")],
   daisyui: {
     themes: [
@@ -27,6 +26,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      borderWidth: {
+        '1.5': '1.9px',
+      },
       width: {
         '2.5': '0.625rem',
         '3.5': '0.875rem',

@@ -27,12 +27,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <UserProvider>
-      <html lang="en">
-      <body className={dmSans.className}>
+      <html lang="en" className="h-full">
+        <body className={`${dmSans.className} h-full flex flex-col`}>
           <AOSInitializer />
           <NavBar />
-          <MasterDatasetInitializer />
-          {children}
+          <main className="flex-1 overflow-y-auto">
+            <MasterDatasetInitializer />
+            {children}
+          </main>
           <Toaster />
         </body>
       </html>
