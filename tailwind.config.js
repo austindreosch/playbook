@@ -28,6 +28,7 @@ module.exports = {
     extend: {
       borderWidth: {
         '1.5': '1.9px',
+        '3': '3px',
       },
       width: {
         '2.5': '0.625rem',
@@ -117,6 +118,7 @@ module.exports = {
         pb_lightergray: '#ebebeb',
         pb_lightestgray: '#efefef',
         pb_backgroundgray: '#f5f5f5',
+        pb_paperwhite: '#fefefe',
         pb_bluehover: '#1f7ec5',
         pb_bluedisabled: '#186299',
         pb_blue: {

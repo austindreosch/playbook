@@ -16,11 +16,11 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push('/landing');
-    }
-  }, [isLoading, user, router]);
+  // useEffect(() => {
+  //   if (!isLoading && !user) {
+  //     router.push('/landing');
+  //   }
+  // }, [isLoading, user, router]);
 
   // Function to handle redirection to rankings page
   // useEffect(() => {

@@ -5,8 +5,8 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { DM_Sans } from 'next/font/google';
 // import { Akshar, Albert_Sans, Aleo, Alexandria, Anek_Gurmukhi, Anuphan, Atkinson_Hyperlegible, Barlow, Be_Vietnam_Pro, Chivo, DM_Sans, Familjen_Grotesk, Figtree, Finlandica, Fira, Fira_Sans, Funnel_Sans, Gabarito, Geist, Geologica, Golos_Text, Hanken_Grotesk, heebo, Heebo, Host_Grotesk, Hubot_Sans, IBM_Plex_Sans, Inclusive_Sans, Instrument_Sans, Inter, League_Spartan, Lexend, Lexend_Deca, Libre_Franklin, Literata, Manrope, Mona_Sans, Monda, Onest, Outfit, Overpass, Parkinsans, Plus_Jakarta_Sans, Questrial, Radio_Canada, Readex_Pro, Reddit_Sans, Rethink_Sans, Shippori_Antique, Sintony, Sofia_Sans, Sora, Spline_Sans, SUSE, Urbanist, Vazirmatn, Wix_Madefor_Text, Work_Sans, Yantramanav } from 'next/font/google';
+import ConditionalNavBar from '../components/ConditionalNavBar';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
-import NavBar from '../components/NavBar';
 import './globals.css';
 config.autoAddCss = false
 
@@ -28,10 +28,10 @@ export default function RootLayout({ children }) {
   return (
     <UserProvider>
       <html lang="en" className="h-full">
-        <body className={`${dmSans.className} h-full flex flex-col`}>
+        <body className={`${dmSans.className} flex flex-col`}>
           <AOSInitializer />
-          <NavBar />
-          <main className="flex-1 overflow-y-auto">
+          <ConditionalNavBar />
+          <main className="flex-1">
             <MasterDatasetInitializer />
             {children}
           </main>
