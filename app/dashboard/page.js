@@ -19,32 +19,64 @@ export default function DashboardPage() {
   const { user, error, isLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
 
-  const handleResend = async () => {
-    setIsSending(true);
-    await fetch('/api/auth/resend-verification', { method: 'POST' });
-    toast.success('A new verification email has been sent.');
-    setIsSending(false);
+  const showVerificationToast = () => {
+    const handleResend = async () => {
+      setIsSending(true);
+      try {
+        const response = await fetch('/api/auth/resend-verification', {
+          method: 'POST',
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to resend verification email.');
+        }
+        toast.success('Verification email sent successfully!');
+      } catch (err) {
+        toast.error(err.message || 'An error occurred.');
+      } finally {
+        setIsSending(false);
+      }
+    };
+
+    toast('Please verify your email address.', {
+      description: 'Check your inbox for a verification link to unlock all features.',
+      duration: Infinity,
+      action: {
+        label: isSending ? 'Sending...' : 'Resend Email',
+        onClick: handleResend,
+      },
+    });
   };
 
   useEffect(() => {
-    if (user && !user.email_verified) {
+    if (!isLoading && user && !user.email_verified) {
+      const now = Date.now();
+      const oneDay = 24 * 60 * 60 * 1000;
       const lastShown = localStorage.getItem('verificationToastLastShown');
-      const now = new Date().getTime();
-      const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
       if (!lastShown || now - parseInt(lastShown, 10) > oneDay) {
-        toast('Please Verify Your Email', {
-          description: 'Check your inbox to verify your account and enable all features.',
-          action: {
-            label: isSending ? 'Sending...' : 'Resend Email',
-            onClick: handleResend,
-          },
-          duration: 10000,
-        });
+        showVerificationToast();
         localStorage.setItem('verificationToastLastShown', now.toString());
       }
     }
-  }, [user, isSending]);
+  }, [user, isLoading]);
+
+  // Debug keybind effect
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check for Ctrl + Shift + D
+      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+        console.log('Debug toast triggered!');
+        showVerificationToast();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []); // Empty dependency array ensures this runs only once
 
   // useEffect(() => {
   //   if (!isLoading && !user) {
