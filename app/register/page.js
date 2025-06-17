@@ -89,10 +89,6 @@ const researchMethodOptions = [
     { value: 'traditional-media', label: 'Traditional Sports Media', icon: Tv },
 ];
 
-const notificationOptions = [
-    { value: 'email-updates', label: 'Email Updates' },
-];
-
 export default function RegisterPage() {
   const { user, error, isLoading } = useUser()
   const router = useRouter()
@@ -101,7 +97,7 @@ export default function RegisterPage() {
   const [sports, setSports] = useState([])
   const [struggles, setStruggles] = useState([])
   const [futureFeatures, setFutureFeatures] = useState([])
-  const [notificationsOkay, setNotificationsOkay] = useState(['email-updates'])
+  const [notificationsOkay, setNotificationsOkay] = useState({ email: true, sms: true })
   const [researchMethods, setResearchMethods] = useState([])
   const [submitting, setSubmitting] = useState(false)
 
@@ -126,12 +122,14 @@ export default function RegisterPage() {
     try {
       const payload = {
         auth0Id: user.sub,
-        platforms,
-        sports,
-        struggles,
-        futureFeatures,
+        preferences: {
+          platforms,
+          sports,
+          struggles,
+          futureFeatures,
+          researchMethods,
+        },
         notificationsOkay,
-        researchMethods,
       };
 
       if (completeRegistration) {
@@ -235,8 +233,8 @@ export default function RegisterPage() {
             <div className="flex items-start space-x-3">
               <Checkbox
                 id="notifications"
-                checked={notificationsOkay.includes('email-updates')}
-                onCheckedChange={(checked) => setNotificationsOkay(checked ? ['email-updates'] : [])}
+                checked={notificationsOkay.email}
+                onCheckedChange={(checked) => setNotificationsOkay({ email: checked, sms: checked })}
                 className="border-pb_lightgray mt-0.5"
               />
               <div>

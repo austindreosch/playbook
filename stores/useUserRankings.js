@@ -1,5 +1,6 @@
 import debounce from 'lodash.debounce'; // Import debounce
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { buildApiUrl } from '../lib/utils'; // Assuming you have a helper for this
@@ -271,12 +272,14 @@ const useUserRankings = create(
                             rankings: get().rankings.map(r => r._id === savedData._id ? savedData : r), // Update in the main list too
                             error: null // Clear any previous error
                         });
+                        toast.success('Rankings saved successfully!');
                         return savedData; // Resolve with the saved data or success indication
                     } catch (error) {
                         setState({
                             error: error.message,
                             // isLoading: false // Reset loading state
                         });
+                        toast.error(`Error saving changes: ${error.message}`);
                         return Promise.reject(error); // Reject the promise on error
                     }
                 },
@@ -551,6 +554,7 @@ const useUserRankings = create(
                             standardEcrRankings: [], 
                             redraftEcrRankings: []   
                         });
+                        toast.error(`Failed to load consensus rankings: ${error.message}`);
                     }
                 },
                 // --- END NEW ACTION ---

@@ -3,10 +3,12 @@
 'use client'
 
 import DashboardSkeleton from '@/components/ui/DashboardSkeleton';
+import { Button } from '@/components/ui/button';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ThreeCircles } from 'react-loader-spinner';
+import { toast } from 'sonner';
 import HubBlock from '/components/HubBlock';
 import RosterBlock from '/components/RosterBlock';
 
@@ -15,6 +17,34 @@ export default function DashboardPage() {
 
   const router = useRouter();
   const { user, error, isLoading } = useUser();
+  const [isSending, setIsSending] = useState(false);
+
+  const handleResend = async () => {
+    setIsSending(true);
+    await fetch('/api/auth/resend-verification', { method: 'POST' });
+    toast.success('A new verification email has been sent.');
+    setIsSending(false);
+  };
+
+  useEffect(() => {
+    if (user && !user.email_verified) {
+      const lastShown = localStorage.getItem('verificationToastLastShown');
+      const now = new Date().getTime();
+      const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (!lastShown || now - parseInt(lastShown, 10) > oneDay) {
+        toast('Please Verify Your Email', {
+          description: 'Check your inbox to verify your account and enable all features.',
+          action: {
+            label: isSending ? 'Sending...' : 'Resend Email',
+            onClick: handleResend,
+          },
+          duration: 10000,
+        });
+        localStorage.setItem('verificationToastLastShown', now.toString());
+      }
+    }
+  }, [user, isSending]);
 
   // useEffect(() => {
   //   if (!isLoading && !user) {
