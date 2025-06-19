@@ -3,31 +3,32 @@ import Image from "next/image";
 export default function Newsletter() {
   return (
     <section>
-      <div className="max-w-6xl mx-auto">
-        <div className="pb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="pb-6 md:pb-20">
 
           {/* CTA box */}
-          <div className="relative bg-pb_orange w-full mx-3 py-4 px-4 md:py-8 md:px-12 shadow-md overflow-hidden rounded-lg" data-aos="zoom-y-out">
+          <div className="relative bg-pb_orange p-12 shadow-lg overflow-hidden rounded-2xl" data-aos="zoom-y-out">
 
-            <div className="relative flex flex-col lg:flex-row  items-center">
+            <div className="relative flex flex-col lg:flex-row justify-between items-center">
 
-              <div className="mt-8 lg:mt-0 lg:ml-8 pb-6 lg:pb-0 lg:pr-24 flex-shrink-0 flex justify-center items-center">
-                <Image src="/logo-tpfull-big.png" alt="" width={250} height={150} />
-              </div>
-              {/* CTA content */}
-              <div className="text-center lg:text-left lg:max-w-xl">
-                <h3 className="h3 text-2xl  mb-2 font-bold pb-1">Ready to see what Playbook can do?</h3>
-                <p className=" mb-6">Start using the tools early and see how it changes the way you manage your fantasy teams today.</p>
-
-                {/* CTA buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a className="btn font-medium bg-pb_blue text-white hover:bg-pb_bluehover shadow px-8 py-3 rounded-md" href="#0">Sign Up Now</a>
-                  {/* <a className="btn font-medium bg-white text-pb_darkgray hover:bg-gray-100 shadow px-8 py-3 rounded-md" href="#0">Learn More</a> */}
+              {/* Image */}
+              <div className="hidden lg:block lg:w-1/3" aria-hidden="true">
+                <div className="relative flex justify-center items-center">
+                  <Image src="/logo-tpfull-big.png" alt="Playbook Icon" width={200} height={200} />
                 </div>
-                <p className="text-sm text-black/90 mt-4">Use it free of charge for right now.</p>
               </div>
 
-              {/* Image on the right */}
+              {/* CTA content */}
+              <div className=" w-full lg:w-2/3 lg:pl-12 space-y-3 text-center">
+                <h3 className="text-3xl font-bold text-pb_darkgray">Ready to see what Playbook can do?</h3>
+                <div className="py-2">
+                  <p className="text-base font-medium text-pb_mddarkgray md:text-lg md:w-[80%] mx-auto">Start using Playbook early and see how it changes the way you manage your fantasy teams today.</p>
+                </div>
+                <div className="flex justify-center">
+                  <a className="btn font-medium bg-pb_blue text-white hover:bg-pb_bluehover shadow px-8 py-3 mt-2 rounded-md" href="/register">Sign Up Now</a>
+                </div>
+                  <p className="text-sm text-pb_mddarkgray">Use it free of charge for right now.</p>
+              </div>
 
             </div>
 

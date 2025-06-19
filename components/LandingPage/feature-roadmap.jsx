@@ -30,9 +30,10 @@ const RoadmapItem = ({ feature, index }) => {
         'border-pb_blue':   { border: 'border-pb_blue' },
         'border-pb_green':  { border: 'border-pb_green' },
         'border-pb_red':    { border: 'border-pb_red' },
+        'border-pb_darkgray': { border: 'border-pb_darkgray' },
     };
     
-    const borderColorKey = Object.keys(colorVariants)[index % 4];
+    const borderColorKey = Object.keys(colorVariants)[index % 5];
     const colors = colorVariants[borderColorKey];
 
     return (
@@ -59,7 +60,7 @@ const RoadmapItem = ({ feature, index }) => {
                     {/* Inner div for border and content */}
                     <div className={`
                         relative w-full h-full p-4 rounded-2xl bg-white
-                        border-3 border-dashed ${colors.border} border-t-5 
+                        border-4 border-dashed ${colors.border} 
                         text-center flex flex-col items-center justify-center
                         before:absolute before:inset-[4px] before:rounded-xl before:rounded-t-xl before:border before:border-pb_lightergray
                         group-hover/card:before:hidden
@@ -87,8 +88,16 @@ const RoadmapItem = ({ feature, index }) => {
 export default function FeatureRoadmap() {
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
-        <h2 className="text-3xl font-bold mb-8 text-center text-pb_darkgray">Our Roadmap</h2>
-        <div className="space-y-12 lg:space-y-0 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-pb_lightgray before:via-pb_lightgray before:to-transparent">
+      <div className="text-center pt-16 pb-8">
+        <h2 className="text-3xl font-extrabold tracking-tight text-pb_darkgray mb-2 leading-snug">
+          Feature Roadmap
+        </h2>
+        <p className="text-base text-pb_midgray">
+          A glimpse into what we&apos;re building next.
+        </p>
+      </div>
+
+      <div className="space-y-12 lg:space-y-0 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-pb_lightgray before:via-pb_lightgray before:to-transparent">
             {features.map((feature, index) => (
                 <RoadmapItem key={index} feature={feature} index={index} />
             ))}

@@ -1,46 +1,52 @@
+import { Separator } from '@/components/ui/separator'
 import TestimonialImage from '@/public/austinprof.jpg'
+import { Mail, MessageSquare, MessageSquareText } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
 
 export default function Testimonials() {
   return (
-    <section className="flex justify-center items-center py-12 md:py-20 bg-white">
-      <div className="rounded-lg max-w-6xl w-full mx-4 px-6 py-8 md:px-12 md:py-10 flex flex-col md:flex-row items-center gap-12 ">
-        {/* Left Side */}
-        <div className="flex-1 flex flex-col justify-center items-start">
-          <h2 className="font-bold text-xl md:text-2xl mb-2 pb-2">
-          Get an early look at Playbook and help shape where it goes
-          </h2>
-          <p className="text-gray-700 text-base mb-7">
-          This is your chance to try Playbook before everyone else. Get early access to next-gen fantasy tools and help influence the roadmap with your feedback. The vision is big and your voice can help shape what it becomes.
-          </p>
+    <section className="bg-pb_white">
+      <div className="max-w-6xl mx-auto py-16 px-8">
+        <Separator className='bg-pb_lightgray h-[1px] mb-16' />
+        <div className="md:grid md:grid-cols-5 md:gap-12 items-center">
+          {/* Left column: headline + subhead */}
+          <div className="space-y-4 md:col-span-3 text-center">
+            <h2 className="text-3xl font-extrabold text-pb_darkgray">
+              Get an early look at Playbook and <br /> help shape where it goes
+            </h2>
+            <p className="text-pb_midgray leading-relaxed max-w-prose mx-auto">
+            This is your chance to try Playbook before everyone else. Get early access to next-gen fantasy tools and help influence the roadmap with your feedback. The vision is big and your voice can help shape what it becomes.
 
-          <div className="flex flex-col gap-1 mt-2">
-            <div className="flex items-center text-gray-800 text-base">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square-text-icon lucide-message-square-text"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M13 8H7"/><path d="M17 12H7"/></svg>
-              
-              <span className='ml-2 font-bold'>Have ideas, questions, or feedback?</span>
-            </div>
-            <span className="text-gray-700 text-base mt-2">
-              I&apos;d love to hear from you — {' '}
-              <a
-                href="mailto:austin@playbookfantasy.com"
-                className="text-pb_blue break-all"
-              >
-                austin@playbookfantasy.com
-              </a>
-            </span>
+</p>
           </div>
-        </div>
-        {/* Right Side */}
-        <div className="flex-shrink-0 flex justify-center items-center">
-          <Image
-            className="rounded-full border-4 border-white shadow-lg"
-            src={TestimonialImage}
-            width={140}
-            height={140}
-            alt="Austin, Playbook founder"
-          />
+
+          {/* Right column: Contact CTA */}
+          <div className="flex justify-center md:justify-center mt-8 md:mt-0 md:col-span-2 text-center items-center">
+            <div className="flex items-center gap-4">
+              {/* <Image
+                className="rounded-full"
+                src={TestimonialImage}
+                width={80}
+                height={80}
+                alt="Austin, Playbook founder"
+              /> */}
+              <div className="text-center space-y-2">
+                <div className="flex items-center justify-center gap-2">
+                  <MessageSquareText className="w-5 h-5 text-pb_darkgray" />
+                  <h3 className="md:text-lg font-semibold text-pb_darkgray">Have ideas, questions, or feedback?</h3>
+                </div>
+                <p className="text-pb_midgray text-sm pb-2 md:pb-0">
+                  I&apos;d love to hear from you.
+                </p>
+                <a href="mailto:austin@playbookfantasy.com" className="block text-sm text-pb_darkgray py-1 font-medium hover:underline">austin@playbookfantasy.com</a>
+                <a href="mailto:austin@playbookfantasy.com"
+                  className="inline-flex items-center bg-pb_darkgray text-white font-medium px-4 py-2.5 rounded-lg shadow hover:bg-pb_darkgrayhover transition text-sm">
+                  <Mail className="w-4 h-4 mr-2" />Send me a note
+                </a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
