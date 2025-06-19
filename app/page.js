@@ -9,6 +9,7 @@ import { ThreeCircles } from 'react-loader-spinner';
 import HubBlock from "../components/HubBlock";
 import RosterBlock from "../components/RosterBlock";
 
+import FeatureRoadmap from '@/components/LandingPage/feature-roadmap';
 import Features from '@/components/LandingPage/features';
 import FeaturesBlocks from '@/components/LandingPage/features-blocks';
 import Footer from '@/components/LandingPage/footer';
@@ -22,6 +23,7 @@ export default function Home() {
       <Hero />
       <Features />
       <FeaturesBlocks />
+      <FeatureRoadmap />
       <Testimonials />
       <Newsletter />
       <Footer />

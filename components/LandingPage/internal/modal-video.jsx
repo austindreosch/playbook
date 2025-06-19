@@ -16,6 +16,14 @@ export default function ModalVideo({
   const [modalOpen, setModalOpen] = useState(false)
   const videoRef = useRef(null)
 
+  const handleScrollToFeatures = (e) => {
+    e.preventDefault();
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div>
 
@@ -60,6 +68,17 @@ export default function ModalVideo({
             </svg>
             <span className="ml-3">Watch the full video (2 min)</span>
           </button>
+        </div>
+        {/* Bottom CTA */}
+        <div className="pt-6" data-aos="zoom-y-out" data-aos-delay="450">
+          <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center">
+            <a href="#features" onClick={handleScrollToFeatures} className="group flex items-center justify-center text-sm font-medium text-pb_textgray hover:text-pb_blue transition duration-150 ease-in-out">
+              <svg className="w-3 h-3 fill-current text-pb_textgray group-hover:text-pb_blue shrink-0 mr-2" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9l-3-3H6V2a2 2 0 012-2h4a2 2 0 012 2v2a2 2 0 01-2 2h-2M3 9h3v2a2 2 0 01-2 2H1a2 2 0 01-2-2V9a2 2 0 012-2h2" transform="rotate(90 6 6)" />
+              </svg>
+              <span>What makes Playbook different?</span>
+            </a>
+          </div>
         </div>
       </div>
       {/* End: Video thumbnail */}

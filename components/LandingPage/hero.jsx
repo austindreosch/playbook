@@ -1,9 +1,26 @@
-import ModalVideo from '@/components/LandingPage/internal/modal-video'
-import { Button } from '@/components/ui/button'
-import VideoThumb from '@/public/images/hero-image.png'
-import ModalImage from './internal/modal-image'
+'use client';
+
+import ModalVideo from '@/components/LandingPage/internal/modal-video';
+import { Button } from '@/components/ui/button';
+import VideoThumb from '@/public/images/hero-image.png';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from 'next/navigation';
+import ModalImage from './internal/modal-image';
 
 export default function Hero() {
+  const router = useRouter();
+  const { user, isLoading } = useUser();
+
+  const handleGetStarted = () => {
+    if (isLoading) return; // Prevent action while loading
+
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      router.push('/api/auth/login');
+    }
+  };
+
   return (
     <section className="relative overflow-hidden">
 
@@ -36,10 +53,20 @@ export default function Hero() {
               <p className="text-xl text-gray-600 mb-8" data-aos="zoom-y-out" data-aos-delay="150">Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard.</p>
               <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center" data-aos="zoom-y-out" data-aos-delay="300">
                 <div>
-                  <Button className="w-full p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0">Get Started</Button>
+                  <Button
+                    className="w-full p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0"
+                    onClick={handleGetStarted}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Loading...' : 'Get Started'}
+                  </Button>
                 </div>
                 <div>
-                  <Button variant="secondary" className="w-full p-5 shadow-md font-bold bg-pb_lightergray text-pb_darkgray hover:bg-gray-300 sm:w-auto sm:ml-4">Learn more</Button>
+                  <a href="#features">
+                    <Button variant="secondary" className="w-full p-5 shadow-md font-bold bg-pb_lightergray text-pb_darkgray hover:bg-gray-300 sm:w-auto sm:ml-4">
+                      Learn more
+                    </Button>
+                  </a>
                 </div>
               </div>
             </div>

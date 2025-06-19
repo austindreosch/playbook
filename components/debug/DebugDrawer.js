@@ -37,11 +37,38 @@ export default function DebugDrawer() {
 
   const renderUserObject = (obj) => {
     if (!obj) return null;
-    return Object.entries(obj).map(([key, value]) => {
-        if (typeof value === 'object' && value !== null) {
-            return <DebugValue key={key} label={key} value={JSON.stringify(value, null, 2)} isPreformatted />;
-        }
-        return <DebugValue key={key} label={key} value={value} isBoolean={typeof value === 'boolean'} />;
+
+    const keyOrder = [
+      'email',
+      'nickname',
+      'name',
+      'sub',
+      'email_verified',
+      'https://www.playbookfantasy.com/registration_complete',
+      'https://www.playbookfantasy.com/logins_count',
+      'https://www.playbookfantasy.com/roles',
+      'sid',
+      'updated_at',
+      'picture',
+    ];
+
+    const sortedEntries = Object.entries(obj).sort(([keyA], [keyB]) => {
+      const indexA = keyOrder.indexOf(keyA);
+      const indexB = keyOrder.indexOf(keyB);
+
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return keyA.localeCompare(keyB); // Fallback for keys not in keyOrder
+    });
+
+    return sortedEntries.map(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        return <DebugValue key={key} label={key} value={JSON.stringify(value, null, 2)} isPreformatted />;
+      }
+      return <DebugValue key={key} label={key} value={value} isBoolean={typeof value === 'boolean'} />;
     });
   };
 
