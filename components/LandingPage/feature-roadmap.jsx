@@ -40,26 +40,33 @@ const RoadmapItem = ({ feature, index }) => {
             </div>
             {/* Card */}
             <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] flex md:group-even:justify-end">
+                {/* Outer div for shadow and transforms */}
                 <div className={`
-                    group/card relative w-64 h-40 p-4 rounded-2xl border-2 bg-white shadow-sm
-                    border-t-5 border-dashed ${borderColorClass}
-                    hover:shadow-2xl hover:-translate-y-0.5
+                    group/card w-64 h-40
+                    shadow-md hover:shadow-2xl
                     transition-all duration-300
-                    text-center flex flex-col items-center justify-center
                     ${isEven ? 'rotate-1' : '-rotate-1'}
+                    hover:-translate-y-0.5
+                    rounded-2xl
                 `}>
-                    
-                    {/* Default visible content */}
-                    <div className="flex flex-col items-center justify-center transition-opacity duration-300 group-hover/card:opacity-0">
-                        <div className="w-12 h-12 bg-pb_blue-50 rounded-full flex items-center justify-center mb-4">
-                            <Icon className="w-6 h-6 text-pb_blue" />
+                    {/* Inner div for border and content */}
+                    <div className={`
+                        relative w-full h-full p-4 rounded-2xl bg-white
+                        border-3 border-dashed ${borderColorClass} border-t-5 
+                        text-center flex flex-col items-center justify-center
+                    `}>
+                        {/* Default visible content */}
+                        <div className="flex flex-col items-center justify-center transition-opacity duration-300 group-hover/card:opacity-0">
+                            <div className="w-12 h-12 bg-pb_blue-50 rounded-full flex items-center justify-center mb-4">
+                                <Icon className="w-6 h-6 text-pb_blue" />
+                            </div>
+                            <div className="font-semibold text-base leading-tight text-pb_darkgray">{feature.label}</div>
                         </div>
-                        <div className="font-semibold text-base leading-tight text-pb_darkgray">{feature.label}</div>
-                    </div>
 
-                    {/* Hover content */}
-                    <div className="absolute inset-0 p-4 rounded-2xl flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
-                        <p className="text-sm text-center text-pb_textgray">{feature.tooltip}</p>
+                        {/* Hover content */}
+                        <div className="absolute inset-0 p-4 rounded-2xl flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm text-center text-pb_textgray">{feature.tooltip}</p>
+                        </div>
                     </div>
                 </div>
             </div>
