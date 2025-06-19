@@ -2,6 +2,7 @@
 
 'use client'
 
+import DebugDrawer from '@/components/debug/DebugDrawer';
 import DashboardSkeleton from '@/components/ui/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -98,6 +99,7 @@ export default function DashboardPage() {
 
   return (
     <>
+      <DebugDrawer />
       {/* TODO: remove this later */}
       {/* <DashboardSkeleton /> */}
       <div className="container mx-auto h-full py-4 flex flex-col">
