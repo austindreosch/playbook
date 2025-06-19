@@ -3,10 +3,12 @@
 'use client'
 
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { baseball, basketball, football, footballHelmet, golfDriver, iceHockey, soccerBall, steeringWheel, tire, toolbox } from '@lucide/lab';
-import { Activity, AppWindow, Binoculars, BookOpenText, Brain, Calculator, CalendarRange, ChartCandlestick, ClipboardList, Compass, createLucideIcon, Dribbble, Gamepad2, HelpCircle, LandPlot, ListTodo, MessagesSquare, Rss, Scale, ScanSearch, Search, ShieldUser, Speech, Swords, TableProperties, ThumbsDown, Tv } from 'lucide-react';
+import { Activity, AppWindow, Binoculars, BookOpenText, Brain, Calculator, CalendarRange, ChartCandlestick, ClipboardList, Compass, createLucideIcon, Dribbble, Gamepad2, HelpCircle, LandPlot, ListTodo, MessagesSquare, Rss, Scale, ScanSearch, Search, ShieldUser, Speech, Swords, TableProperties, ThumbsDown, Tv, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 
@@ -23,10 +25,12 @@ const platformOptions = [
   { value: 'mfl', label: 'MyFantasyLeague' },
   { value: 'ffpc', label: 'FFPC' },
   { value: 'league-tycoon', label: 'League Tycoon' },
-  { value: 'fleaflicker', label: 'Fleaflicker' },
+  // { value: 'fleaflicker', label: 'Fleaflicker' },
   // { value: 'ottoneu', label: 'Ottoneu' },
   { value: 'other', label: 'Other', },
 ];
+
+
 
 
 const sportOptions = [
@@ -40,13 +44,13 @@ const sportOptions = [
   { value: 'pga', label: 'PGA', icon: createLucideIcon('golf-driver', golfDriver) },
   { value: 'nascar', label: 'NASCAR', icon: createLucideIcon('tire', tire)  },
   { value: 'esports', label: 'eSports', icon: Gamepad2 },
-  { value: 'f1', label: 'F1', icon: createLucideIcon('steering-wheel', steeringWheel)},
+  // { value: 'f1', label: 'F1', icon: createLucideIcon('steering-wheel', steeringWheel)},
   // { value: 'wnba', label: 'WNBA', icon: createLucideIcon('basketball', basketball) },
   // { value: 'cfl', label: 'CFL', icon: createLucideIcon('football', football) },
   { value: 'other', label: 'Other', icon: HelpCircle },
 ];
 
-const struggleOptions = [
+const fantasyProblemOptions = [
     { value: 'time-effort', label: 'Excelling in fantasy takes too much time & effort' },
     { value: 'info-miss', label: 'Missing key information and losing when I get lazy/busy' },
     { value: 'trade-stress', label: 'Finding league winning trades is difficult and time-consuming' },
@@ -93,19 +97,19 @@ export default function RegisterPage() {
   const { user, error, isLoading } = useUser()
   const router = useRouter()
 
+  const [firstName, setFirstName] = useState('');
   const [platforms, setPlatforms] = useState([])
   const [sports, setSports] = useState([])
-  const [struggles, setStruggles] = useState([])
+  const [fantasyProblems, setFantasyProblems] = useState([])
   const [futureFeatures, setFutureFeatures] = useState([])
   const [notificationsOkay, setNotificationsOkay] = useState({ email: true, sms: true })
   const [researchMethods, setResearchMethods] = useState([])
   const [submitting, setSubmitting] = useState(false)
+  const [firstNameError, setFirstNameError] = useState('');
 
-  // useEffect(() => {
-  //   if (!isLoading && !user) {
-  //     router.push('/landing')
-  //   }
-  // }, [isLoading, user, router])
+  useEffect(() => {
+    console.log({ user, isLoading, error });
+  }, [user, isLoading, error]);
 
   const handleCheckboxChange = (setter, value) => {
     setter((prev) =>
@@ -115,50 +119,55 @@ export default function RegisterPage() {
     );
   };
 
-  const handleRegistrationSubmit = async (completeRegistration) => {
-    if (!user) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!user) {
+      return;
+    }
+
+    // First name is now always required to proceed
+    if (!firstName.trim()) {
+      setFirstNameError('First name is required.');
+      return;
+    }
+    setFirstNameError(''); // Clear error if validation passes
+
     setSubmitting(true);
 
     try {
       const payload = {
         auth0Id: user.sub,
+        firstName: firstName.trim(),
         preferences: {
           platforms,
           sports,
-          struggles,
+          fantasyProblems,
           futureFeatures,
           researchMethods,
         },
         notificationsOkay,
+        newUser: false, // Always completing registration now
       };
 
-      if (completeRegistration) {
-        payload.newUser = false;
-      }
-
-      await fetch('/api/user', {
+      const response = await fetch('/api/user', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`API responded with ${response.status}: ${JSON.stringify(errorData)}`);
+      }
+
       router.push('/dashboard');
     } catch (err) {
-      console.error('Failed to submit registration', err);
+      console.error('Failed to submit registration:', err);
     } finally {
       setSubmitting(false);
     }
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleRegistrationSubmit(true);
-  };
-
-  const handleSkip = (e) => {
-    e.preventDefault();
-    handleRegistrationSubmit(false);
-  }
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
@@ -175,24 +184,24 @@ export default function RegisterPage() {
           {Icon && <Icon className="w-5 h-5 mr-2 text-pb_blue" />}
           {title}
         </h3>
-        <div className="rounded-lg border-3 border-pb_mddarkgray bg-card text-card-foreground shadow-sm p-4">
+        <div className="rounded-lg border border-pb_lightgray bg-card text-card-foreground shadow-sm p-4 pl-5">
             <div className={containerClasses}>
             {options.map((option) => (
                 <Fragment key={option.value}>
-                <div className={`flex items-center space-x-1 transition-colors hover:bg-gray-50 rounded-md ${isGrid ? 'p-2' : 'px-2'} `}>
-                <Checkbox
-                    id={`${title}-${option.value}`}
-                    checked={selected.includes(option.value)}
-                    onCheckedChange={() => handleCheckboxChange(setter, option.value)}
-                    className="border-pb_textlightergray"
-                />
-                <label
-                    htmlFor={`${title}-${option.value}`}
-                    className={`text-sm leading-none flex items-center gap-2 cursor-pointer pl-2 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`}
-                >
-                    {option.icon && <option.icon className={`w-4 h-4 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`} />}
-                    <span className="pl-0.5">{option.label}</span>
-                </label>
+                <div className={`flex items-center space-x-1 transition-colors hover:bg-gray-50 rounded-md ${isGrid ? 'py-[.55rem]' : 'pr-2'} `}>
+                  <Checkbox
+                      id={`${title}-${option.value}`}
+                      checked={selected.includes(option.value)}
+                      onCheckedChange={() => handleCheckboxChange(setter, option.value)}
+                      className="border-pb_textlightergray"
+                  />
+                  <label
+                      htmlFor={`${title}-${option.value}`}
+                      className={`text-sm leading-none flex items-center gap-2 cursor-pointer pl-2 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`}
+                  >
+                      {option.icon && <option.icon className={`w-4 h-4 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`} />}
+                      <span className="pl-0.5">{option.label}</span>
+                  </label>
                 </div>
                 {option.separator && <Separator className={`my-2 mx-2 w-62 bg-pb_lightergray ${isGrid ? 'col-span-full' : ''}`} />}
                 </Fragment>
@@ -204,67 +213,84 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl py-8 pb-16">
+    <div className="container mx-auto max-w-7xl py-8 pb-12">
       <div className="text-left mb-6 px-4 2xl:px-0">
         <h1 className="text-4xl font-bold tracking-tight text-pb_darkgray">Let's build your Playbook together.</h1>
         <p className="text-md text-pb_textgray mt-2">A few quick questions so we can build the features you need most - totally optional, but every response helps.</p>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 px-3 2xl:px-0">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1 space-y-4">
-            <CheckboxGroup title="Which leagues do you play?" icon={LandPlot} options={sportOptions} selected={sports} setter={setSports} layout="stack" />
-            <CheckboxGroup title="Which platforms do you use?" icon={AppWindow} options={platformOptions} selected={platforms} setter={setPlatforms} layout="stack" />
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-4">
-            <CheckboxGroup title="What makes managing your teams frustrating?" icon={ThumbsDown} options={struggleOptions} selected={struggles} setter={setStruggles} />
-            <CheckboxGroup title="Which Playbook features are you most interested in?" icon={Compass} options={futureFeatureOptions} selected={futureFeatures} setter={setFutureFeatures} />
-            <CheckboxGroup title="What are your favorite resources for fantasy sports advice?" icon={BookOpenText} options={researchMethodOptions} selected={researchMethods} setter={setResearchMethods} />
-          </div>
-        </div>
-
-        <div className="px-3 md:px-0">
-          <Separator className="my-6 " />
-          <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4">
-
-            <div className="flex items-start space-x-3">
-              <Checkbox
-                id="notifications"
-                checked={notificationsOkay.email}
-                onCheckedChange={(checked) => setNotificationsOkay({ email: checked, sms: checked })}
-                className="border-pb_lightgray mt-0.5"
-              />
+        <fieldset disabled={isLoading || submitting}>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 px-3 2xl:px-0">
+            {/* Left Sidebar */}
+            <div className="lg:col-span-1 space-y-4">
+              
               <div>
-                <label htmlFor="notifications" className="text-sm leading-none cursor-pointer flex items-center gap-2">
-                  {/* <MessagesSquare className="w-5 h-5 text-pb_midgray right-0" /> */}
-                  <span>I don't want to miss critical updates and time-sensitive matchup reports. </span>
-                </label>
-                <p className="text-xs pt-1 text-pb_textlightgray">Get priority access to game-changing insights when we launch.</p>
+                  <Label htmlFor="firstName" className="text-md font-semibold text-pb_darkgray mb-1.5 flex items-center">
+                    <User className={`w-5 h-5 mr-2 ${firstName.trim() ? 'text-green-500' : 'text-red-500'}`} />
+                    First Name {!firstName.trim() && <span className="text-red-500 ml-1">*</span>}
+                  </Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => {
+                      setFirstName(e.target.value);
+                      if (firstNameError) setFirstNameError('');
+                    }}
+                    placeholder="Enter your first name"
+                    className={`w-full border-pb_lightgray rounded-lg ${firstNameError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  />
+                  {firstNameError && <p className="text-red-500 text-xs mt-1.5">{firstNameError}</p>}
+              </div>
+
+              <CheckboxGroup title="Which leagues do you play?" icon={LandPlot} options={sportOptions} selected={sports} setter={setSports} layout="stack" />
+              <CheckboxGroup title="Which platforms do you use?" icon={AppWindow} options={platformOptions} selected={platforms} setter={setPlatforms} layout="stack" />
+            </div>
+
+            {/* Main Content */}
+            <div className="lg:col-span-3 space-y-[20px]">
+              <CheckboxGroup title="What makes managing your teams frustrating?" icon={ThumbsDown} options={fantasyProblemOptions} selected={fantasyProblems} setter={setFantasyProblems} />
+              <CheckboxGroup title="Which Playbook features are you most interested in?" icon={Compass} options={futureFeatureOptions} selected={futureFeatures} setter={setFutureFeatures} />
+              <CheckboxGroup title="What are your favorite resources for fantasy sports advice?" icon={BookOpenText} options={researchMethodOptions} selected={researchMethods} setter={setResearchMethods} />
+            </div>
+          </div>
+
+          <div className="px-3 md:px-0">
+            <Separator className="my-4" />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+              <div className="flex items-start space-x-3 pl-2">
+                <Checkbox
+                  id="notifications"
+                  checked={notificationsOkay.email}
+                  onCheckedChange={(checked) => setNotificationsOkay({ email: checked, sms: checked })}
+                  className="border-pb_lightgray mt-0.5"
+                />
+                <div>
+                  <label htmlFor="notifications" className="text-sm leading-none cursor-pointer flex items-center gap-2">
+                    {/* <MessagesSquare className="w-5 h-5 text-pb_midgray right-0" /> */}
+                    <span>I don't want to miss critical alerts and useful status reports. </span>
+                  </label>
+                  <p className="text-xs pt-1 text-pb_textlightgray">Get priority access to game-changing insights when we launch.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end pt-4 md:pt-0 pl-4">
+                <div className="flex items-center gap-4">
+                  <p className="text-xs text-pb_textlightgray hidden md:block">You can change these preferences later.</p>
+                  <button
+                    type="submit"
+                    disabled={isLoading || submitting || !user || !firstName.trim()}
+                    className="bg-pb_orange text-pb_darkgray px-4 py-2 rounded-md hover:bg-pb_orangehover disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                  >
+                    {submitting ? 'Saving...' : 'Complete Registration'}
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="flex items-center gap-2 justify-end pt-4 md:pt-0 pl-4">
-              <button
-                type="button"
-                onClick={handleSkip}
-                disabled={submitting}
-                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-semibold"
-              >
-                Skip for now
-              </button>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="bg-pb_orange text-pb_darkgray px-4 py-2 rounded-md hover:bg-pb_orangehover disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-semibold"
-              >
-                {submitting ? 'Saving...' : 'Complete Registration'}
-              </button>
-            </div>
           </div>
-        </div>
+        </fieldset>
       </form>
     </div>
   );

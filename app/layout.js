@@ -26,8 +26,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <UserProvider>
-      <html lang="en" className="h-full">
+    <html lang="en" className="h-full">
+      <UserProvider>
         <body className={`${dmSans.className} flex flex-col`}>
           <AOSInitializer />
           <ConditionalNavBar />
@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
           </main>
           <Toaster />
         </body>
-      </html>
-    </UserProvider>
+      </UserProvider>
+    </html>
   )
 }

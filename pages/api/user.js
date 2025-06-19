@@ -47,7 +47,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'PUT') {
-    const { auth0Id, ...updateData } = req.body;
+    const { auth0Id, firstName, preferences, notificationsOkay, newUser } = req.body;
     if (!auth0Id) {
       return res.status(400).json({ error: 'Missing auth0Id' });
     }
@@ -56,16 +56,24 @@ export default async function handler(req, res) {
       const db = await connectToDatabase();
       const usersCollection = db.collection('users');
 
-      const updatePayload = {};
-      for (const key in updateData) {
-        if (updateData[key] !== undefined) {
-          updatePayload[key] = updateData[key];
-        }
+      const updatePayload = { updatedAt: new Date() };
+
+      if (firstName !== undefined) {
+        updatePayload.firstName = firstName;
+      }
+      if (preferences !== undefined) {
+        updatePayload.preferences = preferences;
+      }
+      if (notificationsOkay !== undefined) {
+        updatePayload.notificationsOkay = notificationsOkay;
+      }
+      if (newUser !== undefined) {
+        updatePayload.newUser = newUser;
       }
 
       await usersCollection.updateOne(
         { auth0Id },
-        { $set: { ...updatePayload, updatedAt: new Date() } }
+        { $set: updatePayload }
       );
 
       return res.status(200).json({ success: true, message: 'User updated successfully' });
