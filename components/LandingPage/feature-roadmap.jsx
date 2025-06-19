@@ -1,18 +1,24 @@
-import { BarChart2, CalendarCheck, Check, Layers, MessageSquare, PieChart, Settings, Sliders, Smartphone, TrendingUp, Users, Zap } from "lucide-react";
+import { coinsExchange, lunchBox, toolbox2 } from "@lucide/lab";
+import { Activity, AlertTriangle, Backpack, BarChart2, BrainCog, Briefcase, Calendar, Calendar1, CalendarCheck, Check, ClipboardList, LandPlot, LayoutDashboard, Medal, MessageSquare, MessagesSquare, Newspaper, PanelsTopLeft, PieChart, Settings, ShieldUser, Sliders, Smartphone, SquareActivity, TrendingUp, Users, Zap, createLucideIcon } from "lucide-react";
+
+
 
 const features = [
-  { label: "Accounts & Authentication", subLabel: null, icon: Users, tooltip: "Sign up and log in securely.", status: "active" },
-  { label: "League Imports", subLabel: null, icon: Zap, tooltip: "Sync your leagues from Sleeper, Fleaflicker, and more.", status: "active" },
-  { label: "Rankings", subLabel: null, icon: BarChart2, tooltip: "Base player rankings to get started.", status: "active" },
-  { label: "Dashboard", subLabel: "Overview, Roster, Trades", icon: Layers, tooltip: "Your team overview and trade center.", status: "active" },
-  { label: "Rankings", subLabel: "Advanced Features", icon: TrendingUp, tooltip: "Breakout candidates, trends, and tiered systems.", status: "upcoming" },
-  { label: "Dashboard", subLabel: "Scouting, Matchup, Trends", icon: CalendarCheck, tooltip: "Matchup tools and scouting reports.", status: "upcoming" },
-  { label: "Mobile App", subLabel: null, icon: Smartphone, tooltip: "Playbook in your pocket.", status: "upcoming" },
-  { label: "Status Reports & Advanced News", subLabel: null, icon: MessageSquare, tooltip: "Game-time decisions, injury alerts, and more.", status: "upcoming" },
-  { label: "Draft Assistant", subLabel: null, icon: PieChart, tooltip: "Live draft tool to help you pick the best players.", status: "upcoming" },
-  { label: "Mock Drafts", subLabel: null, icon: Sliders, tooltip: "Practice your draft strategy.", status: "upcoming" },
-  { label: "Dynasty Tools", subLabel: null, icon: Settings, tooltip: "Tools to manage your dynasty teams long-term.", status: "upcoming" },
+  { label: "Rankings", subLabel: null, icon: ClipboardList, tooltip: "Base player rankings to get started.", status: "active" },
+  { label: "Dashboard", subLabel: "Overview, Roster, Trades", icon: PanelsTopLeft, tooltip: "Your team overview and trade center.", status: "upcoming" },
+  { label: "Dashboard", subLabel: "Scouting, Matchup, Trends", icon: PanelsTopLeft, tooltip: "Matchup previews, player scouting reports, and historical trends.", status: "upcoming" },
+  { label: "Rankings", subLabel: "Advanced Features", icon: ClipboardList, tooltip: "Breakout candidates, trends, and tiered systems.", status: "upcoming" },
+  { label: "Expanded AI Assistant", subLabel: null, icon: BrainCog  , tooltip: "Chat-style lineup suggestions and trade evaluations.", status: "upcoming" },
+  { label: "Status Reports & Advanced News", subLabel: null, icon: Newspaper, tooltip: "Real-time alerts and in-depth analysis stories.", status: "upcoming" },
+  { label: "Draft Tools", subLabel: null, icon: ShieldUser, tooltip: "Interactive draft boards, mock drafts, and 'what-if' scenarios.", status: "upcoming" },
+  { label: "Mobile App", subLabel: null, icon: Smartphone, tooltip: "Access core features on iOS and Android.", status: "upcoming" },
+  { label: "Debate", subLabel: "Community Discussions & Leaderboards", icon: MessagesSquare, tooltip: "Forums to argue picks and public leaderboards.", status: "upcoming" },
+  { label: "Commissioner Tools", subLabel: null, icon: createLucideIcon('lunchBox', lunchBox), tooltip: "League settings, draft scheduling, and rule enforcement.", status: "upcoming" },
+  { label: "DFS Tools", subLabel: null, icon: createLucideIcon('coinsExchange', coinsExchange), tooltip: "Daily fantasy lineup optimizers and salary-cap managers.", status: "upcoming" },
+  { label: "Other Sports", subLabel: null, icon: Sliders, tooltip: "Support for NBA, MLB, NHL, soccer, and more.", status: "upcoming" },
 ];
+
+
 
 const RoadmapItem = ({ feature, index }) => {
     const Icon = feature.icon;
@@ -63,7 +69,7 @@ const RoadmapItem = ({ feature, index }) => {
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightergray`}>
                                 <Icon className={`w-6 h-6 text-pb_darkgray`} />
                             </div>
-                            <div className="font-bold text-lg leading-tight text-pb_darkgray tracking-wide ">{feature.label}</div>
+                            <div className="font-bold text-lg leading-tight text-pb_darkgray tracking-wide ">{feature.label.toUpperCase()}</div>
                             <div className="font-semibold text-sm leading-tight text-pb_textgray tracking-wide pt-0.5">{feature.subLabel}</div>
                         </div>
 
@@ -82,7 +88,7 @@ export default function FeatureRoadmap() {
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
         <h2 className="text-3xl font-bold mb-8 text-center text-pb_darkgray">Our Roadmap</h2>
-        <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-pb_lightgray before:to-transparent">
+        <div className="space-y-12 lg:space-y-0 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-pb_lightgray before:via-pb_lightgray before:to-transparent">
             {features.map((feature, index) => (
                 <RoadmapItem key={index} feature={feature} index={index} />
             ))}
