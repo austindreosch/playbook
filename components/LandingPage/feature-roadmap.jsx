@@ -1,17 +1,17 @@
 import { BarChart2, CalendarCheck, Check, Layers, MessageSquare, PieChart, Settings, Sliders, Smartphone, TrendingUp, Users, Zap } from "lucide-react";
 
 const features = [
-    { label: "Accounts & Authentication", icon: Users, tooltip: "Sign up and log in securely.", status: 'active' },
-    { label: "League Imports", icon: Zap, tooltip: "Sync your leagues from Sleeper, Fleaflicker, and more.", status: 'active' },
-    { label: "Rankings", icon: BarChart2, tooltip: "Base player rankings to get started.", status: 'active' },
-    { label: "Dashboard: Overview, Roster, Trades", icon: Layers, tooltip: "Your team overview and trade center.", status: 'active' },
-    { label: "Rankings: Advanced Features", icon: TrendingUp, tooltip: "Breakout candidates, trends, and tiered systems.", status: 'upcoming' },
-    { label: "Dashboard: Scouting, Matchup, Trends", icon: CalendarCheck, tooltip: "Matchup tools and scouting reports.", status: 'upcoming' },
-    { label: "Mobile App", icon: Smartphone, tooltip: "Playbook in your pocket.", status: 'upcoming' },
-    { label: "Status Reports & Advanced News", icon: MessageSquare, tooltip: "Game-time decisions, injury alerts, and more.", status: 'upcoming' },
-    { label: "Draft Assistant", icon: PieChart, tooltip: "Live draft tool to help you pick the best players.", status: 'upcoming' },
-    { label: "Mock Drafts", icon: Sliders, tooltip: "Practice your draft strategy.", status: 'upcoming' },
-    { label: "Dynasty Tools", icon: Settings, tooltip: "Tools to manage your dynasty teams long-term.", status: 'upcoming' },
+  { label: "Accounts & Authentication", subLabel: null, icon: Users, tooltip: "Sign up and log in securely.", status: "active" },
+  { label: "League Imports", subLabel: null, icon: Zap, tooltip: "Sync your leagues from Sleeper, Fleaflicker, and more.", status: "active" },
+  { label: "Rankings", subLabel: null, icon: BarChart2, tooltip: "Base player rankings to get started.", status: "active" },
+  { label: "Dashboard", subLabel: "Overview, Roster, Trades", icon: Layers, tooltip: "Your team overview and trade center.", status: "active" },
+  { label: "Rankings", subLabel: "Advanced Features", icon: TrendingUp, tooltip: "Breakout candidates, trends, and tiered systems.", status: "upcoming" },
+  { label: "Dashboard", subLabel: "Scouting, Matchup, Trends", icon: CalendarCheck, tooltip: "Matchup tools and scouting reports.", status: "upcoming" },
+  { label: "Mobile App", subLabel: null, icon: Smartphone, tooltip: "Playbook in your pocket.", status: "upcoming" },
+  { label: "Status Reports & Advanced News", subLabel: null, icon: MessageSquare, tooltip: "Game-time decisions, injury alerts, and more.", status: "upcoming" },
+  { label: "Draft Assistant", subLabel: null, icon: PieChart, tooltip: "Live draft tool to help you pick the best players.", status: "upcoming" },
+  { label: "Mock Drafts", subLabel: null, icon: Sliders, tooltip: "Practice your draft strategy.", status: "upcoming" },
+  { label: "Dynasty Tools", subLabel: null, icon: Settings, tooltip: "Tools to manage your dynasty teams long-term.", status: "upcoming" },
 ];
 
 const RoadmapItem = ({ feature, index }) => {
@@ -19,14 +19,15 @@ const RoadmapItem = ({ feature, index }) => {
     const isActive = feature.status === 'active';
     const isEven = index % 2 === 0;
 
-    const borderColors = [
-        'border-pb_orange',
-        'border-pb_blue',
-        'border-pb_green',
-        'border-pb_red',
-        'border-pb_darkgray'
-    ];
-    const borderColorClass = borderColors[index % 5];
+    const colorVariants = {
+        'border-pb_orange': { border: 'border-pb_orange' },
+        'border-pb_blue':   { border: 'border-pb_blue' },
+        'border-pb_green':  { border: 'border-pb_green' },
+        'border-pb_red':    { border: 'border-pb_red' },
+    };
+    
+    const borderColorKey = Object.keys(colorVariants)[index % 4];
+    const colors = colorVariants[borderColorKey];
 
     return (
         <div className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group ${isActive ? 'is-active' : ''}`}>
@@ -52,15 +53,18 @@ const RoadmapItem = ({ feature, index }) => {
                     {/* Inner div for border and content */}
                     <div className={`
                         relative w-full h-full p-4 rounded-2xl bg-white
-                        border-3 border-dashed ${borderColorClass} border-t-5 
+                        border-3 border-dashed ${colors.border} border-t-5 
                         text-center flex flex-col items-center justify-center
+                        before:absolute before:inset-[4px] before:rounded-xl before:rounded-t-xl before:border before:border-pb_lightergray
+                        group-hover/card:before:hidden
                     `}>
                         {/* Default visible content */}
                         <div className="flex flex-col items-center justify-center transition-opacity duration-300 group-hover/card:opacity-0">
-                            <div className="w-12 h-12 bg-pb_blue-50 rounded-full flex items-center justify-center mb-4">
-                                <Icon className="w-6 h-6 text-pb_blue" />
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightergray`}>
+                                <Icon className={`w-6 h-6 text-pb_darkgray`} />
                             </div>
-                            <div className="font-semibold text-base leading-tight text-pb_darkgray">{feature.label}</div>
+                            <div className="font-bold text-lg leading-tight text-pb_darkgray tracking-wide ">{feature.label}</div>
+                            <div className="font-semibold text-sm leading-tight text-pb_textgray tracking-wide pt-0.5">{feature.subLabel}</div>
                         </div>
 
                         {/* Hover content */}
