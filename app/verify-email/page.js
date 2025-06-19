@@ -5,12 +5,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { MailCheck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function VerifyEmailPage() {
   const { user, isLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
+
+  useEffect(() => {
+    // If the user lands on this page already verified, redirect them away.
+    if (user && user.email_verified) {
+      window.location.href = '/dashboard';
+      return;
+    }
+
+    // Poll every 3 seconds to check if the user has verified in another tab.
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.status === 200) {
+          // A 200 OK response means a session was found.
+          // At this point, they must have verified to get a session.
+          clearInterval(interval);
+          window.location.reload(); // Reload the page to trigger middleware redirect.
+        }
+      } catch (err) {
+        // This is expected if the user is not yet logged in, so we can ignore it.
+      }
+    }, 3000);
+
+    return () => clearInterval(interval); // Cleanup on component unmount.
+  }, [user]);
 
   const handleResend = async () => {
     setIsSending(true);

@@ -6,34 +6,43 @@ export async function middleware(req) {
   const session = await getSession(req, res);
   const { pathname } = req.nextUrl;
 
-  // If the user is logged in, handle verification and registration redirects.
+  const LOGIN_COUNT_CLAIM = 'https://www.playbookfantasy.com/logins_count';
+  const REGISTRATION_COMPLETE_CLAIM = 'https://www.playbookfantasy.com/registration_complete';
+
   if (session?.user) {
     const { user } = session;
+    console.log('[Middleware] Found session. User object:', JSON.stringify(user, null, 2));
 
-    // 1. If email is not verified, force user to the verify-email page.
+    const registrationComplete = user[REGISTRATION_COMPLETE_CLAIM];
+
     if (!user.email_verified && pathname !== '/verify-email') {
+      console.log('[Middleware] User not verified. Redirecting to /verify-email');
       return NextResponse.redirect(new URL('/verify-email', req.url));
     }
 
-    // 2. If email IS verified...
     if (user.email_verified) {
-      // ...and they are a new user, force them to the register page.
-      if (user.newUser && pathname !== '/register') {
+      const loginsCount = user[LOGIN_COUNT_CLAIM];
+      console.log(`[Middleware] Logins count from claim: ${loginsCount}, Registration complete: ${registrationComplete}`);
+
+      if (loginsCount === 1 && !registrationComplete && pathname !== '/register') {
+        console.log('[Middleware] First login, registration not complete. Redirecting to /register.');
         return NextResponse.redirect(new URL('/register', req.url));
       }
-      // ...and they are an existing user trying to access onboarding pages, redirect to dashboard.
-      if (!user.newUser && (pathname === '/verify-email' || pathname === '/register')) {
+
+      if ((loginsCount > 1 || registrationComplete) && (pathname === '/verify-email' || pathname === '/register')) {
+        console.log('[Middleware] Existing user or registration complete on onboarding page. Redirecting to /dashboard.');
         return NextResponse.redirect(new URL('/dashboard', req.url));
       }
     }
+  } else {
+    console.log('[Middleware] No session found.');
   }
 
-  // If no session, continue. Assumes pages are protected individually
-  // or that unauthenticated access is intended.
+  console.log(`[Middleware] Allowing request to ${pathname}`);
   return res;
 }
 
 export const config = {
   // Run this middleware on all relevant pages.
-  matcher: ['/dashboard/:path*', '/rankings/:path*', '/verify-email', '/register'],
+  matcher: ['/', '/dashboard/:path*', '/rankings/:path*', '/verify-email', '/register'],
 }; 

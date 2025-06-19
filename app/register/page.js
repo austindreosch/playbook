@@ -107,9 +107,9 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false)
   const [firstNameError, setFirstNameError] = useState('');
 
-  useEffect(() => {
-    console.log({ user, isLoading, error });
-  }, [user, isLoading, error]);
+  // useEffect(() => {
+  //   console.log({ user, isLoading, error });
+  // }, [user, isLoading, error]);
 
   const handleCheckboxChange = (setter, value) => {
     setter((prev) =>
@@ -121,6 +121,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit button clicked, handleSubmit function triggered.");
 
     if (!user) {
       return;
@@ -172,43 +173,45 @@ export default function RegisterPage() {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
 
-  const CheckboxGroup = ({ title, icon: Icon, options, selected, setter, layout = 'grid' }) => {
+  const CheckboxGroup = ({ title, icon: Icon, options, selected, setter, layout = 'grid', disabled = false }) => {
     const isGrid = layout === 'grid';
     const containerClasses = isGrid
       ? 'grid grid-cols-1 md:grid-cols-2 gap-x-2 gap-y-0'
       : 'flex flex-col space-y-2';
 
     return (
-      <div>
-        <h3 className="text-md font-semibold text-pb_darkgray mb-1.5 flex items-center">
-          {Icon && <Icon className="w-5 h-5 mr-2 text-pb_blue" />}
-          {title}
-        </h3>
-        <div className="rounded-lg border border-pb_lightgray bg-card text-card-foreground shadow-sm p-4 pl-5">
-            <div className={containerClasses}>
-            {options.map((option) => (
-                <Fragment key={option.value}>
-                <div className={`flex items-center space-x-1 transition-colors hover:bg-gray-50 rounded-md ${isGrid ? 'py-[.55rem]' : 'pr-2'} `}>
-                  <Checkbox
-                      id={`${title}-${option.value}`}
-                      checked={selected.includes(option.value)}
-                      onCheckedChange={() => handleCheckboxChange(setter, option.value)}
-                      className="border-pb_textlightergray"
-                  />
-                  <label
-                      htmlFor={`${title}-${option.value}`}
-                      className={`text-sm leading-none flex items-center gap-2 cursor-pointer pl-2 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`}
-                  >
-                      {option.icon && <option.icon className={`w-4 h-4 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`} />}
-                      <span className="pl-0.5">{option.label}</span>
-                  </label>
-                </div>
-                {option.separator && <Separator className={`my-2 mx-2 w-62 bg-pb_lightergray ${isGrid ? 'col-span-full' : ''}`} />}
-                </Fragment>
-            ))}
-            </div>
+      <fieldset disabled={disabled}>
+        <div>
+          <h3 className="text-md font-semibold text-pb_darkgray mb-1.5 flex items-center">
+            {Icon && <Icon className="w-5 h-5 mr-2 text-pb_blue" />}
+            {title}
+          </h3>
+          <div className="rounded-lg border border-pb_lightgray bg-card text-card-foreground shadow-sm p-4 pl-5">
+              <div className={containerClasses}>
+              {options.map((option) => (
+                  <Fragment key={option.value}>
+                  <div className={`flex items-center space-x-1 transition-colors hover:bg-gray-50 rounded-md ${isGrid ? 'py-[.55rem]' : 'pr-2'} `}>
+                    <Checkbox
+                        id={`${title}-${option.value}`}
+                        checked={selected.includes(option.value)}
+                        onCheckedChange={() => handleCheckboxChange(setter, option.value)}
+                        className="border-pb_textlightergray"
+                    />
+                    <label
+                        htmlFor={`${title}-${option.value}`}
+                        className={`text-sm leading-none flex items-center gap-2 cursor-pointer pl-2 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`}
+                    >
+                        {option.icon && <option.icon className={`w-4 h-4 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`} />}
+                        <span className="pl-0.5">{option.label}</span>
+                    </label>
+                  </div>
+                  {option.separator && <Separator className={`my-2 mx-2 w-62 bg-pb_lightergray ${isGrid ? 'col-span-full' : ''}`} />}
+                  </Fragment>
+              ))}
+              </div>
+          </div>
         </div>
-      </div>
+      </fieldset>
     );
   };
 
@@ -220,11 +223,11 @@ export default function RegisterPage() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <fieldset disabled={isLoading || submitting}>
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 px-3 2xl:px-0">
-            {/* Left Sidebar */}
-            <div className="lg:col-span-1 space-y-4">
-              
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 px-3 2xl:px-0">
+          {/* Left Sidebar */}
+          <div className="lg:col-span-1 space-y-4">
+            
+            <fieldset disabled={isLoading || submitting}>
               <div>
                   <Label htmlFor="firstName" className="text-md font-semibold text-pb_darkgray mb-1.5 flex items-center">
                     <User className={`w-5 h-5 mr-2 ${firstName.trim() ? 'text-green-500' : 'text-red-500'}`} />
@@ -243,23 +246,25 @@ export default function RegisterPage() {
                   />
                   {firstNameError && <p className="text-red-500 text-xs mt-1.5">{firstNameError}</p>}
               </div>
+            </fieldset>
 
-              <CheckboxGroup title="Which leagues do you play?" icon={LandPlot} options={sportOptions} selected={sports} setter={setSports} layout="stack" />
-              <CheckboxGroup title="Which platforms do you use?" icon={AppWindow} options={platformOptions} selected={platforms} setter={setPlatforms} layout="stack" />
-            </div>
-
-            {/* Main Content */}
-            <div className="lg:col-span-3 space-y-[20px]">
-              <CheckboxGroup title="What makes managing your teams frustrating?" icon={ThumbsDown} options={fantasyProblemOptions} selected={fantasyProblems} setter={setFantasyProblems} />
-              <CheckboxGroup title="Which Playbook features are you most interested in?" icon={Compass} options={futureFeatureOptions} selected={futureFeatures} setter={setFutureFeatures} />
-              <CheckboxGroup title="What are your favorite resources for fantasy sports advice?" icon={BookOpenText} options={researchMethodOptions} selected={researchMethods} setter={setResearchMethods} />
-            </div>
+            <CheckboxGroup title="Which leagues do you play?" icon={LandPlot} options={sportOptions} selected={sports} setter={setSports} layout="stack" disabled={isLoading || submitting} />
+            <CheckboxGroup title="Which platforms do you use?" icon={AppWindow} options={platformOptions} selected={platforms} setter={setPlatforms} layout="stack" disabled={isLoading || submitting} />
           </div>
 
-          <div className="px-3 md:px-0">
-            <Separator className="my-4" />
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          {/* Main Content */}
+          <div className="lg:col-span-3 space-y-[20px]">
+            <CheckboxGroup title="What makes managing your teams frustrating?" icon={ThumbsDown} options={fantasyProblemOptions} selected={fantasyProblems} setter={setFantasyProblems} disabled={isLoading || submitting} />
+            <CheckboxGroup title="Which Playbook features are you most interested in?" icon={Compass} options={futureFeatureOptions} selected={futureFeatures} setter={setFutureFeatures} disabled={isLoading || submitting} />
+            <CheckboxGroup title="What are your favorite resources for fantasy sports advice?" icon={BookOpenText} options={researchMethodOptions} selected={researchMethods} setter={setResearchMethods} disabled={isLoading || submitting} />
+          </div>
+        </div>
 
+        <div className="px-3 md:px-0">
+          <Separator className="my-4" />
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+            <fieldset disabled={isLoading || submitting} className="flex-grow">
               <div className="flex items-start space-x-3 pl-2">
                 <Checkbox
                   id="notifications"
@@ -275,22 +280,22 @@ export default function RegisterPage() {
                   <p className="text-xs pt-1 text-pb_textlightgray">Get priority access to game-changing insights when we launch.</p>
                 </div>
               </div>
+            </fieldset>
 
-              <div className="flex items-center justify-end pt-4 md:pt-0 pl-4">
-                <div className="flex items-center gap-4">
-                  <p className="text-xs text-pb_textlightgray hidden md:block">You can change these preferences later.</p>
-                  <button
-                    type="submit"
-                    disabled={isLoading || submitting || !user || !firstName.trim()}
-                    className="bg-pb_orange text-pb_darkgray px-4 py-2 rounded-md hover:bg-pb_orangehover disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
-                  >
-                    {submitting ? 'Saving...' : 'Complete Registration'}
-                  </button>
-                </div>
+            <div className="flex items-center justify-end pt-4 md:pt-0 pl-4">
+              <div className="flex items-center gap-4">
+                <p className="text-xs text-pb_textlightgray hidden md:block">You can change these preferences later.</p>
+                <button
+                  type="submit"
+                  disabled={isLoading || submitting || !user || !firstName.trim()}
+                  className="bg-pb_orange text-pb_darkgray px-4 py-2 rounded-md hover:bg-pb_orangehover disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                >
+                  {submitting ? 'Saving...' : 'Complete Registration'}
+                </button>
               </div>
             </div>
           </div>
-        </fieldset>
+        </div>
       </form>
     </div>
   );

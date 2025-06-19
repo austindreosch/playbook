@@ -1,6 +1,7 @@
 // /pages/api/user.js
 // endpoint for auth0 to call to create or update user in the database
 
+import { getSession, updateSession } from '@auth0/nextjs-auth0';
 import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
@@ -47,6 +48,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Internal server error' });
     }
   } else if (req.method === 'PUT') {
+    const session = await getSession(req, res);
+    if (!session || !session.user) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
     const { auth0Id, firstName, preferences, notificationsOkay, newUser } = req.body;
     if (!auth0Id) {
       return res.status(400).json({ error: 'Missing auth0Id' });
@@ -75,6 +81,14 @@ export default async function handler(req, res) {
         { auth0Id },
         { $set: updatePayload }
       );
+
+      await updateSession(req, res, {
+        ...session,
+        user: {
+          ...session.user,
+          'https://www.playbookfantasy.com/registration_complete': true,
+        },
+      });
 
       return res.status(200).json({ success: true, message: 'User updated successfully' });
     } catch (error) {
