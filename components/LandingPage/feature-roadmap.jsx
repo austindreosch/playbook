@@ -1,26 +1,100 @@
 import { coinsExchange, lunchBox, toolbox2 } from "@lucide/lab";
-import { Activity, AlertTriangle, Backpack, BarChart2, BrainCog, Briefcase, Calendar, Calendar1, CalendarCheck, Check, ClipboardList, LandPlot, LayoutDashboard, Medal, MessageSquare, MessagesSquare, Newspaper, PanelsTopLeft, PieChart, Settings, ShieldUser, Sliders, Smartphone, SquareActivity, TrendingUp, Users, Zap, createLucideIcon } from "lucide-react";
+import { Activity, AlertTriangle, Backpack, BarChart2, BrainCog, Briefcase, Calendar, Calendar1, CalendarCheck, Check, ClipboardList, Hammer, LandPlot, LayoutDashboard, Medal, MessageSquare, MessagesSquare, Newspaper, PanelsTopLeft, PieChart, Settings, ShieldUser, Sliders, Smartphone, SquareActivity, TrendingUp, Users, Wrench, Zap, createLucideIcon } from "lucide-react";
 
 
 
 const features = [
-  { label: "Rankings", subLabel: null, icon: ClipboardList, tooltip: "Base player rankings to get started.", status: "active" },
-  { label: "Dashboard", subLabel: "Overview, Roster, Trades", icon: PanelsTopLeft, tooltip: "Your team overview and trade center.", status: "upcoming" },
-  { label: "Dashboard", subLabel: "Scouting, Matchup, Trends", icon: PanelsTopLeft, tooltip: "Matchup previews, player scouting reports, and historical trends.", status: "upcoming" },
-  { label: "Rankings", subLabel: "Advanced Features", icon: ClipboardList, tooltip: "Breakout candidates, trends, and tiered systems.", status: "upcoming" },
-  { label: "Expanded AI Assistant", subLabel: null, icon: BrainCog  , tooltip: "Chat-style lineup suggestions and trade evaluations.", status: "upcoming" },
-  { label: "Status Reports & Advanced News", subLabel: null, icon: Newspaper, tooltip: "Real-time alerts and in-depth analysis stories.", status: "upcoming" },
-  { label: "Draft Tools", subLabel: null, icon: ShieldUser, tooltip: "Interactive draft boards, mock drafts, and 'what-if' scenarios.", status: "upcoming" },
-  { label: "Mobile App", subLabel: null, icon: Smartphone, tooltip: "Access core features on iOS and Android.", status: "upcoming" },
-  { label: "Debate", subLabel: "Community Discussions & Leaderboards", icon: MessagesSquare, tooltip: "Forums to argue picks and public leaderboards.", status: "upcoming" },
-  { label: "Commissioner Tools", subLabel: null, icon: createLucideIcon('lunchBox', lunchBox), tooltip: "League settings, draft scheduling, and rule enforcement.", status: "upcoming" },
-  { label: "DFS Tools", subLabel: null, icon: createLucideIcon('coinsExchange', coinsExchange), tooltip: "Daily fantasy lineup optimizers and salary-cap managers.", status: "upcoming" },
-  { label: "Other Sports", subLabel: null, icon: Sliders, tooltip: "Support for NBA, MLB, NHL, soccer, and more.", status: "upcoming" },
+  {
+    label: "Rankings",
+    subLabel: null,
+    icon: ClipboardList,
+    tooltip: "Customizable expert consensus rankings for each sport and format. Adjust player ranks to curate your own value system and exploit the hidden value differences. View stats and explore punt differences.",
+    status: "active"
+  },
+  {
+    label: "Dashboard",
+    subLabel: "Overview, Roster, Trades",
+    icon: PanelsTopLeft,
+    tooltip: "The core of Playbook. Import your leagues and instantly get unprecedented clarity on your roster. Playbook tracks your strategy, preferences and opponents to find hidden value opportunities in our trade calculator. Our AI smart trade generator uses all your personalized data to find winning trades for you in seconds.",
+    status: "upcoming"
+  },
+  {
+    label: "Dashboard",
+    subLabel: "Scouting, Matchup, Trends",
+    icon: PanelsTopLeft,
+    tooltip: "Find players that fit you well, see stat trends and rising trade values before everyone else, get granular details for matchup optimizing.",
+    status: "upcoming"
+  },
+  {
+    label: "Rankings",
+    subLabel: "Advanced Features",
+    icon: ClipboardList,
+    tooltip: "Update rankings to current consensus rankings at different weights. Share with friends & collaborate with the community.",
+    status: "upcoming"
+  },
+  {
+    label: "Expanded AI Assistant",
+    subLabel: null,
+    icon: BrainCog,
+    tooltip: "Integrates a conversational interface trained on your personalized data and the circumstances of each league that can answer any question. Generate on-demand lineup suggestions, trade recommendations, and waiver-wire pickup suggestions.",
+    status: "upcoming"
+  },
+  {
+    label: "Status Reports & Advanced News",
+    subLabel: null,
+    icon: Newspaper,
+    tooltip: "Compiles real-time alerts for matchups, injuries and opportunities - plus curated news summaries highlighting only the developments that directly affect your team.",
+    status: "upcoming"
+  },
+  {
+    label: "Draft Tools",
+    subLabel: null,
+    icon: ShieldUser,
+    tooltip: "Real-time adjusted values and suggestions for live drafts and deep insight analytical tools to find steal picks and trade opportunities as the draft is unfolding.",
+    status: "upcoming"
+  },
+  {
+    label: "Mobile App",
+    subLabel: null,
+    icon: Smartphone,
+    tooltip: "Native iOS/Android app with full access to all features plus the addition of push notifications for critical events.",
+    status: "upcoming"
+  },
+  {
+    label: "Debate",
+    subLabel: "Community Discussions & Leaderboards",
+    icon: MessagesSquare,
+    tooltip: "Unique community discussion platform that will integrate seamlessly with your personal leagues to quickly create and comment in threads about recent happening, along with user performance rankings leaderboards that provide context for user advice.",
+    status: "upcoming"
+  },
+  {
+    label: "Commissioner Tools",
+    subLabel: null,
+    icon: createLucideIcon('lunchBox', lunchBox),
+    tooltip: "Includes context tracking for all leagues, a custom scheduling interface, customizable league communication templates, public voting tool for trades & rules, custom rulebook pages and automated reminders & communication for league milestones.",
+    status: "upcoming"
+  },
+  {
+    label: "DFS Tools",
+    subLabel: null,
+    icon: createLucideIcon('coinsExchange', coinsExchange),
+    tooltip: "Salary-cap lineup optimizer and analytical tools for daily leagues.",
+    status: "upcoming"
+  },
+  {
+    label: "Other Sports",
+    subLabel: null,
+    icon: Sliders,
+    tooltip: "Expanse beyond NFL, NBA and MLB - which comes first depends on user feedback.",
+    status: "upcoming"
+  }
 ];
 
 
 
-const RoadmapItem = ({ feature, index }) => {
+
+
+const RoadmapItem = ({ feature, index, isWip }) => {
     const Icon = feature.icon;
     const isActive = feature.status === 'active';
     const isEven = index % 2 === 0;
@@ -39,13 +113,16 @@ const RoadmapItem = ({ feature, index }) => {
     return (
         <div className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group ${isActive ? 'is-active' : ''}`}>
             {/* Dot */}
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 border-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isActive ? 'bg-pb_green' : 'bg-pb_lightgray'}`}>
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full  shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isActive ? 'bg-pb_green' : 'bg-pb_lightgray'}`}>
                 {isActive ? (
                     <Check className="w-5 h-5 text-white" />
+                ) : isWip ? (
+                    <Hammer className="w-6 h-6 text-pb_mddarkgray" />
                 ) : (
                     <div className="w-3 h-3 bg-pb_midgray rounded-full" />
                 )}
             </div>
+            
             {/* Card */}
             <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] flex md:group-even:justify-end">
                 {/* Outer div for shadow and transforms */}
@@ -67,7 +144,7 @@ const RoadmapItem = ({ feature, index }) => {
                     `}>
                         {/* Default visible content */}
                         <div className="flex flex-col items-center justify-center transition-opacity duration-300 group-hover/card:opacity-0">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightergray`}>
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightergray border-2 border-pb_lightgray`}>
                                 <Icon className={`w-6 h-6 text-pb_darkgray`} />
                             </div>
                             <div className="font-bold text-lg leading-tight text-pb_darkgray tracking-wide ">{feature.label.toUpperCase()}</div>
@@ -86,10 +163,14 @@ const RoadmapItem = ({ feature, index }) => {
 };
 
 export default function FeatureRoadmap() {
+  const lastActiveIndex = features.map(f => f.status === 'active').lastIndexOf(true);
+  const wipIndex = features.findIndex(f => f.status === 'upcoming');
+  const greenLinePercentage = lastActiveIndex >= 0 ? ((lastActiveIndex + 0.5) / features.length) * 100 : 0;
+
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
-      <div className="text-center pt-16 pb-8">
-        <h2 className="text-3xl font-extrabold tracking-tight text-pb_darkgray mb-2 leading-snug">
+      <div className="text-center py-16">
+        <h2 className="text-3xl font-extrabold tracking-tight text-pb_darkgray mb-4 ">
           Feature Roadmap
         </h2>
         <p className="text-base text-pb_midgray">
@@ -97,10 +178,19 @@ export default function FeatureRoadmap() {
         </p>
       </div>
 
-      <div className="space-y-12 lg:space-y-0 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-pb_lightgray before:via-pb_lightgray before:to-transparent">
-            {features.map((feature, index) => (
-                <RoadmapItem key={index} feature={feature} index={index} />
-            ))}
+      <div className="space-y-12 lg:space-y-0 relative">
+        {/* Gray line */}
+        <div className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 h-full w-0.5 bg-pb_lightgray" aria-hidden="true"></div>
+        {/* Green line */}
+        <div 
+            className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 w-0.5 bg-gradient-to-b from-transparent to-pb_green" 
+            style={{ height: `${greenLinePercentage}%` }}
+            aria-hidden="true"
+        ></div>
+
+        {features.map((feature, index) => (
+            <RoadmapItem key={index} feature={feature} index={index} isWip={index === wipIndex} />
+        ))}
         </div>
     </div>
   );
