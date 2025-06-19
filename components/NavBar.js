@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, Settings as SettingsIcon, Shield, UserPlus } from 'lucide-react';
+import { Cable, ClipboardList, CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, MessageSquareQuote, PanelsTopLeft, Settings as SettingsIcon, Shield, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
@@ -26,9 +26,9 @@ function NavBar() {
             <div className="container mx-auto">
                 <div className="flex items-center justify-between h-12 md:h-16 align-content my-auto">
                     <div className="flex items-center group font-bold">
-                        <img src="/logo-tpfull.png" alt="Playbook Icon" className="h-6 w-6 md:h-8 md:w-8" />
+                        <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-6 w-6 md:h-8 md:w-8" />
                         <a href="/rankings" className="px-2 md:px-3 py-2 flex items-center">
-                            <div className={`text-xl md:text-3xl font-bold group-hover:text-white`}>
+                            <div className={`text-xl md:text-3xl font-bold text-pb_darkgray group-hover:text-white`}>
                                 Playbook
                             </div>
                         </a>
@@ -36,20 +36,28 @@ function NavBar() {
 
                     {/* Desktop Navigation Links - hidden on mobile (screens smaller than md) */}
                     <div className="hidden md:flex items-center space-x-4 ml-10 text-smd font-extrabold tracking-wider text-pb_darkgray ">
-                        <span className={`text-pb_orangedisabled  px-3 py-2 rounded-md cursor-not-allowed  select-none`}>DASHBOARD</span>
-                        <Link href="/rankings" className={` hover:text-white px-3 py-2 rounded-md  select-none  `}>RANKINGS</Link>
-                        <Link href="/landing" className={` hover:text-white px-3 py-2 rounded-md select-none  `}>ABOUT</Link>
+                        <span className={`text-pb_orangedisabled px-3 py-2 rounded-md cursor-not-allowed select-none flex items-center`}>
+                            <PanelsTopLeft className="h-4 w-4 mr-3 text-pb_darkgray opacity-50" />
+                            DASHBOARD
+                        </span>
+                        <Link href="/rankings" className={`group hover:text-white px-3 py-2 rounded-md select-none flex items-center`}>
+                            <ClipboardList className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
+                            RANKINGS
+                        </Link>
+                        <Link href="/landing" className={`group hover:text-white px-3 py-2 rounded-md select-none flex items-center`}>
+                            <MessageSquareQuote className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
+                            ABOUT
+                        </Link>
 
                         {user ? (
                             <div className="py-2 pl-2 pr-3">
                                 <UserProfileDropdown user={user} />
                             </div>
                         ) : (
-                            <div className='rounded-md mx-1'>
-                                <Link href="/api/auth/login" className="  hover:text-white px-3 py-2 rounded-md">
-                                    LOGIN
-                                </Link>
-                            </div>
+                            <Link href="/api/auth/login" className="group text-pb_darkgray hover:text-white px-3 py-2 rounded-md select-none flex items-center">
+                                <LogIn className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
+                                LOGIN
+                            </Link>
                         )}
                     </div>
 

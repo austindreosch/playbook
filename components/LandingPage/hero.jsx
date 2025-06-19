@@ -48,8 +48,8 @@ export default function Hero() {
 
           {/* Section header */}
           <div className="text-center pb-12 md:pb-16">
-            <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4 text-pb_darkgray" data-aos="zoom-y-out">Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-teal-400">faster.</span></h1>
-            <div className="max-w-3xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-4 text-pb_darkgray" data-aos="zoom-y-out">Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-pb_green">faster.</span></h1>
+            <div className="max-w-4xl mx-auto">
               <p className="text-xl text-pb_midgray mb-8" data-aos="zoom-y-out" data-aos-delay="150">Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard.</p>
               <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center" data-aos="zoom-y-out" data-aos-delay="300">
                 <div>

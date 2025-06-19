@@ -1,10 +1,28 @@
+'use client';
+
+import { Button } from "@/components/ui/button";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Newsletter() {
+  const router = useRouter();
+  const { user, isLoading } = useUser();
+
+  const handleSignUp = () => {
+    if (isLoading) return;
+
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      router.push('/api/auth/login');
+    }
+  };
+
   return (
     <section>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="pb-6 md:pb-20">
+        <div className="pb-6 pt-8 md:pb-8">
 
           {/* CTA box */}
           <div className="relative bg-pb_orange p-12 shadow-lg overflow-hidden rounded-2xl" data-aos="zoom-y-out">
@@ -25,7 +43,13 @@ export default function Newsletter() {
                   <p className="text-base font-medium text-pb_mddarkgray md:text-lg md:w-[80%] mx-auto">Start using Playbook early and see how it changes the way you manage your fantasy teams today.</p>
                 </div>
                 <div className="flex justify-center">
-                  <a className="btn font-medium bg-pb_blue text-white hover:bg-pb_bluehover shadow px-8 py-3 mt-2 rounded-md" href="/register">Sign Up Now</a>
+                  <Button
+                    className="w-full p-5 px-7 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0 rounded-lg"
+                    onClick={handleSignUp}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Loading...' : 'Sign Up Now'}
+                  </Button>
                 </div>
                   <p className="text-sm text-pb_mddarkgray">Use it free of charge for right now.</p>
               </div>

@@ -8,21 +8,21 @@ const features = [
     label: "Rankings",
     subLabel: null,
     icon: ClipboardList,
-    tooltip: "Customizable expert consensus rankings for each sport and format. Adjust player ranks to curate your own value system and exploit the hidden value differences. View stats and explore punt differences.",
+    tooltip: "Customizable expert consensus rankings for each sport and format. View stats and adjust player ranks to curate your own value system and exploit the hidden value differences.",
     status: "active"
   },
   {
     label: "Dashboard",
     subLabel: "Overview, Roster, Trades",
     icon: PanelsTopLeft,
-    tooltip: "The core of Playbook. Import your leagues and instantly get unprecedented clarity on your roster. Playbook tracks your strategy, preferences and opponents to find hidden value opportunities in our trade calculator. Our AI smart trade generator uses all your personalized data to find winning trades for you in seconds.",
+    tooltip: "Import your leagues and get unprecedented clarity. Playbook tracks your strategy, preferences and opponents to find hidden value opportunities for our AI smart trade generator.",
     status: "upcoming"
   },
   {
     label: "Dashboard",
     subLabel: "Scouting, Matchup, Trends",
     icon: PanelsTopLeft,
-    tooltip: "Find players that fit you well, see stat trends and rising trade values before everyone else, get granular details for matchup optimizing.",
+    tooltip: "Deep search for players and oppoortunities that fit you well. See deep trends in stats and trade values before everyone else. Get granular details for optimizing every matchup.",
     status: "upcoming"
   },
   {
@@ -36,7 +36,7 @@ const features = [
     label: "Expanded AI Assistant",
     subLabel: null,
     icon: BrainCog,
-    tooltip: "Integrates a conversational interface trained on your personalized data and the circumstances of each league that can answer any question. Generate on-demand lineup suggestions, trade recommendations, and waiver-wire pickup suggestions.",
+    tooltip: "Full integration of a conversational interface trained on your personalized data for each league that can answer any question you have about your players and leagues.",
     status: "upcoming"
   },
   {
@@ -64,14 +64,14 @@ const features = [
     label: "Debate",
     subLabel: "Community Discussions & Leaderboards",
     icon: MessagesSquare,
-    tooltip: "Unique community discussion platform that will integrate seamlessly with your personal leagues to quickly create and comment in threads about recent happening, along with user performance rankings leaderboards that provide context for user advice.",
+    tooltip: "Unique community discussion platform integrated across the platform. Quickly create and comment in threads about recent happenings - along with user profiles & leaderboards.",
     status: "upcoming"
   },
   {
     label: "Commissioner Tools",
     subLabel: null,
     icon: createLucideIcon('lunchBox', lunchBox),
-    tooltip: "Includes context tracking for all leagues, a custom scheduling interface, customizable league communication templates, public voting tool for trades & rules, custom rulebook pages and automated reminders & communication for league milestones.",
+    tooltip: "Context tracking for all leagues, customizable communication templates, public voting tool for trade vetos & rules, public rulebook pages, and automated reminders & communication.",
     status: "upcoming"
   },
   {
@@ -127,7 +127,7 @@ const RoadmapItem = ({ feature, index, isWip }) => {
             <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] flex md:group-even:justify-end">
                 {/* Outer div for shadow and transforms */}
                 <div className={`
-                    group/card w-64 h-40
+                    group/card w-64 h-40 group-hover/card:h-auto
                     shadow-md hover:shadow-2xl
                     transition-all duration-300
                     ${isEven ? 'rotate-1' : '-rotate-1'}
@@ -144,7 +144,7 @@ const RoadmapItem = ({ feature, index, isWip }) => {
                     `}>
                         {/* Default visible content */}
                         <div className="flex flex-col items-center justify-center transition-opacity duration-300 group-hover/card:opacity-0">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightergray border-2 border-pb_lightgray`}>
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightestgray border-2 border-pb_lightgray`}>
                                 <Icon className={`w-6 h-6 text-pb_darkgray`} />
                             </div>
                             <div className="font-bold text-lg leading-tight text-pb_darkgray tracking-wide ">{feature.label.toUpperCase()}</div>
@@ -165,7 +165,23 @@ const RoadmapItem = ({ feature, index, isWip }) => {
 export default function FeatureRoadmap() {
   const lastActiveIndex = features.map(f => f.status === 'active').lastIndexOf(true);
   const wipIndex = features.findIndex(f => f.status === 'upcoming');
-  const greenLinePercentage = lastActiveIndex >= 0 ? ((lastActiveIndex + 0.5) / features.length) * 100 : 0;
+  
+  // --- Accurate Height Calculation ---
+  // Constants derived from Tailwind classes (h-40 -> 10rem, py-12 -> 3rem)
+  const itemHeightRem = 10;
+  const paddingTopRem = 3;
+  const paddingBottomRem = 3;
+  const numItems = features.length;
+
+  // Total height of the container on large screens (where lg:space-y-0 applies)
+  const contentHeightRem = numItems * itemHeightRem;
+  const totalHeightRem = contentHeightRem + paddingTopRem + paddingBottomRem;
+
+  // Target height for the green line: from the top of the padding to the middle of the last active item.
+  const targetLineHeightRem = paddingTopRem + (lastActiveIndex + 0.5) * itemHeightRem;
+
+  // Convert the target rem height to a percentage of the total rem height.
+  const greenLinePercentage = (targetLineHeightRem / totalHeightRem) * 100;
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -173,17 +189,16 @@ export default function FeatureRoadmap() {
         <h2 className="text-3xl font-extrabold tracking-tight text-pb_darkgray mb-4 ">
           Feature Roadmap
         </h2>
-        <p className="text-base text-pb_midgray">
-          A glimpse into what we&apos;re building next.
-        </p>
+        <p className="max-w-xl mx-auto text-pb_midgray">
+        Want a peek ahead? Follow the rollout path below where you can see how each upcoming update adds more leverage and amplifies your advantage.        </p>
       </div>
 
-      <div className="space-y-12 lg:space-y-0 relative">
+      <div className="space-y-12 lg:space-y-0 relative py-12">
         {/* Gray line */}
         <div className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 h-full w-0.5 bg-pb_lightgray" aria-hidden="true"></div>
         {/* Green line */}
         <div 
-            className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 w-0.5 bg-gradient-to-b from-transparent to-pb_green" 
+            className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 w-0.5 bg-gradient-to-b from-white to-pb_green" 
             style={{ height: `${greenLinePercentage}%` }}
             aria-hidden="true"
         ></div>

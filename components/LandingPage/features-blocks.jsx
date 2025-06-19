@@ -95,7 +95,7 @@ export default function FeaturesBlocks() {
 
           {/* Section header */}
           <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20 ">
-            <h2 className="h2 mb-4 font-bold text-2xl text-pb_darkgray">Explore the features</h2>
+            <h2 className="h2 mb-4 font-bold text-2xl text-pb_darkgray">Explore the Features</h2>
             <p className="text-pb_mddarkgray"> Playbook combines advanced data, automation, and clean interfaces to make winning as simple as possible. Take a look at the first wave of tools.</p>
           </div>
 
