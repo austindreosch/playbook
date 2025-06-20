@@ -1,3 +1,5 @@
+'use client';
+import useMediaQuery from "@/hooks/useMediaQuery";
 import { coinsExchange, lunchBox, toolbox2 } from "@lucide/lab";
 import { Activity, AlertTriangle, Backpack, BarChart2, BrainCog, Briefcase, Calendar, Calendar1, CalendarCheck, Check, ClipboardList, Hammer, LandPlot, LayoutDashboard, Medal, MessageSquare, MessagesSquare, Newspaper, PanelsTopLeft, PieChart, Settings, ShieldUser, Sliders, Smartphone, SquareActivity, TrendingUp, Users, Wrench, Zap, createLucideIcon } from "lucide-react";
 
@@ -163,25 +165,40 @@ const RoadmapItem = ({ feature, index, isWip }) => {
 };
 
 export default function FeatureRoadmap() {
-  const lastActiveIndex = features.map(f => f.status === 'active').lastIndexOf(true);
-  const wipIndex = features.findIndex(f => f.status === 'upcoming');
-  
-  // --- Accurate Height Calculation ---
-  // Constants derived from Tailwind classes (h-40 -> 10rem, py-12 -> 3rem)
-  const itemHeightRem = 10;
-  const paddingTopRem = 3;
-  const paddingBottomRem = 3;
-  const numItems = features.length;
+    const isLg = useMediaQuery('(min-width: 1024px)'); // Tailwind's lg breakpoint
+    const lastActiveIndex = features.map(f => f.status === 'active').lastIndexOf(true);
+    const wipIndex = features.findIndex(f => f.status === 'upcoming');
 
-  // Total height of the container on large screens (where lg:space-y-0 applies)
-  const contentHeightRem = numItems * itemHeightRem;
-  const totalHeightRem = contentHeightRem + paddingTopRem + paddingBottomRem;
+    let greenLinePercentage;
 
-  // Target height for the green line: from the top of the padding to the middle of the last active item.
-  const targetLineHeightRem = paddingTopRem + (lastActiveIndex + 0.5) * itemHeightRem;
+    if (lastActiveIndex < 0) {
+        greenLinePercentage = 0;
+    } else if (isLg) {
+        // LG+ : Desktop layout with space-y-0
+        const numItems = features.length;
+        const itemHeightRem = 10; // h-40
+        const paddingTopRem = 3;  // py-12
+        const paddingBottomRem = 3;
 
-  // Convert the target rem height to a percentage of the total rem height.
-  const greenLinePercentage = (targetLineHeightRem / totalHeightRem) * 100;
+        const contentHeightRem = numItems * itemHeightRem;
+        const totalHeightRem = contentHeightRem + paddingTopRem + paddingBottomRem;
+        const targetLineHeightRem = paddingTopRem + (lastActiveIndex * itemHeightRem) + (itemHeightRem / 2);
+
+        greenLinePercentage = (targetLineHeightRem / totalHeightRem) * 100;
+    } else {
+        // <LG : Mobile/Tablet layout with space-y-12
+        const numItems = features.length;
+        const itemHeightRem = 10; // h-40
+        const spaceYRem = 3;      // space-y-12
+        const paddingTopRem = 3;  // py-12
+        const paddingBottomRem = 3;
+
+        const contentHeightRem = (numItems * itemHeightRem) + ((numItems > 0 ? numItems - 1 : 0) * spaceYRem);
+        const totalHeightRem = contentHeightRem + paddingTopRem + paddingBottomRem;
+        const targetLineHeightRem = paddingTopRem + (lastActiveIndex * (itemHeightRem + spaceYRem)) + (itemHeightRem / 2);
+
+        greenLinePercentage = (targetLineHeightRem / totalHeightRem) * 100;
+    }
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
@@ -193,20 +210,21 @@ export default function FeatureRoadmap() {
         Want a peek ahead? Follow the rollout path below where you can see how each upcoming update adds more leverage and amplifies your advantage.        </p>
       </div>
 
-      <div className="space-y-12 lg:space-y-0 relative py-12">
+      <div className="pl-4 md:pl-0 relative">
         {/* Gray line */}
-        <div className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 h-full w-0.5 bg-pb_lightgray" aria-hidden="true"></div>
+        <div className="absolute top-0 bottom-0 ml-5 -translate-x-px md:left-1/2 md:ml-0 md:-translate-x-1/2 h-full w-0.5 bg-pb_lightgray" aria-hidden="true"></div>
         {/* Green line */}
-        <div 
-            className="absolute inset-0 ml-5 -translate-x-px md:mx-auto md:translate-x-0 w-0.5 bg-gradient-to-b from-white to-pb_green" 
+        <div
+            className="absolute top-0 bottom-0 ml-5 -translate-x-px md:left-1/2 md:ml-0 md:-translate-x-1/2 w-0.5 bg-gradient-to-b from-white to-pb_green"
             style={{ height: `${greenLinePercentage}%` }}
             aria-hidden="true"
         ></div>
-
-        {features.map((feature, index) => (
-            <RoadmapItem key={index} feature={feature} index={index} isWip={index === wipIndex} />
-        ))}
+        <div className="space-y-12 lg:space-y-0 relative py-12">
+            {features.map((feature, index) => (
+                <RoadmapItem key={index} feature={feature} index={index} isWip={index === wipIndex} />
+            ))}
         </div>
+    </div>
     </div>
   );
 }
