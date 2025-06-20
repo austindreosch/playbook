@@ -68,7 +68,7 @@ export default function VerifyEmailPage() {
           </div>
           <CardTitle className="mt-4">Please Verify Your Email</CardTitle>
           <CardDescription>
-            Click the link in the email we sent to <span className="font-semibold">{user?.email || 'your email address'}</span>. Once you've verified, click continue.
+            Click the link in the email we sent to <span className="font-semibold">{user?.email || 'your email address'}</span>. Once you&rsquo;ve verified, click continue.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">

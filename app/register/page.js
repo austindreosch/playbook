@@ -218,7 +218,7 @@ export default function RegisterPage() {
   return (
     <div className="container mx-auto max-w-7xl py-8 pb-12">
       <div className="text-left mb-6 px-4 2xl:px-0">
-        <h1 className="text-4xl font-bold tracking-tight text-pb_darkgray">Let's build your Playbook together.</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-pb_darkgray">Let&rsquo;s build your Playbook together.</h1>
         <p className="text-md text-pb_textgray mt-2">A few quick questions so we can build the features you need most - totally optional, but every response helps.</p>
       </div>
 
@@ -275,7 +275,7 @@ export default function RegisterPage() {
                 <div>
                   <label htmlFor="notifications" className="text-sm leading-none cursor-pointer flex items-center gap-2">
                     {/* <MessagesSquare className="w-5 h-5 text-pb_midgray right-0" /> */}
-                    <span>I don't want to miss critical alerts and useful status reports. </span>
+                    <span>I don&rsquo;t want to miss critical alerts and useful status reports. </span>
                   </label>
                   <p className="text-xs pt-1 text-pb_textlightgray">Get priority access to game-changing insights when we launch.</p>
                 </div>
