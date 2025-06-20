@@ -62,6 +62,14 @@ module.exports = {
         '11.5': '2.875rem',
         '12.5': '3.125rem',
       },
+      maxHeight: {
+        '3xl': '48rem', // 768px
+        '4xl': '56rem', // 896px
+        '5xl': '64rem', // 1024px
+        '6xl': '72rem', // 1152px
+        '7xl': '80rem', // 1280px
+        '8xl': '90rem', // 1440px
+      },
       ringOffsetWidth: {
         '3': '3px',
         '5': '5px',
@@ -81,7 +89,9 @@ module.exports = {
         '19': 'repeat(19, minmax(0, 1fr))',
         '20': 'repeat(20, minmax(0, 1fr))',
         '21': 'repeat(21, minmax(0, 1fr))',
-        '22': 'repeat(22, minmax(0, 1fr))'
+        '22': 'repeat(22, minmax(0, 1fr))',
+        '23': 'repeat(23, minmax(0, 1fr))',
+        '24': 'repeat(24, minmax(0, 1fr))',
       },
       gridTemplateRows: {
         '7': 'repeat(7, minmax(0, 1fr))',

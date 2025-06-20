@@ -50,11 +50,11 @@ function NavBar() {
                         </Link>
 
                         {user ? (
-                            <div className="py-2 pl-2 pr-3">
+                            <div className="py-2 pl-2">
                                 <UserProfileDropdown user={user} />
                             </div>
                         ) : (
-                            <Link href="/api/auth/login" className="group text-pb_darkgray hover:text-white px-3 py-2 rounded-md select-none flex items-center">
+                            <Link href="/api/auth/login" className="group text-pb_darkgray hover:text-white pl-3 py-2 rounded-md select-none flex items-center">
                                 <LogIn className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
                                 LOGIN
                             </Link>

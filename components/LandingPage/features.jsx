@@ -6,7 +6,7 @@ import FeaturesCard2 from '@/public/images/landing/featurescard2.png'
 import FeaturesCard3 from '@/public/images/landing/featurescard3.png'
 import { Transition } from '@headlessui/react'
 import { Separator } from '@radix-ui/react-dropdown-menu'
-import { BrainCog, Compass, PanelsTopLeft } from 'lucide-react'
+import { BrainCog, CandlestickChart, Compass, PanelsTopLeft } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
@@ -97,7 +97,7 @@ export default function Features() {
                     <div className={`text-sm md:text-base ${tab === 1 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Everything you need to know about all your leagues, centralized in one clear view. See trends, expert consensus, and hidden opportunities to make league winning moves fast. </div>
                   </div>
                   <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
-                    <PanelsTopLeft className={`w-6 h-6 ${tab === 1 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
+                    <Compass className={`w-6 h-6 ${tab === 1 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
                   </div>
                 </a>
                 <a
@@ -123,7 +123,7 @@ export default function Features() {
                     <div className={`text-sm md:text-base ${tab === 3 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness&rsquo; and undervalued players using AI and your personalized data. </div>
                   </div>
                   <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
-                    <Compass className={`w-6 h-6 ${tab === 3 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
+                    <CandlestickChart className={`w-6 h-6 ${tab === 3 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
                   </div>
                 </a>
               </div>

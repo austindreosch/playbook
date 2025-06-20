@@ -2,10 +2,19 @@
 
 'use client'
 
+import DashboardSkeleton from '@/components/dashboard/DashboardSkeleton';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
+import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
+import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
+import DownloadButton from '@/components/dashboard/Header/DownloadButton';
+import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
+import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
+import CurrentLeagueTeamDisplay from '@/components/dashboard/Overview/Header/CurrentLeagueTeamDisplay';
+import LeagueSettingsButton from '@/components/dashboard/Overview/Header/LeagueSettingsButton';
+import RankingsSelectorButton from '@/components/dashboard/Overview/Header/RankingsSelectorButton';
+import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
 import RosterViewImportLeague from '@/components/dashboard/Overview/RosterViewBlock/RosterViewImportLeague';
 import DebugDrawer from '@/components/debug/DebugDrawer';
-import DashboardSkeleton from '@/components/ui/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
@@ -95,8 +104,28 @@ export default function DashboardPage() {
   // }, [user, router]);
 
 
+  // Debug keybind for toggling loading state
+  const [debugLoading, setDebugLoading] = useState(false);
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check for Ctrl + Shift + L
+      if (event.ctrlKey && event.shiftKey && event.key === 'L') {
+        console.log('Debug loading toggle triggered!');
+        setDebugLoading(prev => !prev);
+      }
+    };
 
-  if (isLoading) return <DashboardSkeleton />;
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []); // Empty dependency array ensures this runs only once
+
+  // Override real loading state with debug loading state
+  const effectiveIsLoading = debugLoading || isLoading;
+  
+  if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
 
   return (
@@ -104,35 +133,45 @@ export default function DashboardPage() {
       <DebugDrawer />
       {/* TODO: remove this later */}
       {/* <DashboardSkeleton /> */}
-      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] py-4 flex flex-col overflow-hidden">
+      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
           {/* Dashboard Tab Selector */}
-          <div className="w-1/2 pr-2">
+          <div className="w-3/5">
             <DashboardTabs />
           </div>
 
           {/* Imported League Selector */}
-          <div className="grid grid-cols-15 gap-2 w-1/2 items-center pb-2.5">
-            <div className="col-start-4 col-span-1 h-8 rounded"></div>
-            <div className="h-9 col-span-3 rounded border-1.5 border-pb_lightgray shadow-sm"></div>
-            <div className="h-9 col-span-5 rounded border-1.5 border-pb_lightgray shadow-sm"></div>
-            <div className="h-9 col-span-3 rounded border-1.5 border-pb_lightgray shadow-sm"></div>
+          <div className="flex gap-2 w-2/5 justify-end pb-2.5">
+
+            <AllLeaguesButton className="h-9" />
+            <LeagueSelectorButton className="h-9" />
+            <DownloadButton className="h-9" />
+            <DashboardSettingsButton className="h-9" />
           </div>
 
           {/* Selectors Divider */}
-          <div className="absolute bottom-0 right-0 w-1/2">
+          <div className="absolute bottom-0 right-0 w-2/5">
             <div className="h-[1px] w-full bg-pb_lightgray"></div>
           </div>
         </div>
 
-        {/* Individual League View Bar */}
-        <div className="grid grid-cols-20 gap-2 w-full pt-2.5">
-          <div className="h-9 col-span-3 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
-          <div className="h-9 col-span-6 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
-          <div className="col-span-6"></div>
-          <div className="h-9 col-span-2 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
-          <div className="h-9 col-span-3 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
+        {/* Individual League View Bar  */}
+        <div className="flex w-full pt-2.5">
+
+          {/* OVERVIEW VERSION */}
+          <div className="flex w-full justify-between ">
+            <div className="flex gap-2">
+              <CurrentLeagueTeamDisplay className="h-9"/>
+              <CurrentLeagueContext className="h-9"/>
+            </div>
+
+            <div className="flex gap-2">
+              <SyncLeagueButton className="h-9"/>  
+              <LeagueSettingsButton className="h-9"/>
+              <RankingsSelectorButton className="h-9"/>
+            </div>
+          </div>
         </div>
 
         {/* Divider between League View and Main Dashboard Content */}  
@@ -141,27 +180,32 @@ export default function DashboardPage() {
         </div>
 
         {/* Dashboard Main Content */}
-        <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-6 w-full min-h-0">
-          {/* Left column (sidebar) */}
-          <div className="col-span-3 row-span-2">
-            <RosterViewImportLeague />
+        <div className="w-full h-full flex">
+          {/* Overview Version */}
+          <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
+            {/* Roster View */}
+            <div className="col-span-3 row-span-2">
+              <RosterViewImportLeague />
+            </div>
+
+            {/* Overview Blocks Wall */}
+            <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
+              <div className="col-span-2 grid grid-rows-6 gap-2">
+                <div className="w-full h-full row-span-4  rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+              </div>
+              <div className="col-span-3 grid grid-rows-3 gap-2">
+                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+              </div>
+              <div className="col-span-2 grid grid-rows-2 gap-2">
+                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+              </div>
+            </div>
           </div>
 
-          {/* Main Dashboard Content Area (right) */}
-          <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
-            <div className="col-span-2 grid grid-rows-6 gap-2">
-              <div className="w-full h-full row-span-4 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-              <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-            </div>
-            <div className="col-span-3 grid grid-rows-3 gap-2">
-              <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-              <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-            </div>
-            <div className="col-span-2 grid grid-rows-2 gap-2">
-              <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-              <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-            </div>
-          </div>
+
         </div>
       </div>
     </>
