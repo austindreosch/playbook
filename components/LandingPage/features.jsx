@@ -1,9 +1,12 @@
 'use client'
 
 import FeaturesElement from '@/public/images/features-element.png'
-import FeaturesBg from '@/public/images/temp.png'
+import FeaturesCard1 from '@/public/images/landing/featurescard1.png'
+import FeaturesCard2 from '@/public/images/landing/featurescard2.png'
+import FeaturesCard3 from '@/public/images/landing/featurescard3.png'
 import { Transition } from '@headlessui/react'
 import { Separator } from '@radix-ui/react-dropdown-menu'
+import { BrainCog, Compass, PanelsTopLeft } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
@@ -93,10 +96,8 @@ export default function Features() {
                     <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">One Dashboard. Every Answer.</div>
                     <div className={`text-sm md:text-base ${tab === 1 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Everything you need to know about all your leagues, centralized in one clear view. See trends, expert consensus, and hidden opportunities to make league winning moves fast. </div>
                   </div>
-                  <div className="flex justify-center items-center w-8 h-8 bg-pb_paperwhite rounded-full shadow flex-shrink-0 ml-3">
-                    <svg className={`w-3 h-3 fill-current ${tab === 1 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M11.953 4.29a.5.5 0 00-.454-.292H6.14L6.984.62A.5.5 0 006.12.173l-6 7a.5.5 0 00.379.825h5.359l-.844 3.38a.5.5 0 00.864.445l6-7a.5.5 0 00.075-.534z" />
-                    </svg>
+                  <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
+                    <PanelsTopLeft className={`w-6 h-6 ${tab === 1 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
                   </div>
                 </a>
                 <a
@@ -108,10 +109,8 @@ export default function Features() {
                     <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">Instant insights with personalized intelligence.</div>
                     <div className={`text-sm md:text-base ${tab === 2 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Turn hours of scattered research into seconds. Get key analytics and intelligent suggestions for trades, waivers, and matchups all tailored to your individual league and strategy.</div>
                   </div>
-                  <div className="flex justify-center items-center w-8 h-8 bg-pb_paperwhite rounded-full shadow flex-shrink-0 ml-3">
-                    <svg className={`w-3 h-3 fill-current ${tab === 2 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M11.854.146a.5.5 0 00-.525-.116l-11 4a.5.5 0 00-.015.934l4.8 1.921 1.921 4.8A.5.5 0 007.5 12h.008a.5.5 0 00.462-.329l4-11a.5.5 0 00-.116-.525z" fillRule="nonzero" />
-                    </svg>
+                  <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
+                    <BrainCog className={`w-6 h-6 ${tab === 2 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
                   </div>
                 </a>
                 <a
@@ -123,17 +122,15 @@ export default function Features() {
                     <div className="text-base md:text-lg font-bold leading-snug tracking-tight mb-1">Find opportunities to exploit hidden value.</div>
                     <div className={`text-sm md:text-base ${tab === 3 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness&rsquo; and undervalued players using AI and your personalized data. </div>
                   </div>
-                  <div className="flex justify-center items-center w-8 h-8 bg-pb_paperwhite rounded-full shadow flex-shrink-0 ml-3">
-                    <svg className={`w-3 h-3 fill-current ${tab === 3 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M11.334 8.06a.5.5 0 00-.421-.237 6.023 6.023 0 01-5.905-6c0-.41.042-.82.125-1.221a.5.5 0 00-.614-.586 6 6 0 106.832 8.529.5.5 0 00-.017-.485z" fillRule="nonzero" />
-                    </svg>
+                  <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
+                    <Compass className={`w-6 h-6 ${tab === 3 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
                   </div>
                 </a>
               </div>
             </div>
 
             {/* Tabs items */}
-            <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 mt-8 md:mb-0 md:order-1 overflow-hidden" data-aos="zoom-y-out" ref={tabs}>
+            <div className="max-w-xl pt-5 md:max-w-none md:w-full mx-auto md:col-span-5 lg:col-span-6 md:mb-0 md:order-1 overflow-hidden" data-aos="zoom-y-out" ref={tabs}>
               <div className="relative flex flex-col text-center lg:text-right">
                 {/* Item 1 */}
                 <Transition
@@ -147,8 +144,12 @@ export default function Features() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 -translate-y-24"
                 >
-                  <div className="relative inline-flex flex-col">
-                    <Image className="w-full rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-pb_lightergray rounded-xs " style={{
+                    background: 'linear-gradient(to bottom, rgba(235, 235, 235, 0.2) 0%, rgba(235, 235, 235, 0.1) 50%, rgba(235, 235, 235, 0) 100%)',
+                    borderImage: 'linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(235, 235, 235) 50%, transparent 100%) 1'
+                  }}>
+
+                    <Image className="w-full rounded" src={FeaturesCard1} width={500} height="462" alt="Feature card 1" />
                     {/* <Image className="md:max-w-none absolute w-full left-0 transform animate-float" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} /> */}
                   </div>
                 </Transition>
@@ -164,8 +165,11 @@ export default function Features() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 -translate-y-24"
                 >
-                  <div className="relative inline-flex flex-col">
-                    <Image className="w-full rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-pb_lightergray rounded-xs " style={{
+                    background: 'linear-gradient(to bottom, rgba(235, 235, 235, 0.2) 0%, rgba(235, 235, 235, 0.1) 50%, rgba(235, 235, 235, 0) 100%)',
+                    borderImage: 'linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(235, 235, 235) 50%, transparent 100%) 1'
+                  }}>
+                    <Image className="w-full rounded" src={FeaturesCard2} width={500} height="462" alt="Feature card 2" />
                     {/* <Image className="md:max-w-none absolute w-full left-0 transform animate-float" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} /> */}
                   </div>
                 </Transition>
@@ -181,8 +185,11 @@ export default function Features() {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 -translate-y-24"
                 >
-                  <div className="relative inline-flex flex-col">
-                    <Image className="w-full rounded" src={FeaturesBg} width={500} height="462" alt="Features bg" />
+                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-pb_lightergray rounded-xs " style={{
+                    background: 'linear-gradient(to bottom, rgba(235, 235, 235, 0.2) 0%, rgba(235, 235, 235, 0.1) 50%, rgba(235, 235, 235, 0) 100%)',
+                    borderImage: 'linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(235, 235, 235) 50%, transparent 100%) 1'
+                  }}>
+                    <Image className="w-full rounded" src={FeaturesCard3} width={500} height="462" alt="Feature card 3" />
                     {/* <Image className="md:max-w-none absolute w-full left-0 transform animate-float" src={FeaturesElement} width={500} height="44" alt="Element" style={{ top: '30%' }} /> */}
                   </div>
                 </Transition>

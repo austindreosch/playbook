@@ -1,6 +1,6 @@
 'use client'
 
-import ModalImageFile from '@/public/images/modalimage.jpg'; // Import the image
+import ModalImageFile from '@/public/images/landing/herofeature.png'; // Import the image
 import Image from 'next/image';
 
 export default function ModalImage({

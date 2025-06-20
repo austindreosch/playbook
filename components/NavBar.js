@@ -36,10 +36,10 @@ function NavBar() {
 
                     {/* Desktop Navigation Links - hidden on mobile (screens smaller than md) */}
                     <div className="hidden md:flex items-center space-x-4 ml-10 text-smd font-extrabold tracking-wider text-pb_darkgray ">
-                        <span className={`text-pb_orangedisabled px-3 py-2 rounded-md cursor-not-allowed select-none flex items-center`}>
-                            <PanelsTopLeft className="h-4 w-4 mr-3 text-pb_darkgray opacity-50" />
+                        <Link href="/dashboard" className={`group hover:text-white px-3 py-2 rounded-md select-none flex items-center`}>
+                            <PanelsTopLeft className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
                             DASHBOARD
-                        </span>
+                        </Link>
                         <Link href="/rankings" className={`group hover:text-white px-3 py-2 rounded-md select-none flex items-center`}>
                             <ClipboardList className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
                             RANKINGS

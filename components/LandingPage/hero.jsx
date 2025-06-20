@@ -2,7 +2,7 @@
 
 import ModalVideo from '@/components/LandingPage/internal/modal-video';
 import { Button } from '@/components/ui/button';
-import VideoThumb from '@/public/images/hero-image.png';
+import VideoThumb from '@/public/images/landing/herofeature.png';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import ModalImage from './internal/modal-image';
