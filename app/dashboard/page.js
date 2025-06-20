@@ -2,6 +2,7 @@
 
 'use client'
 
+import DashboardTabs from '@/components/dashboard/DashboardTabs';
 import RosterViewImportLeague from '@/components/dashboard/Overview/RosterViewBlock/RosterViewImportLeague';
 import DebugDrawer from '@/components/debug/DebugDrawer';
 import DashboardSkeleton from '@/components/ui/DashboardSkeleton';
@@ -104,20 +105,28 @@ export default function DashboardPage() {
       {/* TODO: remove this later */}
       {/* <DashboardSkeleton /> */}
       <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] py-4 flex flex-col overflow-hidden">
-        {/* Top navigation bar */}
+        {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
-          <div className="h-12 w-1/2 rounded-lg rounded-br-none border bg-pb_darkgray"></div>
+          {/* Dashboard Tab Selector */}
+          <div className="w-1/2 pr-2">
+            <DashboardTabs />
+          </div>
+
+          {/* Imported League Selector */}
           <div className="grid grid-cols-15 gap-2 w-1/2 items-center pb-2.5">
             <div className="col-start-4 col-span-1 h-8 rounded"></div>
             <div className="h-9 col-span-3 rounded border-1.5 border-pb_lightgray shadow-sm"></div>
             <div className="h-9 col-span-5 rounded border-1.5 border-pb_lightgray shadow-sm"></div>
             <div className="h-9 col-span-3 rounded border-1.5 border-pb_lightgray shadow-sm"></div>
           </div>
+
+          {/* Selectors Divider */}
           <div className="absolute bottom-0 right-0 w-1/2">
             <div className="h-[1px] w-full bg-pb_lightgray"></div>
           </div>
         </div>
 
+        {/* Individual League View Bar */}
         <div className="grid grid-cols-20 gap-2 w-full pt-2.5">
           <div className="h-9 col-span-3 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
           <div className="h-9 col-span-6 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
@@ -126,17 +135,19 @@ export default function DashboardPage() {
           <div className="h-9 col-span-3 rounded-md border-1.5 border-pb_lightgray shadow-sm"></div>
         </div>
 
+        {/* Divider between League View and Main Dashboard Content */}  
         <div className="w-full py-2.5">
           <div className="h-[1px] w-full bg-pb_lightestgray"></div>
         </div>
 
+        {/* Dashboard Main Content */}
         <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-6 w-full min-h-0">
           {/* Left column (sidebar) */}
           <div className="col-span-3 row-span-2">
             <RosterViewImportLeague />
           </div>
 
-          {/* Main content area (right) */}
+          {/* Main Dashboard Content Area (right) */}
           <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
             <div className="col-span-2 grid grid-rows-6 gap-2">
               <div className="w-full h-full row-span-4 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>

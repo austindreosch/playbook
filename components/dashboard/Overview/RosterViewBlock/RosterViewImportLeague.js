@@ -13,7 +13,7 @@ export default function RosterViewImportLeague() {
       <p className="text-sm font-medium text-pb_darkgray mb-4 max-w-[12rem]">
         Import your first league to unlock roster insights.
       </p>
-      <Link href="/import" passHref legacyBehavior>
+      <Link href="/dashboard" passHref legacyBehavior>
         <Button asChild size="sm" className="px-4">
           <span>Import League</span>
         </Button>
