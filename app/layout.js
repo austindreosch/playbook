@@ -4,7 +4,6 @@ import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { DM_Sans } from 'next/font/google';
-// import { Akshar, Albert_Sans, Aleo, Alexandria, Anek_Gurmukhi, Anuphan, Atkinson_Hyperlegible, Barlow, Be_Vietnam_Pro, Chivo, DM_Sans, Familjen_Grotesk, Figtree, Finlandica, Fira, Fira_Sans, Funnel_Sans, Gabarito, Geist, Geologica, Golos_Text, Hanken_Grotesk, heebo, Heebo, Host_Grotesk, Hubot_Sans, IBM_Plex_Sans, Inclusive_Sans, Instrument_Sans, Inter, League_Spartan, Lexend, Lexend_Deca, Libre_Franklin, Literata, Manrope, Mona_Sans, Monda, Onest, Outfit, Overpass, Parkinsans, Plus_Jakarta_Sans, Questrial, Radio_Canada, Readex_Pro, Reddit_Sans, Rethink_Sans, Shippori_Antique, Sintony, Sofia_Sans, Sora, Spline_Sans, SUSE, Urbanist, Vazirmatn, Wix_Madefor_Text, Work_Sans, Yantramanav } from 'next/font/google';
 import ConditionalNavBar from '../components/ConditionalNavBar';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
 import './globals.css';
@@ -16,12 +15,11 @@ const dmSans = DM_Sans({
   display: 'swap'
 })
 
-
-// const inter = Inter({ subsets: ['latin'], weight: '400', display: 'swap' })
-
 export const metadata = {
-  title: 'Playbook AI',
-  description: 'AI powered fantasy sports toolkit.',
+  title: 'Playbook Fantasy Sports',
+  description: 'Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard..',
+  icons: { icon: '/favicon.ico', shortcut: '/favicon.ico', apple: '/favicon.ico' },
+  keywords: ['fantasy sports', 'AI', 'rankings', 'trades', 'fantasy football', 'fantasy basketball', 'fantasy hockey', 'fantasy baseball', 'fantasy soccer', 'fantasy golf', 'fantasy tennis', 'fantasy racing', 'fantasy football rankings', 'fantasy basketball rankings', 'fantasy hockey rankings', 'fantasy baseball rankings', 'fantasy soccer rankings', 'fantasy golf rankings', 'fantasy tennis rankings', 'fantasy racing rankings'],
 }
 
 export default function RootLayout({ children }) {
@@ -41,3 +39,5 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
+
+

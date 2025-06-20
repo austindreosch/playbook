@@ -102,7 +102,7 @@ export default function DashboardPage() {
       <DebugDrawer />
       {/* TODO: remove this later */}
       {/* <DashboardSkeleton /> */}
-      <div className="container mx-auto h-full py-4 flex flex-col">
+      <div className="container mx-auto min-h-screen py-4 flex flex-col">
         {/* Top navigation bar */}
         <div className="relative flex items-center">
           <div className="h-12 w-1/2 rounded-lg rounded-br-none border bg-pb_darkgray"></div>
