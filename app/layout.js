@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full scroll-smooth">
       <UserProvider>
-        <body className={`${dmSans.className} flex flex-col`}>
+        <body className={`${dmSans.className} flex flex-col bg-pb_paperwhite pt-12 md:pt-16`}>
           <AOSInitializer />
           <ConditionalNavBar />
           <main className="flex-1">
