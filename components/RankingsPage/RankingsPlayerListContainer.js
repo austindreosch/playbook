@@ -15,8 +15,8 @@ import RankingsPlayerListSkeleton from './RankingsPlayerListSkeleton';
 
 const DEFAULT_ROW_HEIGHT = 40;
 const EXPANDED_ROW_HEIGHT = 220;
-const MOBILE_ROW_HEIGHT = 48;
-const MOBILE_EXPANDED_ROW_HEIGHT = 158
+const MOBILE_ROW_HEIGHT = 50;
+const MOBILE_EXPANDED_ROW_HEIGHT = 160
 ;
 
 const RankingsPlayerListContainer = React.forwardRef(({
@@ -182,7 +182,7 @@ const RankingsPlayerListContainer = React.forwardRef(({
         };
 
         return (
-            <div style={style}>
+            <div style={style} className="w-full">
                 <RankingsPlayerRow
                     key={player.id}
                     player={player}

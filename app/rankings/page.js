@@ -568,7 +568,7 @@ export default function RankingsPage() {
 
   // Main Render AFTER hooks and checks
   return (
-    <div className="container mx-auto px-0"> {/* Changed py-4 to py-2 for mobile */}
+    <div className="w-full mx-auto px-2 sm:container"> {/* Apply w-full for mobile, container for sm+ */}
       {/* Top bar: Title, Desktop Buttons / Mobile Icon Buttons */}
       <div className="flex justify-between items-center pt-0.5 md:pt-0 my-2 md:my-3">
         {/* Left side: Title */}
@@ -606,7 +606,7 @@ export default function RankingsPage() {
           )}
 
           {/* Mobile icon buttons container */}
-          <div className="flex md:hidden items-center w-full justify-between gap-1">
+          <div className="flex md:hidden items-center w-full justify-between gap-1 flex-wrap justify-end">
             {/* Left-justified group */}
             <div className="flex items-center gap-1">
               <MobileCollapseButton onClick={handleCollapseAll} isCollapsing={isCollapsingRows} />
@@ -671,7 +671,7 @@ export default function RankingsPage() {
         <> {/* Added fragment to wrap main content and conditional panel */}
           <div className="flex flex-col md:flex-row gap-4 relative">
             {/* Player List Area - takes full width on mobile, constrained on desktop */}
-            <div className="flex-1 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)]">
+            <div className="flex-1 overflow-x-auto md:max-w-full lg:max-w-[calc(100%-224px)] xl:max-w-[calc(100%-256px)] px-0 md:px-0">
               <RankingsPlayerListHeader
                 sport={selectedSport}
                 activeRanking={activeRanking}

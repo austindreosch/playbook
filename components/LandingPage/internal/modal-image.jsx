@@ -1,6 +1,6 @@
 'use client'
 
-import ModalImageFile from '@/public/images/modalimage.jpg'; // Import the image
+import ModalImageFile from '@/public/images/landing/herofeature.png'; // Import the image
 import Image from 'next/image';
 
 export default function ModalImage({
@@ -9,18 +9,10 @@ export default function ModalImage({
   // Removed modalOpen state
 
   // TODO: Replace these placeholder values with the actual dimensions of modalimage.png
-  const imageWidth = 1920; // Example width
-  const imageHeight = 1080; // Example height
-  const thumbWidth = 768; // Example thumbnail width
-  const thumbHeight = 432; // Example thumbnail height
-
-  const handleScrollDown = () => {
-    window.scrollBy({
-      top: 500, // Scroll down by 500 pixels
-      left: 0,
-      behavior: 'smooth'
-    });
-  };
+  const imageWidth = 3401; // Example width
+  const imageHeight = 1985; // Example height
+  const thumbWidth = 3401; // Example thumbnail width
+  const thumbHeight = 1985; // Example thumbnail height
 
   return (
     <div>
@@ -31,16 +23,16 @@ export default function ModalImage({
             {/* Use ModalImageFile and placeholder dimensions */}
             <Image src={ModalImageFile} width={thumbWidth} height={thumbHeight} alt={thumbAlt} className='' quality={100} />
           </div>
-          <button 
-            className="absolute top-full flex items-center transform -translate-y-1/2 bg-white rounded-full font-medium group p-4 shadow-lg" 
-            onClick={handleScrollDown} // Changed onClick handler
+          <a
+            href="/#features"
+            className="absolute top-full flex items-center transform -translate-y-1/2 bg-white rounded-full font-medium group p-4 shadow-lg"
           >
-            <svg className="w-6 h-6 fill-current text-gray-400 group-hover:text-blue-600 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-6 h-6 fill-current text-pb_darkgray group-hover:text-pb_blue shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
               <path d="M8 12 L12 16 L16 12 L14.59 10.59 L13 12.17 L13 8 L11 8 L11 12.17 L9.41 10.59 L8 12 Z" />
             </svg>
-            <span className="ml-3">What makes Playbook different?</span>
-          </button>
+            <span className="ml-3 text-pb_darkgray hover:text-pb_darkgrayhover">What makes Playbook different?</span>
+          </a>
         </div>
       </div>
       {/* End: Image thumbnail */}

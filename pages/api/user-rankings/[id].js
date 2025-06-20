@@ -44,13 +44,28 @@ export default async function handler(req, res) {
             const db = client.db('playbook');
             const collection = db.collection('user_rankings');
 
-            const currentDoc = await collection.findOne({ _id: new ObjectId(id), userId: session.user.sub });
+            // --- MODIFIED LOGIC to handle missing userId ---
+            const rankingToUpdate = await collection.findOne({ _id: new ObjectId(id) });
 
-            if (!currentDoc) {
-                return res.status(404).json({ error: 'Ranking not found for this user.' });
+            if (!rankingToUpdate) {
+                return res.status(404).json({ error: 'Ranking not found.' });
             }
 
-            const currentRankingsLength = Array.isArray(currentDoc.rankings) ? currentDoc.rankings.length : 0;
+            // If the document has a userId, it MUST match the session user.
+            if (rankingToUpdate.userId && rankingToUpdate.userId !== session.user.sub) {
+                return res.status(403).json({ error: 'Unauthorized: Ranking does not belong to this user.' });
+            }
+            
+            // If we are here, the user is authorized. Now prepare the update.
+            const updatePayload = { ...updatedData };
+            
+            // If the document was missing a userId, add it to the payload.
+            if (!rankingToUpdate.userId) {
+                updatePayload.userId = session.user.sub;
+            }
+            // --- END MODIFIED LOGIC ---
+
+            const currentRankingsLength = Array.isArray(rankingToUpdate.rankings) ? rankingToUpdate.rankings.length : 0;
             const incomingRankingsLength = Array.isArray(updatedData.rankings) ? updatedData.rankings.length : -1;
 
             if (incomingRankingsLength < 0) {
@@ -67,12 +82,12 @@ export default async function handler(req, res) {
             }
 
             const updateResult = await collection.updateOne(
-                { _id: new ObjectId(id), userId: session.user.sub },
-                { $set: updatedData }
+                { _id: new ObjectId(id) }, // Query only by ID now, as we've authorized.
+                { $set: updatePayload }
             );
 
             // Fetch and return the updated document to ensure the client has the latest version
-            const savedRanking = await collection.findOne({ _id: new ObjectId(id), userId: session.user.sub });
+            const savedRanking = await collection.findOne({ _id: new ObjectId(id) });
 
             if (!savedRanking) {
                 // This case implies the document was deleted between the updateOne and findOne, or an issue with ObjectId/userId matching.
