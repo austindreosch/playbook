@@ -133,7 +133,7 @@ module.exports = {
         pb_lightergray: '#ebebeb',
         pb_lightestgray: '#efefef',
         pb_backgroundgray: '#f5f5f5',
-        pb_paperwhite: '#fefefe',
+        pb_paperwhite: '#fcfcfc',
         pb_bluehover: '#1f7ec5',
         pb_bluedisabled: '#186299',
         pb_blue: {

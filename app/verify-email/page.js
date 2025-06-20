@@ -5,37 +5,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { MailCheck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function VerifyEmailPage() {
   const { user, isLoading } = useUser();
+  const router = useRouter();
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    // If the user lands on this page already verified, redirect them away.
-    if (user && user.email_verified) {
-      window.location.href = '/dashboard';
+    // If already verified, navigate away.
+    if (user?.email_verified) {
+      router.replace('/dashboard');
       return;
     }
 
-    // Poll every 3 seconds to check if the user has verified in another tab.
+    // Poll every 5 seconds for session indicating verification.
     const interval = setInterval(async () => {
       try {
         const res = await fetch('/api/auth/me');
-        if (res.status === 200) {
-          // A 200 OK response means a session was found.
-          // At this point, they must have verified to get a session.
+        if (res.ok) {
           clearInterval(interval);
-          window.location.reload(); // Reload the page to trigger middleware redirect.
+          router.replace('/dashboard');
         }
-      } catch (err) {
-        // This is expected if the user is not yet logged in, so we can ignore it.
+      } catch (_err) {
+        // Ignore errors and continue polling
       }
-    }, 3000);
+    }, 5000);
 
-    return () => clearInterval(interval); // Cleanup on component unmount.
-  }, [user]);
+    return () => clearInterval(interval);
+  }, [user, router]);
 
   const handleResend = async () => {
     setIsSending(true);
@@ -50,9 +50,12 @@ export default function VerifyEmailPage() {
   };
 
   const handleContinue = () => {
-    // A full page reload is the most reliable way to force the middleware
-    // to re-evaluate the session and perform the correct redirect.
-    window.location.reload();
+    if (user?.email_verified) {
+      router.replace('/dashboard');
+    } else {
+      // Trigger a soft refresh to re-run middleware without full reload
+      router.refresh();
+    }
   };
 
   if (isLoading) {

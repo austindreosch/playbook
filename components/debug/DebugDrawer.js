@@ -2,18 +2,21 @@
 
 import { Button } from '@/components/ui/button';
 import {
-    Drawer,
-    DrawerContent,
-    DrawerDescription,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Bug } from 'lucide-react';
+
+// Determine whether to show the debug drawer.
+const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
 
 const DebugValue = ({ label, value, isBoolean = false, isPreformatted = false }) => (
   <div className="grid grid-cols-3 gap-x-4 items-start border-b py-2 text-sm last:border-b-0">
@@ -34,6 +37,8 @@ const DebugValue = ({ label, value, isBoolean = false, isPreformatted = false })
 
 export default function DebugDrawer() {
   const { user, isLoading, error } = useUser();
+  // Early-exit in production (or when the admin flag is not set) so the component tree is completely skipped.
+  if (!SHOW_DEBUG_DRAWER) return null;
 
   const renderUserObject = (obj) => {
     if (!obj) return null;

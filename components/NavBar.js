@@ -22,7 +22,7 @@ function NavBar() {
     }, [user]);
 
     return (
-        <nav className="bg-pb_orange shadow-md ">
+        <nav className="bg-pb_orange shadow-md fixed top-0 left-0 right-0 z-50">
             <div className="container mx-auto">
                 <div className="flex items-center justify-between h-12 md:h-16 align-content my-auto">
                     <div className="flex items-center group font-bold">
