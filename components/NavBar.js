@@ -27,7 +27,7 @@ function NavBar() {
                 <div className="flex items-center justify-between h-12 md:h-16 align-content my-auto">
                     <div className="flex items-center group font-bold">
                         <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-6 w-6 md:h-8 md:w-8" />
-                        <a href="/rankings" className="px-2 md:px-3 py-2 flex items-center">
+                        <a href="/dashboard" className="px-2 md:px-3 py-2 flex items-center">
                             <div className={`text-xl md:text-3xl font-bold text-pb_darkgray group-hover:text-white`}>
                                 Playbook
                             </div>

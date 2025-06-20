@@ -9,10 +9,10 @@ export default function ModalImage({
   // Removed modalOpen state
 
   // TODO: Replace these placeholder values with the actual dimensions of modalimage.png
-  const imageWidth = 1920; // Example width
-  const imageHeight = 1080; // Example height
-  const thumbWidth = 768; // Example thumbnail width
-  const thumbHeight = 432; // Example thumbnail height
+  const imageWidth = 3401; // Example width
+  const imageHeight = 1985; // Example height
+  const thumbWidth = 3401; // Example thumbnail width
+  const thumbHeight = 1985; // Example thumbnail height
 
   return (
     <div>
