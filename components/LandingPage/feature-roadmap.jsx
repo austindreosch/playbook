@@ -35,7 +35,7 @@ const features = [
     status: "upcoming"
   },
   {
-    label: "Expanded AI Assistant",
+    label: "Integrated AI Advisor",
     subLabel: null,
     icon: BrainCog,
     tooltip: "Full integration of a conversational interface trained on your personalized data for each league that can answer any question you have about your players and leagues.",
