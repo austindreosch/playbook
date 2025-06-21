@@ -189,13 +189,6 @@ export const dashboardDummyData = {
           "T. Murphy III"
         ]
       },
-      "toolbox": [
-        "waivers",
-        "trades",
-        "lineup",
-        "analytics",
-        "notifications"
-      ],
       "teamArchetype": {
         "value": 5,
         "power": 4,
@@ -389,13 +382,6 @@ export const dashboardDummyData = {
           "D. Adams"
         ]
       },
-      "toolbox": [
-        "waivers",
-        "trades",
-        "lineup",
-        "draft",
-        "notifications"
-      ],
       "teamArchetype": {
         "value": 2,
         "power": 3,
@@ -564,13 +550,6 @@ export const dashboardDummyData = {
           "C. Kershaw"
         ]
       },
-      "toolbox": [
-        "waivers",
-        "trades",
-        "lineup",
-        "injuries",
-        "notifications"
-      ],
       "teamArchetype": {
         "value": 8,
         "power": 7,

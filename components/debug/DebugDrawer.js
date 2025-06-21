@@ -139,20 +139,20 @@ export default function DebugDrawer() {
           <ChevronRight className="h-5 w-5 transform transition-transform duration-200 group-open:rotate-90" />
         </summary>
         
-        <div className="p-2 border-t bg-gray-50/50 max-h-[80vh] overflow-y-auto">
-            <div className="columns-1 md:columns-2 xl:columns-3 gap-4">
+        <div className="p-2 border-t bg-gray-50/50 max-h-[80vh] overflow-y-auto pb-2">
+            <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-1">
               {entries.map(([key, value], index) => {
                 const isArrayOfObjects = Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
                 return (
                   <div key={key} className={`bg-white border rounded-lg shadow-sm break-inside-avoid w-full mb-4 ${isArrayOfObjects ? '[column-span:all]' : ''}`}>
-                    <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center">
+                    <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center ">
                       <span>{key}</span>
                       <span className="text-xs font-normal text-gray-400">[{index}]</span>
                     </h4>
                     {(Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null) ? (
                       <div className="p-2 bg-gray-50/50 overflow-auto">
                         {value.map((item, itemIndex) => (
-                          <details key={itemIndex} className="mb-2 last:mb-0 bg-white border rounded-md">
+                          <details key={itemIndex} className="mb-1 last:mb-0 bg-white border rounded-md">
                             <summary className="cursor-pointer list-none flex items-center justify-between p-2 font-medium text-sm hover:bg-gray-100">
                               <span>{item.leagueDetails?.leagueName || item.name || `Index ${itemIndex}`}</span>
                               <ChevronRight className="h-4 w-4 transform transition-transform duration-200 group-open:rotate-90" />
