@@ -1,29 +1,42 @@
 //  /dashboard page
 
 'use client'
+import DebugDrawer from '@/components/debug/DebugDrawer';
+import { Button } from '@/components/ui/button';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+// import { ThreeCircles } from 'react-loader-spinner';
+import { toast } from 'sonner';
+// import HubBlock from '/components/HubBlock';
+// import RosterBlock from '/components/RosterBlock';
 
+// Layout Components
 import DashboardSkeleton from '@/components/dashboard/DashboardSkeleton';
+
+// Global Header Components
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
 import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
 import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
 import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
+
+// League Header Components 
 import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
 import CurrentLeagueTeamDisplay from '@/components/dashboard/Overview/Header/CurrentLeagueTeamDisplay';
 import EditWidgetsButton from '@/components/dashboard/Overview/Header/EditWidgetsButton';
 import LeagueSettingsButton from '@/components/dashboard/Overview/Header/LeagueSettingsButton';
 import RankingsSelectorButton from '@/components/dashboard/Overview/Header/RankingsSelectorButton';
 import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
-import RosterViewImportLeague from '@/components/dashboard/Overview/RosterViewBlock/RosterViewImportLeague';
-import DebugDrawer from '@/components/debug/DebugDrawer';
-import { Button } from '@/components/ui/button';
-import { useUser } from '@auth0/nextjs-auth0/client';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { ThreeCircles } from 'react-loader-spinner';
-import { toast } from 'sonner';
-import HubBlock from '/components/HubBlock';
-import RosterBlock from '/components/RosterBlock';
+
+// Overview Blocks
+import ActionStepsBlock from '@/components/dashboard/Overview/ActionSteps/ActionStepsBlock';
+import MatchupBlock from '@/components/dashboard/Overview/Matchup/MatchupBlock';
+import NewsFeedBlock from '@/components/dashboard/Overview/NewsFeed/NewsFeedBlock';
+import RosterViewImportLeague from '@/components/dashboard/Overview/RosterView/RosterViewImportLeague';
+import StandingsBlock from '@/components/dashboard/Overview/Standings/StandingsBlock';
+import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';
+import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
 
 
 export default function DashboardPage() {
@@ -191,27 +204,24 @@ export default function DashboardPage() {
             </div>
 
             {/* Overview Blocks Wall */}
-            <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
+            <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
               {/* First Column */}
               <div className="col-span-2 grid grid-rows-6 gap-2">
-                
-                <div className="w-full h-full row-span-4  rounded-lg border-1.5 border-pb_lightgray shadow-sm">StandingsBlock</div>
-                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm">MatchupBlock</div>
-
+                <StandingsBlock className="row-span-4" />
+                <MatchupBlock className="row-span-2" />
               </div>
 
               {/* Second Column */}
-              <div className="col-span-2 grid grid-rows-3 gap-2">
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm">TeamArchetypeBlock</div>
-                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm">ActionStepsBlock</div>
+              <div className="col-span-3 grid grid-rows-3 gap-2">
+                <TeamArchetypeBlock className="row-span-1" />
+                <ActionStepsBlock className="row-span-2" />
               </div>
-
+              
               {/* Third Column */}
               <div className="col-span-2 grid grid-rows-2 gap-2">
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm">TeamProfileBlock</div>
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm">NewsFeedBlock</div>
+                <TeamProfileBlock className="row-span-1" />
+                <NewsFeedBlock className="row-span-1" />
               </div>
-
             </div>
           </div>
 

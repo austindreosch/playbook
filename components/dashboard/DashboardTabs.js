@@ -30,7 +30,7 @@ export default function DashboardTabs({ initialTab = 'overview', onChange }) {
               ? 'bg-pb_paperwhite text-pb_darkgray -mb-px border border-pb_darkgray border-b-0 rounded-tl-lg rounded-tr-lg'
               : 'text-white hover:bg-pb_mddarkgray border border-transparent'}
             ${idx === 0 ? 'rounded-tl-lg rounded-tr-lg' : ''}
-            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-pb_mddarkgray
+            disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-pb_mddarkgray
           `}
           onClick={() => handleClick(id)}
         >
