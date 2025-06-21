@@ -3,10 +3,12 @@
 'use client'
 import DebugDrawer from '@/components/debug/DebugDrawer';
 import { Button } from '@/components/ui/button';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // import { ThreeCircles } from 'react-loader-spinner';
+import { Bug } from 'lucide-react';
 import { toast } from 'sonner';
 // import HubBlock from '/components/HubBlock';
 // import RosterBlock from '/components/RosterBlock';
@@ -38,12 +40,30 @@ import StandingsBlock from '@/components/dashboard/Overview/Standings/StandingsB
 import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';
 import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
 
+const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
 
 export default function DashboardPage() {
-
   const router = useRouter();
   const { user, error, isLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
+  const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (SHOW_DEBUG_DRAWER) {
+      const storedIsOpen = localStorage.getItem('debugDrawerIsOpen');
+      if (storedIsOpen) {
+        setIsDebugDrawerOpen(JSON.parse(storedIsOpen));
+      }
+    }
+  }, []);
+
+  const toggleDebugDrawer = () => {
+    setIsDebugDrawerOpen(prev => {
+      const newState = !prev;
+      localStorage.setItem('debugDrawerIsOpen', JSON.stringify(newState));
+      return newState;
+    });
+  };
 
   const showVerificationToast = () => {
     const handleResend = async () => {
@@ -95,6 +115,12 @@ export default function DashboardPage() {
         console.log('Debug toast triggered!');
         showVerificationToast();
       }
+      if (SHOW_DEBUG_DRAWER && event.key === '0') {
+        // Prevent toggle when typing in inputs
+        if (['INPUT', 'TEXTAREA'].includes(event.target.tagName) || event.target.isContentEditable) return;
+        event.preventDefault();
+        toggleDebugDrawer();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -144,91 +170,107 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DebugDrawer />
+      {SHOW_DEBUG_DRAWER && (
+        <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
+          <Bug className="h-4 w-4" />
+        </Button>
+      )}
 
-      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
-        {/* Dashboard Tab Selectors Bar */}
-        <div className="relative flex items-center">
-          {/* Dashboard Tab Selector */}
-          <div className="w-3/5">
-            <DashboardTabs />
-          </div>
-
-          {/* Imported League Selector */}
-          <div className="flex gap-2 w-2/5 justify-end pb-2.5">
-
-            <AllLeaguesButton className="h-9" />
-            <LeagueSelectorButton className="h-9" />
-            <ImportLeagueButton className="h-9" />
-            <DashboardSettingsButton className="h-9" />
-          </div>
-
-          {/* Selectors Divider */}
-          <div className="absolute bottom-0 right-0 w-2/5">
-            <div className="h-[1px] w-full bg-pb_lightgray"></div>
-          </div>
-        </div>
-
-        {/* Individual League View Bar  */}
-        <div className="flex w-full pt-2.5">
-
-          {/* OVERVIEW VERSION */}
-          <div className="flex w-full justify-between ">
-            <div className="flex gap-2">
-              <CurrentLeagueTeamDisplay className="h-9"/>
-              <CurrentLeagueContext className="h-9"/>
-            </div>
-
-            <div className="flex gap-2">
-              <EditWidgetsButton className="h-9"/>
-              <SyncLeagueButton className="h-9"/>  
-              <LeagueSettingsButton className="h-9"/>
-              <RankingsSelectorButton className="h-9"/>
-            </div>
-          </div>
-        </div>
-
-        {/* Divider between League View and Main Dashboard Content */}  
-        <div className="w-full py-2.5">
-          <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-        </div>
-
-        {/* Dashboard Main Content */}
-        <div className="w-full h-full flex">
-          {/* Overview Version */}
-          <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
-
-            {/* Roster View */}
-            <div className="col-span-3 row-span-2">
-              <RosterViewImportLeague />
-            </div>
-
-            {/* Widget Block Wall */}
-            <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
-              {/* First Column */}
-              <div className="col-span-2 grid grid-rows-6 gap-2">
-                <StandingsBlock className="row-span-2" />
-                <MatchupBlock className="row-span-4" />
+      <ResizablePanelGroup direction="horizontal" className="w-full h-screen">
+        <ResizablePanel defaultSize={100} minSize={30}>
+          <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
+            {/* Dashboard Tab Selectors Bar */}
+            <div className="relative flex items-center">
+              {/* Dashboard Tab Selector */}
+              <div className="w-3/5">
+                <DashboardTabs />
               </div>
 
-              {/* Second Column */}
-              <div className="col-span-2 grid grid-rows-2 gap-2">
-                <TeamArchetypeBlock className="row-span-1" />
-                <ActionStepsBlock className="row-span-1" />
+              {/* Imported League Selector */}
+              <div className="flex gap-2 w-2/5 justify-end pb-2.5">
+
+                <AllLeaguesButton className="h-9" />
+                <LeagueSelectorButton className="h-9" />
+                <ImportLeagueButton className="h-9" />
+                <DashboardSettingsButton className="h-9" />
               </div>
-              
-              {/* Third Column */}
-              <div className="col-span-2 grid grid-rows-3 gap-2">
-                <TeamProfileBlock className="row-span-1" />
-                <NewsFeedBlock className="row-span-2" />
+
+              {/* Selectors Divider */}
+              <div className="absolute bottom-0 right-0 w-2/5">
+                <div className="h-[1px] w-full bg-pb_lightgray"></div>
               </div>
             </div>
 
+            {/* Individual League View Bar  */}
+            <div className="flex w-full pt-2.5">
+
+              {/* OVERVIEW VERSION */}
+              <div className="flex w-full justify-between ">
+                <div className="flex gap-2">
+                  <CurrentLeagueTeamDisplay className="h-9"/>
+                  <CurrentLeagueContext className="h-9"/>
+                </div>
+
+                <div className="flex gap-2">
+                  <EditWidgetsButton className="h-9"/>
+                  <SyncLeagueButton className="h-9"/>  
+                  <LeagueSettingsButton className="h-9"/>
+                  <RankingsSelectorButton className="h-9"/>
+                </div>
+              </div>
+            </div>
+
+            {/* Divider between League View and Main Dashboard Content */}  
+            <div className="w-full py-2.5">
+              <div className="h-[1px] w-full bg-pb_lightestgray"></div>
+            </div>
+
+            {/* Dashboard Main Content */}
+            <div className="w-full h-full flex">
+              {/* Overview Version */}
+              <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
+
+                {/* Roster View */}
+                <div className="col-span-3 row-span-2">
+                  <RosterViewImportLeague />
+                </div>
+
+                {/* Widget Block Wall */}
+                <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
+                  {/* First Column */}
+                  <div className="col-span-2 grid grid-rows-6 gap-2">
+                    <StandingsBlock className="row-span-2" />
+                    <MatchupBlock className="row-span-4" />
+                  </div>
+
+                  {/* Second Column */}
+                  <div className="col-span-2 grid grid-rows-2 gap-2">
+                    <TeamArchetypeBlock className="row-span-1" />
+                    <ActionStepsBlock className="row-span-1" />
+                  </div>
+                  
+                  {/* Third Column */}
+                  <div className="col-span-2 grid grid-rows-3 gap-2">
+                    <TeamProfileBlock className="row-span-1" />
+                    <NewsFeedBlock className="row-span-2" />
+                  </div>
+                </div>
+
+              </div>
+
+
+            </div>
           </div>
-
-
-        </div>
-      </div>
+        </ResizablePanel>
+        {isDebugDrawerOpen && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={25} minSize={15} maxSize={50}>
+              <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
+            </ResizablePanel>
+          </>
+        )}
+      </ResizablePanelGroup>
     </>
   );
 } 
