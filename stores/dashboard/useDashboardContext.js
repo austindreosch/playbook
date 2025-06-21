@@ -256,11 +256,11 @@ const useDashboardContext = create((set, get) => ({
 
   /**
    * TAB SELECTION: Set current tab
-   * @param {string} tab - Tab identifier
+   * @param {string} tabId - The ID of the tab to set as active
    */
-  setCurrentTab: (tab) => {
-    console.log('📥 INPUT ACTION: setCurrentTab called', { tab });
-    set({ currentTab: tab });
+  setCurrentTab: (tabId) => {
+    console.log('📥 INPUT ACTION: setCurrentTab called', { tabId });
+    set({ currentTab: tabId });
     console.log('✅ INPUT ACTION: Current tab updated');
   },
 

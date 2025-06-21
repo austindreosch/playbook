@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 const TABS = [
   { id: 'overview', label: 'OVERVIEW', enabled: true },
@@ -9,12 +9,19 @@ const TABS = [
   { id: 'trends', label: 'TRENDS', enabled: false },
 ];
 
-export default function DashboardTabs({ initialTab = 'overview', onChange }) {
-  const [active, setActive] = useState(initialTab);
+export default function DashboardTabs() {
+  // =================================================================
+  // CONTEXT STORE
+  // =================================================================
+  // ---- INCOMING DATA ----
+  // Get current tab state from the dashboard context store
+  const currentTab = useDashboardContext((state) => state.currentTab);
+  // ---- OUTGOING DATA ----
+  // Get setter function to update the current tab in the store
+  const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
 
   const handleClick = (id) => {
-    setActive(id);
-    onChange?.(id);
+    setCurrentTab(id);
   };
 
   return (
@@ -26,7 +33,7 @@ export default function DashboardTabs({ initialTab = 'overview', onChange }) {
           className={`
             flex-1 h-full flex items-center justify-center text-sm font-semibold tracking-wider uppercase
             focus:outline-none select-none transition-colors
-            ${active === id
+            ${currentTab === id
               ? 'bg-pb_paperwhite text-pb_darkgray -mb-px border border-pb_darkgray border-b-0 rounded-tl-lg rounded-tr-lg'
               : 'text-white hover:bg-pb_mddarkgray border border-transparent'}
             ${idx === 0 ? 'rounded-tl-lg rounded-tr-lg' : ''}
@@ -34,6 +41,8 @@ export default function DashboardTabs({ initialTab = 'overview', onChange }) {
           `}
           onClick={() => handleClick(id)}
         >
+          {/* ---- DISPLAY DATA ---- */}
+          {/* Display tab label */}
           {label}
         </button>
       ))}

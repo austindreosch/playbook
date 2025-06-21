@@ -30,7 +30,7 @@ export const dashboardDummyData = {
   "currentTab": "overview",
   "dashboardSettings": {
     "autoSync": true,
-    "defaultView": "overview",
+    "defaultTab": "overview",
     "notifications": {
       "trades": true,
       "waivers": true,

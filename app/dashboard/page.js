@@ -145,8 +145,7 @@ export default function DashboardPage() {
   return (
     <>
       <DebugDrawer />
-      {/* TODO: remove this later */}
-      {/* <DashboardSkeleton /> */}
+
       <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
@@ -198,12 +197,13 @@ export default function DashboardPage() {
         <div className="w-full h-full flex">
           {/* Overview Version */}
           <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
+
             {/* Roster View */}
             <div className="col-span-3 row-span-2">
               <RosterViewImportLeague />
             </div>
 
-            {/* Overview Blocks Wall */}
+            {/* Widget Block Wall */}
             <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
               {/* First Column */}
               <div className="col-span-2 grid grid-rows-6 gap-2">
@@ -223,6 +223,7 @@ export default function DashboardPage() {
                 <NewsFeedBlock className="row-span-2" />
               </div>
             </div>
+
           </div>
 
 
