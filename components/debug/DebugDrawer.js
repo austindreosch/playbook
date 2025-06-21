@@ -215,25 +215,25 @@ export default function DebugDrawer() {
                 <div className="flex-1 min-h-0 p-4">
                   {/* <ScrollArea className="h-full w-full"> */}
                     <TabsContent value="zustand-state" className="mt-0 h-full flex flex-col">
-                      <h3 className="text-lg font-semibold mb-2 text-pb_blue">Zustand Stores</h3>
+                      {/* <h3 className="text-lg font-semibold mb-2 text-pb_blue">Zustand Stores</h3> */}
                       {renderStoreState('useDashboardContext', dashboardState)}
                     </TabsContent>
                     <TabsContent value="user-session" className="mt-0">
-                      <h3 className="text-lg font-semibold mb-2">Auth0 User Session</h3>
+                      {/* <h3 className="text-lg font-semibold mb-2">Auth0 User Session</h3> */}
                       {isLoading && <p>Loading user info...</p>}
                       {error && <p>Error: {error.message}</p>}
                       {user && <div>{renderUserObject(user)}</div>}
                     </TabsContent>
                     <TabsContent value="feature-flags" className="mt-0">
-                      <h3 className="text-lg font-semibold mb-2">Feature Flags</h3>
+                      {/* <h3 className="text-lg font-semibold mb-2">Feature Flags</h3> */}
                       <p className="text-sm text-gray-500">Placeholder for active feature flags.</p>
                     </TabsContent>
                     <TabsContent value="db-record" className="mt-0">
-                      <h3 className="text-lg font-semibold mb-2">User Database Record</h3>
+                      {/* <h3 className="text-lg font-semibold mb-2">User Database Record</h3> */}
                       <p className="text-sm text-gray-500">Placeholder to fetch and display the user&apos;s full record from MongoDB.</p>
                     </TabsContent>
                     <TabsContent value="api-log" className="mt-0">
-                      <h3 className="text-lg font-semibold mb-2">API Call History</h3>
+                      {/* <h3 className="text-lg font-semibold mb-2">API Call History</h3> */}
                       <p className="text-sm text-gray-500">Placeholder for a log of recent client-side API calls.</p>
                     </TabsContent>
                   {/* </ScrollArea> */}
