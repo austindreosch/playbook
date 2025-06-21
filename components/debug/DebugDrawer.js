@@ -269,14 +269,37 @@ export default function DebugDrawer({ isOpen, onToggle }) {
     const snapThreshold = 50;
     let newX = x;
     let newY = y;
+    let newWidth = size.width;
+    let newHeight = size.height;
 
-    if (x < snapThreshold) newX = 0; // Snap to left
-    if (y < snapThreshold) newY = 0; // Snap to top
-    if (innerWidth - (x + size.width) < snapThreshold) newX = innerWidth - size.width; // Snap to right
-    if (innerHeight - (y + size.height) < snapThreshold) newY = innerHeight - size.height; // Snap to bottom
+    // Top snap
+    if (y < snapThreshold) {
+      newY = 0;
+      newX = 0;
+      newWidth = innerWidth;
+    }
+    // Bottom snap
+    else if (innerHeight - (y + size.height) < snapThreshold) {
+      newY = innerHeight - size.height;
+      newX = 0;
+      newWidth = innerWidth;
+    }
+    // Left snap
+    else if (x < snapThreshold) {
+      newX = 0;
+      newY = 0;
+      newHeight = innerHeight;
+    }
+    // Right snap
+    else if (innerWidth - (x + size.width) < snapThreshold) {
+      newX = innerWidth - size.width;
+      newY = 0;
+      newHeight = innerHeight;
+    }
 
     // Only update state on stop
     setPosition({ x: newX, y: newY });
+    setSize({ width: newWidth, height: newHeight });
   };
 
   const handleResize = (e, { size: newSize }) => {
