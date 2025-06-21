@@ -4,7 +4,7 @@ import RotateIcon from '@/components/icons/RotateIcon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Activity, ChevronRight, Database, FileText, Flag, GripVertical, User } from 'lucide-react';
+import { Activity, AlignCenter, ChevronRight, Database, FileText, Flag, GripVertical, SquareSquare, User, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { ResizableBox } from 'react-resizable';
@@ -18,17 +18,17 @@ import useDummyDashboardData from '@/stores/dashboard/useDummyDashboardData';
 const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
 
 const DebugValue = ({ label, value, isBoolean = false, isPreformatted = false }) => (
-  <div className="grid grid-cols-4 gap-x-4 items-start border-b py-2 text-sm last:border-b-0">
-    <p className="col-span-1 font-medium text-gray-600 break-words">{label}</p>
+  <div className="grid grid-cols-4 gap-x-2 items-start border-b py-1 text-xs last:border-b-0">
+    <p className="col-span-1 font-medium text-gray-600 break-words text-xs">{label}</p>
     <div className="col-span-3">
       {isBoolean ? (
-        <span className={value ? 'font-semibold text-green-600' : 'font-semibold text-red-600'}>
+        <span className={value ? 'font-semibold text-green-600 text-xs' : 'font-semibold text-red-600 text-xs'}>
           {value ? 'Yes' : 'No'}
         </span>
       ) : isPreformatted ? (
         <pre className="text-gray-800 text-xs whitespace-pre-wrap break-all">{value ?? 'N/A'}</pre>
       ) : (
-        <p className="text-gray-800 break-all">{String(value ?? 'N/A')}</p>
+        <p className="text-gray-800 break-all text-xs">{String(value ?? 'N/A')}</p>
       )}
     </div>
   </div>
@@ -84,47 +84,47 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
     const entries = Object.entries(storeState).filter(([, value]) => typeof value !== 'function');
 
     return (
-      <details className="mb-2 group border rounded-md [&[open]]:flex [&[open]]:flex-col [&[open]]:flex-1 [&[open]]:min-h-0">
-        <summary className="cursor-pointer list-none flex-shrink-0 flex items-center justify-between p-2 font-medium text-md hover:bg-gray-50">
+      <details className="mb-1 group border rounded-md [&[open]]:flex [&[open]]:flex-col [&[open]]:flex-1 [&[open]]:min-h-0">
+        <summary className="cursor-pointer list-none flex-shrink-0 flex items-center justify-between p-1.5 font-medium text-sm hover:bg-gray-50">
           {storeName}
-          <ChevronRight className="h-5 w-5 transform transition-transform duration-200 group-open:rotate-90" />
+          <ChevronRight className="h-4 w-4 transform transition-transform duration-200 group-open:rotate-90" />
         </summary>
 
-        <div className="p-2 border-t bg-gray-50/50 max-h-[80vh] overflow-y-auto pb-2">
-          <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-1">
+        <div className="p-1 border-t bg-gray-50/50 max-h-[80vh] overflow-y-auto">
+          <div className="columns-1 md:columns-2 xl:columns-3 gap-2 space-y-1">
             {entries.map(([key, value], index) => {
               const isArrayOfObjects =
                 Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
               return (
                 <div
                   key={key}
-                  className={`bg-white border rounded-lg shadow-sm break-inside-avoid w-full mb-4 ${
+                  className={`bg-white border rounded shadow-sm break-inside-avoid w-full mb-2 ${
                     isArrayOfObjects ? '[column-span:all]' : ''
                   }`}
                 >
-                  <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center ">
+                  <h4 className="font-medium p-1.5 border-b text-gray-700 bg-gray-50 rounded-t text-xs flex justify-between items-center">
                     <span>{key}</span>
                     <span className="text-xs font-normal text-gray-400">[{index}]</span>
                   </h4>
                   {Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null ? (
-                    <div className="p-2 bg-gray-50/50 overflow-auto">
+                    <div className="p-1 bg-gray-50/50 overflow-auto">
                       {value.map((item, itemIndex) => (
-                        <details key={itemIndex} className="mb-1 last:mb-0 bg-white border rounded-md">
-                          <summary className="cursor-pointer list-none flex items-center justify-between p-2 font-medium text-sm hover:bg-gray-100">
+                        <details key={itemIndex} className="mb-0.5 last:mb-0 bg-white border rounded">
+                          <summary className="cursor-pointer list-none flex items-center justify-between p-1.5 font-medium text-xs hover:bg-gray-100">
                             <span>{item.leagueDetails?.leagueName || item.name || `Index ${itemIndex}`}</span>
-                            <ChevronRight className="h-4 w-4 transform transition-transform duration-200 group-open:rotate-90" />
+                            <ChevronRight className="h-3 w-3 transform transition-transform duration-200 group-open:rotate-90" />
                           </summary>
-                          <div className="border-t columns-1 md:columns-2 xl:columns-3 gap-4 p-2 bg-gray-50/50">
+                          <div className="border-t columns-1 md:columns-2 xl:columns-3 gap-2 p-1 bg-gray-50/50">
                             {Object.entries(item)
                               .filter(([, val]) => typeof val !== 'function')
                               .map(([propKey, propValue], propIndex) => (
-                                <div key={propKey} className="bg-white border rounded-lg shadow-sm break-inside-avoid w-full mb-4">
-                                  <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center">
+                                <div key={propKey} className="bg-white border rounded shadow-sm break-inside-avoid w-full mb-1">
+                                  <h4 className="font-medium p-1 border-b text-gray-700 bg-gray-50 rounded-t text-xs flex justify-between items-center">
                                     <span>{propKey}</span>
                                     <span className="text-xs font-normal text-gray-400">[{propIndex}]</span>
                                   </h4>
-                                  <pre className="text-xs p-2 whitespace-pre-wrap break-all overflow-auto">
-                                    {JSON.stringify(propValue, null, 2)}
+                                  <pre className="text-xs p-1 whitespace-pre-wrap break-all overflow-auto">
+                                    {JSON.stringify(propValue, null, 1)}
                                   </pre>
                                 </div>
                               ))}
@@ -133,8 +133,8 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
                       ))}
                     </div>
                   ) : (
-                    <pre className="text-xs p-2 whitespace-pre-wrap break-all overflow-auto">
-                      {JSON.stringify(value, null, 2)}
+                    <pre className="text-xs p-1.5 whitespace-pre-wrap break-all overflow-auto">
+                      {JSON.stringify(value, null, 1)}
                     </pre>
                   )}
                 </div>
@@ -151,27 +151,27 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
       <Tabs value={activeTab} onValueChange={onTabChange} orientation="vertical" className="h-full">
         <div className="w-full h-full flex flex-row">
           {/* Left Sidebar */}
-          <div className="w-[80px] flex-shrink-0 border-r p-2 bg-gray-50/50 overflow-y-auto">
-            <TabsList className="flex-col h-auto w-full items-center justify-start bg-transparent p-0 space-y-2">
-              <TabsTrigger value="zustand-state" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                <Database className="h-4 w-4 mb-1" />
-                <span className="text-xs">State</span>
+          <div className="w-[60px] flex-shrink-0 border-r p-1 bg-gray-50/50 overflow-y-auto pt-1">
+            <TabsList className="flex-col h-auto w-full items-center justify-start bg-transparent p-0 space-y-1">
+              <TabsTrigger value="zustand-state" className="flex-col items-center justify-center h-10 w-full p-0.5 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <Database className="h-3 w-3 mb-0.5 mt-1" />
+                <span className="text-[10px]">State</span>
               </TabsTrigger>
-              <TabsTrigger value="user-session" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                <User className="h-4 w-4 mb-1" />
-                <span className="text-xs">User</span>
+              <TabsTrigger value="user-session" className="flex-col items-center justify-center h-10 w-full p-0.5 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <User className="h-3 w-3 mb-0.5 mt-1" />
+                <span className="text-[10px]">User</span>
               </TabsTrigger>
-              <TabsTrigger value="feature-flags" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                <Flag className="h-4 w-4 mb-1" />
-                <span className="text-xs">Flags</span>
+              <TabsTrigger value="feature-flags" className="flex-col items-center justify-center h-10 w-full p-0.5 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <Flag className="h-3 w-3 mb-0.5 mt-1" />
+                <span className="text-[10px]">Flags</span>
               </TabsTrigger>
-              <TabsTrigger value="db-record" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                <FileText className="h-4 w-4 mb-1" />
-                <span className="text-xs">DB</span>
+              <TabsTrigger value="db-record" className="flex-col items-center justify-center h-10 w-full p-0.5 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <FileText className="h-3 w-3 mb-0.5 mt-1" />
+                <span className="text-[10px]">DB</span>
               </TabsTrigger>
-              <TabsTrigger value="api-log" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                <Activity className="h-4 w-4 mb-1" />
-                <span className="text-xs">API</span>
+              <TabsTrigger value="api-log" className="flex-col items-center justify-center h-10 w-full p-0.5 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <Activity className="h-3 w-3 mb-0.5 mt-1" />
+                <span className="text-[10px]">API</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -208,11 +208,19 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
 export default function DebugDrawer({ isOpen, onToggle }) {
   const [activeTab, setActiveTab] = useState('zustand-state');
   const { user, isLoading, error } = useUser();
-  const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = useDashboardContext();
+  // Get entire dashboard context state automatically
+  const dashboardContextFull = useDashboardContext();
   
-  const dashboardState = React.useMemo(() => ({
-    currentLeagueId, currentTab, dashboardSettings, userRankings, leagues
-  }), [currentLeagueId, currentTab, dashboardSettings, userRankings, leagues]);
+  // Filter out functions to get only data for display
+  const dashboardState = React.useMemo(() => {
+    const stateData = {};
+    for (const [key, value] of Object.entries(dashboardContextFull)) {
+      if (typeof value !== 'function') {
+        stateData[key] = value;
+      }
+    }
+    return stateData;
+  }, [dashboardContextFull]);
 
   // Get dummy dashboard data state
   const dummyDashboardState = useDummyDashboardData();
@@ -460,14 +468,24 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             <div className="drag-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
               <GripVertical className="h-5 w-5 text-gray-400" />
               <h2 className="text-lg font-semibold ml-2">Debug Information</h2>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="ml-auto p-1 rounded-md border bg-white hover:bg-gray-100 shadow-sm"
-                aria-label="Reset Drawer"
-              >
-                <RotateIcon className="h-4 w-4" />
-              </button>
+              <div className="ml-auto flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="p-1 rounded-md border bg-white hover:bg-gray-100 shadow-sm"
+                  aria-label="Reset Drawer"
+                >
+                  <AlignCenter className="h-4 w-6" />
+                </button>
+                <button
+                  type="button"
+                  onClick={onToggle}
+                  className="p-1 rounded-md border bg-white hover:bg-gray-100 shadow-sm"
+                  aria-label="Close Debug Drawer"
+                >
+                  <X className="h-4 w-6" />
+                </button>
+              </div>
             </div>
 
             <DebugDrawerContent

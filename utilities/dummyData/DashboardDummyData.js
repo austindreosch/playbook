@@ -27,7 +27,7 @@ export const dashboardDummyData = {
       "lastUpdated": "2024-07-19T12:00:00Z"
     }
   ],
-  "currentTab": "overview",
+  
   "dashboardSettings": {
     "autoSync": true,
     "defaultTab": "overview",

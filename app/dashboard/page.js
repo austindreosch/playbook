@@ -40,9 +40,19 @@ import StandingsBlock from '@/components/dashboard/Overview/Standings/StandingsB
 import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';
 import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
 
+// Store
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+
 const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
 
 export default function DashboardPage() {
+  // =================================================================
+  // CONTEXT STORE
+  // =================================================================
+  // ---- INCOMING DATA ----
+  // Get current view state from the dashboard context store
+  const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
+
   const router = useRouter();
   const { user, error, isLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
@@ -202,26 +212,28 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Individual League View Bar  */}
-        <div className="flex w-full pt-2.5">
+        {/* Individual League View Bar - Only show when not in All Leagues view */}
+        {!isAllLeaguesView && (
+          <div className="flex w-full pt-2.5">
 
-          {/* OVERVIEW VERSION */}
-          <div className="flex w-full justify-between ">
-            <div className="flex gap-2">
-              <CurrentLeagueTeamDisplay className="h-9"/>
-              <CurrentLeagueContext className="h-9"/>
-            </div>
+            {/* OVERVIEW VERSION */}
+            <div className="flex w-full justify-between ">
+              <div className="flex gap-2">
+                <CurrentLeagueTeamDisplay className="h-9"/>
+                <CurrentLeagueContext className="h-9"/>
+              </div>
 
-            <div className="flex gap-2">
-              <EditWidgetsButton className="h-9"/>
-              <SyncLeagueButton className="h-9"/>  
-              <LeagueSettingsButton className="h-9"/>
-              <RankingsSelectorButton className="h-9"/>
+              <div className="flex gap-2">
+                <EditWidgetsButton className="h-9"/>
+                <SyncLeagueButton className="h-9"/>  
+                <LeagueSettingsButton className="h-9"/>
+                <RankingsSelectorButton className="h-9"/>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Divider between League View and Main Dashboard Content */}  
+        {/* Divider between League Bar and Main Dashboard Content */}  
         <div className="w-full py-2.5">
           <div className="h-[1px] w-full bg-pb_lightestgray"></div>
         </div>

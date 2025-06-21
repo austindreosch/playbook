@@ -1,21 +1,13 @@
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
-const TABS = [
-  { id: 'overview', label: 'OVERVIEW', enabled: true },
-  { id: 'roster', label: 'ROSTER', enabled: true },
-  { id: 'trades', label: 'TRADES', enabled: true },
-  { id: 'scouting', label: 'SCOUTING', enabled: false },
-  { id: 'matchups', label: 'MATCHUPS', enabled: false },
-  { id: 'trends', label: 'TRENDS', enabled: false },
-];
-
 export default function DashboardTabs() {
   // =================================================================
   // CONTEXT STORE
   // =================================================================
   // ---- INCOMING DATA ----
-  // Get current tab state from the dashboard context store
+  // Get current tab state and available tabs from the dashboard context store
   const currentTab = useDashboardContext((state) => state.currentTab);
+  const availableTabs = useDashboardContext((state) => state.availableTabs);
   // ---- OUTGOING DATA ----
   // Get setter function to update the current tab in the store
   const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
@@ -26,7 +18,7 @@ export default function DashboardTabs() {
 
   return (
     <div className="h-12 w-full flex rounded-lg rounded-tr-lg rounded-b-none overflow-hidden border border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5 pt-0.5">
-      {TABS.map(({ id, label, enabled }, idx) => (
+      {availableTabs.map(({ id, label, enabled }, idx) => (
         <button
           key={id}
           disabled={!enabled}

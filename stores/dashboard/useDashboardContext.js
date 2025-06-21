@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
+import { DASHBOARD_DEFAULTS, TABS_CONFIG } from './config.js';
 
 // ============================================================================
 // DASHBOARD CONTEXT SCHEMA DEFINITIONS
@@ -8,7 +9,7 @@ import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData
 // Dashboard widgets are handled by a separate store.
 
 const DASHBOARD_CONTEXT_SCHEMA = {
-  currentLeagueId: null,         // String: currently selected league ID
+  currentLeagueId: null,         // String: currently selected league ID (null means "All Leagues" view)
   userRankings: [
     {
       name: null,
@@ -19,6 +20,9 @@ const DASHBOARD_CONTEXT_SCHEMA = {
     },
   ],
   currentTab: null,                  // String: currently selected tab
+  currentView: null,                 // String: currently selected view
+  isAllLeaguesView: false,           // Boolean: whether we're in "All Leagues" view or individual league view
+  availableTabs: [],                 // Array: tabs available in current view (All Leagues vs individual league)
   dashboardSettings: {},              // Object: dashboard-wide settings
   leagues: [
     {
@@ -32,10 +36,82 @@ const DASHBOARD_CONTEXT_SCHEMA = {
 };
 
 // ============================================================================
+// LOCALSTORAGE PERSISTENCE FUNCTIONS
+// ============================================================================
+// These functions handle saving and loading UI state from browser localStorage
+
+/**
+ * Save dashboard UI state to localStorage
+ * @param {string} currentView - Current view ('allLeagues' or 'league')
+ * @param {string} currentTab - Current active tab
+ */
+const saveDashboardStateToLocalStorage = (currentView, currentTab) => {
+  try {
+    const dashboardState = {
+      currentView,
+      currentTab,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('dashboardUIState', JSON.stringify(dashboardState));
+    console.log('💾 Saved dashboard state to localStorage:', dashboardState);
+  } catch (error) {
+    console.warn('⚠️  Failed to save dashboard state to localStorage:', error);
+  }
+};
+
+/**
+ * Load dashboard UI state from localStorage
+ * @returns {Object|null} Saved state or null if not found/invalid
+ */
+const loadDashboardStateFromLocalStorage = () => {
+  try {
+    const saved = localStorage.getItem('dashboardUIState');
+    if (!saved) return null;
+    
+    const state = JSON.parse(saved);
+    
+    // Validate the loaded state
+    if (typeof state.currentView === 'string' && typeof state.currentTab === 'string') {
+      console.log('📂 Loaded dashboard state from localStorage:', state);
+      return state;
+    }
+    
+    console.warn('⚠️  Invalid dashboard state in localStorage, ignoring');
+    return null;
+  } catch (error) {
+    console.warn('⚠️  Failed to load dashboard state from localStorage:', error);
+    return null;
+  }
+};
+
+// ============================================================================
 // INPUT PROCESSING FUNCTIONS
 // ============================================================================
 // These functions handle data validation, transformation, and normalization
 // before it enters the store. They ensure data consistency regardless of source.
+
+/**
+ * Calculate which tabs should be available based on current view mode
+ * @param {boolean} isAllLeaguesView - Whether we're in "All Leagues" view
+ * @returns {Array} Array of available tabs with enabled status
+ */
+const calculateAvailableTabs = (isAllLeaguesView) => {
+  return TABS_CONFIG.map(tab => ({
+    ...tab,
+    enabled: isAllLeaguesView ? tab.enabledInAllLeagues : tab.enabledInLeague
+  }));
+};
+
+/**
+ * Get the default tab for a given view mode
+ * @param {boolean} isAllLeaguesView - Whether we're in "All Leagues" view
+ * @returns {string} Default tab ID
+ */
+const getDefaultTab = (isAllLeaguesView) => {
+  const availableTabs = calculateAvailableTabs(isAllLeaguesView);
+  const enabledTab = availableTabs.find(tab => tab.enabled);
+  return enabledTab ? enabledTab.id : DASHBOARD_DEFAULTS.defaultTab;
+};
 
 /**
  * Validates and normalizes league data structure
@@ -94,11 +170,10 @@ const processUserRankingsInput = (rawRankings) => {
 const processLeagueContextInput = (rawData) => {
   console.log('📥 INPUT: Processing league context data...');
   
-  // ONLY extract the exact fields from our schema
+  // ONLY extract the exact fields from our schema (excluding UI state)
   const processedData = {
     currentLeagueId: rawData.currentLeagueId || null,
     userRankings: processUserRankingsInput(rawData.userRankings || []),
-    currentTab: rawData.currentTab || null,
     dashboardSettings: rawData.dashboardSettings || rawData.settings || {},
     leagues: processLeaguesInput(rawData.leagues || []),
   };
@@ -124,9 +199,30 @@ if (initialLeagueId) {
   processedLeagueData.currentLeagueId = initialLeagueId;
 }
 
+// Initialize tabs state - determine initial view based on localStorage, config, and available data
+const savedUIState = loadDashboardStateFromLocalStorage();
+const savedCurrentView = savedUIState?.currentView;
+const savedCurrentTab = savedUIState?.currentTab;
+
+// Determine initial view: localStorage → config → fallback logic
+// If we have a league ID, we should be in league view regardless of other settings
+const shouldStartInAllLeaguesView = initialLeagueId ? false : 
+                                   (savedCurrentView === 'allLeagues' || 
+                                   (savedCurrentView === null && DASHBOARD_DEFAULTS.defaultView === 'allLeagues'));
+const initialIsAllLeaguesView = shouldStartInAllLeaguesView;
+const initialCurrentView = shouldStartInAllLeaguesView ? 'allLeagues' : 'league';
+const initialAvailableTabs = calculateAvailableTabs(initialIsAllLeaguesView);
+
+// Determine initial tab: localStorage → config default
+const initialCurrentTab = savedCurrentTab || getDefaultTab(initialIsAllLeaguesView);
+
 console.log('📊 INITIALIZED LEAGUE CONTEXT:', {
   leaguesCount: initialLeagues.length,
   currentLeagueId: processedLeagueData.currentLeagueId,
+  currentView: initialCurrentView,
+  isAllLeaguesView: initialIsAllLeaguesView,
+  currentTab: initialCurrentTab,
+  availableTabsCount: initialAvailableTabs.length,
   hasLeagueData: initialLeagues.length > 0,
   fieldsInStore: Object.keys(processedLeagueData)
 });
@@ -150,7 +246,10 @@ const useDashboardContext = create((set, get) => ({
   // All fields from schema - explicitly set from processed data
   currentLeagueId: processedLeagueData.currentLeagueId,
   userRankings: processedLeagueData.userRankings,
-  currentTab: processedLeagueData.currentTab,
+  currentTab: initialCurrentTab,
+  currentView: initialCurrentView,
+  isAllLeaguesView: initialIsAllLeaguesView,
+  availableTabs: initialAvailableTabs,
   dashboardSettings: processedLeagueData.dashboardSettings,
   leagues: processedLeagueData.leagues,
 
@@ -167,14 +266,30 @@ const useDashboardContext = create((set, get) => ({
     console.log('📥 INPUT ACTION: setLeagueContext called');
     const processedData = processLeagueContextInput(rawData);
     
-    // ONLY set the exact fields from schema
+    // ONLY set the exact fields from schema (UI state remains unchanged)
     set({
       currentLeagueId: processedData.currentLeagueId,
       userRankings: processedData.userRankings,
-      currentTab: processedData.currentTab,
       dashboardSettings: processedData.dashboardSettings,
       leagues: processedData.leagues,
     });
+    
+    // Update view state based on new data if needed
+    const { currentView, isAllLeaguesView } = get();
+    if (processedData.currentLeagueId && isAllLeaguesView) {
+      // If we received league data but we're in All Leagues view, switch to league view
+      const newAvailableTabs = calculateAvailableTabs(false);
+      const defaultTab = getDefaultTab(false);
+      
+      set({
+        currentView: 'league',
+        isAllLeaguesView: false,
+        availableTabs: newAvailableTabs,
+        currentTab: defaultTab,
+      });
+      
+      saveDashboardStateToLocalStorage('league', defaultTab);
+    }
     
     console.log('✅ INPUT ACTION: League context data updated');
   },
@@ -211,8 +326,22 @@ const useDashboardContext = create((set, get) => ({
     );
     
     if (leagueExists) {
-      set({ currentLeagueId: leagueId });
-      console.log('✅ INPUT ACTION: Current league updated');
+      // Switch to individual league view
+      const newAvailableTabs = calculateAvailableTabs(false);
+      const defaultTab = getDefaultTab(false);
+      
+      set({
+        currentLeagueId: leagueId,
+        currentView: 'league',
+        isAllLeaguesView: false,
+        availableTabs: newAvailableTabs,
+        currentTab: defaultTab,
+      });
+      
+      // Save UI state to localStorage
+      saveDashboardStateToLocalStorage('league', defaultTab);
+      
+      console.log('✅ INPUT ACTION: Current league updated and switched to individual view');
     } else {
       console.warn('⚠️  INPUT ACTION: League not found:', leagueId);
     }
@@ -260,8 +389,90 @@ const useDashboardContext = create((set, get) => ({
    */
   setCurrentTab: (tabId) => {
     console.log('📥 INPUT ACTION: setCurrentTab called', { tabId });
-    set({ currentTab: tabId });
-    console.log('✅ INPUT ACTION: Current tab updated');
+    const { availableTabs } = get();
+    const tabExists = availableTabs.some(tab => tab.id === tabId && tab.enabled);
+    
+    if (tabExists) {
+      set({ currentTab: tabId });
+      
+      // Save UI state to localStorage
+      const { currentView } = get();
+      saveDashboardStateToLocalStorage(currentView, tabId);
+      
+      console.log('✅ INPUT ACTION: Current tab updated');
+    } else {
+      console.warn('⚠️  INPUT ACTION: Tab not available or disabled:', tabId);
+      // Fallback to default tab
+      const { isAllLeaguesView, currentView } = get();
+      const defaultTab = getDefaultTab(isAllLeaguesView);
+      set({ currentTab: defaultTab });
+      
+      // Save fallback state to localStorage
+      saveDashboardStateToLocalStorage(currentView, defaultTab);
+    }
+  },
+
+  /**
+   * ALL LEAGUES VIEW: Switch to "All Leagues" view
+   */
+  setAllLeaguesView: () => {
+    console.log('📥 INPUT ACTION: setAllLeaguesView called');
+    const newAvailableTabs = calculateAvailableTabs(true);
+    const defaultTab = getDefaultTab(true);
+    
+    set({
+      currentLeagueId: null,
+      currentView: 'allLeagues',
+      isAllLeaguesView: true,
+      availableTabs: newAvailableTabs,
+      currentTab: defaultTab,
+    });
+    
+    // Save UI state to localStorage
+    saveDashboardStateToLocalStorage('allLeagues', defaultTab);
+    
+    console.log('✅ INPUT ACTION: Switched to All Leagues view');
+  },
+
+  /**
+   * INDIVIDUAL LEAGUE VIEW: Switch to individual league view
+   * @param {string} leagueId - League identifier (optional, uses current if not provided)
+   */
+  setIndividualLeagueView: (leagueId = null) => {
+    console.log('📥 INPUT ACTION: setIndividualLeagueView called', { leagueId });
+    const { leagues, currentLeagueId } = get();
+    
+    // Use provided leagueId or current one, or fallback to first available league
+    const targetLeagueId = leagueId || currentLeagueId || leagues[0]?.leagueDetails?.leagueName;
+    
+    if (!targetLeagueId) {
+      console.warn('⚠️  INPUT ACTION: No league available for individual view');
+      return;
+    }
+    
+    const leagueExists = leagues.some(league => 
+      league.leagueDetails?.leagueName === targetLeagueId
+    );
+    
+    if (leagueExists) {
+      const newAvailableTabs = calculateAvailableTabs(false);
+      const defaultTab = getDefaultTab(false);
+      
+      set({
+        currentLeagueId: targetLeagueId,
+        currentView: 'league',
+        isAllLeaguesView: false,
+        availableTabs: newAvailableTabs,
+        currentTab: defaultTab,
+      });
+      
+      // Save UI state to localStorage
+      saveDashboardStateToLocalStorage('league', defaultTab);
+      
+      console.log('✅ INPUT ACTION: Switched to individual league view');
+    } else {
+      console.warn('⚠️  INPUT ACTION: League not found:', targetLeagueId);
+    }
   },
 
   /**
@@ -342,12 +553,13 @@ const useDashboardContext = create((set, get) => ({
    * @returns {Object} Complete league context data matching schema
    */
   getLeagueContextExport: () => {
-    const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = get();
+    const { leagues, currentLeagueId, userRankings, currentTab, currentView, dashboardSettings } = get();
     
     const exportData = {
       currentLeagueId,
       userRankings,
       currentTab,
+      currentView,
       dashboardSettings,
       leagues,
     };
@@ -361,7 +573,7 @@ const useDashboardContext = create((set, get) => ({
    * @returns {Object} Status of each league context section
    */
   getLeagueContextStatus: () => {
-    const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = get();
+    const { leagues, currentLeagueId, userRankings, currentTab, currentView, dashboardSettings } = get();
     
     const status = {
       currentLeagueId: { 
@@ -375,6 +587,10 @@ const useDashboardContext = create((set, get) => ({
       currentTab: {
         ready: currentTab !== null && currentTab !== undefined,
         value: currentTab
+      },
+      currentView: {
+        ready: currentView !== null && currentView !== undefined,
+        value: currentView
       },
       dashboardSettings: {
         ready: typeof dashboardSettings === 'object' && dashboardSettings !== null,
