@@ -251,11 +251,14 @@ export default function DebugDrawer({ isOpen, onToggle }) {
     const { innerWidth, innerHeight } = window;
     const snapThreshold = 50;
 
-    // Imperatively update indicators to avoid re-renders
-    topIndicatorRef.current.style.opacity = y < snapThreshold ? '1' : '0';
-    leftIndicatorRef.current.style.opacity = x < snapThreshold ? '1' : '0';
-    rightIndicatorRef.current.style.opacity = innerWidth - (x + size.width) < snapThreshold ? '1' : '0';
-    bottomIndicatorRef.current.style.opacity = innerHeight - (y + size.height) < snapThreshold ? '1' : '0';
+    // Use mouse position for snapping feedback
+    const cursorX = e.clientX;
+    const cursorY = e.clientY;
+
+    topIndicatorRef.current.style.opacity = cursorY < snapThreshold ? '1' : '0';
+    leftIndicatorRef.current.style.opacity = cursorX < snapThreshold ? '1' : '0';
+    rightIndicatorRef.current.style.opacity = innerWidth - cursorX < snapThreshold ? '1' : '0';
+    bottomIndicatorRef.current.style.opacity = innerHeight - cursorY < snapThreshold ? '1' : '0';
   };
 
   const handleStop = (e, { x, y }) => {
@@ -267,43 +270,42 @@ export default function DebugDrawer({ isOpen, onToggle }) {
 
     const { innerWidth, innerHeight } = window;
     const snapThreshold = 50;
+    const cursorX = e.clientX;
+    const cursorY = e.clientY;
+
     let newX = x;
     let newY = y;
     let newWidth = size.width;
     let newHeight = size.height;
 
-    // Top snap
-    if (y < snapThreshold) {
+    // Snap decisions based on cursor proximity
+    if (cursorY < snapThreshold) {
+      // Snap to top: full width, keep current height
       newY = 0;
       newX = 0;
       newWidth = innerWidth;
-    }
-    // Bottom snap
-    else if (innerHeight - (y + size.height) < snapThreshold) {
-      newY = innerHeight - size.height;
+    } else if (innerHeight - cursorY < snapThreshold) {
+      // Snap to bottom: full width, half height (50vh)
+      newHeight = Math.round(innerHeight * 0.5);
+      newY = innerHeight - newHeight;
       newX = 0;
       newWidth = innerWidth;
-    }
-    // Left snap
-    else if (x < snapThreshold) {
+    } else if (cursorX < snapThreshold) {
+      // Snap to left: half width (50vw), full height
       newX = 0;
       newY = 0;
+      newWidth = Math.round(innerWidth * 0.5);
       newHeight = innerHeight;
-    }
-    // Right snap
-    else if (innerWidth - (x + size.width) < snapThreshold) {
-      newX = innerWidth - size.width;
+    } else if (innerWidth - cursorX < snapThreshold) {
+      // Snap to right: half width (50vw), full height
+      newWidth = Math.round(innerWidth * 0.5);
+      newX = innerWidth - newWidth;
       newY = 0;
       newHeight = innerHeight;
     }
 
-    // Only update state on stop
     setPosition({ x: newX, y: newY });
     setSize({ width: newWidth, height: newHeight });
-  };
-
-  const handleResize = (e, { size: newSize }) => {
-    setSize(newSize);
   };
 
   const handleTabChange = React.useCallback((value) => {
@@ -333,9 +335,11 @@ export default function DebugDrawer({ isOpen, onToggle }) {
           <ResizableBox
             width={size.width}
             height={size.height}
-            onResize={handleResize}
             minConstraints={[400, 300]}
             maxConstraints={[1800, 1200]}
+            onResizeStop={(_e, { size: s }) => {
+              setSize(s);
+            }}
             className="bg-white border rounded-lg shadow-2xl flex flex-col overflow-hidden"
           >
             <div className="drag-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
