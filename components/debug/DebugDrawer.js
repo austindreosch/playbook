@@ -323,11 +323,15 @@ export default function DebugDrawer({ isOpen, onToggle }) {
 
     setPosition(prevPos => {
       let updated = { ...prevPos };
+
+      // Keep the snapped edge anchored by only shifting when the opposite edge moves.
+      // Do NOT lock width/height so the drawer can expand/contract.
+
       if (handle.includes('n')) {
-        updated.y -= deltaHeight; // shift down/up based on top edge move
+        updated.y -= deltaHeight;
       }
       if (handle.includes('w')) {
-        updated.x -= deltaWidth; // shift right/left based on left edge move
+        updated.x -= deltaWidth;
       }
       return updated;
     });
@@ -353,18 +357,17 @@ export default function DebugDrawer({ isOpen, onToggle }) {
 
   // Determine allowed resize handles based on snapped side
   const resizeHandles = React.useMemo(() => {
-    const all = ['se', 's', 'e', 'n', 'w'];
     switch (snapSide) {
       case 'left':
-        return all.filter(h => !h.startsWith('w')); // disallow west handles
+        return ['e']; // exposed right edge
       case 'right':
-        return all.filter(h => !h.startsWith('e')); // disallow east handles
+        return ['w']; // exposed left edge
       case 'top':
-        return all.filter(h => h !== 'n' && h !== 'se');
+        return ['s']; // exposed bottom edge
       case 'bottom':
-        return all.filter(h => h !== 's' && h !== 'se');
+        return ['s']; // still resize from bottom edge only
       default:
-        return all;
+        return ['se', 's', 'e', 'w']; // no top handle
     }
   }, [snapSide]);
 
@@ -395,13 +398,13 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             width={size.width}
             height={size.height}
             minConstraints={[400, 300]}
-            maxConstraints={[1800, 1200]}
+            maxConstraints={[1800, 2160]}
             resizeHandles={resizeHandles}
             onResizeStop={(_e, { size: newSize, handle }) => {
               adjustPositionForResize(size, newSize, handle);
               setSize(newSize); // single render after gesture
             }}
-            className="bg-white border rounded-lg shadow-2xl flex flex-col overflow-hidden"
+            className="bg-white border rounded-lg shadow-2xl flex flex-col"
           >
             <div className="drag-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
               <GripVertical className="h-5 w-5 text-gray-400" />
@@ -426,6 +429,86 @@ export default function DebugDrawer({ isOpen, onToggle }) {
               error={error}
             />
           </ResizableBox>
+          {/* Global overrides for resize handle size */}
+          <style jsx global>{`
+            /* Kill all default backgrounds first */
+            .react-resizable-handle {
+              background: transparent !important;
+              background-image: none !important;
+            }
+            
+            /* Bottom edge - small pill */
+            .react-resizable-handle-s {
+              width: 32px !important;
+              height: 12px !important;
+              bottom: -7px !important;
+              left: 50% !important;
+              transform: translateX(-50%);
+              cursor: ns-resize;
+              background-color: #ffffff !important;
+              border-radius: 999px !important;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            }
+            
+            .react-resizable-handle-s:hover {
+              background-color: #3b82f6 !important;
+              transform: translateX(-50%) scale(1.1);
+            }
+            
+            /* Right edge - small pill */
+            .react-resizable-handle-e {
+              width: 12px !important;
+              height: 32px !important;
+              right: -6px !important;
+              top: 50% !important;
+              transform: translateY(-50%);
+              cursor: ew-resize;
+              background-color: #ffffff !important;
+              border-radius: 999px !important;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            }
+            
+            .react-resizable-handle-e:hover {
+              background-color: #3b82f6 !important;
+              transform: translateY(-50%) scale(1.1);
+            }
+            
+            /* Left edge - small pill */
+            .react-resizable-handle-w {
+              width: 12px !important;
+              height: 32px !important;
+              left: -6px !important;
+              top: 50% !important;
+              transform: translateY(-50%);
+              cursor: ew-resize;
+              background-color: #ffffff !important;
+              border-radius: 999px !important;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            }
+            
+            .react-resizable-handle-w:hover {
+              background-color: #3b82f6 !important;
+              transform: translateY(-50%) scale(1.2);
+            }
+            
+            /* Corner - small circle */
+            .react-resizable-handle-se {
+              width: 10px !important;
+              height: 10px !important;
+              right: -1px !important;
+              bottom: -1px !important;
+              cursor: se-resize;
+              background-color: transparent !important;
+              border-radius: 50% !important;
+              {/* border: 2px solid white !important; */}
+              {/* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important; */}
+            }
+            
+            .react-resizable-handle-se:hover {
+              background-color: #3b82f6 !important;
+              transform: scale(1.2);
+            }
+          `}</style>
         </div>
       </Draggable>
     </>
