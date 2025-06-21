@@ -44,12 +44,14 @@ const DASHBOARD_CONTEXT_SCHEMA = {
  * Save dashboard UI state to localStorage
  * @param {string} currentView - Current view ('allLeagues' or 'league')
  * @param {string} currentTab - Current active tab
+ * @param {string|null} currentLeagueId - Current league ID (preserved across view switches)
  */
-const saveDashboardStateToLocalStorage = (currentView, currentTab) => {
+const saveDashboardStateToLocalStorage = (currentView, currentTab, currentLeagueId = null) => {
   try {
     const dashboardState = {
       currentView,
       currentTab,
+      currentLeagueId,
       timestamp: Date.now()
     };
     localStorage.setItem('dashboardUIState', JSON.stringify(dashboardState));
@@ -73,7 +75,11 @@ const loadDashboardStateFromLocalStorage = () => {
     // Validate the loaded state
     if (typeof state.currentView === 'string' && typeof state.currentTab === 'string') {
       console.log('📂 Loaded dashboard state from localStorage:', state);
-      return state;
+      return {
+        currentView: state.currentView,
+        currentTab: state.currentTab,
+        currentLeagueId: state.currentLeagueId || null, // Include currentLeagueId if present
+      };
     }
     
     console.warn('⚠️  Invalid dashboard state in localStorage, ignoring');
@@ -203,10 +209,19 @@ if (initialLeagueId) {
 const savedUIState = loadDashboardStateFromLocalStorage();
 const savedCurrentView = savedUIState?.currentView;
 const savedCurrentTab = savedUIState?.currentTab;
+const savedCurrentLeagueId = savedUIState?.currentLeagueId;
+
+// Determine final currentLeagueId: localStorage → dummy data fallback → null
+const finalCurrentLeagueId = savedCurrentLeagueId || initialLeagueId || null;
+
+// Update processed data with the final currentLeagueId
+if (finalCurrentLeagueId) {
+  processedLeagueData.currentLeagueId = finalCurrentLeagueId;
+}
 
 // Determine initial view: localStorage → config → fallback logic
 // If we have a league ID, we should be in league view regardless of other settings
-const shouldStartInAllLeaguesView = initialLeagueId ? false : 
+const shouldStartInAllLeaguesView = finalCurrentLeagueId ? false : 
                                    (savedCurrentView === 'allLeagues' || 
                                    (savedCurrentView === null && DASHBOARD_DEFAULTS.defaultView === 'allLeagues'));
 const initialIsAllLeaguesView = shouldStartInAllLeaguesView;
@@ -288,7 +303,7 @@ const useDashboardContext = create((set, get) => ({
         currentTab: defaultTab,
       });
       
-      saveDashboardStateToLocalStorage('league', defaultTab);
+      saveDashboardStateToLocalStorage('league', defaultTab, processedData.currentLeagueId);
     }
     
     console.log('✅ INPUT ACTION: League context data updated');
@@ -338,8 +353,8 @@ const useDashboardContext = create((set, get) => ({
         currentTab: defaultTab,
       });
       
-      // Save UI state to localStorage
-      saveDashboardStateToLocalStorage('league', defaultTab);
+      // Save UI state to localStorage including the currentLeagueId
+      saveDashboardStateToLocalStorage('league', defaultTab, leagueId);
       
       console.log('✅ INPUT ACTION: Current league updated and switched to individual view');
     } else {
@@ -396,8 +411,8 @@ const useDashboardContext = create((set, get) => ({
       set({ currentTab: tabId });
       
       // Save UI state to localStorage
-      const { currentView } = get();
-      saveDashboardStateToLocalStorage(currentView, tabId);
+      const { currentView, currentLeagueId } = get();
+      saveDashboardStateToLocalStorage(currentView, tabId, currentLeagueId);
       
       console.log('✅ INPUT ACTION: Current tab updated');
     } else {
@@ -408,30 +423,33 @@ const useDashboardContext = create((set, get) => ({
       set({ currentTab: defaultTab });
       
       // Save fallback state to localStorage
-      saveDashboardStateToLocalStorage(currentView, defaultTab);
+      const { currentLeagueId } = get();
+      saveDashboardStateToLocalStorage(currentView, defaultTab, currentLeagueId);
     }
   },
 
   /**
    * ALL LEAGUES VIEW: Switch to "All Leagues" view
+   * Note: currentLeagueId is preserved so we remember the last selected league
    */
   setAllLeaguesView: () => {
     console.log('📥 INPUT ACTION: setAllLeaguesView called');
+    const { currentLeagueId } = get();
     const newAvailableTabs = calculateAvailableTabs(true);
     const defaultTab = getDefaultTab(true);
     
     set({
-      currentLeagueId: null,
+      // Keep currentLeagueId - don't set to null!
       currentView: 'allLeagues',
       isAllLeaguesView: true,
       availableTabs: newAvailableTabs,
       currentTab: defaultTab,
     });
     
-    // Save UI state to localStorage
-    saveDashboardStateToLocalStorage('allLeagues', defaultTab);
+    // Save UI state to localStorage including the preserved currentLeagueId
+    saveDashboardStateToLocalStorage('allLeagues', defaultTab, currentLeagueId);
     
-    console.log('✅ INPUT ACTION: Switched to All Leagues view');
+    console.log('✅ INPUT ACTION: Switched to All Leagues view (preserved currentLeagueId)');
   },
 
   /**
@@ -466,8 +484,8 @@ const useDashboardContext = create((set, get) => ({
         currentTab: defaultTab,
       });
       
-      // Save UI state to localStorage
-      saveDashboardStateToLocalStorage('league', defaultTab);
+      // Save UI state to localStorage including the currentLeagueId
+      saveDashboardStateToLocalStorage('league', defaultTab, targetLeagueId);
       
       console.log('✅ INPUT ACTION: Switched to individual league view');
     } else {
