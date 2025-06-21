@@ -249,6 +249,52 @@ export default function DebugDrawer({ isOpen, onToggle }) {
     }
   }, []);
 
+  // Handle window resize to maintain snap position
+  useEffect(() => {
+    if (!isOpen || !snapSide || !position) return;
+
+    const handleWindowResize = () => {
+      const { innerWidth, innerHeight } = window;
+      let newX = position.x;
+      let newY = position.y;
+      let newWidth = size.width;
+      let newHeight = size.height;
+
+      switch (snapSide) {
+        case 'top':
+          newX = 0;
+          newY = 0;
+          newWidth = innerWidth;
+          // Keep current height
+          break;
+        case 'bottom':
+          newHeight = Math.round(innerHeight * 0.5);
+          newY = innerHeight - newHeight;
+          newX = 0;
+          newWidth = innerWidth;
+          break;
+        case 'left':
+          newX = 0;
+          newY = 0;
+          newWidth = Math.round(innerWidth * 0.5);
+          newHeight = innerHeight;
+          break;
+        case 'right':
+          newWidth = Math.round(innerWidth * 0.5);
+          newX = innerWidth - newWidth;
+          newY = 0;
+          newHeight = innerHeight;
+          break;
+      }
+
+      setPosition({ x: newX, y: newY });
+      setSize({ width: newWidth, height: newHeight });
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [isOpen, snapSide, position, size]);
+
   const handleDrag = (e, { x, y }) => {
     const { innerWidth, innerHeight } = window;
     const snapThreshold = 50;
