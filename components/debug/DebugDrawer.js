@@ -1,5 +1,6 @@
 'use client';
 
+import RotateIcon from '@/components/icons/RotateIcon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -220,6 +221,7 @@ export default function DebugDrawer({ isOpen, onToggle }) {
   const draggableRef = useRef(null);
   const [position, setPosition] = useState(null);
   const [size, setSize] = useState({ width: 800, height: 600 });
+  const [snapSide, setSnapSide] = useState(null); // 'left' | 'right' | 'top' | 'bottom' | null
   
   const topIndicatorRef = useRef(null);
   const rightIndicatorRef = useRef(null);
@@ -284,24 +286,30 @@ export default function DebugDrawer({ isOpen, onToggle }) {
       newY = 0;
       newX = 0;
       newWidth = innerWidth;
+      setSnapSide('top');
     } else if (innerHeight - cursorY < snapThreshold) {
       // Snap to bottom: full width, half height (50vh)
       newHeight = Math.round(innerHeight * 0.5);
       newY = innerHeight - newHeight;
       newX = 0;
       newWidth = innerWidth;
+      setSnapSide('bottom');
     } else if (cursorX < snapThreshold) {
       // Snap to left: half width (50vw), full height
       newX = 0;
       newY = 0;
       newWidth = Math.round(innerWidth * 0.5);
       newHeight = innerHeight;
+      setSnapSide('left');
     } else if (innerWidth - cursorX < snapThreshold) {
       // Snap to right: half width (50vw), full height
       newWidth = Math.round(innerWidth * 0.5);
       newX = innerWidth - newWidth;
       newY = 0;
       newHeight = innerHeight;
+      setSnapSide('right');
+    } else {
+      setSnapSide(null); // not snapped
     }
 
     setPosition({ x: newX, y: newY });
@@ -330,6 +338,39 @@ export default function DebugDrawer({ isOpen, onToggle }) {
     localStorage.setItem('debugDrawerActiveTab', value);
   }, []);
 
+  // Reset the drawer to a safe centered position and default size
+  const handleReset = React.useCallback(() => {
+    if (typeof window === 'undefined') return;
+    const safeWidth = Math.min(window.innerWidth * 0.7, 1000);
+    const safeHeight = Math.min(window.innerHeight * 0.7, 800);
+    setSize({ width: safeWidth, height: safeHeight });
+    setPosition({
+      x: (window.innerWidth - safeWidth) / 2,
+      y: (window.innerHeight - safeHeight) / 2,
+    });
+    setSnapSide(null);
+  }, []);
+
+  // Determine allowed resize handles based on snapped side
+  const resizeHandles = React.useMemo(() => {
+    const all = ['se', 's', 'e', 'n', 'w'];
+    switch (snapSide) {
+      case 'left':
+        return all.filter(h => !h.startsWith('w')); // disallow west handles
+      case 'right':
+        return all.filter(h => !h.startsWith('e')); // disallow east handles
+      case 'top':
+        return all.filter(h => h !== 'n' && h !== 'se');
+      case 'bottom':
+        return all.filter(h => h !== 's' && h !== 'se');
+      default:
+        return all;
+    }
+  }, [snapSide]);
+
+  // Key to remount draggable when position or size changes (needed because we use defaultPosition)
+  const drawerKey = `${position?.x ?? 0}-${position?.y ?? 0}-${size.width}-${size.height}`;
+
   if (!SHOW_DEBUG_DRAWER || !isOpen || position === null) return null;
 
   return (
@@ -341,9 +382,10 @@ export default function DebugDrawer({ isOpen, onToggle }) {
       <div ref={leftIndicatorRef} className="fixed top-0 left-0 h-full w-2 bg-blue-500 opacity-0 transition-opacity duration-200 z-[9998]" />
 
       <Draggable
+        key={drawerKey}
         nodeRef={draggableRef}
         handle=".drag-handle"
-        position={position}
+        defaultPosition={position}
         onDrag={handleDrag}
         onStop={handleStop}
         cancel=".react-resizable-handle"
@@ -354,7 +396,7 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             height={size.height}
             minConstraints={[400, 300]}
             maxConstraints={[1800, 1200]}
-            resizeHandles={['se', 's', 'e', 'n', 'w']}
+            resizeHandles={resizeHandles}
             onResizeStop={(_e, { size: newSize, handle }) => {
               adjustPositionForResize(size, newSize, handle);
               setSize(newSize); // single render after gesture
@@ -364,6 +406,14 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             <div className="drag-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
               <GripVertical className="h-5 w-5 text-gray-400" />
               <h2 className="text-lg font-semibold ml-2">Debug Information</h2>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="ml-auto p-1 rounded-md border bg-white hover:bg-gray-100 shadow-sm"
+                aria-label="Reset Drawer"
+              >
+                <RotateIcon className="h-4 w-4" />
+              </button>
             </div>
 
             <DebugDrawerContent
