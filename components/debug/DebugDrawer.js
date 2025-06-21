@@ -45,7 +45,7 @@ export default function DebugDrawer() {
   const [activeTab, setActiveTab] = useState('zustand-state');
   const { user, isLoading, error } = useUser();
   const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = useDashboardContext();
-  const dashboardState = { currentLeagueId, userRankings, currentTab, dashboardSettings, leagues };
+  const dashboardState = { currentLeagueId, currentTab, dashboardSettings,userRankings, leagues };
   
   // Get dummy dashboard data state
   const dummyDashboardState = useDummyDashboardData();

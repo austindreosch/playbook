@@ -5,24 +5,26 @@ export const dashboardDummyData = {
   "userRankings": [
     {
       "name": "My NBA Dynasty Rankings 2025",
-      "sport": "NBA",
-      "format": "Dynasty",
-      "scoring": "Categories",
-      "lastUpdated": "2024-01-15"
+      "sport": "nba",
+      "format": "dynasty",
+      "scoring": "categories",
+      "lastUpdated": "2024-07-21T10:00:00Z"
     },
     {
       "name": "My NFL Redraft Rankings 2025",
-      "sport": "NFL", 
-      "format": "Redraft",
-      "scoring": "PPR",
-      "lastUpdated": "2024-01-10"
+      "sport": "nfl",
+      "format": "redraft",
+      "scoring": "points",
+      "pprType": "0.5",
+      "flexSetting": "superflex",
+      "lastUpdated": "2024-07-20T15:30:00Z"
     },
     {
       "name": "My MLB Keeper Rankings 2025",
-      "sport": "MLB",
-      "format": "Keeper",
-      "scoring": "Roto",
-      "lastUpdated": "2024-01-12"
+      "sport": "mlb",
+      "format": "keeper",
+      "scoring": "categories",
+      "lastUpdated": "2024-07-19T12:00:00Z"
     }
   ],
   "currentTab": "overview",

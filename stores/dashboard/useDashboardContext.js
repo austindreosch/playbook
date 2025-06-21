@@ -9,7 +9,15 @@ import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData
 
 const DASHBOARD_CONTEXT_SCHEMA = {
   currentLeagueId: null,         // String: currently selected league ID
-  userRankings: [],
+  userRankings: [
+    {
+      name: null,
+      sport: null,
+      format: null,
+      scoring: null,
+      lastUpdated: null
+    },
+  ],
   currentTab: null,                  // String: currently selected tab
   dashboardSettings: {},              // Object: dashboard-wide settings
   leagues: [
@@ -51,6 +59,34 @@ const processLeaguesInput = (rawLeagues) => {
 };
 
 /**
+ * Validates and normalizes user rankings data structure
+ * @param {Array} rawRankings - Raw user rankings data from API or dummy source
+ * @returns {Array} Normalized user rankings array
+ */
+const processUserRankingsInput = (rawRankings) => {
+  if (!Array.isArray(rawRankings)) {
+    console.warn('⚠️  processUserRankingsInput: Expected array, received:', typeof rawRankings);
+    return [];
+  }
+
+  return rawRankings
+    .map((ranking) => {
+      if (typeof ranking === 'object' && ranking !== null) {
+        return {
+          name: ranking.name || null,
+          sport: ranking.sport || null,
+          format: ranking.format || null,
+          scoring: ranking.scoring || null,
+          lastUpdated: ranking.lastUpdated || null,
+        };
+      }
+      // Silently ignore non-object entries for robustness
+      return null;
+    })
+    .filter(Boolean); // Remove null entries
+};
+
+/**
  * Processes complete league context data blob
  * @param {Object} rawData - Raw league context data from API or dummy source
  * @returns {Object} Normalized league context data matching schema ONLY
@@ -61,7 +97,7 @@ const processLeagueContextInput = (rawData) => {
   // ONLY extract the exact fields from our schema
   const processedData = {
     currentLeagueId: rawData.currentLeagueId || null,
-    userRankings: Array.isArray(rawData.userRankings) ? rawData.userRankings : [],
+    userRankings: processUserRankingsInput(rawData.userRankings || []),
     currentTab: rawData.currentTab || null,
     dashboardSettings: rawData.dashboardSettings || rawData.settings || {},
     leagues: processLeaguesInput(rawData.leagues || []),
