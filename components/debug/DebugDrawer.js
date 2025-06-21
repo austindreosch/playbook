@@ -4,7 +4,7 @@ import RotateIcon from '@/components/icons/RotateIcon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { ChevronRight, GripVertical } from 'lucide-react';
+import { Activity, ChevronRight, Database, FileText, Flag, GripVertical, User } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import { ResizableBox } from 'react-resizable';
@@ -151,22 +151,27 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
       <Tabs value={activeTab} onValueChange={onTabChange} orientation="vertical" className="h-full">
         <div className="w-full h-full flex flex-row">
           {/* Left Sidebar */}
-          <div className="w-[250px] flex-shrink-0 border-r p-4 bg-gray-50/50 overflow-y-auto">
-            <TabsList className="flex-col h-auto w-full items-stretch justify-start bg-transparent p-0 space-y-1">
-              <TabsTrigger value="zustand-state" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                Zustand State
+          <div className="w-[80px] flex-shrink-0 border-r p-2 bg-gray-50/50 overflow-y-auto">
+            <TabsList className="flex-col h-auto w-full items-center justify-start bg-transparent p-0 space-y-2">
+              <TabsTrigger value="zustand-state" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <Database className="h-4 w-4 mb-1" />
+                <span className="text-xs">State</span>
               </TabsTrigger>
-              <TabsTrigger value="user-session" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                User Session
+              <TabsTrigger value="user-session" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <User className="h-4 w-4 mb-1" />
+                <span className="text-xs">User</span>
               </TabsTrigger>
-              <TabsTrigger value="feature-flags" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                Feature Flags
+              <TabsTrigger value="feature-flags" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <Flag className="h-4 w-4 mb-1" />
+                <span className="text-xs">Flags</span>
               </TabsTrigger>
-              <TabsTrigger value="db-record" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                DB Record
+              <TabsTrigger value="db-record" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <FileText className="h-4 w-4 mb-1" />
+                <span className="text-xs">DB</span>
               </TabsTrigger>
-              <TabsTrigger value="api-log" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
-                API Log
+              <TabsTrigger value="api-log" className="flex-col items-center justify-center h-14 w-full p-1 data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                <Activity className="h-4 w-4 mb-1" />
+                <span className="text-xs">API</span>
               </TabsTrigger>
             </TabsList>
           </div>
