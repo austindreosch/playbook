@@ -1,91 +1,320 @@
 import { create } from 'zustand';
 import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
 
-// This defines the structure of our dashboard's context.
-// When we fetch real data, it should conform to this shape.
-const dashboardSchema = {
-  leagueDetails: {},
-  players: [],
-  standings: {},
-  scheduleStrength: {},
-  matchup: {},
-  toolbox: [],
-  teamArchetype: {},
-  teamProfile: {},
-  actionSteps: [],
-  newsFeed: [],
-  teamAdvisor: {},
+// ============================================================================
+// DASHBOARD CONTEXT SCHEMA DEFINITIONS
+// ============================================================================
+// This schema defines the expected structure for dashboard context.
+// Dashboard widgets are handled by a separate store.
+
+const DASHBOARD_CONTEXT_SCHEMA = {
+  // League management
+  currentLeagueId: null,         // String: currently selected league ID
+  leagues: [
+    {
+      leagueDetails: {},             // Object: league configuration and metadata
+      standings: {},                 // Object: team standings and records
+      matchup: {},                   // Object: current/upcoming matchup data
+      players: [],                   // Array: player data for league roster
+    }
+  ],
+  userRankings: []
 };
 
 // ============================================================================
-// DUMMY DATA INITIALIZATION
+// INPUT PROCESSING FUNCTIONS
 // ============================================================================
-// For development, we are initializing the store with dummy data.
-// Each piece of state is explicitly assigned from the `dashboardDummyData` object.
-// This makes it visually clear where the development data is coming from.
-//
-// TODO: Replace these initial values with real data fetching. You would likely
-// initialize with an empty array and then populate the store via an async action.
+// These functions handle data validation, transformation, and normalization
+// before it enters the store. They ensure data consistency regardless of source.
+
+/**
+ * Validates and normalizes league data structure
+ * @param {Array} rawLeagues - Raw league data from API or dummy source
+ * @returns {Array} Normalized league array
+ */
+const processLeaguesInput = (rawLeagues) => {
+  if (!Array.isArray(rawLeagues)) {
+    console.warn('⚠️  processLeaguesInput: Expected array, received:', typeof rawLeagues);
+    return [];
+  }
+  
+  return rawLeagues.map(league => ({
+    // ONLY extract the fields we want - ignore everything else
+    leagueDetails: league.leagueDetails || {},
+    standings: league.standings || {},
+    matchup: league.matchup || {},
+    players: league.players || [],
+  }));
+};
+
+/**
+ * Processes complete league context data blob
+ * @param {Object} rawData - Raw league context data from API or dummy source
+ * @returns {Object} Normalized league context data matching schema ONLY
+ */
+const processLeagueContextInput = (rawData) => {
+  console.log('📥 INPUT: Processing league context data...');
+  
+  // ONLY extract the exact fields from our schema
+  const processedData = {
+    currentLeagueId: rawData.currentLeagueId || null,
+    leagues: processLeaguesInput(rawData.leagues || []),
+  };
+  
+  console.log('✅ INPUT: League context data processed successfully');
+  console.log('📋 PROCESSED FIELDS:', Object.keys(processedData));
+  return processedData;
+};
+
 // ============================================================================
-const allLeagues = dashboardDummyData.leagues || [];
-const initialLeague = allLeagues[0] || null;
+// INITIAL DATA SETUP
+// ============================================================================
+// Process only league data from dummy data through our input pipeline
+
+console.log('🔄 INITIALIZING: Processing league context dummy data...');
+const processedLeagueData = processLeagueContextInput(dashboardDummyData);
+const initialLeagues = processedLeagueData.leagues;
+const initialLeague = initialLeagues[0] || null;
+const initialLeagueId = initialLeague?.leagueDetails?.leagueName || null;
+
+// Override currentLeagueId if we found a league
+if (initialLeagueId) {
+  processedLeagueData.currentLeagueId = initialLeagueId;
+}
+
+console.log('📊 INITIALIZED LEAGUE CONTEXT:', {
+  leaguesCount: initialLeagues.length,
+  currentLeagueId: processedLeagueData.currentLeagueId,
+  hasLeagueData: initialLeagues.length > 0,
+  fieldsInStore: Object.keys(processedLeagueData)
+});
+
+// ============================================================================
+// ZUSTAND STORE DEFINITION
+// ============================================================================
 
 const useDashboardContext = create((set, get) => ({
-  // The complete list of leagues for the user
-  leagues: allLeagues,
+  
+  // ============================================================================
+  // STORE STATE (ONLY the fields from DASHBOARD_CONTEXT_SCHEMA)
+  // ============================================================================
+  
+  // League management only - explicitly set from processed data
+  currentLeagueId: processedLeagueData.currentLeagueId,
+  leagues: processedLeagueData.leagues,
 
-  // The currently selected league's ID
-  currentLeagueId: initialLeague?.leagueDetails.leagueName || null,
-
-  // Actions
+  // ============================================================================
+  // INPUT ACTIONS (Data Entry Points)
+  // ============================================================================
+  
   /**
-   * Sets the current league based on its unique name.
-   * @param {string} leagueName - The leagueName of the league to set as current.
+   * PRIMARY INPUT: Replace entire league context with new data
+   * This is the main entry point for API data updates
+   * @param {Object} rawData - Raw league context data from API
    */
-  setCurrentLeague: (leagueName) => {
-    set({ currentLeagueId: leagueName });
+  setLeagueContext: (rawData) => {
+    console.log('📥 INPUT ACTION: setLeagueContext called');
+    const processedData = processLeagueContextInput(rawData);
+    
+    // ONLY set the exact fields we want
+    set({
+      currentLeagueId: processedData.currentLeagueId,
+      leagues: processedData.leagues,
+    });
+    
+    console.log('✅ INPUT ACTION: League context data updated');
   },
 
   /**
-   * Updates the entire list of leagues.
-   * This would be used after a data fetch.
-   * @param {Array} newLeagues - The new array of league objects.
+   * LEAGUE INPUT: Update leagues and set current league
+   * @param {Array} rawLeagues - Raw league data from API
    */
-  setLeagues: (newLeagues) => {
+  setLeagues: (rawLeagues) => {
+    console.log('📥 INPUT ACTION: setLeagues called');
+    const processedLeagues = processLeaguesInput(rawLeagues);
+    const newCurrentLeagueId = processedLeagues[0]?.leagueDetails?.leagueName || null;
+    
     set({
-      leagues: newLeagues,
-      currentLeagueId: newLeagues[0]?.leagueDetails.leagueName || null,
+      leagues: processedLeagues,
+      currentLeagueId: newCurrentLeagueId,
+    });
+    
+    console.log('✅ INPUT ACTION: Leagues updated', {
+      count: processedLeagues.length,
+      currentLeagueId: newCurrentLeagueId
     });
   },
 
-  // State Initialization from Dummy Data
-  leagueDetails: dashboardDummyData.leagueDetails,
-  players: dashboardDummyData.players,
-  standings: dashboardDummyData.standings,
-  scheduleStrength: dashboardDummyData.scheduleStrength,
-  matchup: dashboardDummyData.matchup,
-  toolbox: dashboardDummyData.toolbox,
-  teamArchetype: dashboardDummyData.teamArchetype,
-  teamProfile: dashboardDummyData.teamProfile,
-  actionSteps: dashboardDummyData.actionSteps,
-  newsFeed: dashboardDummyData.newsFeed,
-  teamAdvisor: dashboardDummyData.teamAdvisor,
+  /**
+   * LEAGUE SELECTION: Set current league by ID
+   * @param {string} leagueId - League identifier
+   */
+  setCurrentLeague: (leagueId) => {
+    console.log('📥 INPUT ACTION: setCurrentLeague called', { leagueId });
+    const { leagues } = get();
+    const leagueExists = leagues.some(league => 
+      league.leagueDetails?.leagueName === leagueId
+    );
+    
+    if (leagueExists) {
+      set({ currentLeagueId: leagueId });
+      console.log('✅ INPUT ACTION: Current league updated');
+    } else {
+      console.warn('⚠️  INPUT ACTION: League not found:', leagueId);
+    }
+  },
 
-  // Action to replace the entire dashboard data blob
-  setDashboardData: (data) => set(data),
+  /**
+   * UPDATE CURRENT LEAGUE DATA: Update specific data for current league
+   * @param {Object} updates - Object containing updates for current league
+   */
+  updateCurrentLeagueData: (updates) => {
+    console.log('📥 INPUT ACTION: updateCurrentLeagueData called');
+    const { leagues, currentLeagueId } = get();
+    
+    const updatedLeagues = leagues.map(league => {
+      if (league.leagueDetails?.leagueName === currentLeagueId) {
+        return {
+          // ONLY update the fields that are allowed in our schema
+          players: updates.players !== undefined ? updates.players : league.players,
+          leagueDetails: { ...league.leagueDetails, ...(updates.leagueDetails || {}) },
+          standings: { ...league.standings, ...(updates.standings || {}) },
+          matchup: { ...league.matchup, ...(updates.matchup || {}) },
+        };
+      }
+      return league;
+    });
+    
+    set({ leagues: updatedLeagues });
+    console.log('✅ INPUT ACTION: Current league data updated');
+  },
 
-  // Individual setters for each part of the state
-  setLeagueDetails: (leagueDetails) => set({ leagueDetails }),
-  setPlayers: (players) => set({ players }),
-  setStandings: (standings) => set({ standings }),
-  setScheduleStrength: (scheduleStrength) => set({ scheduleStrength }),
-  setMatchup: (matchup) => set({ matchup }),
-  setToolbox: (toolbox) => set({ toolbox }),
-  setTeamArchetype: (teamArchetype) => set({ teamArchetype }),
-  setTeamProfile: (teamProfile) => set({ teamProfile }),
-  setActionSteps: (actionSteps) => set({ actionSteps }),
-  setNewsFeed: (newsFeed) => set({ newsFeed }),
-  setTeamAdvisor: (teamAdvisor) => set({ teamAdvisor }),
+  // ============================================================================
+  // OUTPUT SELECTORS (Data Access Points)
+  // ============================================================================
+  
+  /**
+   * OUTPUT: Get current league data with validation
+   * @returns {Object|null} Current league object or null
+   */
+  getCurrentLeague: () => {
+    const { leagues, currentLeagueId } = get();
+    const currentLeague = leagues.find(league => 
+      league.leagueDetails?.leagueName === currentLeagueId
+    );
+    
+    console.log('📤 OUTPUT: getCurrentLeague called', {
+      found: !!currentLeague,
+      leagueId: currentLeagueId
+    });
+    
+    return currentLeague || null;
+  },
+
+  /**
+   * OUTPUT: Get current league's players
+   * @returns {Array} Players array for current league
+   */
+  getCurrentLeaguePlayers: () => {
+    const currentLeague = get().getCurrentLeague();
+    console.log('📤 OUTPUT: getCurrentLeaguePlayers called');
+    return currentLeague?.players || [];
+  },
+
+  /**
+   * OUTPUT: Get current league's details
+   * @returns {Object} League details object for current league
+   */
+  getCurrentLeagueDetails: () => {
+    const currentLeague = get().getCurrentLeague();
+    console.log('📤 OUTPUT: getCurrentLeagueDetails called');
+    return currentLeague?.leagueDetails || {};
+  },
+
+  /**
+   * OUTPUT: Get current league's standings
+   * @returns {Object} Standings object for current league
+   */
+  getCurrentLeagueStandings: () => {
+    const currentLeague = get().getCurrentLeague();
+    console.log('📤 OUTPUT: getCurrentLeagueStandings called');
+    return currentLeague?.standings || {};
+  },
+
+  /**
+   * OUTPUT: Get current league's matchup
+   * @returns {Object} Matchup object for current league
+   */
+  getCurrentLeagueMatchup: () => {
+    const currentLeague = get().getCurrentLeague();
+    console.log('📤 OUTPUT: getCurrentLeagueMatchup called');
+    return currentLeague?.matchup || {};
+  },
+
+  /**
+   * OUTPUT: Get formatted league context data for export/API
+   * @returns {Object} Complete league context data matching schema
+   */
+  getLeagueContextExport: () => {
+    const { leagues, currentLeagueId } = get();
+    
+    const exportData = {
+      currentLeagueId,
+      leagues,
+    };
+    
+    console.log('📤 OUTPUT: getLeagueContextExport called');
+    return exportData;
+  },
+
+  /**
+   * OUTPUT: Get league context readiness status
+   * @returns {Object} Status of each league context section
+   */
+  getLeagueContextStatus: () => {
+    const { leagues, currentLeagueId } = get();
+    
+    const status = {
+      currentLeagueId: { 
+        ready: currentLeagueId !== null && currentLeagueId !== undefined, 
+        value: currentLeagueId 
+      },
+      leagues: { 
+        ready: leagues.length > 0, 
+        count: leagues.length 
+      }
+    };
+    
+    console.log('📤 OUTPUT: getLeagueContextStatus called');
+    return status;
+  },
+
+  /**
+   * OUTPUT: Check if current league has specific data
+   * @param {string} dataType - Type of data to check (players, standings, matchup)
+   * @returns {boolean} Whether the current league has the specified data
+   */
+  currentLeagueHasData: (dataType) => {
+    const currentLeague = get().getCurrentLeague();
+    if (!currentLeague) return false;
+    
+    const data = currentLeague[dataType];
+    const hasData = Array.isArray(data) ? data.length > 0 : 
+                    (typeof data === 'object' && data !== null) ? Object.keys(data).length > 0 :
+                    data !== null && data !== undefined;
+    
+    console.log('📤 OUTPUT: currentLeagueHasData called', { dataType, hasData });
+    return hasData;
+  },
+
 }));
 
+// ============================================================================
+// STORE EXPORT
+// ============================================================================
+
 export default useDashboardContext;
+
+// Export schema for external validation if needed
+export { DASHBOARD_CONTEXT_SCHEMA };
+

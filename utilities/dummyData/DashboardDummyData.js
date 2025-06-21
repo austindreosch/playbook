@@ -637,7 +637,14 @@ export const dashboardDummyData = {
         "prompt": "Should I trade my ace pitcher for a top-tier closer to secure more saves?",
         "verdict": "Avoid",
         "analysis": "While saves can be valuable, an ace pitcher provides consistent, high-impact contributions across multiple categories (ERA, WHIP, SO, W). Closers are volatile and a single category specialist often isn't worth an ace."
-      }
+      },
+      "userRankings": [
+        "My Dynasty Rankings 2025",
+      ],
+      "expertRankings": [
+        "Expert Rankings",
+
+      ]
     }
   ]
 };
