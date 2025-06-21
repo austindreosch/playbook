@@ -6,10 +6,11 @@ import DashboardSkeleton from '@/components/dashboard/DashboardSkeleton';
 import DashboardTabs from '@/components/dashboard/DashboardTabs';
 import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
-import DownloadButton from '@/components/dashboard/Header/DownloadButton';
+import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
 import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
 import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
 import CurrentLeagueTeamDisplay from '@/components/dashboard/Overview/Header/CurrentLeagueTeamDisplay';
+import EditWidgetsButton from '@/components/dashboard/Overview/Header/EditWidgetsButton';
 import LeagueSettingsButton from '@/components/dashboard/Overview/Header/LeagueSettingsButton';
 import RankingsSelectorButton from '@/components/dashboard/Overview/Header/RankingsSelectorButton';
 import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
@@ -146,7 +147,7 @@ export default function DashboardPage() {
 
             <AllLeaguesButton className="h-9" />
             <LeagueSelectorButton className="h-9" />
-            <DownloadButton className="h-9" />
+            <ImportLeagueButton className="h-9" />
             <DashboardSettingsButton className="h-9" />
           </div>
 
@@ -167,6 +168,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex gap-2">
+              <EditWidgetsButton className="h-9"/>
               <SyncLeagueButton className="h-9"/>  
               <LeagueSettingsButton className="h-9"/>
               <RankingsSelectorButton className="h-9"/>
@@ -189,19 +191,27 @@ export default function DashboardPage() {
             </div>
 
             {/* Overview Blocks Wall */}
-            <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
+            <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
+              {/* First Column */}
               <div className="col-span-2 grid grid-rows-6 gap-2">
-                <div className="w-full h-full row-span-4  rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+                
+                <div className="w-full h-full row-span-4  rounded-lg border-1.5 border-pb_lightgray shadow-sm">StandingsBlock</div>
+                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm">MatchupBlock</div>
+
               </div>
-              <div className="col-span-3 grid grid-rows-3 gap-2">
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+
+              {/* Second Column */}
+              <div className="col-span-2 grid grid-rows-3 gap-2">
+                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm">TeamArchetypeBlock</div>
+                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm">ActionStepsBlock</div>
               </div>
+
+              {/* Third Column */}
               <div className="col-span-2 grid grid-rows-2 gap-2">
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
+                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm">TeamProfileBlock</div>
+                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm">NewsFeedBlock</div>
               </div>
+
             </div>
           </div>
 
