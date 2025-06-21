@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 
 // Zustand Stores
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+import useDummyDashboardData from '@/stores/dashboard/useDummyDashboardData';
 
 // Determine whether to show the debug drawer.
 const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
@@ -43,9 +44,16 @@ export default function DebugDrawer() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('zustand-state');
   const { user, isLoading, error } = useUser();
-  const { leagues, currentLeagueId } = useDashboardContext();
-  const dashboardState = { currentLeagueId, leagues };
+  const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = useDashboardContext();
+  const dashboardState = { currentLeagueId, userRankings, currentTab, dashboardSettings, leagues };
   
+  // Get dummy dashboard data state
+  const dummyDashboardState = useDummyDashboardData();
+  // Filter out functions for display
+  const dummyDashboardStateForDisplay = Object.fromEntries(
+    Object.entries(dummyDashboardState).filter(([, value]) => typeof value !== 'function')
+  );
+
   // On mount, restore the drawer's state from localStorage
   useEffect(() => {
     const storedIsOpen = localStorage.getItem('debugDrawerIsOpen');
@@ -213,10 +221,11 @@ export default function DebugDrawer() {
 
                 {/* Main Content */}
                 <div className="flex-1 min-h-0 p-4">
-                  {/* <ScrollArea className="h-full w-full"> */}
+                  <ScrollArea className="h-full w-full">
                     <TabsContent value="zustand-state" className="mt-0 h-full flex flex-col">
                       {/* <h3 className="text-lg font-semibold mb-2 text-pb_blue">Zustand Stores</h3> */}
                       {renderStoreState('useDashboardContext', dashboardState)}
+                      {renderStoreState('useDummyDashboardData', dummyDashboardStateForDisplay)}
                     </TabsContent>
                     <TabsContent value="user-session" className="mt-0">
                       {/* <h3 className="text-lg font-semibold mb-2">Auth0 User Session</h3> */}
@@ -236,7 +245,7 @@ export default function DebugDrawer() {
                       {/* <h3 className="text-lg font-semibold mb-2">API Call History</h3> */}
                       <p className="text-sm text-gray-500">Placeholder for a log of recent client-side API calls.</p>
                     </TabsContent>
-                  {/* </ScrollArea> */}
+                  </ScrollArea>
                 </div>
               </div>
             </Tabs>

@@ -1,4 +1,22 @@
 export const dashboardDummyData = {
+  "expertRankings": [
+    "Expert Rankings",
+  ],
+  "userRankings": [
+    "My NBA Dynasty Rankings 2025",
+    "My NFL Redraft Rankings 2025", 
+    "My MLB Keeper Rankings 2025"
+  ],
+  "currentTab": "overview",
+  "dashboardSettings": {
+    "autoSync": true,
+    "defaultView": "overview",
+    "notifications": {
+      "trades": true,
+      "waivers": true,
+      "news": false
+    }
+  },
   "leagues": [
     {
       "leagueDetails": {
@@ -10,6 +28,17 @@ export const dashboardDummyData = {
         "platform": "Fantrax",
         "mode": "H2H (Each)",
         "teamDirection": "Contending"
+      },
+      "leagueSettings": {
+        "autoStart": true,
+        "lineupLocks": "daily",
+        "waiverBudget": 100,
+        "tradeDeadline": "2025-03-01",
+        "viewPreferences": {
+          "defaultSort": "projected",
+          "showBench": true,
+          "showIR": false
+        }
       },
       "players": [
         {
@@ -243,6 +272,9 @@ export const dashboardDummyData = {
           "action": "Go to Roster"
         }
       ],
+      "userRankings": [
+        "My NBA Dynasty Rankings 2025",
+      ],
       "newsFeed": [
         {
           "type": "Latest News",
@@ -280,6 +312,17 @@ export const dashboardDummyData = {
         "platform": "ESPN",
         "mode": "H2H",
         "teamDirection": "Rebuilding"
+      },
+      "leagueSettings": {
+        "autoStart": false,
+        "lineupLocks": "weekly",
+        "waiverBudget": 200,
+        "tradeDeadline": "2025-11-15",
+        "viewPreferences": {
+          "defaultSort": "points",
+          "showBench": true,
+          "showIR": true
+        }
       },
       "players": [
         {
@@ -429,6 +472,9 @@ export const dashboardDummyData = {
           "action": "Review Trade"
         }
       ],
+      "userRankings": [
+        "My NFL Redraft Rankings 2025",
+      ],
       "newsFeed": [
         {
           "type": "Latest News",
@@ -456,6 +502,17 @@ export const dashboardDummyData = {
         "platform": "Yahoo",
         "mode": "Season Long",
         "teamDirection": "Contending"
+      },
+      "leagueSettings": {
+        "autoStart": true,
+        "lineupLocks": "daily",
+        "waiverBudget": 0,
+        "tradeDeadline": "2025-07-31",
+        "viewPreferences": {
+          "defaultSort": "rotation",
+          "showBench": false,
+          "showIR": true
+        }
       },
       "players": [
         {
@@ -618,11 +675,7 @@ export const dashboardDummyData = {
         "analysis": "While saves can be valuable, an ace pitcher provides consistent, high-impact contributions across multiple categories (ERA, WHIP, SO, W). Closers are volatile and a single category specialist often isn't worth an ace."
       },
       "userRankings": [
-        "My Dynasty Rankings 2025",
-      ],
-      "expertRankings": [
-        "Expert Rankings",
-
+        "My MLB Keeper Rankings 2025",
       ]
     }
   ]

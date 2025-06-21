@@ -8,17 +8,19 @@ import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData
 // Dashboard widgets are handled by a separate store.
 
 const DASHBOARD_CONTEXT_SCHEMA = {
-  // League management
   currentLeagueId: null,         // String: currently selected league ID
+  userRankings: [],
+  currentTab: null,                  // String: currently selected tab
+  dashboardSettings: {},              // Object: dashboard-wide settings
   leagues: [
     {
       leagueDetails: {},             // Object: league configuration and metadata
       standings: {},                 // Object: team standings and records
       matchup: {},                   // Object: current/upcoming matchup data
       players: [],                   // Array: player data for league roster
+      leagueSettings: {},            // Object: league-specific settings
     }
   ],
-  userRankings: []
 };
 
 // ============================================================================
@@ -44,6 +46,7 @@ const processLeaguesInput = (rawLeagues) => {
     standings: league.standings || {},
     matchup: league.matchup || {},
     players: league.players || [],
+    leagueSettings: league.leagueSettings || {},
   }));
 };
 
@@ -58,6 +61,9 @@ const processLeagueContextInput = (rawData) => {
   // ONLY extract the exact fields from our schema
   const processedData = {
     currentLeagueId: rawData.currentLeagueId || null,
+    userRankings: Array.isArray(rawData.userRankings) ? rawData.userRankings : [],
+    currentTab: rawData.currentTab || null,
+    dashboardSettings: rawData.dashboardSettings || rawData.settings || {},
     leagues: processLeaguesInput(rawData.leagues || []),
   };
   
@@ -89,6 +95,12 @@ console.log('📊 INITIALIZED LEAGUE CONTEXT:', {
   fieldsInStore: Object.keys(processedLeagueData)
 });
 
+console.log('🔍 DEBUG PROCESSED DATA:', {
+  userRankings: processedLeagueData.userRankings,
+  currentTab: processedLeagueData.currentTab,
+  dashboardSettings: processedLeagueData.dashboardSettings
+});
+
 // ============================================================================
 // ZUSTAND STORE DEFINITION
 // ============================================================================
@@ -99,8 +111,11 @@ const useDashboardContext = create((set, get) => ({
   // STORE STATE (ONLY the fields from DASHBOARD_CONTEXT_SCHEMA)
   // ============================================================================
   
-  // League management only - explicitly set from processed data
+  // All fields from schema - explicitly set from processed data
   currentLeagueId: processedLeagueData.currentLeagueId,
+  userRankings: processedLeagueData.userRankings,
+  currentTab: processedLeagueData.currentTab,
+  dashboardSettings: processedLeagueData.dashboardSettings,
   leagues: processedLeagueData.leagues,
 
   // ============================================================================
@@ -116,9 +131,12 @@ const useDashboardContext = create((set, get) => ({
     console.log('📥 INPUT ACTION: setLeagueContext called');
     const processedData = processLeagueContextInput(rawData);
     
-    // ONLY set the exact fields we want
+    // ONLY set the exact fields from schema
     set({
       currentLeagueId: processedData.currentLeagueId,
+      userRankings: processedData.userRankings,
+      currentTab: processedData.currentTab,
+      dashboardSettings: processedData.dashboardSettings,
       leagues: processedData.leagues,
     });
     
@@ -180,6 +198,7 @@ const useDashboardContext = create((set, get) => ({
           leagueDetails: { ...league.leagueDetails, ...(updates.leagueDetails || {}) },
           standings: { ...league.standings, ...(updates.standings || {}) },
           matchup: { ...league.matchup, ...(updates.matchup || {}) },
+          leagueSettings: { ...league.leagueSettings, ...(updates.leagueSettings || {}) },
         };
       }
       return league;
@@ -187,6 +206,37 @@ const useDashboardContext = create((set, get) => ({
     
     set({ leagues: updatedLeagues });
     console.log('✅ INPUT ACTION: Current league data updated');
+  },
+
+  /**
+   * USER RANKINGS INPUT: Set user rankings
+   * @param {Array} rankings - Array of user rankings
+   */
+  setUserRankings: (rankings) => {
+    console.log('📥 INPUT ACTION: setUserRankings called');
+    set({ userRankings: Array.isArray(rankings) ? rankings : [] });
+    console.log('✅ INPUT ACTION: User rankings updated');
+  },
+
+  /**
+   * TAB SELECTION: Set current tab
+   * @param {string} tab - Tab identifier
+   */
+  setCurrentTab: (tab) => {
+    console.log('📥 INPUT ACTION: setCurrentTab called', { tab });
+    set({ currentTab: tab });
+    console.log('✅ INPUT ACTION: Current tab updated');
+  },
+
+  /**
+   * DASHBOARD SETTINGS INPUT: Update dashboard settings
+   * @param {Object} settingsUpdate - Object containing dashboard settings updates
+   */
+  updateDashboardSettings: (settingsUpdate) => {
+    console.log('📥 INPUT ACTION: updateDashboardSettings called');
+    const { dashboardSettings } = get();
+    set({ dashboardSettings: { ...dashboardSettings, ...settingsUpdate } });
+    console.log('✅ INPUT ACTION: Dashboard settings updated');
   },
 
   // ============================================================================
@@ -256,10 +306,13 @@ const useDashboardContext = create((set, get) => ({
    * @returns {Object} Complete league context data matching schema
    */
   getLeagueContextExport: () => {
-    const { leagues, currentLeagueId } = get();
+    const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = get();
     
     const exportData = {
       currentLeagueId,
+      userRankings,
+      currentTab,
+      dashboardSettings,
       leagues,
     };
     
@@ -272,17 +325,29 @@ const useDashboardContext = create((set, get) => ({
    * @returns {Object} Status of each league context section
    */
   getLeagueContextStatus: () => {
-    const { leagues, currentLeagueId } = get();
+    const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = get();
     
     const status = {
       currentLeagueId: { 
         ready: currentLeagueId !== null && currentLeagueId !== undefined, 
         value: currentLeagueId 
       },
+      userRankings: {
+        ready: Array.isArray(userRankings),
+        count: userRankings.length
+      },
+      currentTab: {
+        ready: currentTab !== null && currentTab !== undefined,
+        value: currentTab
+      },
+      dashboardSettings: {
+        ready: typeof dashboardSettings === 'object' && dashboardSettings !== null,
+        keys: Object.keys(dashboardSettings).length
+      },
       leagues: { 
         ready: leagues.length > 0, 
         count: leagues.length 
-      }
+      },
     };
     
     console.log('📤 OUTPUT: getLeagueContextStatus called');

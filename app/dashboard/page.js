@@ -204,23 +204,23 @@ export default function DashboardPage() {
             </div>
 
             {/* Overview Blocks Wall */}
-            <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
+            <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
               {/* First Column */}
               <div className="col-span-2 grid grid-rows-6 gap-2">
-                <StandingsBlock className="row-span-4" />
-                <MatchupBlock className="row-span-2" />
+                <StandingsBlock className="row-span-2" />
+                <MatchupBlock className="row-span-4" />
               </div>
 
               {/* Second Column */}
-              <div className="col-span-3 grid grid-rows-3 gap-2">
+              <div className="col-span-2 grid grid-rows-2 gap-2">
                 <TeamArchetypeBlock className="row-span-1" />
-                <ActionStepsBlock className="row-span-2" />
+                <ActionStepsBlock className="row-span-1" />
               </div>
               
               {/* Third Column */}
-              <div className="col-span-2 grid grid-rows-2 gap-2">
+              <div className="col-span-2 grid grid-rows-3 gap-2">
                 <TeamProfileBlock className="row-span-1" />
-                <NewsFeedBlock className="row-span-1" />
+                <NewsFeedBlock className="row-span-2" />
               </div>
             </div>
           </div>
