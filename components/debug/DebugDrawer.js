@@ -248,7 +248,6 @@ export default function DebugDrawer({ isOpen, onToggle }) {
   }, []);
 
   const handleDrag = (e, { x, y }) => {
-    setPosition({ x, y });
     const { innerWidth, innerHeight } = window;
     const snapThreshold = 50;
 
@@ -276,9 +275,8 @@ export default function DebugDrawer({ isOpen, onToggle }) {
     if (innerWidth - (x + size.width) < snapThreshold) newX = innerWidth - size.width; // Snap to right
     if (innerHeight - (y + size.height) < snapThreshold) newY = innerHeight - size.height; // Snap to bottom
 
-    if (newX !== x || newY !== y) {
-        setPosition({ x: newX, y: newY });
-    }
+    // Only update state on stop
+    setPosition({ x: newX, y: newY });
   };
 
   const handleResize = (e, { size: newSize }) => {
