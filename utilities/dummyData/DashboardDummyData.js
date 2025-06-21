@@ -3,9 +3,27 @@ export const dashboardDummyData = {
     "Expert Rankings",
   ],
   "userRankings": [
-    "My NBA Dynasty Rankings 2025",
-    "My NFL Redraft Rankings 2025", 
-    "My MLB Keeper Rankings 2025"
+    {
+      "name": "My NBA Dynasty Rankings 2025",
+      "sport": "NBA",
+      "format": "Dynasty",
+      "scoring": "Categories",
+      "lastUpdated": "2024-01-15"
+    },
+    {
+      "name": "My NFL Redraft Rankings 2025",
+      "sport": "NFL", 
+      "format": "Redraft",
+      "scoring": "PPR",
+      "lastUpdated": "2024-01-10"
+    },
+    {
+      "name": "My MLB Keeper Rankings 2025",
+      "sport": "MLB",
+      "format": "Keeper",
+      "scoring": "Roto",
+      "lastUpdated": "2024-01-12"
+    }
   ],
   "currentTab": "overview",
   "dashboardSettings": {
@@ -272,9 +290,6 @@ export const dashboardDummyData = {
           "action": "Go to Roster"
         }
       ],
-      "userRankings": [
-        "My NBA Dynasty Rankings 2025",
-      ],
       "newsFeed": [
         {
           "type": "Latest News",
@@ -471,9 +486,6 @@ export const dashboardDummyData = {
           "note": "received offer for veteran QB",
           "action": "Review Trade"
         }
-      ],
-      "userRankings": [
-        "My NFL Redraft Rankings 2025",
       ],
       "newsFeed": [
         {
@@ -673,10 +685,7 @@ export const dashboardDummyData = {
         "prompt": "Should I trade my ace pitcher for a top-tier closer to secure more saves?",
         "verdict": "Avoid",
         "analysis": "While saves can be valuable, an ace pitcher provides consistent, high-impact contributions across multiple categories (ERA, WHIP, SO, W). Closers are volatile and a single category specialist often isn't worth an ace."
-      },
-      "userRankings": [
-        "My MLB Keeper Rankings 2025",
-      ]
+      }
     }
   ]
 };
