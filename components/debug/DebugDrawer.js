@@ -1,20 +1,13 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Bug, ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronRight, GripVertical } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import Draggable from 'react-draggable';
+import { ResizableBox } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
 // Zustand Stores
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
@@ -40,35 +33,15 @@ const DebugValue = ({ label, value, isBoolean = false, isPreformatted = false })
   </div>
 );
 
-export default function DebugDrawer({ isOpen, onToggle }) {
-  const [activeTab, setActiveTab] = useState('zustand-state');
-  const { user, isLoading, error } = useUser();
-  const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = useDashboardContext();
-  const dashboardState = { currentLeagueId, currentTab, dashboardSettings,userRankings, leagues };
-  
-  // Get dummy dashboard data state
-  const dummyDashboardState = useDummyDashboardData();
-  // Filter out functions for display
-  const dummyDashboardStateForDisplay = Object.fromEntries(
-    Object.entries(dummyDashboardState).filter(([, value]) => typeof value !== 'function')
-  );
-
-  // On mount, restore the drawer's active tab from localStorage
-  useEffect(() => {
-    const storedActiveTab = localStorage.getItem('debugDrawerActiveTab');
-    if (storedActiveTab) {
-      setActiveTab(storedActiveTab);
-    }
-  }, []);
-
-  const handleTabChange = (value) => {
-    setActiveTab(value);
-    localStorage.setItem('debugDrawerActiveTab', value);
-  };
-
-  // Early-exit in production (or when the admin flag is not set) so the component tree is completely skipped.
-  if (!SHOW_DEBUG_DRAWER || !isOpen) return null;
-
+const DebugDrawerContent = React.memo(function DebugDrawerContent({
+  activeTab,
+  onTabChange,
+  dashboardState,
+  dummyDashboardStateForDisplay,
+  user,
+  isLoading,
+  error,
+}) {
   const renderUserObject = (obj) => {
     if (!obj) return null;
 
@@ -115,103 +88,252 @@ export default function DebugDrawer({ isOpen, onToggle }) {
           {storeName}
           <ChevronRight className="h-5 w-5 transform transition-transform duration-200 group-open:rotate-90" />
         </summary>
-        
+
         <div className="p-2 border-t bg-gray-50/50 max-h-[80vh] overflow-y-auto pb-2">
-            <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-1">
-              {entries.map(([key, value], index) => {
-                const isArrayOfObjects = Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
-                return (
-                  <div key={key} className={`bg-white border rounded-lg shadow-sm break-inside-avoid w-full mb-4 ${isArrayOfObjects ? '[column-span:all]' : ''}`}>
-                    <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center ">
-                      <span>{key}</span>
-                      <span className="text-xs font-normal text-gray-400">[{index}]</span>
-                    </h4>
-                    {(Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null) ? (
-                      <div className="p-2 bg-gray-50/50 overflow-auto">
-                        {value.map((item, itemIndex) => (
-                          <details key={itemIndex} className="mb-1 last:mb-0 bg-white border rounded-md">
-                            <summary className="cursor-pointer list-none flex items-center justify-between p-2 font-medium text-sm hover:bg-gray-100">
-                              <span>{item.leagueDetails?.leagueName || item.name || `Index ${itemIndex}`}</span>
-                              <ChevronRight className="h-4 w-4 transform transition-transform duration-200 group-open:rotate-90" />
-                            </summary>
-                            <div className="border-t columns-1 md:columns-2 xl:columns-3 gap-4 p-2 bg-gray-50/50">
-                              {Object.entries(item).filter(([, val]) => typeof val !== 'function').map(([propKey, propValue], propIndex) => (
+          <div className="columns-1 md:columns-2 xl:columns-3 gap-4 space-y-1">
+            {entries.map(([key, value], index) => {
+              const isArrayOfObjects =
+                Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null;
+              return (
+                <div
+                  key={key}
+                  className={`bg-white border rounded-lg shadow-sm break-inside-avoid w-full mb-4 ${
+                    isArrayOfObjects ? '[column-span:all]' : ''
+                  }`}
+                >
+                  <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center ">
+                    <span>{key}</span>
+                    <span className="text-xs font-normal text-gray-400">[{index}]</span>
+                  </h4>
+                  {Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null ? (
+                    <div className="p-2 bg-gray-50/50 overflow-auto">
+                      {value.map((item, itemIndex) => (
+                        <details key={itemIndex} className="mb-1 last:mb-0 bg-white border rounded-md">
+                          <summary className="cursor-pointer list-none flex items-center justify-between p-2 font-medium text-sm hover:bg-gray-100">
+                            <span>{item.leagueDetails?.leagueName || item.name || `Index ${itemIndex}`}</span>
+                            <ChevronRight className="h-4 w-4 transform transition-transform duration-200 group-open:rotate-90" />
+                          </summary>
+                          <div className="border-t columns-1 md:columns-2 xl:columns-3 gap-4 p-2 bg-gray-50/50">
+                            {Object.entries(item)
+                              .filter(([, val]) => typeof val !== 'function')
+                              .map(([propKey, propValue], propIndex) => (
                                 <div key={propKey} className="bg-white border rounded-lg shadow-sm break-inside-avoid w-full mb-4">
                                   <h4 className="font-semibold p-2 border-b text-gray-700 bg-gray-50 rounded-t-lg flex justify-between items-center">
                                     <span>{propKey}</span>
                                     <span className="text-xs font-normal text-gray-400">[{propIndex}]</span>
                                   </h4>
-                                  <pre className="text-xs p-2 whitespace-pre-wrap break-all overflow-auto">{JSON.stringify(propValue, null, 2)}</pre>
+                                  <pre className="text-xs p-2 whitespace-pre-wrap break-all overflow-auto">
+                                    {JSON.stringify(propValue, null, 2)}
+                                  </pre>
                                 </div>
                               ))}
-                            </div>
-                          </details>
-                        ))}
-                      </div>
-                    ) : (
-                      <pre className="text-xs p-2 whitespace-pre-wrap break-all overflow-auto">{JSON.stringify(value, null, 2)}</pre>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                          </div>
+                        </details>
+                      ))}
+                    </div>
+                  ) : (
+                    <pre className="text-xs p-2 whitespace-pre-wrap break-all overflow-auto">
+                      {JSON.stringify(value, null, 2)}
+                    </pre>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </details>
     );
   };
 
   return (
-    <div className="h-full flex flex-col bg-white border-l">
-      <div className="flex-1 min-h-0">
-        <Tabs value={activeTab} onValueChange={handleTabChange} orientation="vertical" className="h-full">
-          <div className="w-full h-full flex flex-row">
-            {/* Left Sidebar */}
-            <div className="w-[250px] flex-shrink-0 border-r p-4 bg-gray-50/50">
-              <div className="text-left mb-4">
-                <h2 className="text-lg font-semibold">Debug Information</h2>
-                <p className="text-sm text-muted-foreground">Current user session and application state.</p>
-              </div>
-
-              <TabsList className="flex-col h-auto w-full items-stretch justify-start bg-transparent p-0 space-y-1">
-                <TabsTrigger value="zustand-state" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">Zustand State</TabsTrigger>
-                <TabsTrigger value="user-session" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">User Session</TabsTrigger>
-                <TabsTrigger value="feature-flags" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">Feature Flags</TabsTrigger>
-                <TabsTrigger value="db-record" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">DB Record</TabsTrigger>
-                <TabsTrigger value="api-log" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">API Log</TabsTrigger>
-              </TabsList>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 min-h-0 p-4">
-              <ScrollArea className="h-full w-full">
-                <TabsContent value="zustand-state" className="mt-0 h-full flex flex-col">
-                  {/* <h3 className="text-lg font-semibold mb-2 text-pb_blue">Zustand Stores</h3> */}
-                  {renderStoreState('useDashboardContext', dashboardState)}
-                  {renderStoreState('useDummyDashboardData', dummyDashboardStateForDisplay)}
-                </TabsContent>
-                <TabsContent value="user-session" className="mt-0">
-                  {/* <h3 className="text-lg font-semibold mb-2">Auth0 User Session</h3> */}
-                  {isLoading && <p>Loading user info...</p>}
-                  {error && <p>Error: {error.message}</p>}
-                  {user && <div>{renderUserObject(user)}</div>}
-                </TabsContent>
-                <TabsContent value="feature-flags" className="mt-0">
-                  {/* <h3 className="text-lg font-semibold mb-2">Feature Flags</h3> */}
-                  <p className="text-sm text-gray-500">Placeholder for active feature flags.</p>
-                </TabsContent>
-                <TabsContent value="db-record" className="mt-0">
-                  {/* <h3 className="text-lg font-semibold mb-2">User Database Record</h3> */}
-                  <p className="text-sm text-gray-500">Placeholder to fetch and display the user&apos;s full record from MongoDB.</p>
-                </TabsContent>
-                <TabsContent value="api-log" className="mt-0">
-                  {/* <h3 className="text-lg font-semibold mb-2">API Call History</h3> */}
-                  <p className="text-sm text-gray-500">Placeholder for a log of recent client-side API calls.</p>
-                </TabsContent>
-              </ScrollArea>
-            </div>
+    <div className="flex-1 min-h-0 h-full">
+      <Tabs value={activeTab} onValueChange={onTabChange} orientation="vertical" className="h-full">
+        <div className="w-full h-full flex flex-row">
+          {/* Left Sidebar */}
+          <div className="w-[250px] flex-shrink-0 border-r p-4 bg-gray-50/50 overflow-y-auto">
+            <TabsList className="flex-col h-auto w-full items-stretch justify-start bg-transparent p-0 space-y-1">
+              <TabsTrigger value="zustand-state" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                Zustand State
+              </TabsTrigger>
+              <TabsTrigger value="user-session" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                User Session
+              </TabsTrigger>
+              <TabsTrigger value="feature-flags" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                Feature Flags
+              </TabsTrigger>
+              <TabsTrigger value="db-record" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                DB Record
+              </TabsTrigger>
+              <TabsTrigger value="api-log" className="justify-start data-[state=active]:bg-gray-200/50 data-[state=active]:shadow-sm">
+                API Log
+              </TabsTrigger>
+            </TabsList>
           </div>
-        </Tabs>
-      </div>
+
+          {/* Main Content */}
+          <div className="flex-1 min-h-0 p-4">
+            <ScrollArea className="h-full w-full">
+              <TabsContent value="zustand-state" className="mt-0 h-full flex flex-col">
+                {renderStoreState('useDashboardContext', dashboardState)}
+                {renderStoreState('useDummyDashboardData', dummyDashboardStateForDisplay)}
+              </TabsContent>
+              <TabsContent value="user-session" className="mt-0">
+                {isLoading && <p>Loading user info...</p>}
+                {error && <p>Error: {error.message}</p>}
+                {user && <div>{renderUserObject(user)}</div>}
+              </TabsContent>
+              <TabsContent value="feature-flags" className="mt-0">
+                <p className="text-sm text-gray-500">Placeholder for active feature flags.</p>
+              </TabsContent>
+              <TabsContent value="db-record" className="mt-0">
+                <p className="text-sm text-gray-500">Placeholder to fetch and display the user&apos;s full record from MongoDB.</p>
+              </TabsContent>
+              <TabsContent value="api-log" className="mt-0">
+                <p className="text-sm text-gray-500">Placeholder for a log of recent client-side API calls.</p>
+              </TabsContent>
+            </ScrollArea>
+          </div>
+        </div>
+      </Tabs>
     </div>
+  );
+});
+
+export default function DebugDrawer({ isOpen, onToggle }) {
+  const [activeTab, setActiveTab] = useState('zustand-state');
+  const { user, isLoading, error } = useUser();
+  const { leagues, currentLeagueId, userRankings, currentTab, dashboardSettings } = useDashboardContext();
+  
+  const dashboardState = React.useMemo(() => ({
+    currentLeagueId, currentTab, dashboardSettings, userRankings, leagues
+  }), [currentLeagueId, currentTab, dashboardSettings, userRankings, leagues]);
+
+  // Get dummy dashboard data state
+  const dummyDashboardState = useDummyDashboardData();
+  // Filter out functions for display
+  const dummyDashboardStateForDisplay = React.useMemo(() => (
+    Object.fromEntries(
+      Object.entries(dummyDashboardState).filter(([, value]) => typeof value !== 'function')
+    )
+  ), [dummyDashboardState]);
+
+  const draggableRef = useRef(null);
+  const [position, setPosition] = useState(null);
+  const [size, setSize] = useState({ width: 800, height: 600 });
+  
+  const topIndicatorRef = useRef(null);
+  const rightIndicatorRef = useRef(null);
+  const bottomIndicatorRef = useRef(null);
+  const leftIndicatorRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (position === null) {
+        const newWidth = Math.min(window.innerWidth * 0.7, 1000);
+        const newHeight = window.innerHeight * 0.7;
+        setSize({ width: newWidth, height: newHeight });
+        setPosition({
+          x: (window.innerWidth - newWidth) / 2,
+          y: (window.innerHeight - newHeight) / 2,
+        });
+      }
+    }
+  }, [isOpen, position]);
+
+  useEffect(() => {
+    const storedActiveTab = localStorage.getItem('debugDrawerActiveTab');
+    if (storedActiveTab) {
+      setActiveTab(storedActiveTab);
+    }
+  }, []);
+
+  const handleDrag = (e, { x, y }) => {
+    setPosition({ x, y });
+    const { innerWidth, innerHeight } = window;
+    const snapThreshold = 50;
+
+    // Imperatively update indicators to avoid re-renders
+    topIndicatorRef.current.style.opacity = y < snapThreshold ? '1' : '0';
+    leftIndicatorRef.current.style.opacity = x < snapThreshold ? '1' : '0';
+    rightIndicatorRef.current.style.opacity = innerWidth - (x + size.width) < snapThreshold ? '1' : '0';
+    bottomIndicatorRef.current.style.opacity = innerHeight - (y + size.height) < snapThreshold ? '1' : '0';
+  };
+
+  const handleStop = (e, { x, y }) => {
+    // Hide all indicators
+    topIndicatorRef.current.style.opacity = '0';
+    leftIndicatorRef.current.style.opacity = '0';
+    rightIndicatorRef.current.style.opacity = '0';
+    bottomIndicatorRef.current.style.opacity = '0';
+
+    const { innerWidth, innerHeight } = window;
+    const snapThreshold = 50;
+    let newX = x;
+    let newY = y;
+
+    if (x < snapThreshold) newX = 0; // Snap to left
+    if (y < snapThreshold) newY = 0; // Snap to top
+    if (innerWidth - (x + size.width) < snapThreshold) newX = innerWidth - size.width; // Snap to right
+    if (innerHeight - (y + size.height) < snapThreshold) newY = innerHeight - size.height; // Snap to bottom
+
+    if (newX !== x || newY !== y) {
+        setPosition({ x: newX, y: newY });
+    }
+  };
+
+  const handleResize = (e, { size: newSize }) => {
+    setSize(newSize);
+  };
+
+  const handleTabChange = React.useCallback((value) => {
+    setActiveTab(value);
+    localStorage.setItem('debugDrawerActiveTab', value);
+  }, []);
+
+  if (!SHOW_DEBUG_DRAWER || !isOpen || position === null) return null;
+
+  return (
+    <>
+      {/* Page-edge Snap Indicators */}
+      <div ref={topIndicatorRef} className="fixed top-0 left-0 w-full h-2 bg-blue-500 opacity-0 transition-opacity duration-200 z-[9998]" />
+      <div ref={rightIndicatorRef} className="fixed top-0 right-0 h-full w-2 bg-blue-500 opacity-0 transition-opacity duration-200 z-[9998]" />
+      <div ref={bottomIndicatorRef} className="fixed bottom-0 left-0 w-full h-2 bg-blue-500 opacity-0 transition-opacity duration-200 z-[9998]" />
+      <div ref={leftIndicatorRef} className="fixed top-0 left-0 h-full w-2 bg-blue-500 opacity-0 transition-opacity duration-200 z-[9998]" />
+
+      <Draggable
+        nodeRef={draggableRef}
+        handle=".drag-handle"
+        position={position}
+        onDrag={handleDrag}
+        onStop={handleStop}
+        cancel=".react-resizable-handle"
+      >
+        <div ref={draggableRef} className="fixed z-[9999]" style={{ top: 0, left: 0 }}>
+          <ResizableBox
+            width={size.width}
+            height={size.height}
+            onResize={handleResize}
+            minConstraints={[400, 300]}
+            maxConstraints={[1800, 1200]}
+            className="bg-white border rounded-lg shadow-2xl flex flex-col overflow-hidden"
+          >
+            <div className="drag-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
+              <GripVertical className="h-5 w-5 text-gray-400" />
+              <h2 className="text-lg font-semibold ml-2">Debug Information</h2>
+            </div>
+
+            <DebugDrawerContent
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+              dashboardState={dashboardState}
+              dummyDashboardStateForDisplay={dummyDashboardStateForDisplay}
+              user={user}
+              isLoading={isLoading}
+              error={error}
+            />
+          </ResizableBox>
+        </div>
+      </Draggable>
+    </>
   );
 } 

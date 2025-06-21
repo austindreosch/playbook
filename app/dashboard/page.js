@@ -171,106 +171,97 @@ export default function DashboardPage() {
   return (
     <>
       {SHOW_DEBUG_DRAWER && (
-        <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
-          <Bug className="h-4 w-4" />
-        </Button>
+        <>
+          <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
+            <Bug className="h-4 w-4" />
+          </Button>
+          <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
+        </>
       )}
 
-      <ResizablePanelGroup direction="horizontal" className="w-full h-screen">
-        <ResizablePanel defaultSize={100} minSize={30}>
-          <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
-            {/* Dashboard Tab Selectors Bar */}
-            <div className="relative flex items-center">
-              {/* Dashboard Tab Selector */}
-              <div className="w-3/5">
-                <DashboardTabs />
-              </div>
+      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
+        {/* Dashboard Tab Selectors Bar */}
+        <div className="relative flex items-center">
+          {/* Dashboard Tab Selector */}
+          <div className="w-3/5">
+            <DashboardTabs />
+          </div>
 
-              {/* Imported League Selector */}
-              <div className="flex gap-2 w-2/5 justify-end pb-2.5">
+          {/* Imported League Selector */}
+          <div className="flex gap-2 w-2/5 justify-end pb-2.5">
 
-                <AllLeaguesButton className="h-9" />
-                <LeagueSelectorButton className="h-9" />
-                <ImportLeagueButton className="h-9" />
-                <DashboardSettingsButton className="h-9" />
-              </div>
+            <AllLeaguesButton className="h-9" />
+            <LeagueSelectorButton className="h-9" />
+            <ImportLeagueButton className="h-9" />
+            <DashboardSettingsButton className="h-9" />
+          </div>
 
-              {/* Selectors Divider */}
-              <div className="absolute bottom-0 right-0 w-2/5">
-                <div className="h-[1px] w-full bg-pb_lightgray"></div>
-              </div>
+          {/* Selectors Divider */}
+          <div className="absolute bottom-0 right-0 w-2/5">
+            <div className="h-[1px] w-full bg-pb_lightgray"></div>
+          </div>
+        </div>
+
+        {/* Individual League View Bar  */}
+        <div className="flex w-full pt-2.5">
+
+          {/* OVERVIEW VERSION */}
+          <div className="flex w-full justify-between ">
+            <div className="flex gap-2">
+              <CurrentLeagueTeamDisplay className="h-9"/>
+              <CurrentLeagueContext className="h-9"/>
             </div>
 
-            {/* Individual League View Bar  */}
-            <div className="flex w-full pt-2.5">
-
-              {/* OVERVIEW VERSION */}
-              <div className="flex w-full justify-between ">
-                <div className="flex gap-2">
-                  <CurrentLeagueTeamDisplay className="h-9"/>
-                  <CurrentLeagueContext className="h-9"/>
-                </div>
-
-                <div className="flex gap-2">
-                  <EditWidgetsButton className="h-9"/>
-                  <SyncLeagueButton className="h-9"/>  
-                  <LeagueSettingsButton className="h-9"/>
-                  <RankingsSelectorButton className="h-9"/>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider between League View and Main Dashboard Content */}  
-            <div className="w-full py-2.5">
-              <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-            </div>
-
-            {/* Dashboard Main Content */}
-            <div className="w-full h-full flex">
-              {/* Overview Version */}
-              <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
-
-                {/* Roster View */}
-                <div className="col-span-3 row-span-2">
-                  <RosterViewImportLeague />
-                </div>
-
-                {/* Widget Block Wall */}
-                <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
-                  {/* First Column */}
-                  <div className="col-span-2 grid grid-rows-6 gap-2">
-                    <StandingsBlock className="row-span-2" />
-                    <MatchupBlock className="row-span-4" />
-                  </div>
-
-                  {/* Second Column */}
-                  <div className="col-span-2 grid grid-rows-2 gap-2">
-                    <TeamArchetypeBlock className="row-span-1" />
-                    <ActionStepsBlock className="row-span-1" />
-                  </div>
-                  
-                  {/* Third Column */}
-                  <div className="col-span-2 grid grid-rows-3 gap-2">
-                    <TeamProfileBlock className="row-span-1" />
-                    <NewsFeedBlock className="row-span-2" />
-                  </div>
-                </div>
-
-              </div>
-
-
+            <div className="flex gap-2">
+              <EditWidgetsButton className="h-9"/>
+              <SyncLeagueButton className="h-9"/>  
+              <LeagueSettingsButton className="h-9"/>
+              <RankingsSelectorButton className="h-9"/>
             </div>
           </div>
-        </ResizablePanel>
-        {isDebugDrawerOpen && (
-          <>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={25} minSize={15} maxSize={50}>
-              <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
-            </ResizablePanel>
-          </>
-        )}
-      </ResizablePanelGroup>
+        </div>
+
+        {/* Divider between League View and Main Dashboard Content */}  
+        <div className="w-full py-2.5">
+          <div className="h-[1px] w-full bg-pb_lightestgray"></div>
+        </div>
+
+        {/* Dashboard Main Content */}
+        <div className="w-full h-full flex">
+          {/* Overview Version */}
+          <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
+
+            {/* Roster View */}
+            <div className="col-span-3 row-span-2">
+              <RosterViewImportLeague />
+            </div>
+
+            {/* Widget Block Wall */}
+            <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
+              {/* First Column */}
+              <div className="col-span-2 grid grid-rows-6 gap-2">
+                <StandingsBlock className="row-span-2" />
+                <MatchupBlock className="row-span-4" />
+              </div>
+
+              {/* Second Column */}
+              <div className="col-span-2 grid grid-rows-2 gap-2">
+                <TeamArchetypeBlock className="row-span-1" />
+                <ActionStepsBlock className="row-span-1" />
+              </div>
+              
+              {/* Third Column */}
+              <div className="col-span-2 grid grid-rows-3 gap-2">
+                <TeamProfileBlock className="row-span-1" />
+                <NewsFeedBlock className="row-span-2" />
+              </div>
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
     </>
   );
 } 
