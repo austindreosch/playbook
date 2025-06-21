@@ -221,12 +221,6 @@ export default function DebugDrawer({ isOpen, onToggle }) {
   const [position, setPosition] = useState(null);
   const [size, setSize] = useState({ width: 800, height: 600 });
   
-  // Keep a ref of the latest size so we can compare inside onResize without stale closures
-  const sizeRef = useRef({ width: 800, height: 600 });
-  useEffect(() => {
-    sizeRef.current = size;
-  }, [size]);
-
   const topIndicatorRef = useRef(null);
   const rightIndicatorRef = useRef(null);
   const bottomIndicatorRef = useRef(null);
@@ -314,26 +308,22 @@ export default function DebugDrawer({ isOpen, onToggle }) {
     setSize({ width: newWidth, height: newHeight });
   };
 
-  // Live resize handler so the dragged edge follows the cursor in real-time
-  const handleResize = React.useCallback((e, { size: newSize, handle }) => {
-    const prevSize = sizeRef.current;
+  // Position adjust helper used on resize stop
+  const adjustPositionForResize = (prevSize, newSize, handle) => {
     const deltaHeight = newSize.height - prevSize.height;
     const deltaWidth = newSize.width - prevSize.width;
 
     setPosition(prevPos => {
       let updated = { ...prevPos };
       if (handle.includes('n')) {
-        updated.y -= deltaHeight; // move top edge with cursor
+        updated.y -= deltaHeight; // shift down/up based on top edge move
       }
       if (handle.includes('w')) {
-        updated.x -= deltaWidth; // move left edge with cursor
+        updated.x -= deltaWidth; // shift right/left based on left edge move
       }
       return updated;
     });
-
-    sizeRef.current = newSize; // update ref immediately for next event
-    setSize(newSize);
-  }, []);
+  };
 
   const handleTabChange = React.useCallback((value) => {
     setActiveTab(value);
@@ -365,10 +355,9 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             minConstraints={[400, 300]}
             maxConstraints={[1800, 1200]}
             resizeHandles={['se', 's', 'e', 'n', 'w']}
-            onResize={handleResize}
-            onResizeStop={(_e, { size: newSize }) => {
-              // Finalize size on stop (position already updated in onResize)
-              setSize(newSize);
+            onResizeStop={(_e, { size: newSize, handle }) => {
+              adjustPositionForResize(size, newSize, handle);
+              setSize(newSize); // single render after gesture
             }}
             className="bg-white border rounded-lg shadow-2xl flex flex-col overflow-hidden"
           >
