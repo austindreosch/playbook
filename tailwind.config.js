@@ -48,6 +48,31 @@ module.exports = {
         '10.5': '2.625rem',
         '11.5': '2.875rem',
         '12.5': '3.125rem',
+        // Additional intermediate sizes
+        '50': '12.5rem',   // 200px
+        '54': '13.5rem',   // 216px  
+        '58': '14.5rem',   // 232px
+        '62': '15.5rem',   // 248px
+        '66': '16.5rem',   // 264px
+        '68': '17rem',     // 272px
+        '70': '17.5rem',   // 280px
+        '74': '18.5rem',   // 296px
+        '76': '19rem',     // 304px
+        '78': '19.5rem',   // 312px
+        '82': '20.5rem',   // 328px
+        '84': '21rem',     // 336px
+        '86': '21.5rem',   // 344px
+        '88': '22rem',     // 352px
+        '90': '22.5rem',   // 360px
+        '92': '23rem',     // 368px
+        '94': '23.5rem',   // 376px
+        '98': '24.5rem',   // 392px
+        '100': '25rem',    // 400px
+        '104': '26rem',    // 416px
+        '108': '27rem',    // 432px
+        '112': '28rem',    // 448px
+        '116': '29rem',    // 464px
+        '120': '30rem',    // 480px
       },
       height: {
         '2.5': '0.625rem',
@@ -190,6 +215,8 @@ module.exports = {
         pb_pastelbrown: '#9b8e82',
         pb_pastelstone: '#d6d3c2',
 
+
+
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -270,3 +297,7 @@ module.exports = {
   },
   plugins: [],
 }
+
+
+
+
