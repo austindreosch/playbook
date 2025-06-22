@@ -16,13 +16,12 @@ export default function RankingsSelectorButton({ className = '' }) {
   // =================================================================
   const getCurrentLeagueDetails = useDashboardContext(state => state.getCurrentLeagueDetails);
   const userRankings = useDashboardContext(state => state.userRankings);
-  const dashboardSettings = useDashboardContext(state => state.dashboardSettings);
+  const expertRankings = useDashboardContext(state => state.expertRankings);
   
   const leagueDetails = getCurrentLeagueDetails();
   
-  // Get expert rankings from dashboard context (assuming they're stored in dashboardSettings or similar)
-  // TODO: Update this path based on where expert rankings are actually stored in the context
-  const allExpertRankings = dashboardSettings?.expertRankings || [];
+  // Get expert rankings directly from the store
+  const allExpertRankings = expertRankings || [];
   
   // =================================================================
   // UTILITY FUNCTIONS
@@ -76,10 +75,16 @@ export default function RankingsSelectorButton({ className = '' }) {
            rankingScoring === currentScoring;
   });
   
-  // Combine all available rankings (user + expert)
+  // Combine all available rankings with expert rankings first, then sorted user rankings
   const allRankings = [
-    ...matchingUserRankings.map(ranking => ({ ...ranking, type: 'user' })),
-    ...matchingExpertRankings.map(ranking => ({ ...ranking, type: 'expert' }))
+    ...matchingExpertRankings.map(ranking => ({ ...ranking, type: 'expert' })),
+    ...matchingUserRankings
+      .map(ranking => ({ ...ranking, type: 'user' }))
+      .sort((a, b) => {
+        const dateA = new Date(a.lastUpdated);
+        const dateB = new Date(b.lastUpdated);
+        return dateB - dateA; // Sort newest first
+      })
   ];
   
   // Determine current ranking (prefer selected, then user rankings, fallback to expert)
@@ -129,16 +134,18 @@ export default function RankingsSelectorButton({ className = '' }) {
     <div className="relative" ref={buttonRef}>
       <button
         onClick={handleButtonClick}
-        className={`flex items-center justify-between gap-2 rounded-md border border-pb_lightgray shadow-sm select-none px-3 py-1 hover:bg-pb_lightestgray transition-colors w-auto ${className}`.trim()}
+        className={`flex items-center justify-between gap-2 rounded-md border border-pb_lightgray shadow-sm select-none px-3 py-1 hover:bg-pb_lightestgray transition-colors ${className}`.trim()}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <ClipboardList className="w-5 h-5 text-pb_darkgray" />
           <span className="text-sm font-semibold text-left text-pb_darkgray truncate hidden md:block lg:w-48 xl:w-62">
             {displayName}
           </span>
         </div>
         
-        <ChevronsUpDown className="w-4 h-4 text-pb_darkgray" />
+        <div className="flex items-center gap-1">
+          <ChevronsUpDown className="w-4 h-4 text-pb_darkgray" />
+          <ClipboardList className="w-5 h-5 text-pb_darkgray" />
+        </div>
       </button>
 
       {/* Custom Floating Dropdown */}
@@ -166,18 +173,23 @@ export default function RankingsSelectorButton({ className = '' }) {
               // Determine display name and details based on ranking type
               let displayName, detailsText;
               
-              if (isUserType) {
-                // User rankings: show ranking name, then "My Rankings"
-                displayName = ranking.name;
-                detailsText = 'My Rankings';
-              } else {
-                // Expert rankings: show "Expert Rankings", then sport/format/scoring details
-                displayName = 'Expert Rankings';
+              // Format sport, format, and scoring details
+              const formatDetails = (ranking) => {
                 const details = [];
                 if (ranking.sport) details.push(ranking.sport.toUpperCase());
                 if (ranking.format) details.push(ranking.format.charAt(0).toUpperCase() + ranking.format.slice(1));
                 if (ranking.scoring) details.push(ranking.scoring.charAt(0).toUpperCase() + ranking.scoring.slice(1));
-                detailsText = details.length > 0 ? details.join(' • ') : 'Expert Rankings';
+                return details.length > 0 ? details.join(' • ') : 'Rankings';
+              };
+
+              if (isUserType) {
+                // User rankings: show ranking name and sport/format/scoring details
+                displayName = ranking.name;
+                detailsText = formatDetails(ranking);
+              } else {
+                // Expert rankings: show "Expert Rankings" and sport/format/scoring details
+                displayName = 'Expert Rankings';
+                detailsText = formatDetails(ranking);
               }
               
               return (
@@ -191,7 +203,7 @@ export default function RankingsSelectorButton({ className = '' }) {
                   }`}
                 >
                   {/* Ranking Type Icon */}
-                  <Icon className="w-4 h-4 text-pb_darkgray shrink-0" />
+                  <Icon className="w-5 h-5 text-pb_darkgray shrink-0" />
 
                   {/* Ranking Name & Details */}
                   <div className="flex flex-col flex-1 min-w-0">

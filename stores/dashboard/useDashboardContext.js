@@ -19,6 +19,7 @@ const DASHBOARD_CONTEXT_SCHEMA = {
       lastUpdated: null
     },
   ],
+  expertRankings: [],           // Array: expert rankings
   currentTab: null,                  // String: currently selected tab
   currentView: null,                 // String: currently selected view
   isAllLeaguesView: false,           // Boolean: whether we're in "All Leagues" view or individual league view
@@ -174,19 +175,35 @@ const processUserRankingsInput = (rawRankings) => {
  * @returns {Object} Normalized league context data matching schema ONLY
  */
 const processLeagueContextInput = (rawData) => {
-  console.log('📥 INPUT: Processing league context data...');
+  console.log(' INPUT: Processing league context data...');
   
-  // ONLY extract the exact fields from our schema (excluding UI state)
-  const processedData = {
-    currentLeagueId: rawData.currentLeagueId || null,
-    userRankings: processUserRankingsInput(rawData.userRankings || []),
-    dashboardSettings: rawData.dashboardSettings || rawData.settings || {},
-    leagues: processLeaguesInput(rawData.leagues || []),
+  // Process leagues
+  const processedLeagues = processLeaguesInput(rawData.leagues || []);
+  
+  // Process user rankings
+  const processedUserRankings = processUserRankingsInput(rawData.userRankings || []);
+  
+  // Process expert rankings
+  const processedExpertRankings = rawData.expertRankings || [];
+  
+  // Process dashboard settings
+  const processedDashboardSettings = {
+    autoSync: rawData.dashboardSettings?.autoSync || false,
+    defaultTab: rawData.dashboardSettings?.defaultTab || 'overview',
+    notifications: {
+      trades: rawData.dashboardSettings?.notifications?.trades || false,
+      waivers: rawData.dashboardSettings?.notifications?.waivers || false,
+      news: rawData.dashboardSettings?.notifications?.news || false
+    }
   };
   
-  console.log('✅ INPUT: League context data processed successfully');
-  console.log('📋 PROCESSED FIELDS:', Object.keys(processedData));
-  return processedData;
+  return {
+    ...DASHBOARD_CONTEXT_SCHEMA,
+    leagues: processedLeagues,
+    userRankings: processedUserRankings,
+    expertRankings: processedExpertRankings,
+    dashboardSettings: processedDashboardSettings
+  };
 };
 
 // ============================================================================
@@ -261,6 +278,7 @@ const useDashboardContext = create((set, get) => ({
   // All fields from schema - explicitly set from processed data
   currentLeagueId: processedLeagueData.currentLeagueId,
   userRankings: processedLeagueData.userRankings,
+  expertRankings: processedLeagueData.expertRankings,
   currentTab: initialCurrentTab,
   currentView: initialCurrentView,
   isAllLeaguesView: initialIsAllLeaguesView,

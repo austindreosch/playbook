@@ -22,15 +22,16 @@ export const metadata = {
   keywords: ['fantasy sports', 'AI', 'rankings', 'trades', 'fantasy football', 'fantasy basketball', 'fantasy hockey', 'fantasy baseball', 'fantasy soccer', 'fantasy golf', 'fantasy tennis', 'fantasy racing', 'fantasy football rankings', 'fantasy basketball rankings', 'fantasy hockey rankings', 'fantasy baseball rankings', 'fantasy soccer rankings', 'fantasy golf rankings', 'fantasy tennis rankings', 'fantasy racing rankings'],
 }
 
+const NAVBAR_HEIGHT = 64; // 16px padding top + 48px navbar height
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full scroll-smooth">
       <UserProvider>
-        <body className={`${dmSans.className} flex flex-col bg-pb_paperwhite pt-12 md:pt-16`}>
+      <body className={`${dmSans.className} bg-pb_paperwhite min-h-0`}>
           <AOSInitializer />
           <ConditionalNavBar />
-          <main className="flex-1">
-            <MasterDatasetInitializer />
+            <main className="mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
             {children}
           </main>
           <Toaster />

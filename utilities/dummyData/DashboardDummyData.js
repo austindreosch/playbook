@@ -5,7 +5,7 @@ export const dashboardDummyData = {
       "sport": "nba", 
       "format": "dynasty",
       "scoring": "categories",
-      "lastUpdated": "2024-07-22T10:00:00Z"
+      "lastUpdated": "2025-06-19T14:45:00Z"
     },
     {
       "name": "Expert NFL Redraft Rankings 2025",
@@ -14,14 +14,14 @@ export const dashboardDummyData = {
       "scoring": "points",
       "pprType": "0.5",
       "flexSetting": "superflex",
-      "lastUpdated": "2024-07-21T15:30:00Z"
+      "lastUpdated": "2025-06-17T09:30:00Z"
     },
     {
       "name": "Expert MLB Keeper Rankings 2025",
       "sport": "mlb",
       "format": "keeper",
       "scoring": "categories", 
-      "lastUpdated": "2024-07-20T12:00:00Z"
+      "lastUpdated": "2025-06-21T16:15:00Z"
     }
   ],
   "userRankings": [
@@ -30,7 +30,7 @@ export const dashboardDummyData = {
       "sport": "nba",
       "format": "dynasty",
       "scoring": "categories",
-      "lastUpdated": "2024-07-21T10:00:00Z"
+      "lastUpdated": "2025-06-20T11:30:00Z"
     },
     {
       "name": "Football Redraft 2025",
@@ -39,14 +39,14 @@ export const dashboardDummyData = {
       "scoring": "points",
       "pprType": "0.5",
       "flexSetting": "superflex",
-      "lastUpdated": "2024-07-20T15:30:00Z"
+      "lastUpdated": "2025-06-18T08:45:00Z"
     },
     {
       "name": "My MLB Keeper Rankings 2025",
       "sport": "mlb",
       "format": "keeper",
       "scoring": "categories",
-      "lastUpdated": "2024-07-19T12:00:00Z"
+      "lastUpdated": "2025-06-22T09:15:00Z"
     }
   ],
   "dashboardSettings": {
