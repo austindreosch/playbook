@@ -47,7 +47,8 @@ export const dashboardDummyData = {
         "scoring": "Categories",
         "platform": "Fantrax",
         "mode": "H2H (Each)",
-        "teamDirection": "Contending"
+        "teamDirection": "Contending",
+        "teamSize": 12
       },
       "leagueSettings": {
         "autoStart": true,
@@ -328,7 +329,8 @@ export const dashboardDummyData = {
         "scoring": "PPR",
         "platform": "ESPN",
         "mode": "H2H",
-        "teamDirection": "Rebuilding"
+        "teamDirection": "Rebuilding",
+        "teamSize": 10
       },
       "leagueSettings": {
         "autoStart": false,
@@ -508,14 +510,15 @@ export const dashboardDummyData = {
     },
     {
       "leagueDetails": {
-        "teamName": "Diamond Dominators",
-        "leagueName": "Slam Dunk MLB League",
+        "teamName": "Batball Brawlers",
+        "leagueName": "Diamond Dynasty Baseball",
         "sport": "MLB",
         "format": "Keeper",
         "scoring": "Roto",
         "platform": "Yahoo",
         "mode": "Season Long",
-        "teamDirection": "Contending"
+        "teamDirection": "Contending",
+        "teamSize": 16
       },
       "leagueSettings": {
         "autoStart": true,

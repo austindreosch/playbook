@@ -43,6 +43,40 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
   isLoading,
   error,
 }) {
+  // State to track which store sections are expanded
+  const [expandedStores, setExpandedStores] = useState(() => {
+    const stored = localStorage.getItem('debugDrawerExpandedStores');
+    return stored ? JSON.parse(stored) : {};
+  });
+
+  // State to track which individual items are expanded
+  const [expandedItems, setExpandedItems] = useState(() => {
+    const stored = localStorage.getItem('debugDrawerExpandedItems');
+    return stored ? JSON.parse(stored) : {};
+  });
+
+  // Save expanded state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('debugDrawerExpandedStores', JSON.stringify(expandedStores));
+  }, [expandedStores]);
+
+  useEffect(() => {
+    localStorage.setItem('debugDrawerExpandedItems', JSON.stringify(expandedItems));
+  }, [expandedItems]);
+
+  const toggleStoreExpanded = (storeName) => {
+    setExpandedStores(prev => ({
+      ...prev,
+      [storeName]: !prev[storeName]
+    }));
+  };
+
+  const toggleItemExpanded = (itemKey) => {
+    setExpandedItems(prev => ({
+      ...prev,
+      [itemKey]: !prev[itemKey]
+    }));
+  };
   const renderUserObject = (obj) => {
     if (!obj) return null;
 
@@ -82,12 +116,22 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
 
   const renderStoreState = (storeName, storeState) => {
     const entries = Object.entries(storeState).filter(([, value]) => typeof value !== 'function');
+    const isExpanded = expandedStores[storeName] || false;
 
     return (
-      <details className="mb-1 group border rounded-md [&[open]]:flex [&[open]]:flex-col [&[open]]:flex-1 [&[open]]:min-h-0">
-        <summary className="cursor-pointer list-none flex-shrink-0 flex items-center justify-between p-1.5 font-medium text-sm hover:bg-gray-50">
+      <details 
+        open={isExpanded}
+        className="mb-1 group border rounded-md [&[open]]:flex [&[open]]:flex-col [&[open]]:flex-1 [&[open]]:min-h-0"
+      >
+        <summary 
+          className="cursor-pointer list-none flex-shrink-0 flex items-center justify-between p-1.5 font-medium text-sm hover:bg-gray-50"
+          onClick={(e) => {
+            e.preventDefault();
+            toggleStoreExpanded(storeName);
+          }}
+        >
           {storeName}
-          <ChevronRight className="h-4 w-4 transform transition-transform duration-200 group-open:rotate-90" />
+          <ChevronRight className={`h-4 w-4 transform transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
         </summary>
 
         <div className="p-1 border-t bg-gray-50/50 max-h-[80vh] overflow-y-auto">
@@ -108,12 +152,25 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
                   </h4>
                   {Array.isArray(value) && value.length > 0 && typeof value[0] === 'object' && value[0] !== null ? (
                     <div className="p-1 bg-gray-50/50 overflow-auto">
-                      {value.map((item, itemIndex) => (
-                        <details key={itemIndex} className="mb-0.5 last:mb-0 bg-white border rounded">
-                          <summary className="cursor-pointer list-none flex items-center justify-between p-1.5 font-medium text-xs hover:bg-gray-100">
-                            <span>{item.leagueDetails?.leagueName || item.name || `Index ${itemIndex}`}</span>
-                            <ChevronRight className="h-3 w-3 transform transition-transform duration-200 group-open:rotate-90" />
-                          </summary>
+                      {value.map((item, itemIndex) => {
+                        const itemKey = `${key}-${itemIndex}`;
+                        const isItemExpanded = expandedItems[itemKey] || false;
+                        return (
+                          <details 
+                            key={itemIndex} 
+                            open={isItemExpanded}
+                            className="mb-0.5 last:mb-0 bg-white border rounded"
+                          >
+                            <summary 
+                              className="cursor-pointer list-none flex items-center justify-between p-1.5 font-medium text-xs hover:bg-gray-100"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                toggleItemExpanded(itemKey);
+                              }}
+                            >
+                              <span>{item.leagueDetails?.leagueName || item.name || `Index ${itemIndex}`}</span>
+                              <ChevronRight className={`h-3 w-3 transform transition-transform duration-200 ${isItemExpanded ? 'rotate-90' : ''}`} />
+                            </summary>
                           <div className="border-t columns-1 md:columns-2 xl:columns-3 gap-2 p-1 bg-gray-50/50">
                             {Object.entries(item)
                               .filter(([, val]) => typeof val !== 'function')
@@ -129,9 +186,10 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
                                 </div>
                               ))}
                           </div>
-                        </details>
-                      ))}
-                    </div>
+                                                    </details>
+                          );
+                        })}
+                      </div>
                   ) : (
                     <pre className="text-xs p-1.5 whitespace-pre-wrap break-all overflow-auto">
                       {JSON.stringify(value, null, 1)}
@@ -452,7 +510,12 @@ export default function DebugDrawer({ isOpen, onToggle }) {
         onStop={handleStop}
         cancel=".react-resizable-handle"
       >
-        <div ref={draggableRef} className="fixed z-[9999]" style={{ top: 0, left: 0 }}>
+        <div 
+          ref={draggableRef} 
+          id="debug-drawer-root"
+          className="fixed z-[9999]" 
+          style={{ top: 0, left: 0 }}
+        >
           <ResizableBox
             width={size.width}
             height={size.height}
@@ -465,14 +528,14 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             }}
             className="bg-white border rounded-lg shadow-2xl flex flex-col"
           >
-            <div className="drag-handle cursor-move bg-gray-100 p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
-              <GripVertical className="h-5 w-5 text-gray-400" />
-              <h2 className="text-lg font-semibold ml-2">Debug Information</h2>
+            <div className="drag-handle cursor-move bg-pb_greenhover p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
+              <GripVertical className="h-5 w-5 text-white" />
+              <h2 className="text-lg font-semibold ml-2 text-white">Debug Information</h2>
               <div className="ml-auto flex items-center gap-3">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="p-1 rounded-md border bg-white hover:bg-gray-100 shadow-sm"
+                  className="p-1 rounded-md border bg-white hover:bg-pb_lightestgray shadow-sm"
                   aria-label="Reset Drawer"
                 >
                   <AlignCenter className="h-4 w-6" />
@@ -480,7 +543,7 @@ export default function DebugDrawer({ isOpen, onToggle }) {
                 <button
                   type="button"
                   onClick={onToggle}
-                  className="p-1 rounded-md border bg-white hover:bg-gray-100 shadow-sm"
+                  className="p-1 rounded-md border bg-white hover:bg-pb_lightestgray shadow-sm"
                   aria-label="Close Debug Drawer"
                 >
                   <X className="h-4 w-6" />

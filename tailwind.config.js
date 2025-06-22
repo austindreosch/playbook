@@ -190,8 +190,6 @@ module.exports = {
         pb_pastelbrown: '#9b8e82',
         pb_pastelstone: '#d6d3c2',
 
-
-
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -272,8 +270,3 @@ module.exports = {
   },
   plugins: [],
 }
-
-
-
-
-
