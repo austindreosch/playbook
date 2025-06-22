@@ -60,6 +60,17 @@ export default function LeagueSelectorButton({ className = "" }) {
 
   const handleButtonClick = () => {
     console.log('🖱️ Button clicked');
+    
+    // If not in league view, directly enter the current league
+    if (!isLeagueView) {
+      if (currentLeagueId) {
+        console.log('🔄 Entering current league:', currentLeagueId);
+        setIndividualLeagueView(currentLeagueId);
+      }
+      return;
+    }
+    
+    // If already in league view, show dropdown to switch leagues
     setIsOpen(!isOpen);
     setSearchQuery(''); // Clear search when opening
   };
@@ -204,13 +215,13 @@ export default function LeagueSelectorButton({ className = "" }) {
                     className={`group relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 m-1 py-7 max-h-4 text-sm outline-none transition-colors ${
                       isSelected 
                         ? 'bg-pb_lightergray text-pb_darkgray hover:bg-pb_lightgray focus:bg-pb_lightgray' 
-                        : 'text-pb_darkgray hover:bg-pb_lightgray hover:text-pb_darkgray'
+                        : 'text-pb_darkgray hover:bg-pb_backgroundgray hover:text-pb_darkgray'
                     }`}
                 >
                                                         {/* Sport Icon & Container */}
                     <div className={`flex items-center justify-center w-8 h-8 rounded-full shrink-0 mr-0.5 transition-colors
                       ${isSelected ? ' text-white group-hover:bg-lightgray' : 'bg-pb_backgroundgray border border-pb_lightgray text-pb_darkgray'}`}>
-                    {getSportIcon(sport, isSelected ? 'w-6 h-6 text-pb_darkgray' : 'w-5 h-5 text-pb_darkgray')}
+                    {getSportIcon(sport, isSelected ? 'w-5.5 h-5.5 text-pb_darkgray' : 'w-5 h-5 text-pb_darkgray')}
                   </div>
 
                   {/* League Name & Format */}
