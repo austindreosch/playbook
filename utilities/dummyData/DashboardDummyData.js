@@ -1,17 +1,39 @@
 export const dashboardDummyData = {
   "expertRankings": [
-    "Expert Rankings",
+    {
+      "name": "Expert NBA Dynasty Rankings 2025",
+      "sport": "nba", 
+      "format": "dynasty",
+      "scoring": "categories",
+      "lastUpdated": "2024-07-22T10:00:00Z"
+    },
+    {
+      "name": "Expert NFL Redraft Rankings 2025",
+      "sport": "nfl",
+      "format": "redraft", 
+      "scoring": "points",
+      "pprType": "0.5",
+      "flexSetting": "superflex",
+      "lastUpdated": "2024-07-21T15:30:00Z"
+    },
+    {
+      "name": "Expert MLB Keeper Rankings 2025",
+      "sport": "mlb",
+      "format": "keeper",
+      "scoring": "categories", 
+      "lastUpdated": "2024-07-20T12:00:00Z"
+    }
   ],
   "userRankings": [
     {
-      "name": "My NBA Dynasty Rankings 2025",
+      "name": "NBA Dynasty List",
       "sport": "nba",
       "format": "dynasty",
       "scoring": "categories",
       "lastUpdated": "2024-07-21T10:00:00Z"
     },
     {
-      "name": "My NFL Redraft Rankings 2025",
+      "name": "Football Redraft 2025",
       "sport": "nfl",
       "format": "redraft",
       "scoring": "points",
@@ -27,7 +49,6 @@ export const dashboardDummyData = {
       "lastUpdated": "2024-07-19T12:00:00Z"
     }
   ],
-  
   "dashboardSettings": {
     "autoSync": true,
     "defaultTab": "overview",
