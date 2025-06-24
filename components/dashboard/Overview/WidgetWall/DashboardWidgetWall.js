@@ -41,54 +41,62 @@ export default function DashboardWidgetWall() {
     const measureHeight = () => {
       const containerHeight = container.clientHeight;
       if (containerHeight > 0) {
-        const totalGapHeight = 5 * 8; 
+        const totalGapHeight = 5 * 8;
         const netHeight = containerHeight - totalGapHeight;
         setUnitHeight(netHeight / 6);
       }
     };
-
-    // Delay measurement to allow parent layout to settle
-    const timeoutId = setTimeout(measureHeight, 0);
     
+    measureHeight(); // Initial measurement
     const resizeObserver = new ResizeObserver(measureHeight);
     resizeObserver.observe(container);
 
-    return () => {
-      clearTimeout(timeoutId);
-      resizeObserver.disconnect();
-    };
-  }, []);
+    return () => resizeObserver.disconnect();
+  }, [widgetLayout]); // Re-run when layout changes, which covers most cases
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // Require pointer to move 8px to start dragging
+        distance: 8,
       },
     })
   );
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (!over) return;
-    if (active.id !== over.id) {
-      // This is a simplified logic for reordering within the same column.
-      // A full implementation would need to handle moving between columns.
-      // For now, we will find the column of the active item and reorder within it.
-      const newLayout = { ...widgetLayout };
-      let activeColumn = null;
-      Object.keys(newLayout).forEach(col => {
-        if (newLayout[col].includes(active.id)) {
-          activeColumn = col;
-        }
-      });
-      if (activeColumn && newLayout[activeColumn].includes(over.id)) {
-        const oldIndex = newLayout[activeColumn].indexOf(active.id);
-        const newIndex = newLayout[activeColumn].indexOf(over.id);
-        newLayout[activeColumn] = arrayMove(newLayout[activeColumn], oldIndex, newIndex);
-        setWidgetLayout(newLayout);
-      }
-      // TODO: Implement logic for dragging between columns.
+    if (!over || active.id === over.id) {
+      return;
     }
+
+    const newLayout = JSON.parse(JSON.stringify(widgetLayout));
+    let sourceColumn, sourceIndex, destColumn, destIndex;
+
+    Object.entries(newLayout).forEach(([colId, widgets]) => {
+      const activeIndex = widgets.indexOf(active.id);
+      const overIndex = widgets.indexOf(over.id);
+
+      if (activeIndex !== -1) {
+        sourceColumn = colId;
+        sourceIndex = activeIndex;
+      }
+      if (overIndex !== -1) {
+        destColumn = colId;
+        destIndex = overIndex;
+      }
+    });
+
+    if (!destColumn) {
+        if (newLayout[over.id]) {
+            destColumn = over.id;
+            destIndex = newLayout[destColumn].length;
+        } else {
+            return;
+        }
+    }
+
+    const [movedItem] = newLayout[sourceColumn].splice(sourceIndex, 1);
+    newLayout[destColumn].splice(destIndex, 0, movedItem);
+    setWidgetLayout(newLayout);
   };
 
   const allWidgets = widgetLayout ? Object.values(widgetLayout).flat() : [];
@@ -102,7 +110,10 @@ export default function DashboardWidgetWall() {
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
         <div ref={containerRef} className="flex w-full h-full gap-2">
           {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
-            <div key={columnId} className="flex-1 flex flex-col gap-2 overflow-y-auto">
+            <div
+              key={columnId}
+              className="flex-1 flex flex-col gap-2 min-h-fit overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent scrollbar-gutter-stable"
+            >
               {widgets.map((widgetId) => {
                 const Widget = widgetMap[widgetId];
                 if (!Widget) return null;

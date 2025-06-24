@@ -40,6 +40,13 @@ import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/Te
 import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
 import RosterViewImportLeague from '../../components/dashboard/Overview/RosterView/RosterViewImportLeague';
 
+// All Leagues View Pages
+
+// Individual League View Pages
+import LeagueOverviewPage from '@/components/dashboard/LeagueView/LeagueOverviewPage';
+import LeagueRosterPage from '@/components/dashboard/LeagueView/LeagueRosterPage';
+import LeagueTradesPage from '@/components/dashboard/LeagueView/LeagueTradesPage';
+
 // Store
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
@@ -189,6 +196,19 @@ export default function DashboardPage() {
   if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
 
+  const renderLeagueView = () => {
+    switch (currentTab) {
+      case 'overview':
+        return <LeagueOverviewPage />;
+      case 'roster':
+        return <LeagueRosterPage />;
+      case 'trades':
+        return <LeagueTradesPage />;
+      default:
+        return <LeagueOverviewPage />; // Fallback to overview
+    }
+  };
+
   return (
     <>
       {SHOW_DEBUG_DRAWER && (
@@ -223,72 +243,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Individual League View Bar - Only show when not in All Leagues view */}
-        {!isAllLeaguesView && (
-          <div className="flex w-full pt-2.5">
+        {/* Main Content */}
 
-            {/* OVERVIEW VERSION */}
-            <div className="flex w-full justify-between ">
-              <div className="flex gap-2">
-                <CurrentLeagueTeamDisplay className="h-9"/>
-                <CurrentLeagueContext className="h-9"/>
-              </div>
 
-              <div className="flex gap-2">
-                <SyncLeagueButton className="h-9"/>  
-                <EditWidgetsButton className="h-9"/>
-                <LeagueSettingsButton className="h-9"/>
-                <RankingsSelectorButton className="h-9"/>
-              </div>
+        <div className="flex-grow min-h-0">
+          {isAllLeaguesView ? (
+            // TODO: Build out the All Leagues view
+            <div className="flex items-center justify-center w-full h-full">
+              <p>All Leagues View (Coming Soon)</p>
             </div>
-          </div>
-        )}
-
-        {/* Divider between League Bar and Main Dashboard Content */}  
-        <div className="w-full py-2.5">
-          <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-        </div>
-
-        {/* Dashboard Main Content */}
-        <div className="w-full h-full flex">
-          {/* Overview Version */}
-          <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
-
-            {/* Roster View */}
-            <div className="col-span-3 row-span-2">
+          ) : currentLeagueId ? (
+            renderLeagueView()
+          ) : (
+            <div className="flex items-center justify-center w-full h-full">
               <RosterViewImportLeague />
             </div>
-
-            {/* Widget Block Wall */}
-            <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
-
-              {/* <div className="col-span-2 grid grid-rows-6 gap-2">
-                <StandingsBlock className="row-span-2" />
-                <MatchupBlock className="row-span-4" />
-              </div>
-
-              <div className="col-span-2 grid grid-rows-2 gap-2">
-                <TeamArchetypeBlock className="row-span-1" />
-                <ActionStepsBlock className="row-span-1" />
-              </div>
-
-              <div className="col-span-2 grid grid-rows-3 gap-2">
-                <TeamProfileBlock className="row-span-1" />
-                <NewsFeedBlock className="row-span-2" />
-              </div> */}
-
-
-
-            {/* Widget Block Wall */}
-            <div className="col-span-12 row-span-2">
-              <DashboardWidgetWall />
-            </div>
-
-            </div>
-
-          </div>
-
-
+          )}
         </div>
       </div>
     </>

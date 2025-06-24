@@ -294,9 +294,9 @@ console.log('🔍 DEBUG PROCESSED DATA:', {
 const useDashboardContext = create(
   persist(
     (set, get) => ({
-      // ============================================================================
+      // =================================================================
       // STATE
-      // ============================================================================
+      // =================================================================
       isEditMode: false,
       leagues: [],
       currentLeagueId: null,
@@ -304,10 +304,11 @@ const useDashboardContext = create(
       allRankings: [],
       currentRankingId: null,
       widgetLayout: initialWidgetLayout,
+      layoutBeforeEdit: null, // To store layout on entering edit mode
 
-      // ============================================================================
+      // =================================================================
       // ACTIONS
-      // ============================================================================
+      // =================================================================
 
       // ----------------------------------------------------------------------------
       // Widget Actions
@@ -343,6 +344,37 @@ const useDashboardContext = create(
         await storage.set('widgetLayout', initialWidgetLayout);
         get().loadDashboardData();
         console.log('🔄 Dashboard data has been reset to dummy data.');
+      },
+
+      // ----------------------------------------------------------------------------
+      // UI Actions
+      // ----------------------------------------------------------------------------
+      startEditingLayout: () => {
+        set(state => ({
+          isEditMode: true,
+          layoutBeforeEdit: state.widgetLayout, // Save current layout
+        }));
+      },
+
+      saveLayoutChanges: () => {
+        set({
+          isEditMode: false,
+          layoutBeforeEdit: null, // Clear the saved layout
+        });
+      },
+
+      cancelLayoutChanges: () => {
+        set(state => ({
+          isEditMode: false,
+          widgetLayout: state.layoutBeforeEdit || initialWidgetLayout, // Revert
+          layoutBeforeEdit: null,
+        }));
+      },
+
+      resetLayoutToDefault: () => {
+        set({
+          widgetLayout: initialWidgetLayout,
+        });
       },
 
       // ============================================================================
@@ -816,16 +848,15 @@ const useDashboardContext = create(
 
     }),
     {
-      name: 'dashboard-storage', // unique name
-      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
-      merge: (persistedState, currentState) => {
-        const merged = { ...currentState, ...persistedState };
-        // If the persisted layout is empty or invalid, use the current (initial) state's layout.
-        if (!persistedState.widgetLayout || Object.keys(persistedState.widgetLayout).length === 0) {
-          merged.widgetLayout = currentState.widgetLayout;
-        }
-        return merged;
-      },
+      name: 'dashboard-context-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        // Persist only these fields
+        currentLeagueId: state.currentLeagueId,
+        currentTab: state.currentTab,
+        isAllLeaguesView: state.isAllLeaguesView,
+        widgetLayout: state.widgetLayout,
+      }),
     }
   )
 );

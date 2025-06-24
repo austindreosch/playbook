@@ -1,28 +1,37 @@
-import { LayoutDashboard, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Check, LayoutDashboard, RotateCcw, X } from 'lucide-react';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
-import AcceptWidgetsButton from './AcceptWidgetsButton';
 
 export default function EditWidgetsButton({ className = '' }) {
-  const isEditMode = useDashboardContext((state) => state.isEditMode);
-  const setIsEditMode = useDashboardContext((state) => state.setIsEditMode);
+  const isEditMode = useDashboardContext(state => state.isEditMode);
+  const startEditingLayout = useDashboardContext(state => state.startEditingLayout);
+  const saveLayoutChanges = useDashboardContext(state => state.saveLayoutChanges);
+  const cancelLayoutChanges = useDashboardContext(state => state.cancelLayoutChanges);
+  const resetLayoutToDefault = useDashboardContext(state => state.resetLayoutToDefault);
+
+  if (isEditMode) {
+    return (
+      <div className={`flex gap-2 ${className}`}>
+        {/* Reset to Default Button */}
+        <Button variant="outline" size="icon" onClick={resetLayoutToDefault} title="Reset to Default Layout">
+          <RotateCcw className="w-4 h-4" />
+        </Button>
+        {/* Cancel Button */}
+        <Button variant="destructive" size="icon" onClick={cancelLayoutChanges} title="Cancel Changes">
+          <X className="w-4 h-4" />
+        </Button>
+        {/* Save/Done Button */}
+        <Button variant="primary" size="icon" onClick={saveLayoutChanges} title="Save Layout">
+          <Check className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex gap-2">
-      <button
-        onClick={() => setIsEditMode(!isEditMode)}
-        className={`flex items-center justify-between px-3 gap-3 rounded-md border transition-colors duration-200 shadow-sm select-none ${
-          isEditMode
-            ? 'border-pb_red bg-pb-red-100 hover:bg-pb_red-200'
-            : 'border-pb_lightgray bg-white hover:bg-pb_lightestgray'
-        } ${className}`.trim()}
-      >
-        {isEditMode ? (
-          <X className="w-5 h-5 text-pb_red" />
-        ) : (
-          <LayoutDashboard className="w-5 h-5 text-pb_darkgray" />
-        )}
-      </button>
-      {isEditMode && <AcceptWidgetsButton />}
-    </div>
+    <Button variant="outline" onClick={startEditingLayout} className={className}>
+      <LayoutDashboard className="w-4 h-4 mr-2" />
+      Edit Widgets
+    </Button>
   );
 } 
