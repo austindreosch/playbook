@@ -1,4 +1,4 @@
-import { Clock, RefreshCw } from 'lucide-react';
+import { CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 
@@ -7,6 +7,7 @@ import useDashboardContext from '../../../../stores/dashboard/useDashboardContex
 //  - className (string) - optional additional CSS classes
 export default function SyncLeagueButton({ className = '' }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   
   // ============================================================================
   // DUMMY DATA ACCESS - REPLACE WITH REAL DATA SOURCE
@@ -48,7 +49,7 @@ export default function SyncLeagueButton({ className = '' }) {
     // return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
     return `${diffInDays}d ago`;
   };
-2 
+
   const handleSync = async () => {
     if (!currentLeagueId) {
       console.warn('No current league selected');
@@ -89,6 +90,10 @@ export default function SyncLeagueButton({ className = '' }) {
         updateLastSync(result.data.lastSync);
       }
       
+      setIsLoading(false);
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 2000); // Revert to idle after 2s
+      
       // ============================================================================
       // REAL IMPLEMENTATION PLACEHOLDER - ADD DATABASE REFRESH HERE
       // ============================================================================
@@ -120,7 +125,6 @@ export default function SyncLeagueButton({ className = '' }) {
       // Example real implementation:
       // toast.error('Failed to sync league. Please try again.');
       // logErrorToMonitoringService('league_sync_failed', error, { leagueId: currentLeagueId });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -128,24 +132,37 @@ export default function SyncLeagueButton({ className = '' }) {
   return (
     <button
       onClick={handleSync}
-      disabled={isLoading}
+      disabled={isLoading || isSuccess}
       className={`
         flex items-center justify-between rounded-md border shadow-sm select-none 
         px-3 py-1 transition-colors
-        ${isLoading
-          ? ' bg-gradient-to-r from-pb_green-800 via-pb_green-300 to-pb_green-800 bg-[length:300%_100%] animate-background-pan border-pb_green-700'
-          : 'border-pb_lightgray bg-white hover:bg-pb_lightestgray'
+        ${
+          isLoading
+            ? 'bg-gradient-to-r from-pb_green-800 via-pb_green-300 to-pb_green-800 bg-[length:300%_100%] animate-background-pan border-pb_green-700'
+            : isSuccess
+            ? 'bg-pb_green border-pb_green-700'
+            : 'border-pb_lightgray bg-white hover:bg-pb_lightestgray'
         }
         ${className}`.trim().replace(/\s+/g, ' ')}
     >
       <div className="flex items-center">
-        <RefreshCw className={`w-5 h-5 mr-1.5 text-pb_darkgray ${isLoading ? 'animate-spin text-white' : ''}`} />
+        {isSuccess ? (
+          <CheckCircle className="w-5 h-5 mr-1.5 text-white animate-pop-bounce-in" />
+        ) : (
+          <RefreshCw className={`w-5 h-5 mr-1.5 ${isLoading ? 'animate-spin text-white' : 'text-pb_darkgray'}`} />
+        )}
       </div>
-      <div className="flex items-center ml-2">
-        <Clock className={`w-3 h-3 text-pb_darkgray mr-1 ${isLoading ? 'text-white' : ''}`} />
-        <span className={`whitespace-nowrap text-xs text-pb_darkgray ${isLoading ? 'text-white' : ''}`}>
-          {formatLastSync(lastSyncDate)}
-        </span>
+      <div className="flex items-center ml-2 w-16 justify-center">
+        {isSuccess ? (
+          <span className="whitespace-nowrap text-xs text-white animate-fade-in justify-start">Synced!</span>
+        ) : (
+          <>
+            <Clock className={`w-3 h-3 mr-1 ${isLoading ? 'text-white' : 'text-pb_darkgray'}`} />
+            <span className={`whitespace-nowrap text-xs ${isLoading ? 'text-white' : 'text-pb_darkgray'}`}>
+              {formatLastSync(lastSyncDate)}
+            </span>
+          </>
+        )}
       </div>
     </button>
   );
