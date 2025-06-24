@@ -17,19 +17,18 @@ export default function DashboardTabs() {
   };
 
   return (
-    <div className="h-12 w-full flex rounded-lg rounded-tr-lg rounded-b-none overflow-hidden border border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5 pt-0.5">
-      {availableTabs.map(({ id, label, enabled }, idx) => (
+    <div className="h-12 w-full flex items-center rounded-t-lg gap-0.5 overflow-hidden border border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5">
+      {availableTabs.map(({ id, label, enabled }) => (
         <button
           key={id}
           disabled={!enabled}
           className={`
-            flex-1 h-full flex items-center justify-center text-sm font-semibold tracking-wider uppercase
+            flex-1 flex items-center justify-center text-sm font-semibold tracking-wider uppercase
             focus:outline-none select-none transition-colors
             ${currentTab === id
-              ? 'bg-pb_paperwhite text-pb_darkgray -mb-px border border-pb_darkgray border-b-0 rounded-tl-lg rounded-tr-lg'
-              : 'text-white hover:bg-pb_mddarkgray border border-transparent'}
-            ${idx === 0 ? 'rounded-tl-lg rounded-tr-lg' : ''}
-            disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-pb_mddarkgray
+              ? 'h-full bg-pb_paperwhite text-pb_darkgray border mt-1 border-pb_darkgray border-b-0 rounded-t-lg'
+              : 'h-full text-white hover:bg-pb_mddarkgray rounded-md mt-1.5 mx-0.5'}
+            disabled:opacity-70 disabled:cursor-not-allowed
           `}
           onClick={() => handleClick(id)}
         >
