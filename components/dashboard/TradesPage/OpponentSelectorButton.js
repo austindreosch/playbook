@@ -109,7 +109,7 @@ export default function OpponentSelectorButton({ className = '' }) {
 
       {isOpen && (
         <div 
-          className="absolute top-full right-0 mt-1 bg-white border border-pb_lightgray rounded-md shadow-md z-[10001] max-h-80 overflow-y-auto text-pb_darkgray animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"
+          className="absolute top-full right-0 w-full mt-1 bg-white border border-pb_lightgray rounded-md shadow-md z-[10001] max-h-80 overflow-y-auto text-pb_darkgray animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"
         >
           {opponentTeams.length === 0 ? (
             <div className="relative flex cursor-default select-none items-center rounded-sm px-3 py-2 text-sm outline-none">
