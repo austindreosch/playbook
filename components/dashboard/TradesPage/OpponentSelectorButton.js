@@ -5,21 +5,21 @@ import { Check, ChevronsUpDown, Users } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 // Hardcoded team data for now
-const dummyTeams = [
-  { teamName: 'Cosmic Comets', owner: 'Alex' },
-  { teamName: 'Galactic Guardians', owner: 'Ben' },
-  { teamName: 'Solar Flares', owner: 'Charlie' },
-  { teamName: 'Nebula Knights', owner: 'Diana' },
-  { teamName: 'Orbiting Olympians', owner: 'Evan' },
-  { teamName: 'Astro Avengers', owner: 'Fiona' },
-  { teamName: 'Meteor Mavericks', owner: 'George' },
-  { teamName: 'Starlight Strikers', owner: 'Hannah' },
-  { teamName: 'Supernova Sluggers', owner: 'Ian' },
-  { teamName: 'Vortex Vipers', owner: 'Julia' },
-  { teamName: 'Pulsar Pirates', owner: 'Kevin' },
-  // User's team, which will be filtered out
-  { teamName: 'Dunkball Legends', owner: 'User' },
-];
+// const dummyTeams = [
+//   { teamName: 'Cosmic Comets', owner: 'Alex' },
+//   { teamName: 'Galactic Guardians', owner: 'Ben' },
+//   { teamName: 'Solar Flares', owner: 'Charlie' },
+//   { teamName: 'Nebula Knights', owner: 'Diana' },
+//   { teamName: 'Orbiting Olympians', owner: 'Evan' },
+//   { teamName: 'Astro Avengers', owner: 'Fiona' },
+//   { teamName: 'Meteor Mavericks', owner: 'George' },
+//   { teamName: 'Starlight Strikers', owner: 'Hannah' },
+//   { teamName: 'Supernova Sluggers', owner: 'Ian' },
+//   { teamName: 'Vortex Vipers', owner: 'Julia' },
+//   { teamName: 'Pulsar Pirates', owner: 'Kevin' },
+//   // User's team, which will be filtered out
+//   { teamName: 'Dunkball Legends', owner: 'User' },
+// ];
 
 export default function OpponentSelectorButton({ className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function OpponentSelectorButton({ className = '' }) {
   // =================================================================
   const leagues = useDashboardContext((state) => state.leagues);
   const currentLeagueId = useDashboardContext((state) => state.currentLeagueId);
-  // const leagueTeams = useDashboardContext((state) => state.leagueTeams); // Will use this later
+  const leagueTeams = useDashboardContext((state) => state.leagueTeams); // Will use this later
 
   const currentLeague = useMemo(() => {
     if (!leagues || !currentLeagueId) return null;
@@ -46,8 +46,9 @@ export default function OpponentSelectorButton({ className = '' }) {
   
   // For now, using dummy data. Later, this will come from context.
   const opponentTeams = useMemo(() => {
-    return dummyTeams.filter(team => team.teamName !== userTeamName);
-  }, [userTeamName]);
+    if (!leagueTeams) return [];
+    return leagueTeams.filter(team => team.teamName !== userTeamName);
+  }, [leagueTeams, userTeamName]);
 
   // Determine current opponent
   const currentOpponent = selectedOpponent || (opponentTeams.length > 0 ? opponentTeams[0] : null);

@@ -58,6 +58,20 @@ export const dashboardDummyData = {
       "news": false
     }
   },
+  "leagueTeams": [
+    { "teamName": "Cosmic Comets", "owner": "Alex" },
+    { "teamName": "Galactic Guardians", "owner": "Ben" },
+    { "teamName": "Solar Flares", "owner": "Charlie" },
+    { "teamName": "Nebula Knights", "owner": "Diana" },
+    { "teamName": "Orbiting Olympians", "owner": "Evan" },
+    { "teamName": "Astro Avengers", "owner": "Fiona" },
+    { "teamName": "Meteor Mavericks", "owner": "George" },
+    { "teamName": "Starlight Strikers", "owner": "Hannah" },
+    { "teamName": "Supernova Sluggers", "owner": "Ian" },
+    { "teamName": "Vortex Vipers", "owner": "Julia" },
+    { "teamName": "Pulsar Pirates", "owner": "Kevin" },
+    { "teamName": "Dunkball Legends", "owner": "User" }
+  ],
   "leagues": [
     {
       "leagueDetails": {
@@ -926,3 +940,31 @@ export const resetDummyData = () => {
 
 // Create a function that returns the current data (either from localStorage or original)
 export const getDashboardDummyData = () => getCurrentDummyData();
+
+// This defines the structure of the leagueTeams data for a single league.
+// It's a mapping from leagueId to an array of team objects.
+const leagueTeams = {
+  "Fantasy Hoopers Dynasty": [
+    { "teamName": "Cosmic Comets", "owner": "Alex" },
+    { "teamName": "Galactic Guardians", "owner": "Ben" },
+    { "teamName": "Solar Flares", "owner": "Charlie" },
+    { "teamName": "Nebula Knights", "owner": "Diana" },
+    { "teamName": "Orbiting Olympians", "owner": "Evan" },
+    { "teamName": "Astro Avengers", "owner": "Fiona" },
+    { "teamName": "Meteor Mavericks", "owner": "George" },
+    { "teamName": "Starlight Strikers", "owner": "Hannah" },
+    { "teamName": "Supernova Sluggers", "owner": "Ian" },
+    { "teamName": "Vortex Vipers", "owner": "Julia" },
+    { "teamName": "Pulsar Pirates", "owner": "Kevin" },
+    { "teamName": "Dunkball Legends", "owner": "User" }
+  ],
+  "Gridiron Dynasty": [
+    // ... teams for Gridiron Dynasty
+  ],
+  "Diamond Kings League": [
+    // ... teams for Diamond Kings League
+  ]
+};
+
+export { leagueTeams };
+
