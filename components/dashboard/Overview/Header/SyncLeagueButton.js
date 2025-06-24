@@ -149,7 +149,11 @@ export default function SyncLeagueButton({ className = '' }) {
         {isSuccess ? (
           <CheckCircle className="w-5 h-5 mr-1.5 text-white animate-pop-bounce-in" />
         ) : (
-          <RefreshCw className={`w-5 h-5 mr-1.5 ${isLoading ? 'animate-spin text-white' : 'text-pb_darkgray'}`} />
+          <RefreshCw
+            className={`w-5 h-5 mr-1.5 ${
+              isLoading ? 'animate-spin-and-pulse text-white' : 'text-pb_darkgray'
+            }`}
+          />
         )}
       </div>
       <div className="flex items-center ml-2 w-16 justify-center">
