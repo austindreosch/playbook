@@ -19,12 +19,12 @@ import SortableWidget from './SortableWidget';
 
 // Map widget IDs to their components and styling
 const widgetMap = {
-  standings: { component: StandingsBlock, size: 2 },     // 1x unit
-  matchup: { component: MatchupBlock, size: 2 },         // 3x unit
-  teamArchetype: { component: TeamArchetypeBlock, size: 2 },// 2x unit
-  actionSteps: { component: ActionStepsBlock, size: 2 },  // 2x unit
-  teamProfile: { component: TeamProfileBlock, size: 1 },  // 1x unit
-  newsFeed: { component: NewsFeedBlock, size: 3 },       // 3x unit
+  standings: { component: StandingsBlock, size: 2 },   
+  matchup: { component: MatchupBlock, size: 4 },         
+  teamArchetype: { component: TeamArchetypeBlock, size: 3 },
+  actionSteps: { component: ActionStepsBlock, size: 3 },  
+  teamProfile: { component: TeamProfileBlock, size: 2 }, 
+  newsFeed: { component: NewsFeedBlock, size: 4 },
 };
 
 export default function DashboardWidgetWall() {
@@ -38,21 +38,25 @@ export default function DashboardWidgetWall() {
     const container = containerRef.current;
     if (!container) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (entries[0]) {
-        const containerHeight = entries[0].contentRect.height;
-        if (containerHeight > 0) {
-          // We want the unit height to be 1/6th of the container's height, minus the gaps.
-          // There are 5 gaps (of 8px each) in a full 6-unit column.
-          const totalGapHeight = 5 * 8; // gap-2 is 0.5rem = 8px
-          const netHeight = containerHeight - totalGapHeight;
-          setUnitHeight(netHeight / 6);
-        }
+    const measureHeight = () => {
+      const containerHeight = container.clientHeight;
+      if (containerHeight > 0) {
+        const totalGapHeight = 5 * 8; 
+        const netHeight = containerHeight - totalGapHeight;
+        setUnitHeight(netHeight / 6);
       }
-    });
+    };
 
+    // Delay measurement to allow parent layout to settle
+    const timeoutId = setTimeout(measureHeight, 0);
+    
+    const resizeObserver = new ResizeObserver(measureHeight);
     resizeObserver.observe(container);
-    return () => resizeObserver.disconnect();
+
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
   }, []);
 
   const sensors = useSensors(
@@ -96,7 +100,7 @@ export default function DashboardWidgetWall() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
-        <div ref={containerRef} className="flex w-full h-screen gap-2">
+        <div ref={containerRef} className="flex w-full h-full gap-2">
           {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
             <div key={columnId} className="flex-1 flex flex-col gap-2 overflow-y-auto">
               {widgets.map((widgetId) => {
@@ -104,7 +108,7 @@ export default function DashboardWidgetWall() {
                 if (!Widget) return null;
                 const WidgetComponent = Widget.component;
                 const widgetHeight = unitHeight > 0 
-                  ? (unitHeight * Widget.size) + ((Widget.size - 1) * 8) // Add back gap height for multi-unit widgets
+                  ? (unitHeight * Widget.size) + ((Widget.size - 1) * 8)
                   : undefined;
 
                 return (
