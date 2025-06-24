@@ -69,7 +69,8 @@ export const dashboardDummyData = {
         "platform": "Fantrax",
         "mode": "H2H (Each)",
         "teamDirection": "Contending",
-        "teamSize": 12
+        "teamSize": 12,
+        "lastSync": "2025-06-22T14:45:00Z"
       },
       "leagueSettings": {
         "autoStart": true,
@@ -351,7 +352,8 @@ export const dashboardDummyData = {
         "platform": "ESPN",
         "mode": "H2H",
         "teamDirection": "Rebuilding",
-        "teamSize": 10
+        "teamSize": 10,
+        "lastSync": "2025-06-22T14:45:00Z"
       },
       "leagueSettings": {
         "autoStart": false,
@@ -539,7 +541,8 @@ export const dashboardDummyData = {
         "platform": "Yahoo",
         "mode": "Season Long",
         "teamDirection": "Contending",
-        "teamSize": 16
+        "teamSize": 16,
+        "lastSync": "2025-06-22T14:45:00Z"
       },
       "leagueSettings": {
         "autoStart": true,
@@ -715,3 +718,211 @@ export const dashboardDummyData = {
     }
   ]
 };
+
+// ============================================================================
+// UTILITY FUNCTIONS FOR UPDATING DUMMY DATA
+// ============================================================================
+
+// Create a mutable copy of the dummy data that can be updated
+let mutableDashboardData = { ...dashboardDummyData };
+
+/**
+ * Get the current dummy data (either from localStorage or original)
+ * @returns {Object} Current dummy data
+ */
+export const getCurrentDummyData = () => {
+  try {
+    // Try to get updated data from localStorage first
+    const savedData = localStorage.getItem('dashboardDummyData');
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      // Update our mutable copy
+      mutableDashboardData = parsedData;
+      console.log('📂 Loaded updated dummy data from localStorage');
+      return parsedData;
+    }
+  } catch (error) {
+    console.warn('⚠️ Failed to load dummy data from localStorage:', error);
+  }
+  
+  // Fallback to original data
+  return mutableDashboardData;
+};
+
+/**
+ * Save updated dummy data to localStorage
+ * @param {Object} data - The data to save
+ */
+const saveDummyDataToStorage = (data) => {
+  try {
+    localStorage.setItem('dashboardDummyData', JSON.stringify(data));
+    console.log('💾 Saved updated dummy data to localStorage');
+  } catch (error) {
+    console.warn('⚠️ Failed to save dummy data to localStorage:', error);
+  }
+};
+
+/**
+ * Update the lastSync timestamp for a specific league in the dummy data
+ * @param {string} leagueName - The name of the league to update
+ * @param {string} newLastSync - New lastSync timestamp (ISO string)
+ * @returns {Object} Updated dummy data object
+ */
+export const updateLeagueLastSync = (leagueName, newLastSync) => {
+  // Get current data (from localStorage if available)
+  const currentData = getCurrentDummyData();
+  
+  const updatedData = {
+    ...currentData,
+    leagues: currentData.leagues.map(league => {
+      if (league.leagueDetails?.leagueName === leagueName) {
+        return {
+          ...league,
+          leagueDetails: {
+            ...league.leagueDetails,
+            lastSync: newLastSync
+          }
+        };
+      }
+      return league;
+    })
+  };
+  
+  // Update our mutable copy
+  mutableDashboardData = updatedData;
+  
+  // Save to localStorage for persistence
+  saveDummyDataToStorage(updatedData);
+  
+  console.log('🔄 Updated lastSync for league:', leagueName, 'to:', newLastSync);
+  return updatedData;
+};
+
+/**
+ * Get a copy of the dummy data with updated lastSync for a specific league
+ * @param {string} leagueName - The name of the league to update
+ * @param {string} newLastSync - New lastSync timestamp (ISO string)
+ * @returns {Object} Updated dummy data object
+ */
+export const getUpdatedDummyData = (leagueName, newLastSync) => {
+  return updateLeagueLastSync(leagueName, newLastSync);
+};
+
+/**
+ * Reset dummy data to original values (for testing/debugging)
+ */
+export const resetDummyData = () => {
+  // Get the original static data (not the mutable copy)
+  const originalData = {
+    "expertRankings": [
+      {
+        "name": "Expert NBA Dynasty Rankings 2025",
+        "sport": "nba", 
+        "format": "dynasty",
+        "scoring": "categories",
+        "lastUpdated": "2025-06-19T14:45:00Z"
+      },
+      {
+        "name": "Expert NFL Redraft Rankings 2025",
+        "sport": "nfl",
+        "format": "redraft", 
+        "scoring": "points",
+        "pprType": "0.5",
+        "flexSetting": "superflex",
+        "lastUpdated": "2025-06-17T09:30:00Z"
+      },
+      {
+        "name": "Expert MLB Keeper Rankings 2025",
+        "sport": "mlb",
+        "format": "keeper",
+        "scoring": "categories", 
+        "lastUpdated": "2025-06-21T16:15:00Z"
+      }
+    ],
+    "userRankings": [
+      {
+        "name": "NBA Dynasty List",
+        "sport": "nba",
+        "format": "dynasty",
+        "scoring": "categories",
+        "lastUpdated": "2025-06-20T11:30:00Z"
+      },
+      {
+        "name": "Football Redraft 2025",
+        "sport": "nfl",
+        "format": "redraft",
+        "scoring": "points",
+        "pprType": "0.5",
+        "flexSetting": "superflex",
+        "lastUpdated": "2025-06-18T08:45:00Z"
+      },
+      {
+        "name": "My MLB Keeper Rankings 2025",
+        "sport": "mlb",
+        "format": "keeper",
+        "scoring": "categories",
+        "lastUpdated": "2025-06-22T09:15:00Z"
+      }
+    ],
+    "dashboardSettings": {
+      "autoSync": true,
+      "defaultTab": "overview",
+      "notifications": {
+        "trades": true,
+        "waivers": true,
+        "news": false
+      }
+    },
+    "leagues": [
+      {
+        "leagueDetails": {
+          "teamName": "Dunkball Legends",
+          "leagueName": "Fantasy Hoopers Dynasty",
+          "sport": "NBA",
+          "format": "Dynasty",
+          "scoring": "Categories",
+          "platform": "Fantrax",
+          "mode": "H2H (Each)",
+          "teamDirection": "Contending",
+          "teamSize": 12,
+          "lastSync": "2025-06-22T14:45:00Z"
+        }
+      },
+      {
+        "leagueDetails": {
+          "teamName": "Gridiron Gurus",
+          "leagueName": "Touchdown Titans League",
+          "sport": "NFL",
+          "format": "Redraft",
+          "scoring": "PPR",
+          "platform": "ESPN",
+          "mode": "H2H",
+          "teamDirection": "Rebuilding",
+          "teamSize": 10,
+          "lastSync": "2025-06-22T14:45:00Z"
+        }
+      },
+      {
+        "leagueDetails": {
+          "teamName": "Batball Brawlers",
+          "leagueName": "Diamond Dynasty Baseball",
+          "sport": "MLB",
+          "format": "Keeper",
+          "scoring": "Roto",
+          "platform": "Yahoo",
+          "mode": "Season Long",
+          "teamDirection": "Contending",
+          "teamSize": 16,
+          "lastSync": "2025-06-22T14:45:00Z"
+        }
+      }
+    ]
+  };
+  
+  mutableDashboardData = originalData;
+  localStorage.removeItem('dashboardDummyData');
+  console.log('🔄 Reset dummy data to original values');
+};
+
+// Create a function that returns the current data (either from localStorage or original)
+export const getDashboardDummyData = () => getCurrentDummyData();

@@ -37,16 +37,16 @@ export default function CurrentLeagueContext({
     <div className={`hidden lg:flex items-center pl-1 gap-3 xl:pl-2 ${className}`.trim()}>
 
       {/* Sport icon */}
-      <div className="shrink-0 hidden xl:block">
+      {/* <div className="shrink-0 hidden xl:block">
         {sport === 'NBA' && <Basketball className="w-4 h-4 text-pb_mddarkgray" />}
         {sport === 'NFL' && <Football className="w-4 h-4 text-pb_mddarkgray" />}
         {sport === 'MLB' && <Baseball className="w-4 h-4 text-pb_mddarkgray" />}
-      </div>
+      </div> */}
 
       {/* League name */}
-      <span className="text-xs font-semibold text-pb_mddarkgray truncate hidden xl:block">
+      {/* <span className="text-xs font-semibold text-pb_mddarkgray truncate hidden xl:block">
         {leagueName}
-      </span>
+      </span> */}
       
       {/* Lightning bolt separator */}
       <Bolt className="w-3 h-3 text-pb_midgray shrink-0" />

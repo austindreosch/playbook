@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
+import { getDashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
 import { DASHBOARD_DEFAULTS, TABS_CONFIG } from './config.js';
 
 // ============================================================================
@@ -212,7 +212,7 @@ const processLeagueContextInput = (rawData) => {
 // Process only league data from dummy data through our input pipeline
 
 console.log('🔄 INITIALIZING: Processing league context dummy data...');
-const processedLeagueData = processLeagueContextInput(dashboardDummyData);
+const processedLeagueData = processLeagueContextInput(getDashboardDummyData());
 const initialLeagues = processedLeagueData.leagues;
 const initialLeague = initialLeagues[0] || null;
 const initialLeagueId = initialLeague?.leagueDetails?.leagueName || null;
@@ -290,6 +290,26 @@ const useDashboardContext = create((set, get) => ({
   // INPUT ACTIONS (Data Entry Points)
   // ============================================================================
   
+  /**
+   * REHYDRATE STATE: Force reload of dummy data into the store
+   * This is a temporary solution for dummy data persistence.
+   * In a real implementation, this would be replaced by fetching from a database.
+   */
+  rehydrate: () => {
+    console.log('🔄 Rehydrating dashboard context from dummy data...');
+    const freshData = getDashboardDummyData();
+    const processedData = processLeagueContextInput(freshData);
+    
+    set({
+      leagues: processedData.leagues,
+      userRankings: processedData.userRankings,
+      expertRankings: processedData.expertRankings,
+      dashboardSettings: processedData.dashboardSettings,
+    });
+    
+    console.log('✅ Dashboard context rehydrated');
+  },
+
   /**
    * PRIMARY INPUT: Replace entire league context with new data
    * This is the main entry point for API data updates
@@ -520,6 +540,64 @@ const useDashboardContext = create((set, get) => ({
     const { dashboardSettings } = get();
     set({ dashboardSettings: { ...dashboardSettings, ...settingsUpdate } });
     console.log('✅ INPUT ACTION: Dashboard settings updated');
+  },
+
+  /**
+   * LEAGUE SYNC: Update lastSync timestamp for current league
+   * @param {string} newLastSync - New lastSync timestamp (ISO string)
+   */
+  updateLastSync: (newLastSync) => {
+    console.log('📥 INPUT ACTION: updateLastSync called', { newLastSync });
+    const { leagues, currentLeagueId } = get();
+    
+    if (!currentLeagueId) {
+      console.warn('⚠️  INPUT ACTION: No current league selected for lastSync update');
+      return;
+    }
+
+    // ============================================================================
+    // DUMMY LOGIC - REPLACE WITH REAL DATABASE UPDATE
+    // ============================================================================
+    
+    // DUMMY: Update lastSync in local state only
+    // REAL: Update lastSync in database and then refresh state from database
+    
+    const updatedLeagues = leagues.map(league => {
+      if (league.leagueDetails?.leagueName === currentLeagueId) {
+        return {
+          ...league,
+          leagueDetails: {
+            ...league.leagueDetails,
+            lastSync: newLastSync
+          }
+        };
+      }
+      return league;
+    });
+
+    // Update the store with fresh data
+    set({ leagues: updatedLeagues });
+    console.log('✅ INPUT ACTION: LastSync updated for league:', currentLeagueId);
+    
+    // ============================================================================
+    // REAL IMPLEMENTATION PLACEHOLDER - ADD DATABASE UPDATE HERE
+    // ============================================================================
+    
+    // TODO: REAL IMPLEMENTATION NEEDED:
+    // 1. Update lastSync timestamp in database for this league
+    // 2. Optionally refresh the entire league data from database
+    // 3. Handle database update errors gracefully
+    
+    // Example real implementation:
+    // try {
+    //   await updateLeagueLastSyncInDatabase(currentLeagueId, newLastSync);
+    //   // Optionally refresh league data from database
+    //   const refreshedLeagueData = await fetchLeagueFromDatabase(currentLeagueId);
+    //   // Update state with fresh data from database
+    // } catch (error) {
+    //   console.error('Failed to update lastSync in database:', error);
+    //   // Handle error (maybe revert state change, show user notification, etc.)
+    // }
   },
 
   // ============================================================================

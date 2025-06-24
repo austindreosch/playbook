@@ -52,11 +52,17 @@ export default function DashboardPage() {
   // ---- INCOMING DATA ----
   // Get current view state from the dashboard context store
   const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
+  const rehydrate = useDashboardContext((state) => state.rehydrate);
 
   const router = useRouter();
   const { user, error, isLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
   const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    // Rehydrate the store on mount to ensure we have the latest persisted dummy data
+    rehydrate();
+  }, [rehydrate]);
 
   useEffect(() => {
     if (SHOW_DEBUG_DRAWER) {
@@ -224,8 +230,8 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex gap-2">
-                <EditWidgetsButton className="h-9"/>
                 <SyncLeagueButton className="h-9"/>  
+                <EditWidgetsButton className="h-9"/>
                 <LeagueSettingsButton className="h-9"/>
                 <RankingsSelectorButton className="h-9"/>
               </div>

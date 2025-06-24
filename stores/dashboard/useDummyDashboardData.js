@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { dashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
+import { getDashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
 import useDashboardContext from './useDashboardContext.js';
 
 // ============================================================================
@@ -36,7 +36,7 @@ const useDummyDashboardData = create((set, get) => ({
   newsFeed: [],
   
   // Global data - initialized from top-level dummy data
-  expertRankings: dashboardDummyData.expertRankings || [],
+  expertRankings: getDashboardDummyData().expertRankings || [],
 
   // Function to update dashboard data based on current league
   updateFromCurrentLeague: () => {

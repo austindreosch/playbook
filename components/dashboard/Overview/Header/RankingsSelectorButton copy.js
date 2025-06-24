@@ -1,5 +1,6 @@
 import { Check, ChevronsUpDown, ClipboardList, ClipboardMinus, Clock } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { shallow } from 'zustand/shallow';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 
 // Button that shows the current rankings list and allows changing it.
@@ -14,12 +15,15 @@ export default function RankingsSelectorButton({ className = '' }) {
   // =================================================================
   // CONTEXT STORE
   // =================================================================
-  // By selecting each piece of state individually, we ensure the component
-  // only re-renders when the exact data it needs changes, preventing loops.
-  const leagues = useDashboardContext((state) => state.leagues);
-  const currentLeagueId = useDashboardContext((state) => state.currentLeagueId);
-  const userRankings = useDashboardContext((state) => state.userRankings);
-  const expertRankings = useDashboardContext((state) => state.expertRankings);
+  const { leagues, currentLeagueId, userRankings, expertRankings } = useDashboardContext(
+    (state) => ({
+      leagues: state.leagues,
+      currentLeagueId: state.currentLeagueId,
+      userRankings: state.userRankings,
+      expertRankings: state.expertRankings,
+    }),
+    shallow
+  );
 
   const leagueDetails = useMemo(() => {
     if (!leagues || !currentLeagueId) return {};
@@ -29,6 +33,30 @@ export default function RankingsSelectorButton({ className = '' }) {
     return currentLeague?.leagueDetails || {};
   }, [leagues, currentLeagueId]);
   
+  // Get expert rankings directly from the store
+  const allExpertRankings = expertRankings || [];
+  
+  // =================================================================
+  // UTILITY FUNCTIONS
+  // =================================================================
+  
+  // Convert timestamp to relative time (e.g., "2d ago", "1w ago")
+  const getRelativeTime = (timestamp) => {
+    if (!timestamp) return '';
+    
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 1) return 'Today';
+    if (diffDays === 1) return '1d ago';
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
+    return `${Math.floor(diffDays / 365)}y ago`;
+  };
+
   // =================================================================
   // COMPUTED VALUES
   // =================================================================
@@ -38,7 +66,7 @@ export default function RankingsSelectorButton({ className = '' }) {
   const currentFormat = leagueDetails?.format?.toLowerCase();
   const currentScoring = leagueDetails?.scoring?.toLowerCase();
   
-  // Find and tag matching user rankings for current league context
+  // Find matching user rankings for current league context
   const matchingUserRankings = (userRankings || []).filter(ranking => {
     const rankingSport = ranking.sport?.toLowerCase();
     const rankingFormat = ranking.format?.toLowerCase(); 
@@ -47,9 +75,9 @@ export default function RankingsSelectorButton({ className = '' }) {
     return rankingSport === currentSport && 
            rankingFormat === currentFormat && 
            rankingScoring === currentScoring;
-  }).map(ranking => ({ ...ranking, type: 'user' }));
+  });
   
-  // Find and tag matching expert rankings for current league context
+  // Find matching expert rankings for current league context
   const matchingExpertRankings = (expertRankings || []).filter(ranking => {
     const rankingSport = ranking.sport?.toLowerCase();
     const rankingFormat = ranking.format?.toLowerCase(); 
@@ -58,12 +86,13 @@ export default function RankingsSelectorButton({ className = '' }) {
     return rankingSport === currentSport && 
            rankingFormat === currentFormat && 
            rankingScoring === currentScoring;
-  }).map(ranking => ({ ...ranking, type: 'expert' }));
+  });
   
   // Combine all available rankings with expert rankings first, then sorted user rankings
   const allRankings = [
-    ...matchingExpertRankings,
-    ...matchingUserRankings
+    ...(matchingExpertRankings || []).map(ranking => ({ ...ranking, type: 'expert' })),
+    ...(matchingUserRankings || [])
+      .map(ranking => ({ ...ranking, type: 'user' }))
       .sort((a, b) => {
         const dateA = new Date(a.lastUpdated);
         const dateB = new Date(b.lastUpdated);
@@ -75,10 +104,8 @@ export default function RankingsSelectorButton({ className = '' }) {
   const currentRanking = selectedRanking || 
     (matchingUserRankings?.length > 0 ? matchingUserRankings[0] : matchingExpertRankings?.[0]);
   
-  // Determine display name for the button
-  const displayName = currentRanking?.type === 'expert' 
-    ? 'Expert Rankings' 
-    : currentRanking?.name || 'Select Rankings';
+  // Determine display name
+  const displayName = currentRanking?.name || 'Select Rankings';
 
   // =================================================================
   // EVENT HANDLERS
@@ -123,7 +150,7 @@ export default function RankingsSelectorButton({ className = '' }) {
         className={`flex items-center justify-between gap-2 rounded-md border border-pb_lightgray shadow-sm select-none px-3 py-1 hover:bg-pb_lightestgray transition-colors ${className}`.trim()}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-sm font-semibold text-left text-pb_darkgray truncate hidden md:block md:w-44 xl:w-54">
+          <span className="text-sm font-semibold text-left text-pb_darkgray truncate hidden md:block lg:w-48 xl:w-62">
             {displayName}
           </span>
         </div>
