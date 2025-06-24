@@ -1,27 +1,27 @@
 //  /dashboard page
 
 'use client'
-import DebugDrawer from '@/components/debug/DebugDrawer';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import DebugDrawer from '../../components/debug/DebugDrawer';
 // import { ThreeCircles } from 'react-loader-spinner';
 import { Bug } from 'lucide-react';
 import { toast } from 'sonner';
-// import HubBlock from '/components/HubBlock';
-// import RosterBlock from '/components/RosterBlock';
+
 
 // Layout Components
-import DashboardSkeleton from '@/components/dashboard/DashboardSkeleton';
+import DashboardSkeleton from '../../components/dashboard/DashboardSkeleton.jsx';
+import DashboardWidgetWall from '../../components/dashboard/Overview/WidgetWall/DashboardWidgetWall';
 
 // Global Header Components
-import DashboardTabs from '@/components/dashboard/DashboardTabs';
 import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
 import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
 import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
+import DashboardTabs from '../../components/dashboard/DashboardTabs';
 
 // League Header Components 
 import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
@@ -35,10 +35,10 @@ import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueB
 import ActionStepsBlock from '@/components/dashboard/Overview/ActionSteps/ActionStepsBlock';
 import MatchupBlock from '@/components/dashboard/Overview/Matchup/MatchupBlock';
 import NewsFeedBlock from '@/components/dashboard/Overview/NewsFeed/NewsFeedBlock';
-import RosterViewImportLeague from '@/components/dashboard/Overview/RosterView/RosterViewImportLeague';
 import StandingsBlock from '@/components/dashboard/Overview/Standings/StandingsBlock';
 import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';
 import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
+import RosterViewImportLeague from '../../components/dashboard/Overview/RosterView/RosterViewImportLeague';
 
 // Store
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
@@ -51,11 +51,16 @@ export default function DashboardPage() {
   // =================================================================
   // ---- INCOMING DATA ----
   // Get current view state from the dashboard context store
-  const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
+  const currentLeagueId = useDashboardContext((state) => state.currentLeagueId);
+  const isLoading = useDashboardContext((state) => state.isLoading);
+  const currentTab = useDashboardContext((state) => state.currentTab);
+  const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
   const rehydrate = useDashboardContext((state) => state.rehydrate);
+  const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
+
 
   const router = useRouter();
-  const { user, error, isLoading } = useUser();
+  const { user, error, isLoading: isUserLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
   const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
 
@@ -111,7 +116,7 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if (!isLoading && user && !user.email_verified) {
+    if (!isUserLoading && user && !user.email_verified) {
       const now = Date.now();
       const oneDay = 24 * 60 * 60 * 1000;
       const lastShown = localStorage.getItem('verificationToastLastShown');
@@ -121,7 +126,7 @@ export default function DashboardPage() {
         localStorage.setItem('verificationToastLastShown', now.toString());
       }
     }
-  }, [user, isLoading]);
+  }, [user, isUserLoading]);
 
   // Debug keybind effect
   useEffect(() => {
@@ -147,10 +152,10 @@ export default function DashboardPage() {
   }, []); // Empty dependency array ensures this runs only once
 
   // useEffect(() => {
-  //   if (!isLoading && !user) {
+  //   if (!isUserLoading && !user) {
   //     router.push('/landing');
   //   }
-  // }, [isLoading, user, router]);
+  // }, [isUserLoading, user, router]);
 
   // Function to handle redirection to rankings page
   // useEffect(() => {
@@ -179,7 +184,7 @@ export default function DashboardPage() {
   }, []); // Empty dependency array ensures this runs only once
 
   // Override real loading state with debug loading state
-  const effectiveIsLoading = debugLoading || isLoading;
+  const effectiveIsLoading = debugLoading || isLoading || isUserLoading;
   
   if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
@@ -256,23 +261,29 @@ export default function DashboardPage() {
 
             {/* Widget Block Wall */}
             <div className="col-span-8 row-span-2 grid grid-cols-6 gap-2 w-full h-full">
-              {/* First Column */}
-              <div className="col-span-2 grid grid-rows-6 gap-2">
+
+              {/* <div className="col-span-2 grid grid-rows-6 gap-2">
                 <StandingsBlock className="row-span-2" />
                 <MatchupBlock className="row-span-4" />
               </div>
 
-              {/* Second Column */}
               <div className="col-span-2 grid grid-rows-2 gap-2">
                 <TeamArchetypeBlock className="row-span-1" />
                 <ActionStepsBlock className="row-span-1" />
               </div>
-              
-              {/* Third Column */}
+
               <div className="col-span-2 grid grid-rows-3 gap-2">
                 <TeamProfileBlock className="row-span-1" />
                 <NewsFeedBlock className="row-span-2" />
-              </div>
+              </div> */}
+
+
+
+            {/* Widget Block Wall */}
+            <div className="col-span-12 row-span-2">
+              <DashboardWidgetWall />
+            </div>
+
             </div>
 
           </div>
