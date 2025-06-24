@@ -27,9 +27,9 @@ export default function LeagueRosterPage() {
             <CurrentLeagueContext className="h-9" />
           </div>
           <div className="flex gap-2">
-            <SyncLeagueButton className="h-9" />
             {/* <EditWidgetsButton className="h-9" /> */}
             <LeagueSettingsButton className="h-9" />
+            <SyncLeagueButton className="h-9" />
             <RankingsSelectorButton className="h-9" />
           </div>
         </div>

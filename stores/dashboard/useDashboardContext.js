@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { getDashboardDummyData } from '../../utilities/dummyData/DashboardDummyData.js';
+import { getDashboardDummyData, leagueTeams } from '../../utilities/dummyData/DashboardDummyData.js';
 import { DASHBOARD_DEFAULTS, TABS_CONFIG } from './config.js';
 
 // ============================================================================
@@ -16,13 +16,15 @@ const storage = {
 // ============================================================================
 const dummyData = getDashboardDummyData();
 const DUMMY_LEAGUES = dummyData.leagues;
-const DUMMY_LEAGUE_TEAMS = dummyData.leagueTeams;
+const DUMMY_LEAGUE_TEAMS = leagueTeams;
 const DUMMY_RANKINGS = dummyData.userRankings;
 const initialWidgetLayout = {
   column1: ['standings', 'matchup'],
   column2: ['teamArchetype', 'actionSteps'],
   column3: ['teamProfile', 'newsFeed'],
 };
+
+const initialTradeValueMode = 'compass';
 
 // ============================================================================
 // DASHBOARD CONTEXT SCHEMA DEFINITIONS
@@ -42,11 +44,13 @@ const DASHBOARD_CONTEXT_SCHEMA = {
     },
   ],
   expertRankings: [],           // Array: expert rankings
+  leagueTeams: [],                   // Array: teams in the current league
   currentTab: null,                  // String: currently selected tab
   currentView: null,                 // String: currently selected view
   isAllLeaguesView: false,           // Boolean: whether we're in "All Leagues" view or individual league view
   availableTabs: [],                 // Array: tabs available in current view (All Leagues vs individual league)
   dashboardSettings: {},              // Object: dashboard-wide settings
+  tradeValueMode: initialTradeValueMode, // String: 'compass' or 'clipboard'
   leagues: [
     {
       leagueDetails: {},             // Object: league configuration and metadata
@@ -207,6 +211,9 @@ const processLeagueContextInput = (rawData) => {
   
   // Process expert rankings
   const processedExpertRankings = rawData.expertRankings || [];
+
+  // Process league teams
+  const processedLeagueTeams = rawData.leagueTeams || [];
   
   // Process dashboard settings
   const processedDashboardSettings = {
@@ -224,7 +231,8 @@ const processLeagueContextInput = (rawData) => {
     leagues: processedLeagues,
     userRankings: processedUserRankings,
     expertRankings: processedExpertRankings,
-    dashboardSettings: processedDashboardSettings
+    dashboardSettings: processedDashboardSettings,
+    leagueTeams: processedLeagueTeams,
   };
 };
 
@@ -305,6 +313,7 @@ const useDashboardContext = create(
       currentRankingId: null,
       widgetLayout: initialWidgetLayout,
       layoutBeforeEdit: null, // To store layout on entering edit mode
+      tradeValueMode: initialTradeValueMode,
 
       // =================================================================
       // ACTIONS
@@ -314,7 +323,7 @@ const useDashboardContext = create(
       // Widget Actions
       // ----------------------------------------------------------------------------
       setIsEditMode: (isEditMode) => set({ isEditMode }),
-      setWidgetLayout: (newLayout) => set({ widgetLayout: newLayout }),
+      setWidgetLayout: (layout) => set({ widgetLayout: layout }),
 
       // ----------------------------------------------------------------------------
       // Data Loading Actions
@@ -393,7 +402,8 @@ const useDashboardContext = create(
       availableTabs: initialAvailableTabs,
       dashboardSettings: processedLeagueData.dashboardSettings,
       leagues: processedLeagueData.leagues,
-
+      tradeValueMode: processedLeagueData.tradeValueMode,
+      leagueTeams: processedLeagueData.leagueTeams,
       // ============================================================================
       // INPUT ACTIONS (Data Entry Points)
       // ============================================================================
@@ -413,6 +423,7 @@ const useDashboardContext = create(
           userRankings: processedData.userRankings,
           expertRankings: processedData.expertRankings,
           dashboardSettings: processedData.dashboardSettings,
+          tradeValueMode: processedData.tradeValueMode,
         });
         
         console.log('✅ Dashboard context rehydrated');
@@ -433,6 +444,7 @@ const useDashboardContext = create(
           userRankings: processedData.userRankings,
           dashboardSettings: processedData.dashboardSettings,
           leagues: processedData.leagues,
+          tradeValueMode: processedData.tradeValueMode,
         });
         
         // Update view state based on new data if needed
@@ -846,6 +858,15 @@ const useDashboardContext = create(
         return hasData;
       },
 
+      // ============================================================================
+      // TRADE VALUE MODE ACTIONS
+      // ============================================================================
+
+      setTradeValueMode: (mode) => {
+        set({ tradeValueMode: mode });
+        console.log(`TRADE_VALUE_MODE: Switched to ${mode}`);
+      },
+
     }),
     {
       name: 'dashboard-context-storage',
@@ -856,6 +877,7 @@ const useDashboardContext = create(
         currentTab: state.currentTab,
         isAllLeaguesView: state.isAllLeaguesView,
         widgetLayout: state.widgetLayout,
+        tradeValueMode: state.tradeValueMode,
       }),
     }
   )
