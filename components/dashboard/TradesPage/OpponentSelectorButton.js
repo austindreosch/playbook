@@ -4,23 +4,6 @@ import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { Check, ChevronsUpDown, Users } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-// Hardcoded team data for now
-// const dummyTeams = [
-//   { teamName: 'Cosmic Comets', owner: 'Alex' },
-//   { teamName: 'Galactic Guardians', owner: 'Ben' },
-//   { teamName: 'Solar Flares', owner: 'Charlie' },
-//   { teamName: 'Nebula Knights', owner: 'Diana' },
-//   { teamName: 'Orbiting Olympians', owner: 'Evan' },
-//   { teamName: 'Astro Avengers', owner: 'Fiona' },
-//   { teamName: 'Meteor Mavericks', owner: 'George' },
-//   { teamName: 'Starlight Strikers', owner: 'Hannah' },
-//   { teamName: 'Supernova Sluggers', owner: 'Ian' },
-//   { teamName: 'Vortex Vipers', owner: 'Julia' },
-//   { teamName: 'Pulsar Pirates', owner: 'Kevin' },
-//   // User's team, which will be filtered out
-//   { teamName: 'Dunkball Legends', owner: 'User' },
-// ];
-
 export default function OpponentSelectorButton({ className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOpponent, setSelectedOpponent] = useState(null);
