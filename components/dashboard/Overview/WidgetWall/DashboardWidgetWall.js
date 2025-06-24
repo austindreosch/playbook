@@ -41,23 +41,29 @@ export default function DashboardWidgetWall() {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
+    if (!over) return;
     if (active.id !== over.id) {
-      const oldIndex = active.data.current.sortable.index;
-      const newIndex = over.data.current.sortable.index;
-      const newLayout = arrayMove(Object.values(widgetLayout).flat(), oldIndex, newIndex);
-      
-      // Reconstruct the columns. This is a simple example.
-      // A more robust solution might be needed for complex layouts.
-      const updatedLayout = {
-        column1: newLayout.slice(0, 2),
-        column2: newLayout.slice(2, 4),
-        column3: newLayout.slice(4, 6),
-      };
-      setWidgetLayout(updatedLayout);
+      // This is a simplified logic for reordering within the same column.
+      // A full implementation would need to handle moving between columns.
+      // For now, we will find the column of the active item and reorder within it.
+      const newLayout = { ...widgetLayout };
+      let activeColumn = null;
+      Object.keys(newLayout).forEach(col => {
+        if (newLayout[col].includes(active.id)) {
+          activeColumn = col;
+        }
+      });
+      if (activeColumn && newLayout[activeColumn].includes(over.id)) {
+        const oldIndex = newLayout[activeColumn].indexOf(active.id);
+        const newIndex = newLayout[activeColumn].indexOf(over.id);
+        newLayout[activeColumn] = arrayMove(newLayout[activeColumn], oldIndex, newIndex);
+        setWidgetLayout(newLayout);
+      }
+      // TODO: Implement logic for dragging between columns.
     }
   };
   
-  const allWidgets = Object.values(widgetLayout).flat();
+  const allWidgets = widgetLayout ? Object.values(widgetLayout).flat() : [];
 
   return (
     <DndContext
@@ -66,16 +72,23 @@ export default function DashboardWidgetWall() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-6 gap-2 w-full h-full">
-          {allWidgets.map((widgetId) => {
-            const WidgetComponent = widgetMap[widgetId]?.component;
-            const className = widgetMap[widgetId]?.className || '';
-            return WidgetComponent ? (
-              <SortableWidget key={widgetId} id={widgetId} isEditMode={isEditMode}>
-                <WidgetComponent className={className} />
-              </SortableWidget>
-            ) : null;
-          })}
+        <div className="grid grid-cols-6 gap-2 w-full h-full overflow-y-auto">
+          {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
+            <div key={columnId} className="col-span-2 grid grid-rows-6 gap-2">
+              {widgets.map((widgetId) => {
+                const Widget = widgetMap[widgetId];
+                if (!Widget) return null;
+                const WidgetComponent = Widget.component;
+                const className = Widget.className;
+
+                return (
+                  <SortableWidget key={widgetId} id={widgetId} isEditMode={isEditMode} className={className}>
+                    <WidgetComponent />
+                  </SortableWidget>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </SortableContext>
     </DndContext>

@@ -19,9 +19,9 @@ const DUMMY_LEAGUES = dummyData.leagues;
 const DUMMY_LEAGUE_TEAMS = dummyData.leagueTeams;
 const DUMMY_RANKINGS = dummyData.userRankings;
 const initialWidgetLayout = {
-  column1: ['standings', 'teamArchetype'],
-  column2: ['matchup'],
-  column3: ['teamProfile', 'actionSteps', 'newsFeed'],
+  column1: ['standings', 'matchup'],
+  column2: ['teamArchetype', 'actionSteps'],
+  column3: ['teamProfile', 'newsFeed'],
 };
 
 // ============================================================================
@@ -818,6 +818,14 @@ const useDashboardContext = create(
     {
       name: 'dashboard-storage', // unique name
       storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      merge: (persistedState, currentState) => {
+        const merged = { ...currentState, ...persistedState };
+        // If the persisted layout is empty or invalid, use the current (initial) state's layout.
+        if (!persistedState.widgetLayout || Object.keys(persistedState.widgetLayout).length === 0) {
+          merged.widgetLayout = currentState.widgetLayout;
+        }
+        return merged;
+      },
     }
   )
 );

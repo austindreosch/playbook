@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 
-export default function SortableWidget({ id, children, isEditMode }) {
+export default function SortableWidget({ id, children, isEditMode, className = '' }) {
   const {
     attributes,
     listeners,
@@ -22,7 +22,7 @@ export default function SortableWidget({ id, children, isEditMode }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative h-full">
+    <div ref={setNodeRef} style={style} className={`relative ${className}`}>
       {children}
       {isEditMode && (
         <button
