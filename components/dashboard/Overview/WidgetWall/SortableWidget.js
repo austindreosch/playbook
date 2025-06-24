@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 
-export default function SortableWidget({ id, children, isEditMode, className = '' }) {
+export default function SortableWidget({ id, children, isEditMode, className = '', style: incomingStyle, ...rest }) {
   const {
     attributes,
     listeners,
@@ -15,6 +15,7 @@ export default function SortableWidget({ id, children, isEditMode, className = '
   } = useSortable({ id, disabled: !isEditMode });
 
   const style = {
+    ...incomingStyle,
     transform: CSS.Transform.toString(transform),
     transition,
     zIndex: isDragging ? 10 : 'auto',
@@ -22,7 +23,7 @@ export default function SortableWidget({ id, children, isEditMode, className = '
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative ${className}`}>
+    <div ref={setNodeRef} style={style} className={`relative ${className}`} {...rest}>
       {children}
       {isEditMode && (
         <button

@@ -7,7 +7,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 import ActionStepsBlock from '../ActionSteps/ActionStepsBlock';
 import MatchupBlock from '../Matchup/MatchupBlock';
@@ -19,8 +19,8 @@ import SortableWidget from './SortableWidget';
 
 // Map widget IDs to their components and styling
 const widgetMap = {
-  standings: { component: StandingsBlock, size: 1 },     // 1x unit
-  matchup: { component: MatchupBlock, size: 3 },         // 3x unit
+  standings: { component: StandingsBlock, size: 2 },     // 1x unit
+  matchup: { component: MatchupBlock, size: 2 },         // 3x unit
   teamArchetype: { component: TeamArchetypeBlock, size: 2 },// 2x unit
   actionSteps: { component: ActionStepsBlock, size: 2 },  // 2x unit
   teamProfile: { component: TeamProfileBlock, size: 1 },  // 1x unit
@@ -34,16 +34,21 @@ export default function DashboardWidgetWall() {
   const containerRef = useRef(null);
   const [unitHeight, setUnitHeight] = useState(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const resizeObserver = new ResizeObserver(() => {
-      // We want the unit height to be 1/6th of the container's height, minus the gaps.
-      // Assuming 6 rows, there will be 5 gaps.
-      const totalGapHeight = 5 * 8; // gap-2 is 0.5rem = 8px
-      const netHeight = container.clientHeight - totalGapHeight;
-      setUnitHeight(netHeight / 6);
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (entries[0]) {
+        const containerHeight = entries[0].contentRect.height;
+        if (containerHeight > 0) {
+          // We want the unit height to be 1/6th of the container's height, minus the gaps.
+          // There are 5 gaps (of 8px each) in a full 6-unit column.
+          const totalGapHeight = 5 * 8; // gap-2 is 0.5rem = 8px
+          const netHeight = containerHeight - totalGapHeight;
+          setUnitHeight(netHeight / 6);
+        }
+      }
     });
 
     resizeObserver.observe(container);
@@ -91,7 +96,7 @@ export default function DashboardWidgetWall() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
-        <div ref={containerRef} className="flex w-full h-full gap-2">
+        <div ref={containerRef} className="flex w-full h-screen gap-2">
           {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
             <div key={columnId} className="flex-1 flex flex-col gap-2 overflow-y-auto">
               {widgets.map((widgetId) => {
@@ -107,7 +112,7 @@ export default function DashboardWidgetWall() {
                     key={widgetId} 
                     id={widgetId} 
                     isEditMode={isEditMode}
-                    style={{ height: widgetHeight ? `${widgetHeight}px` : 'auto' }}
+                    style={{ height: widgetHeight ? `${widgetHeight}px` : undefined }}
                   >
                     <WidgetComponent />
                   </SortableWidget>
