@@ -6,8 +6,6 @@ import React, { useEffect } from 'react';
 // import { Oxanium, Sen } from 'next/font/google';
 // import DetailBlock from "../components/DetailBlock";
 import { ThreeCircles } from 'react-loader-spinner';
-import HubBlock from "../components/HubBlock";
-import RosterBlock from "../components/RosterBlock";
 
 import FeatureRoadmap from '@/components/LandingPage/feature-roadmap';
 import Features from '@/components/LandingPage/features';

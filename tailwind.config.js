@@ -6,7 +6,11 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  plugins: ['prettier-plugin-tailwindcss', require("tailwindcss-animate")],
+  plugins: [
+    'prettier-plugin-tailwindcss',
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar'),
+  ],
   daisyui: {
     themes: [
       {
@@ -48,6 +52,31 @@ module.exports = {
         '10.5': '2.625rem',
         '11.5': '2.875rem',
         '12.5': '3.125rem',
+        // Additional intermediate sizes
+        '50': '12.5rem',   // 200px
+        '54': '13.5rem',   // 216px  
+        '58': '14.5rem',   // 232px
+        '62': '15.5rem',   // 248px
+        '66': '16.5rem',   // 264px
+        '68': '17rem',     // 272px
+        '70': '17.5rem',   // 280px
+        '74': '18.5rem',   // 296px
+        '76': '19rem',     // 304px
+        '78': '19.5rem',   // 312px
+        '82': '20.5rem',   // 328px
+        '84': '21rem',     // 336px
+        '86': '21.5rem',   // 344px
+        '88': '22rem',     // 352px
+        '90': '22.5rem',   // 360px
+        '92': '23rem',     // 368px
+        '94': '23.5rem',   // 376px
+        '98': '24.5rem',   // 392px
+        '100': '25rem',    // 400px
+        '104': '26rem',    // 416px
+        '108': '27rem',    // 432px
+        '112': '28rem',    // 448px
+        '116': '29rem',    // 464px
+        '120': '30rem',    // 480px
       },
       height: {
         '2.5': '0.625rem',
@@ -144,6 +173,7 @@ module.exports = {
         pb_lightestgray: '#efefef',
         pb_backgroundgray: '#f5f5f5',
         pb_paperwhite: '#fcfcfc',
+        // Primary Colors
         pb_bluehover: '#1f7ec5',
         pb_bluedisabled: '#186299',
         pb_blue: {
@@ -174,14 +204,37 @@ module.exports = {
           800: '#997b31',
           900: '#665220',
         },
-        pb_green: '#59cd90',
+        pb_green: {
+          50: '#eef4f4', // Lightest shade before white
+          100: '#def5e9',
+          200: '#cdf0de',
+          300: '#bdebd3',
+          400: '#ace6c8',
+          500: '#9be1bc',
+          600: '#8bdcb1',
+          700: '#7ad7a6',
+          800: '#6ad29b',
+          DEFAULT: '#59cd90', // Retain DEFAULT for compatibility
+          900: '#47a473', // Default moved to 900, as requested
+        },
         pb_greenhover: '#50b982',
         pb_greendisabled: '#3e9065',
-        'pb-green-100': '#e2f7ec',
-        pb_red: '#ee6352',
+        pb_red: {
+          50: '#fdefee', // Lightest shade before white
+          100: '#fce0dc',
+          200: '#fad0cb',
+          300: '#f8c1ba',
+          400: '#f7b1a9',
+          500: '#f5a197',
+          600: '#f39286',
+          700: '#f18275',
+          800: '#f07363',
+          DEFAULT: '#ee6352', // Retain DEFAULT for compatibility
+          900: '#be4f42', 
+        },
         pb_redhover: '#d6594a',
         pb_reddisabled: '#a74539',
-        'pb-red-100': '#fee5e1',
+        // Informational Accent Colors
         pb_pastelblue: '#79addc',
         pb_pastelpurple: '#ababef',
         pb_pastelorange: '#f5d491',
@@ -257,22 +310,48 @@ module.exports = {
           '80%': { transform: 'scale(0.95) translateY(5%)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
         },
-        "fade-out": {
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'fade-out': {
           '0%': { opacity: '1' },
           '100%': { opacity: '0' },
-        }
+        },
+        'background-pan': {
+          '0%': { backgroundPosition: '0% center' },
+          '100%': { backgroundPosition: '-200% center' },
+        },
+        'spin-and-pulse': {
+          '0%': { transform: 'scale(1) rotate(0deg)' },
+          '50%': { transform: 'scale(1.2) rotate(180deg)' },
+          '100%': { transform: 'scale(1) rotate(360deg)' },
+        },
       },
       animation: {
         shimmer: 'shimmer 5s linear infinite',
         float: 'float 6s ease-in-out infinite',
-        "pop-bounce-in": 'pop-bounce-in 0.35s ease-out',
-        "toast-hide": 'fade-out 0.3s ease-in-out forwards',
+        'pop-bounce-in': 'pop-bounce-in 0.35s ease-out',
+        'toast-hide': 'fade-out 0.3s ease-in-out forwards',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.5s ease-in-out',
+        'fade-out': 'fade-out 0.5s ease-in-out',
+        'background-pan': 'background-pan 3s linear infinite',
+        'spin-and-pulse': 'spin-and-pulse 0.8s ease-in-out infinite',
       },
     }
   },
   plugins: [],
 }
-
 
 
 

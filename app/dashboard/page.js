@@ -1,35 +1,97 @@
 //  /dashboard page
 
 'use client'
-
-import DashboardSkeleton from '@/components/dashboard/DashboardSkeleton';
-import DashboardTabs from '@/components/dashboard/DashboardTabs';
-import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
-import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
-import DownloadButton from '@/components/dashboard/Header/DownloadButton';
-import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
-import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
-import CurrentLeagueTeamDisplay from '@/components/dashboard/Overview/Header/CurrentLeagueTeamDisplay';
-import LeagueSettingsButton from '@/components/dashboard/Overview/Header/LeagueSettingsButton';
-import RankingsSelectorButton from '@/components/dashboard/Overview/Header/RankingsSelectorButton';
-import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
-import RosterViewImportLeague from '@/components/dashboard/Overview/RosterViewBlock/RosterViewImportLeague';
-import DebugDrawer from '@/components/debug/DebugDrawer';
 import { Button } from '@/components/ui/button';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ThreeCircles } from 'react-loader-spinner';
+import DebugDrawer from '../../components/debug/DebugDrawer';
+// import { ThreeCircles } from 'react-loader-spinner';
+import { Bug } from 'lucide-react';
 import { toast } from 'sonner';
-import HubBlock from '/components/HubBlock';
-import RosterBlock from '/components/RosterBlock';
 
+
+// Layout Components
+import DashboardSkeleton from '../../components/dashboard/DashboardSkeleton.jsx';
+import DashboardWidgetWall from '../../components/dashboard/Overview/WidgetWall/DashboardWidgetWall';
+
+// Global Header Components
+import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
+import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
+import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
+import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
+import DashboardTabs from '../../components/dashboard/DashboardTabs';
+
+// League Header Components 
+import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
+import CurrentLeagueTeamDisplay from '@/components/dashboard/Overview/Header/CurrentLeagueTeamDisplay';
+import EditWidgetsButton from '@/components/dashboard/Overview/Header/EditWidgetsButton';
+import LeagueSettingsButton from '@/components/dashboard/Overview/Header/LeagueSettingsButton';
+import RankingsSelectorButton from '@/components/dashboard/Overview/Header/RankingsSelectorButton';
+import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
+
+// Overview Blocks
+import ActionStepsBlock from '@/components/dashboard/Overview/ActionSteps/ActionStepsBlock';
+import MatchupBlock from '@/components/dashboard/Overview/Matchup/MatchupBlock';
+import NewsFeedBlock from '@/components/dashboard/Overview/NewsFeed/NewsFeedBlock';
+import StandingsBlock from '@/components/dashboard/Overview/Standings/StandingsBlock';
+import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';
+import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
+import RosterViewImportLeague from '../../components/dashboard/Overview/RosterView/RosterViewImportLeague';
+
+// All Leagues View Pages
+
+// Individual League View Pages
+import LeagueOverviewPage from '@/components/dashboard/LeagueView/LeagueOverviewPage';
+import LeagueRosterPage from '@/components/dashboard/LeagueView/LeagueRosterPage';
+import LeagueTradesPage from '@/components/dashboard/LeagueView/LeagueTradesPage';
+
+// Store
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+
+const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
 
 export default function DashboardPage() {
+  // =================================================================
+  // CONTEXT STORE
+  // =================================================================
+  // ---- INCOMING DATA ----
+  // Get current view state from the dashboard context store
+  const currentLeagueId = useDashboardContext((state) => state.currentLeagueId);
+  const isLoading = useDashboardContext((state) => state.isLoading);
+  const currentTab = useDashboardContext((state) => state.currentTab);
+  const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
+  const rehydrate = useDashboardContext((state) => state.rehydrate);
+  const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
+
 
   const router = useRouter();
-  const { user, error, isLoading } = useUser();
+  const { user, error, isLoading: isUserLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
+  const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    // Rehydrate the store on mount to ensure we have the latest persisted dummy data
+    rehydrate();
+  }, [rehydrate]);
+
+  useEffect(() => {
+    if (SHOW_DEBUG_DRAWER) {
+      const storedIsOpen = localStorage.getItem('debugDrawerIsOpen');
+      if (storedIsOpen) {
+        setIsDebugDrawerOpen(JSON.parse(storedIsOpen));
+      }
+    }
+  }, []);
+
+  const toggleDebugDrawer = () => {
+    setIsDebugDrawerOpen(prev => {
+      const newState = !prev;
+      localStorage.setItem('debugDrawerIsOpen', JSON.stringify(newState));
+      return newState;
+    });
+  };
 
   const showVerificationToast = () => {
     const handleResend = async () => {
@@ -61,7 +123,7 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if (!isLoading && user && !user.email_verified) {
+    if (!isUserLoading && user && !user.email_verified) {
       const now = Date.now();
       const oneDay = 24 * 60 * 60 * 1000;
       const lastShown = localStorage.getItem('verificationToastLastShown');
@@ -71,7 +133,7 @@ export default function DashboardPage() {
         localStorage.setItem('verificationToastLastShown', now.toString());
       }
     }
-  }, [user, isLoading]);
+  }, [user, isUserLoading]);
 
   // Debug keybind effect
   useEffect(() => {
@@ -80,6 +142,12 @@ export default function DashboardPage() {
       if (event.ctrlKey && event.shiftKey && event.key === 'D') {
         console.log('Debug toast triggered!');
         showVerificationToast();
+      }
+      if (SHOW_DEBUG_DRAWER && event.key === '0') {
+        // Prevent toggle when typing in inputs
+        if (['INPUT', 'TEXTAREA'].includes(event.target.tagName) || event.target.isContentEditable) return;
+        event.preventDefault();
+        toggleDebugDrawer();
       }
     };
 
@@ -91,10 +159,10 @@ export default function DashboardPage() {
   }, []); // Empty dependency array ensures this runs only once
 
   // useEffect(() => {
-  //   if (!isLoading && !user) {
+  //   if (!isUserLoading && !user) {
   //     router.push('/landing');
   //   }
-  // }, [isLoading, user, router]);
+  // }, [isUserLoading, user, router]);
 
   // Function to handle redirection to rankings page
   // useEffect(() => {
@@ -123,16 +191,35 @@ export default function DashboardPage() {
   }, []); // Empty dependency array ensures this runs only once
 
   // Override real loading state with debug loading state
-  const effectiveIsLoading = debugLoading || isLoading;
+  const effectiveIsLoading = debugLoading || isLoading || isUserLoading;
   
   if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
 
+  const renderLeagueView = () => {
+    switch (currentTab) {
+      case 'overview':
+        return <LeagueOverviewPage />;
+      case 'roster':
+        return <LeagueRosterPage />;
+      case 'trades':
+        return <LeagueTradesPage />;
+      default:
+        return <LeagueOverviewPage />; // Fallback to overview
+    }
+  };
+
   return (
     <>
-      <DebugDrawer />
-      {/* TODO: remove this later */}
-      {/* <DashboardSkeleton /> */}
+      {SHOW_DEBUG_DRAWER && (
+        <>
+          <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
+            <Bug className="h-4 w-4" />
+          </Button>
+          <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
+        </>
+      )}
+
       <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
@@ -146,7 +233,7 @@ export default function DashboardPage() {
 
             <AllLeaguesButton className="h-9" />
             <LeagueSelectorButton className="h-9" />
-            <DownloadButton className="h-9" />
+            <ImportLeagueButton className="h-9" />
             <DashboardSettingsButton className="h-9" />
           </div>
 
@@ -156,56 +243,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Individual League View Bar  */}
-        <div className="flex w-full pt-2.5">
+        {/* Main Content */}
 
-          {/* OVERVIEW VERSION */}
-          <div className="flex w-full justify-between ">
-            <div className="flex gap-2">
-              <CurrentLeagueTeamDisplay className="h-9"/>
-              <CurrentLeagueContext className="h-9"/>
+
+        <div className="flex-grow min-h-0">
+          {isAllLeaguesView ? (
+            // TODO: Build out the All Leagues view
+            <div className="flex items-center justify-center w-full h-full">
+              <p>All Leagues View (Coming Soon)</p>
             </div>
-
-            <div className="flex gap-2">
-              <SyncLeagueButton className="h-9"/>  
-              <LeagueSettingsButton className="h-9"/>
-              <RankingsSelectorButton className="h-9"/>
-            </div>
-          </div>
-        </div>
-
-        {/* Divider between League View and Main Dashboard Content */}  
-        <div className="w-full py-2.5">
-          <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-        </div>
-
-        {/* Dashboard Main Content */}
-        <div className="w-full h-full flex">
-          {/* Overview Version */}
-          <div className="flex-1 grid grid-cols-11 grid-rows-2 gap-2 w-full min-h-0">
-            {/* Roster View */}
-            <div className="col-span-3 row-span-2">
+          ) : currentLeagueId ? (
+            renderLeagueView()
+          ) : (
+            <div className="flex items-center justify-center w-full h-full">
               <RosterViewImportLeague />
             </div>
-
-            {/* Overview Blocks Wall */}
-            <div className="col-span-8 row-span-2 grid grid-cols-7 gap-2 w-full h-full">
-              <div className="col-span-2 grid grid-rows-6 gap-2">
-                <div className="w-full h-full row-span-4  rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-              </div>
-              <div className="col-span-3 grid grid-rows-3 gap-2">
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-                <div className="w-full h-full row-span-2 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-              </div>
-              <div className="col-span-2 grid grid-rows-2 gap-2">
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-                <div className="w-full h-full row-span-1 rounded-lg border-1.5 border-pb_lightgray shadow-sm"></div>
-              </div>
-            </div>
-          </div>
-
-
+          )}
         </div>
       </div>
     </>
