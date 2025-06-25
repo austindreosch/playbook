@@ -16,25 +16,22 @@ const dummyPositionStrengths = {
     ],
     nfl: [
         { position: 'QB', rank: 3, value: 20, color: 'bg-pb_pastelred' },
-        { position: 'RB', rank: 1, value: 30, color: 'bg-pb_pastelblue' },
-        { position: 'WR', rank: 2, value: 25, color: 'bg-pb_pastelgreen' },
+        { position: 'RB', rank: 1, value: 30, color: 'bg-pb_pastelgreen' },
+        { position: 'WR', rank: 2, value: 25, color: 'bg-pb_pastelblue' },
         { position: 'TE', rank: 8, value: 15, color: 'bg-pb_pastelorange' },
     ],
     mlb: [
-        { position: 'P', rank: 3, value: 25, color: 'bg-pb_pastelblue' },
-        { position: 'RP', rank: 7, value:  9, color: 'bg-pb_pastelyellow' },
-        { position: 'C', rank: 8, value: 10, color: 'bg-pb_pastelred' },
-        { position: '1B', rank: 4, value: 15, color: 'bg-pb_pastelgreen' },
-        { position: '2B', rank: 6, value: 12, color: 'bg-pb_pastelorange' },
-        { position: '3B', rank: 2, value: 18, color: 'bg-pb_pastelpurple' },
-        { position: 'SS', rank: 1, value: 20, color: 'bg-pb_pastelbrown' },
-        { position: 'OF', rank: 5, value: 14, color: 'bg-pb_pastelteal'   },
-        { position: 'UT', rank: 9, value:  6, color: 'bg-pb_pastelpink'   },
+        { position: 'C',  rank: 8, value: 16, color: 'bg-pb_pastelblue'    },
+        { position: 'MI', rank: 4, value: 25, color: 'bg-pb_pastelbrown' },
+        { position: 'CI', rank: 3, value: 26, color: 'bg-pb_pastelorange'},
+        { position: 'OF', rank: 5, value: 20, color: 'bg-pb_pastelgreen' },
+        { position: 'P',  rank: 5, value: 36, color: 'bg-pb_pastelpurple'  },
     ],
 };
 
 
-export default function TeamPositionStrengthBar() {
+export default function TeamPositionStrengthBar({ team }) {
+    // The 'team' prop is available here to fetch team-specific position strength data.
     const { leagues, currentLeagueId } = useDashboardContext();
 
     if (!currentLeagueId || !leagues || leagues.length === 0) {
@@ -74,15 +71,15 @@ export default function TeamPositionStrengthBar() {
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className="py-2 hover:no-underline">
+                <AccordionTrigger className="py-1 hover:no-underline">
                     <div className="flex w-full justify-between items-center">
-                        <h3 className="text-md font-bold text-pb_textprimary">Positional Strength</h3>
+                        <h3 className="text-md font-semibold text-pb_darkgray">Positional Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="pb-4">
-                    <Separator className="mb-3" />
+                <AccordionContent className="">
+                    {/* <Separator className="mb-3" /> */}
                     <div className="w-full">
-                        <div className="flex w-full h-8 rounded-md overflow-hidden">
+                        <div className="flex w-full h-10 rounded-md overflow-hidden mt-1.5 shadow">
                             {positionStrengths.map((pos, index) => (
                                 <div
                                     key={pos.position}

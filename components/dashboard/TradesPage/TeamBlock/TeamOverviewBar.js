@@ -6,8 +6,8 @@ import { ChartCandlestick, Trophy } from 'lucide-react';
 
 
 
-export default function TeamOverviewBar() {
-  // TODO: Replace with dynamic data
+export default function TeamOverviewBar({ team }) {
+  // TODO: Replace with dynamic data using the 'team' prop
   const valueRank = 5;
   const valueRankSuffix = 'th';
   const victoryRank = 2;
@@ -16,14 +16,14 @@ export default function TeamOverviewBar() {
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
       <AccordionItem value="item-1" className="border-b-0">
-        <AccordionTrigger className=" py-2 hover:no-underline">
+        <AccordionTrigger className="py-1 hover:no-underline">
           <div className="flex w-full justify-between items-center">
-            <h3 className="text-md font-bold text-pb_textprimary">Team Overview</h3>
+            <h3 className="text-md font-semibold text-pb_darkgray">Team Overview</h3>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="pb-4">
-        <Separator className="mb-3" />
-          <div className="flex items-center justify-center space-x-8">
+        <AccordionContent className="">
+        <Separator className="mt-1 mb-3" />
+          <div className="flex items-center justify-center space-x-8 mt-1.5">
             {/* Value */}
             <div className="flex items-center space-x-2">
               <ChartCandlestick className="w-5 h-5 text-pb_darkgray" />

@@ -7,16 +7,22 @@ import TradeRosterBlock from '@/components/dashboard/TradesPage/TeamBlock/TradeR
 import { Separator } from '@/components/ui/separator';
 
 export default function UserTeamBlock() {
+  // TODO: Replace with dynamic data for the user's team
+  const userTeam = {
+    id: 'user_team_123',
+    name: 'Gridiron Gurus',
+  };
+
   return (
-    <div className="flex h-full w-full flex-col gap-2">
-      <TeamOverviewBar />
+    <div className="flex h-full w-full flex-col gap-1">
+      <TeamOverviewBar team={userTeam} />
       {/* <Separator /> */}
-      <TeamPositionStrengthBar />
+      <TeamPositionStrengthBar team={userTeam} />
       {/* <Separator /> */}
-      <TeamCategoryStrengthBar />
+      <TeamCategoryStrengthBar team={userTeam} />
       {/* <Separator /> */}
       <div className="flex-grow min-h-0">
-        <TradeRosterBlock />
+        <TradeRosterBlock team={userTeam} />
       </div>
     </div>
   );
