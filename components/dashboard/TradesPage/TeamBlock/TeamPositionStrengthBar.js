@@ -79,7 +79,7 @@ export default function TeamPositionStrengthBar({ team }) {
                 <AccordionContent className="">
                     {/* <Separator className="mb-3" /> */}
                     <div className="w-full">
-                        <div className="flex w-full h-10 rounded-md overflow-hidden mt-1.5 shadow">
+                        <div className="flex w-full h-9 rounded-md overflow-hidden mt-1.5 shadow">
                             {positionStrengths.map((pos, index) => (
                                 <div
                                     key={pos.position}
