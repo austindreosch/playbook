@@ -493,26 +493,28 @@ const useDashboardContext = create(
        */
       setCurrentLeague: (leagueId) => {
         console.log('📥 INPUT ACTION: setCurrentLeague called', { leagueId });
-        const { leagues } = get();
+        const { leagues, currentTab } = get();
         const leagueExists = leagues.some(league => 
           league.leagueDetails?.leagueName === leagueId
         );
         
         if (leagueExists) {
-          // Switch to individual league view
+          // Switch to individual league view, preserving the tab if possible
           const newAvailableTabs = calculateAvailableTabs(false);
           const defaultTab = getDefaultTab(false);
+          const isCurrentTabEnabled = newAvailableTabs.some(tab => tab.id === currentTab && tab.enabled);
+          const newCurrentTab = isCurrentTabEnabled ? currentTab : defaultTab;
           
           set({
             currentLeagueId: leagueId,
             currentView: 'league',
             isAllLeaguesView: false,
             availableTabs: newAvailableTabs,
-            currentTab: defaultTab,
+            currentTab: newCurrentTab,
           });
           
           // Save UI state to localStorage including the currentLeagueId
-          saveDashboardStateToLocalStorage('league', defaultTab, leagueId);
+          saveDashboardStateToLocalStorage('league', newCurrentTab, leagueId);
           
           console.log('✅ INPUT ACTION: Current league updated and switched to individual view');
         } else {
