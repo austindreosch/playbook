@@ -196,19 +196,6 @@ export default function DashboardPage() {
   if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
 
-  const renderLeagueView = () => {
-    switch (currentTab) {
-      case 'overview':
-        return <LeagueOverviewPage />;
-      case 'roster':
-        return <LeagueRosterPage />;
-      case 'trades':
-        return <LeagueTradesPage />;
-      default:
-        return <LeagueOverviewPage />; // Fallback to overview
-    }
-  };
-
   return (
     <>
       {SHOW_DEBUG_DRAWER && (
@@ -231,9 +218,9 @@ export default function DashboardPage() {
           {/* Imported League Selector */}
           <div className="flex gap-2 w-2/5 justify-end pb-2.5">
 
-            <AllLeaguesButton className="h-9" />
-            <LeagueSelectorButton className="h-9" />
-            <ImportLeagueButton className="h-9" />
+            <AllLeaguesButton className="h-9" /> {/* New Page View*/}
+            <LeagueSelectorButton className="h-9" /> {/* New Page View*/}
+            <ImportLeagueButton className="h-9" />  {/* New Page View*/}
             <DashboardSettingsButton className="h-9" />
           </div>
 
@@ -248,17 +235,28 @@ export default function DashboardPage() {
 
         <div className="flex-grow min-h-0">
           {isAllLeaguesView ? (
-            // TODO: Build out the All Leagues view
-            <div className="flex items-center justify-center w-full h-full">
-              <p>All Leagues View (Coming Soon)</p>
-            </div>
-          ) : currentLeagueId ? (
-            renderLeagueView()
-          ) : (
-            <div className="flex items-center justify-center w-full h-full">
-              <RosterViewImportLeague />
-            </div>
-          )}
+            <div className="flex items-center justify-center w-full h-full"><p>All Leagues View (Coming Soon)</p></div>
+          ) : !currentLeagueId ? (
+            <div className="flex items-center justify-center w-full h-full"><RosterViewImportLeague /></div>
+          ) : (() => {
+            // Individual League View based on tab
+            switch (currentTab) {
+              case 'overview':
+                return <LeagueOverviewPage />;
+              case 'roster':
+                return <LeagueRosterPage />;
+              case 'trades':
+                return <LeagueTradesPage />;
+              case 'scouting':
+                return <div className="flex items-center justify-center w-full h-full"><p>Scouting Page (Coming Soon)</p></div>;
+              case 'waiver':
+                return <div className="flex items-center justify-center w-full h-full"><p>Waiver Page (Coming Soon)</p></div>;
+              case 'trends':
+                return <div className="flex items-center justify-center w-full h-full"><p>Trends Page (Coming Soon)</p></div>;
+              default:
+                return <LeagueOverviewPage />; // Fallback to overview
+            }
+          })()}
         </div>
       </div>
     </>

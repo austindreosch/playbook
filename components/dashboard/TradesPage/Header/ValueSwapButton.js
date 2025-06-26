@@ -21,16 +21,16 @@ const ValueSwapButton = ({ className }) => {
         ${className}`.trim().replace(/\s+/g, ' ')}
     >
       <Compass 
-        className={`h-5 w-5 ${tradeValueMode === 'compass' ? 'text-pb_darkgray' : 'text-gray-300'}`} 
+        className={`h-5 w-5 transition-colors ${tradeValueMode === 'compass' ? ' text-pb_darkgray' : 'text-pb_lightgray'}`} 
       />
       <Switch 
         id="value-swap" 
-        className="mx-2"
+        className="mx-2 data-[state=checked]:bg-pb_darkgray data-[state=unchecked]:bg-pb_blue"
         checked={tradeValueMode === 'clipboard'}
         onCheckedChange={handleSwap}
       />
       <ClipboardMinus 
-        className={`h-5 w-5 ${tradeValueMode === 'clipboard' ? 'text-pb_darkgray' : 'text-gray-300'}`} 
+        className={`h-5 w-5 transition-colors ${tradeValueMode === 'clipboard' ? 'text-pb_darkgray' : 'text-pb_lightgray'}`} 
       />
     </div>
   );
