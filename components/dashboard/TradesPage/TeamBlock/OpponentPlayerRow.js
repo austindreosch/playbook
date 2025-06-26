@@ -2,14 +2,11 @@
 
 import HeartFilledIcon from '@/components/icons/HeartFilledIcon';
 import { cn } from '@/lib/utils';
-import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { abbreviateName } from '@/utilities/stringUtils';
 import { ArrowLeftRight, Ban, ChevronDown, Crosshair, GripVertical, HandHelping, Package } from 'lucide-react';
 import { useState } from 'react';
-import { sportConfig } from '../../sportConfig';
 
 export default function OpponentPlayerRow({ player }) {
-  const { leagues, currentLeagueId } = useDashboardContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFavorite, setIsFavorite] = useState(player.isFavorite || false);
   const [isTarget, setIsTarget] = useState(player.isTarget || false);
@@ -33,15 +30,9 @@ export default function OpponentPlayerRow({ player }) {
     }
   };
 
-  const currentLeague = leagues.find(
-    (league) => league.leagueDetails.leagueName === currentLeagueId
-  );
-  const sport = currentLeague?.leagueDetails.sport.toLowerCase();
-  const positionColor = sport && player.position ? sportConfig[sport]?.positionColors[player.position] : 'bg-gray-400';
-
   const renderPriorityIcon = () => {
     if (isNotInterested) {
-      return <Ban className="w-5 h-5 text-pb_red" />;
+      return <Ban className="w-5 h-5 text-pb_darkgray" />;
     }
     if (isTarget) {
       return <Crosshair className="w-5 h-5" />;
@@ -63,7 +54,6 @@ export default function OpponentPlayerRow({ player }) {
       >
         <div className="flex items-center space-x-2 text-pb_darkgray min-w-0">
           <GripVertical className="w-5 h-5 flex-shrink-0" />
-          <div className={cn("w-2.5 h-2.5 rounded-full", positionColor)}></div>
           <span className="text-sm font-semibold text-pb_darkgray truncate">{abbreviateName(player.name)}</span>
         </div>
 

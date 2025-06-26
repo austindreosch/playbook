@@ -3,30 +3,29 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Separator } from '@/components/ui/separator';
 import useDashboardContext from "@/stores/dashboard/useDashboardContext";
-import { sportConfig } from "../../sportConfig";
 
 // TODO: This is a placeholder for sport-specific data.
 // In a real implementation, this data would be fetched based on the user's league and selected sport.
-const dummyPositionStrengthsData = {
+const dummyPositionStrengths = {
     nba: [
-        { position: 'PG', rank: 4, value: 25 },
-        { position: 'SG', rank: 5, value: 20 },
-        { position: 'SF', rank: 9, value: 15 },
-        { position: 'PF', rank: 4, value: 25 },
-        { position: 'C', rank: 1, value: 30 },
+        { position: 'PG', rank: 4, value: 25, color: 'bg-pb_pastelblue' },
+        { position: 'SG', rank: 5, value: 20, color: 'bg-pb_pastelgreen' },
+        { position: 'SF', rank: 9, value: 15, color: 'bg-pb_pastelorange' },
+        { position: 'PF', rank: 4, value: 25, color: 'bg-pb_pastelpurple' },
+        { position: 'C', rank: 1, value: 30, color: 'bg-pb_pastelred' },
     ],
     nfl: [
-        { position: 'QB', rank: 3, value: 20 },
-        { position: 'RB', rank: 1, value: 30 },
-        { position: 'WR', rank: 2, value: 25 },
-        { position: 'TE', rank: 8, value: 15 },
+        { position: 'QB', rank: 3, value: 20, color: 'bg-pb_pastelred' },
+        { position: 'RB', rank: 1, value: 30, color: 'bg-pb_pastelgreen' },
+        { position: 'WR', rank: 2, value: 25, color: 'bg-pb_pastelblue' },
+        { position: 'TE', rank: 8, value: 15, color: 'bg-pb_pastelorange' },
     ],
     mlb: [
-        { position: 'C',  rank: 8, value: 16 },
-        { position: 'MI', rank: 4, value: 25 },
-        { position: 'CI', rank: 3, value: 26 },
-        { position: 'OF', rank: 5, value: 20 },
-        { position: 'P',  rank: 5, value: 36 },
+        { position: 'C',  rank: 8, value: 16, color: 'bg-pb_pastelblue'    },
+        { position: 'MI', rank: 4, value: 25, color: 'bg-pb_pastelred' },
+        { position: 'CI', rank: 3, value: 26, color: 'bg-pb_pastelorange'},
+        { position: 'OF', rank: 5, value: 20, color: 'bg-pb_pastelgreen' },
+        { position: 'P',  rank: 5, value: 36, color: 'bg-pb_pastelpurple'  },
     ],
 };
 
@@ -48,19 +47,13 @@ export default function TeamPositionStrengthBar({ team }) {
     }
 
     const sport = currentLeague.leagueDetails.sport.toLowerCase();
-    const positionData = dummyPositionStrengthsData[sport];
-    const positionColors = sportConfig[sport]?.positionColors || {};
+    const positionStrengths = dummyPositionStrengths[sport];
 
-    if (!positionData) {
+    if (!positionStrengths) {
         console.warn(`No position strength data found for sport: ${sport}`);
         return null;
     }
     
-    const positionStrengths = positionData.map(pos => ({
-        ...pos,
-        color: positionColors[pos.position] || 'bg-gray-400', // Fallback color
-    }));
-
     const totalValue = positionStrengths.reduce((acc, pos) => acc + pos.value, 0);
 
     const getRankSuffix = (rank) => {
