@@ -23,3 +23,13 @@ export const getDisplayEmail = (user) => {
     // For other providers or if no identifiable info
     return 'No email available';
 };
+
+// Abbreviate a full name to "F. LastName"
+export const abbreviateName = (name) => {
+    if (!name || typeof name !== 'string') return '';
+    const parts = name.split(' ');
+    if (parts.length < 2) return name;
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ');
+    return `${firstName.charAt(0).toUpperCase()}. ${lastName}`;
+};
