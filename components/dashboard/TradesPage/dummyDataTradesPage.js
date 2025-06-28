@@ -61,41 +61,40 @@ export const opponentPlayers = {
 export const mockTrades = {
     nba: {
       user: [
-        userPlayers.nba[0], // LeBron James
-        userPlayers.nba[2], // Stephen Curry
+        { id: 'u_nba_1', name: 'LeBron James', value: 550, status: 'protected', position: 'SF' },
+        { id: 'u_nba_3', name: 'Stephen Curry', value: 480, status: null, position: 'PG' },
       ],
       opponent: [
-        opponentPlayers.nba[0], // Jayson Tatum
-        opponentPlayers.nba[1], // Devin Booker
-        opponentPlayers.nba[3], // Ja Morant
+        { id: 'o_nba_1', name: 'Jayson Tatum', value: 880, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'SF' },
+        { id: 'o_nba_2', name: 'Devin Booker', value: 810, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'SG' },
       ],
-      valueAdjustment: 150,
+      valueAdjustment: 0,
+      winProbability: 0.68,
       rationale: "User trades aging superstars for a package of younger, high-upside talent, winning the value battle."
     },
     nfl: {
       user: [
-        userPlayers.nfl[1], // Travis Kelce
-        userPlayers.nfl[4], // Tyreek Hill
+        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 920, status: 'protected', position: 'RB' },
       ],
       opponent: [
-        opponentPlayers.nfl[2], // A.J. Brown
-        opponentPlayers.nfl[4], // Bijan Robinson
-        opponentPlayers.nfl[6], // Amon-Ra St. Brown
+        { id: 'o_nfl_5', name: 'Bijan Robinson', value: 650, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'RB' },
+        { id: 'o_nfl_6', name: 'Garrett Wilson', value: 450, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'WR' },
       ],
       valueAdjustment: 180,
-      rationale: "User gives up a top TE and WR for three elite, younger players at key positions."
+      winProbability: 0.52,
+      rationale: "User gives up the top RB for two elite, younger players at key positions."
     },
     mlb: {
       user: [
-        userPlayers.mlb[1], // Mike Trout
-        userPlayers.mlb[2], // Aaron Judge
+        { id: 'u_mlb_1', name: 'Shohei Ohtani', value: 950, position: 'P' },
+        { id: 'u_mlb_2', name: 'Mike Trout', value: 320, position: 'OF' },
       ],
       opponent: [
-        opponentPlayers.mlb[0], // Juan Soto
-        opponentPlayers.mlb[1], // Julio Rodríguez
-        opponentPlayers.mlb[4], // Yordan Alvarez
+        { id: 'o_mlb_1', name: 'Juan Soto', value: 940, position: 'OF' },
+        { id: 'o_mlb_2', name: 'Julio Rodríguez', value: 925, position: 'OF' },
       ],
-      valueAdjustment: 200,
-      rationale: "A blockbuster deal where the user trades two sluggers for three of the best young hitters in the game."
+      valueAdjustment: 555,
+      winProbability: 0.25,
+      rationale: "A blockbuster deal where the user trades two sluggers for two of the best young hitters in the game, but loses value."
     }
   };

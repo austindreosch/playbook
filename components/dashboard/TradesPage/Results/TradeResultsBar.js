@@ -39,9 +39,8 @@ export default function TradeResultsBar() {
   const finalValueMargin = receivedAdjustedValue - sentAdjustedValue;
   const isWinningTrade = finalValueMargin > 0;
 
-  // Visuals for main bar are based on adjusted values
-  const totalAdjustedValue = sentAdjustedValue + receivedAdjustedValue;
-  const winningPercentage = totalAdjustedValue > 0 ? (receivedAdjustedValue / totalAdjustedValue) * 100 : 50;
+  // Visuals for main bar are based on win probability from the trade data
+  const winningPercentage = trade.winProbability ? trade.winProbability * 100 : 50;
   const losingPercentage = 100 - winningPercentage;
 
   // Visuals for player segments are based on raw player values
