@@ -1,5 +1,6 @@
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
-import { mockTrades, opponentPlayers, userPlayers } from '../dummyDataTradesPage';
+import { ThumbsDown, ThumbsUp } from 'lucide-react';
+import { mockTrades } from '../dummyDataTradesPage';
 
 export default function TradeResultsBar() {
   const { leagues, currentLeagueId } = useDashboardContext();
@@ -91,15 +92,26 @@ export default function TradeResultsBar() {
           {/* Players Received (Green) - always on the left */}
           <div 
             style={{ width: `${winningPercentage}%` }} 
-            className={`bg-${receivedColor} flex items-center justify-end pr-4 text-white text-xs font-medium`}
+            className={`bg-${receivedColor} flex items-center justify-end pr-4 text-white font-medium`}
           >
-            <span className="font-bold text-lg z-10">{`${Math.round(winningPercentage)}%`}</span>
+            {isWinningTrade && (
+              <div className="flex items-center gap-2 z-10">
+                <ThumbsUp className="h-5 w-5" />
+                <span className="font-bold text-lg">{`${Math.round(winningPercentage)}%`}</span>
+              </div>
+            )}
           </div>
           {/* Players Sent (Red) - always on the right */}
           <div 
             style={{ width: `${losingPercentage}%` }} 
-            className={`bg-${sentColor}`}
+            className={`bg-${sentColor} flex items-center justify-start pl-4 text-white font-medium`}
           >
+            {!isWinningTrade && (
+              <div className="flex items-center gap-2 z-10">
+                <span className="font-bold text-lg">{`${Math.round(winningPercentage)}%`}</span>
+                <ThumbsDown className="h-5 w-5" />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -159,7 +171,7 @@ export default function TradeResultsBar() {
 
         {/* Corrected Divider line */}
         <div 
-          className={`absolute top-1/2 -translate-y-1/2 h-5 w-1 bg-pb_greenhover`} 
+          className={`absolute top-1/2 -translate-y-1/2 h-5 w-1 ${isWinningTrade ? 'bg-pb_greenhover' : 'bg-pb_redhover'}`} 
           style={{ left: `${(receivedAdjustedValue / totalVisualValue) * 100}%` }} 
         />
 
