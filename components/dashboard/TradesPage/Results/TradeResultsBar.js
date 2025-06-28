@@ -54,15 +54,31 @@ export default function TradeResultsBar() {
   // New: Calculate total value including the adjustment for segment widths
   const totalVisualValue = sentRawValue + receivedRawValue + valueAdjustment;
 
-  const allPlayersForSegments = [
-    ...playersReceived.map(p => ({ ...p, color: winningColor })),
-    ...playersSent.map(p => ({ ...p, color: losingColor }))
+  const visualSegments = [
+    ...playersReceived.map(p => ({
+      id: p.id,
+      value: p.value,
+      colorClass: `bg-pb_${winningColor}`
+    })),
+    ...playersSent.map(p => ({
+      id: p.id,
+      value: p.value,
+      colorClass: `bg-pb_${losingColor}`
+    }))
   ];
+
+  if (valueAdjustment > 0 && sentFewerPlayers) {
+    visualSegments.push({
+      id: 'adjustment',
+      value: valueAdjustment,
+      colorClass: 'bg-red-800'
+    });
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       {/* Main bar container */}
-      <div className="relative bg-white rounded-lg overflow-hidden shadow-sm">
+      <div className="relative rounded-lg overflow-hidden shadow-sm">
         <div className="flex h-16 relative">
           {/* Winning Side (Green) - Players Received */}
           <div 
@@ -114,32 +130,33 @@ export default function TradeResultsBar() {
       </div>
 
       {/* Bottom thin line indicator */}
-      <div className="flex h-2 relative w-full items-center">
-        {/* Received Player Segments */}
-        {playersReceived.map((player, index) => (
-            <div key={player.id} className={`h-full bg-pb_${winningColor}`} style={{ width: `${(player.value / totalVisualValue) * 100}%`}} />
+      <div className="flex h-2 relative w-full items-center mb-8">
+        {visualSegments.map((segment, index) => (
+          <div
+            key={segment.id}
+            className={`h-full ${segment.colorClass} ${index < visualSegments.length - 1 ? 'border-r border-white' : ''}`}
+            style={{ width: `${(segment.value / totalVisualValue) * 100}%` }}
+          />
         ))}
-        {/* Sent Player Segments */}
-        {playersSent.map((player, index) => (
-            <div key={player.id} className={`h-full bg-pb_${losingColor}`} style={{ width: `${(player.value / totalVisualValue) * 100}%`}} />
-        ))}
-        {/* New: Adjustment Value Segment */}
-        {valueAdjustment > 0 && sentFewerPlayers && (
-          <div className="h-full bg-red-800" style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }} />
-        )}
 
         {/* Corrected Divider line */}
         <div 
           className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 bg-gray-700" 
           style={{ left: `${(receivedRawValue / totalVisualValue) * 100}%` }} 
         />
-      </div>
-      
-      {/* Margin indicator */}
-      <div className="mt-2 text-center">
-        <span className={`font-bold text-xl text-${winningColor}-500`}>
-          {finalValueMargin >= 0 ? '+' : ''}{finalValueMargin.toLocaleString()}
-        </span>
+
+        {/* Margin indicator positioned under the divider */}
+        <div 
+          className="absolute top-full w-max"
+          style={{
+            left: `${(receivedRawValue / totalVisualValue) * 100}%`,
+            transform: 'translateX(-50%)'
+          }}
+        >
+          <span className={`mt-1 inline-block font-bold text-xl text-${winningColor}-500`}>
+            {finalValueMargin >= 0 ? '+' : ''}{finalValueMargin.toLocaleString()}
+          </span>
+        </div>
       </div>
       
       {/* Mock trade display */}

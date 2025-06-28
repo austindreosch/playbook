@@ -161,6 +161,7 @@ module.exports = {
   			]
   		},
   		colors: {
+  			neutral: '#FEF9F3',
   			pb_darkgray: '#383838',
   			pb_darkgrayhover: '#4c4c4c',
   			pb_mddarkgray: '#606060',
