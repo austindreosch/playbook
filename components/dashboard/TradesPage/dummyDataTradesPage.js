@@ -12,7 +12,7 @@ export const userPlayers = {
         { id: 'u_nfl_1', name: 'Patrick Mahomes', value: 985, status: 'protected', position: 'QB' },
         { id: 'u_nfl_2', name: 'Travis Kelce', value: 890, status: 'target', position: 'TE' },
         { id: 'u_nfl_3', name: 'Justin Jefferson', value: 970, status: null, position: 'WR' },
-        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 975, status: 'protected', position: 'RB' },
+        { id: 'o_nfl_5', name: 'Bijan Robinson', value: 900, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'RB' },
         { id: 'u_nfl_5', name: 'Tyreek Hill', value: 950, status: null, position: 'WR' },
         { id: 'u_nfl_6', name: 'Joe Burrow', value: 940, status: null, position: 'QB' },
         { id: 'u_nfl_7', name: 'Ja\'Marr Chase', value: 960, status: 'target', position: 'WR' },
@@ -43,7 +43,7 @@ export const opponentPlayers = {
         { id: 'o_nfl_2', name: 'Justin Herbert', value: 930, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'QB' },
         { id: 'o_nfl_3', name: 'A.J. Brown', value: 940, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'WR' },
         { id: 'o_nfl_4', name: 'CeeDee Lamb', value: 955, isFavorite: false, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'WR' },
-        { id: 'o_nfl_5', name: 'Bijan Robinson', value: 900, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'RB' },
+        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 975, status: 'protected', position: 'RB' },
         { id: 'o_nfl_6', name: 'Garrett Wilson', value: 880, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'WR' },
         { id: 'o_nfl_7', name: 'Amon-Ra St. Brown', value: 910, isFavorite: true, isTarget: true, isOnTradeBlock: true, position: 'WR' },
     ],
@@ -75,13 +75,13 @@ export const mockTrades = {
     },
     nfl: {
       user: [
-        { id: 'u_nfl_2', name: 'Travis Kelce', value: 890, status: 'target', position: 'TE' },
-        { id: 'u_nfl_5', name: 'Tyreek Hill', value: 950, status: null, position: 'WR' },
-        { id: 'u_nfl_6', name: 'Joe Burrow', value: 940, status: null, position: 'QB' },
+        userPlayers.nfl[1], // Travis Kelce
+        userPlayers.nfl[4], // Tyreek Hill
+        userPlayers.nfl[5], // Joe Burrow
       ],
       opponent: [
-        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 975, status: 'protected', position: 'RB' },
-        { id: 'o_nfl_1', name: 'Josh Allen', value: 980, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'QB' },
+        opponentPlayers.nfl[4], // Christian McCaffrey
+        opponentPlayers.nfl[0], // Josh Allen
       ],
       valueAdjustment: 150,
       winProbability: 0.38,
