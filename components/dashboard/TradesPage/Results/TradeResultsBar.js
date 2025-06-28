@@ -65,14 +65,14 @@ export default function TradeResultsBar() {
 
   if (valueAdjustment > 0) {
     if (receivedFewerPlayers) {
-      // Adjustment on the "received" (green) side because that side has fewer players.
-      receivedSegments.push({
+      // Adjustment on the "received" (green) side: add to the beginning (far left).
+      receivedSegments.unshift({
         id: 'adjustment',
         value: valueAdjustment,
         colorClass: 'bg-pb_green-900'
       });
     } else {
-      // Adjustment on the "sent" (red) side because that side has fewer players.
+      // Adjustment on the "sent" (red) side: add to the end (far right).
       sentSegments.push({
         id: 'adjustment',
         value: valueAdjustment,
@@ -106,35 +106,37 @@ export default function TradeResultsBar() {
 
       {/* Player name labels */}
       <div className="flex w-full mt-2 items-center">
-        {/* Received Players (Left) */}
-        {playersReceived.map((player) => (
-          <div
-            key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${receivedColor}`}
-            style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
-          >
-            {player.name.split(' ').pop().toUpperCase()}
-          </div>
-        ))}
+        {/* Adjustment Value Label (Left side) */}
         {valueAdjustment > 0 && receivedFewerPlayers && (
           <div
-            className={`text-xs font-semibold text-center text-pb_green-700`}
+            className={`text-sm font-semibold text-center text-pb_greendisabled`}
             style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
           >
             +
           </div>
         )}
-        {/* Sent Players (Right) */}
-        {playersSent.map((player) => (
+        {/* Received Players (Left) */}
+        {playersReceived.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${sentColor}`}
+            className={`text-xs font-semibold text-center truncate px-1 text-${receivedColor}disabled`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
           </div>
         ))}
-        {/* Adjustment Value Label */}
+        
+        {/* Sent Players (Right) */}
+        {playersSent.map((player) => (
+          <div
+            key={player.id}
+            className={`text-xs font-semibold text-center truncate px-1 text-${sentColor}disabled`}
+            style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
+          >
+            {player.name.split(' ').pop().toUpperCase()}
+          </div>
+        ))}
+        {/* Adjustment Value Label (Right side) */}
         {valueAdjustment > 0 && !receivedFewerPlayers && (
           <div
             className={`text-xs font-semibold text-center text-pb_reddisabled`}
