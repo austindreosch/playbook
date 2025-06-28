@@ -28,13 +28,15 @@ export default function TradeResultsBar() {
   const playersReceived = trade.opponent;
   const valueAdjustment = trade.valueAdjustment || 0;
 
-  const sentFewerPlayers = playersSent.length < playersReceived.length;
+  // Correctly determine which side has fewer players.
+  const receivedFewerPlayers = playersReceived.length < playersSent.length;
 
   const sentRawValue = playersSent.reduce((sum, p) => sum + p.value, 0);
   const receivedRawValue = playersReceived.reduce((sum, p) => sum + p.value, 0);
   
-  const sentAdjustedValue = sentRawValue + (sentFewerPlayers ? valueAdjustment : 0);
-  const receivedAdjustedValue = receivedRawValue + (!sentFewerPlayers ? valueAdjustment : 0);
+  // Add adjustment to the side with fewer players.
+  const receivedAdjustedValue = receivedRawValue + (receivedFewerPlayers ? valueAdjustment : 0);
+  const sentAdjustedValue = sentRawValue + (!receivedFewerPlayers ? valueAdjustment : 0);
 
   const finalValueMargin = receivedAdjustedValue - sentAdjustedValue;
   const isWinningTrade = finalValueMargin > 0;
@@ -42,13 +44,9 @@ export default function TradeResultsBar() {
   // Visuals for main bar are based on win probability from the trade data
   const winningPercentage = trade.winProbability ? trade.winProbability * 100 : 50;
   const losingPercentage = 100 - winningPercentage;
-
-  // Visuals for player segments are based on raw player values
-  const totalRawValue = sentRawValue + receivedRawValue;
-  const receivedRawPercentage = totalRawValue > 0 ? (receivedRawValue / totalRawValue) * 100 : 50;
   
-  const winningColor = isWinningTrade ? 'pb_green' : 'pb_red';
-  const losingColor = isWinningTrade ? 'pb_red' : 'pb_green';
+  const receivedColor = 'pb_green';
+  const sentColor = 'pb_red';
 
   // New: Calculate total value including the adjustment for segment widths
   const totalVisualValue = sentRawValue + receivedRawValue + valueAdjustment;
@@ -56,29 +54,29 @@ export default function TradeResultsBar() {
   const receivedSegments = playersReceived.map(p => ({
     id: p.id,
     value: p.value,
-    colorClass: `bg-${winningColor}`
+    colorClass: `bg-${receivedColor}`
   }));
 
   const sentSegments = playersSent.map(p => ({
     id: p.id,
     value: p.value,
-    colorClass: `bg-${losingColor}`
+    colorClass: `bg-${sentColor}`
   }));
 
   if (valueAdjustment > 0) {
-    if (!sentFewerPlayers) {
-      const adjustmentColorClass = winningColor === 'pb_green' ? 'bg-pb_green-900' : 'bg-pb_red-900';
+    if (receivedFewerPlayers) {
+      // Adjustment on the "received" (green) side because that side has fewer players.
       receivedSegments.push({
         id: 'adjustment',
         value: valueAdjustment,
-        colorClass: adjustmentColorClass
+        colorClass: 'bg-pb_green-900'
       });
     } else {
-      const adjustmentColorClass = losingColor === 'pb_red' ? 'bg-pb_red-900' : 'bg-pb_green-900';
+      // Adjustment on the "sent" (red) side because that side has fewer players.
       sentSegments.push({
         id: 'adjustment',
         value: valueAdjustment,
-        colorClass: adjustmentColorClass
+        colorClass: 'bg-pb_red-900'
       });
     }
   }
@@ -90,17 +88,17 @@ export default function TradeResultsBar() {
       {/* Main bar container */}
       <div className="relative rounded-lg overflow-hidden shadow-sm">
         <div className="flex h-12 relative">
-          {/* Winning Side (Green) - Players Received */}
+          {/* Players Received (Green) - always on the left */}
           <div 
             style={{ width: `${winningPercentage}%` }} 
-            className={`bg-${winningColor} flex items-center justify-end pr-4 text-white text-xs font-medium`}
+            className={`bg-${receivedColor} flex items-center justify-end pr-4 text-white text-xs font-medium`}
           >
             <span className="font-bold text-lg z-10">{`${Math.round(winningPercentage)}%`}</span>
           </div>
-          {/* Losing Side (Red) - Players Sent */}
+          {/* Players Sent (Red) - always on the right */}
           <div 
             style={{ width: `${losingPercentage}%` }} 
-            className={`bg-${losingColor}`}
+            className={`bg-${sentColor}`}
           >
           </div>
         </div>
@@ -112,15 +110,15 @@ export default function TradeResultsBar() {
         {playersReceived.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${winningColor}`}
+            className={`text-xs font-semibold text-center truncate px-1 text-${receivedColor}`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
           </div>
         ))}
-        {valueAdjustment > 0 && !sentFewerPlayers && (
+        {valueAdjustment > 0 && receivedFewerPlayers && (
           <div
-            className={`text-xs font-semibold text-center ${winningColor === 'pb_green' ? 'text-pb_green-700' : 'text-pb_reddisable'}`}
+            className={`text-xs font-semibold text-center text-pb_green-700`}
             style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
           >
             +
@@ -130,16 +128,16 @@ export default function TradeResultsBar() {
         {playersSent.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${losingColor}`}
+            className={`text-xs font-semibold text-center truncate px-1 text-${sentColor}`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
           </div>
         ))}
         {/* Adjustment Value Label */}
-        {valueAdjustment > 0 && sentFewerPlayers && (
+        {valueAdjustment > 0 && !receivedFewerPlayers && (
           <div
-            className={`text-xs font-semibold text-center ${losingColor === 'pb_red' ? 'text-pb_reddisabled' : 'text-pb_greendisabled'}`}
+            className={`text-xs font-semibold text-center text-pb_reddisabled`}
             style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
           >
             +
@@ -160,18 +158,18 @@ export default function TradeResultsBar() {
         {/* Corrected Divider line */}
         <div 
           className={`absolute top-1/2 -translate-y-1/2 h-5 w-1 bg-pb_greenhover`} 
-          style={{ left: `${(receivedRawValue / totalVisualValue) * 100}%` }} 
+          style={{ left: `${(receivedAdjustedValue / totalVisualValue) * 100}%` }} 
         />
 
         {/* Margin indicator positioned under the divider */}
         <div 
           className="absolute top-full w-max"
           style={{
-            left: `${(receivedRawValue / totalVisualValue) * 100}%`,
+            left: `${(receivedAdjustedValue / totalVisualValue) * 100}%`,
             transform: 'translateX(-50%)'
           }}
         >
-          <span className={`mt-2 inline-block font-bold text-xl text-${winningColor}`}>
+          <span className={`mt-2 inline-block font-bold text-xl text-${isWinningTrade ? receivedColor : sentColor}`}>
             {finalValueMargin >= 0 ? '+' : ''}{finalValueMargin.toLocaleString()}
           </span>
         </div>

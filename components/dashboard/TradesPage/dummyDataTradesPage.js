@@ -1,100 +1,104 @@
 export const userPlayers = {
     nba: [
-        { id: 'u_nba_1', name: 'LeBron James', value: 782, status: 'protected', position: 'SF' },
-        { id: 'u_nba_2', name: 'Kevin Durant', value: 751, status: 'target', position: 'PF' },
-        { id: 'u_nba_3', name: 'Stephen Curry', value: 745, status: null, position: 'PG' },
-        { id: 'u_nba_4', name: 'Giannis Antetokounmpo', value: 810, status: 'protected', position: 'PF' },
-        { id: 'u_nba_5', name: 'Nikola Jokic', value: 825, status: null, position: 'C' },
-        { id: 'u_nba_6', name: 'Luka Doncic', value: 800, status: null, position: 'PG' },
-        { id: 'u_nba_7', name: 'Joel Embiid', value: 790, status: 'target', position: 'C' },
+        { id: 'u_nba_1', name: 'LeBron James', value: 910, status: 'protected', position: 'SF' },
+        { id: 'u_nba_2', name: 'Kevin Durant', value: 880, status: 'target', position: 'PF' },
+        { id: 'u_nba_3', name: 'Stephen Curry', value: 925, status: null, position: 'PG' },
+        { id: 'u_nba_4', name: 'Giannis Antetokounmpo', value: 960, status: 'protected', position: 'PF' },
+        { id: 'u_nba_5', name: 'Nikola Jokic', value: 990, status: null, position: 'C' },
+        { id: 'u_nba_6', name: 'Luka Doncic', value: 975, status: null, position: 'PG' },
+        { id: 'u_nba_7', name: 'Joel Embiid', value: 950, status: 'target', position: 'C' },
     ],
     nfl: [
-        { id: 'u_nfl_1', name: 'Patrick Mahomes', value: 910, status: 'protected', position: 'QB' },
-        { id: 'u_nfl_2', name: 'Travis Kelce', value: 850, status: 'target', position: 'TE' },
-        { id: 'u_nfl_3', name: 'Justin Jefferson', value: 890, status: null, position: 'WR' },
-        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 920, status: 'protected', position: 'RB' },
-        { id: 'u_nfl_5', name: 'Tyreek Hill', value: 880, status: null, position: 'WR' },
-        { id: 'u_nfl_6', name: 'Joe Burrow', value: 895, status: null, position: 'QB' },
-        { id: 'u_nfl_7', name: 'Ja\'Marr Chase', value: 870, status: 'target', position: 'WR' },
+        { id: 'u_nfl_1', name: 'Patrick Mahomes', value: 985, status: 'protected', position: 'QB' },
+        { id: 'u_nfl_2', name: 'Travis Kelce', value: 890, status: 'target', position: 'TE' },
+        { id: 'u_nfl_3', name: 'Justin Jefferson', value: 970, status: null, position: 'WR' },
+        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 975, status: 'protected', position: 'RB' },
+        { id: 'u_nfl_5', name: 'Tyreek Hill', value: 950, status: null, position: 'WR' },
+        { id: 'u_nfl_6', name: 'Joe Burrow', value: 940, status: null, position: 'QB' },
+        { id: 'u_nfl_7', name: 'Ja\'Marr Chase', value: 960, status: 'target', position: 'WR' },
     ],
     mlb: [
-        { id: 'u_mlb_1', name: 'Shohei Ohtani', value: 950, status: 'protected', position: 'P' },
+        { id: 'u_mlb_1', name: 'Shohei Ohtani', value: 999, status: 'protected', position: 'P/DH' },
         { id: 'u_mlb_2', name: 'Mike Trout', value: 920, status: 'target', position: 'OF' },
-        { id: 'u_mlb_3', name: 'Aaron Judge', value: 910, status: null, position: 'OF' },
-        { id: 'u_mlb_4', name: 'Mookie Betts', value: 890, status: 'protected', position: 'OF' },
-        { id: 'u_mlb_5', name: 'Ronald Acu\u00f1a Jr.', value: 930, status: null, position: 'OF' },
-        { id: 'u_mlb_6', name: 'Fernando Tatis Jr.', value: 900, status: null, position: 'MI' },
-        { id: 'u_mlb_7', name: 'Corbin Carroll', value: 880, status: 'target', position: 'OF' },
+        { id: 'u_mlb_3', name: 'Aaron Judge', value: 940, status: null, position: 'OF' },
+        { id: 'u_mlb_4', name: 'Mookie Betts', value: 950, status: 'protected', position: 'OF/INF' },
+        { id: 'u_mlb_5', name: 'Ronald Acuña Jr.', value: 980, status: null, position: 'OF' },
+        { id: 'u_mlb_6', name: 'Fernando Tatis Jr.', value: 930, status: null, position: 'MI' },
+        { id: 'u_mlb_7', name: 'Corbin Carroll', value: 900, status: 'target', position: 'OF' },
     ]
 };
 
 export const opponentPlayers = {
     nba: [
-        { id: 'o_nba_1', name: 'Jayson Tatum', value: 780, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'SF' },
-        { id: 'o_nba_2', name: 'Devin Booker', value: 760, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'SG' },
-        { id: 'o_nba_3', name: 'Zion Williamson', value: 730, isFavorite: false, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'PF' },
-        { id: 'o_nba_4', name: 'Ja Morant', value: 770, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'PG' },
-        { id: 'o_nba_5', name: 'Anthony Edwards', value: 790, isFavorite: true, isTarget: true, isOnTradeBlock: false, position: 'SG' },
-        { id: 'o_nba_6', name: 'Trae Young', value: 740, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'PG' },
-        { id: 'o_nba_7', name: 'Shai Gilgeous-Alexander', value: 815, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'SG' },
+        { id: 'o_nba_1', name: 'Jayson Tatum', value: 940, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'SF' },
+        { id: 'o_nba_2', name: 'Devin Booker', value: 915, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'SG' },
+        { id: 'o_nba_3', name: 'Zion Williamson', value: 850, isFavorite: false, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'PF' },
+        { id: 'o_nba_4', name: 'Ja Morant', value: 890, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'PG' },
+        { id: 'o_nba_5', name: 'Anthony Edwards', value: 930, isFavorite: true, isTarget: true, isOnTradeBlock: false, position: 'SG' },
+        { id: 'o_nba_6', name: 'Trae Young', value: 870, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'PG' },
+        { id: 'o_nba_7', name: 'Shai Gilgeous-Alexander', value: 965, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'SG' },
     ],
     nfl: [
-        { id: 'o_nfl_1', name: 'Josh Allen', value: 915, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'QB' },
-        { id: 'o_nfl_2', name: 'Justin Herbert', value: 905, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'QB' },
-        { id: 'o_nfl_3', name: 'A.J. Brown', value: 875, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'WR' },
-        { id: 'o_nfl_4', name: 'CeeDee Lamb', value: 865, isFavorite: false, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'WR' },
-        { id: 'o_nfl_5', name: 'Bijan Robinson', value: 885, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'RB' },
-        { id: 'o_nfl_6', name: 'Garrett Wilson', value: 860, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'WR' },
-        { id: 'o_nfl_7', name: 'Amon-Ra St. Brown', value: 855, isFavorite: true, isTarget: true, isOnTradeBlock: true, position: 'WR' },
+        { id: 'o_nfl_1', name: 'Josh Allen', value: 980, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'QB' },
+        { id: 'o_nfl_2', name: 'Justin Herbert', value: 930, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'QB' },
+        { id: 'o_nfl_3', name: 'A.J. Brown', value: 940, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'WR' },
+        { id: 'o_nfl_4', name: 'CeeDee Lamb', value: 955, isFavorite: false, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'WR' },
+        { id: 'o_nfl_5', name: 'Bijan Robinson', value: 900, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'RB' },
+        { id: 'o_nfl_6', name: 'Garrett Wilson', value: 880, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'WR' },
+        { id: 'o_nfl_7', name: 'Amon-Ra St. Brown', value: 910, isFavorite: true, isTarget: true, isOnTradeBlock: true, position: 'WR' },
     ],
     mlb: [
-        { id: 'o_mlb_1', name: 'Juan Soto', value: 940, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'OF' },
-        { id: 'o_mlb_2', name: 'Julio Rodr\u00edguez', value: 925, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'OF' },
-        { id: 'o_mlb_3', name: 'Vladimir Guerrero Jr.', value: 900, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'CI' },
-        { id: 'o_mlb_4', name: 'Bo Bichette', value: 885, isFavorite: false, isTarget: false, isOnTradeBlock: true, position: 'MI' },
-        { id: 'o_mlb_5', name: 'Yordan Alvarez', value: 915, isFavorite: true, isTarget: true, isOnTradeBlock: false, position: 'OF' },
-        { id: 'o_mlb_6', name: 'Bobby Witt Jr.', value: 895, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'MI' },
-        { id: 'o_mlb_7', name: 'Adley Rutschman', value: 870, isFavorite: true, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'C' },
+        { id: 'o_mlb_1', name: 'Juan Soto', value: 960, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'OF' },
+        { id: 'o_mlb_2', name: 'Julio Rodríguez', value: 970, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'OF' },
+        { id: 'o_mlb_3', name: 'Vladimir Guerrero Jr.', value: 890, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'CI' },
+        { id: 'o_mlb_4', name: 'Bo Bichette', value: 875, isFavorite: false, isTarget: false, isOnTradeBlock: true, position: 'MI' },
+        { id: 'o_mlb_5', name: 'Yordan Alvarez', value: 955, isFavorite: true, isTarget: true, isOnTradeBlock: false, position: 'OF' },
+        { id: 'o_mlb_6', name: 'Bobby Witt Jr.', value: 945, isFavorite: false, isTarget: true, isOnTradeBlock: true, position: 'MI' },
+        { id: 'o_mlb_7', name: 'Adley Rutschman', value: 880, isFavorite: true, isTarget: false, isOnTradeBlock: false, isNotInterested: true, position: 'C' },
     ]
 };
 
 export const mockTrades = {
     nba: {
       user: [
-        { id: 'u_nba_1', name: 'LeBron James', value: 550, status: 'protected', position: 'SF' },
-        { id: 'u_nba_3', name: 'Stephen Curry', value: 480, status: null, position: 'PG' },
+        userPlayers.nba[4], // Nikola Jokic (990)
+        userPlayers.nba[2], // Stephen Curry (925)
       ],
       opponent: [
-        { id: 'o_nba_1', name: 'Jayson Tatum', value: 880, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'SF' },
-        { id: 'o_nba_2', name: 'Devin Booker', value: 810, isFavorite: true, isTarget: false, isOnTradeBlock: true, position: 'SG' },
+        opponentPlayers.nba[6], // Shai Gilgeous-Alexander (965)
+        opponentPlayers.nba[0], // Jayson Tatum (940)
+        opponentPlayers.nba[4], // Anthony Edwards (930)
       ],
-      valueAdjustment: 0,
-      winProbability: 0.68,
-      rationale: "User trades aging superstars for a package of younger, high-upside talent, winning the value battle."
+      valueAdjustment: 200,
+      winProbability: 0.72,
+      rationale: "User trades two top-tier superstars to acquire a trio of elite young talent, winning the overall value proposition."
     },
     nfl: {
       user: [
-        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 920, status: 'protected', position: 'RB' },
+        { id: 'u_nfl_2', name: 'Travis Kelce', value: 890, status: 'target', position: 'TE' },
+        { id: 'u_nfl_5', name: 'Tyreek Hill', value: 950, status: null, position: 'WR' },
+        { id: 'u_nfl_6', name: 'Joe Burrow', value: 940, status: null, position: 'QB' },
       ],
       opponent: [
-        { id: 'o_nfl_5', name: 'Bijan Robinson', value: 650, isFavorite: true, isTarget: false, isOnTradeBlock: false, position: 'RB' },
-        { id: 'o_nfl_6', name: 'Garrett Wilson', value: 450, isFavorite: false, isTarget: true, isOnTradeBlock: false, position: 'WR' },
+        { id: 'u_nfl_4', name: 'Christian McCaffrey', value: 975, status: 'protected', position: 'RB' },
+        { id: 'o_nfl_1', name: 'Josh Allen', value: 980, isFavorite: false, isTarget: false, isOnTradeBlock: false, position: 'QB' },
       ],
-      valueAdjustment: 180,
-      winProbability: 0.52,
-      rationale: "User gives up the top RB for two elite, younger players at key positions."
+      valueAdjustment: 150,
+      winProbability: 0.38,
+      rationale: "User packages three great players to get two of the league's absolute elite at their positions, but narrowly loses the value calculation."
     },
     mlb: {
       user: [
-        { id: 'u_mlb_1', name: 'Shohei Ohtani', value: 950, position: 'P' },
-        { id: 'u_mlb_2', name: 'Mike Trout', value: 320, position: 'OF' },
+        userPlayers.mlb[0], // Shohei Ohtani (999)
+        userPlayers.mlb[2], // Aaron Judge (940)
       ],
       opponent: [
-        { id: 'o_mlb_1', name: 'Juan Soto', value: 940, position: 'OF' },
-        { id: 'o_mlb_2', name: 'Julio Rodríguez', value: 925, position: 'OF' },
+        opponentPlayers.mlb[1], // Julio Rodríguez (970)
+        opponentPlayers.mlb[4], // Yordan Alvarez (955)
+        opponentPlayers.mlb[5], // Bobby Witt Jr. (945)
       ],
-      valueAdjustment: 555,
-      winProbability: 0.25,
-      rationale: "A blockbuster deal where the user trades two sluggers for two of the best young hitters in the game, but loses value."
+      valueAdjustment: 300,
+      winProbability: 0.88,
+      rationale: "A blockbuster deal where the user sends two top sluggers for an incredible package of three young, elite hitters."
     }
   };
