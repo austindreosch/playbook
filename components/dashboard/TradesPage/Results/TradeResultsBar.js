@@ -48,8 +48,8 @@ export default function TradeResultsBar() {
   const totalRawValue = sentRawValue + receivedRawValue;
   const receivedRawPercentage = totalRawValue > 0 ? (receivedRawValue / totalRawValue) * 100 : 50;
   
-  const winningColor = isWinningTrade ? 'green' : 'red';
-  const losingColor = isWinningTrade ? 'red' : 'green';
+  const winningColor = isWinningTrade ? 'pb_green' : 'pb_red';
+  const losingColor = isWinningTrade ? 'pb_red' : 'pb_green';
 
   // New: Calculate total value including the adjustment for segment widths
   const totalVisualValue = sentRawValue + receivedRawValue + valueAdjustment;
@@ -58,12 +58,12 @@ export default function TradeResultsBar() {
     ...playersReceived.map(p => ({
       id: p.id,
       value: p.value,
-      colorClass: `bg-pb_${winningColor}`
+      colorClass: `bg-${winningColor}`
     })),
     ...playersSent.map(p => ({
       id: p.id,
       value: p.value,
-      colorClass: `bg-pb_${losingColor}`
+      colorClass: `bg-${losingColor}`
     }))
   ];
 
@@ -83,14 +83,14 @@ export default function TradeResultsBar() {
           {/* Winning Side (Green) - Players Received */}
           <div 
             style={{ width: `${winningPercentage}%` }} 
-            className={`bg-${winningColor}-400 flex items-center justify-end pr-4 text-white text-xs font-medium`}
+            className={`bg-${winningColor} flex items-center justify-end pr-4 text-white text-xs font-medium`}
           >
             <span className="font-bold text-lg z-10">{`${Math.round(winningPercentage)}%`}</span>
           </div>
           {/* Losing Side (Red) - Players Sent */}
           <div 
             style={{ width: `${losingPercentage}%` }} 
-            className={`bg-${losingColor}-400`}
+            className={`bg-${losingColor}`}
           >
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function TradeResultsBar() {
         {playersReceived.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${winningColor}-600`}
+            className={`text-xs font-semibold text-center truncate px-1 text-${winningColor}`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
@@ -112,7 +112,7 @@ export default function TradeResultsBar() {
         {playersSent.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${losingColor}-600`}
+            className={`text-xs font-semibold text-center truncate px-1 text-${losingColor}`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
@@ -153,7 +153,7 @@ export default function TradeResultsBar() {
             transform: 'translateX(-50%)'
           }}
         >
-          <span className={`mt-1 inline-block font-bold text-xl text-${winningColor}-500`}>
+          <span className={`mt-1 inline-block font-bold text-xl text-${winningColor}`}>
             {finalValueMargin >= 0 ? '+' : ''}{finalValueMargin.toLocaleString()}
           </span>
         </div>
