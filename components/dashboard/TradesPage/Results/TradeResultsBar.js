@@ -54,32 +54,43 @@ export default function TradeResultsBar() {
   // New: Calculate total value including the adjustment for segment widths
   const totalVisualValue = sentRawValue + receivedRawValue + valueAdjustment;
 
-  const visualSegments = [
-    ...playersReceived.map(p => ({
-      id: p.id,
-      value: p.value,
-      colorClass: `bg-${winningColor}`
-    })),
-    ...playersSent.map(p => ({
-      id: p.id,
-      value: p.value,
-      colorClass: `bg-${losingColor}`
-    }))
-  ];
+  const receivedSegments = playersReceived.map(p => ({
+    id: p.id,
+    value: p.value,
+    colorClass: `bg-${winningColor}`
+  }));
 
-  if (valueAdjustment > 0 && sentFewerPlayers) {
-    visualSegments.push({
-      id: 'adjustment',
-      value: valueAdjustment,
-      colorClass: 'bg-red-800'
-    });
+  const sentSegments = playersSent.map(p => ({
+    id: p.id,
+    value: p.value,
+    colorClass: `bg-${losingColor}`
+  }));
+
+  if (valueAdjustment > 0) {
+    if (!sentFewerPlayers) {
+      const adjustmentColorClass = winningColor === 'pb_green' ? 'bg-pb_green-900' : 'bg-pb_red-900';
+      receivedSegments.push({
+        id: 'adjustment',
+        value: valueAdjustment,
+        colorClass: adjustmentColorClass
+      });
+    } else {
+      const adjustmentColorClass = losingColor === 'pb_red' ? 'bg-pb_red-900' : 'bg-pb_green-900';
+      sentSegments.push({
+        id: 'adjustment',
+        value: valueAdjustment,
+        colorClass: adjustmentColorClass
+      });
+    }
   }
+
+  const visualSegments = [...receivedSegments, ...sentSegments];
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       {/* Main bar container */}
       <div className="relative rounded-lg overflow-hidden shadow-sm">
-        <div className="flex h-16 relative">
+        <div className="flex h-12 relative">
           {/* Winning Side (Green) - Players Received */}
           <div 
             style={{ width: `${winningPercentage}%` }} 
@@ -108,6 +119,14 @@ export default function TradeResultsBar() {
             {player.name.split(' ').pop().toUpperCase()}
           </div>
         ))}
+        {valueAdjustment > 0 && !sentFewerPlayers && (
+          <div
+            className={`text-xs font-semibold text-center ${winningColor === 'pb_green' ? 'text-pb_green-700' : 'text-pb_reddisable'}`}
+            style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
+          >
+            +
+          </div>
+        )}
         {/* Sent Players (Right) */}
         {playersSent.map((player) => (
           <div
@@ -120,8 +139,8 @@ export default function TradeResultsBar() {
         ))}
         {/* Adjustment Value Label */}
         {valueAdjustment > 0 && sentFewerPlayers && (
-          <div 
-            className="text-xs font-semibold text-center text-red-700"
+          <div
+            className={`text-xs font-semibold text-center ${losingColor === 'pb_red' ? 'text-pb_reddisabled' : 'text-pb_greendisabled'}`}
             style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
           >
             +
@@ -141,7 +160,7 @@ export default function TradeResultsBar() {
 
         {/* Corrected Divider line */}
         <div 
-          className="absolute top-1/2 -translate-y-1/2 h-4 w-0.5 bg-gray-700" 
+          className={`absolute top-1/2 -translate-y-1/2 h-5 w-1 bg-pb_greenhover`} 
           style={{ left: `${(receivedRawValue / totalVisualValue) * 100}%` }} 
         />
 
@@ -153,7 +172,7 @@ export default function TradeResultsBar() {
             transform: 'translateX(-50%)'
           }}
         >
-          <span className={`mt-1 inline-block font-bold text-xl text-${winningColor}`}>
+          <span className={`mt-2 inline-block font-bold text-xl text-${winningColor}`}>
             {finalValueMargin >= 0 ? '+' : ''}{finalValueMargin.toLocaleString()}
           </span>
         </div>
