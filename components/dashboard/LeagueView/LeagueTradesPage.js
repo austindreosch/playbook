@@ -56,15 +56,14 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 grid grid-rows-[7fr_7fr_5fr] px-3">
+        <div className="col-span-12 flex flex-col px-3 min-w-0">
 
           <div>
             <TradeResultsBlock />
             <Separator className="bg-pb_lightergray"/>
           </div>
-          <div>
+          <div className="flex-grow flex items-center justify-center">
             <TradeCalculatorBlock /> 
-            <Separator className="bg-pb_lightergray"/>
           </div>
           <div>
             <TradeHistoryBlock />

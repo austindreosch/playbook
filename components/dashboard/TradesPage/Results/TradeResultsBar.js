@@ -85,7 +85,7 @@ export default function TradeResultsBar() {
   const visualSegments = [...receivedSegments, ...sentSegments];
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
+    <div className="w-full mx-auto">
       {/* Main bar container */}
       <div className="relative rounded-lg overflow-hidden shadow-sm">
         <div className="flex h-12 relative">
@@ -190,7 +190,7 @@ export default function TradeResultsBar() {
       </div>
       
       {/* Mock trade display */}
-      <div className="mt-6 flex flex-col md:flex-row md:justify-center gap-8">
+      {/* <div className="mt-6 flex flex-col md:flex-row md:justify-center gap-8">
         <div className="flex-1">
           <h3 className="text-center font-semibold mb-2">User Sends</h3>
           <ul className="bg-gray-50 rounded p-3 shadow-sm">
@@ -208,7 +208,11 @@ export default function TradeResultsBar() {
           </ul>
         </div>
       </div>
-      <div className="mt-4 text-center text-sm text-gray-600 italic max-w-2xl mx-auto">{trade.rationale}</div>
+      <div className="mt-4 text-center text-sm text-gray-600 italic max-w-2xl mx-auto">{trade.rationale}</div> */}
+
+
     </div>
+
+    
   );
 }

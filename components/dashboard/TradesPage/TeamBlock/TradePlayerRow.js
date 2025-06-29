@@ -7,7 +7,7 @@ import LockFilledIcon from '@/components/icons/LockFilledIcon';
 import { cn } from '@/lib/utils';
 import { abbreviateName } from '@/utilities/stringUtils';
 
-export default function TradePlayerRow({ player }) {
+export default function TradePlayerRow({ player, isExpandable = true }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [status, setStatus] = useState(player.status);
 
@@ -15,11 +15,17 @@ export default function TradePlayerRow({ player }) {
     setStatus(status === clickedStatus ? null : clickedStatus);
   };
 
+  const handleRowClick = () => {
+    if (isExpandable) {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
   return (
     <div className="bg-white border border-pb_lightergray rounded-md">
-      <div 
-        className="flex items-center justify-between p-1 h-11 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
+      <div
+        className={cn("flex items-center justify-between p-1 h-11", isExpandable && "cursor-pointer")}
+        onClick={handleRowClick}
       >
         <div className="flex items-center space-x-2 text-pb_darkgray min-w-0">
           <GripVertical className="w-5 h-5 flex-shrink-0" />
@@ -30,15 +36,16 @@ export default function TradePlayerRow({ player }) {
           <div className="w-5 h-5">
             {status === 'protected' && <LockFilledIcon className="w-5 h-5 text-pb_darkgray" />}
             {status === 'target' && <Package className="w-5 h-5" />}
+            {status === 'bullseye' && <Target className="w-5 h-5" />}
           </div>
           <div className="flex items-center space-x-2">
             <span className="w-10 text-right text-sm font-semibold text-pb_darkgray">{player.value}</span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            {isExpandable && <ChevronDown className={cn('w-4 h-4 transition-transform', isExpanded ? 'rotate-180' : '')} />}
           </div>
         </div>
       </div>
 
-      {isExpanded && (
+      {isExpandable && isExpanded && (
         <div className="p-3 border-t border-pb_lightergray bg-pb_backgroundgray/60">
             <div className="flex items-center justify-around">
                 {/* Protected Button */}
