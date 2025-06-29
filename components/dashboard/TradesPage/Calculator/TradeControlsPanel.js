@@ -5,34 +5,53 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 import { CandlestickChart, CopyPlus, Handshake, Rocket, Save, Settings, Trash2, Trophy, View } from "lucide-react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 export default function TradeControlsPanel() {
   const [tradeFocus, setTradeFocus] = useState("value");
   const [tradeAggressiveness, setTradeAggressiveness] = useState("respectful");
+  const buttonGroupRef = useRef(null);
+  const [contentWidth, setContentWidth] = useState(0);
+
+  useLayoutEffect(() => {
+    const updateWidth = () => {
+      if (buttonGroupRef.current) {
+        setContentWidth(buttonGroupRef.current.offsetWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   return (
     <div className="flex items-center justify-between w-full gap-2 flex-shrink-0 h-full">
-      <div className="flex items-center gap-2 h-full">
-        <Button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-md flex items-center justify-center gap-2 text-sm h-full">
+      <div className="flex items-center h-full" ref={buttonGroupRef}>
+        <Button className="bg-pb_blue hover:bg-pb_bluehover text-white font-bold py-1 px-3.5 pr-4.5 rounded-l-md rounded-r-none flex items-center justify-center gap-2 text-sm h-full">
           <View className="h-5 w-5" />
           <span className="ml-0.5">Find Smart Trade</span>
         </Button>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white h-full px-3">
+            <Button className="bg-pb_blue hover:bg-pb_bluehover text-white h-full px-3 rounded-r-md rounded-l-none border-l-2 border-white/20">
               <Settings className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-72 p-3" align="start">
+          <DropdownMenuContent 
+            className="p-3" 
+            align="start"
+            style={{ width: contentWidth ? `${contentWidth + 60}px` : undefined }}
+            alignOffset={-contentWidth + 46}
+          >
             <DropdownMenuLabel className="p-0">Smart Trade Settings</DropdownMenuLabel>
             <DropdownMenuSeparator className="my-2" />
             
             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="focus:bg-transparent p-0">
               <div className="flex flex-col gap-2 w-full">
                 <p className="font-semibold text-sm">Focus</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-pb_textgray">
                   Prioritize long-term value or immediate gains for a championship run.
                 </p>
                 <ToggleGroup 
@@ -41,15 +60,32 @@ export default function TradeControlsPanel() {
                   onValueChange={(value) => {
                     if (value) setTradeFocus(value);
                   }}
-                  className="w-full grid grid-cols-2"
+                  className="w-full flex gap-0"
                 >
-                  <ToggleGroupItem value="value" aria-label="Toggle value" className="flex flex-col gap-1 h-auto py-2 data-[state=on]:bg-blue-100 dark:data-[state=on]:bg-blue-900/50">
+                  <ToggleGroupItem 
+                    value="value" 
+                    aria-label="Toggle value" 
+                    className={cn(
+                      "flex-1 flex flex-col gap-1 h-auto py-2 border rounded-l-md rounded-r-none transition-colors",
+                      "data-[state=on]:bg-pb_blue data-[state=on]:text-white data-[state=on]:border-pb_bluehover hover:data-[state=on]:bg-pb_bluehover hover:data-[state=on]:text-white",
+                      "data-[state=off]:bg-white data-[state=off]:text-pb_textlightestgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
+                    )}
+                  >
                     <CandlestickChart className="h-5 w-5" />
-                    <span className="text-xs font-medium">Value</span>
+                    
+                    <span className="text-xs">Value</span>
                   </ToggleGroupItem>
-                  <ToggleGroupItem value="victory" aria-label="Toggle victory" className="flex flex-col gap-1 h-auto py-2 data-[state=on]:bg-blue-100 dark:data-[state=on]:bg-blue-900/50">
+                  <ToggleGroupItem 
+                    value="victory" 
+                    aria-label="Toggle victory" 
+                    className={cn(
+                      "flex-1 flex flex-col gap-1 h-auto py-2 border rounded-r-md rounded-l-none -ml-px transition-colors",
+                      "data-[state=on]:bg-pb_blue data-[state=on]:text-white data-[state=on]:border-pb_bluehover hover:data-[state=on]:bg-pb_bluehover hover:data-[state=on]:text-white",
+                      "data-[state=off]:bg-white data-[state=off]:text-pb_textlightestgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
+                    )}
+                  >
                     <Trophy className="h-5 w-5" />
-                    <span className="text-xs font-medium">Victory</span>
+                    <span className="text-xs">Victory</span>
                   </ToggleGroupItem>
                 </ToggleGroup>
               </div>
@@ -60,7 +96,7 @@ export default function TradeControlsPanel() {
             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="focus:bg-transparent p-0">
               <div className="flex flex-col gap-2 w-full">
                 <p className="font-semibold text-sm">Aggressiveness</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-pb_textgray">
                   Choose between balanced, fair trades or aim for high-value, aggressive deals.
                 </p>
                 <ToggleGroup 
@@ -69,15 +105,31 @@ export default function TradeControlsPanel() {
                   onValueChange={(value) => {
                     if (value) setTradeAggressiveness(value);
                   }}
-                  className="w-full grid grid-cols-2"
+                  className="w-full flex gap-0"
                 >
-                  <ToggleGroupItem value="respectful" aria-label="Toggle respectful" className="flex flex-col gap-1 h-auto py-2 data-[state=on]:bg-blue-100 dark:data-[state=on]:bg-blue-900/50">
-                    <Handshake className="h-5 w-5" />
-                    <span className="text-xs font-medium">Respectful</span>
-                  </ToggleGroupItem>
-                  <ToggleGroupItem value="aggressive" aria-label="Toggle aggressive" className="flex flex-col gap-1 h-auto py-2 data-[state=on]:bg-blue-100 dark:data-[state=on]:bg-blue-900/50">
+                  <ToggleGroupItem 
+                    value="respectful" 
+                    aria-label="Toggle respectful" 
+                      className={cn(
+                        "flex-1 flex flex-col gap-1 h-auto py-2 border rounded-l-md rounded-r-none transition-colors",
+                        "data-[state=on]:bg-pb_blue data-[state=on]:text-white data-[state=on]:border-pb_bluehover hover:data-[state=on]:bg-pb_bluehover hover:data-[state=on]:text-white",
+                        "data-[state=off]:bg-white data-[state=off]:text-pb_textlightestgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
+                      )}
+                    >
+                      <Handshake className="h-5 w-5" />
+                      <span className="text-xs">Respectful</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem 
+                      value="aggressive" 
+                      aria-label="Toggle aggressive" 
+                      className={cn(
+                        "flex-1 flex flex-col gap-1 h-auto py-2 border rounded-r-md rounded-l-none -ml-px transition-colors",
+                        "data-[state=on]:bg-pb_blue data-[state=on]:text-white data-[state=on]:border-pb_bluehover hover:data-[state=on]:bg-pb_bluehover hover:data-[state=on]:text-white",
+                        "data-[state=off]:bg-white data-[state=off]:text-pb_textlightestgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
+                      )}
+                  >
                     <Rocket className="h-5 w-5" />
-                    <span className="text-xs font-medium">Aggressive</span>
+                    <span className="text-xs">Aggressive</span>
                   </ToggleGroupItem>
                 </ToggleGroup>
               </div>

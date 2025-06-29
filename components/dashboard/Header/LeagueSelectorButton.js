@@ -231,7 +231,7 @@ export default function LeagueSelectorButton({ className = "" }) {
                         {leagueName}
                       </span>
                     </div>
-                    <span className={`text-xs ${isSelected ? 'text-pb_midgray' : 'text-pb_textgray'}`}>
+                    <span className={`text-xs ${isSelected ? 'text-pb_textgray' : 'text-pb_textlightgray'}`}>
                       {format} • {platform} {teamSize ? `• ${teamSize} Team` : ''}
                     </span>
                   </div>
