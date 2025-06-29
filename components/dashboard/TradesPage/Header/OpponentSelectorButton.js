@@ -77,27 +77,27 @@ export default function OpponentSelectorButton({ className = '' }) {
     <div className="relative" ref={buttonRef}>
       <button
         onClick={handleButtonClick}
-        className={`flex items-center justify-between gap-2 rounded-md border border-pb_lightgray shadow-sm select-none px-3 py-1 hover:bg-pb_lightestgray transition-colors ${className}`.trim()}
+        className={`flex items-center justify-between gap-2 rounded-md border border-pb_mddarkgray bg-pb_darkgray text-white shadow-sm select-none px-3 py-1 hover:bg-pb_mddarkgray transition-colors ${className}`.trim()}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-sm font-semibold text-left text-pb_darkgray truncate hidden md:block md:w-44 xl:w-54">
+          <span className="text-sm font-semibold text-left truncate hidden md:block md:w-44 xl:w-54">
             {displayName}
           </span>
         </div>
         
         <div className="flex items-center gap-1">
-          <ChevronsUpDown className="w-4 h-4 text-pb_darkgray" />
-          <Users className="w-5 h-5 text-pb_darkgray" />
+          <ChevronsUpDown className="w-4 h-4" />
+          <Users className="w-5 h-5" />
         </div>
       </button>
 
       {isOpen && (
         <div 
-          className="absolute top-full right-0 w-full mt-1 bg-white border border-pb_lightgray rounded-md shadow-md z-[10001] max-h-80 overflow-y-auto text-pb_darkgray animate-in fade-in-0 zoom-in-95 slide-in-from-top-2"
+          className="absolute top-full right-0 w-full mt-1 bg-pb_darkgray border border-pb_mddarkgray rounded-md shadow-md z-[10001] max-h-80 overflow-y-auto text-white animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 scrollbar-thin scrollbar-thumb-pb_mddarkgray scrollbar-track-pb_darkgray"
         >
           {opponentTeams.length === 0 ? (
             <div className="relative flex cursor-default select-none items-center rounded-sm px-3 py-2 text-sm outline-none">
-              <span className="text-sm text-pb_mddarkgray">
+              <span className="text-sm text-gray-400">
                 No other teams available
               </span>
             </div>
@@ -111,14 +111,14 @@ export default function OpponentSelectorButton({ className = '' }) {
                   onClick={() => handleOpponentSelect(team)}
                   className={`group relative flex cursor-default select-none items-center gap-3 rounded-sm px-3 py-3 m-1 text-sm outline-none transition-colors ${
                     isSelected 
-                      ? 'bg-pb_lightestgray' 
-                      : 'hover:bg-pb_lightestgray'
+                      ? 'bg-pb_mddarkgray' 
+                      : 'hover:bg-pb_mddarkgray'
                   }`}
                 >
-                  <Users className={`w-5 h-5 text-pb_darkgray`} />
+                  <Users className={`w-5 h-5 text-white`} />
                   <div className="flex-grow">
                     <p className="font-semibold">{team.teamName}</p>
-                    <p className="text-xs text-pb_mddarkgray">Owner: {team.owner}</p>
+                    <p className="text-xs text-gray-400">Owner: {team.owner}</p>
                   </div>
                   {isSelected && <Check className="w-4 h-4" />}
                 </div>

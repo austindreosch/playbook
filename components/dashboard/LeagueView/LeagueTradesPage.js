@@ -25,20 +25,29 @@ export default function LeagueTradesPage() {
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
-      <div className="flex w-full pt-2.5">
-        <div className="flex w-full justify-between">
-          <div className="flex gap-2">
-            <CurrentLeagueTeamDisplay className="h-9" />
+      <div className="grid grid-cols-22 gap-2 w-full items-center pt-2.5">
+        {/* Left part */}
+        <div className="col-span-5 flex gap-2">
+          <CurrentLeagueTeamDisplay className="h-9 flex-1" />
+        </div>
+
+        {/* Middle part */}
+        <div className="col-span-12 flex justify-between">
+          <div className="truncate pr-3">
             <CurrentLeagueContext className="h-9" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex justify-end gap-2">
             <ValueSwapButton className="h-9" />
             <ScreenshotButton className="h-9" />
             <ShareLinkButton className="h-9" />
             <LeagueSettingsButton className="h-9" />
             <SyncLeagueButton className="h-9" />
-            <OpponentSelectorButton className="h-9" />
           </div>
+        </div>
+
+        {/* Right part */}
+        <div className="col-span-5">
+          <OpponentSelectorButton className="h-9 w-full" />
         </div>
       </div>
 
@@ -56,15 +65,16 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 flex flex-col px-3 min-w-0">
+        <div className="col-span-12 flex flex-col px-3 min-w-0 space-y-2">
 
           <div>
             <TradeResultsBlock />
-            <Separator className="bg-pb_lightergray"/>
           </div>
+            <Separator className="bg-pb_lightergray"/>
           <div className="flex-grow flex items-center justify-center">
             <TradeCalculatorBlock /> 
           </div>
+            <Separator className="bg-pb_lightergray"/>
           <div>
             <TradeHistoryBlock />
           </div>

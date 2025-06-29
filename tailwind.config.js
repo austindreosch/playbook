@@ -5,6 +5,7 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   plugins: [
     'prettier-plugin-tailwindcss',
@@ -162,7 +163,8 @@ module.exports = {
   		},
   		colors: {
   			neutral: '#FEF9F3',
-  			pb_darkgray: '#383838',
+  			pb_darkergray: '#2d2d2d',
+  			pb_darkgray: '#383838', // primary black
   			pb_darkgrayhover: '#4c4c4c',
   			pb_mddarkgray: '#606060',
   			pb_midgray: '#747474',
@@ -391,7 +393,11 @@ module.exports = {
   		}
   	}
   },
-  plugins: [],
+  plugins: [
+    'prettier-plugin-tailwindcss',
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar'),
+  ],
 }
 
 

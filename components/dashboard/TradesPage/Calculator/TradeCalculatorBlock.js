@@ -1,20 +1,69 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useDashboardContext from "@/stores/dashboard/useDashboardContext";
+import { mockTrades } from "../dummyDataTradesPage";
 import TradePlayerRow from "../TeamBlock/TradePlayerRow";
-import ControlsPanel from "./ControlsPanel";
+import TradeControlsPanel from "./TradeControlsPanel";
+
+const useTradeCalculator = () => {
+  const { leagues, currentLeagueId } = useDashboardContext();
+
+  if (!currentLeagueId || !leagues || !leagues.length) {
+    return { isLoading: true };
+  }
+
+  const currentLeague = leagues.find(
+    (league) => league.leagueDetails.leagueName === currentLeagueId
+  );
+
+  if (!currentLeague) {
+    return { isLoading: true };
+  }
+  
+  const selectedSport = currentLeague.leagueDetails.sport.toLowerCase();
+  const trade = mockTrades[selectedSport];
+
+  if (!trade) {
+    return { error: `No trade data available for ${selectedSport.toUpperCase()}.` };
+  }
+  
+  const sendPlayers = trade.user;
+  const receivePlayers = trade.opponent;
+  const valueAdjustment = trade.valueAdjustment || 0;
+
+  const receivedFewerPlayers = receivePlayers.length < sendPlayers.length;
+
+  const sentRawValue = sendPlayers.reduce((sum, p) => sum + p.value, 0);
+  const receivedRawValue = receivePlayers.reduce((sum, p) => sum + p.value, 0);
+  
+  const sendTotal = sentRawValue + (!receivedFewerPlayers ? valueAdjustment : 0);
+  const receiveTotal = receivedRawValue + (receivedFewerPlayers ? valueAdjustment : 0);
+
+  const sendAdjustment = !receivedFewerPlayers ? valueAdjustment : 0;
+  const receiveAdjustment = receivedFewerPlayers ? valueAdjustment : 0;
+
+  return {
+    sendPlayers,
+    receivePlayers,
+    sendTotal,
+    receiveTotal,
+    sendAdjustment,
+    receiveAdjustment
+  };
+};
 
 const TradePanel = ({ type, players, total, valueAdjustment }) => {
   return (
-    <Card className="flex-1 bg-gray-50 p-2 rounded-lg border shadow-md flex flex-col max-h-[400px]">
+    <Card className="flex-1 bg-pb_backgroundgray rounded-lg border-1.5 border-pb_lightgray shadow-inner flex flex-col max-h-[400px] min-w-0">
       <CardHeader className="flex flex-row items-center justify-between p-2 mb-2 flex-shrink-0">
         <CardTitle className="text-xs font-bold text-gray-500 uppercase tracking-wider">{type}</CardTitle>
         <div className="text-lg font-bold text-gray-800">{total.toLocaleString()}</div>
       </CardHeader>
       <CardContent className="p-2 overflow-y-auto">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           {players.map((player, index) => (
             <TradePlayerRow key={index} player={player} />
           ))}
-          {type === "SEND" && valueAdjustment && (
+          {valueAdjustment > 0 && (
             <div className="flex items-center justify-between bg-gray-600 text-white p-2 rounded-md mt-2">
               <span className="font-medium">Value Adjustment</span>
               <span className="font-bold">+{valueAdjustment}</span>
@@ -27,24 +76,29 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
 };
 
 export default function TradeCalculatorBlock() {
-  // TODO: Replace with dynamic data
-  const sendPlayers = [
-    { name: 'Giannis Antetokounmpo', value: 8576 },
-    { name: 'Clint Capela', value: 3274, status: 'target' },
-  ];
-  const receivePlayers = [
-    { name: 'Shai Gilgeous-Alexander', value: 7653 },
-    { name: 'Jalen Brunson', value: 6574, status: 'bullseye' },
-    { name: 'Bam Adebayo', value: 5893 },
-  ];
-  const sendTotal = 12178;
-  const receiveTotal = 20120;
+  const { 
+    isLoading, 
+    error, 
+    sendPlayers, 
+    receivePlayers, 
+    sendTotal, 
+    receiveTotal, 
+    sendAdjustment, 
+    receiveAdjustment 
+  } = useTradeCalculator();
+
+  if (isLoading) return null; // Or a loading skeleton
+  if (error) return <div className="p-4 text-center">{error}</div>;
 
   return (
-    <div className="w-full h-full rounded-lg flex items-stretch justify-center gap-4 p-4">
-      <TradePanel type="SEND" players={sendPlayers} total={sendTotal} valueAdjustment={328} />
-      <ControlsPanel />
-      <TradePanel type="RECEIVE" players={receivePlayers} total={receiveTotal} />
+  <div className="w-full h-full space-y-2">
+    <div className="flex h-9">
+      <TradeControlsPanel />
     </div>
+    <div className="h-full rounded-lg flex items-stretch justify-center gap-4">
+      <TradePanel type="SEND" players={sendPlayers} total={sendTotal} valueAdjustment={sendAdjustment} />
+      <TradePanel type="RECEIVE" players={receivePlayers} total={receiveTotal} valueAdjustment={receiveAdjustment} />
+    </div>
+  </div>
   );
 } 
