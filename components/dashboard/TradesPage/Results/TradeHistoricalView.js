@@ -52,7 +52,7 @@ export default function TradeHistoricalView() {
 
   return (
     <div className="w-full h-full bg-white border border-pb_lightgray rounded-lg p-2 px-3">
-      <div className="text-xs text-pb_textlightestgray">Historical View</div>
+      <div className="text-2xs text-pb_textlightergray">Historical View</div>
       
              <ChartContainer config={chartConfig} className="h-[calc(100%-10px)] w-full">
          <LineChart data={data} margin={{ top: 0, right: 5, bottom: 0, left: 5 }}>
@@ -73,10 +73,10 @@ export default function TradeHistoricalView() {
           {/* Yearly average line */}
           <ReferenceLine 
             y={yearlyAverage} 
-            stroke="#ccc" 
-            strokeDasharray="5 5" 
+            stroke="#efefef" 
+            strokeDasharray="4 3" 
             strokeWidth={2}
-            label={{ value: `+${yearlyAverage}`, position: "insideTopLeft", fontSize: 11, fill: "#999", offset: -4, textAnchor: "start" }}
+            label={{ value: `+${yearlyAverage}`, position: "insideTopLeft", fontSize: 11, fill: "#9c9c9c", offset: -4, textAnchor: "start" }}
           />
           
           <ChartTooltip content={<ChartTooltipContent />} />
