@@ -53,16 +53,25 @@ export default function TradeHistoricalView() {
 
     // Get the actual container dimensions
     const containerRect = svgRef.current.parentElement.getBoundingClientRect();
+    
+    // Safety check for valid dimensions
+    if (containerRect.width <= 0 || containerRect.height <= 0) {
+      return;
+    }
+    
     const margin = { top: 5, right:  0, bottom: 28, left: 0 };
     const width = containerRect.width - margin.left - margin.right;
     const height = containerRect.height - margin.top - margin.bottom;
+    
+    // Additional safety check for chart area
+    if (width <= 0 || height <= 0) {
+      return;
+    }
 
     // Create SVG
     const svg = d3.select(svgRef.current)
-      .attr('width', '100%')
-      .attr('height', '100%')
-      .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      .attr('preserveAspectRatio', 'xMidYMid meet');
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom);
 
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -220,17 +229,32 @@ export default function TradeHistoricalView() {
     // Initial draw
     drawChart();
 
-    // Set up resize observer for responsive behavior
-    const resizeObserver = new ResizeObserver(() => {
-      drawChart();
-    });
+    // Simple resize handling
+    let resizeTimeout;
+    
+    const handleResize = () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      
+      resizeTimeout = setTimeout(() => {
+        drawChart();
+      }, 100);
+    };
 
+    window.addEventListener('resize', handleResize);
+    
+    const resizeObserver = new ResizeObserver(handleResize);
     if (svgRef.current.parentElement) {
       resizeObserver.observe(svgRef.current.parentElement);
     }
 
     // Cleanup
     return () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      window.removeEventListener('resize', handleResize);
       resizeObserver.disconnect();
     };
 
@@ -258,8 +282,15 @@ export default function TradeHistoricalView() {
   return (
     <div className="w-full h-full bg-white border border-pb_lightgray rounded-lg p-3">
       {/* D3 Chart Container */}
-      <div className="relative w-full h-full">
-        <svg ref={svgRef} className="overflow-visible"></svg>
+      <div className="relative w-full h-full overflow-hidden">
+        <svg 
+          ref={svgRef} 
+          style={{ 
+            width: '100%', 
+            height: '100%',
+            display: 'block'
+          }}
+        />
       </div>
     </div>
   );
