@@ -53,7 +53,7 @@ export default function TradeHistoricalView() {
 
     // Get the actual container dimensions
     const containerRect = svgRef.current.parentElement.getBoundingClientRect();
-    const margin = { top: 0, right:  0, bottom: 28, left: 0 };
+    const margin = { top: 5, right:  0, bottom: 28, left: 0 };
     const width = containerRect.width - margin.left - margin.right;
     const height = containerRect.height - margin.top - margin.bottom;
 
@@ -105,19 +105,19 @@ export default function TradeHistoricalView() {
     
     lineGradient.append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', '#ef4444');
+      .attr('stop-color', '#ee6352');
 
     lineGradient.append('stop')
       .attr('offset', `${breakEvenPosition}%`)
-      .attr('stop-color', '#ef4444');
+      .attr('stop-color', '#ee6352');
 
     lineGradient.append('stop')
       .attr('offset', `${breakEvenPosition}%`)
-      .attr('stop-color', '#22c55e');
+      .attr('stop-color', '#59cd90');
 
     lineGradient.append('stop')
       .attr('offset', '100%')
-      .attr('stop-color', '#22c55e');
+      .attr('stop-color', '#59cd90');
 
     // Add subtle grid lines (like HTML example)
     const yAxis = d3.axisLeft(yScale).tickSize(-width).tickFormat('');
@@ -144,16 +144,16 @@ export default function TradeHistoricalView() {
     const textHeight = 14;
     
     g.append('rect')
-      .attr('x', 10 - 4)
+      .attr('x', 0 - 2)
       .attr('y', yScale(yearlyAverage) - 8)
-      .attr('width', textWidth + 8)
+      .attr('width', textWidth + 4)
       .attr('height', textHeight)
       .attr('fill', 'white')
       .attr('stroke', 'none');
 
-    // Add yearly average label (positioned on the left side inside chart area)
+    // Add yearly average label (positioned at the far left edge)
     g.append('text')
-      .attr('x', 10)
+      .attr('x', 0)
       .attr('y', yScale(yearlyAverage) + 3)
       .attr('font-size', '11')
       .attr('font-weight', '400')
@@ -174,15 +174,18 @@ export default function TradeHistoricalView() {
       .attr('stroke-width', 3)
       .attr('d', line);
 
-    // Add main data points (colored by breakeven like HTML example)
+    // Add main data points as rounded squares (colored by breakeven like HTML example)
     g.selectAll('.dot')
       .data(historicalData)
-      .enter().append('circle')
+      .enter().append('rect')
       .attr('class', 'dot')
-      .attr('cx', d => xScale(d.period))
-      .attr('cy', d => yScale(d.value))
-      .attr('r', (d, i) => i === historicalData.length - 1 ? 6 : 5)
-      .attr('fill', d => d.value >= breakeven ? '#22c55e' : '#ef4444')
+      .attr('x', d => xScale(d.period) - 5)
+      .attr('y', d => yScale(d.value) - 5)
+      .attr('width', 10)
+      .attr('height', 10)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('fill', d => d.value >= breakeven ? '#59cd90' : '#ee6352')
       .attr('stroke', 'white')
       .attr('stroke-width', 2);
 
@@ -198,6 +201,16 @@ export default function TradeHistoricalView() {
       .attr('fill', '#666')
       .attr('font-weight', '500')
       .text(d => d.period);
+
+      // Add "Historical View" label in top left corner
+      g.append('text')
+        .attr('x', 0)
+        .attr('y', 2)
+        .attr('text-anchor', 'start')
+        .attr('font-size', '11')
+        .attr('font-weight', '400')
+        .attr('fill', '#999')
+        .text('Historical View');
 
       // Remove default axes (we're doing custom)
       g.selectAll('.domain').remove();
