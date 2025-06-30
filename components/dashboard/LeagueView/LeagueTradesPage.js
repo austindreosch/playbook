@@ -71,9 +71,9 @@ export default function LeagueTradesPage() {
         <div className="col-span-12 px-3">
           <div className="space-y-4 mb-4">
             <TradeResultsBlock />
-            <Separator className="bg-pb_lightergray my-3"/>
+            {/* <Separator className="bg-pb_lightergray my-3"/> */}
             <TradeImpactBar />
-            <div className="grid grid-cols-[6fr_4fr] gap-2">
+            <div className="grid grid-cols-[7fr_3fr] gap-1">
                 <TradeOutcome />
                 <TradeHistoricalView />
             </div>
