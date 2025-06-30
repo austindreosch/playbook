@@ -44,6 +44,12 @@ export default function TradeHistoricalView() {
 
   const yearlyAverage = 317;
 
+  // Gradient breakpoint for zero threshold
+  const domainMin = -700;
+  const domainMax = 1100;
+  const threshold = 0;
+  const offsetPct = ((domainMax - threshold) / (domainMax - domainMin)) * 100;
+
   return (
     <div className="w-full h-full bg-white border border-pb_lightgray rounded-lg p-2 px-3">
       <div className="text-xs text-pb_textlightestgray">Historical View</div>
@@ -101,7 +107,8 @@ export default function TradeHistoricalView() {
           <defs>
             <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#59cd90" />
-              <stop offset="50%" stopColor="#ee6352" />
+              <stop offset={`${offsetPct}%`} stopColor="#59cd90" />
+              <stop offset={`${offsetPct}%`} stopColor="#ee6352" />
               <stop offset="100%" stopColor="#ee6352" />
             </linearGradient>
           </defs>
