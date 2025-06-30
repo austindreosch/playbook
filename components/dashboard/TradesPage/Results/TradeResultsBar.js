@@ -171,8 +171,8 @@ export default function TradeResultsBar() {
 
         {/* Corrected Divider line */}
         <div 
-          className={`absolute top-1/2 -translate-y-1/2 h-5 w-1 ${isWinningTrade ? 'bg-pb_greenhover' : 'bg-pb_redhover'}`} 
-          style={{ left: `${(receivedAdjustedValue / totalVisualValue) * 100}%` }} 
+          className={`absolute top-1/2 -translate-y-1/2 h-5 w-[3px] ${isWinningTrade ? 'bg-pb_green' : 'bg-pb_redhover'}`} 
+          style={{ left: `${(receivedAdjustedValue / totalVisualValue) * 100}%`, transform: 'translateY(-50%) translateX(-50%)' }} 
         />
 
         {/* Margin indicator positioned under the divider */}
@@ -189,26 +189,7 @@ export default function TradeResultsBar() {
         </div>
       </div>
       
-      {/* Mock trade display */}
-      {/* <div className="mt-6 flex flex-col md:flex-row md:justify-center gap-8">
-        <div className="flex-1">
-          <h3 className="text-center font-semibold mb-2">User Sends</h3>
-          <ul className="bg-gray-50 rounded p-3 shadow-sm">
-            {playersSent.map(player => (
-              <li key={player.id} className="py-1 text-center">{player.name} <span className="text-xs text-gray-500">({player.position})</span></li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex-1">
-          <h3 className="text-center font-semibold mb-2">Opponent Sends</h3>
-          <ul className="bg-gray-50 rounded p-3 shadow-sm">
-            {playersReceived.map(player => (
-              <li key={player.id} className="py-1 text-center">{player.name} <span className="text-xs text-gray-500">({player.position})</span></li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="mt-4 text-center text-sm text-gray-600 italic max-w-2xl mx-auto">{trade.rationale}</div> */}
+
 
 
     </div>
