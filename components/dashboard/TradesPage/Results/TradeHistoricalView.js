@@ -101,6 +101,7 @@ export default function TradeHistoricalView() {
                 />
               );
             }}
+            activeDot={false}
           />
           
           {/* Gradient definition */}
