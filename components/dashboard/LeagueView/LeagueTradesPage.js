@@ -17,7 +17,8 @@ import ValueSwapButton from '@/components/dashboard/TradesPage/Header/ValueSwapB
 import TradeCalculatorBlock from '@/components/dashboard/TradesPage/Calculator/TradeCalculatorBlock';
 import TradeHistoryBlock from '@/components/dashboard/TradesPage/History/TradeHistoryBlock';
 import TradeHistoricalView from '@/components/dashboard/TradesPage/Results/TradeHistoricalView';
-import TradeOutcomeBlock from '@/components/dashboard/TradesPage/Results/TradeOutcomeBlock';
+import TradeImpactBar from '@/components/dashboard/TradesPage/Results/TradeImpactBar';
+import TradeOutcome from '@/components/dashboard/TradesPage/Results/TradeOutcome';
 import TradeResultsBlock from '@/components/dashboard/TradesPage/Results/TradeResultsBlock';
 import OpponentTeamBlock from '@/components/dashboard/TradesPage/TeamBlock/OpponentTeamBlock';
 import UserTeamBlock from '@/components/dashboard/TradesPage/TeamBlock/UserTeamBlock';
@@ -69,16 +70,12 @@ export default function LeagueTradesPage() {
         {/* Center Column */}
         <div className="col-span-12 px-3">
           <div className="space-y-4 mb-4">
-            <div>
-              <TradeResultsBlock />
-            </div>
-            <div className="grid grid-cols-10 gap-4">
-              <div className="col-span-7">
-                <TradeOutcomeBlock />
-              </div>
-              <div className="col-span-3">
+            <TradeResultsBlock />
+            <Separator className="bg-pb_lightergray my-3"/>
+            <TradeImpactBar />
+            <div className="grid grid-cols-[6fr_4fr] gap-2">
+                <TradeOutcome />
                 <TradeHistoricalView />
-              </div>
             </div>
             <Separator className="bg-pb_lightergray"/>
           </div>
