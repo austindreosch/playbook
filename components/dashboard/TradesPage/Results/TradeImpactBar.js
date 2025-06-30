@@ -77,7 +77,7 @@ const getTradeImpactData = (sport, isWinningTrade) => {
           change: isWinningTrade ? +1 : -2,
           newRank: isWinningTrade ? 2 : 5,
           rankSuffix: isWinningTrade ? 'nd' : 'th',
-          isImprovement: isWinningTrade
+          isImprovement: false
         }
       ],
       statCategories: [
@@ -163,57 +163,74 @@ export default function TradeImpactBar() {
   
   const tradeAnalysis = getTradeImpactData(selectedSport, isWinningTrade);
 
+  // Combine special and stat categories, then sort by improvement/decline
+  const allCategories = [
+    ...tradeAnalysis.specialCategories.map(cat => ({ ...cat, type: 'special' })),
+    ...tradeAnalysis.statCategories.map(stat => ({ 
+      ...stat, 
+      type: 'stat',
+      isImprovement: stat.improvement,
+      key: stat.abbreviation 
+    }))
+  ].sort((a, b) => {
+    if (a.isImprovement && !b.isImprovement) return -1;
+    if (!a.isImprovement && b.isImprovement) return 1;
+    return 0;
+  });
+
   return (
     <div className="w-full">
       {/* Category Comparison Bar */}
       <div className="flex items-center h-9 w-full gap-[1px] rounded-md overflow-hidden">
-        {/* Special categories */}
-        {tradeAnalysis.specialCategories.map(cat => {
-          const needsWhiteBox = (cat.newRank !== null && cat.newRank !== undefined);
-          
-          return (
-            <div
-              key={cat.key}
-              className={`flex h-full items-center px-3 py-0.5 text-sm font-semibold flex-shrink-0
-                ${cat.isImprovement === false ? 'bg-pb_red-400 text-pb_reddisabled' : 'bg-pb_green-400 text-pb_greendisabled'}`}
-            >
-              {cat.icon}
-              {cat.change !== 0 && (
-                  <span className={`font-semibold ${cat.key === 'age' ? "pl-3 pr-[3px]" : "px-2.5 pr-3"}`}>
-                    {cat.change > 0 ? `+${cat.change}` : cat.change}
+        {/* All categories */}
+        {allCategories.map(cat => {
+          if (cat.type === 'special') {
+            const needsWhiteBox = (cat.newRank !== null && cat.newRank !== undefined);
+            
+            return (
+              <div
+                key={cat.key}
+                className={`flex h-full items-center px-3 py-0.5 text-sm font-semibold flex-shrink-0
+                  ${cat.isImprovement === false ? 'bg-pb_red-400 text-pb_reddisabled' : 'bg-pb_green-400 text-pb_greendisabled'}`}
+              >
+                {cat.icon}
+                {cat.change !== 0 && (
+                    <span className={`font-semibold pl-2 ${cat.key === 'age' ? "" : ""}`}>
+                      {cat.change > 0 ? `+${cat.change}` : cat.change}
+                    </span>
+                  )}
+                {/* {cat.newRank && needsWhiteBox && (
+                  <span className=" bg-white text-gray-700 w-10 text-center py-0.5 rounded text-sm font-semibold border">
+                    {cat.newRank}{cat.rankSuffix}
                   </span>
                 )}
-              {cat.newRank && needsWhiteBox && (
-                <span className=" bg-white text-gray-700 w-10 text-center py-0.5 rounded text-sm font-semibold border">
-                  {cat.newRank}{cat.rankSuffix}
-                </span>
-              )}
-              {cat.newRank && !needsWhiteBox && (
-                <span className="font-semibold">{cat.newRank}{cat.rankSuffix}</span>
-              )}
-              {/* Always show label if nothing else */}
-              {cat.change === 0 && !cat.newRank && needsWhiteBox && (
-                <span className="bg-white text-gray-700 px-1.5 py-0.5 rounded text-sm font-semibold border">
-                  {cat.abbreviation || cat.label}
-                </span>
-              )}
-              {cat.change === 0 && !cat.newRank && !needsWhiteBox && (
-                <span className="font-semibold">{cat.abbreviation || cat.label}</span>
-              )}
-            </div>
-          );
+                {cat.newRank && !needsWhiteBox && (
+                  <span className="font-semibold">{cat.newRank}{cat.rankSuffix}</span>
+                )}
+                {cat.change === 0 && !cat.newRank && needsWhiteBox && (
+                  <span className="bg-white text-gray-700 px-1.5 py-0.5 rounded text-sm font-semibold border">
+                    {cat.abbreviation || cat.label}
+                  </span>
+                )}
+                {cat.change === 0 && !cat.newRank && !needsWhiteBox && (
+                  <span className="font-semibold">{cat.abbreviation || cat.label}</span>
+                )} */}
+              </div>
+            );
+          } else {
+            // Stat category
+            return (
+              <div
+                key={cat.abbreviation}
+                className={`flex h-full items-center px-2 py-0.5 text-xs font-semibold flex-1 min-w-0 justify-center
+                  ${cat.improvement ? 'bg-pb_green-400 text-pb_greendisabled' : 'bg-pb_red-400 text-pb_reddisabled'}`}
+                title={cat.label}
+              >
+                {cat.abbreviation}
+              </div>
+            );
+          }
         })}
-        {/* Stat categories */}
-        {tradeAnalysis.statCategories.map(stat => (
-          <div
-            key={stat.abbreviation}
-            className={`flex h-full items-center px-2 py-0.5 text-xs font-semibold flex-1 min-w-0 justify-center
-              ${stat.improvement ? 'bg-pb_green-400 text-pb_greendisabled' : 'bg-pb_red-400 text-pb_reddisabled'}`}
-            title={stat.label}
-          >
-            {stat.abbreviation}
-          </div>
-        ))}
       </div>
     </div>
   );
