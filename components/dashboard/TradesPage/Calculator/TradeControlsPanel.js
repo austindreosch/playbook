@@ -5,29 +5,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 import { CandlestickChart, CopyPlus, Handshake, Rocket, Save, Settings, Trash2, Trophy, View } from "lucide-react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export default function TradeControlsPanel() {
   const [tradeFocus, setTradeFocus] = useState("value");
   const [tradeAggressiveness, setTradeAggressiveness] = useState("respectful");
-  const buttonGroupRef = useRef(null);
-  const [contentWidth, setContentWidth] = useState(0);
-
-  useLayoutEffect(() => {
-    const updateWidth = () => {
-      if (buttonGroupRef.current) {
-        setContentWidth(buttonGroupRef.current.offsetWidth);
-      }
-    };
-
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
 
   return (
-    <div className="flex items-center justify-between w-full gap-2 flex-shrink-0 h-full">
-      <div className="flex items-center h-full" ref={buttonGroupRef}>
+    <div className="grid grid-cols-[1fr_auto] items-center w-full gap-2 flex-shrink-0 h-full">
+      <div className="relative flex items-center h-full col-start-1">
         <Button className="bg-pb_blue hover:bg-pb_bluehover text-white font-bold py-1 px-3.5 pr-4.5 rounded-l-md rounded-r-none flex items-center justify-center gap-2 text-sm h-full">
           <View className="h-5 w-5" />
           <span className="ml-0.5">Find Smart Trade</span>
@@ -40,10 +26,10 @@ export default function TradeControlsPanel() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 
-            className="p-3" 
+            className="p-3 col-span-2 w-full" 
             align="start"
-            style={{ width: contentWidth ? `${contentWidth + 60}px` : undefined }}
-            alignOffset={-contentWidth + 46}
+            side="bottom"
+            sideOffset={4}
           >
             <DropdownMenuLabel className="p-0">Smart Trade Settings</DropdownMenuLabel>
             <DropdownMenuSeparator className="my-2" />
@@ -72,7 +58,6 @@ export default function TradeControlsPanel() {
                     )}
                   >
                     <CandlestickChart className="h-5 w-5" />
-                    
                     <span className="text-xs">Value</span>
                   </ToggleGroupItem>
                   <ToggleGroupItem 
@@ -140,7 +125,7 @@ export default function TradeControlsPanel() {
         
       </div>
 
-      <div className="flex items-center gap-2 h-full">
+      <div className="flex items-center gap-2 h-full col-start-2">
         <button className="flex items-center justify-center rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
           <Save className="w-5 h-5 text-pb_darkgray" />
         </button>

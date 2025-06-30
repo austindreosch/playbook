@@ -91,11 +91,11 @@ export default function TradeCalculatorBlock() {
   if (error) return <div className="p-4 text-center">{error}</div>;
 
   return (
-  <div className="w-full h-full space-y-2">
+  <div className="w-full flex flex-col space-y-2">
     <div className="flex h-9">
       <TradeControlsPanel />
     </div>
-    <div className="h-full rounded-lg flex items-stretch justify-center gap-4">
+    <div className="flex-1 rounded-lg flex justify-center gap-4">
       <TradePanel type="SEND" players={sendPlayers} total={sendTotal} valueAdjustment={sendAdjustment} />
       <TradePanel type="RECEIVE" players={receivePlayers} total={receiveTotal} valueAdjustment={receiveAdjustment} />
     </div>

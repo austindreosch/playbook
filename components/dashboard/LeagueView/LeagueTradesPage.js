@@ -16,6 +16,8 @@ import ValueSwapButton from '@/components/dashboard/TradesPage/Header/ValueSwapB
 // Trades Page PrimaryComponents
 import TradeCalculatorBlock from '@/components/dashboard/TradesPage/Calculator/TradeCalculatorBlock';
 import TradeHistoryBlock from '@/components/dashboard/TradesPage/History/TradeHistoryBlock';
+import TradeHistoricalView from '@/components/dashboard/TradesPage/Results/TradeHistoricalView';
+import TradeOutcomeBlock from '@/components/dashboard/TradesPage/Results/TradeOutcomeBlock';
 import TradeResultsBlock from '@/components/dashboard/TradesPage/Results/TradeResultsBlock';
 import OpponentTeamBlock from '@/components/dashboard/TradesPage/TeamBlock/OpponentTeamBlock';
 import UserTeamBlock from '@/components/dashboard/TradesPage/TeamBlock/UserTeamBlock';
@@ -37,7 +39,7 @@ export default function LeagueTradesPage() {
             <CurrentLeagueContext className="h-9" />
           </div>
           <div className="flex justify-end gap-2">
-            <ValueSwapButton className="h-9" />
+            <ValueSwapButton className="h-9 flex-shrink-0" />
             <ScreenshotButton className="h-9" />
             <ShareLinkButton className="h-9" />
             <LeagueSettingsButton className="h-9" />
@@ -65,20 +67,26 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 flex flex-col px-3 min-w-0 space-y-2">
-
-          <div>
-            <TradeResultsBlock />
-          </div>
+        <div className="col-span-12 px-3">
+          <div className="space-y-4 mb-4">
+            <div>
+              <TradeResultsBlock />
+            </div>
+            <div className="grid grid-cols-10 gap-4">
+              <div className="col-span-7">
+                <TradeOutcomeBlock />
+              </div>
+              <div className="col-span-3">
+                <TradeHistoricalView />
+              </div>
+            </div>
             <Separator className="bg-pb_lightergray"/>
-          <div className="flex-grow flex items-center justify-center">
+          </div>
+          <div className="">
             <TradeCalculatorBlock /> 
-          </div>
-            <Separator className="bg-pb_lightergray"/>
-          <div>
+            <Separator className="bg-pb_lightergray my-3"/>
             <TradeHistoryBlock />
           </div>
-
         </div>
 
         {/* Right Column */}
