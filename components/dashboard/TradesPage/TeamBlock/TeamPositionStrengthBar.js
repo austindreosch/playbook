@@ -30,7 +30,7 @@ const dummyPositionStrengths = {
 };
 
 
-export default function TeamPositionStrengthBar({ team }) {
+export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
     // The 'team' prop is available here to fetch team-specific position strength data.
     const { leagues, currentLeagueId } = useDashboardContext();
 
@@ -68,15 +68,20 @@ export default function TeamPositionStrengthBar({ team }) {
         }
     };
 
+    // Different border styles for user vs opponent positioning
+    const borderClasses = isOpponent 
+        ? "border border-l-0 border-pb_lightgray" 
+        : "border border-r-0 border-pb_lightgray";
+
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className="py-1 hover:no-underline">
-                    <div className="flex w-full justify-between items-center">
-                        <h3 className="text-md font-semibold text-pb_darkgray">Positional Strength</h3>
+                <AccordionTrigger className={`p-2 hover:no-underline bg-white ${borderClasses}`}>
+                    <div className="flex w-full justify-between items-center ">
+                        <h3 className="text-sm text-pb_darkgray">Positional Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="">
+                <AccordionContent className="px-1">
                     {/* <Separator className="mb-3" /> */}
                     <div className="w-full">
                         <div className="flex w-full h-9 rounded-md overflow-hidden mt-1.5 shadow">

@@ -153,6 +153,7 @@ module.exports = {
   			'7xs': '.400rem',
   			'8xs': '.350rem',
   			'9xs': '.300rem',
+  			'md': '1rem',
   			smd: '.925rem'
   		},
   		fontFamily: {

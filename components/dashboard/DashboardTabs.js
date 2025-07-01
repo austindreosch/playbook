@@ -17,7 +17,7 @@ export default function DashboardTabs() {
   };
 
   return (
-    <div className="h-12 w-full flex items-center rounded-t-lg gap-0.5 overflow-hidden border border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5">
+    <div className="h-12 w-full flex items-center rounded-t-lg gap-0.5 overflow-hidden border-t-0 border-l border-r border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5">
       {availableTabs.map(({ id, label, enabled }) => (
         <button
           key={id}

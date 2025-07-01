@@ -49,7 +49,7 @@ const getGridPlaceholders = (totalItems, columns) => {
     return Array(placeholders).fill(null);
 };
 
-export default function TeamCategoryStrengthBar({ team }) {
+export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
     // The 'team' prop is available here to fetch team-specific category strength data.
     const { leagues, currentLeagueId } = useDashboardContext();
 
@@ -75,15 +75,20 @@ export default function TeamCategoryStrengthBar({ team }) {
 
     const gridItems = [...categoryStrengths, ...getGridPlaceholders(categoryStrengths.length, 5)];
 
+    // Different border styles for user vs opponent positioning
+    const borderClasses = isOpponent 
+        ? "border border-l-0 border-pb_lightgray" 
+        : "border border-r-0 border-pb_lightgray";
+
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className="py-1 hover:no-underline">
+                <AccordionTrigger className={`p-2 hover:no-underline bg-white ${borderClasses}`}>
                     <div className="flex w-full justify-between items-center">
-                        <h3 className="text-md font-semibold text-pb_darkgray">Category Strength</h3>
+                        <h3 className="text-sm text-pb_darkgray">Category Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="">
+                <AccordionContent className="px-1">
                     {/* <Separator className="mb-3" /> */}
                     <div className="grid grid-cols-5 rounded-md overflow-hidden mt-1.5 shadow-md">
                         {gridItems.map((item, index) => {
@@ -94,7 +99,7 @@ export default function TeamCategoryStrengthBar({ team }) {
                             return (
                                 <div
                                     key={category}
-                                    className={`h-10 flex items-center justify-center ${color}`}
+                                    className={`h-9 flex items-center justify-center ${color}`}
                                 >
                                     <span className="text-sm font-bold text-pb_darkgray/80">{category}</span>
                                 </div>

@@ -6,7 +6,7 @@ import TradeRosterBlock from '@/components/dashboard/TradesPage/TeamBlock/TradeR
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { resolveDashboardComponent } from '../../dashboardUtils';
 
-export default function OpponentTeamBlock() {
+export default function OpponentTeamBlock({ className }) {
   const { leagues, currentLeagueId } = useDashboardContext();
   
   // TODO: Replace with dynamic data for the selected opponent team
@@ -35,10 +35,12 @@ export default function OpponentTeamBlock() {
   const CategoryStrengthComponent = resolveDashboardComponent('tradePage', 'CategoryStrength', leagueSettings);
 
   return (
-    <div className="flex h-full w-full flex-col gap-1">
-      <TeamOverviewBar team={opponentTeam} />
-      <TeamPositionStrengthBar team={opponentTeam} />
-      {CategoryStrengthComponent && <CategoryStrengthComponent team={opponentTeam} />}
+    <div className={`flex h-full w-full flex-col gap-1 bg-pb_darkgray ${className}`}>
+      <div className="flex flex-col gap-1">
+        <TeamOverviewBar team={opponentTeam} isOpponent={true} />
+        <TeamPositionStrengthBar team={opponentTeam} isOpponent={true} />
+        {CategoryStrengthComponent && <CategoryStrengthComponent team={opponentTeam} isOpponent={true} />}
+      </div>
       <div className="flex-grow min-h-0">
         <TradeRosterBlock team={opponentTeam} isOpponent={true} />
       </div>

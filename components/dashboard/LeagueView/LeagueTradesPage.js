@@ -28,7 +28,7 @@ export default function LeagueTradesPage() {
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
-      <div className="grid grid-cols-22 gap-2 w-full items-center pt-2.5">
+      <div className="grid grid-cols-22 gap-2 w-full items-center pt-2.5  pb-2.5 border-b border-pb_lightgray">
         {/* Left part */}
         <div className="col-span-5 flex gap-2">
           <CurrentLeagueTeamDisplay className="h-9 flex-1" />
@@ -55,16 +55,16 @@ export default function LeagueTradesPage() {
       </div>
 
       {/* Divider */}
-      <div className="w-full py-2.5">
+      {/* <div className="w-full pt-2.5">
         <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-      </div>
+      </div> */}
 
 
       {/* Main Content */}
       <div className="grid grid-cols-22 gap-2 flex-grow min-h-0">
         {/* Left Column */}
-        <div className="col-span-5">
-          <UserTeamBlock />
+        <div className="col-span-5 border-r border-pb_lightgray">
+          <UserTeamBlock className="" />
         </div>
 
         {/* Center Column */}
@@ -87,8 +87,8 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Right Column */}
-        <div className="col-span-5">
-          <OpponentTeamBlock />
+        <div className="col-span-5 border-l border-pb_lightgray">
+          <OpponentTeamBlock className="" />
         </div>
       </div>
     </div>

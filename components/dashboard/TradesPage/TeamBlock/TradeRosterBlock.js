@@ -31,7 +31,7 @@ export default function TradeRosterBlock({ team, isOpponent = false }) {
     const PlayerRowComponent = isOpponent ? OpponentPlayerRow : TradePlayerRow;
 
     return (
-        <div className="w-full h-full bg-pb_backgroundgray border-1.5 border-pb_lightgray rounded-lg shadow-inner flex flex-col">
+        <div className={`w-full h-full bg-pb_backgroundgray border-1.5 border-pb_lightgray shadow-inner flex flex-col rounded-lg ${isOpponent ? 'rounded-l-none' : 'rounded-r-none'}`}>
             <ScrollArea className="flex-grow">
                 <div className="p-2 space-y-1">
                     {players.map(player => (
