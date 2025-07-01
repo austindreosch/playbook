@@ -32,7 +32,7 @@ export default function TradeHistoricalView() {
     { period: '1Y', value: -600, profit: -600 },
     { period: '6M', value: -350, profit: -350 },
     { period: '1M', value: 800, profit: 800 },
-    { period: '►', value: 1000, profit: 1000 }
+    { period: '◆', value: 1000, profit: 1000 }
   ];
 
   const chartConfig = {
@@ -52,7 +52,7 @@ export default function TradeHistoricalView() {
 
   return (
     <div className="w-full h-full bg-white border border-pb_lightgray rounded-lg p-2 px-3">
-      <div className="text-2xs text-pb_textlightergray">Historical View</div>
+      <div className="text-2xs text-pb_textlightergray pl-0.5">Historical View</div>
       
              <ChartContainer config={chartConfig} className="h-[calc(100%-10px)] w-full">
          <LineChart data={data} margin={{ top: 0, right: 5, bottom: 0, left: 5 }}>
@@ -87,9 +87,9 @@ export default function TradeHistoricalView() {
             stroke="url(#colorGradient)"
             strokeWidth={3}
             dot={(props) => {
-              const { cx, cy, payload } = props;
+              const { cx, cy, payload, index } = props;
               return (
-                <rect
+                <rect key={index}
                   x={cx - 5}
                   y={cy - 5}
                   width={10}

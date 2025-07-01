@@ -115,7 +115,7 @@ const getTradeImpactData = (sport, isWinningTrade) => {
           key: 'age',
           icon: <TimerReset className="w-5 h-5" />,
           label: 'AGE',
-          change: isWinningTrade ? -1.2 : +0.8,
+          change: isWinningTrade ? -2 : +1,
           newRank: isWinningTrade ? 6 : 8,
           rankSuffix: isWinningTrade ? 'th' : 'th',
           isImprovement: isWinningTrade,
@@ -244,7 +244,7 @@ const getTradeImpactData = (sport, isWinningTrade) => {
           key: 'age',
           icon: <TimerReset className="w-5 h-5" />,
           label: 'AGE',
-          change: isWinningTrade ? -0.9 : +1.1,
+          change: isWinningTrade ? -1 : +2,
           newRank: isWinningTrade ? 5 : 7,
           rankSuffix: isWinningTrade ? 'th' : 'th',
           isImprovement: isWinningTrade
@@ -293,7 +293,7 @@ const getTradeImpactData = (sport, isWinningTrade) => {
           key: 'age',
           icon: <TimerReset className="w-5 h-5" />,
           label: 'AGE',
-          change: isWinningTrade ? -1.5 : +0.7,
+          change: isWinningTrade ? -1 : +3,
           newRank: isWinningTrade ? 4 : 9,
           rankSuffix: isWinningTrade ? 'th' : 'th',
           isImprovement: isWinningTrade
