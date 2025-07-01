@@ -76,12 +76,14 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
     const gridItems = [...categoryStrengths, ...getGridPlaceholders(categoryStrengths.length, 5)];
 
     // Dark theme styling for opponent
+    // ? opponent
+    // : user
     const containerClasses = isOpponent
         ? "bg-pb_mddarkgray text-white"
         : "bg-white text-pb_darkgray";
 
     const borderClasses = isOpponent 
-        ? "border-l-0 border-pb_lightgray" 
+        ? "border-y border-pb_textgray" //
         : "border-r-0 border-pb_lightgray";
 
     const textClasses = isOpponent
@@ -89,34 +91,39 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
         : "text-pb_darkgray";
 
     const contentClasses = isOpponent
-        ? "bg-pb_mddarkgray"
-        : "bg-white";
+        ? ""
+        : "";
+
+    const chevronClasses = isOpponent
+        ? "[&>svg]:text-white"
+        : "[&>svg]:text-muted-foreground";
 
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full ">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses}`}>
+                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
                     <div className="flex w-full justify-between items-center">
                         <h3 className={`text-sm ${textClasses}`}>Category Strength</h3>
                     </div>
                 </AccordionTrigger>
                 <AccordionContent className={`pb-0 ${contentClasses} px-1`}>
-                    {/* <Separator className="mb-3" /> */}
-                    <div className="grid grid-cols-5 overflow-hidden mt-1.5 rounded-md  ">
-                        {gridItems.map((item, index) => {
-                            if (!item) {
-                                return <div key={`placeholder-${index}`} className={isOpponent ? "bg-pb_lightestgray" : "bg-pb_lightgray"} />;
-                            }
-                            const { category, color } = item;
-                            return (
-                                <div
-                                    key={category}
-                                    className={`h-9 flex items-center justify-center ${color}`}
-                                >
-                                    <span className="text-sm font-bold text-pb_darkgray/80">{category}</span>
-                                </div>
-                            );
-                        })}
+                    <div className="h-24 flex items-center justify-center">
+                        <div className="grid grid-cols-5 overflow-hidden rounded-md w-full">
+                            {gridItems.map((item, index) => {
+                                if (!item) {
+                                    return <div key={`placeholder-${index}`} className={isOpponent ? "bg-pb_lightestgray" : "bg-pb_lightgray"} />;
+                                }
+                                const { category, color } = item;
+                                return (
+                                    <div
+                                        key={category}
+                                        className={`h-9 flex items-center justify-center ${color}`}
+                                    >
+                                        <span className="text-sm font-bold text-pb_darkgray/80">{category}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </AccordionContent>
             </AccordionItem>

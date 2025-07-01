@@ -52,11 +52,34 @@ const useTradeCalculator = () => {
 };
 
 const TradePanel = ({ type, players, total, valueAdjustment }) => {
+  const isOpponent = type === "RECEIVE";
+  
+  // Dark theme styling for opponent (RECEIVE), light for user (SEND)
+  const containerClasses = isOpponent
+    ? "bg-pb_darkgray border-pb_textgray"
+    : "bg-pb_backgroundgray border-pb_lightgray";
+    
+  const headerClasses = isOpponent
+    ? "bg-pb_mddarkgray text-white"
+    : "bg-white text-pb_darkgray";
+    
+  const titleClasses = isOpponent
+    ? "text-gray-300"
+    : "text-gray-500";
+    
+  const totalClasses = isOpponent
+    ? "text-white"
+    : "text-gray-800";
+    
+  const adjustmentClasses = isOpponent
+    ? "bg-pb_textgray text-white"
+    : "bg-gray-600 text-white";
+
   return (
-    <Card className="flex-1 bg-pb_backgroundgray rounded-lg border-1.5 border-pb_lightgray shadow-inner flex flex-col max-h-[400px] min-w-0">
-      <CardHeader className="flex flex-row items-center justify-between p-2 mb-2 flex-shrink-0">
-        <CardTitle className="text-xs font-bold text-gray-500 uppercase tracking-wider">{type}</CardTitle>
-        <div className="text-lg font-bold text-gray-800">{total.toLocaleString()}</div>
+    <Card className={`flex-1 rounded-lg border-1.5 shadow-inner flex flex-col max-h-[400px] min-w-0 ${containerClasses}`}>
+      <CardHeader className={`flex flex-row items-center justify-between p-2 mb-2 flex-shrink-0 rounded-t-lg ${headerClasses}`}>
+        <CardTitle className={`text-xs font-bold uppercase tracking-wider ${titleClasses}`}>{type}</CardTitle>
+        <div className={`text-lg font-bold ${totalClasses}`}>{total.toLocaleString()}</div>
       </CardHeader>
       <CardContent className="p-2 overflow-y-auto">
         <div className="flex flex-col gap-1">
@@ -64,7 +87,7 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
             <TradePlayerRow key={index} player={player} />
           ))}
           {valueAdjustment > 0 && (
-            <div className="flex items-center justify-between bg-gray-600 text-white p-2 rounded-md mt-2">
+            <div className={`flex items-center justify-between p-2 rounded-md mt-2 ${adjustmentClasses}`}>
               <span className="font-medium">Value Adjustment</span>
               <span className="font-bold">+{valueAdjustment}</span>
             </div>

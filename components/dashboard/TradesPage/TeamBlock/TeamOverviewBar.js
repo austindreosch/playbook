@@ -14,12 +14,14 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
   const victoryRankSuffix = 'nd';
 
   // Dark theme styling for opponent
+  // ? opponent
+  // : user
   const containerClasses = isOpponent
     ? "bg-pb_mddarkgray text-white"
     : "bg-white text-pb_darkgray";
 
   const borderClasses = isOpponent 
-    ? "border-r border-pb_darkgray" 
+    ? "border-r border-pb_textgray" 
     : "border-l border-pb_lightgray";
 
   const textClasses = isOpponent
@@ -30,17 +32,20 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
     ? "border-pb_textgray bg-pb_darkgray text-white"
     : "border-pb_lightgray bg-white text-pb_darkgray";
 
+  const chevronClasses = isOpponent
+    ? "[&>svg]:text-white"
+    : "[&>svg]:text-muted-foreground";
+
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
       <AccordionItem value="item-1" className="border-b-0">
-        <AccordionTrigger className={`p-2 hover:no-underline border-b ${containerClasses} ${borderClasses}`}>
+        <AccordionTrigger className={`p-2 hover:no-underline border-b ${containerClasses} ${borderClasses} ${chevronClasses}`}>
           <div className="flex w-full justify-between items-center">
             <h3 className={`text-sm ${textClasses}`}>Team Overview</h3>
           </div>
         </AccordionTrigger>
         <AccordionContent className="px-1 pb-0">
-        {/* <Separator className="mt-1 mb-3" /> */}
-          <div className="flex items-center justify-center space-x-8 mt-1.5">
+          <div className="h-24 flex items-center justify-center space-x-8">
             {/* Value */}
             <div className="flex items-center space-x-2">
               <ChartCandlestick className={`w-5 h-5 ${textClasses}`} />

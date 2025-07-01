@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
-import { CandlestickChart, CopyPlus, Handshake, Rocket, Save, Settings, Trash2, Trophy, View } from "lucide-react";
+import { CandlestickChart, CopyPlus, Handshake, History, Rocket, Save, Settings, Trash2, Trophy, View } from "lucide-react";
 import { useState } from "react";
 
 export default function TradeControlsPanel() {
@@ -126,14 +126,21 @@ export default function TradeControlsPanel() {
       </div>
 
       <div className="flex items-center gap-2 h-full col-start-2">
-        <button className="flex items-center justify-center rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <Save className="w-5 h-5 text-pb_darkgray" />
+        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
+          <Save className="w-4 h-4 text-pb_darkgray" />
+          <span className="text-sm font-medium text-pb_darkgray">Save</span>
         </button>
-        <button className="flex items-center justify-center rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <CopyPlus className="w-5 h-5 text-pb_darkgray" />
+        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
+          <CopyPlus className="w-4 h-4 text-pb_darkgray" />
+          <span className="text-sm font-medium text-pb_darkgray">Copy</span>
         </button>
-        <button className="flex items-center justify-center rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <Trash2 className="w-5 h-5 text-pb_darkgray" />
+        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
+          <Trash2 className="w-4 h-4 text-pb_darkgray" />
+          <span className="text-sm font-medium text-pb_darkgray">Clear</span>
+        </button>
+        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
+          <History className="w-4 h-4 text-pb_darkgray" />
+          <span className="text-sm font-medium text-pb_darkgray">Trade History</span>
         </button>
       </div>
     </div>

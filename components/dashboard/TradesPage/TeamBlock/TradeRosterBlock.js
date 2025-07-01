@@ -32,8 +32,8 @@ export default function TradeRosterBlock({ team, isOpponent = false }) {
 
     // Dark theme styling for opponent
     const containerClasses = isOpponent
-        ? "w-full h-full bg-pb_darkgray border-1.5 border-l-0 border-pb_textgray shadow-inner flex flex-col rounded-br"
-        : "w-full h-full bg-pb_backgroundgray border-1.5 border-r-0 border-pb_lightgray shadow-inner flex flex-col rounded-bl";
+        ? "w-full h-full bg-pb_darkgray border-1.5 border-pb_textgray border-l-0 shadow-inner flex flex-col rounded-br-lg"
+        : "w-full h-full bg-pb_backgroundgray border-1.5 border-pb_lightgray border-r-0 shadow-inner flex flex-col rounded-bl-lgc";
 
     return (
         <div className={containerClasses}>

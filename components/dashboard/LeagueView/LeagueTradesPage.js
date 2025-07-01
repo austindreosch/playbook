@@ -63,15 +63,14 @@ export default function LeagueTradesPage() {
       {/* Main Content */}
       <div className="grid grid-cols-22 gap-2 flex-grow min-h-0">
         {/* Left Column */}
-        <div className="col-span-5 border-r border-pb_lightgray">
+        <div className="col-span-5 border-r border-pb_lightgray bg-pb_backgroundgray">
           <UserTeamBlock className="" />
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 px-3">
+        <div className="col-span-12 px-3 pt-2">
           <div className="space-y-4 mb-4">
             <TradeResultsBlock />
-            {/* <Separator className="bg-pb_lightergray my-3"/> */}
             <TradeImpactBar />
             <div className="grid grid-cols-[7fr_3fr] gap-1">
                 <TradeOutcome />
@@ -81,8 +80,8 @@ export default function LeagueTradesPage() {
           </div>
           <div className="">
             <TradeCalculatorBlock /> 
-            <Separator className="bg-pb_lightergray my-3"/>
-            <TradeHistoryBlock />
+            {/* <Separator className="bg-pb_lightergray my-3"/> */}
+            {/* <TradeHistoryBlock /> */}
           </div>
         </div>
 
