@@ -18,7 +18,7 @@ export default function TradeOutcomeBlock() {
       
             {/* Trade Outcome Section */}
       <div className="p-3">
-        <div className="space-y-2">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Crown className="w-5 h-5 text-pb_darkgray" />
@@ -73,8 +73,7 @@ export default function TradeOutcomeBlock() {
           </div>
           
           {/* Bottom Row: Likely Drops */}
-          <div className="flex items-center justify-start pt-1">
-            {/* Likely Drops */}
+          {/* <div className="flex items-center justify-start pt-1">
             <div className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 bg-red-500 rounded-full flex items-center justify-center">
                 <X className="w-3 h-3 text-white" />
@@ -92,7 +91,8 @@ export default function TradeOutcomeBlock() {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
+
         </div>
       </div>
     </div>
