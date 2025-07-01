@@ -75,25 +75,37 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
 
     const gridItems = [...categoryStrengths, ...getGridPlaceholders(categoryStrengths.length, 5)];
 
-    // Different border styles for user vs opponent positioning
+    // Dark theme styling for opponent
+    const containerClasses = isOpponent
+        ? "bg-pb_mddarkgray text-white"
+        : "bg-white text-pb_darkgray";
+
     const borderClasses = isOpponent 
-        ? "border border-l-0 border-pb_lightgray" 
-        : "border border-r-0 border-pb_lightgray";
+        ? "border-l-0 border-pb_lightgray" 
+        : "border-r-0 border-pb_lightgray";
+
+    const textClasses = isOpponent
+        ? "text-white"
+        : "text-pb_darkgray";
+
+    const contentClasses = isOpponent
+        ? "bg-pb_mddarkgray"
+        : "bg-white";
 
     return (
-        <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
+        <Accordion type="single" collapsible defaultValue="item-1" className="w-full ">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`p-2 hover:no-underline bg-white ${borderClasses}`}>
+                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses}`}>
                     <div className="flex w-full justify-between items-center">
-                        <h3 className="text-sm text-pb_darkgray">Category Strength</h3>
+                        <h3 className={`text-sm ${textClasses}`}>Category Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-1">
+                <AccordionContent className={`pb-0 ${contentClasses} px-1`}>
                     {/* <Separator className="mb-3" /> */}
-                    <div className="grid grid-cols-5 rounded-md overflow-hidden mt-1.5 shadow-md">
+                    <div className="grid grid-cols-5 overflow-hidden mt-1.5 rounded-md  ">
                         {gridItems.map((item, index) => {
                             if (!item) {
-                                return <div key={`placeholder-${index}`} className=" bg-gray-200" />;
+                                return <div key={`placeholder-${index}`} className={isOpponent ? "bg-pb_lightestgray" : "bg-pb_lightgray"} />;
                             }
                             const { category, color } = item;
                             return (

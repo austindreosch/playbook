@@ -32,44 +32,44 @@ export default function OpponentPlayerRow({ player }) {
 
   const renderPriorityIcon = () => {
     if (isNotInterested) {
-      return <Ban className="w-5 h-5 text-pb_darkgray" />;
+      return <Ban className="w-5 h-5 text-white" />;
     }
     if (isTarget) {
-      return <Crosshair className="w-5 h-5" />;
+      return <Crosshair className="w-5 h-5 text-white" />;
     }
     if (isOnTradeBlock) {
-      return <HandHelping className="w-5 h-5" />;
+      return <HandHelping className="w-5 h-5 text-white" />;
     }
     if (isFavorite) {
-      return <HeartFilledIcon className="w-5 h-5 text-pb_darkgray" />;
+      return <HeartFilledIcon className="w-5 h-5 text-white" />;
     }
     return null;
   };
 
   return (
-    <div className="bg-white border border-pb_lightergray rounded-md">
+    <div className="bg-pb_mddarkgray border border-pb_textgray rounded-md">
       <div 
         className="flex items-center justify-between p-1 h-11 cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center space-x-2 text-pb_darkgray min-w-0">
-          <GripVertical className="w-5 h-5 flex-shrink-0" />
-          <span className="text-sm font-semibold text-pb_darkgray truncate">{abbreviateName(player.name)}</span>
+        <div className="flex items-center space-x-2 text-white min-w-0">
+          <GripVertical className="w-5 h-5 flex-shrink-0 text-white" />
+          <span className="text-sm font-semibold text-white truncate">{abbreviateName(player.name)}</span>
         </div>
 
-        <div className="flex items-center space-x-1 text-pb_darkgray">
+        <div className="flex items-center space-x-1 text-white">
             <div className="w-5 h-5 flex items-center justify-center">
                 {renderPriorityIcon()}
             </div>
           <div className="flex items-center space-x-2">
-            <span className="w-10 text-right text-sm font-semibold text-pb_darkgray">{player.value}</span>
-            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            <span className="w-10 text-right text-sm font-semibold text-white">{player.value}</span>
+            <ChevronDown className={`w-4 h-4 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
           </div>
         </div>
       </div>
 
       {isExpanded && (
-        <div className="p-3 border-t border-pb_lightergray bg-pb_backgroundgray/60">
+        <div className="p-3 border-t border-pb_textgray bg-pb_darkgray">
             <div className="grid grid-cols-4 items-start">
                 {/* Favorite Button */}
                 <div onClick={() => handleToggle('favorite')} className="flex flex-col items-center cursor-pointer group">

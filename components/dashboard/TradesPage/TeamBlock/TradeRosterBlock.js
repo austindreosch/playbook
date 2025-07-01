@@ -30,8 +30,13 @@ export default function TradeRosterBlock({ team, isOpponent = false }) {
     
     const PlayerRowComponent = isOpponent ? OpponentPlayerRow : TradePlayerRow;
 
+    // Dark theme styling for opponent
+    const containerClasses = isOpponent
+        ? "w-full h-full bg-pb_darkgray border-1.5 border-l-0 border-pb_textgray shadow-inner flex flex-col rounded-br"
+        : "w-full h-full bg-pb_backgroundgray border-1.5 border-r-0 border-pb_lightgray shadow-inner flex flex-col rounded-bl";
+
     return (
-        <div className={`w-full h-full bg-pb_backgroundgray border-1.5 border-pb_lightgray shadow-inner flex flex-col rounded-lg ${isOpponent ? 'rounded-l-none' : 'rounded-r-none'}`}>
+        <div className={containerClasses}>
             <ScrollArea className="flex-grow">
                 <div className="p-2 space-y-1">
                     {players.map(player => (

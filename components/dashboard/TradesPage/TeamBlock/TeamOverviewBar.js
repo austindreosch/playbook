@@ -13,36 +13,48 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
   const victoryRank = 2;
   const victoryRankSuffix = 'nd';
 
-  // Different border styles for user vs opponent positioning
+  // Dark theme styling for opponent
+  const containerClasses = isOpponent
+    ? "bg-pb_mddarkgray text-white"
+    : "bg-white text-pb_darkgray";
+
   const borderClasses = isOpponent 
-    ? "border-b border-r border-pb_lightgray" 
-    : "border-b border-l border-pb_lightgray";
+    ? "border-r border-pb_darkgray" 
+    : "border-l border-pb_lightgray";
+
+  const textClasses = isOpponent
+    ? "text-white"
+    : "text-pb_darkgray";
+
+  const badgeClasses = isOpponent
+    ? "border-pb_textgray bg-pb_darkgray text-white"
+    : "border-pb_lightgray bg-white text-pb_darkgray";
 
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
       <AccordionItem value="item-1" className="border-b-0">
-        <AccordionTrigger className={`p-2 hover:no-underline bg-white ${borderClasses}`}>
+        <AccordionTrigger className={`p-2 hover:no-underline border-b ${containerClasses} ${borderClasses}`}>
           <div className="flex w-full justify-between items-center">
-            <h3 className="text-sm text-pb_darkgray">Team Overview</h3>
+            <h3 className={`text-sm ${textClasses}`}>Team Overview</h3>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-1">
+        <AccordionContent className="px-1 pb-0">
         {/* <Separator className="mt-1 mb-3" /> */}
           <div className="flex items-center justify-center space-x-8 mt-1.5">
             {/* Value */}
             <div className="flex items-center space-x-2">
-              <ChartCandlestick className="w-5 h-5 text-pb_darkgray" />
-              <span className="text-sm font-semibold text-pb_darkgray">Value</span>
-              <span className="px-2 py-0.5 border border-pb_lightgray rounded-md bg-white font-bold text-pb_darkgray text-sm">
+              <ChartCandlestick className={`w-5 h-5 ${textClasses}`} />
+              <span className={`text-sm font-semibold ${textClasses}`}>Value</span>
+              <span className={`px-2 py-0.5 border rounded-md font-bold text-sm ${badgeClasses}`}>
                 {valueRank}{valueRankSuffix}
               </span>
             </div>
 
             {/* Victory */}
             <div className="flex items-center space-x-2">
-              <Trophy className="w-5 h-5 text-pb_darkgray" />
-              <span className="text-sm font-semibold text-pb_darkgray">Victory</span>
-              <span className="px-2 py-0.5 border border-pb_lightgray rounded-md bg-white font-bold text-pb_darkgray text-sm">
+              <Trophy className={`w-5 h-5 ${textClasses}`} />
+              <span className={`text-sm font-semibold ${textClasses}`}>Victory</span>
+              <span className={`px-2 py-0.5 border rounded-md font-bold text-sm ${badgeClasses}`}>
                 {victoryRank}{victoryRankSuffix}
               </span>
             </div>

@@ -68,20 +68,32 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
         }
     };
 
-    // Different border styles for user vs opponent positioning
+    // Dark theme styling for opponent
+    const containerClasses = isOpponent
+        ? "bg-pb_mddarkgray text-white"
+        : "bg-white text-pb_darkgray";
+
     const borderClasses = isOpponent 
-        ? "border border-l-0 border-pb_lightgray" 
-        : "border border-r-0 border-pb_lightgray";
+        ? "border-l-0 border-pb_lightgray" 
+        : "border-r-0 border-pb_lightgray";
+
+    const textClasses = isOpponent
+        ? "text-white"
+        : "text-pb_darkgray";
+
+    const contentClasses = isOpponent
+        ? "bg-pb_darkgray"
+        : "bg-white";
 
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`p-2 hover:no-underline bg-white ${borderClasses}`}>
+                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses}`}>
                     <div className="flex w-full justify-between items-center ">
-                        <h3 className="text-sm text-pb_darkgray">Positional Strength</h3>
+                        <h3 className={`text-sm ${textClasses}`}>Positional Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="px-1">
+                <AccordionContent className={`px-1 pb-0 ${contentClasses}`}>
                     {/* <Separator className="mb-3" /> */}
                     <div className="w-full">
                         <div className="flex w-full h-9 rounded-md overflow-hidden mt-1.5 shadow">
@@ -99,7 +111,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
                             {positionStrengths.map((pos) => (
                                 <div
                                     key={pos.position}
-                                    className="flex-grow text-center text-sm text-gray-500"
+                                    className={`flex-grow text-center text-sm ${isOpponent ? 'text-white' : 'text-gray-500'}`}
                                     style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
                                 >
                                     {pos.rank}{getRankSuffix(pos.rank)}
