@@ -49,13 +49,13 @@ export default function Hero() {
 
 
 
-      <div className="max-w-8xl mx-auto sm:px-6 lg:pl-8 lg:pr-6 relative z-20">
+      <div className="max-w-8xl mx-auto lg:pr-8 relative z-20">
         {/* Hero content */}
-        <div className="pt-20 pb-24 md:pt-32 md:pb-40">
+        <div className="pt-20 pb-32 md:pt-32 md:pb-72">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-6 items-center">
             
-                          {/* Left side - Text content */}
-              <div className="text-center lg:text-left px-6 lg:pr-32 relative z-50">
+              {/* Left side - Text content */}
+              <div className="text-center px-4 md:px-0 lg:text-left lg:pr-32 relative z-50">
               <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-6 text-pb_darkgray" data-aos="zoom-y-out">
                 Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-pb_green">faster.</span>
               </h1>
@@ -78,7 +78,7 @@ export default function Hero() {
             </div>
 
             {/* Right side - Jumbotron with carousel */}
-            <div className="relative flex justify-center items-center mt-8 md:-mt-32" data-aos="lg:fade-left" data-aos-delay="400">
+            <div className="relative flex justify-center items-center mt-8 lg:ml-4 md:-mt-32" data-aos="lg:fade-left" data-aos-delay="400">
               {/* Cables positioned relative to jumbotron */}
               <div className="absolute inset-0 pointer-events-none z-0">
                 {/* Mobile: Full height cables from nav to jumbotron */}
@@ -97,12 +97,13 @@ export default function Hero() {
                   />
                   {/* Left cable - mobile */}
                   <div 
-                    className="absolute w-3.5 bg-pb_darkgray z-10"
+                    className="absolute w-3.5 z-10"
                     style={{ 
                       left: 'calc(50% - 145px)', 
                       top: '-100vh', 
                       bottom: '75%',
-                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                      background: 'linear-gradient(to right, #5a5a5a 0%, #5a5a5a 50%, #2d2d2d 50%, #2d2d2d 100%)',
+                      boxShadow: '2px 0 4px rgba(0,0,0,0.3)'
                     }}
                   />
                   
@@ -119,12 +120,13 @@ export default function Hero() {
                   
                   {/* Right cable - mobile */}
                   <div 
-                    className="absolute w-3.5 bg-pb_darkgray z-10"
+                    className="absolute w-3.5 z-10"
                     style={{ 
                       left: 'calc(50% + 130px)', 
                       top: '-100vh', 
                       bottom: '75%',
-                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                      background: 'linear-gradient(to right, #5a5a5a 0%, #5a5a5a 50%, #2d2d2d 50%, #2d2d2d 100%)',
+                      boxShadow: '2px 0 4px rgba(0,0,0,0.3)'
                     }}
                   />
                   
@@ -135,34 +137,37 @@ export default function Hero() {
                 <div className="hidden lg:block">
                                                   {/* Left cable */}
                   <div 
-                    className="absolute w-4 bg-pb_darkgray"
+                    className="absolute w-4"
                     style={{ 
                       left: 'calc(50% - 180px)', 
                       top: '-100px', 
                       bottom: '75%',
-                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                      background: 'linear-gradient(to right, #5a5a5a 0%, #5a5a5a 50%, #2d2d2d 50%, #2d2d2d 100%)',
+                      boxShadow: '2px 0 4px rgba(0,0,0,0.3)'
                     }}
                   />
                   
                   {/* Middle cable */}
                   <div 
-                    className="absolute w-4 bg-pb_darkgray"
+                    className="absolute w-4"
                     style={{ 
                       left: 'calc(50% - 2px)', 
                       top: '-100px', 
                       bottom: '75%',
-                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                      background: 'linear-gradient(to right, #5a5a5a 0%, #5a5a5a 50%, #2d2d2d 50%, #2d2d2d 100%)',
+                      boxShadow: '2px 0 4px rgba(0,0,0,0.3)'
                     }}
                   />
                   
                   {/* Right cable */}
                   <div 
-                       className="absolute w-4 bg-pb_darkgray"
+                       className="absolute w-4"
                     style={{ 
                       left: 'calc(50% + 176px)', 
                       top: '-100px', 
                       bottom: '75%',
-                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                      background: 'linear-gradient(to right, #5a5a5a 0%, #5a5a5a 50%, #2d2d2d 50%, #2d2d2d 100%)',
+                      boxShadow: '2px 0 4px rgba(0,0,0,0.3)'
                     }}
                   />
                 </div>
