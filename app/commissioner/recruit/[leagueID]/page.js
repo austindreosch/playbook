@@ -122,108 +122,94 @@ export default function CommissionerRecruitPage() {
                  <div className="grid grid-cols-1 lg:grid-cols-13 gap-2">
            {/* Left Column - League Details & Commissioner Info */}
            <div className="lg:col-span-3 space-y-2">
-            {/* League Information */}
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <Trophy className="h-5 w-5 text-pb_blue" />
-                  League Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="p-3 bg-pb_lightestgray rounded-lg">
-                    <p className="text-sm font-medium text-pb_textgray mb-1">Sport & Format</p>
-                    <p className="text-lg font-semibold text-pb_darkgray">
-                      {leagueData?.sport} {leagueData?.format}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-pb_lightestgray rounded-lg">
-                    <p className="text-sm font-medium text-pb_textgray mb-1">Scoring System</p>
-                    <p className="text-lg font-semibold text-pb_darkgray">{leagueData?.scoring}</p>
-                  </div>
-                </div>
-                
-                <Separator />
-                
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-pb_darkgray flex items-center gap-2">
-                    <Settings className="h-4 w-4" />
-                    League Settings
-                  </h4>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div className="p-2 bg-pb_lightestgray rounded">
-                      <p className="text-pb_textgray">Teams</p>
-                      <p className="font-semibold text-pb_darkgray">{leagueData?.totalTeams || 12}</p>
-                    </div>
-                    <div className="p-2 bg-pb_lightestgray rounded">
-                      <p className="text-pb_textgray">Available</p>
-                      <p className="font-semibold text-pb_darkgray">{leagueData?.availableSpots || 2}</p>
-                    </div>
-                    <div className="p-2 bg-pb_lightestgray rounded">
-                      <p className="text-pb_textgray">Entry Fee</p>
-                      <p className="font-semibold text-pb_darkgray">{leagueData?.settings?.entryFee || '$75'}</p>
-                    </div>
-                    <div className="p-2 bg-pb_lightestgray rounded">
-                      <p className="text-pb_textgray">Games Cap</p>
-                      <p className="font-semibold text-pb_darkgray">{leagueData?.settings?.gamesCap || '40/week'}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold mb-3 text-pb_darkgray flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    Roster Structure
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="p-2 bg-pb_lightestgray rounded">
-                      <p className="text-pb_textgray mb-1">Starters</p>
-                      <p className="font-medium text-pb_darkgray">{leagueData?.settings?.roster?.starters}</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="p-2 bg-pb_lightestgray rounded text-center">
-                        <p className="text-pb_textgray text-xs">Bench</p>
-                        <p className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.bench || 3}</p>
-                      </div>
-                      <div className="p-2 bg-pb_lightestgray rounded text-center">
-                        <p className="text-pb_textgray text-xs">IR</p>
-                        <p className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.ir || 3}</p>
-                      </div>
-                      <div className="p-2 bg-pb_lightestgray rounded text-center">
-                        <p className="text-pb_textgray text-xs">Minors</p>
-                        <p className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.minorLeague || 5}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                         {/* League Information */}
+             <Card className="shadow-lg">
+               <CardHeader className="pb-1">
+                 <CardTitle className="flex items-center gap-1 text-sm">
+                   <Trophy className="h-5 w-5 pr-1 text-pb_blue" />
+                   League Details
+                 </CardTitle>
+               </CardHeader>
+               <CardContent className="pt-0 space-y-2">
+                 <div className="space-y-1 text-xs">
+                   <div>
+                     <span className="text-pb_textgray">Format: </span>
+                     <span className="font-medium text-pb_darkgray">
+                       {leagueData?.sport} {leagueData?.format}
+                     </span>
+                   </div>
+                   <div>
+                     <span className="text-pb_textgray">Scoring: </span>
+                     <span className="font-medium text-pb_darkgray">{leagueData?.scoring}</span>
+                   </div>
+                 </div>
+                 
+                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+                   <div>
+                     <span className="text-pb_textgray">Teams: </span>
+                     <span className="font-semibold text-pb_darkgray">{leagueData?.totalTeams || 12}</span>
+                   </div>
+                   <div>
+                     <span className="text-pb_textgray">Available: </span>
+                     <span className="font-semibold text-pb_darkgray">{leagueData?.availableSpots || 2}</span>
+                   </div>
+                   <div>
+                     <span className="text-pb_textgray">Entry Fee: </span>
+                     <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.entryFee || '$75'}</span>
+                   </div>
+                   <div>
+                     <span className="text-pb_textgray">Games Cap: </span>
+                     <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.gamesCap || '40/week'}</span>
+                   </div>
+                 </div>
+                 
+                 <div className="space-y-1 text-xs">
+                   <div>
+                     <span className="text-pb_textgray">Roster: </span>
+                     <span className="font-medium text-pb_darkgray text-[10px] leading-tight">{leagueData?.settings?.roster?.starters}</span>
+                   </div>
+                   <div className="grid grid-cols-3 gap-x-2 gap-y-1">
+                     <div>
+                       <span className="text-pb_textgray">Bench: </span>
+                       <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.bench || 3}</span>
+                     </div>
+                     <div>
+                       <span className="text-pb_textgray">IR: </span>
+                       <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.ir || 3}</span>
+                     </div>
+                     <div>
+                       <span className="text-pb_textgray">Minors: </span>
+                       <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.minorLeague || 5}</span>
+                     </div>
+                   </div>
+                 </div>
+               </CardContent>
+             </Card>
 
-            {/* Commissioner Information */}
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <MessageSquare className="h-5 w-5 text-pb_blue" />
-                  Commissioner
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="h-16 w-16 bg-gradient-to-br from-pb_blue to-pb_bluehover rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                    {leagueData?.commissioner?.name?.charAt(0) || 'A'}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-pb_darkgray text-lg">{leagueData?.commissioner?.name || 'Austin (League Commissioner)'}</p>
-                    <p className="text-pb_textgray">{leagueData?.commissioner?.email || 'austin@playbookfantasy.com'}</p>
-                  </div>
-                </div>
-                <Button className="w-full bg-pb_blue hover:bg-pb_bluehover text-white">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Contact Commissioner
-                </Button>
-              </CardContent>
-            </Card>
+                         {/* Commissioner Information */}
+             <Card className="shadow-lg">
+               <CardHeader className="pb-1">
+                 <CardTitle className="flex items-center gap-1 text-sm">
+                   <MessageSquare className="h-5 w-5 pr-1 text-pb_blue" />
+                   Commissioner
+                 </CardTitle>
+               </CardHeader>
+               <CardContent className="pt-0">
+                 <div className="flex items-center gap-2 mb-2">
+                   <div className="h-8 w-8 bg-gradient-to-br from-pb_blue to-pb_bluehover rounded-full flex items-center justify-center text-white font-bold text-xs shadow">
+                     {leagueData?.commissioner?.name?.charAt(0) || 'A'}
+                   </div>
+                   <div className="flex-1 min-w-0">
+                     <p className="font-medium text-pb_darkgray text-xs truncate">{leagueData?.commissioner?.name || 'Austin (League Commissioner)'}</p>
+                     <p className="text-pb_textgray text-xs truncate">{leagueData?.commissioner?.email || 'austin@playbookfantasy.com'}</p>
+                   </div>
+                 </div>
+                 <Button className="w-full bg-pb_blue hover:bg-pb_bluehover text-white text-xs h-7">
+                   <Mail className="h-5 w-5 pr-1" />
+                   Contact
+                 </Button>
+               </CardContent>
+             </Card>
                      </div>
 
            {/* Middle Column - Available Teams */}
@@ -232,7 +218,7 @@ export default function CommissionerRecruitPage() {
              <Card className="shadow-lg">
                <CardHeader className="pb-2">
                  <CardTitle className="flex items-center gap-1 text-base">
-                   <UserCheck className="h-3 w-3 text-pb_blue" />
+                   <UserCheck className="h-5 w-5 pr-1 text-pb_blue" />
                    Available Teams ({leagueData?.availableSpots || 2})
                  </CardTitle>
                </CardHeader>
@@ -248,13 +234,13 @@ export default function CommissionerRecruitPage() {
                            className="w-10 h-10 p-0 data-[state=active]:bg-pb_blue data-[state=active]:text-white"
                            title={team.teamName}
                          >
-                           <Users className="h-4 w-4" />
+                           <Users className="h-5 w-5 pr-1" />
                          </TabsTrigger>
                        ))}
                      </TabsList>
 
                      {/* Tab Content */}
-                     <div className="flex-1">
+                     <div className="flex-1 overflow-y-auto">
                        {leagueData?.availableTeams?.map((team, index) => (
                          <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0">
                            <div className="space-y-1">
@@ -270,38 +256,42 @@ export default function CommissionerRecruitPage() {
                                </div>
                              </div>
 
-                             {/* Current Roster - Ultra Compact */}
-                             <div>
-                               <h4 className="text-xs font-medium text-pb_darkgray mb-0.5 flex items-center gap-0.5">
-                                 <TrendingUp className="h-2 w-2" />
-                                 Current ({team.currentRoster?.length})
-                               </h4>
-                               <div className="space-y-0.5">
-                                 {team.currentRoster?.map((player, i) => (
-                                   <div key={i} className="flex items-center justify-between py-0.5 px-1 bg-pb_lightestgray rounded text-xs">
-                                     <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
-                                     <div className="flex items-center gap-1 shrink-0 ml-2">
-                                       <span className="text-pb_textgray">{player.team}</span>
-                                       <span className="text-pb_textgray">{player.position}</span>
+                                                            {/* Current Roster - Enhanced */}
+                               <div>
+                                 <h4 className="text-xs font-medium text-pb_darkgray mb-1 flex items-center gap-0.5">
+                                   <TrendingUp className="h-5 w-5 pr-1" />
+                                   Current Roster ({team.currentRoster?.length})
+                                 </h4>
+                                 <div className="space-y-1">
+                                   {team.currentRoster?.map((player, i) => (
+                                     <div key={i} className="flex items-center justify-between py-2 px-2 bg-pb_lightestgray rounded hover:bg-gray-100 transition-colors">
+                                       <div className="flex-1 min-w-0">
+                                         <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
+                                       </div>
+                                       <div className="shrink-0 ml-2 flex items-center gap-2 text-xs">
+                                         <span className="font-mono bg-white px-1 rounded text-pb_textgray">{player.team}</span>
+                                         <span className="text-pb_blue font-medium">{player.position}</span>
+                                       </div>
                                      </div>
-                                   </div>
-                                 ))}
+                                   ))}
+                                 </div>
                                </div>
-                             </div>
 
                              {/* Minor League - Ultra Compact */}
                              <div>
                                <h4 className="text-xs font-medium text-pb_darkgray mb-0.5 flex items-center gap-0.5">
-                                 <Star className="h-2 w-2" />
+                                 <Star className="h-5 w-5 pr-1" />
                                  Minors ({team.minorLeague?.length})
                                </h4>
-                               <div className="space-y-0.5">
+                               <div className="space-y-1">
                                  {team.minorLeague?.map((player, i) => (
-                                   <div key={i} className="flex items-center justify-between py-0.5 px-1 bg-blue-50 rounded text-xs">
-                                     <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
-                                     <div className="flex items-center gap-1 shrink-0 ml-2">
-                                       <span className="text-pb_textgray">{player.team}</span>
-                                       <span className="text-blue-700">{player.position}</span>
+                                   <div key={i} className="flex items-center justify-between py-2 px-2 bg-pb_lightestgray rounded hover:bg-gray-100 transition-colors">
+                                     <div className="flex-1 min-w-0">
+                                       <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
+                                     </div>
+                                     <div className="shrink-0 ml-2 flex items-center gap-2 text-xs">
+                                       <span className="font-mono bg-white px-1 rounded text-pb_textgray">{player.team}</span>
+                                       <span className="text-pb_blue font-medium">{player.position}</span>
                                      </div>
                                    </div>
                                  ))}
@@ -327,13 +317,13 @@ export default function CommissionerRecruitPage() {
              <Card className="shadow-lg">
                <CardHeader className="pb-2">
                  <CardTitle className="flex items-center gap-1 text-base">
-                   <FileText className="h-3 w-3 text-pb_blue" />
+                   <FileText className="h-5 w-5 pr-1 text-pb_blue" />
                    Rulebook
                  </CardTitle>
                </CardHeader>
                <CardContent className="pt-0">
                  {ruleSections.length > 0 ? (
-                   <Accordion type="single" collapsible className="w-full">
+                   <Accordion type="single" collapsible className="w-full h-full overflow-y-auto">
                      {ruleSections.map((section, index) => (
                        <AccordionItem key={index} value={`item-${index}`} className="border-b border-pb_lightgray">
                          <AccordionTrigger className="text-left font-medium text-xs text-pb_darkgray hover:text-pb_blue py-1">
