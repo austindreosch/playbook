@@ -76,7 +76,7 @@ const DUMMY_COMMISSIONER_LEAGUES = {
         rounds: 'Week 1&2: First two rounds, Week 3: Two-week championship'
       }
     },
-    availableTeams: [
+    availableTeams: [ci
       {
         teamId: 'team-007',
         teamName: 'Available Team #1',
