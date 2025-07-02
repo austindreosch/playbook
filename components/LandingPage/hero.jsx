@@ -14,8 +14,33 @@ export default function Hero() {
   const router = useRouter();
   const { user, isLoading } = useUser();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
   
   const slides = [Slide1, Slide2, Slide3];
+
+  // Check screen size and trigger animation
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    // Force scroll to top on page load
+    window.scrollTo(0, 0);
+    
+    // Trigger animation after component mounts
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 600); // 600ms delay to let page load
+    
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+      clearTimeout(timer);
+    };
+  }, []);
 
   // Auto-advance carousel
   useEffect(() => {
@@ -78,7 +103,15 @@ export default function Hero() {
             </div>
 
             {/* Right side - Jumbotron with carousel */}
-            <div className="relative flex justify-center items-center mt-8 lg:ml-4 md:-mt-32" data-aos="lg:fade-left" data-aos-delay="400">
+            <div 
+              className={`relative flex justify-center items-center mt-8 lg:ml-4 md:-mt-32 transition-all duration-1000 ease-out ${
+                isDesktop 
+                  ? isVisible 
+                    ? 'opacity-100 translate-x-0' 
+                    : 'opacity-0 translate-x-8'
+                  : 'opacity-100 translate-x-0'
+              }`}
+            >
               {/* Cables positioned relative to jumbotron */}
               <div className="absolute inset-0 pointer-events-none z-0">
                 {/* Mobile: Full height cables from nav to jumbotron */}
