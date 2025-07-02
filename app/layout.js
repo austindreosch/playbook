@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
       <body className={`${dmSans.className} bg-pb_paperwhite min-h-0`}>
           <AOSInitializer />
           <ConditionalNavBar />
-            <main className="mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
+            <main className="mt-12 md:mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
             {children}
           </main>
           <Toaster />

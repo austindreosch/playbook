@@ -47,28 +47,30 @@ export default function Hero() {
 
 
 
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:pl-8 lg:pr-6">
+
+
+      <div className="max-w-8xl mx-auto sm:px-6 lg:pl-8 lg:pr-6 relative z-20">
         {/* Hero content */}
         <div className="pt-20 pb-24 md:pt-32 md:pb-40">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-6 items-center">
             
-            {/* Left side - Text content */}
-            <div className="text-left lg:pr-32">
+                          {/* Left side - Text content */}
+              <div className="text-center lg:text-left px-6 lg:pr-32 relative z-50">
               <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-6 text-pb_darkgray" data-aos="zoom-y-out">
                 Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-pb_green">faster.</span>
               </h1>
               <p className="text-xl text-pb_midgray mb-8" data-aos="zoom-y-out" data-aos-delay="150">
                 Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4" data-aos="zoom-y-out" data-aos-delay="300">
+              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start" data-aos="zoom-y-out" data-aos-delay="300">
                 <Button
-                  className="p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover border border-pb_blue"
+                  className="p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover border border-pb_blue w-48 sm:w-auto"
                   onClick={handleGetStarted}
                 >
                   Join the Waitlist
                 </Button>
                 <a href="#features">
-                  <Button variant="secondary" className="w-full sm:w-auto p-5 shadow-md font-bold bg-pb_lightgray border border-pb_textlightergray text-pb_darkgray hover:bg-gray-300">
+                  <Button variant="secondary" className="w-48 sm:w-auto p-5 shadow-md font-bold bg-pb_lightgray border border-pb_textlightergray text-pb_darkgray hover:bg-gray-300">
                     Learn More
                   </Button>
                 </a>
@@ -76,38 +78,94 @@ export default function Hero() {
             </div>
 
             {/* Right side - Jumbotron with carousel */}
-            <div className="relative flex justify-center items-center -mt-20 md:-mt-32" data-aos="fade-left" data-aos-delay="400">
+            <div className="relative flex justify-center items-center mt-8 md:-mt-32" data-aos="lg:fade-left" data-aos-delay="400">
               {/* Cables positioned relative to jumbotron */}
-              <div className="absolute inset-0 pointer-events-none z-5">
-                {/* Left cable */}
-                <div 
-                  className="absolute w-4 bg-gradient-to-b from-gray-700 to-gray-800 drop-shadow-lg"
-                  style={{ 
-                    left: 'calc(50% - 180px)', 
-                    top: '-100px', 
-                    bottom: '50%' 
-                  }}
-                />
+              <div className="absolute inset-0 pointer-events-none z-0">
+                {/* Mobile: Full height cables from nav to jumbotron */}
+                <div className="lg:hidden">
+                  {/* White gradient overlay - in same container as cables */}
+                  <div 
+                    className="absolute pointer-events-none z-20"
+                    style={{ 
+                      background: 'linear-gradient(to bottom, white 0%, white 70%, rgba(255,255,255,0.8) 85%, transparent 100%)',
+                      top: '-100vh',
+                      left: '-100vw',
+                      right: '-100vw',
+                      height: '120vh',
+                      width: '300vw'
+                    }}
+                  />
+                  {/* Left cable - mobile */}
+                  <div 
+                    className="absolute w-3.5 bg-pb_darkgray z-10"
+                    style={{ 
+                      left: 'calc(50% - 180px)', 
+                      top: '-100vh', 
+                      bottom: '75%',
+                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  />
+                  
+                  {/* Middle cable - mobile */}
+                  {/* <div 
+                    className="absolute w-3.5 bg-pb_darkgray z-10"
+                    style={{ 
+                      left: 'calc(50% - 2px)', 
+                      top: '-100vh', 
+                      bottom: '75%',
+                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  /> */}
+                  
+                  {/* Right cable - mobile */}
+                  <div 
+                    className="absolute w-3.5 bg-pb_darkgray z-10"
+                    style={{ 
+                      left: 'calc(50% + 176px)', 
+                      top: '-100vh', 
+                      bottom: '75%',
+                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  />
+                  
+
+                </div>
                 
-                {/* Middle cable */}
-                <div 
-                  className="absolute w-4 bg-gradient-to-b from-gray-700 to-gray-800 drop-shadow-lg"
-                  style={{ 
-                    left: 'calc(50% - 2px)', 
-                    top: '-100px', 
-                    bottom: '50%' 
-                  }}
-                />
-                
-                {/* Right cable */}
-                <div 
-                  className="absolute w-4 bg-gradient-to-b from-gray-700 to-gray-800 drop-shadow-lg"
-                  style={{ 
-                    left: 'calc(50% + 176px)', 
-                    top: '-100px', 
-                    bottom: '50%' 
-                  }}
-                />
+                {/* Desktop: Original cables */}
+                <div className="hidden lg:block">
+                                                  {/* Left cable */}
+                  <div 
+                    className="absolute w-4 bg-pb_darkgray"
+                    style={{ 
+                      left: 'calc(50% - 180px)', 
+                      top: '-100px', 
+                      bottom: '75%',
+                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  />
+                  
+                  {/* Middle cable */}
+                  <div 
+                    className="absolute w-4 bg-pb_darkgray"
+                    style={{ 
+                      left: 'calc(50% - 2px)', 
+                      top: '-100px', 
+                      bottom: '75%',
+                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  />
+                  
+                  {/* Right cable */}
+                  <div 
+                       className="absolute w-4 bg-pb_darkgray"
+                    style={{ 
+                      left: 'calc(50% + 176px)', 
+                      top: '-100px', 
+                      bottom: '75%',
+                      boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  />
+                </div>
               </div>
               
               {/* Jumbotron container */}
