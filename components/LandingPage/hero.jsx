@@ -1,5 +1,6 @@
 'use client';
 
+import BasketballHero from '@/components/LandingPage/assets/basketball-hero.png';
 import ModalVideo from '@/components/LandingPage/internal/modal-video';
 import { Button } from '@/components/ui/button';
 import VideoThumb from '@/public/images/landing/herofeature.png';
@@ -23,6 +24,13 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden">
+
+      {/* Basketball hero background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10 -z-10" 
+        style={{ backgroundImage: `url(${BasketballHero.src || BasketballHero})` }}
+        aria-hidden="true"
+      />
 
       {/* Illustration behind hero content */}
       {/* <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 pointer-events-none -z-1" aria-hidden="true">
