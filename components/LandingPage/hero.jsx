@@ -45,6 +45,8 @@ export default function Hero() {
         aria-hidden="true"
       />
 
+
+
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:pl-8 lg:pr-6">
         {/* Hero content */}
         <div className="pt-20 pb-24 md:pt-32 md:pb-40">
@@ -73,8 +75,41 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Right side - Jumbotron with carousel */}W
+            {/* Right side - Jumbotron with carousel */}
             <div className="relative flex justify-center items-center -mt-20 md:-mt-32" data-aos="fade-left" data-aos-delay="400">
+              {/* Cables positioned relative to jumbotron */}
+              <div className="absolute inset-0 pointer-events-none z-5">
+                {/* Left cable */}
+                <div 
+                  className="absolute w-4 bg-gradient-to-b from-gray-700 to-gray-800 drop-shadow-lg"
+                  style={{ 
+                    left: 'calc(50% - 180px)', 
+                    top: '-100px', 
+                    bottom: '50%' 
+                  }}
+                />
+                
+                {/* Middle cable */}
+                <div 
+                  className="absolute w-4 bg-gradient-to-b from-gray-700 to-gray-800 drop-shadow-lg"
+                  style={{ 
+                    left: 'calc(50% - 2px)', 
+                    top: '-100px', 
+                    bottom: '50%' 
+                  }}
+                />
+                
+                {/* Right cable */}
+                <div 
+                  className="absolute w-4 bg-gradient-to-b from-gray-700 to-gray-800 drop-shadow-lg"
+                  style={{ 
+                    left: 'calc(50% + 176px)', 
+                    top: '-100px', 
+                    bottom: '50%' 
+                  }}
+                />
+              </div>
+              
               {/* Jumbotron container */}
               <div className="relative w-full max-w-3xl scale-125 origin-center">
                 {/* Jumbotron image */}
