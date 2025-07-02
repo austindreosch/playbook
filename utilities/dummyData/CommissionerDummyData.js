@@ -76,7 +76,7 @@ const DUMMY_COMMISSIONER_LEAGUES = {
         rounds: 'Week 1&2: First two rounds, Week 3: Two-week championship'
       }
     },
-    availableTeams: [ci
+    availableTeams: [
       {
         teamId: 'team-007',
         teamName: 'Available Team #1',
@@ -89,6 +89,11 @@ const DUMMY_COMMISSIONER_LEAGUES = {
           { name: 'Ausar Thompson', position: 'SG/SF', team: 'DET' },
           { name: 'Marcus Sasser', position: 'PG', team: 'DET' },
           { name: 'GG Jackson', position: 'PF', team: 'MEM' },
+          { name: 'Jabari Smith Jr.', position: 'PF', team: 'HOU' },
+          { name: 'Jalen Suggs', position: 'PG/SG', team: 'ORL' },
+          { name: 'Isaiah Jackson', position: 'C', team: 'IND' },
+          { name: 'Jalen Williams', position: 'SG/SF', team: 'OKC' },
+          { name: 'Walker Kessler', position: 'C', team: 'UTA' },
         ],
         minorLeague: [
           { name: 'Keyonte George', position: 'PG', team: 'UTA' },
@@ -101,7 +106,6 @@ const DUMMY_COMMISSIONER_LEAGUES = {
       {
         teamId: 'team-011',
         teamName: 'Available Team #2',
-        teamName: 'Available Team #2',
         currentRoster: [
           { name: 'Anthony Edwards', position: 'SG', team: 'MIN' },
           { name: 'Scottie Barnes', position: 'PF/SF', team: 'TOR' },
@@ -111,6 +115,11 @@ const DUMMY_COMMISSIONER_LEAGUES = {
           { name: 'Gradey Dick', position: 'SG/SF', team: 'TOR' },
           { name: 'Dereck Lively II', position: 'C', team: 'DAL' },
           { name: 'Cam Whitmore', position: 'SG/SF', team: 'HOU' },
+          { name: 'Jalen Duren', position: 'C', team: 'DET' },
+          { name: 'Bennedict Mathurin', position: 'SG', team: 'IND' },
+          { name: 'Keegan Murray', position: 'SF/PF', team: 'SAC' },
+          { name: 'Jeremy Sochan', position: 'PF', team: 'SAS' },
+          { name: 'Ousmane Dieng', position: 'PG/SF', team: 'OKC' },
         ],
         minorLeague: [
           { name: 'Bilal Coulibaly', position: 'SF/SG', team: 'WAS' },
