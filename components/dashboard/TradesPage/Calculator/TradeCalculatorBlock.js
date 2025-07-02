@@ -52,15 +52,15 @@ const useTradeCalculator = () => {
 };
 
 const TradePanel = ({ type, players, total, valueAdjustment }) => {
-  const isOpponent = type === "RECEIVE";
+  const isOpponent = type === "YOU RECEIVE";
   
   // Dark theme styling for opponent (RECEIVE), light for user (SEND)
   const containerClasses = isOpponent
-    ? "bg-pb_darkgray border-pb_textgray"
+    ? "bg-pb_textgray border-pb_textlightgray"
     : "bg-pb_backgroundgray border-pb_lightgray";
     
   const headerClasses = isOpponent
-    ? "bg-pb_mddarkgray text-white"
+    ? "bg-pb_darkgray text-white"
     : "bg-white text-pb_darkgray";
     
   const titleClasses = isOpponent
@@ -76,18 +76,18 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
     : "bg-gray-600 text-white";
 
   return (
-    <Card className={`flex-1 rounded-lg border-1.5 shadow-inner flex flex-col max-h-[400px] min-w-0 ${containerClasses}`}>
-      <CardHeader className={`flex flex-row items-center justify-between p-2 mb-2 flex-shrink-0 rounded-t-lg ${headerClasses}`}>
+    <Card className={`flex-1 rounded-lg border-1.5 shadow-inner flex flex-col min-h-[400px] min-w-0 ${containerClasses}`}>
+      <CardHeader className={`flex flex-row items-center justify-between p-2 px-3.5 mb-2 flex-shrink-0 rounded-t-lg ${headerClasses}`}>
         <CardTitle className={`text-xs font-bold uppercase tracking-wider ${titleClasses}`}>{type}</CardTitle>
         <div className={`text-lg font-bold ${totalClasses}`}>{total.toLocaleString()}</div>
       </CardHeader>
       <CardContent className="p-2 overflow-y-auto">
         <div className="flex flex-col gap-1">
           {players.map((player, index) => (
-            <TradePlayerRow key={index} player={player} />
+            <TradePlayerRow key={index} player={player} isOpponent={isOpponent} />
           ))}
           {valueAdjustment > 0 && (
-            <div className={`flex items-center justify-between p-2 rounded-md mt-2 ${adjustmentClasses}`}>
+            <div className={`flex items-center justify-between p-2 rounded-md ${adjustmentClasses}`}>
               <span className="font-medium">Value Adjustment</span>
               <span className="font-bold">+{valueAdjustment}</span>
             </div>
@@ -114,13 +114,13 @@ export default function TradeCalculatorBlock() {
   if (error) return <div className="p-4 text-center">{error}</div>;
 
   return (
-  <div className="w-full flex flex-col space-y-2">
+  <div className="w-full flex flex-col space-y-4">
     <div className="flex h-9">
       <TradeControlsPanel />
     </div>
     <div className="flex-1 rounded-lg flex justify-center gap-4">
-      <TradePanel type="SEND" players={sendPlayers} total={sendTotal} valueAdjustment={sendAdjustment} />
-      <TradePanel type="RECEIVE" players={receivePlayers} total={receiveTotal} valueAdjustment={receiveAdjustment} />
+      <TradePanel type="YOU SEND" players={sendPlayers} total={sendTotal} valueAdjustment={sendAdjustment} />
+      <TradePanel type="YOU RECEIVE" players={receivePlayers} total={receiveTotal} valueAdjustment={receiveAdjustment} />
     </div>
   </div>
   );

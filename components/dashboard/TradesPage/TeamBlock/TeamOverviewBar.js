@@ -17,7 +17,7 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
   // ? opponent
   // : user
   const containerClasses = isOpponent
-    ? "bg-pb_mddarkgray text-white"
+    ? "bg-pb_darkgray text-white"
     : "bg-white text-pb_darkgray";
 
   const borderClasses = isOpponent 
@@ -29,7 +29,7 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
     : "text-pb_darkgray";
 
   const badgeClasses = isOpponent
-    ? "border-pb_textgray bg-pb_darkgray text-white"
+    ? "border-pb_textgray bg-white text-pb_darkgray"
     : "border-pb_lightgray bg-white text-pb_darkgray";
 
   const chevronClasses = isOpponent

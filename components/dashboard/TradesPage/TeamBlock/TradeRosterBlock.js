@@ -3,7 +3,6 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { opponentPlayers, userPlayers } from '../dummyDataTradesPage';
-import OpponentPlayerRow from './OpponentPlayerRow';
 import TradePlayerRow from './TradePlayerRow';
 
 // TODO: This is a placeholder for sport-specific player data.
@@ -27,12 +26,9 @@ export default function TradeRosterBlock({ team, isOpponent = false }) {
     const playersData = isOpponent ? opponentPlayers : userPlayers;
     const players = (playersData?.[sport] || []).sort((a, b) => b.value - a.value);
 
-    
-    const PlayerRowComponent = isOpponent ? OpponentPlayerRow : TradePlayerRow;
-
     // Dark theme styling for opponent
     const containerClasses = isOpponent
-        ? "w-full h-full bg-pb_darkgray border-1.5 border-pb_textgray border-l-0 shadow-inner flex flex-col rounded-br-lg"
+        ? "w-full h-full bg-pb_textgray  border-1.5 border-pb_textlightgray border-l-0 shadow-inner flex flex-col rounded-br-lg"
         : "w-full h-full bg-pb_backgroundgray border-1.5 border-pb_lightgray border-r-0 shadow-inner flex flex-col rounded-bl-lgc";
 
     return (
@@ -40,7 +36,7 @@ export default function TradeRosterBlock({ team, isOpponent = false }) {
             <ScrollArea className="flex-grow">
                 <div className="p-2 space-y-1">
                     {players.map(player => (
-                        <PlayerRowComponent key={player.id} player={player} />
+                        <TradePlayerRow key={player.id} player={player} isOpponent={isOpponent} />
                     ))}
                 </div>
             </ScrollArea>

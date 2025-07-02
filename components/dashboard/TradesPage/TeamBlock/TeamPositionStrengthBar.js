@@ -72,7 +72,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
     // ? opponent
     // : user
     const containerClasses = isOpponent
-        ? "bg-pb_mddarkgray text-white"
+        ? "bg-pb_darkgray text-white"
         : "bg-white text-pb_darkgray";
 
     const borderClasses = isOpponent 
