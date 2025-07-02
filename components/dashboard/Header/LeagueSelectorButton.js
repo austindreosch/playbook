@@ -38,7 +38,7 @@ export default function LeagueSelectorButton({ className = "" }) {
   const leagues = useDashboardContext((state) => state.leagues);
   
   // ---- OUTGOING DATA ----
-  const setIndividualLeagueView = useDashboardContext((state) => state.setIndividualLeagueView);
+  const setCurrentLeague = useDashboardContext((state) => state.setCurrentLeague);
 
   // =================================================================
   // COMPUTED VALUES
@@ -54,7 +54,7 @@ export default function LeagueSelectorButton({ className = "" }) {
   // =================================================================
   const handleLeagueSelect = (leagueName) => {
     console.log('🔄 League selected:', leagueName);
-    setIndividualLeagueView(leagueName);
+    setCurrentLeague(leagueName);
     setIsOpen(false);
   };
 
@@ -65,7 +65,7 @@ export default function LeagueSelectorButton({ className = "" }) {
     if (!isLeagueView) {
       if (currentLeagueId) {
         console.log('🔄 Entering current league:', currentLeagueId);
-        setIndividualLeagueView(currentLeagueId);
+        setCurrentLeague(currentLeagueId);
       }
       return;
     }
@@ -231,7 +231,7 @@ export default function LeagueSelectorButton({ className = "" }) {
                         {leagueName}
                       </span>
                     </div>
-                    <span className={`text-xs ${isSelected ? 'text-pb_midgray' : 'text-pb_textgray'}`}>
+                    <span className={`text-xs ${isSelected ? 'text-pb_textgray' : 'text-pb_textlightgray'}`}>
                       {format} • {platform} {teamSize ? `• ${teamSize} Team` : ''}
                     </span>
                   </div>

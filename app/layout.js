@@ -26,12 +26,24 @@ const NAVBAR_HEIGHT = 64; // 16px padding top + 48px navbar height
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="h-full scroll-smooth">
+    <html lang="en" className="h-full">
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('scrollRestoration' in history) {
+              history.scrollRestoration = 'manual';
+            }
+            window.addEventListener('beforeunload', function() {
+              window.scrollTo(0, 0);
+            });
+          `
+        }} />
+      </head>
       <UserProvider>
       <body className={`${dmSans.className} bg-pb_paperwhite min-h-0`}>
           <AOSInitializer />
           <ConditionalNavBar />
-            <main className="mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
+            <main className="mt-12 md:mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
             {children}
           </main>
           <Toaster />

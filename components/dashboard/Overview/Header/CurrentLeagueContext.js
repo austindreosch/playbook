@@ -34,25 +34,13 @@ export default function CurrentLeagueContext({
   const contextString = [sport, format, mode, scoring, platform].filter(Boolean).join(' • ');
 
   return (
-    <div className={`hidden lg:flex items-center pl-1 gap-3 xl:pl-2 ${className}`.trim()}>
-
-      {/* Sport icon */}
-      {/* <div className="shrink-0 hidden xl:block">
-        {sport === 'NBA' && <Basketball className="w-4 h-4 text-pb_mddarkgray" />}
-        {sport === 'NFL' && <Football className="w-4 h-4 text-pb_mddarkgray" />}
-        {sport === 'MLB' && <Baseball className="w-4 h-4 text-pb_mddarkgray" />}
-      </div> */}
-
-      {/* League name */}
-      {/* <span className="text-xs font-semibold text-pb_mddarkgray truncate hidden xl:block">
-        {leagueName}
-      </span> */}
+    <div className={`hidden lg:flex items-center pl-1 gap-2.5 xl:pl-1.5 ${className}`.trim()}>
       
       {/* Lightning bolt separator */}
       <Bolt className="w-3 h-3 text-pb_midgray shrink-0" />
       
       {/* Context string */}
-      <span className="text-xs font-medium text-pb_midgray truncate">
+      <span className="text-xs font-medium text-pb_textgray truncate">
         {contextString}
       </span>
 
@@ -60,7 +48,7 @@ export default function CurrentLeagueContext({
       {teamDirection && (
         <div className="items-center gap-2 shrink-0 hidden 2xl:flex">
           <Route className="w-3 h-3 text-pb_midgray" />
-          <span className="text-xs font-medium text-pb_midgray whitespace-nowrap">{teamDirection}</span>
+          <span className="text-xs font-medium text-pb_textgray whitespace-nowrap">{teamDirection}</span>
         </div>
       )}
     </div>

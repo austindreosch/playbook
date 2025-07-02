@@ -30,7 +30,7 @@ const dummyPositionStrengths = {
 };
 
 
-export default function TeamPositionStrengthBar({ team }) {
+export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
     // The 'team' prop is available here to fetch team-specific position strength data.
     const { leagues, currentLeagueId } = useDashboardContext();
 
@@ -68,38 +68,62 @@ export default function TeamPositionStrengthBar({ team }) {
         }
     };
 
+    // Dark theme styling for opponent
+    // ? opponent
+    // : user
+    const containerClasses = isOpponent
+        ? "bg-pb_darkgray text-white"
+        : "bg-white text-pb_darkgray";
+
+    const borderClasses = isOpponent 
+        ? "border-y border-pb_textgray" 
+        : "border-r-0 border-pb_lightgray";
+
+    const textClasses = isOpponent
+        ? "text-white"
+        : "text-pb_darkgray";
+
+    const contentClasses = isOpponent
+        ? ""
+        : "";
+
+    const chevronClasses = isOpponent
+        ? "[&>svg]:text-white"
+        : "[&>svg]:text-muted-foreground";
+
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className="py-1 hover:no-underline">
-                    <div className="flex w-full justify-between items-center">
-                        <h3 className="text-md font-semibold text-pb_darkgray">Positional Strength</h3>
+                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
+                    <div className="flex w-full justify-between items-center ">
+                        <h3 className={`text-sm ${textClasses}`}>Positional Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className="">
-                    {/* <Separator className="mb-3" /> */}
-                    <div className="w-full">
-                        <div className="flex w-full h-10 rounded-md overflow-hidden mt-1.5 shadow">
-                            {positionStrengths.map((pos, index) => (
-                                <div
-                                    key={pos.position}
-                                    className={`${pos.color} flex items-center justify-center`}
-                                    style={{ width: `${(pos.value / totalValue) * 100}%` }}
-                                >
-                                    <span className="text-pb_darkgray/80 font-bold text-sm">{pos.position}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="flex w-full mt-2">
-                            {positionStrengths.map((pos) => (
-                                <div
-                                    key={pos.position}
-                                    className="flex-grow text-center text-sm text-gray-500"
-                                    style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
-                                >
-                                    {pos.rank}{getRankSuffix(pos.rank)}
-                                </div>
-                            ))}
+                <AccordionContent className={`px-1 pb-0 ${contentClasses}`}>
+                    <div className="h-24 flex items-center justify-center w-full">
+                        <div className="w-full">
+                            <div className="flex w-full h-9 rounded-md overflow-hidden shadow">
+                                {positionStrengths.map((pos, index) => (
+                                    <div
+                                        key={pos.position}
+                                        className={`${pos.color} flex items-center justify-center`}
+                                        style={{ width: `${(pos.value / totalValue) * 100}%` }}
+                                    >
+                                        <span className="text-pb_darkgray/80 font-bold text-sm">{pos.position}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="flex w-full mt-2">
+                                {positionStrengths.map((pos) => (
+                                    <div
+                                        key={pos.position}
+                                        className={`flex-grow text-center text-sm ${isOpponent ? 'text-white' : 'text-gray-500'}`}
+                                        style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
+                                    >
+                                        {pos.rank}{getRankSuffix(pos.rank)}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </AccordionContent>

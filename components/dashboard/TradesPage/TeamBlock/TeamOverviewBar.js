@@ -6,38 +6,60 @@ import { ChartCandlestick, Trophy } from 'lucide-react';
 
 
 
-export default function TeamOverviewBar({ team }) {
+export default function TeamOverviewBar({ team, isOpponent = false }) {
   // TODO: Replace with dynamic data using the 'team' prop
   const valueRank = 5;
   const valueRankSuffix = 'th';
   const victoryRank = 2;
   const victoryRankSuffix = 'nd';
 
+  // Dark theme styling for opponent
+  // ? opponent
+  // : user
+  const containerClasses = isOpponent
+    ? "bg-pb_darkgray text-white"
+    : "bg-white text-pb_darkgray";
+
+  const borderClasses = isOpponent 
+    ? "border-r border-pb_textgray" 
+    : "border-l border-pb_lightgray";
+
+  const textClasses = isOpponent
+    ? "text-white"
+    : "text-pb_darkgray";
+
+  const badgeClasses = isOpponent
+    ? "border-pb_textgray bg-white text-pb_darkgray"
+    : "border-pb_lightgray bg-white text-pb_darkgray";
+
+  const chevronClasses = isOpponent
+    ? "[&>svg]:text-white"
+    : "[&>svg]:text-muted-foreground";
+
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
       <AccordionItem value="item-1" className="border-b-0">
-        <AccordionTrigger className="py-1 hover:no-underline">
+        <AccordionTrigger className={`p-2 hover:no-underline border-b ${containerClasses} ${borderClasses} ${chevronClasses}`}>
           <div className="flex w-full justify-between items-center">
-            <h3 className="text-md font-semibold text-pb_darkgray">Team Overview</h3>
+            <h3 className={`text-sm ${textClasses}`}>Team Overview</h3>
           </div>
         </AccordionTrigger>
-        <AccordionContent className="">
-        <Separator className="mt-1 mb-3" />
-          <div className="flex items-center justify-center space-x-8 mt-1.5">
+        <AccordionContent className="px-1 pb-0">
+          <div className="h-24 flex items-center justify-center space-x-8">
             {/* Value */}
             <div className="flex items-center space-x-2">
-              <ChartCandlestick className="w-5 h-5 text-pb_darkgray" />
-              <span className="text-sm font-semibold text-pb_darkgray">Value</span>
-              <span className="px-2 py-0.5 border border-pb_lightgray rounded-md bg-pb_white font-bold text-pb_darkgray text-sm">
+              <ChartCandlestick className={`w-5 h-5 ${textClasses}`} />
+              <span className={`text-sm font-semibold ${textClasses}`}>Value</span>
+              <span className={`px-2 py-0.5 border rounded-md font-bold text-sm ${badgeClasses}`}>
                 {valueRank}{valueRankSuffix}
               </span>
             </div>
 
             {/* Victory */}
             <div className="flex items-center space-x-2">
-              <Trophy className="w-5 h-5 text-pb_darkgray" />
-              <span className="text-sm font-semibold text-pb_darkgray">Victory</span>
-              <span className="px-2 py-0.5 border border-pb_lightgray rounded-md bg-pb_white font-bold text-pb_darkgray text-sm">
+              <Trophy className={`w-5 h-5 ${textClasses}`} />
+              <span className={`text-sm font-semibold ${textClasses}`}>Victory</span>
+              <span className={`px-2 py-0.5 border rounded-md font-bold text-sm ${badgeClasses}`}>
                 {victoryRank}{victoryRankSuffix}
               </span>
             </div>

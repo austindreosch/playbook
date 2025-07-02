@@ -5,6 +5,7 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   plugins: [
     'prettier-plugin-tailwindcss',
@@ -98,6 +99,14 @@ module.exports = {
   			'7xl': '80rem',
   			'8xl': '90rem'
   		},
+		maxWidth: {
+			'7xl': '80rem',
+			'8xl': '90rem',
+			'9xl': '100rem',
+			'10xl': '110rem',
+			'11xl': '120rem',
+		},
+		
   		ringOffsetWidth: {
   			'3': '3px',
   			'5': '5px',
@@ -152,6 +161,7 @@ module.exports = {
   			'7xs': '.400rem',
   			'8xs': '.350rem',
   			'9xs': '.300rem',
+  			'md': '1rem',
   			smd: '.925rem'
   		},
   		fontFamily: {
@@ -161,13 +171,17 @@ module.exports = {
   			]
   		},
   		colors: {
-  			pb_darkgray: '#383838',
+  			neutral: '#FEF9F3',
+  			pb_darkergray: '#2d2d2d',
+  			pb_darkgray: '#383838', // primary black
   			pb_darkgrayhover: '#4c4c4c',
   			pb_mddarkgray: '#606060',
-  			pb_midgray: '#747474',
-  			pb_textgray: '#888888',
-  			pb_textlightgray: '#afafaf',
-  			pb_textlightergray: '#c3c3c3',
+  			pb_midgray: '#707070',
+  			pb_textgray: '#747474',
+  			pb_textlightgray: '#888888',
+  			pb_textlightergray: '#9c9c9c',
+			pb_textlightestgray: '#afafaf',
+			pb_textlighterestgray: '#c3c3c3',
   			pb_lightgray: '#d7d7d7',
   			pb_lightergray: '#ebebeb',
   			pb_lightestgray: '#efefef',
@@ -390,7 +404,11 @@ module.exports = {
   		}
   	}
   },
-  plugins: [],
+  plugins: [
+    'prettier-plugin-tailwindcss',
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar'),
+  ],
 }
 
 

@@ -16,6 +16,9 @@ import ValueSwapButton from '@/components/dashboard/TradesPage/Header/ValueSwapB
 // Trades Page PrimaryComponents
 import TradeCalculatorBlock from '@/components/dashboard/TradesPage/Calculator/TradeCalculatorBlock';
 import TradeHistoryBlock from '@/components/dashboard/TradesPage/History/TradeHistoryBlock';
+import TradeHistoricalView from '@/components/dashboard/TradesPage/Results/TradeHistoricalView';
+import TradeImpactBar from '@/components/dashboard/TradesPage/Results/TradeImpactBar';
+import TradeOutcome from '@/components/dashboard/TradesPage/Results/TradeOutcome';
 import TradeResultsBlock from '@/components/dashboard/TradesPage/Results/TradeResultsBlock';
 import OpponentTeamBlock from '@/components/dashboard/TradesPage/TeamBlock/OpponentTeamBlock';
 import UserTeamBlock from '@/components/dashboard/TradesPage/TeamBlock/UserTeamBlock';
@@ -25,56 +28,66 @@ export default function LeagueTradesPage() {
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
-      <div className="flex w-full pt-2.5">
-        <div className="flex w-full justify-between">
-          <div className="flex gap-2">
-            <CurrentLeagueTeamDisplay className="h-9" />
+      <div className="grid grid-cols-22 gap-2 w-full items-center pt-2.5  pb-2.5 border-b border-pb_lightgray">
+        {/* Left part */}
+        <div className="col-span-5 flex gap-2">
+          <CurrentLeagueTeamDisplay className="h-9 flex-1" />
+        </div>
+
+        {/* Middle part */}
+        <div className="col-span-12 flex justify-between">
+          <div className="truncate pr-3">
             <CurrentLeagueContext className="h-9" />
           </div>
-          <div className="flex gap-2">
-            <ValueSwapButton className="h-9" />
+          <div className="flex justify-end gap-2">
+            <ValueSwapButton className="h-9 flex-shrink-0" />
             <ScreenshotButton className="h-9" />
             <ShareLinkButton className="h-9" />
             <LeagueSettingsButton className="h-9" />
             <SyncLeagueButton className="h-9" />
-            <OpponentSelectorButton className="h-9" />
           </div>
+        </div>
+
+        {/* Right part */}
+        <div className="col-span-5">
+          <OpponentSelectorButton className="h-9 w-full" />
         </div>
       </div>
 
       {/* Divider */}
-      <div className="w-full py-2.5">
+      {/* <div className="w-full pt-2.5">
         <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-      </div>
+      </div> */}
 
 
       {/* Main Content */}
       <div className="grid grid-cols-22 gap-2 flex-grow min-h-0">
         {/* Left Column */}
-        <div className="col-span-5">
-          <UserTeamBlock />
+        <div className="col-span-5 border-r border-pb_lightgray bg-pb_backgroundgray">
+          <UserTeamBlock className="" />
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 grid grid-rows-[7fr_7fr_5fr] px-3">
-
-          <div>
+        <div className="col-span-12 px-3 pt-2">
+          <div className="space-y-4 mb-4">
             <TradeResultsBlock />
+            <TradeImpactBar />
+            <div className="grid grid-cols-[7fr_3fr] gap-1">
+                <TradeOutcome />
+                <TradeHistoricalView />
+            </div>
             <Separator className="bg-pb_lightergray"/>
           </div>
-          <div>
+          <div className="">
             <TradeCalculatorBlock /> 
-            <Separator className="bg-pb_lightergray"/>
+            {/* <Separator className="bg-pb_lightergray my-3"/> */}
+            {/* <TradeHistoryBlock /> */}
           </div>
-          <div>
-            <TradeHistoryBlock />
-          </div>
-
         </div>
 
         {/* Right Column */}
-        <div className="col-span-5">
-          <OpponentTeamBlock />
+        <div className="col-span-5 border-l border-pb_lightgray">
+          <OpponentTeamBlock className="" />
         </div>
       </div>
     </div>
