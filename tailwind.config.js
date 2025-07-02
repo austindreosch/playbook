@@ -99,6 +99,14 @@ module.exports = {
   			'7xl': '80rem',
   			'8xl': '90rem'
   		},
+		maxWidth: {
+			'7xl': '80rem',
+			'8xl': '90rem',
+			'9xl': '100rem',
+			'10xl': '110rem',
+			'11xl': '120rem',
+		},
+		
   		ringOffsetWidth: {
   			'3': '3px',
   			'5': '5px',
