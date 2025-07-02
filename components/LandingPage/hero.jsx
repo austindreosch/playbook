@@ -60,21 +60,20 @@ export default function Hero() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4" data-aos="zoom-y-out" data-aos-delay="300">
                 <Button
-                  className="p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover"
+                  className="p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover border border-pb_blue"
                   onClick={handleGetStarted}
-                  disabled={isLoading}
                 >
-                  {isLoading ? 'Loading...' : 'Get Started'}
+                  Join the Waitlist
                 </Button>
                 <a href="#features">
-                  <Button variant="secondary" className="w-full sm:w-auto p-5 shadow-md font-bold bg-pb_lightergray text-pb_darkgray hover:bg-gray-300">
-                    Learn more
+                  <Button variant="secondary" className="w-full sm:w-auto p-5 shadow-md font-bold bg-pb_lightgray border border-pb_textlightergray text-pb_darkgray hover:bg-gray-300">
+                    Learn More
                   </Button>
                 </a>
               </div>
             </div>
 
-            {/* Right side - Jumbotron with carousel */}
+            {/* Right side - Jumbotron with carousel */}W
             <div className="relative flex justify-center items-center -mt-20 md:-mt-32" data-aos="fade-left" data-aos-delay="400">
               {/* Jumbotron container */}
               <div className="relative w-full max-w-3xl scale-125 origin-center">
