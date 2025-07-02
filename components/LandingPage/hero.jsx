@@ -18,6 +18,7 @@ export default function Hero() {
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
   
   const slides = [Slide1, Slide2, Slide3];
+  const extendedSlides = [...slides, ...slides]; // Duplicate slides for infinite loop
 
   // Check screen size and trigger animation
   useEffect(() => {
@@ -42,14 +43,22 @@ export default function Hero() {
     };
   }, []);
 
-  // Auto-advance carousel
+  // Auto-advance carousel with infinite loop
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => {
+        const next = prev + 1;
+        // When we reach the end of the duplicated slides, reset to slide 0 without animation
+        if (next >= extendedSlides.length) {
+          setTimeout(() => setCurrentSlide(0), 50); // Small delay to avoid visual glitch
+          return prev; // Keep current position for this frame
+        }
+        return next;
+      });
     }, 4000); // Change slide every 4 seconds
 
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, [extendedSlides.length]);
 
   const handleGetStarted = () => {
     if (isLoading) return;
@@ -104,11 +113,11 @@ export default function Hero() {
 
             {/* Right side - Jumbotron with carousel */}
             <div 
-              className={`relative flex justify-center items-center mt-8 lg:ml-4 md:-mt-32 transition-all duration-1000 ease-out ${
+              className={`relative flex justify-center items-center mt-8 lg:ml-4 md:-mt-32 transition-all duration-1200 ease-out ${
                 isDesktop 
                   ? isVisible 
                     ? 'opacity-100 translate-x-0' 
-                    : 'opacity-0 translate-x-8'
+                    : 'opacity-0 translate-x-20'
                   : 'opacity-100 translate-x-0'
               }`}
             >
@@ -212,7 +221,14 @@ export default function Hero() {
                 <img 
                   src={JumbotronImage.src || JumbotronImage} 
                   alt="Jumbotron display"
-                  className="w-full h-auto relative z-10"
+                  className="w-full h-auto relative z-10 select-none"
+                  style={{
+                    imageRendering: 'crisp-edges',
+                    WebkitImageOptimization: 'high',
+                    imageOptimization: 'high',
+                    filter: 'contrast(1.05) saturate(1.05)',
+                  }}
+                  draggable={false}
                 />
                 
                 {/* Carousel container - positioned inside the jumbotron screen */}
@@ -226,20 +242,30 @@ export default function Hero() {
                   }}>
                     {/* Carousel slides */}
                     <div className="relative w-full h-full overflow-hidden rounded-lg">
-                      {slides.map((slide, index) => (
-                        <div
-                          key={index}
-                          className={`absolute inset-0 transition-opacity duration-1000 ${
-                            index === currentSlide ? 'opacity-100' : 'opacity-0'
-                          }`}
-                        >
-                          <img 
-                            src={slide.src || slide} 
-                            alt={`Dashboard view ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
+                      <div 
+                        className="flex transition-transform duration-700 ease-in-out h-full"
+                        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                      >
+                        {extendedSlides.map((slide, index) => (
+                          <div
+                            key={index}
+                            className="w-full h-full flex-shrink-0"
+                          >
+                            <img 
+                              src={slide.src || slide} 
+                              alt={`Dashboard view ${index + 1}`}
+                              className="w-full h-full object-cover select-none"
+                              style={{
+                                imageRendering: 'crisp-edges',
+                                WebkitImageOptimization: 'high',
+                                imageOptimization: 'high',
+                                filter: 'contrast(1.05) saturate(1.05)',
+                              }}
+                              draggable={false}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     
                     {/* Carousel indicators */}
@@ -249,7 +275,7 @@ export default function Hero() {
                           key={index}
                           onClick={() => setCurrentSlide(index)}
                           className={`w-2 h-2 rounded-full transition-colors ${
-                            index === currentSlide ? 'bg-white' : 'bg-white/50'
+                            index === (currentSlide % slides.length) ? 'bg-white' : 'bg-white/50'
                           }`}
                           aria-label={`Go to slide ${index + 1}`}
                         />
