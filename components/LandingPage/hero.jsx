@@ -87,7 +87,7 @@ export default function Hero() {
                   <div 
                     className="absolute pointer-events-none z-20"
                     style={{ 
-                      background: 'linear-gradient(to bottom, white 0%, white 70%, rgba(255,255,255,0.8) 85%, transparent 100%)',
+                      background: 'linear-gradient(to bottom, white 0%, white 65%, rgba(255,255,255,0.8) 75%, transparent 100%)',
                       top: '-100vh',
                       left: '-100vw',
                       right: '-100vw',
@@ -99,7 +99,7 @@ export default function Hero() {
                   <div 
                     className="absolute w-3.5 bg-pb_darkgray z-10"
                     style={{ 
-                      left: 'calc(50% - 180px)', 
+                      left: 'calc(50% - 145px)', 
                       top: '-100vh', 
                       bottom: '75%',
                       boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
@@ -121,7 +121,7 @@ export default function Hero() {
                   <div 
                     className="absolute w-3.5 bg-pb_darkgray z-10"
                     style={{ 
-                      left: 'calc(50% + 176px)', 
+                      left: 'calc(50% + 130px)', 
                       top: '-100vh', 
                       bottom: '75%',
                       boxShadow: 'inset -1px 0 0 #1f1f1f, inset 1px 0 0 #4a4a4a, 2px 0 4px rgba(0,0,0,0.3)'
