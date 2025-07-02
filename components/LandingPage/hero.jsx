@@ -89,14 +89,17 @@ export default function Hero() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-6 items-center">
             
               {/* Left side - Text content */}
-              <div className="text-center px-4 md:px-0 lg:text-left lg:pr-32 relative z-50">
-              <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-6 text-pb_darkgray" data-aos="zoom-y-out">
+              <div className="text-center px-4 md:px-0 pt-10 lg:text-left lg:pr-24 relative z-50">
+              <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-10 text-pb_darkgray" data-aos="zoom-y-out">
                 Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-pb_green">faster.</span>
               </h1>
-              <p className="text-xl text-pb_midgray mb-8" data-aos="zoom-y-out" data-aos-delay="150">
-                Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard.
+              <p className="text-[17px] text-pb_midgray mb-8 leading-relaxed" data-aos="zoom-y-out" data-aos-delay="150">
+The all-in-one command center for fantasy sports strategy with <br/> AI integrated expert insights that learn your leagues and gameplan. Get ahead instantly & outclass your competition with a fraction of the effort.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start" data-aos="zoom-y-out" data-aos-delay="300">
+              {/* <p className="text-xl text-pb_midgray mb-8" data-aos="zoom-y-out" data-aos-delay="150">
+                Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard.
+              </p> */}
+              <div className="flex flex-col sm:flex-row gap-4  pt-4 items-center lg:items-start" data-aos="zoom-y-out" data-aos-delay="100">
                 <Button
                   className="p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover border border-pb_blue w-48 sm:w-auto"
                   onClick={handleGetStarted}
@@ -109,6 +112,10 @@ export default function Hero() {
                   </Button>
                 </a>
               </div>
+              
+              <p className="text-sm text-pb_textgray mt-10 md:mt-6 text-center lg:text-left" data-aos="zoom-y-out" data-aos-delay="100">
+                Playbook is in development. Sign up to get early access soon.
+              </p>
             </div>
 
             {/* Right side - Jumbotron with carousel */}
@@ -180,6 +187,7 @@ export default function Hero() {
                                                   {/* Left cable */}
                   <div 
                     className="absolute w-4"
+                    data-aos="zoom-y-out" data-aos-delay="200"
                     style={{ 
                       left: 'calc(50% - 180px)', 
                       top: '-100px', 
@@ -192,6 +200,7 @@ export default function Hero() {
                   {/* Middle cable */}
                   <div 
                     className="absolute w-4"
+                    data-aos="zoom-y-out" data-aos-delay="200"
                     style={{ 
                       left: 'calc(50% - 2px)', 
                       top: '-100px', 
@@ -204,6 +213,7 @@ export default function Hero() {
                   {/* Right cable */}
                   <div 
                        className="absolute w-4"
+                       data-aos="zoom-y-out" data-aos-delay="200"
                     style={{ 
                       left: 'calc(50% + 176px)', 
                       top: '-100px', 
@@ -216,12 +226,13 @@ export default function Hero() {
               </div>
               
               {/* Jumbotron container */}
-              <div className="relative w-full max-w-3xl scale-125 origin-center">
+              <div className="relative w-full max-w-3xl scale-125 origin-center " >
                 {/* Jumbotron image */}
                 <img 
                   src={JumbotronImage.src || JumbotronImage} 
                   alt="Jumbotron display"
                   className="w-full h-auto relative z-10 select-none"
+                  data-aos="zoom-y-out" data-aos-delay="100"
                   style={{
                     imageRendering: 'crisp-edges',
                     WebkitImageOptimization: 'high',
@@ -232,7 +243,7 @@ export default function Hero() {
                 />
                 
                 {/* Carousel container - positioned inside the jumbotron screen */}
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center" data-aos="zoom-y-out" data-aos-delay="100">
                   {/* Adjust these percentages based on where the screen cutout is in your jumbotron image */}
                   <div className="absolute" style={{
                     top: '35%',
