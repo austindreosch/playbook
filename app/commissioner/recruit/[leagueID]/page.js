@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Calendar, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
 
 
 
@@ -213,33 +213,33 @@ First and second round matchups will have a scoring period of one week each. And
           
           {/* Key Details Cards */}
           <div className="flex flex-wrap gap-2 ml-4">
-            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+             {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <Basketball className="w-4 h-4 text-pb_darkgray" /> 
                 <span className="text-pb_darkgray font-medium text-sm">NBA</span>
               </div>
-            </Card>
+            </Card>  */}
             
-            <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <LandPlot className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">Dynasty</span>
               </div>
-            </Card>
+            </Card> */}
             
-            <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <Pyramid className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">Categories</span>
               </div>
-            </Card>
+            </Card> */}
             
-            <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <Swords className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">H2H</span>
               </div>
-            </Card> */}
+            </Card>  */}
             
             <Card className="px-3 py-2 bg-white border border-lightergray shadow-sm">
               <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ First and second round matchups will have a scoring period of one week each. And
                  {/* Format & Scoring */}
                  <div className="grid grid-cols-2 gap-2">
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                     <LandPlot className="w-4 h-4 text-pb_darkgray" />
+                     <Basketball className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Sport</span>
                        <span className="font-bold text-pb_darkgray text-xs">NBA</span>
@@ -304,7 +304,7 @@ First and second round matchups will have a scoring period of one week each. And
                    </div>
                    
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                     <Ticket className="w-4 h-4 text-pb_darkgray" />
+                     <Binoculars className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Format</span>
                        <span className="font-bold text-pb_darkgray text-xs">Dynasty</span>
@@ -312,7 +312,7 @@ First and second round matchups will have a scoring period of one week each. And
                    </div>
                    
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                     <Pyramid className="w-4 h-4 text-pb_darkgray" />
+                    <Boxes className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Scoring</span>
                        <span className="font-bold text-pb_darkgray text-xs">Categories</span>
@@ -569,12 +569,12 @@ First and second round matchups will have a scoring period of one week each. And
                  {leagueData?.availableTeams?.length > 0 ? (
                    <Tabs defaultValue="team-0" className="w-full">
                      {/* Horizontal Tab List */}
-                     <TabsList className="grid w-full grid-cols-2 mb-4">
+                     <TabsList className="grid w-full grid-cols-2 mb-4 border border-lightestgray bg-pb_backgroundgray">
                        {leagueData?.availableTeams?.map((team, index) => (
                          <TabsTrigger 
                            key={team.teamId} 
                            value={`team-${index}`}
-                           className="data-[state=active]:bg-pb_blue data-[state=active]:text-white"
+                           className="data-[state=active]:bg-pb_green data-[state=active]:text-white text-xs h-full"
                          >
                            {team.teamName}
                          </TabsTrigger>
@@ -587,31 +587,69 @@ First and second round matchups will have a scoring period of one week each. And
                          <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0">
                            <div className="space-y-1">
                              {/* Team Header */}
-                             <div className="flex items-center justify-between pb-2 px-0 border-b border-gray-200 mb-4">
+                             <div className="flex items-center justify-between pb-2 px-0 mb-2.5">
                                {/* <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3> */}
                                <div className="flex gap-2">
-                                 {team.teamStrengths?.slice(0, 2).map((strength, i) => (
-                                   <Badge key={i} className="bg-pb_green text-white text-xs px-2 py-1 font-medium">
-                                     {strength}
-                                   </Badge>
-                                 ))}
+                                 {team.teamStrengths?.slice(0, 2).map((strength, i) => {
+                                   const getStrengthIcon = (strengthName) => {
+                                     switch (strengthName?.toLowerCase()) {
+                                       case 'rebounding':
+                                         return <Target className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'scoring':
+                                         return <TrendingUp className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'assists':
+                                         return <ArrowRightLeft className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'defense':
+                                         return <Shield className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'blocks':
+                                         return <Grid2X2X className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'steals':
+                                         return <Eye className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'three-pointers':
+                                       case '3-pointers':
+                                         return <Binoculars className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'free throws':
+                                         return <Goal className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'field goals':
+                                         return <Star className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'youth':
+                                       case 'young core':
+                                         return <Users className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'veteran leadership':
+                                         return <Trophy className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       case 'depth':
+                                         return <Boxes className="h-3 w-3 mr-1 text-pb_blue" />;
+                                       default:
+                                         return <Star className="h-3 w-3 mr-1 text-pb_blue" />;
+                                     }
+                                   };
+                                   
+                                   return (
+                                     <Badge key={i} className="bg-white text-pb_darkgray border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md">
+                                       {getStrengthIcon(strength)}
+                                       {strength}
+                                     </Badge>
+                                   );
+                                 })}
                                </div>
                              </div>
 
-                                                            {/* Current Roster - Enhanced */}
+                                                                                        {/* Current Roster - Enhanced */}
                                <div>
-                                 <div className="space-y-1">
-                                   {team.currentRoster?.map((player, i) => (
-                                     <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors">
-                                       <div className="flex-1 min-w-0">
-                                         <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
+                                 <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner">
+                                   <div className="space-y-1">
+                                     {team.currentRoster?.map((player, i) => (
+                                       <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors">
+                                         <div className="flex-1 min-w-0">
+                                           <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
+                                         </div>
+                                         <div className="flex items-center gap-2 shrink-0 text-xs">
+                                           <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                           <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
+                                         </div>
                                        </div>
-                                       <div className="flex items-center gap-2 shrink-0 text-xs">
-                                         <span className="text-pb_textgray w-8 text-center">{player.team}</span>
-                                         <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
-                                       </div>
-                                     </div>
-                                   ))}
+                                     ))}
+                                   </div>
                                  </div>
                                </div>
 

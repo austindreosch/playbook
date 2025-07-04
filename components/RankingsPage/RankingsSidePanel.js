@@ -1,6 +1,5 @@
 'use client';
 
-import { HistoryIcon } from '@/components/icons/HistoryIcon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';

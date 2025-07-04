@@ -1,7 +1,6 @@
 'use client';
 
-import { BarsIcon } from '@/components/icons/BarsIcon';
-import { HistoryIcon } from '@/components/icons/HistoryIcon';
+
 import { ButtonLoading } from '@/components/Interface/ButtonLoading';
 import {
     AlertDialog,
