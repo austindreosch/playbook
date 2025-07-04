@@ -7,14 +7,9 @@ import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
+import { BookmarkCheck, Calendar, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, Flag, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Target, Undo2, Users } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import EmptyStatIndicator from '../common/EmptyStatIndicator';
-import BullseyeIcon from '../icons/BullseyeIcon';
-import CalendarIcon from '../icons/CalendarIcon';
-import FlagIcon from '../icons/FlagIcon';
-import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
-import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 
 // --- DEFINE CONSTANTS --- //
 const DEFAULT_ROW_HEIGHT = 45;
@@ -644,7 +639,7 @@ const RankingsPlayerRow = memo(({
                                     {/* Flag Button - below ECRs, centered if ECRs don't take full width or using w-auto for flag button */}
                                     <div>
                                         <div className="bg-pb_green hover:bg-pb_green_darker text-white font-medium rounded-sm shadow-sm w-7 h-4 flex items-center justify-center">
-                                            <FlagIcon className={`w-3 h-3 text-white`} /> 
+                                            <Flag className={`w-3 h-3 text-white`} /> 
                                         </div>
                                         <div className='text-7xs tracking-wider text-pb_textgray uppercase items-center justify-center' >STATUS</div> 
                                     </div>
@@ -888,19 +883,19 @@ const RankingsPlayerRow = memo(({
                                         }`}>
 
                                     </div>
-                                    <FlagIcon className="w-5 h-5" />
+                                    <Flag className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
                                     <span className="text-xs tracking-wider mb-3 text-pb_textgray">{teamAbbreviation}</span>
-                                    <PeopleGroupIcon className="w-5 h-5" />
+                                    <Users className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
                                     <span className="text-xs tracking-wider mb-3 text-pb_textgray">{age}</span>
-                                    <CalendarIcon className="w-5 h-5" />
+                                    <Calendar className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
                                     <span className="text-xs tracking-wider mb-3 text-pb_textgray">{playerPosition}</span>
-                                    <BullseyeIcon className="w-5 h-5" />
+                                    <Target className="w-5 h-5" />
                                 </div>
                             </div>
                         </div>

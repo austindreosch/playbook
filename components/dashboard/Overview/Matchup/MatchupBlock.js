@@ -1,4 +1,4 @@
-import { ShieldSolidIcon } from '@/components/icons/ShieldSolidIcon';
+import { Shield } from 'lucide-react';
 import { Swords } from 'lucide-react';
 
 export default function MatchupBlock() {

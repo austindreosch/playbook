@@ -1,6 +1,5 @@
 'use client';
 
-import RotateIcon from '@/components/icons/RotateIcon';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@auth0/nextjs-auth0/client';

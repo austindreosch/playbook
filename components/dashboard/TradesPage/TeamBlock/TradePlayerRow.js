@@ -3,7 +3,7 @@
 import { ChevronDown, GripVertical, Lock, Package, Target } from 'lucide-react';
 import { useState } from 'react';
 
-import LockFilledIcon from '@/components/icons/LockFilledIcon';
+
 import { cn } from '@/lib/utils';
 import { abbreviateName } from '@/utilities/stringUtils';
 
@@ -51,7 +51,7 @@ export default function TradePlayerRow({ player, isExpandable = true, isOpponent
 
         <div className={`flex items-center space-x-1 ${textClasses}`}>
           <div className="w-5 h-5">
-            {status === 'protected' && <LockFilledIcon className={`w-5 h-5 ${textClasses}`} />}
+            {status === 'protected' && <Lock className={`w-5 h-5 ${textClasses}`} />}
             {status === 'target' && <Package className={`w-5 h-5 ${textClasses}`} />}
             {status === 'bullseye' && <Target className={`w-5 h-5 ${textClasses}`} />}
           </div>
@@ -76,7 +76,7 @@ export default function TradePlayerRow({ player, isExpandable = true, isOpponent
                           ? (isOpponent ? 'bg-pb_mddarkgray' : 'bg-pb_darkgray')
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
-                        <LockFilledIcon className={cn(
+                        <Lock className={cn(
                             "w-6 h-6",
                             status === 'protected' ? 'text-white' : 'text-gray-500'
                         )} />
