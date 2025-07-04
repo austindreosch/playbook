@@ -7,10 +7,10 @@ import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS
 import { cn, getNestedValue } from "@/lib/utils";
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
+import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Target, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import EmptyStatIndicator from '../common/EmptyStatIndicator';
-import BullseyeIcon from '../icons/BullseyeIcon';
+
 import CalendarIcon from '../icons/CalendarIcon';
 import FlagIcon from '../icons/FlagIcon';
 import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
@@ -900,7 +900,7 @@ const RankingsPlayerRow = memo(({
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
                                     <span className="text-xs tracking-wider mb-3 text-pb_textgray">{playerPosition}</span>
-                                    <BullseyeIcon className="w-5 h-5" />
+                                    <Target className="w-5 h-5" />
                                 </div>
                             </div>
                         </div>

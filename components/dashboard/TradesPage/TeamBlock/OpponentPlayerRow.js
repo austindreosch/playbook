@@ -1,9 +1,9 @@
 'use client';
 
-import HeartFilledIcon from '@/components/icons/HeartFilledIcon';
+
 import { cn } from '@/lib/utils';
 import { abbreviateName } from '@/utilities/stringUtils';
-import { ArrowLeftRight, Ban, ChevronDown, Crosshair, GripVertical, HandHelping, Package } from 'lucide-react';
+import { ArrowLeftRight, Ban, ChevronDown, Crosshair, GripVertical, HandHelping, Heart, Package } from 'lucide-react';
 import { useState } from 'react';
 
 export default function OpponentPlayerRow({ player }) {
@@ -41,7 +41,7 @@ export default function OpponentPlayerRow({ player }) {
       return <HandHelping className="w-5 h-5 text-white" />;
     }
     if (isFavorite) {
-      return <HeartFilledIcon className="w-5 h-5 text-white" />;
+      return <Heart className="w-5 h-5 text-white" />;
     }
     return null;
   };
@@ -74,7 +74,7 @@ export default function OpponentPlayerRow({ player }) {
                 {/* Favorite Button */}
                 <div onClick={() => handleToggle('favorite')} className="flex flex-col items-center cursor-pointer group">
                     <div className={cn("flex items-center justify-center w-10 h-10 rounded-full transition-colors", isFavorite ? 'bg-pb_darkgray' : 'bg-gray-200 group-hover:bg-gray-300')}>
-                        <HeartFilledIcon className={cn("w-5 h-5", isFavorite ? 'text-white' : 'text-pb_textgray')} />
+                        <Heart className={cn("w-5 h-5", isFavorite ? 'text-white' : 'text-pb_textgray')} />
                     </div>
                     <span className={cn("mt-1 text-xs text-center h-8 flex items-center justify-center", isFavorite ? 'text-pb_darkgray' : 'text-pb_textgray')}>Favor</span>
                 </div>

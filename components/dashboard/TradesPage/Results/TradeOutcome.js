@@ -1,7 +1,6 @@
 'use client';
 
-import FillArrowDown from '@/components/icons/FillArrowDown';
-import FillArrowUp from '@/components/icons/FillArrowUp';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import useTradeContext from '@/stores/dashboard/useTradeContext';
 import { ArrowRight, BicepsFlexed, ChartCandlestick, CircleArrowRight, Clock, Crown, TimerReset, TrendingUp, Trophy, UserMinus, Users, X } from 'lucide-react';
@@ -58,7 +57,7 @@ export default function TradeOutcomeBlock() {
                     <div className="flex-1 flex items-center justify-center">
                       {cat.change !== 0 && (
                         <span className={`flex items-center text-xs gap-1 font-semibold ${cat.isImprovement ? 'text-pb_greenhover' : 'text-pb_redhover'}`}>
-                          {cat.isImprovement ? <FillArrowUp /> : <FillArrowDown />}
+                          {cat.isImprovement ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
                           {Math.abs(cat.change)}
                         </span>
                       )}
