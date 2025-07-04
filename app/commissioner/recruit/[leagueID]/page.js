@@ -166,7 +166,7 @@ All other trades will be upheld.
         title: "Owner Conduct",
         content: `**No collusion.** Fraternizing with, or manipulating, another player in private to achieve an outcome that could disrupt another team's fair chances of success and/or tip the competitive balance in your favor.
 
-**No sandbagging.** You must always be engaged, playing and setting coherent lineups, regardless of the strength of your team. Season "tanking" is allowed only through trading. 
+**No sandbagging.** You must always be engaged, playing and setting coherent lineups, regardless of the strength of your team. Season &quot;tanking&quot; is allowed only through trading. 
 
 **Set your lineups.** The absolute minimum requirement for playing in the league is making sure your roster is properly placed and off the bench for every matchup. It's your responsibility to make sure that your match-ups' competitive integrity isn't spoiled by your ineptness or indifference towards this essential duty.
 
