@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, ArrowRight, Calendar, Clock, FileText, Flag, Mail, MessageSquare, Settings, Shield, Star, Target, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { AlertCircle, ArrowRight, ArrowRightLeft, Calendar, Clock, FileText, Flag, Mail, Medal, MessageSquare, Settings, Shield, ShieldUser, Star, Swords, Target, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -144,9 +144,9 @@ After the draft, all players not drafted will enter into the Waiver Wire system.
         title: "Playoffs",
         content: `6 teams will enter the playoffs after the regular season matchups, these teams are decided by league standings at the end of the season.
 
-First round, seeds (1) and (2) will both get a bye. Two matchups will be played between seeds (3) v.s. (6) and seeds (4) v.s. (5).
+First round, **seeds (1) and (2) will both get a bye**. Two matchups will be played between seeds (3) v.s. (6) and seeds (4) v.s. (5).
 
-Second round, the playoff bracket will be reseeded, placing seed (1) against the lowest available seed to make it out of the first round. Seed (2) will be placed against the other first round victor.
+Second round, the playoff bracket will be reseeded, placing seed (1) against the **lowest available seed** to make it out of the first round. Seed (2) will be placed against the other first round victor.
 
 Third and final round, the two winners of the second round of matchups will face off to decide who gets 1st place and 2nd place prizes - the losers will face off in a third place matchup.
 
@@ -159,8 +159,8 @@ First and second round matchups will have a scoring period of one week each. And
 
   const ruleSections = parseRulebook(leagueData?.fullRulebook);
 
-      return (
-      <div className="min-h-screen bg-pb_backgroundgray">
+  return (
+      <div className="">
         <div className="container mx-auto w-full py-8">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-4">
@@ -197,63 +197,83 @@ First and second round matchups will have a scoring period of one week each. And
            {/* Left Column - League Details & Commissioner Info */}
            <div className="lg:col-span-2 space-y-2">
                          {/* League Information */}
-             <Card className="shadow-lg">
-               <CardHeader className="pb-1">
-                 <CardTitle className="flex items-center gap-1 text-sm">
-                   <Trophy className="h-5 w-5 pr-1 text-pb_blue" />
+             <Card className="shadow-lg border-0 bg-white">
+               <CardHeader className="pb-3">
+                 <CardTitle className="flex items-center gap-2 text-base font-bold text-pb_darkgray">
+                   <Trophy className="h-5 w-5 text-pb_blue" />
                    League Details
                  </CardTitle>
                </CardHeader>
-               <CardContent className="pt-0 space-y-2">
-                 <div className="space-y-1 text-xs">
-                   <div>
-                     <span className="text-pb_textgray">Format: </span>
-                     <span className="font-medium text-pb_darkgray">
-                       {leagueData?.sport} {leagueData?.format}
+               <CardContent className="pt-0 space-y-4">
+                 {/* Format & Scoring */}
+                 <div className="space-y-2">
+                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
+                     <span className="text-pb_textgray text-sm font-medium">Sport</span>
+                     <span className="font-bold text-pb_darkgray text-sm">
+                       NBA
                      </span>
                    </div>
-                   <div>
-                     <span className="text-pb_textgray">Scoring: </span>
-                     <span className="font-medium text-pb_darkgray">{leagueData?.scoring}</span>
+                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
+                     <span className="text-pb_textgray text-sm font-medium">Format</span>
+                     <span className="font-bold text-pb_darkgray text-sm">
+                       {leagueData?.format || 'Dynasty'}
+                     </span>
+                   </div>
+                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
+                     <span className="text-pb_textgray text-sm font-medium">Scoring</span>
+                     <span className="font-bold text-pb_darkgray text-sm">Categories</span>
+                   </div>
+                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
+                     <span className="text-pb_textgray text-sm font-medium">Scoring</span>
+                     <span className="font-bold text-pb_darkgray text-sm">H2H</span>
                    </div>
                  </div>
                  
-                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
-                   <div>
-                     <span className="text-pb_textgray">Teams: </span>
-                     <span className="font-semibold text-pb_darkgray">{leagueData?.totalTeams || 12}</span>
+                 {/* Key Numbers */}
+                 <div className="grid grid-cols-2 gap-2">
+                   <div className="text-center py-2 bg-gray-50 rounded-lg border">
+                     <div className="text-2xl font-bold text-pb_blue">12</div>
+                     <div className="text-xs text-pb_textgray font-medium">Total Teams</div>
                    </div>
-                   <div>
-                     <span className="text-pb_textgray">Available: </span>
-                     <span className="font-semibold text-pb_darkgray">{leagueData?.availableSpots || 2}</span>
-                   </div>
-                   <div>
-                     <span className="text-pb_textgray">Entry Fee: </span>
-                     <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.entryFee || '$75'}</span>
-                   </div>
-                   <div>
-                     <span className="text-pb_textgray">Games Cap: </span>
-                     <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.gamesCap || '40/week'}</span>
+                   <div className="text-center py-2 bg-gray-50 rounded-lg border">
+                     <div className="text-2xl font-bold text-pb_green">6</div>
+                     <div className="text-xs text-pb_textgray font-medium">Playoff Spots</div>
                    </div>
                  </div>
                  
-                 <div className="space-y-1 text-xs">
-                   <div>
-                     <span className="text-pb_textgray">Roster: </span>
-                     <span className="font-medium text-pb_darkgray text-[10px] leading-tight">{leagueData?.settings?.roster?.starters}</span>
+                 {/* Financial & Rules */}
+                 <div className="space-y-2">
+                   <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg">
+                     <span className="text-pb_textgray text-sm font-medium">Entry Fee</span>
+                     <span className="font-bold text-pb_darkgray text-sm">$75</span>
                    </div>
-                   <div className="grid grid-cols-3 gap-x-2 gap-y-1">
-                     <div>
-                       <span className="text-pb_textgray">Bench: </span>
-                       <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.bench || 3}</span>
-                     </div>
-                     <div>
-                       <span className="text-pb_textgray">IR: </span>
-                       <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.ir || 3}</span>
-                     </div>
-                     <div>
-                       <span className="text-pb_textgray">Minors: </span>
-                       <span className="font-semibold text-pb_darkgray">{leagueData?.settings?.roster?.minorLeague || 5}</span>
+                   {/* <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg">
+                     <span className="text-pb_textgray text-sm font-medium">Games Cap</span>
+                     <span className="font-bold text-pb_darkgray text-sm">40</span>
+                   </div> */}
+                 </div>
+                 
+                 {/* Roster Breakdown */}
+                 <div className="border-t pt-3">
+                   <h4 className="text-sm font-bold text-pb_darkgray mb-2">Roster Structure</h4>
+                   <div className="space-y-2">
+                                           <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
+                        <span className="text-pb_textgray text-sm font-medium">Starters</span>
+                        <span className="font-bold text-pb_darkgray text-sm">PG, SG, SF, PF, C, G, F, UTIL (3)</span>
+                      </div>
+                     <div className="grid grid-cols-3 gap-2 text-xs">
+                       <div className="text-center py-2 bg-white border rounded">
+                         <div className="font-bold text-pb_darkgray">{leagueData?.settings?.roster?.bench || 3}</div>
+                         <div className="text-pb_textgray">Bench</div>
+                       </div>
+                       <div className="text-center py-2 bg-white border rounded">
+                         <div className="font-bold text-pb_darkgray">{leagueData?.settings?.roster?.ir || 3}</div>
+                         <div className="text-pb_textgray">IR</div>
+                       </div>
+                       <div className="text-center py-2 bg-white border rounded">
+                         <div className="font-bold text-pb_darkgray">{leagueData?.settings?.roster?.minorLeague || 5}</div>
+                         <div className="text-pb_textgray">Minors</div>
+                       </div>
                      </div>
                    </div>
                  </div>
@@ -287,7 +307,7 @@ First and second round matchups will have a scoring period of one week each. And
                      </div>
 
            {/* Middle Column - Available Teams */}
-           <div className="lg:col-span-3 space-y-2">
+           <div className="lg:col-span-4 space-y-2">
                          {/* Available Teams - Vertical Tabs with Compact Rows */}
              <Card className="shadow-lg">
                <CardHeader className="pb-2">
@@ -385,7 +405,7 @@ First and second round matchups will have a scoring period of one week each. And
            </div>
 
            {/* Right Column - League Rules */}
-           <div className="lg:col-span-8 space-y-2">
+           <div className="lg:col-span-7 space-y-2">
              {/* League Rules - Left-Justified Tabs Display */}
              <Card className="shadow-lg">
                <CardHeader className="pb-2">
@@ -404,22 +424,22 @@ First and second round matchups will have a scoring period of one week each. And
                            {ruleSections.map((section, index) => {
                              const getIcon = (title) => {
                                switch (title) {
-                                 case 'League Structure':
+                                 case 'Format':
                                    return <Users className="h-4 w-4" />;
-                                 case 'Minor League System':
-                                   return <Star className="h-4 w-4" />;
                                  case 'Scoring System':
                                    return <Target className="h-4 w-4" />;
                                  case 'Prize Pool':
-                                   return <Shield className="h-4 w-4" />;
+                                   return <Medal className="h-4 w-4" />;
                                  case 'Owner Conduct':
                                    return <Flag className="h-4 w-4" />;
                                  case 'Trades':
-                                   return <ArrowRight className="h-4 w-4" />;
+                                   return <ArrowRightLeft className="h-4 w-4" />;
                                  case 'Draft':
-                                   return <Calendar className="h-4 w-4" />;
+                                   return <ShieldUser className="h-4 w-4" />;
                                  case 'Playoffs':
-                                   return <Clock className="h-4 w-4" />;
+                                   return <FlagTarget className="h-4 w-4" />;
+                                case 'Matchups':
+                                  return <Swords className="h-4 w-4" />;
                                  default:
                                    return <FileText className="h-4 w-4" />;
                                }
