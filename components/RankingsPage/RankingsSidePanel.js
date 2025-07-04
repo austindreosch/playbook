@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { Clock } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 
 const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
@@ -93,7 +94,7 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
                                     })()}
                                 </div>
                                 <div className={`text-xs lg:text-3xs whitespace-nowrap flex items-center ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-500'}`}>
-                                    <HistoryIcon className={`w-3 h-3 mr-1 ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-400'}`} />
+                                    <Clock className={`w-3 h-3 mr-1 ${activeRankingId === ranking._id ? 'text-blue-100' : 'text-gray-400'}`} />
                                     {ranking.lastUpdated ? (
                                         <>
                                             <span className="">{formatDate(ranking.lastUpdated, true)}</span>

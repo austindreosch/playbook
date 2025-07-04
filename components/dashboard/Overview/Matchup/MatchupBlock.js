@@ -1,3 +1,4 @@
+import { Shield } from 'lucide-react';
 import { Swords } from 'lucide-react';
 
 export default function MatchupBlock() {
