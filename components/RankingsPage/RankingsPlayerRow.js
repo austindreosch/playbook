@@ -10,11 +10,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { BookmarkCheck, Check, CheckCircle, CheckSquare, CheckSquare2, CircleCheck, EyeOff, GripHorizontalIcon, GripVerticalIcon, RotateCcw, SquareCheck, Undo2 } from 'lucide-react';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import EmptyStatIndicator from '../common/EmptyStatIndicator';
-import BullseyeIcon from '../icons/BullseyeIcon';
-import CalendarIcon from '../icons/CalendarIcon';
-import FlagIcon from '../icons/FlagIcon';
-import { PeopleGroupIcon } from '../icons/PeopleGroupIcon';
-import { SquareCheckSolidIcon } from '../icons/SquareCheckSolidIcon';
 
 // --- DEFINE CONSTANTS --- //
 const DEFAULT_ROW_HEIGHT = 45;

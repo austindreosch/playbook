@@ -1,14 +1,40 @@
 'use client';
 
+import { baseball, basketball, football } from "@lucide/lab";
+const Basketball = createLucideIcon('basketball', basketball);
+const Football = createLucideIcon('football', football);
+const Baseball = createLucideIcon('baseball', baseball); 
+
+import FantraxIcon from '@/components/icons/FantraxIcon';
+import LeagueSafeIcon from '@/components/icons/LeagueSafeIcon';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, ArrowRight, ArrowRightLeft, Calendar, Clock, FileText, Flag, Mail, Medal, MessageSquare, Settings, Shield, ShieldUser, Star, Swords, Target, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Calendar, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+
+
+
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+// Custom Reddit Icon Component
+const RedditIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+  </svg>
+);
+
+// Custom Discord Icon Component  
+const DiscordIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.0002 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9554 2.4189-2.1568 2.4189Z"/>
+  </svg>
+);
 
 export default function CommissionerRecruitPage() {
   const params = useParams();
@@ -17,6 +43,21 @@ export default function CommissionerRecruitPage() {
   const [leagueData, setLeagueData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Function to get position pill styling  
+  const getPositionPill = (position) => {
+    const pos = position.split('/')[0]; // Get first position if multiple
+    const colorMap = {
+      'PG': 'bg-pb_pastelblue text-pb_darkgray',
+      'SG': 'bg-pb_pastelgreen text-pb_darkgray', 
+      'SF': 'bg-pb_pastelorange text-pb_darkgray',
+      'PF': 'bg-pb_pastelpurple text-pb_darkgray',
+      'C': 'bg-pb_pastelred text-pb_darkgray'
+    };
+    
+    const colorClass = colorMap[pos] || 'bg-pb_pastelstone text-pb_darkgray';
+    return `${colorClass} px-2 py-1 rounded-sm text-xs font-medium w-10 text-center shrink-0`;
+  };
 
   useEffect(() => {
     // Fetch league data from dummy database
@@ -125,11 +166,11 @@ All other trades will be upheld.
         title: "Owner Conduct",
         content: `**No collusion.** Fraternizing with, or manipulating, another player in private to achieve an outcome that could disrupt another team's fair chances of success and/or tip the competitive balance in your favor.
 
-**No sandbagging.** You must always be engaged, playing and setting coherent lineups, regardless of the strength of your team. Season "tanking" is **allowed only through trading**. 
+**No sandbagging.** You must always be engaged, playing and setting coherent lineups, regardless of the strength of your team. Season "tanking" is allowed only through trading. 
 
 **Set your lineups.** The absolute minimum requirement for playing in the league is making sure your roster is properly placed and off the bench for every matchup. It's your responsibility to make sure that your match-ups' competitive integrity isn't spoiled by your ineptness or indifference towards this essential duty.
 
-**No roster self-destructing.** Any malicious or nonsensical player drops or trades reasonably diagnosed as reckless and indicative of a player choosing to disregard the competitive integrity of the league will be **undone** and if needed, the offending team will be **held frozen** until a replacement owner can be found.`
+**No roster self-destructing.** Any malicious or nonsensical player drops or trades reasonably diagnosed as reckless and indicative of a player choosing to disregard the competitive integrity of the league will be undone and if needed, the offending team will be held frozen until a replacement owner can be found.`
       },
       {
         title: "Draft",
@@ -166,156 +207,364 @@ First and second round matchups will have a scoring period of one week each. And
         <div className="flex items-center justify-between mb-4">
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-pb_darkgray">
-              {leagueData?.leagueName || 'Elite NBA Dynasty League'}
+              The League
             </h1>
           </div>
           
-          {/* Key Details Badges */}
+          {/* Key Details Cards */}
           <div className="flex flex-wrap gap-2 ml-4">
-            <Badge className="bg-pb_blue hover:bg-pb_bluehover text-white font-semibold px-3 py-1">
-              NBA
-            </Badge>
-            <Badge className="bg-pb_blue hover:bg-pb_bluehover text-white font-semibold px-3 py-1">
-              Dynasty
-            </Badge>
-            <Badge className="bg-pb_blue hover:bg-pb_bluehover text-white font-semibold px-3 py-1">
-              9-Cat
-            </Badge>
-            <Badge className="bg-pb_blue hover:bg-pb_bluehover text-white font-semibold px-3 py-1">
-              H2H
-            </Badge>
-            <Badge className="bg-pb_textgray hover:bg-pb_darkgray text-white font-semibold px-3 py-1">
-              Fantrax
-            </Badge>
-            <Badge className="bg-pb_darkgray hover:bg-pb_textgray text-white font-semibold px-3 py-1">
-              {leagueData?.availableSpots || 2} Spots Available
-            </Badge>
+            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2">
+                <Basketball className="w-4 h-4 text-pb_darkgray" /> 
+                <span className="text-pb_darkgray font-medium text-sm">NBA</span>
+              </div>
+            </Card>
+            
+            <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2">
+                <LandPlot className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">Dynasty</span>
+              </div>
+            </Card>
+            
+            <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2">
+                <Pyramid className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">Categories</span>
+              </div>
+            </Card>
+            
+            <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-2">
+                <Swords className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">H2H</span>
+              </div>
+            </Card> */}
+            
+            <Card className="px-3 py-2 bg-white border border-lightergray shadow-sm">
+              <div className="flex items-center gap-2">
+                <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">Fantrax</span>
+              </div>
+            </Card>
+            
+            <Card 
+              className="px-3 py-2 bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => window.open('https://discord.gg/your-invite-link', '_blank')}
+            >
+              <div className="flex items-center gap-2">
+                <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">Discord Group Chat</span>
+                <ExternalLink className="w-3 h-3 text-pb_darkgray ml-1" />
+              </div>
+            </Card>
+            
+            <Card 
+              className="px-3 py-2 bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
+              onClick={() => window.open('https://leaguesafe.com/your-league-link', '_blank')}
+            >
+              <div className="flex items-center gap-2">
+                <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">LeagueSafe Page</span>
+                <ExternalLink className="w-3 h-3 text-pb_darkgray ml-1" />
+              </div>
+            </Card>
+            
+            <Card className="px-3 py-2 bg-pb_green border border-pb_green shadow-sm">
+              <div className="flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-white" />
+                <span className="text-white font-medium text-sm">{leagueData?.availableSpots || 2} Spots Available</span>
+              </div>
+            </Card>
           </div>
         </div>
 
-                 <div className="grid grid-cols-1 lg:grid-cols-13 gap-2">
+                 <div className="grid grid-cols-1 lg:grid-cols-16 gap-2">
            {/* Left Column - League Details & Commissioner Info */}
-           <div className="lg:col-span-2 space-y-2">
+           <div className="lg:col-span-3 space-y-2">
                          {/* League Information */}
-             <Card className="shadow-lg border-0 bg-white">
+             <Card className="shadow-md border border-lightergray bg-white">
                <CardHeader className="pb-3">
                  <CardTitle className="flex items-center gap-2 text-base font-bold text-pb_darkgray">
-                   <Trophy className="h-5 w-5 text-pb_blue" />
+                   <NotebookTabs className="h-5 w-5 " />
                    League Details
                  </CardTitle>
                </CardHeader>
-               <CardContent className="pt-0 space-y-4">
+               <Separator className="mt-[3px] mb-3 w-[92%] mx-auto" />
+
+               <CardContent className="pt-0 space-y-2">
                  {/* Format & Scoring */}
-                 <div className="space-y-2">
-                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
-                     <span className="text-pb_textgray text-sm font-medium">Sport</span>
-                     <span className="font-bold text-pb_darkgray text-sm">
-                       NBA
-                     </span>
+                 <div className="grid grid-cols-2 gap-2">
+                   <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+                     <LandPlot className="w-4 h-4 text-pb_darkgray" />
+                     <div className="flex flex-col">
+                       <span className="text-pb_textlightestgray text-xs">Sport</span>
+                       <span className="font-bold text-pb_darkgray text-xs">NBA</span>
+                     </div>
                    </div>
-                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
-                     <span className="text-pb_textgray text-sm font-medium">Format</span>
-                     <span className="font-bold text-pb_darkgray text-sm">
-                       {leagueData?.format || 'Dynasty'}
-                     </span>
+                   
+                   <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+                     <Ticket className="w-4 h-4 text-pb_darkgray" />
+                     <div className="flex flex-col">
+                       <span className="text-pb_textlightestgray text-xs">Format</span>
+                       <span className="font-bold text-pb_darkgray text-xs">Dynasty</span>
+                     </div>
                    </div>
-                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
-                     <span className="text-pb_textgray text-sm font-medium">Scoring</span>
-                     <span className="font-bold text-pb_darkgray text-sm">Categories</span>
+                   
+                   <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+                     <Pyramid className="w-4 h-4 text-pb_darkgray" />
+                     <div className="flex flex-col">
+                       <span className="text-pb_textlightestgray text-xs">Scoring</span>
+                       <span className="font-bold text-pb_darkgray text-xs">Categories</span>
+                     </div>
                    </div>
-                   <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
-                     <span className="text-pb_textgray text-sm font-medium">Scoring</span>
-                     <span className="font-bold text-pb_darkgray text-sm">H2H</span>
+                   
+                   <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+                     <Swords className="w-4 h-4 text-pb_darkgray" />
+                     <div className="flex flex-col">
+                       <span className="text-pb_textlightestgray text-xs">Matchup</span>
+                       <span className="font-bold text-pb_darkgray text-xs">H2H</span>
+                     </div>
                    </div>
                  </div>
                  
                  {/* Key Numbers */}
                  <div className="grid grid-cols-2 gap-2">
-                   <div className="text-center py-2 bg-gray-50 rounded-lg border">
-                     <div className="text-2xl font-bold text-pb_blue">12</div>
-                     <div className="text-xs text-pb_textgray font-medium">Total Teams</div>
+                   <div className="text-center py-1 rounded-lg border">
+                     <div className="text-lg font-bold text-pb_darkgray">12</div>
+                     <div className="text-xs text-pb_textlightgray font-medium">Teams</div>
                    </div>
-                   <div className="text-center py-2 bg-gray-50 rounded-lg border">
-                     <div className="text-2xl font-bold text-pb_green">6</div>
-                     <div className="text-xs text-pb_textgray font-medium">Playoff Spots</div>
+                   <div className="text-center py-1 rounded-lg border">
+                     <div className="text-lg font-bold text-pb_darkgray">6</div>
+                     <div className="text-xs text-pb_textlightgray font-medium">Playoff Spots</div>
                    </div>
                  </div>
                  
                  {/* Financial & Rules */}
                  <div className="space-y-2">
                    <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg">
-                     <span className="text-pb_textgray text-sm font-medium">Entry Fee</span>
-                     <span className="font-bold text-pb_darkgray text-sm">$75</span>
+                     <span className="text-pb_textlightgray text-xs font-medium">League Fee</span>
+                     <span className="font-bold text-pb_darkgray text-xs">$75</span>
                    </div>
-                   {/* <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg">
-                     <span className="text-pb_textgray text-sm font-medium">Games Cap</span>
-                     <span className="font-bold text-pb_darkgray text-sm">40</span>
-                   </div> */}
+                   <TooltipProvider>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg cursor-help">
+                            <span className="text-pb_textlightgray text-xs font-medium">Advanced Payments</span>
+                            <span className="font-bold text-pb_darkgray text-xs">1YR</span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs text-sm">
+                            Owners are always paid 1 year in advance, not just for the current season. Owners are not eligible collect prize money without being current. This ensures league continuity and competitive integrity.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                  </div>
                  
-                 {/* Roster Breakdown */}
-                 <div className="border-t pt-3">
-                   <h4 className="text-sm font-bold text-pb_darkgray mb-2">Roster Structure</h4>
-                   <div className="space-y-2">
-                                           <div className="flex items-center justify-between py-2 px-3 bg-pb_blue/5 rounded-lg">
-                        <span className="text-pb_textgray text-sm font-medium">Starters</span>
-                        <span className="font-bold text-pb_darkgray text-sm">PG, SG, SF, PF, C, G, F, UTIL (3)</span>
-                      </div>
-                     <div className="grid grid-cols-3 gap-2 text-xs">
-                       <div className="text-center py-2 bg-white border rounded">
-                         <div className="font-bold text-pb_darkgray">{leagueData?.settings?.roster?.bench || 3}</div>
-                         <div className="text-pb_textgray">Bench</div>
-                       </div>
-                       <div className="text-center py-2 bg-white border rounded">
-                         <div className="font-bold text-pb_darkgray">{leagueData?.settings?.roster?.ir || 3}</div>
-                         <div className="text-pb_textgray">IR</div>
-                       </div>
-                       <div className="text-center py-2 bg-white border rounded">
-                         <div className="font-bold text-pb_darkgray">{leagueData?.settings?.roster?.minorLeague || 5}</div>
-                         <div className="text-pb_textgray">Minors</div>
-                       </div>
-                     </div>
+                 {/* Roster Structure */}
+                 <div className="pt-2">
+                   <h4 className="text-sm font-bold text-pb_darkgray mb-3 flex items-center gap-2">
+                     <Users className="h-4 w-4 text-pb_darkgray" />
+                     Roster Structure
+                   </h4>
+                   <div className="flex flex-wrap gap-1">
+                     {/* Active Roster */}
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">G</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">G</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">G</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">F</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">F</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">F</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">C</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">FLX</div>
+                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">FLX</div>
+                     <div className="bg-white border border-lightergray rounded  py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">FLX</div>
+                     
+                                           {/* Bench */}
+                      <div className="bg-pb_green/20 border border-pb_green/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">BENCH</div>
+                      <div className="bg-pb_green/20 border border-pb_green/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">BENCH</div>
+                      <div className="bg-pb_green/20 border border-pb_green/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">BENCH</div>
+                      
+                      {/* IR */}
+                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
+                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
+                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
+                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
+                      
+                      {/* Minors */}
+                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
+                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
+                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
+                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
+                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
                    </div>
                  </div>
                </CardContent>
              </Card>
 
                          {/* Commissioner Information */}
-             <Card className="shadow-lg">
-               <CardHeader className="pb-1">
-                 <CardTitle className="flex items-center gap-1 text-sm">
-                   <MessageSquare className="h-5 w-5 pr-1 text-pb_blue" />
+             <Card className="shadow-md">
+               <CardHeader className="pb-0">
+                 <CardTitle className="flex items-center pb-2 text-md">
+                   <MessageSquare className="h-6 w-6 pr-1 text-pb_blue" />
                    Commissioner
                  </CardTitle>
                </CardHeader>
                <CardContent className="pt-0">
-                 <div className="flex items-center gap-2 mb-2">
-                   <div className="h-8 w-8 bg-gradient-to-br from-pb_blue to-pb_bluehover rounded-full flex items-center justify-center text-white font-bold text-xs shadow">
-                     {leagueData?.commissioner?.name?.charAt(0) || 'A'}
+                 
+                 {/* Contact Methods */}
+                 <div className="space-y-2">
+                   <div className="flex items-center gap-3 py-2 px-3 bg-gray-50 border border-gray-200 rounded-lg">
+                     <Mailbox className="w-4 h-4 text-pb_darkgray" />
+                     <div className="flex flex-col flex-1">
+                       <span className="text-pb_darkgray text-xs font-medium">Email</span>
+                       <span className="text-pb_textgray text-xs">austindreosch@gmail.com</span>
+                     </div>
+                     <button 
+                       onClick={() => window.open('mailto:austindreosch@gmail.com', '_blank')}
+                       className="p-1 hover:bg-gray-200 rounded transition-colors"
+                     >
+                       <ArrowRight className="w-3 h-3 text-pb_darkgray" />
+                     </button>
                    </div>
-                   <div className="flex-1 min-w-0">
-                     <p className="font-medium text-pb_darkgray text-xs truncate">{leagueData?.commissioner?.name || 'Austin (League Commissioner)'}</p>
-                     <p className="text-pb_textgray text-xs truncate">{leagueData?.commissioner?.email || 'austin@playbookfantasy.com'}</p>
+                   <div className="flex items-center gap-3 py-2 px-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                     <DiscordIcon className="w-4 h-4 text-indigo-500" />
+                     <div className="flex flex-col flex-1">
+                       <span className="text-indigo-700 text-xs font-medium">Discord</span>
+                       <span className="text-indigo-600 text-xs">austindreosch</span>
+                     </div>
+                     <button 
+                       onClick={() => window.open('https://discord.com/users/austindreosch', '_blank')}
+                       className="p-1 hover:bg-indigo-200 rounded transition-colors"
+                     >
+                       <ArrowRight className="w-3 h-3 text-indigo-600" />
+                     </button>
+                   </div>
+                   <div className="flex items-center gap-3 py-2 px-3 bg-orange-50 border border-orange-200 rounded-lg">
+                     <RedditIcon className="w-4 h-4 text-orange-500" />
+                     <div className="flex flex-col flex-1">
+                       <span className="text-orange-700 text-xs font-medium">Reddit</span>
+                       <span className="text-orange-600 text-xs">lookalive9</span>
+                     </div>
+                     <button 
+                       onClick={() => window.open('https://reddit.com/user/lookalive9', '_blank')}
+                       className="p-1 hover:bg-orange-200 rounded transition-colors"
+                     >
+                       <ArrowRight className="w-3 h-3 text-orange-600" />
+                     </button>
                    </div>
                  </div>
-                 <Button className="w-full bg-pb_blue hover:bg-pb_bluehover text-white text-xs h-7">
-                   <Mail className="h-5 w-5 pr-1" />
-                   Contact
-                 </Button>
+                 
                </CardContent>
              </Card>
                      </div>
 
            {/* Middle Column - Available Teams */}
-           <div className="lg:col-span-4 space-y-2">
+           <div className="lg:col-span-5 space-y-2">
                          {/* Available Teams - Vertical Tabs with Compact Rows */}
-             <Card className="shadow-lg">
+             <Card className="shadow-md">
                <CardHeader className="pb-2">
-                 <CardTitle className="flex items-center gap-1 text-base">
-                   <UserCheck className="h-5 w-5 pr-1 text-pb_blue" />
-                   Available Teams ({leagueData?.availableSpots || 2})
-                 </CardTitle>
+                 <div className="flex items-center justify-between">
+                   <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
+                     <UserCheck className="h-6 w-6 pr-1 " />
+                     Available Teams
+                   </CardTitle>
+                   
+                   {/* View All Teams Button */}
+                   <Dialog>
+                     <DialogTrigger asChild>
+                       <Button 
+                         variant="outline" 
+                         size="sm" 
+                         className="text-xs h-7 px-2 text-pb_blue border-pb_blue hover:bg-pb_blue hover:text-white"
+                       >
+                         <Eye className="h-4 w-4 mr-1" />
+                         View Opponents
+                       </Button>
+                     </DialogTrigger>
+                     <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+                       <DialogHeader>
+                         <DialogTitle className="flex items-center gap-2">
+                           <Users className="h-5 w-5 text-pb_blue" />
+                           All League Teams
+                         </DialogTitle>
+                                                <DialogDescription>
+                         View all {leagueData?.totalTeams || 12} teams in the league.
+                       </DialogDescription>
+                       </DialogHeader>
+                       
+                       <ScrollArea className="h-[70vh] w-full">
+                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1">
+                           {/* Available Teams First */}
+                           {leagueData?.availableTeams?.map((team) => (
+                             <Card key={team.teamId} className="h-fit border-pb_blue bg-pb_blue/5">
+                               <CardHeader className="pb-2">
+                                 <div className="flex items-center justify-between">
+                                   <CardTitle className="text-sm font-semibold text-pb_darkgray truncate">
+                                     {team.teamName}
+                                   </CardTitle>
+                                   <Badge className="bg-pb_blue text-white text-xs px-2 py-1 font-medium">
+                                     AVAILABLE
+                                   </Badge>
+                                 </div>
+                               </CardHeader>
+                               <CardContent className="pt-0 space-y-3">
+                                 {/* Full Roster */}
+                                 <div>
+                                   <div className="space-y-1">
+                                     {team.currentRoster?.map((player, i) => (
+                                       <div key={i} className="flex items-center justify-between py-1 px-2 bg-white rounded text-xs border border-pb_blue/20">
+                                         <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
+                                         <div className="flex items-center gap-2 shrink-0">
+                                           <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                           <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
+                                         </div>
+                                       </div>
+                                     ))}
+                                   </div>
+                                 </div>
+                                 
+                                 
+                               </CardContent>
+                             </Card>
+                           ))}
+                           
+                           {/* Filled Teams */}
+                           {leagueData?.allTeams?.map((team) => (
+                             <Card key={team.teamId} className="h-fit border-gray-200">
+                               <CardHeader className="pb-2">
+                                 <CardTitle className="text-sm font-semibold text-pb_darkgray truncate">
+                                   {team.teamName}
+                                 </CardTitle>
+                               </CardHeader>
+                               <CardContent className="pt-0 space-y-3">
+                                 {/* Full Roster */}
+                                 <div>
+                                   <div className="space-y-1">
+                                     {team.currentRoster?.map((player, i) => (
+                                       <div key={i} className="flex items-center justify-between py-1 px-2 bg-pb_backgroundgray rounded text-xs border border-pb_lightergray">
+                                         <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
+                                         <div className="flex items-center gap-2 shrink-0">
+                                           <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                           <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
+                                         </div>
+                                       </div>
+                                     ))}
+                                   </div>
+                                 </div>
+                                 
+                               </CardContent>
+                             </Card>
+                           ))}
+                         </div>
+                       </ScrollArea>
+                     </DialogContent>
+                   </Dialog>
+                 </div>
                </CardHeader>
+               <Separator className="mt-0.5 mb-3 w-[95%] mx-auto" />
                <CardContent className="pt-0">
                  {leagueData?.availableTeams?.length > 0 ? (
                    <Tabs defaultValue="team-0" className="w-full">
@@ -338,11 +587,11 @@ First and second round matchups will have a scoring period of one week each. And
                          <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0">
                            <div className="space-y-1">
                              {/* Team Header */}
-                             <div className="flex items-center justify-between py-3 px-0 border-b border-gray-200">
-                               <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3>
+                             <div className="flex items-center justify-between pb-2 px-0 border-b border-gray-200 mb-4">
+                               {/* <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3> */}
                                <div className="flex gap-2">
                                  {team.teamStrengths?.slice(0, 2).map((strength, i) => (
-                                   <Badge key={i} className="bg-pb_blue text-white text-xs px-2 py-1 font-medium">
+                                   <Badge key={i} className="bg-pb_green text-white text-xs px-2 py-1 font-medium">
                                      {strength}
                                    </Badge>
                                  ))}
@@ -351,45 +600,22 @@ First and second round matchups will have a scoring period of one week each. And
 
                                                             {/* Current Roster - Enhanced */}
                                <div>
-                                 <h4 className="text-xs font-medium text-pb_darkgray mb-1 flex items-center gap-0.5">
-                                   <TrendingUp className="h-5 w-5 pr-1" />
-                                   Current Roster ({team.currentRoster?.length})
-                                 </h4>
                                  <div className="space-y-1">
                                    {team.currentRoster?.map((player, i) => (
                                      <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors">
                                        <div className="flex-1 min-w-0">
                                          <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
                                        </div>
-                                       <div className="shrink-0 ml-2 flex items-center gap-2 text-xs">
-                                         <span className="font-mono bg-gray-100 px-2 py-1 rounded text-pb_textgray">{player.team}</span>
-                                         <span className="text-pb_blue font-medium">{player.position}</span>
+                                       <div className="flex items-center gap-2 shrink-0 text-xs">
+                                         <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                         <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
                                        </div>
                                      </div>
                                    ))}
                                  </div>
                                </div>
 
-                             {/* Minor League - Ultra Compact */}
-                             <div>
-                               <h4 className="text-xs font-medium text-pb_darkgray my-1 flex items-center gap-0.5">
-                                 <Star className="h-5 w-5 pr-1" />
-                                 Minors ({team.minorLeague?.length})
-                               </h4>
-                               <div className="space-y-1">
-                                 {team.minorLeague?.map((player, i) => (
-                                   <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors">
-                                     <div className="flex-1 min-w-0">
-                                       <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
-                                     </div>
-                                     <div className="shrink-0 ml-2 flex items-center gap-2 text-xs">
-                                       <span className="font-mono bg-gray-100 px-2 py-1 rounded text-pb_textgray">{player.team}</span>
-                                       <span className="text-pb_blue font-medium">{player.position}</span>
-                                     </div>
-                                   </div>
-                                 ))}
-                               </div>
-                             </div>
+
                            </div>
                          </TabsContent>
                        ))}
@@ -405,39 +631,40 @@ First and second round matchups will have a scoring period of one week each. And
            </div>
 
            {/* Right Column - League Rules */}
-           <div className="lg:col-span-7 space-y-2">
+           <div className="lg:col-span-8 space-y-2">
              {/* League Rules - Left-Justified Tabs Display */}
-             <Card className="shadow-lg">
+             <Card className="shadow-md">
                <CardHeader className="pb-2">
-                 <CardTitle className="flex items-center gap-1 text-base">
-                   <FileText className="h-5 w-5 pr-1 text-pb_blue" />
+                 <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
+                   <FileText className="h-6 w-6 pr-1" />
                    Rulebook
                  </CardTitle>
                </CardHeader>
+               <Separator className="mt-[7px] mb-3 w-[95%] mx-auto" />
                <CardContent className="pt-0">
                  {ruleSections.length > 0 ? (
                    <Tabs defaultValue="rule-0" className="w-full" orientation="horizontal">
                      <div className="flex h-[600px]">
                        {/* Left Sidebar with Tabs */}
-                       <div className="w-48 border-r border-gray-200">
+                       <div className="w-40 border-r border-gray-200">
                          <TabsList className="flex flex-col h-full w-full p-0 pr-1 bg-transparent space-y-1 items-start justify-start">
                            {ruleSections.map((section, index) => {
                              const getIcon = (title) => {
                                switch (title) {
                                  case 'Format':
-                                   return <Users className="h-4 w-4" />;
+                                   return <AlignLeft className="h-4 w-4" />;
                                  case 'Scoring System':
                                    return <Target className="h-4 w-4" />;
                                  case 'Prize Pool':
                                    return <Medal className="h-4 w-4" />;
                                  case 'Owner Conduct':
-                                   return <Flag className="h-4 w-4" />;
+                                   return <Handshake className="h-4 w-4" />;
                                  case 'Trades':
                                    return <ArrowRightLeft className="h-4 w-4" />;
                                  case 'Draft':
                                    return <ShieldUser className="h-4 w-4" />;
                                  case 'Playoffs':
-                                   return <FlagTarget className="h-4 w-4" />;
+                                   return <Goal className="h-4 w-4" />;
                                 case 'Matchups':
                                   return <Swords className="h-4 w-4" />;
                                  default:
@@ -449,7 +676,7 @@ First and second round matchups will have a scoring period of one week each. And
                                <TabsTrigger
                                  key={index}
                                  value={`rule-${index}`}
-                                 className="w-full justify-start text-left px-3 py-2 text-sm font-medium text-pb_textgray hover:text-pb_blue hover:bg-pb_blue/5 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
+                                 className="w-full justify-start text-left px-3 py-2 text-sm font-medium text-pb_textgray hover:text-pb_blue data-[state=active]:hover:bg-pb_bluehover data-[state=active]:hover:text-white hover:bg-pb_blue/10 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
                                >
                                  <div className="flex items-center gap-2 w-full justify-start">
                                    {getIcon(section.title)}
@@ -471,12 +698,12 @@ First and second round matchups will have a scoring period of one week each. And
                                className="mt-0 px-4 h-full focus-visible:outline-none"
                              >
                                <div className="space-y-4">
-                                 <h2 className="text-lg font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
+                                 <h2 className="text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
                                    {section.title}
                                  </h2>
                                  <div className="prose prose-sm max-w-none">
                                    <div 
-                                     className="whitespace-pre-wrap font-sans text-sm text-pb_darkgray leading-relaxed"
+                                     className="whitespace-pre-wrap text-sm text-pb_darkgray leading-relaxed"
                                      dangerouslySetInnerHTML={{
                                        __html: section.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-pb_blue">$1</strong>')
                                      }}

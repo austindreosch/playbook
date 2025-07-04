@@ -130,6 +130,288 @@ const DUMMY_COMMISSIONER_LEAGUES = {
         teamWeaknesses: ['Needs more depth', 'Young and inconsistent', 'Limited playoff experience']
       }
     ],
+    allTeams: [
+      {
+        teamId: 'team-001',
+        teamName: 'Boston Ballers',
+        ownerName: 'Sarah Chen',
+        currentRoster: [
+          { name: 'Jayson Tatum', position: 'SF/PF', team: 'BOS' },
+          { name: 'Nikola Jokić', position: 'C', team: 'DEN' },
+          { name: 'Tyrese Haliburton', position: 'PG', team: 'IND' },
+          { name: 'Desmond Bane', position: 'SG', team: 'MEM' },
+          { name: 'Evan Mobley', position: 'PF/C', team: 'CLE' },
+          { name: 'OG Anunoby', position: 'SF/PF', team: 'NYK' },
+          { name: 'Kristaps Porziņģis', position: 'PF/C', team: 'BOS' },
+          { name: 'Brandon Miller', position: 'SF', team: 'CHA' },
+          { name: 'Reed Sheppard', position: 'PG/SG', team: 'HOU' },
+          { name: 'Rob Williams III', position: 'C', team: 'POR' },
+          { name: 'Brandin Podziemski', position: 'PG/SG', team: 'GSW' },
+          { name: 'Derrick White', position: 'PG/SG', team: 'BOS' },
+          { name: 'Marcus Smart', position: 'PG/SG', team: 'MEM' }
+        ],
+        minorLeague: [
+          { name: 'Stephon Castle', position: 'SG', team: 'SAS' },
+          { name: 'Carlton Carrington', position: 'PG/SG', team: 'WAS' },
+          { name: 'Ryan Dunn', position: 'SF/PF', team: 'PHX' }
+        ],
+        teamStrengths: ['Elite frontcourt', 'Strong defense', 'Veteran leadership'],
+        record: '8-2',
+        standingsPosition: 1
+      },
+      {
+        teamId: 'team-002', 
+        teamName: 'Mile High Hoops',
+        ownerName: 'Mike Thompson',
+        currentRoster: [
+          { name: 'Victor Wembanyama', position: 'PF/C', team: 'SAS' },
+          { name: 'Shai Gilgeous-Alexander', position: 'PG/SG', team: 'OKC' },
+          { name: 'Devin Vassell', position: 'SG/SF', team: 'SAS' },
+          { name: 'Josh Giddey', position: 'PG/SF', team: 'CHI' },
+          { name: 'Jonathan Kuminga', position: 'SF/PF', team: 'GSW' },
+          { name: 'Tre Mann', position: 'PG/SG', team: 'CHA' },
+          { name: 'Isaiah Hartenstein', position: 'C', team: 'OKC' },
+          { name: 'Luguentz Dort', position: 'SG/SF', team: 'OKC' },
+          { name: 'Dalton Knecht', position: 'SG/SF', team: 'LAL' },
+          { name: 'Yves Missi', position: 'C', team: 'NOP' },
+          { name: 'Alex Caruso', position: 'PG/SG', team: 'OKC' },
+          { name: 'Aaron Wiggins', position: 'SG/SF', team: 'OKC' },
+          { name: 'Kenrich Williams', position: 'SF/PF', team: 'OKC' }
+        ],
+        minorLeague: [
+          { name: 'Zaccharie Risacher', position: 'SF/SG', team: 'ATL' },
+          { name: 'Alexandre Sarr', position: 'PF/C', team: 'WAS' },
+          { name: 'Matas Buzelis', position: 'SF/PF', team: 'CHI' }
+        ],
+        teamStrengths: ['Young superstar', 'High upside', 'Great depth'],
+        record: '7-3',
+        standingsPosition: 2
+      },
+      {
+        teamId: 'team-003',
+        teamName: 'The Process Trust',
+        ownerName: 'Alex Rodriguez',
+        currentRoster: [
+          { name: 'Joel Embiid', position: 'C', team: 'PHI' },
+          { name: 'Tyrese Maxey', position: 'PG/SG', team: 'PHI' },
+          { name: 'Jalen Brunson', position: 'PG', team: 'NYK' },
+          { name: 'Paul George', position: 'SF/SG', team: 'PHI' },
+          { name: 'Tyler Herro', position: 'SG', team: 'MIA' },
+          { name: 'Domantas Sabonis', position: 'PF/C', team: 'SAC' },
+          { name: 'De\'Aaron Fox', position: 'PG', team: 'SAC' },
+          { name: 'Kyle Kuzma', position: 'SF/PF', team: 'WAS' },
+          { name: 'Kelly Oubre Jr.', position: 'SF/SG', team: 'PHI' },
+          { name: 'Nick Richards', position: 'C', team: 'CHA' },
+          { name: 'Malik Monk', position: 'SG', team: 'SAC' },
+          { name: 'Caleb Martin', position: 'SF/PF', team: 'PHI' },
+          { name: 'Andre Drummond', position: 'C', team: 'PHI' }
+        ],
+        minorLeague: [
+          { name: 'Ron Holland II', position: 'SF', team: 'DET' },
+          { name: 'Tidjane Salaün', position: 'SF/PF', team: 'CHA' },
+          { name: 'Ja\'Kobe Walter', position: 'SG', team: 'TOR' }
+        ],
+        teamStrengths: ['Playoff experience', 'Balanced scoring', 'Solid frontcourt'],
+        record: '6-4',
+        standingsPosition: 3
+      },
+      {
+        teamId: 'team-004',
+        teamName: 'Golden State Warriors',
+        ownerName: 'Jennifer Park',
+        currentRoster: [
+          { name: 'Stephen Curry', position: 'PG', team: 'GSW' },
+          { name: 'LaMelo Ball', position: 'PG', team: 'CHA' },
+          { name: 'Draymond Green', position: 'PF/C', team: 'GSW' },
+          { name: 'Andrew Wiggins', position: 'SF/SG', team: 'GSW' },
+          { name: 'Moses Moody', position: 'SG/SF', team: 'GSW' },
+          { name: 'Trayce Jackson-Davis', position: 'C', team: 'GSW' },
+          { name: 'Gary Payton II', position: 'PG/SG', team: 'GSW' },
+          { name: 'Buddy Hield', position: 'SG', team: 'GSW' },
+          { name: 'Kyle Anderson', position: 'SF/PF', team: 'GSW' },
+          { name: 'Kevon Looney', position: 'C', team: 'GSW' },
+          { name: 'De\'Anthony Melton', position: 'PG/SG', team: 'GSW' },
+          { name: 'Pat Spencer', position: 'PG', team: 'GSW' },
+          { name: 'Reece Beekman', position: 'PG', team: 'GSW' }
+        ],
+        minorLeague: [
+          { name: 'Donovan Clingan', position: 'C', team: 'POR' },
+          { name: 'Devin Carter', position: 'SG', team: 'SAC' },
+          { name: 'Jared McCain', position: 'PG/SG', team: 'PHI' }
+        ],
+        teamStrengths: ['Championship experience', 'Three-point shooting', 'Team chemistry'],
+        record: '6-4',
+        standingsPosition: 4
+      },
+      {
+        teamId: 'team-005',
+        teamName: 'Lakers Dynasty',
+        ownerName: 'David Kim',
+        currentRoster: [
+          { name: 'LeBron James', position: 'SF/PF', team: 'LAL' },
+          { name: 'Anthony Davis', position: 'PF/C', team: 'LAL' },
+          { name: 'Austin Reaves', position: 'SG/PG', team: 'LAL' },
+          { name: 'Rui Hachimura', position: 'PF/SF', team: 'LAL' },
+          { name: 'D\'Angelo Russell', position: 'PG/SG', team: 'LAL' },
+          { name: 'Christian Wood', position: 'PF/C', team: 'LAL' },
+          { name: 'Gabe Vincent', position: 'PG/SG', team: 'LAL' },
+          { name: 'Jarred Vanderbilt', position: 'SF/PF', team: 'LAL' },
+          { name: 'Christian Braun', position: 'SG/SF', team: 'DEN' },
+          { name: 'Max Christie', position: 'SG/SF', team: 'LAL' },
+          { name: 'Jaxson Hayes', position: 'C', team: 'LAL' },
+          { name: 'Cam Reddish', position: 'SF/SG', team: 'LAL' },
+          { name: 'Maxwell Lewis', position: 'SF', team: 'LAL' }
+        ],
+        minorLeague: [
+          { name: 'Cody Williams', position: 'SF/SG', team: 'UTA' },
+          { name: 'Isaiah Collier', position: 'PG', team: 'UTA' },
+          { name: 'Tyler Smith', position: 'PF', team: 'MIL' }
+        ],
+        teamStrengths: ['Veteran leadership', 'Playoff experience', 'Star power'],
+        record: '5-5',
+        standingsPosition: 5
+      },
+      {
+        teamId: 'team-006',
+        teamName: 'Clutch City Cats',
+        ownerName: 'Maria Garcia',
+        currentRoster: [
+          { name: 'Fred VanVleet', position: 'PG', team: 'HOU' },
+          { name: 'Dillon Brooks', position: 'SF/SG', team: 'HOU' },
+          { name: 'Tari Eason', position: 'SF/PF', team: 'HOU' },
+          { name: 'Steven Adams', position: 'C', team: 'HOU' },
+          { name: 'Amen Thompson', position: 'PG/SG', team: 'HOU' },
+          { name: 'Jeff Green', position: 'PF/SF', team: 'HOU' },
+          { name: 'Jock Landale', position: 'C', team: 'HOU' },
+          { name: 'Nate Williams', position: 'SF', team: 'HOU' },
+          { name: 'Aaron Holiday', position: 'PG/SG', team: 'HOU' },
+          { name: 'Boban Marjanović', position: 'C', team: 'HOU' },
+          { name: 'AJ Griffin', position: 'SG/SF', team: 'HOU' },
+          { name: 'Jack McVeigh', position: 'PF', team: 'HOU' },
+          { name: 'Jeenathan Williams', position: 'SG/SF', team: 'HOU' }
+        ],
+        minorLeague: [
+          { name: 'Rob Dillingham', position: 'PG/SG', team: 'MIN' },
+          { name: 'Kyshawn George', position: 'SF/SG', team: 'WAS' },
+          { name: 'DaRon Holmes II', position: 'PF/C', team: 'DEN' }
+        ],
+        teamStrengths: ['Young core building', 'Athletic upside', 'Draft capital'],
+        record: '5-5',
+        standingsPosition: 6
+      },
+      {
+        teamId: 'team-008',
+        teamName: 'Brooklyn Brigade',
+        ownerName: 'Chris Wilson',
+        currentRoster: [
+          { name: 'Mikal Bridges', position: 'SF/SG', team: 'NYK' },
+          { name: 'Cam Thomas', position: 'SG', team: 'BKN' },
+          { name: 'Nic Claxton', position: 'C', team: 'BKN' },
+          { name: 'Dennis Schroder', position: 'PG', team: 'BKN' },
+          { name: 'Cameron Johnson', position: 'SF/PF', team: 'BKN' },
+          { name: 'Noah Clowney', position: 'PF', team: 'BKN' },
+          { name: 'Dorian Finney-Smith', position: 'SF/PF', team: 'BKN' },
+          { name: 'Day\'Ron Sharpe', position: 'C', team: 'BKN' },
+          { name: 'Ziaire Williams', position: 'SF/SG', team: 'BKN' },
+          { name: 'Shake Milton', position: 'PG/SG', team: 'BKN' },
+          { name: 'Keon Johnson', position: 'SG', team: 'BKN' },
+          { name: 'Jalen Wilson', position: 'SF/PF', team: 'BKN' },
+          { name: 'Trendon Watford', position: 'PF', team: 'BKN' }
+        ],
+        minorLeague: [
+          { name: 'Zach Edey', position: 'C', team: 'MEM' },
+          { name: 'Bub Carrington', position: 'PG', team: 'WAS' },
+          { name: 'Tristan da Silva', position: 'SF/PF', team: 'ORL' }
+        ],
+        teamStrengths: ['Young pieces', 'Rebuilding assets', 'Future picks'],
+        record: '4-6',
+        standingsPosition: 7
+      },
+      {
+        teamId: 'team-009',
+        teamName: 'Motor City Magic',
+        ownerName: 'Lisa Johnson',
+        currentRoster: [
+          { name: 'Tim Hardaway Jr.', position: 'SG/SF', team: 'DET' },
+          { name: 'Tobias Harris', position: 'SF/PF', team: 'DET' },
+          { name: 'Simone Fontecchio', position: 'SF/PF', team: 'DET' },
+          { name: 'Paul Reed', position: 'PF/C', team: 'DET' },
+          { name: 'Malik Beasley', position: 'SG', team: 'DET' },
+          { name: 'Ronald Holland II', position: 'SF', team: 'DET' },
+          { name: 'Wendell Moore Jr.', position: 'SG/SF', team: 'DET' },
+          { name: 'Tosan Evbuomwan', position: 'SF', team: 'DET' },
+          { name: 'Cole Swider', position: 'SF/PF', team: 'DET' },
+          { name: 'Daniss Jenkins', position: 'PG', team: 'DET' },
+          { name: 'Bobi Klintman', position: 'PF', team: 'DET' },
+          { name: 'Alondes Williams', position: 'PG', team: 'DET' },
+          { name: 'Lamar Stevens', position: 'SF/PF', team: 'DET' }
+        ],
+        minorLeague: [
+          { name: 'Pacome Dadiet', position: 'SF/SG', team: 'NYK' },
+          { name: 'Melvin Ajinça', position: 'SG', team: 'DAL' },
+          { name: 'Kyle Filipowski', position: 'PF/C', team: 'UTA' }
+        ],
+        teamStrengths: ['Veteran experience', 'Role players', 'Depth pieces'],
+        record: '4-6',
+        standingsPosition: 8
+      },
+      {
+        teamId: 'team-010',
+        teamName: 'Phoenix Rising',
+        ownerName: 'Robert Anderson',
+        currentRoster: [
+          { name: 'Devin Booker', position: 'SG', team: 'PHX' },
+          { name: 'Kevin Durant', position: 'SF/PF', team: 'PHX' },
+          { name: 'Bradley Beal', position: 'SG', team: 'PHX' },
+          { name: 'Jusuf Nurkić', position: 'C', team: 'PHX' },
+          { name: 'Grayson Allen', position: 'SG/SF', team: 'PHX' },
+          { name: 'Josh Okogie', position: 'SG/SF', team: 'PHX' },
+          { name: 'Mason Plumlee', position: 'C', team: 'PHX' },
+          { name: 'Royce O\'Neale', position: 'SF/SG', team: 'PHX' },
+          { name: 'Monte Morris', position: 'PG', team: 'PHX' },
+          { name: 'Oso Ighodaro', position: 'C', team: 'PHX' },
+          { name: 'TyTy Washington Jr.', position: 'PG', team: 'PHX' },
+          { name: 'Collin Gillespie', position: 'PG/SG', team: 'PHX' },
+          { name: 'Jalen Bridges', position: 'SF/PF', team: 'PHX' }
+        ],
+        minorLeague: [
+          { name: 'Kel\'el Ware', position: 'C', team: 'MIA' },
+          { name: 'Johnny Furphy', position: 'SF/SG', team: 'IND' },
+          { name: 'Jaylon Tyson', position: 'SF/SG', team: 'CLE' }
+        ],
+        teamStrengths: ['Star power', 'Veteran leadership', 'Playoff experience'],
+        record: '3-7',
+        standingsPosition: 9
+      },
+      {
+        teamId: 'team-012',
+        teamName: 'Sixth Man Squad',
+        ownerName: 'Kevin O\'Brien',
+        currentRoster: [
+          { name: 'Russell Westbrook', position: 'PG', team: 'DEN' },
+          { name: 'Jordan Clarkson', position: 'SG', team: 'UTA' },
+          { name: 'John Collins', position: 'PF/C', team: 'UTA' },
+          { name: 'Collin Sexton', position: 'PG/SG', team: 'UTA' },
+          { name: 'Walker Kessler', position: 'C', team: 'UTA' },
+          { name: 'Lauri Markkanen', position: 'PF/SF', team: 'UTA' },
+          { name: 'Keyonte George', position: 'PG', team: 'UTA' },
+          { name: 'Taylor Hendricks', position: 'PF', team: 'UTA' },
+          { name: 'Brice Sensabaugh', position: 'SG/SF', team: 'UTA' },
+          { name: 'Micah Potter', position: 'PF/C', team: 'UTA' },
+          { name: 'Oscar Tshiebwe', position: 'PF/C', team: 'UTA' },
+          { name: 'Drew Eubanks', position: 'C', team: 'UTA' },
+          { name: 'Patty Mills', position: 'PG', team: 'UTA' }
+        ],
+        minorLeague: [
+          { name: 'Nikola Topić', position: 'PG', team: 'OKC' },
+          { name: 'Yves Missi', position: 'C', team: 'NOP' },
+          { name: 'Ulrich Chomche', position: 'C', team: 'TOR' }
+        ],
+        teamStrengths: ['Veteran presence', 'Role player depth', 'Young prospects'],
+        record: '2-8',
+        standingsPosition: 10
+      }
+    ],
     fullRulebook: `The League Rules - NBA Dynasty League
 
 League Format: Dynasty
