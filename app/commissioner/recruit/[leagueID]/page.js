@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
 
 
 
@@ -202,46 +202,52 @@ First and second round matchups will have a scoring period of one week each. And
 
   return (
       <div className="">
-        <div className="container mx-auto w-full py-8">
+        <div className="container mx-auto w-full pt-5">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-pb_darkgray">
-              The League
-            </h1>
-          </div>
+          <Card className="px-6 h-10 flex items-center bg-white border border-lightergray shadow-sm">
+            <div className="flex-1 flex items-center text-center gap-3">
+              <Book className="w-4 h-4 text-pb_darkgray" />
+              <h1 className="text-lg font-bold text-pb_darkgray">
+                The League
+              </h1>
+              <span className="text-md   text-pb_textgray">
+                (2025-2026)
+              </span>
+            </div>
+          </Card>
           
           {/* Key Details Cards */}
           <div className="flex flex-wrap gap-2 ml-4">
-             {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+             {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <Basketball className="w-4 h-4 text-pb_darkgray" /> 
                 <span className="text-pb_darkgray font-medium text-sm">NBA</span>
               </div>
             </Card>  */}
             
-            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+            {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <LandPlot className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">Dynasty</span>
               </div>
             </Card> */}
             
-            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+            {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <Pyramid className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">Categories</span>
               </div>
             </Card> */}
             
-            {/* <Card className="px-3 py-2 bg-white border border-gray-200 shadow-sm">
+            {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
               <div className="flex items-center gap-2">
                 <Swords className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">H2H</span>
               </div>
             </Card>  */}
             
-            <Card className="px-3 py-2 bg-white border border-lightergray shadow-sm">
+            <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm">
               <div className="flex items-center gap-2">
                 <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
                 <span className="text-pb_darkgray font-medium text-sm">Fantrax</span>
@@ -249,7 +255,7 @@ First and second round matchups will have a scoring period of one week each. And
             </Card>
             
             <Card 
-              className="px-3 py-2 bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
+              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => window.open('https://discord.gg/your-invite-link', '_blank')}
             >
               <div className="flex items-center gap-2">
@@ -260,7 +266,7 @@ First and second round matchups will have a scoring period of one week each. And
             </Card>
             
             <Card 
-              className="px-3 py-2 bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
+              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
               onClick={() => window.open('https://leaguesafe.com/your-league-link', '_blank')}
             >
               <div className="flex items-center gap-2">
@@ -270,7 +276,7 @@ First and second round matchups will have a scoring period of one week each. And
               </div>
             </Card>
             
-            <Card className="px-3 py-2 bg-pb_green border border-pb_green shadow-sm">
+            <Card className="px-3 h-10 flex items-center bg-pb_green border border-pb_green shadow-sm">
               <div className="flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-white" />
                 <span className="text-white font-medium text-sm">{leagueData?.availableSpots || 2} Spots Available</span>
