@@ -1,9 +1,10 @@
 'use client';
 
-import { baseball, basketball, football } from "@lucide/lab";
+import { baseball, basketball, football, lunchBox } from "@lucide/lab";
 const Basketball = createLucideIcon('basketball', basketball);
 const Football = createLucideIcon('football', football);
 const Baseball = createLucideIcon('baseball', baseball); 
+const Lunchbox = createLucideIcon('lunchbox', lunchBox);
 
 import FantraxIcon from '@/components/icons/FantraxIcon';
 import LeagueSafeIcon from '@/components/icons/LeagueSafeIcon';
@@ -15,10 +16,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, ContactRound, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, BookOpenText, Boxes, Calendar, ChartBarStacked, ChartCandlestick, ClipboardList, Clock, ContactRound, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, LucideClipboardSignature, Mail, Mailbox, MailPlus, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
 
 
 
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -157,7 +159,7 @@ export default function CommissionerRecruitPage() {
   const ruleSections = leagueData?.rulebook ? Object.entries(leagueData.rulebook).map(([title, content]) => ({ title, content })) : [];
 
   return (
-      <div className="">
+      <div className="pb-12">
         <div className="container mx-auto w-full pt-5 pb-5">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-2">
@@ -532,7 +534,7 @@ export default function CommissionerRecruitPage() {
                                        <div className="flex flex-wrap gap-1 justify-start">
                                          {team.draftPicks.map((pick, index) => (
                                            <span key={index} className="bg-pb_green/10 text-pb_greendisabled border border-pb_green/30 px-3 py-1 rounded text-sm font-medium flex items-center">
-                                           <ShieldUser className="h-3 w-3 mr-2 text-pb_greendisabled" />{pick}
+                                           <ShieldUser className="h-4 w-4 mr-2 text-pb_greendisabled" />{pick}
                                          </span>
                                          ))}
                                        </div>
@@ -684,7 +686,7 @@ export default function CommissionerRecruitPage() {
                                  <div className="flex flex-wrap gap-1 justify-start">
                                    {team.draftPicks.map((pick, index) => (
                                          <span key={index} className="bg-pb_green/10 text-pb_greendisabled border border-pb_green/30 px-3 py-1 rounded text-sm font-medium flex items-center">
-                                         <ShieldUser className="h-3 w-3 mr-2 text-pb_greendisabled" />{pick}
+                                         <ShieldUser className="h-4 w-4 mr-2 text-pb_greendisabled" />{pick}
                                        </span>
                                    ))}
                                  </div>
@@ -810,6 +812,60 @@ export default function CommissionerRecruitPage() {
            </div>
         </div>
       </div>
+      
+        {/* Footer - App Advertisement */}
+        <footer className="fixed bottom-0 left-0 right-0 border-t border-pb_lightgray py-2 z-10">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center">
+              <Image src="/logo-tpfull.png" alt="Playbook Fantasy Sports" width={18} height={18} className="mr-2 mb-[2px]" />
+              <p className="text-pb_textgray text-sm font-bold mr-2 mb-[2px]">
+                Playbook
+              </p>
+              <p className="text-pb_textgray ml-1">
+                The AI-powered fantasy sports command center that learns your leagues and strategy.
+              </p>
+            </div>
+
+            <div className="flex items-center">
+
+              <div className="flex items-center gap-1">
+                <Button 
+                  size="sm"
+                  variant="ghost"
+                  className="text-pb_blue hover:bg-pb_blue/10 py-1 h-6 text-xs"
+                  onClick={() => window.open('/login', '_blank')}
+                                  >
+                    <LucideClipboardSignature className="w-4 h-4" />
+                    Join the Waitlist
+                  </Button>
+                  <Button 
+                    size="sm"
+                    variant="ghost"
+                    className="text-pb_textgray hover:bg-pb_lightergray py-1 h-6 text-xs"
+                    onClick={() => window.open('/about', '_blank')}
+                  >
+                    <BookOpenText className="w-4 h-4" />
+                    Learn More
+                </Button>
+              </div>
+
+              <div className="h-4.5 w-px bg-pb_lightgray mx-6"></div>
+
+              <div className="flex items-center">
+                <Lunchbox className="h-4 w-4 text-pb_textgray mb-[2px] mr-1" />
+                <p className="text-pb_textgray font-bold">
+                  Commissioner Tools              
+                </p>
+                <p className="text-pb_textgray ml-[3px]">
+                  are in early development.              
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </footer>
     </div>
   );
 } 
