@@ -574,11 +574,11 @@ export default function CommissionerRecruitPage() {
                        </TabsList>
 
                        {/* Tab Content */}
-                       <div className="space-y-4 overflow-y-auto pr-2" style={{ height: 'calc(100% - 80px)' }}>
+                       <div className="flex flex-col pr-2" style={{ height: 'calc(100% - 58px)' }}>
                          {leagueData?.availableTeams?.map((team, index) => (
-                           <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0 space-y-4">
+                           <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0 flex flex-col h-full space-y-4">
                              {/* Team Header */}
-                             <div className="flex items-center justify-between pb-1 px-0 mb-2.5">
+                             <div className="flex items-center justify-between pb-1 px-0">
                                {/* <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3> */}
                                <div className="flex gap-2">
                                  {team.teamStrengths?.slice(0, 2).map((strength, i) => {
@@ -626,9 +626,9 @@ export default function CommissionerRecruitPage() {
                              </div>
 
                              {/* Current Roster - Enhanced with Scrolling */}
-                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner">
+                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner flex-1 overflow-hidden">
                                <div 
-                                 className="max-h-[50vh] overflow-y-auto"
+                                 className="h-full overflow-y-auto"
                                  style={{
                                    scrollbarWidth: 'thin',
                                    scrollbarColor: '#d1d5db transparent'
@@ -679,7 +679,7 @@ export default function CommissionerRecruitPage() {
 
                              {/* Draft Picks - Always Visible */}
                              {team.draftPicks && team.draftPicks.length > 0 && (
-                               <div className="">
+                               <div className="flex-shrink-0 mt-4">
                                  <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
                                  <div className="flex flex-wrap gap-1 justify-start">
                                    {team.draftPicks.map((pick, index) => (
@@ -705,7 +705,7 @@ export default function CommissionerRecruitPage() {
              </Card>
            </div>
 
-           {/* Right Column - League Rules */}
+                      {/* Right Column - League Rules */}
            <div className="lg:col-span-8 space-y-2">
              {/* League Rules - Left-Justified Tabs Display */}
              <Card className="shadow-md rounded-lg" style={{ '--card-height': '70vh' }}>
