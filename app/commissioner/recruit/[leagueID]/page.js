@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
 
 
 
@@ -207,11 +207,11 @@ First and second round matchups will have a scoring period of one week each. And
         <div className="flex items-center justify-between mb-4">
           <Card className="px-6 h-10 flex items-center bg-white border border-lightergray shadow-sm">
             <div className="flex-1 flex items-center text-center gap-3">
-              <Book className="w-4 h-4 text-pb_darkgray" />
+              <BookMarked className="w-5 h-5 text-pb_darkgray" />
               <h1 className="text-lg font-bold text-pb_darkgray">
                 The League
               </h1>
-              <span className="text-md   text-pb_textgray">
+              <span className="text-sm   text-pb_textgray">
                 (2025-2026)
               </span>
             </div>
