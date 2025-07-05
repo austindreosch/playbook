@@ -223,16 +223,36 @@ export default function CommissionerRecruitPage() {
               </div>
             </Card>
             
-            <Card 
-              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
-            >
-              <div className="flex items-center gap-2">
-                <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">LeagueSafe Page</span>
-                <ExternalLink className="w-3 h-3 text-pb_darkgray ml-1" />
-              </div>
-            </Card>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
+                    <span className="text-pb_darkgray font-medium text-sm">LeagueSafe Page</span>
+                    <ExternalLink className="w-3 h-3 text-pb_darkgray ml-1" />
+                  </div>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-amber-500" />
+                    Payment Confirmation
+                  </DialogTitle>
+                  <DialogDescription>
+                    Please reach out to commissioner and confirm details before making payments.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex justify-center mt-4">
+                  <Button 
+                    onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
+                    className="bg-pb_blue hover:bg-pb_bluehover text-white"
+                  >
+                    Continue to LeagueSafe
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             
             <Card className="px-3 h-10 flex items-center bg-pb_green border border-pb_green shadow-sm rounded-lg">
               <div className="flex items-center gap-2">
@@ -243,7 +263,7 @@ export default function CommissionerRecruitPage() {
           </div>
         </div>
 
-                 <div className="grid grid-cols-1 lg:grid-cols-16 gap-2">
+          <div className="grid grid-cols-1 lg:grid-cols-16 gap-2">
            {/* Left Column - League Details & Commissioner Info */}
            <div className="lg:col-span-3 space-y-2">
                          {/* League Information */}
@@ -833,7 +853,7 @@ export default function CommissionerRecruitPage() {
                 <Button 
                   size="sm"
                   variant="ghost"
-                  className="text-pb_blue hover:bg-pb_blue/10 py-1 h-6 text-xs"
+                  className="text-pb_blue hover:bg-pb_blue hover:text-white px-2 py-1 h-6 text-xs"
                   onClick={() => window.open('/login', '_blank')}
                                   >
                     <LucideClipboardSignature className="w-4 h-4" />
@@ -842,7 +862,7 @@ export default function CommissionerRecruitPage() {
                   <Button 
                     size="sm"
                     variant="ghost"
-                    className="text-pb_textgray hover:bg-pb_lightergray py-1 h-6 text-xs"
+                    className="text-pb_textgray hover:bg-pb_lightergray  px-2 py-1 h-6 text-xs"
                     onClick={() => window.open('/about', '_blank')}
                   >
                     <BookOpenText className="w-4 h-4" />
@@ -850,7 +870,7 @@ export default function CommissionerRecruitPage() {
                 </Button>
               </div>
 
-              <div className="h-4.5 w-px bg-pb_lightgray mx-6"></div>
+              <div className="h-4.5 w-px bg-pb_lightgray mx-4 mr-6"></div>
 
               <div className="flex items-center">
                 <Lunchbox className="h-4 w-4 text-pb_textgray mb-[2px] mr-1" />
