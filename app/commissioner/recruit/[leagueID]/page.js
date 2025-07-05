@@ -237,10 +237,10 @@ export default function CommissionerRecruitPage() {
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-amber-500" />
-                    Payment Confirmation
+                    Verify With Commissioner
                   </DialogTitle>
                   <DialogDescription>
-                    Please reach out to commissioner and confirm details before making payments.
+                    Please reach out to the league commissioner and confirm arrangements before making any payments.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-center mt-4">
