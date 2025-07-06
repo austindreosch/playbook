@@ -101,13 +101,13 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full ">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
+                <AccordionTrigger className={`px-2 py-0 h-button hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
                     <div className="flex w-full justify-between items-center">
-                        <h3 className={`text-sm ${textClasses}`}>Category Strength</h3>
+                        <h3 className={`text-button ${textClasses}`}>Category Strength</h3>
                     </div>
                 </AccordionTrigger>
                 <AccordionContent className={`pb-0 ${contentClasses} px-1`}>
-                    <div className="h-24 flex items-center justify-center">
+                    <div className="h-18 flex items-center justify-center">
                         <div className="grid grid-cols-5 overflow-hidden rounded-md w-full">
                             {gridItems.map((item, index) => {
                                 if (!item) {
@@ -117,9 +117,9 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
                                 return (
                                     <div
                                         key={category}
-                                        className={`h-9 flex items-center justify-center ${color}`}
+                                        className={`h-button flex items-center justify-center ${color}`}
                                     >
-                                        <span className="text-sm font-bold text-pb_darkgray/80">{category}</span>
+                                        <span className="text-xs font-semibold text-pb_darkgray/80">{category}</span>
                                     </div>
                                 );
                             })}

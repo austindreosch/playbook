@@ -79,14 +79,6 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
         ? "border-y border-pb_textgray" 
         : "border-r-0 border-pb_lightgray";
 
-    const textClasses = isOpponent
-        ? "text-white"
-        : "text-pb_darkgray";
-
-    const contentClasses = isOpponent
-        ? ""
-        : "";
-
     const chevronClasses = isOpponent
         ? "[&>svg]:text-white"
         : "[&>svg]:text-muted-foreground";
@@ -94,30 +86,30 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`p-2 hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
+                <AccordionTrigger className={`px-2 py-0 h-button hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
                     <div className="flex w-full justify-between items-center ">
-                        <h3 className={`text-sm ${textClasses}`}>Positional Strength</h3>
+                        <h3 className={`text-button text-white`}>Positional Strength</h3>
                     </div>
                 </AccordionTrigger>
-                <AccordionContent className={`px-1 pb-0 ${contentClasses}`}>
-                    <div className="h-24 flex items-center justify-center w-full">
+                <AccordionContent className={`px-1 pb-0`}>
+                    <div className="h-16 flex items-center justify-center w-full">
                         <div className="w-full">
-                            <div className="flex w-full h-9 rounded-md overflow-hidden shadow">
+                            <div className="flex w-full h-button rounded-md overflow-hidden shadow">
                                 {positionStrengths.map((pos, index) => (
                                     <div
                                         key={pos.position}
                                         className={`${pos.color} flex items-center justify-center`}
                                         style={{ width: `${(pos.value / totalValue) * 100}%` }}
                                     >
-                                        <span className="text-pb_darkgray/80 font-bold text-sm">{pos.position}</span>
+                                        <span className="text-pb_darkgray/80 font-semibold text-xs">{pos.position}</span>
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex w-full mt-2">
+                            <div className="flex w-full mt-1">
                                 {positionStrengths.map((pos) => (
                                     <div
                                         key={pos.position}
-                                        className={`flex-grow text-center text-sm ${isOpponent ? 'text-white' : 'text-gray-500'}`}
+                                        className={`flex-grow text-center text-xs ${isOpponent ? 'text-pb_darkgray' : 'text-pb_textgray'}`}
                                         style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
                                     >
                                         {pos.rank}{getRankSuffix(pos.rank)}

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useDashboardContext from "@/stores/dashboard/useDashboardContext";
 import { mockTrades } from "../dummyDataTradesPage";
+import OpponentPlayerRow from "../TeamBlock/OpponentPlayerRow";
 import TradePlayerRow from "../TeamBlock/TradePlayerRow";
 import TradeControlsPanel from "./TradeControlsPanel";
 
@@ -84,7 +85,11 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
       <CardContent className="p-2 overflow-y-auto">
         <div className="flex flex-col gap-1">
           {players.map((player, index) => (
-            <TradePlayerRow key={index} player={player} isOpponent={isOpponent} />
+            isOpponent ? (
+              <OpponentPlayerRow key={index} player={player} />
+            ) : (
+              <TradePlayerRow key={index} player={player} />
+            )
           ))}
           {valueAdjustment > 0 && (
             <div className={`flex items-center justify-between p-2 rounded-md ${adjustmentClasses}`}>

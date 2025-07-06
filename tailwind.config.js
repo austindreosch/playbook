@@ -96,7 +96,8 @@ module.exports = {
   			'9.5': '2.375rem',
   			'10.5': '2.625rem',
   			'11.5': '2.875rem',
-  			'12.5': '3.125rem'
+  			'12.5': '3.125rem',
+  			'18': '4.5rem'
   		},
   		maxHeight: {
   			'3xl': '48rem',
@@ -173,6 +174,9 @@ module.exports = {
   			'8xs': '.350rem',
   			'9xs': '.300rem',
   		},
+		lineHeight: {
+			'relaxed-plus': '1.9',
+		},
   		fontFamily: {
   			sans: [
   				'din-2014',

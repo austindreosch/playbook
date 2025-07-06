@@ -77,11 +77,11 @@ export default function OpponentSelectorButton({ className = '' }) {
     <div className="relative" ref={buttonRef}>
       <button
         onClick={handleButtonClick}
-        className={`flex items-center justify-between gap-2 rounded-md border border-pb_mddarkgray bg-pb_darkgray text-white shadow-sm select-none px-3 py-1 hover:bg-pb_mddarkgray transition-colors ${className}`.trim()}
+        className={`flex items-center justify-between gap-2 rounded-md  bg-pb_darkgray text-white shadow-sm select-none px-3 py-1 hover:bg-pb_mddarkgray transition-colors ${className}`.trim()}
       >
         <div className="flex items-center min-w-0">
           <Users className="w-icon h-icon mr-2 text-white" />
-          <span className="text-button font-semibold text-left truncate hidden md:block md:w-44 xl:w-54">
+          <span className="text-button font-semibold text-left truncate hidden md:block md:w-42 xl:w-52">
             {displayName}
           </span>
         </div>

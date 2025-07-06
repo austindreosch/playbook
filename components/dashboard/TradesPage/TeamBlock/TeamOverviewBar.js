@@ -25,11 +25,11 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
     : "border-l border-pb_lightgray";
 
   const textClasses = isOpponent
-    ? "text-white"
+    ? "text-pb_darkgray"
     : "text-pb_darkgray";
 
   const badgeClasses = isOpponent
-    ? "border-pb_textgray bg-white text-pb_darkgray"
+    ? "border-pb_textlightergray bg-white text-pb_darkgray"
     : "border-pb_lightgray bg-white text-pb_darkgray";
 
   const chevronClasses = isOpponent
@@ -39,27 +39,27 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
       <AccordionItem value="item-1" className="border-b-0">
-        <AccordionTrigger className={`p-2 hover:no-underline border-b ${containerClasses} ${borderClasses} ${chevronClasses}`}>
+        <AccordionTrigger className={`px-2 py-0 h-button hover:no-underline border-b ${containerClasses} ${borderClasses} ${chevronClasses}`}>
           <div className="flex w-full justify-between items-center">
-            <h3 className={`text-sm ${textClasses}`}>Team Overview</h3>
+            <h3 className={`text-button text-white`}>Team Overview</h3>
           </div>
         </AccordionTrigger>
         <AccordionContent className="px-1 pb-0">
-          <div className="h-24 flex items-center justify-center space-x-8">
+          <div className="h-20 flex items-center justify-center space-x-8">
             {/* Value */}
             <div className="flex items-center space-x-2">
-              <ChartCandlestick className={`w-5 h-5 ${textClasses}`} />
-              <span className={`text-sm font-semibold ${textClasses}`}>Value</span>
-              <span className={`px-2 py-0.5 border rounded-md font-bold text-sm ${badgeClasses}`}>
+              <ChartCandlestick className={`w-icon h-icon ${textClasses}`} />
+              <span className={`text-button  ${textClasses}`}>Value</span>
+              <span className={`text-button px-2 h-6 border rounded-md font-bold justify-center leading-relaxed-plus ${badgeClasses}`}>
                 {valueRank}{valueRankSuffix}
               </span>
             </div>
 
             {/* Victory */}
             <div className="flex items-center space-x-2">
-              <Trophy className={`w-5 h-5 ${textClasses}`} />
-              <span className={`text-sm font-semibold ${textClasses}`}>Victory</span>
-              <span className={`px-2 py-0.5 border rounded-md font-bold text-sm ${badgeClasses}`}>
+              <Trophy className={`w-icon h-icon ${textClasses}`} />
+              <span className={`text-button  ${textClasses}`}>Victory</span>
+              <span className={`text-button px-2 h-6 border rounded-md font-bold justify-center leading-relaxed-plus ${badgeClasses}`}>
                 {victoryRank}{victoryRankSuffix}
               </span>
             </div>
