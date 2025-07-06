@@ -41,7 +41,7 @@ export default function LeagueRosterPage() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-18 gap-2 flex-grow min-h-0">
+      <div className="grid grid-cols-18 gap-1.5 flex-grow min-h-0">
         {/* Left Column */}
         <div className="col-span-10">
           {/* <RosterFullBlock /> */}
@@ -49,9 +49,9 @@ export default function LeagueRosterPage() {
         </div>
 
         {/* Right Column */}
-        <div className="col-span-8 grid grid-rows-[8fr_5fr] gap-2">
+        <div className="col-span-8 grid grid-rows-[8fr_5fr] gap-1.5">
             {/* Top Row */}
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
                 <PlayerProfileBlock />
                 <PlaybookScoreBlock />
             </div>

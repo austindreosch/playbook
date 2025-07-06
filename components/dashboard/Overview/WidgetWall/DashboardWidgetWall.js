@@ -108,11 +108,11 @@ export default function DashboardWidgetWall() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
-        <div ref={containerRef} className="flex w-full h-full gap-2">
+        <div ref={containerRef} className="flex w-full h-full gap-1.5">
           {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
             <div
               key={columnId}
-              className="flex-1 flex flex-col gap-2 min-h-fit overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent scrollbar-gutter-stable"
+              className="flex-1 flex flex-col gap-1.5 min-h-fit overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent scrollbar-gutter-stable"
             >
               {widgets.map((widgetId) => {
                 const Widget = widgetMap[widgetId];
