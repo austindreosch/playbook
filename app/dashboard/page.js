@@ -138,7 +138,7 @@ const InDevelopmentDashboard = () => {
                 <div className="flex items-start gap-3">
                   <Eye className="h-5 w-5 text-pb_blue mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-pb_blue mb-1 text-xs md:text-sm">What you're seeing:</h3>
+                    <h3 className="font-semibold text-pb_blue mb-1 text-xs md:text-sm">What you&apos;re seeing:</h3>
                     <ul className="text-xs md:text-sm text-pb_blue space-y-1">
                       <li>• Static design mockups</li>
                       <li>• Interactive tab navigation</li>
