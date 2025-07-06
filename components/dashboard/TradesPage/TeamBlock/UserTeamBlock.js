@@ -34,7 +34,7 @@ export default function UserTeamBlock({ className }) {
   const CategoryStrengthComponent = resolveDashboardComponent('tradePage', 'CategoryStrength', leagueSettings);
 
   return (
-    <div className={`flex h-full w-full flex-col gap-[1px]  ${className} `}>
+    <div className={`flex h-full w-full flex-col gap-[1px] bg-pb_backgroundgray rounded-bl-lg  ${className} `}>
       <div className="flex flex-col gap-[1px]">
         <TeamOverviewBar team={userTeam} />
         <TeamPositionStrengthBar team={userTeam} />

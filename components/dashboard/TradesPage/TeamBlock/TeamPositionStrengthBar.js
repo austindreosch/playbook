@@ -76,8 +76,12 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
         : "bg-white text-pb_darkgray";
 
     const borderClasses = isOpponent 
-        ? "border-y border-pb_textgray" 
-        : "border-r-0 border-pb_lightgray";
+        ? "" 
+        : "border border-r-0 border-pb_lightgray";
+
+    const textClasses = isOpponent
+        ? "text-white"
+        : "text-pb_darkgray";
 
     const chevronClasses = isOpponent
         ? "[&>svg]:text-white"
@@ -86,9 +90,9 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
     return (
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`px-2 py-0 h-button hover:no-underline border ${containerClasses} ${borderClasses} ${chevronClasses}`}>
+                <AccordionTrigger className={`px-2 py-0 h-button hover:no-underline ${containerClasses} ${borderClasses} ${chevronClasses}`}>
                     <div className="flex w-full justify-between items-center ">
-                        <h3 className={`text-button text-white`}>Positional Strength</h3>
+                        <h3 className={`text-button ${textClasses}`}>Positional Strength</h3>
                     </div>
                 </AccordionTrigger>
                 <AccordionContent className={`px-1 pb-0`}>
@@ -109,7 +113,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
                                 {positionStrengths.map((pos) => (
                                     <div
                                         key={pos.position}
-                                        className={`flex-grow text-center text-xs ${isOpponent ? 'text-pb_darkgray' : 'text-pb_textgray'}`}
+                                        className={`flex-grow text-center text-xs ${isOpponent ? 'text-pb_mddarkgray' : 'text-pb_textgray'}`}
                                         style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
                                     >
                                         {pos.rank}{getRankSuffix(pos.rank)}

@@ -35,7 +35,7 @@ export default function OpponentTeamBlock({ className }) {
   const CategoryStrengthComponent = resolveDashboardComponent('tradePage', 'CategoryStrength', leagueSettings);
 
   return (
-    <div className={`flex h-full w-full flex-col gap-[1px] bg-pb_lightgray ${className}`}>
+    <div className={`flex h-full w-full flex-col gap-[2px] bg-pb_lightgray rounded-br-lg ${className}`}>
       <div className="flex flex-col gap-[1px]">
         <TeamOverviewBar team={opponentTeam} isOpponent={true} />
         <TeamPositionStrengthBar team={opponentTeam} isOpponent={true} />

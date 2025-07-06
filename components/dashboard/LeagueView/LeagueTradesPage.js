@@ -54,12 +54,6 @@ export default function LeagueTradesPage() {
         </div>
       </div>
 
-      {/* Divider */}
-      {/* <div className="w-full pt-2.5">
-        <div className="h-[1px] w-full bg-pb_lightestgray"></div>
-      </div> */}
-
-
       {/* Main Content */}
       <div className="grid grid-cols-22 gap-2 flex-grow min-h-0">
         {/* Left Column */}
