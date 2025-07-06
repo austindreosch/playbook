@@ -126,6 +126,11 @@ export default function CommissionerRecruitPage() {
   };
 
   useEffect(() => {
+    // Set document title with slight delay to override layout
+    setTimeout(() => {
+      document.title = 'Playbook | Recruitment Hub';
+    }, 100);
+    
     // Fetch league data from dummy database
     const fetchLeagueData = async () => {
       try {
@@ -135,6 +140,13 @@ export default function CommissionerRecruitPage() {
         }
         const data = await response.json();
         setLeagueData(data);
+        
+        // Update title with league name once loaded
+        if (data?.leagueName) {
+          setTimeout(() => {
+            document.title = `Playbook | Recruit - ${data.leagueName}`;
+          }, 100);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -936,7 +948,7 @@ export default function CommissionerRecruitPage() {
                     size="sm"
                     variant="ghost"
                     className="text-pb_blue hover:bg-pb_blue hover:text-white px-2 py-1 h-6 text-xs"
-                    onClick={() => window.open('/login', '_blank')}
+                    onClick={() => window.open('/api/auth/login', '_blank')}
                   >
                     <LucideClipboardSignature className="w-4 h-4" />
                     Join the Waitlist
@@ -945,7 +957,7 @@ export default function CommissionerRecruitPage() {
                     size="sm" 
                     variant="ghost"
                     className="text-pb_textgray hover:bg-pb_lightergray  px-2 py-1 h-6 text-xs"
-                    onClick={() => window.open('/about', '_blank')}
+                    onClick={() => window.open('/landing', '_blank')}
                   >
                     <BookOpenText className="w-4 h-4" />
                     Learn More

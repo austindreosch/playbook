@@ -1,10 +1,9 @@
 'use client'
-import { Target } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Cable, ClipboardList, CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, MessageSquareQuote, PanelsTopLeft, Settings as SettingsIcon, Shield, UserPlus } from 'lucide-react';
+import { Cable, ClipboardList, CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, MessageSquareQuote, PanelsTopLeft, Settings as SettingsIcon, Shield, Target, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
@@ -27,7 +26,7 @@ function NavBar() {
                 <div className="flex items-center justify-between h-12 md:h-16 align-content my-auto">
                     <div className="flex items-center group font-bold">
                         <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-6 w-6 md:h-8 md:w-8" />
-                        <a href="/dashboard" className="px-2 md:px-3 py-2 flex items-center">
+                        <a href="/landing" className="px-2 md:px-3 py-2 flex items-center">
                             <div className={`text-xl md:text-3xl font-bold text-pb_darkgray group-hover:text-white`}>
                                 Playbook
                             </div>

@@ -1,4 +1,5 @@
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+import { EllipsisVertical } from 'lucide-react';
 
 export default function DashboardTabs() {
   // =================================================================
@@ -37,6 +38,83 @@ export default function DashboardTabs() {
           {label}
         </button>
       ))}
+    </div>
+  );
+}
+
+// Dummy version for "In Development" dashboard
+export function DummyDashboardTabs({ currentTab, onTabClick }) {
+  const dummyTabs = [
+    { id: 'overview', label: 'Overview', enabled: true },
+    { id: 'roster', label: 'Roster', enabled: true },
+    { id: 'trades', label: 'Trades', enabled: true },
+    { id: 'scouting', label: 'Scouting', enabled: false },
+    { id: 'waiver', label: 'Waiver', enabled: false },
+    { id: 'trends', label: 'Trends', enabled: false },
+  ];
+
+  // Mobile: Show only first 3 tabs + "..." for others
+  const mainTabs = dummyTabs.slice(0, 3);
+
+  const handleClick = (id, enabled) => {
+    if (enabled && onTabClick) {
+      onTabClick(id);
+    }
+  };
+
+  return (
+    <div className="h-12 w-full flex items-center rounded-t-lg gap-0.5 overflow-hidden border-t-0 border-l border-r border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5">
+      {/* Desktop: Show all tabs */}
+      <div className="hidden md:contents">
+        {dummyTabs.map(({ id, label, enabled }) => (
+          <button
+            key={id}
+            disabled={!enabled}
+            onClick={() => handleClick(id, enabled)}
+            className={`
+              flex-1 flex items-center justify-center text-sm font-semibold tracking-wider uppercase
+              focus:outline-none select-none transition-colors
+              ${currentTab === id
+                ? 'h-full bg-pb_paperwhite text-pb_darkgray border mt-1 border-pb_darkgray border-b-0 rounded-t-lg'
+                : 'h-full text-white hover:bg-pb_mddarkgray rounded-md mt-1.5 mx-0.5'}
+              ${enabled ? 'cursor-pointer' : 'disabled:opacity-70 disabled:cursor-not-allowed'}
+            `}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile: Show main 3 tabs + "..." */}
+      <div className="md:hidden contents">
+        {mainTabs.map(({ id, label, enabled }) => (
+          <button
+            key={id}
+            disabled={!enabled}
+            onClick={() => handleClick(id, enabled)}
+            className={`
+              flex-1 flex items-center justify-center text-sm font-semibold tracking-wider uppercase
+              focus:outline-none select-none transition-colors
+              ${currentTab === id
+                ? 'h-full bg-pb_paperwhite text-pb_darkgray border mt-1 border-pb_darkgray border-b-0 rounded-t-lg'
+                : 'h-full text-white hover:bg-pb_mddarkgray rounded-md mt-1.5 mx-0.5'}
+              ${enabled ? 'cursor-pointer' : 'disabled:opacity-70 disabled:cursor-not-allowed'}
+            `}
+          >
+            {label}
+          </button>
+        ))}
+        
+        {/* "⋮" button for other tabs */}
+        <button
+          disabled={true}
+          className="w-12 flex items-center justify-center text-sm font-semibold tracking-wider uppercase
+            focus:outline-none select-none transition-colors
+            h-full text-white/50 rounded-md mt-1.5 mx-0.5 cursor-not-allowed"
+        >
+          <EllipsisVertical className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   );
 }

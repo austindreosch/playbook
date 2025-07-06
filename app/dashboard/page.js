@@ -8,9 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import DebugDrawer from '../../components/debug/DebugDrawer';
 // import { ThreeCircles } from 'react-loader-spinner';
-import { Bug } from 'lucide-react';
+import { Activity, Bug, ChevronRight, Construction, Eye, HardHat, HelpCircle, Sparkles, SquareSquare, User, X } from 'lucide-react';
 import { toast } from 'sonner';
-
 
 // Layout Components
 import DashboardSkeleton from '../../components/dashboard/DashboardSkeleton.jsx';
@@ -21,7 +20,7 @@ import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
 import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
 import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
-import DashboardTabs from '../../components/dashboard/DashboardTabs';
+import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 
 // League Header Components 
 import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
@@ -52,6 +51,266 @@ import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ADMIN_DEBUG === 'true';
 
+// In Development Component
+const InDevelopmentDashboard = () => {
+  const [currentTab, setCurrentTab] = useState('overview');
+  const [showModal, setShowModal] = useState(true);
+  
+  // Dashboard design images mapped to tabs
+  const designImages = {
+    overview: '/images/dummydashboard/1.jpg',
+    roster: '/images/dummydashboard/2.jpg',
+    trades: '/images/dummydashboard/3.jpg'
+  };
+
+  // Mobile-specific images
+  const mobileDesignImages = {
+    overview: '/images/dummydashboard/1m.jpg',
+    roster: '/images/dummydashboard/2m.jpg',
+    trades: '/images/dummydashboard/3m.jpg'
+  };
+
+  const handleTabClick = (tabId) => {
+    setCurrentTab(tabId);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  return (
+    <>
+      {/* Development Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg overflow-hidden max-w-md mx-4 shadow-2xl">
+            {/* Construction Image Header */}
+            <div className="relative h-48 bg-gradient-to-br from-orange-100 to-yellow-100">
+              <img
+                src="/images/dummydashboard/construction.png"
+                alt="Construction site"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-yellow-100" style={{ display: 'none' }}>
+                <Construction className="h-16 w-16 text-orange-400" />
+              </div>
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-gray-800 hover:bg-opacity-100 transition-all shadow-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <Construction className="h-7 w-7 text-pb_blue" />
+                <h2 className="text-lg md:text-xl font-bold text-pb_darkgray">Dashboard Preview</h2>
+              </div>
+            
+            <div className="space-y-4 mb-6">
+              <p className="text-pb_mddarkgray text-xs md:text-md">
+                Welcome! You're viewing a <strong>design preview</strong> of some of our upcoming dashboard features.
+              </p>
+              
+              <div className="bg-pb_red/10 border border-pb_red rounded-lg p-4">
+                <div className="flex items-center gap-3 ">
+                  <HardHat className="h-5 w-5 text-pb_red flex-shrink-0" />
+                  <div>
+                    {/* <h3 className="font-semibold text-orange-800 mb-1">In Development:</h3> */}
+                    <p className="text-xs md:text-sm text-pb_red">
+                      The dashboard is still in development!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-pb_blue/10 border border-pb_blue rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <Eye className="h-5 w-5 text-pb_blue mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold text-pb_blue mb-1 text-xs md:text-sm">What you're seeing:</h3>
+                    <ul className="text-xs md:text-sm text-pb_blue space-y-1">
+                      <li>• Static design mockups</li>
+                      <li>• Interactive tab navigation</li>
+                      <li>• Preview of the final interface</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+
+
+            </div>
+            
+              <div className="flex justify-center gap-3">
+                <button
+                  onClick={closeModal}
+                  className="px-6 py-2 bg-pb_blue text-white rounded-lg hover:bg-pb_blue/80 transition-colors font-medium"
+                >
+                  Got it, let me explore!
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
+        {/* Dashboard Tab Selectors Bar - Same as real dashboard */}
+      <div className="space-y-2 md:space-y-0">
+        {/* Mobile: Stacked Layout */}
+        <div className="md:hidden space-y-2">
+          {/* Dashboard Tab Selector - Mobile */}
+          <div className="w-full">
+            <DummyDashboardTabs currentTab={currentTab} onTabClick={handleTabClick} />
+          </div>
+        </div>
+
+        {/* Desktop: Side by Side Layout */}
+        <div className="hidden md:block relative">
+          <div className="flex items-center">
+            {/* Dashboard Tab Selector */}
+            <div className="w-3/5">
+              <DummyDashboardTabs currentTab={currentTab} onTabClick={handleTabClick} />
+            </div>
+
+            {/* Development Status */}
+            <div className="flex gap-2 w-2/5 justify-end pb-2.5 items-center">
+              <div className="flex items-center gap-2 bg-pb_blue/5 border-2 border-dashed border-pb_blue rounded-lg px-3 py-1.5 h-9">
+                <Construction className="h-4 w-4 text-pb_blue" />
+                <span className="text-xs font-bold text-pb_blue">DASHBOARD PREVIEW</span>
+              </div>
+              <button
+                onClick={openModal}
+                className="h-9 px-3 rounded-lg bg-pb_blue border-2 border-pb_blue flex items-center gap-2"
+                title="Learn more about this preview"
+              >
+                <HelpCircle className="h-5 w-5 text-white" />
+                <span className="text-xs font-bold text-white">Why am I seeing this?</span>
+              </button>
+              <button
+                onClick={() => window.location.href = '/landing'}
+                className="h-9 px-3 rounded-lg hover:bg-pb_blue/5 transition-colors border-2 border-pb_lightgray flex items-center gap-2"
+                title="Learn more about Playbook"
+              >
+                <span className="text-xs font-bold text-pb_textgray">Learn More</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Selectors Divider */}
+          <div className="absolute bottom-0 right-0 w-2/5">
+            <div className="h-[1px] w-full bg-pb_lightgray"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-grow min-h-0 mt-4 rounded-lg overflow-hidden">
+        {/* Mobile: Coming Soon Message with Preview */}
+        <div className="md:hidden w-full h-full overflow-auto  rounded-lg">
+          <div className="text-center px-2 py-4 pt-6">
+            <div className="flex items-center justify-center gap-2">
+              <div className="">
+                <Construction className="h-8 w-8 mx-auto mb-3 mr-1 text-pb_blue" />
+                {/* <div className="w-16 h-1 bg-pb_blue/20 mx-auto mb-6"></div> */}
+              </div>
+              
+              <h3 className="text-xl font-bold text-pb_darkgray mb-3">
+                {/* {currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}  */}
+                Dashboard Preview
+              </h3>
+            </div>
+            
+            <p className="text-pb_mddarkgray mb-6 leading-relaxed text-sm">
+              Here's an early look at features that will be coming to the dashboard soon.
+            </p>
+            
+            {/* Mobile Preview Image */}
+            <div className="mb-6 rounded-lg overflow-hidden shadow-lg border border-pb_blue/20">
+              <img
+                src={mobileDesignImages[currentTab]}
+                alt={`Dashboard ${currentTab} design preview`}
+                className="w-full h-auto object-contain"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="w-full h-32 flex items-center justify-center bg-gray-100 text-gray-500" style={{ display: 'none' }}>
+                <div className="text-center">
+                  <Construction className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                  <p className="text-sm">Preview Coming Soon</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* <p className="text-pb_mddarkgray mb-6 text-sm">
+              For the best experience, please view this preview on a desktop or tablet.
+            </p> */}
+            
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-center gap-2 text-sm text-pb_blue">
+                <Sparkles className="h-4 w-4" />
+                <span>Mobile View Coming Soon</span>
+              </div>
+              
+              <div className="flex gap-2 justify-center">
+                <button
+                  onClick={openModal}
+                  className="px-4 py-2 bg-pb_blue text-white rounded-lg hover:bg-pb_blue/90 transition-colors text-sm font-medium flex items-center gap-2"
+                >
+                  <HelpCircle className="h-5 w-5 text-white" />
+                  Why am I seeing this?
+                </button>
+                
+                <button
+                  onClick={() => window.location.href = '/landing'}
+                  className="px-4 py-2 bg-white text-pb_textgray border border-pb_lightgray rounded-lg hover:bg-pb_blue/5 transition-colors text-sm font-medium"
+                >
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: Image preview */}
+        <div className="hidden md:block w-full h-full">
+          <img
+            src={designImages[currentTab]}
+            alt={`Dashboard ${currentTab} design preview`}
+            className="w-full h-full object-cover object-top"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500" style={{ display: 'none' }}>
+            <div className="text-center">
+              <Construction className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+              <p>{currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} Design Preview Coming Soon</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </>
+  );
+};
+
+
+
 export default function DashboardPage() {
   // =================================================================
   // CONTEXT STORE
@@ -65,11 +324,14 @@ export default function DashboardPage() {
   const rehydrate = useDashboardContext((state) => state.rehydrate);
   const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
 
-
   const router = useRouter();
   const { user, error, isLoading: isUserLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
   const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
+
+  // Check if user is admin
+  const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
+  const isAdmin = user && user.sub === adminSub;
 
   useEffect(() => {
     // Rehydrate the store on mount to ensure we have the latest persisted dummy data
@@ -158,20 +420,6 @@ export default function DashboardPage() {
     };
   }, []); // Empty dependency array ensures this runs only once
 
-  // useEffect(() => {
-  //   if (!isUserLoading && !user) {
-  //     router.push('/landing');
-  //   }
-  // }, [isUserLoading, user, router]);
-
-  // Function to handle redirection to rankings page
-  // useEffect(() => {
-  //   if (user) {
-  //     router.push('/rankings'); // TODO: change to dashboard later
-  //   }
-  // }, [user, router]);
-
-
   // Debug keybind for toggling loading state
   const [debugLoading, setDebugLoading] = useState(false);
   useEffect(() => {
@@ -196,6 +444,24 @@ export default function DashboardPage() {
   if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
 
+  // Show "In Development" version for non-admin users
+  if (!isAdmin) {
+    return (
+      <>
+        {SHOW_DEBUG_DRAWER && (
+          <>
+            <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
+              <Bug className="h-4 w-4" />
+            </Button>
+            <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
+          </>
+        )}
+        <InDevelopmentDashboard />
+      </>
+    );
+  }
+
+  // Show real dashboard for admin users
   return (
     <>
       {SHOW_DEBUG_DRAWER && (
@@ -231,8 +497,6 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Content */}
-
-
         <div className="flex-grow min-h-0">
           {isAllLeaguesView ? (
             <div className="flex items-center justify-center w-full h-full"><p>All Leagues View (Coming Soon)</p></div>
