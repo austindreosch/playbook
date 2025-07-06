@@ -216,7 +216,7 @@ export default function CommissionerRecruitPage() {
                 </div>
                 <div className="h-4 w-px bg-pb_lightgray"></div>
                 <div className="flex items-center gap-3 flex-1">
-                  <h1 className="text-sm sm:text-base font-bold text-pb_darkgray leading-tight">
+                  <h1 className="text-sm sm:text-base font-semibold text-pb_darkgray">
                     {leagueData?.leagueName}
                   </h1>
                   <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
@@ -663,10 +663,10 @@ export default function CommissionerRecruitPage() {
                  </div>
                </CardHeader>
                {/* <Separator className="mt-0.5 mb-3 w-[95%] mx-auto" /> */}
-               <CardContent className="p-4 pt-0" style={{ height: 'var(--card-height)' }}>
+               <CardContent className="p-4 pt-0 lg:h-[var(--card-height)]">
                  {leagueData?.availableTeams?.length > 0 ? (
-                   <div className="h-full overflow-hidden">
-                     <Tabs defaultValue="team-0" className="w-full h-full">
+                   <div className="lg:h-full lg:overflow-hidden">
+                     <Tabs defaultValue="team-0" className="w-full lg:h-full">
                        {/* Horizontal Tab List */}
                        <TabsList className={`grid w-full mb-4 border border-lightestgray bg-pb_backgroundgray ${
                          leagueData?.availableTeams?.length === 1 ? 'grid-cols-1' :
@@ -687,11 +687,11 @@ export default function CommissionerRecruitPage() {
                        </TabsList>
 
                        {/* Tab Content */}
-                       <div className="flex flex-col pr-2" style={{ height: 'calc(100% - 58px)' }}>
+                       <div className="flex flex-col pr-2 lg:h-[calc(100%-58px)]">
                          {leagueData?.availableTeams?.map((team, index) => (
-                           <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0 flex flex-col h-full space-y-4">
+                           <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0 flex flex-col lg:h-full space-y-4">
                              {/* Team Header */}
-                             <div className="flex items-center justify-between pb-1 px-0">
+                             <div className="flex items-center justify-between px-0">
                                {/* <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3> */}
                                <div className="flex gap-2">
                                  {team.teamStrengths?.slice(0, 3).map((strength, i) => {
@@ -727,27 +727,29 @@ export default function CommissionerRecruitPage() {
                              </div>
 
                              {/* Current Roster - Enhanced with Scrolling */}
-                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner flex-1 overflow-hidden">
+                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner flex-1 lg:overflow-hidden">
                                <div 
-                                 className="h-full overflow-y-auto"
+                                 className="lg:h-full lg:overflow-y-auto"
                                  style={{
                                    scrollbarWidth: 'thin',
                                    scrollbarColor: '#d1d5db transparent'
                                  }}
                                >
                                  <style jsx>{`
-                                   div::-webkit-scrollbar {
-                                     width: 6px;
-                                   }
-                                   div::-webkit-scrollbar-track {
-                                     background: transparent;
-                                   }
-                                   div::-webkit-scrollbar-thumb {
-                                     background-color: #d1d5db;
-                                     border-radius: 3px;
-                                   }
-                                   div::-webkit-scrollbar-thumb:hover {
-                                     background-color: #9ca3af;
+                                   @media (min-width: 1024px) {
+                                     div::-webkit-scrollbar {
+                                       width: 6px;
+                                     }
+                                     div::-webkit-scrollbar-track {
+                                       background: transparent;
+                                     }
+                                     div::-webkit-scrollbar-thumb {
+                                       background-color: #d1d5db;
+                                       border-radius: 3px;
+                                     }
+                                     div::-webkit-scrollbar-thumb:hover {
+                                       background-color: #9ca3af;
+                                     }
                                    }
                                  `}</style>
                                  <div className="space-y-1">
@@ -826,31 +828,31 @@ export default function CommissionerRecruitPage() {
                      <Tabs defaultValue="rule-0" className="w-full" orientation="horizontal" style={{ height: '100%' }}>
                        <div className="flex" style={{ height: '100%' }}>
                          {/* Left Sidebar with Tabs */}
-                         <div className="w-40 border-r border-gray-200" style={{ height: '100%' }}>
+                         <div className="w-20 lg:w-40 border-r border-gray-200" style={{ height: '100%' }}>
                            <TabsList className="flex flex-col h-full w-full p-0 pr-1 bg-transparent space-y-1 items-start justify-start">
                              {ruleSections.map((section, index) => {
                                const getIcon = (title) => {
                                  switch (title) {
                                    case 'Format':
-                                     return <AlignLeft className="h-4 w-4" />;
+                                     return <AlignLeft className="h-3 w-3 lg:h-4 lg:w-4" />;
                                    case 'Scoring System':
-                                     return <Target className="h-4 w-4" />;
+                                     return <Target className="h-3 w-3 lg:h-4 lg:w-4" />;
                                    case 'Prize Pool':
-                                     return <Medal className="h-4 w-4" />;
-                                   case 'Owner Conduct':
-                                     return <Handshake className="h-4 w-4" />;
+                                     return <Medal className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   case 'Conduct':
+                                     return <Handshake className="h-3 w-3 lg:h-4 lg:w-4" />;
                                    case 'Trades':
-                                     return <ArrowRightLeft className="h-4 w-4" />;
+                                     return <ArrowRightLeft className="h-3 w-3 lg:h-4 lg:w-4" />;
                                    case 'Draft':
-                                     return <ShieldUser className="h-4 w-4" />;
+                                     return <ShieldUser className="h-3 w-3 lg:h-4 lg:w-4" />;
                                     case 'Playoffs':
-                                      return <Goal className="h-4 w-4" />;
+                                      return <Goal className="h-3 w-3 lg:h-4 lg:w-4" />;
                                   case 'Waiver':
-                                    return <ContactRound className="h-4 w-4" />;
+                                    return <ContactRound className="h-3 w-3 lg:h-4 lg:w-4" />;
                                   case 'Matchups':
-                                    return <Swords className="h-4 w-4" />;
+                                    return <Swords className="h-3 w-3 lg:h-4 lg:w-4" />;
                                    default:
-                                     return <FileText className="h-4 w-4" />;
+                                     return <FileText className="h-3 w-3 lg:h-4 lg:w-4" />;
                                  }
                                };
 
@@ -858,11 +860,11 @@ export default function CommissionerRecruitPage() {
                                  <TabsTrigger
                                    key={index}
                                    value={`rule-${index}`}
-                                   className="w-full justify-start text-left px-3 py-2 text-sm font-medium text-pb_textgray hover:text-pb_blue data-[state=active]:hover:bg-pb_bluehover data-[state=active]:hover:text-white hover:bg-pb_blue/10 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
+                                   className="w-full justify-start text-left px-2 py-2 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium text-pb_textgray hover:text-pb_blue data-[state=active]:hover:bg-pb_bluehover data-[state=active]:hover:text-white hover:bg-pb_blue/10 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
                                  >
-                                   <div className="flex items-center gap-2 w-full justify-start">
+                                   <div className="flex flex-col lg:flex-row items-center lg:gap-2 w-full justify-start">
                                      {getIcon(section.title)}
-                                     <span className="truncate text-left">{section.title}</span>
+                                     <span className="truncate text-left text-xs lg:text-sm leading-tight mt-1 lg:mt-0">{section.title}</span>
                                    </div>
                                  </TabsTrigger>
                                );
@@ -877,16 +879,16 @@ export default function CommissionerRecruitPage() {
                                <TabsContent
                                  key={index}
                                  value={`rule-${index}`}
-                                 className="mt-0 px-4 focus-visible:outline-none"
+                                 className="mt-0 px-2 lg:px-4 focus-visible:outline-none"
                                  style={{ height: '100%' }}
                                >
-                                 <div className="space-y-4">
-                                   <h2 className="text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
+                                 <div className="space-y-3 lg:space-y-4">
+                                   <h2 className="text-sm lg:text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
                                      {section.title}
                                    </h2>
                                    <div className="prose prose-sm max-w-none">
                                      <div 
-                                       className="whitespace-pre-wrap text-sm text-pb_darkgray leading-relaxed"
+                                       className="whitespace-pre-wrap text-xs lg:text-sm text-pb_darkgray leading-relaxed"
                                        dangerouslySetInnerHTML={{
                                          __html: section.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-pb_blue">$1</strong>')
                                        }}
