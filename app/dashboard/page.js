@@ -233,7 +233,7 @@ const InDevelopmentDashboard = () => {
             </div>
             
             <p className="text-pb_mddarkgray mb-6 leading-relaxed text-sm">
-              Here's an early look at features that will be coming to the dashboard soon.
+              Here&apos;s an early look at features that will be coming to the dashboard soon.
             </p>
             
             {/* Mobile Preview Image */}
@@ -302,7 +302,7 @@ const InDevelopmentDashboard = () => {
               <p>{currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} Design Preview Coming Soon</p>
             </div>
           </div>
-        </div>
+        </div>11
       </div>
       </div>
     </>
