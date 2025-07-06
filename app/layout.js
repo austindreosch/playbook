@@ -5,6 +5,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { DM_Sans } from 'next/font/google';
 import Script from 'next/script';
+import { Suspense } from 'react';
 import ConditionalNavBar from '../components/ConditionalNavBar';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
@@ -67,9 +68,11 @@ export default function RootLayout({ children }) {
           `
         }} />
       </head>
-      <UserProvider>
+            <UserProvider>
       <body className={`${dmSans.className} bg-pb_paperwhite min-h-0`}>
-          <GoogleAnalytics />
+          <Suspense fallback={null}>
+            <GoogleAnalytics />
+          </Suspense>
           <AOSInitializer />
           <ConditionalNavBar />
             <main className="mt-12 md:mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />

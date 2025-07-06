@@ -429,7 +429,7 @@ export default function DashboardPage() {
         localStorage.setItem('verificationToastLastShown', now.toString());
       }
     }
-  }, [user, isUserLoading]);
+  }, [user, isUserLoading, showVerificationToast]);
 
   // Debug keybind effect
   useEffect(() => {
@@ -452,7 +452,7 @@ export default function DashboardPage() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []); // Empty dependency array ensures this runs only once
+  }, [showVerificationToast, toggleDebugDrawer]); // Include dependencies
 
   // Debug keybind for toggling loading state
   const [debugLoading, setDebugLoading] = useState(false);

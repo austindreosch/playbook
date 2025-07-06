@@ -78,10 +78,6 @@ export default function RankingsPage() {
       title = `${selectedSport}`;
     }
     
-    if (activeRanking?.title) {
-      title = `${selectedSport}`;
-    }
-    
     document.title = `Playbook Rankings | ${title}`;
   }, [selectedSport,]);
 
