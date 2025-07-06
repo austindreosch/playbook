@@ -276,8 +276,8 @@ export default function CommissionerRecruitPage() {
           <div className="hidden lg:flex lg:items-center gap-2">
             <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
               <div className="flex items-center gap-2">
-                <Megaphone className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-sm font-bold text-pb_darkgray">
+                <Megaphone className="w-5 h-5 mr-1 text-pb_darkgray" />
+                <span className="text-md font-bold text-pb_darkgray">
                   Recruitment Hub
                 </span>
               </div>
@@ -285,12 +285,12 @@ export default function CommissionerRecruitPage() {
             <Card className="px-3 py-2 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
+                  <FantraxIcon className="w-4 h-4 mr-1 text-pb_darkgray" />
                   <span className="text-pb_darkgray font-medium text-sm">{leagueData?.settings?.platform}</span>
                 </div>
                 <div className="h-4 w-px bg-pb_lightgray"></div>
                 <div className="flex items-center gap-3">
-                  <h1 className="text-base font-bold text-pb_darkgray leading-tight">
+                  <h1 className="text-sm font-bold text-pb_darkgray">
                     {leagueData?.leagueName}
                   </h1>
                   <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
@@ -822,14 +822,14 @@ export default function CommissionerRecruitPage() {
                  </div>
                </CardHeader>
                {/* <Separator className="mt-[7px] mb-3 w-[95%] mx-auto" /> */}
-               <CardContent className="p-4 pt-0" style={{ height: 'var(--card-height)' }}>
+               <CardContent className="p-4 pt-0 lg:h-[var(--card-height)]">
                  {ruleSections.length > 0 ? (
-                   <div className="h-full overflow-hidden">
-                     <Tabs defaultValue="rule-0" className="w-full" orientation="horizontal" style={{ height: '100%' }}>
-                       <div className="flex" style={{ height: '100%' }}>
-                         {/* Left Sidebar with Tabs */}
-                         <div className="w-20 lg:w-40 border-r border-gray-200" style={{ height: '100%' }}>
-                           <TabsList className="flex flex-col h-full w-full p-0 pr-1 bg-transparent space-y-1 items-start justify-start">
+                   <div className="lg:h-full lg:overflow-hidden">
+                                            <Tabs defaultValue="rule-0" className="w-full lg:h-full" orientation="horizontal">
+                         <div className="flex lg:h-full">
+                           {/* Left Sidebar with Tabs */}
+                         <div className="w-20 lg:w-40 border-r border-gray-200 lg:h-full">
+                           <TabsList className="flex flex-col lg:h-full w-full p-0 pr-1 bg-transparent space-y-1 items-start justify-start">
                              {ruleSections.map((section, index) => {
                                const getIcon = (title) => {
                                  switch (title) {
@@ -873,14 +873,13 @@ export default function CommissionerRecruitPage() {
                          </div>
 
                          {/* Right Content Area */}
-                         <div className="flex-1" style={{ height: '100%', overflow: 'hidden' }}>
-                           <ScrollArea className="h-full">
+                         <div className="flex-1 lg:h-full lg:overflow-hidden">
+                           <ScrollArea className="lg:h-full">
                              {ruleSections.map((section, index) => (
                                <TabsContent
                                  key={index}
                                  value={`rule-${index}`}
-                                 className="mt-0 px-2 lg:px-4 focus-visible:outline-none"
-                                 style={{ height: '100%' }}
+                                 className="mt-0 px-2 lg:px-4 focus-visible:outline-none lg:h-full"
                                >
                                  <div className="space-y-3 lg:space-y-4">
                                    <h2 className="text-sm lg:text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
@@ -916,14 +915,16 @@ export default function CommissionerRecruitPage() {
         {/* Footer - App Advertisement */}
         <footer className="lg:fixed lg:bottom-0 lg:left-0 lg:right-0 border-t border-pb_lightgray py-2 lg:z-10 bg-white">
           <div className="container mx-auto px-4 lg:px-0">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between text-xs gap-3 lg:gap-0">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-0">
-                <div className="flex items-center">
-                  <Image src="/logo-tpfull.png" alt="Playbook Fantasy Sports" width={18} height={18} className="mr-2 mb-[2px]" />
-                  <p className="text-pb_textgray text-sm font-bold mr-2 mb-[2px]">
-                    Playbook
-                  </p>
-                  <p className="text-pb_textgray ml-1">
+            <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-between text-xs gap-3 lg:gap-0">
+              <div className="flex flex-col items-center lg:flex-row lg:items-center gap-3 lg:gap-0">
+                <div className="flex flex-col items-center lg:flex-row lg:items-center mt-4 lg:mt-0">
+                  <div className="flex items-center mb-1 lg:mb-0">
+                    <Image src="/logo-tpfull.png" alt="Playbook Fantasy Sports" width={18} height={18} className="mr-2" />
+                    <p className="text-pb_textgray text-sm font-bold">
+                      Playbook
+                    </p>
+                  </div>
+                  <p className="text-pb_textgray text-center lg:text-left lg:ml-2">
                     The AI-powered fantasy sports command center that learns your leagues and strategy.
                   </p>
                 </div>
