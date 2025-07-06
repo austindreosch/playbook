@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   try {
     // Check if this is the playbook recruit dummy league
-    if (leagueID === 'playbook-recruit-dummy') {
+    if (leagueID === '8k2m9x7p4w1e6r3t') {
       // Read CSV files directly
       const csvDir = path.join(process.cwd(), 'public', 'docs', 'commissioner');
       
@@ -100,16 +100,15 @@ export default async function handler(req, res) {
       
       // Build league data object
       const leagueData = {
-        leagueId: 'playbook-recruit-dummy',
+        leagueId: '8k2m9x7p4w1e6r3t',
         leagueName: 'The League',
-        sport: settings.Sport || 'NBA',
-        format: settings.Format || 'Dynasty',
-        scoring: settings.Scoring || 'Categories',
-        totalTeams: parseInt(settings.Teams) || 12,
+        sport: settings.Sport ,
+        format: settings.Format ,
+        scoring: settings.Scoring ,
+        totalTeams: parseInt(settings.Teams),
         availableSpots: availableTeams.length,
-        description: 'Dynasty format NBA league with true dynasty rules and competitive 9-category H2H scoring.',
         commissioner: {
-          name: 'Austin (League Commissioner)',
+          name: 'Austin',
           email: settings.CommissionerEmail,
           discord: settings.CommissionerDiscord,
           reddit: settings.CommissionerReddit
