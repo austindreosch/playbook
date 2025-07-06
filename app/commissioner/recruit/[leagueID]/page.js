@@ -191,10 +191,10 @@ export default function CommissionerRecruitPage() {
           <div className="flex flex-col gap-2 lg:hidden">
             {/* Row 1: Recruitment Hub + Available Spots */}
             <div className="flex items-center gap-2">
-              <Card className="px-3 h-8 sm:h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg flex-1">
+              <Card className="px-3 h-8 sm:h-10 flex items-center bg-pb_darkgray border border-pb_darkergray shadow-sm rounded-lg flex-1">
                 <div className="flex items-center gap-2">
-                  <Megaphone className="w-4 h-4 text-pb_darkgray" />
-                  <span className="text-sm font-bold text-pb_darkgray">
+                  <Megaphone className="w-4 h-4 text-white" />
+                  <span className="text-sm font-bold text-white">
                     Recruitment Hub
                   </span>
                 </div>
@@ -274,10 +274,10 @@ export default function CommissionerRecruitPage() {
 
           {/* Desktop Layout */}
           <div className="hidden lg:flex lg:items-center gap-2">
-            <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+            <Card className="px-3 h-10 flex items-center bg-pb_darkgray border border-pb_darkergray shadow-sm rounded-lg">
               <div className="flex items-center gap-2">
-                <Megaphone className="w-5 h-5 mr-1 text-pb_darkgray" />
-                <span className="text-md font-bold text-pb_darkgray">
+                <Megaphone className="w-5 h-5 mr-1 text-white" />
+                <span className="text-md font-bold text-white">
                   Recruitment Hub
                 </span>
               </div>
