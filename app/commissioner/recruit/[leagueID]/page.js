@@ -185,44 +185,132 @@ export default function CommissionerRecruitPage() {
   return (
       <div className="pb-12">
         <div className="container mx-auto w-full pt-5 pb-5">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-2 ">
-          <div className="flex items-center gap-2">
-              <Card className="px-4 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+                {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 gap-2">
+          {/* Mobile Layout */}
+          <div className="flex flex-col gap-2 lg:hidden">
+            {/* Row 1: Recruitment Hub + Available Spots */}
+            <div className="flex items-center gap-2">
+              <Card className="px-3 h-8 sm:h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg flex-1">
                 <div className="flex items-center gap-2">
-                  <Megaphone className="w-5 h-5 mr-1 text-pb_darkgray" />
-                  <span className="text-base font-bold text-pb_darkgray">
+                  <Megaphone className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-sm font-bold text-pb_darkgray">
                     Recruitment Hub
                   </span>
                 </div>
               </Card>
-              <Card className="px-4 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
-                                                 <div className="flex items-center gap-3">
-                   <div className="flex items-center gap-2">
-                     <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
-                     <span className="text-pb_darkgray font-medium text-sm">{leagueData?.settings?.platform}</span>
-                   </div>
-                   <div className="h-5 w-px bg-pb_lightgray"></div>
-                   <h1 className="text-sm font-bold text-pb_darkgray">
-                     {leagueData?.leagueName}
-                   </h1>
-                   <span className="text-xs text-pb_textgray mt-[2px]">
-                     ID: f1zwi0wum3y5041b
-                   </span>
-                 </div>
-             </Card>
+              <Card className="px-2 sm:px-3 h-8 sm:h-10 flex items-center bg-pb_green border border-pb_green-900 hover:bg-pb_greenhover shadow-sm rounded-lg flex-1">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium text-xs sm:text-sm">{leagueData?.availableTeams.length} Spots Available</span>
+                </div>
+              </Card>
+            </div>
+            
+            {/* Row 2: League Info (always on one line) */}
+            <Card className="px-3 py-2 sm:py-2 h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+              <div className="flex items-center gap-2 sm:gap-4 w-full justify-between">
+                <div className="flex items-center gap-2">
+                  <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-pb_darkgray font-medium text-xs sm:text-sm">{leagueData?.settings?.platform}</span>
+                </div>
+                <div className="h-4 w-px bg-pb_lightgray"></div>
+                <div className="flex items-center gap-3 flex-1">
+                  <h1 className="text-sm sm:text-base font-bold text-pb_darkgray leading-tight">
+                    {leagueData?.leagueName}
+                  </h1>
+                  <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
+                    ID: f1zwi0wum3y5041b
+                  </span>
+                </div>
+              </div>
+            </Card>
+            
+            {/* Row 3: Discord + LeagueSafe */}
+            <div className="flex gap-2">
+              <Card 
+                className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors flex-1"
+                onClick={() => window.open(leagueData?.settings?.discordLink, '_blank')}
+              >
+                <div className="flex items-center gap-2">
+                  <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-pb_darkgray font-medium text-xs">Discord</span>
+                  <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                </div>
+              </Card>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Card className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors flex-1">
+                    <div className="flex items-center gap-2">
+                      <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
+                      <span className="text-pb_darkgray font-medium text-xs">LeagueSafe</span>
+                      <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                    </div>
+                  </Card>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-pb_darkgray">
+                      <AlertTriangle className="h-5 w-5 text-pb_orange" />
+                      Verify With Commissioner
+                    </DialogTitle>
+                    <DialogDescription className="text-pb_textgray">
+                      Please reach out to the league commissioner and confirm arrangements before making any payments.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-center mt-4">
+                    <Button 
+                      onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
+                      className="bg-pb_blue hover:bg-pb_bluehover text-white"
+                    >
+                      Continue to LeagueSafe
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex lg:items-center gap-2">
+            <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+              <div className="flex items-center gap-2">
+                <Megaphone className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-sm font-bold text-pb_darkgray">
+                  Recruitment Hub
+                </span>
+              </div>
+            </Card>
+            <Card className="px-3 py-2 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-pb_darkgray font-medium text-sm">{leagueData?.settings?.platform}</span>
+                </div>
+                <div className="h-4 w-px bg-pb_lightgray"></div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-base font-bold text-pb_darkgray leading-tight">
+                    {leagueData?.leagueName}
+                  </h1>
+                  <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
+                    ID: f1zwi0wum3y5041b
+                  </span>
+                </div>
+              </div>
+            </Card>
           </div>
             
-            
-          <div className="flex items-center gap-2">
+          {/* Desktop Right Side */}
+          <div className="hidden lg:flex gap-2">
             <Card 
-              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors"
               onClick={() => window.open(leagueData?.settings?.discordLink, '_blank')}
             >
               <div className="flex items-center gap-2">
-                <DiscordIcon className="w-4 h-4 mr-0.5 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">Discord Group Chat</span>
-                <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray ml-1" />
+                <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
+                <span className="text-pb_darkgray font-medium text-sm">Discord</span>
+                <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
               </div>
             </Card>
             
@@ -230,9 +318,9 @@ export default function CommissionerRecruitPage() {
               <DialogTrigger asChild>
                 <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors">
                   <div className="flex items-center gap-2">
-                    <LeagueSafeIcon className="w-4 h-4 mr-0.5 text-pb_darkgray" />
-                    <span className="text-pb_darkgray font-medium text-sm">LeagueSafe Page</span>
-                    <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray ml-1" />
+                    <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
+                    <span className="text-pb_darkgray font-medium text-sm">LeagueSafe</span>
+                    <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
                   </div>
                 </Card>
               </DialogTrigger>
@@ -432,7 +520,7 @@ export default function CommissionerRecruitPage() {
                      </div>
                      <button 
                        onClick={() => window.open(`mailto:${leagueData?.commissioner?.email}`, '_blank')}
-                       className="p-1 hover:bg-gray-200 rounded transition-colors"
+                       className="p-1 hover:bg-pb_backgroundgray rounded transition-colors"
                      >
                        <ArrowRight className="w-3 h-3 text-pb_darkgray" />
                      </button>
@@ -629,7 +717,7 @@ export default function CommissionerRecruitPage() {
                                    };
                                    
                                    return (
-                                     <Badge key={i} className="bg-white text-pb_darkgray border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md">
+                                     <Badge key={i} className="bg-white text-pb_darkgray border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md hover:bg-pb_backgroundgray transition-colors">
                                        {getStrengthIcon(strength)}
                                        {strength}
                                      </Badge>
@@ -664,7 +752,7 @@ export default function CommissionerRecruitPage() {
                                  `}</style>
                                  <div className="space-y-1">
                                    {team.currentRoster?.map((player, i) => (
-                                     <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors">
+                                     <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-pb_backgroundgray transition-colors">
                                        <div className="flex-1 min-w-0">
                                          <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
                                        </div>
