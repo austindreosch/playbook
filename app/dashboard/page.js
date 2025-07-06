@@ -118,9 +118,9 @@ const InDevelopmentDashboard = () => {
               </div>
             
             <div className="space-y-4 mb-6">
-              <p className="text-pb_mddarkgray text-xs md:text-md pb-3 text-center">
-                Welcome! You're viewing a <strong>design preview</strong> of some of our upcoming dashboard features.
-              </p>
+                              <p className="text-pb_mddarkgray text-xs md:text-md pb-3 text-center">
+                  Welcome! You&apos;re viewing a <strong>design preview</strong> of some of our upcoming dashboard features.
+                </p>
               
               <div className="bg-pb_red/10 border border-pb_red rounded-lg p-4">
                 <div className="flex items-center gap-3 ">
