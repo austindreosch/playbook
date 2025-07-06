@@ -78,17 +78,17 @@ function NavBar() {
                                 sideOffset={0}
                             >
                                 <DropdownMenuItem className="text-pb_midgray font-bold cursor-not-allowed select-none text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50">
-                                    <LayoutDashboard className="h-5 w-5 mr-2.5 text-pb_midgray" />Dashboard
+                                    <PanelsTopLeft className="h-5 w-5 mr-2.5 text-pb_midgray" />DASHBOARD
                                 </DropdownMenuItem>
                                 
                                 <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
                                     <Link href="/rankings" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
-                                        <ListOrdered className="h-5 w-5 mr-2.5 text-pb_darkgray" />Rankings
+                                        <ClipboardList className="h-5 w-5 mr-2.5 text-pb_darkgray" />RANKINGS
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
                                     <Link href="/landing" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
-                                        <Info className="h-5 w-5 mr-2.5 text-pb_darkgray" />About
+                                        <MessageSquareQuote className="h-5 w-5 mr-2.5 text-pb_darkgray" />ABOUT
                                     </Link>
                                 </DropdownMenuItem>
                                 
@@ -128,7 +128,7 @@ function NavBar() {
                                         <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
                                         <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
                                             <Link href="/api/auth/login" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
-                                                <LogIn className="h-5 w-5 mr-2.5 text-pb_darkgray" />Login
+                                                <LogIn className="h-5 w-5 mr-2.5 text-pb_darkgray" />LOGIN
                                             </Link>
                                         </DropdownMenuItem>
                                     </>

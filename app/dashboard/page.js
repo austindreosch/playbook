@@ -186,21 +186,21 @@ const InDevelopmentDashboard = () => {
 
             {/* Development Status */}
             <div className="flex gap-2 w-2/5 justify-end pb-2.5 items-center">
-              <div className="flex items-center gap-2 bg-pb_blue/5 border-2 border-dashed border-pb_blue rounded-lg px-3 py-1.5 h-9">
+              <div className="flex items-center gap-2 bg-pb_blue/5 border border-dashed border-pb_blue rounded-lg px-3 py-1.5 h-9">
                 <Construction className="h-4 w-4 text-pb_blue" />
-                <span className="text-xs font-bold text-pb_blue">DASHBOARD PREVIEW</span>
+                <span className="text-xs font-bold text-pb_blue tracking-wider">DASHBOARD PREVIEW</span>
               </div>
               <button
                 onClick={openModal}
                 className="h-9 px-3 rounded-lg bg-pb_blue border-2 border-pb_blue flex items-center gap-2"
                 title="Learn more about this preview"
               >
-                <HelpCircle className="h-5 w-5 text-white" />
+                <HelpCircle className="h-4 w- text-white" />
                 <span className="text-xs font-bold text-white">Why am I seeing this?</span>
               </button>
               <button
                 onClick={() => window.location.href = '/landing'}
-                className="h-9 px-3 rounded-lg hover:bg-pb_blue/5 transition-colors border-2 border-pb_lightgray flex items-center gap-2"
+                className="h-9 px-3 rounded-lg hover:bg-pb_blue/5 transition-colors border border-pb_lightgray flex items-center gap-2"
                 title="Learn more about Playbook"
               >
                 <span className="text-xs font-bold text-pb_textgray">Learn More</span>
@@ -286,11 +286,11 @@ const InDevelopmentDashboard = () => {
         </div>
 
         {/* Desktop: Image preview */}
-        <div className="hidden md:block w-full h-full overflow-auto bg-gray-50">
+        <div className="hidden md:block w-full h-full overflow-hidden bg-gray-50">
           <img
             src={designImages[currentTab]}
             alt={`Dashboard ${currentTab} design preview`}
-            className="w-full min-w-[1200px] h-auto object-contain"
+            className="w-full h-full object-cover object-top"
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
