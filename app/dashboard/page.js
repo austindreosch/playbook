@@ -55,6 +55,18 @@ const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.N
 const InDevelopmentDashboard = () => {
   const [currentTab, setCurrentTab] = useState('overview');
   const [showModal, setShowModal] = useState(true);
+
+  // Dynamic page title for development dashboard
+  useEffect(() => {
+    const titleMap = {
+      overview: 'Overview',
+      roster: 'Roster', 
+      trades: 'Trades'
+    };
+    
+    const title = titleMap[currentTab] || 'Dashboard';
+    document.title = `Playbook Dashboard | ${title}`;
+  }, [currentTab]);
   
   // Dashboard design images mapped to tabs
   const designImages = {
@@ -186,21 +198,21 @@ const InDevelopmentDashboard = () => {
 
             {/* Development Status */}
             <div className="flex gap-2 w-2/5 justify-end pb-2.5 items-center">
-              <div className="flex items-center gap-2 bg-pb_blue/5 border-2 border-dashed border-pb_blue rounded-lg px-3 py-1.5 h-9">
+              <div className="flex items-center gap-2 bg-pb_blue/5 border border-dashed border-pb_blue rounded-lg px-3 py-1.5 h-9">
                 <Construction className="h-4 w-4 text-pb_blue" />
-                <span className="text-xs font-bold text-pb_blue">DASHBOARD PREVIEW</span>
+                <span className="text-xs font-bold text-pb_blue tracking-wider">DASHBOARD PREVIEW</span>
               </div>
               <button
                 onClick={openModal}
                 className="h-9 px-3 rounded-lg bg-pb_blue border-2 border-pb_blue flex items-center gap-2"
                 title="Learn more about this preview"
               >
-                <HelpCircle className="h-5 w-5 text-white" />
+                <HelpCircle className="h-4 w- text-white" />
                 <span className="text-xs font-bold text-white">Why am I seeing this?</span>
               </button>
               <button
                 onClick={() => window.location.href = '/landing'}
-                className="h-9 px-3 rounded-lg hover:bg-pb_blue/5 transition-colors border-2 border-pb_lightgray flex items-center gap-2"
+                className="h-9 px-3 rounded-lg hover:bg-pb_blue/5 transition-colors border border-pb_lightgray flex items-center gap-2"
                 title="Learn more about Playbook"
               >
                 <span className="text-xs font-bold text-pb_textgray">Learn More</span>
@@ -286,11 +298,11 @@ const InDevelopmentDashboard = () => {
         </div>
 
         {/* Desktop: Image preview */}
-        <div className="hidden md:block w-full h-full overflow-auto bg-gray-50">
+        <div className="hidden md:block w-full h-full overflow-hidden bg-gray-50">
           <img
             src={designImages[currentTab]}
             alt={`Dashboard ${currentTab} design preview`}
-            className="w-full min-w-[1200px] h-auto object-contain"
+            className="w-full h-auto max-w-full object-contain object-top"
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
@@ -302,7 +314,7 @@ const InDevelopmentDashboard = () => {
               <p>{currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} Design Preview Coming Soon</p>
             </div>
           </div>
-        </div>11
+        </div>
       </div>
       </div>
     </>
@@ -337,6 +349,28 @@ export default function DashboardPage() {
     // Rehydrate the store on mount to ensure we have the latest persisted dummy data
     rehydrate();
   }, [rehydrate]);
+
+  // Dynamic page title based on current state
+  useEffect(() => {
+    const titleMap = {
+      overview: 'Overview',
+      roster: 'Roster', 
+      trades: 'Trades',
+      scouting: 'Scouting',
+      waiver: 'Waiver',
+      trends: 'Trends'
+    };
+    
+    let title = 'Dashboard';
+    
+    if (isAllLeaguesView) {
+      title = 'All Leagues';
+    } else if (currentTab && titleMap[currentTab]) {
+      title = titleMap[currentTab];
+    }
+    
+    document.title = `Playbook Dashboard | ${title}`;
+  }, [currentTab, isAllLeaguesView]);
 
   useEffect(() => {
     if (SHOW_DEBUG_DRAWER) {
@@ -395,7 +429,7 @@ export default function DashboardPage() {
         localStorage.setItem('verificationToastLastShown', now.toString());
       }
     }
-  }, [user, isUserLoading]);
+  }, [user, isUserLoading, showVerificationToast]);
 
   // Debug keybind effect
   useEffect(() => {
@@ -418,7 +452,7 @@ export default function DashboardPage() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []); // Empty dependency array ensures this runs only once
+  }, [showVerificationToast, toggleDebugDrawer]); // Include dependencies
 
   // Debug keybind for toggling loading state
   const [debugLoading, setDebugLoading] = useState(false);

@@ -1,3 +1,4 @@
+import { trackUserAction } from '@/lib/gtag';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { EllipsisVertical } from 'lucide-react';
 
@@ -14,6 +15,9 @@ export default function DashboardTabs() {
   const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
 
   const handleClick = (id) => {
+    // Track the tab click event
+    trackUserAction('dashboard_tab_click', `${id}_tab`);
+    
     setCurrentTab(id);
   };
 
@@ -58,6 +62,9 @@ export function DummyDashboardTabs({ currentTab, onTabClick }) {
 
   const handleClick = (id, enabled) => {
     if (enabled && onTabClick) {
+      // Track the tab click event (development version)
+      trackUserAction('dashboard_tab_click_preview', `${id}_tab`);
+      
       onTabClick(id);
     }
   };
