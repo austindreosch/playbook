@@ -112,13 +112,13 @@ const InDevelopmentDashboard = () => {
             
             {/* Modal Content */}
             <div className="p-8">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-4 justify-center mb-5">
                 <Construction className="h-7 w-7 text-pb_blue" />
                 <h2 className="text-lg md:text-xl font-bold text-pb_darkgray">Dashboard Preview</h2>
               </div>
             
             <div className="space-y-4 mb-6">
-              <p className="text-pb_mddarkgray text-xs md:text-md">
+              <p className="text-pb_mddarkgray text-xs md:text-md pb-3 text-center">
                 Welcome! You're viewing a <strong>design preview</strong> of some of our upcoming dashboard features.
               </p>
               
@@ -286,11 +286,11 @@ const InDevelopmentDashboard = () => {
         </div>
 
         {/* Desktop: Image preview */}
-        <div className="hidden md:block w-full h-full">
+        <div className="hidden md:block w-full h-full overflow-auto bg-gray-50">
           <img
             src={designImages[currentTab]}
             alt={`Dashboard ${currentTab} design preview`}
-            className="w-full h-full object-cover object-top"
+            className="w-full min-w-[1200px] h-auto object-contain"
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
