@@ -8,7 +8,7 @@ const Football = createLucideIcon('football', football);
 const Baseball = createLucideIcon('baseball', baseball);
 
 // Function to get sport icon
-const getSportIcon = (sport, className = "w-5 h-5") => {
+const getSportIcon = (sport, className = "w-icon h-icon mr-2") => {
   const iconClass = className.includes('text-') ? className : `${className} text-pb_darkgray`;
   
   switch (sport?.toLowerCase()) {
@@ -149,17 +149,17 @@ export default function LeagueSelectorButton({ className = "" }) {
             : 'border-pb_lightgray bg-white hover:bg-pb_lightestgray'
         } ${className}`.trim()}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center">
           <div className="hidden xl:inline">
-            {currentLeague ? getSportIcon(currentLeague.leagueDetails?.sport) : <Basketball className="w-5 h-5 text-pb_darkgray" />}
+            {currentLeague ? getSportIcon(currentLeague.leagueDetails?.sport) : <Basketball className="w-icon h-icon mr-2 text-pb_darkgray" />}
           </div>
-          <span className="hidden mdlg:inline text-sm font-semibold text-pb_darkgray mr-2 truncate text-left max-w-[7rem] xl:max-w-[8rem] 2xl:max-w-[13rem] 2xl:w-52">
+          <span className="hidden mdlg:inline text-button font-semibold text-pb_darkgray mr-2 truncate text-left max-w-[7rem] xl:max-w-[8rem] 2xl:max-w-[13rem] 2xl:w-52">
             {displayName}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <ChevronsUpDown className="w-4 h-4 text-pb_darkgray hidden 2xl:inline" />
-          <BookCopy className="w-5 h-5 text-pb_darkgray" />
+          <ChevronsUpDown className="w-icon-sm h-icon-sm text-pb_darkgray hidden 2xl:inline" />
+          <BookCopy className="w-icon h-icon text-pb_darkgray" />
         </div>
       </button>
 

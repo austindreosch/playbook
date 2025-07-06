@@ -13,9 +13,9 @@ export default function LeagueSettingsButton({ className = '' }) {
       <DialogTrigger asChild>
         <button
           onClick={() => setIsOpen(true)}
-          className={`flex items-center justify-center rounded-md border border-pb_lightgray bg-white hover:bg-pb_lightestgray shadow-sm select-none px-3 py-1 ${className}`.trim()}
+          className={`flex items-center justify-center rounded-md border border-pb_lightgray bg-white hover:bg-pb_lightestgray shadow-sm select-none px-2.5 ${className}`.trim()}
         >
-          <Settings2 className="w-5 h-5 text-pb_darkgray" />
+          <Settings2 className="w-icon h-icon text-pb_darkgray" />
         </button>
       </DialogTrigger>
       <DialogContent>

@@ -10,7 +10,7 @@ const ValueSwapButton = ({ className }) => {
   const setTradeValueMode = useDashboardContext((state) => state.setTradeValueMode);
 
   return (
-    <div className={cn("inline-flex h-9 rounded-md shadow-sm", className)}>
+    <div className={cn("inline-flex h-button rounded-md shadow-sm", className)}>
       <ToggleGroup
         type="single"
         value={tradeValueMode}
@@ -26,7 +26,7 @@ const ValueSwapButton = ({ className }) => {
             "data-[state=off]:bg-white data-[state=off]:text-pb_lightgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
           )}
         >
-          <Compass className="h-5 w-5" />
+          <Compass className="w-icon h-icon" />
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="clipboard" 

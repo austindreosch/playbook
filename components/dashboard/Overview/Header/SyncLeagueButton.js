@@ -38,16 +38,16 @@ export default function SyncLeagueButton({ className = '' }) {
     const now = new Date();
     const diffInMinutes = Math.floor((now - date) / (1000 * 60));
     
-    if (diffInMinutes < 1) return '<1m ago';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1) return '<1m';
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
     
     const diffInHours = Math.floor(diffInMinutes / 60);
     // if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-    if (diffInHours < 24) return `${diffInHours}h  ago`;
+    if (diffInHours < 24) return `${diffInHours}h`;
     
     const diffInDays = Math.floor(diffInHours / 24);
     // return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-    return `${diffInDays}d ago`;
+    return `${diffInDays}d`;
   };
 
   const handleSync = async () => {
@@ -135,7 +135,7 @@ export default function SyncLeagueButton({ className = '' }) {
       disabled={isLoading || isSuccess}
       className={`
         flex items-center justify-between rounded-md border shadow-sm select-none 
-        px-3 py-1 transition-colors
+        px-3 transition-colors
         ${
           isLoading
             ? 'bg-gradient-to-r from-pb_green-800 via-pb_green-300 to-pb_green-800 bg-[length:300%_100%] animate-background-pan border-pb_green-700'
@@ -147,22 +147,22 @@ export default function SyncLeagueButton({ className = '' }) {
     >
       <div className="flex items-center">
         {isSuccess ? (
-          <CheckCircle className="w-5 h-5 mr-1.5 text-white animate-pop-bounce-in" />
+          <CheckCircle className="w-icon h-icon mr-1.5 text-white animate-pop-bounce-in" />
         ) : (
           <RefreshCw
-            className={`w-5 h-5 mr-1.5 ${
+            className={`w-icon h-icon mr-1.5 ${
               isLoading ? 'animate-spin-and-pulse text-white' : 'text-pb_darkgray'
             }`}
           />
         )}
       </div>
-      <div className="flex items-center ml-2 w-16 justify-center">
+      <div className="flex items-center ml-1 w-19 justify-center">
         {isSuccess ? (
-          <span className="whitespace-nowrap text-xs text-white animate-fade-in justify-start">Synced!</span>
+          <span className="whitespace-nowrap text-2xs text-white animate-fade-in">Synced!</span>
         ) : (
           <>
-            <Clock className={`w-3 h-3 mr-1 ${isLoading ? 'text-white' : 'text-pb_darkgray'}`} />
-            <span className={`whitespace-nowrap text-xs ${isLoading ? 'text-white' : 'text-pb_darkgray'}`}>
+            <Clock className={`w-icon-xs h-icon-xs mr-1 ${isLoading ? 'text-white' : 'text-pb_midgray'}`} />
+            <span className={`whitespace-nowrap text-xs ${isLoading ? 'text-white' : 'text-pb_midgray'}`}>
               {formatLastSync(lastSyncDate)}
             </span>
           </>

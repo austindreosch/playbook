@@ -120,17 +120,17 @@ export default function RankingsSelectorButton({ className = '' }) {
     <div className="relative" ref={buttonRef}>
       <button
         onClick={handleButtonClick}
-        className={`flex items-center justify-between gap-2 rounded-md border border-pb_lightgray shadow-sm select-none px-3 py-1 hover:bg-pb_lightestgray transition-colors ${className}`.trim()}
+        className={`flex items-center justify-between gap-2 rounded-md border border-pb_lightgray shadow-sm select-none px-3 hover:bg-pb_lightestgray transition-colors ${className}`.trim()}
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-sm font-semibold text-left text-pb_darkgray truncate hidden md:block md:w-44 xl:w-54">
+        <div className="flex items-center min-w-0">
+          <ClipboardList className="w-icon h-icon mr-2 text-pb_darkgray" />
+          <span className="text-button font-semibold text-left text-pb_darkgray truncate hidden md:block md:w-44 xl:w-54">
             {displayName}
           </span>
         </div>
         
         <div className="flex items-center gap-1">
-          <ChevronsUpDown className="w-4 h-4 text-pb_darkgray" />
-          <ClipboardList className="w-5 h-5 text-pb_darkgray" />
+          <ChevronsUpDown className="w-icon-sm h-icon-sm text-pb_darkgray" />
         </div>
       </button>
 
@@ -188,7 +188,7 @@ export default function RankingsSelectorButton({ className = '' }) {
                       : 'hover:bg-pb_lightestgray'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${isUserType ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
+                  <Icon className={`w-icon h-icon ${isUserType ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
                   <div className="flex-grow">
                     <p className="font-semibold">{displayName}</p>
                     <p className="text-xs text-pb_mddarkgray">{detailsText}</p>

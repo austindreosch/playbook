@@ -29,15 +29,15 @@ export default function CurrentLeagueTeamDisplay({ className = '' }) {
     <HoverCard openDelay={200} closeDelay={100}>
       <HoverCardTrigger asChild>
         <div
-          className={`flex items-center gap-2 rounded-md border border-pb_lightgray bg-white shadow-sm px-2 sm:px-3  py-1 select-none cursor-pointer hover:bg-pb_lightestgray transition-colors w-auto md:w-66 lg:w-54 xl:w-62 ${className}`.trim()}
+          className={`flex items-center gap-2 rounded-md border border-pb_lightgray bg-white shadow-sm px-2 sm:px-3 select-none cursor-pointer hover:bg-pb_lightestgray transition-colors w-auto md:w-66 lg:w-54 xl:w-62 ${className}`.trim()}
         >
                       {/* Team name - progressively hidden on smaller screens */}
-            <span className="text-sm font-semibold text-pb_darkgray truncate flex-1 hidden sm:block">
+            <span className="text-button font-semibold text-pb_darkgray truncate flex-1 hidden sm:block">
               {teamName}
             </span>
           
           {/* Icon - always visible, serves as fallback for smallest screens */}
-          <BookUser className="w-5 h-5 text-pb_darkgray shrink-0" />
+          <BookUser className="w-icon h-icon text-pb_darkgray shrink-0" />
         </div>
       </HoverCardTrigger>
       <HoverCardContent className="w-80" align="start" side="bottom">

@@ -12,9 +12,9 @@ export default function DashboardSettingsButton({ className = "" }) {
       <DialogTrigger asChild>
         <button
           onClick={() => setIsOpen(true)}
-          className={`flex items-center px-3 justify-center rounded-md border border-pb_lightgray bg-white hover:bg-pb_lightestgray shadow-sm select-none ${className}`.trim()}
+          className={`flex items-center px-2.5 justify-center rounded-md border border-pb_lightgray bg-white hover:bg-pb_lightestgray shadow-sm select-none ${className}`.trim()}
         >
-          <Settings className="w-5 h-5 text-pb_darkgray" />
+          <Settings className="w-icon h-icon text-pb_darkgray" />
         </button>
       </DialogTrigger>
 

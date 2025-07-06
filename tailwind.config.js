@@ -42,6 +42,9 @@ module.exports = {
   			'1.5': '1.9px'
   		},
   		width: {
+			'icon-xs': '0.8rem',
+			'icon-sm': '0.9rem',
+			'icon': '1.1rem',
   			'50': '12.5rem',
   			'54': '13.5rem',
   			'58': '14.5rem',
@@ -82,8 +85,12 @@ module.exports = {
   			'2.5': '0.625rem',
   			'3.5': '0.875rem',
   			'4.5': '1.125rem',
+			'icon-xs': '0.8rem',
+			'icon-sm': '0.9rem',
+			'icon': '1.1rem',
   			'5.5': '1.375rem',
   			'6.5': '1.625rem',
+			'button': '1.875rem',
   			'7.5': '1.875rem',
   			'8.5': '2.125rem',
   			'9.5': '2.375rem',
@@ -153,6 +160,10 @@ module.exports = {
   			mdlg: '896px'
   		},
   		fontSize: {
+			'xlg': '1.375rem',
+			'md': '1rem',
+  			smd: '.925rem',
+			'button': '.775rem',
   			'2xs': '.650rem',
   			'3xs': '.600rem',
   			'4xs': '.550rem',
@@ -161,8 +172,6 @@ module.exports = {
   			'7xs': '.400rem',
   			'8xs': '.350rem',
   			'9xs': '.300rem',
-  			'md': '1rem',
-  			smd: '.925rem'
   		},
   		fontFamily: {
   			sans: [

@@ -79,15 +79,15 @@ export default function OpponentSelectorButton({ className = '' }) {
         onClick={handleButtonClick}
         className={`flex items-center justify-between gap-2 rounded-md border border-pb_mddarkgray bg-pb_darkgray text-white shadow-sm select-none px-3 py-1 hover:bg-pb_mddarkgray transition-colors ${className}`.trim()}
       >
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-sm font-semibold text-left truncate hidden md:block md:w-44 xl:w-54">
+        <div className="flex items-center min-w-0">
+          <Users className="w-icon h-icon mr-2 text-white" />
+          <span className="text-button font-semibold text-left truncate hidden md:block md:w-44 xl:w-54">
             {displayName}
           </span>
         </div>
         
         <div className="flex items-center gap-1">
-          <ChevronsUpDown className="w-4 h-4" />
-          <Users className="w-5 h-5" />
+          <ChevronsUpDown className="w-icon-sm h-icon-sm text-white" />
         </div>
       </button>
 
@@ -109,7 +109,7 @@ export default function OpponentSelectorButton({ className = '' }) {
                 <div
                   key={index}
                   onClick={() => handleOpponentSelect(team)}
-                  className={`group relative flex cursor-default select-none items-center gap-3 rounded-sm px-3 py-3 m-1 text-sm outline-none transition-colors ${
+                  className={`group relative flex cursor-default select-none items-center gap-3 rounded-sm px-3 py-3 m-1 text-button outline-none transition-colors ${
                     isSelected 
                       ? 'bg-pb_mddarkgray' 
                       : 'hover:bg-pb_mddarkgray'

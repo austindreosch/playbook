@@ -27,8 +27,8 @@ export default function AllLeaguesButton({ className = "" }) {
           : 'border-pb_lightgray bg-white hover:bg-pb_lightestgray'
       } ${className}`.trim()}
     >
-      <Notebook className="w-5 h-5 text-pb_darkgray" />
-      <span className="text-sm font-semibold text-pb_darkgray text-left pr-0.5 hidden xl:inline">All Leagues</span>
+      <Notebook className="w-icon h-icon text-pb_darkgray" />
+      <span className="text-button font-semibold text-pb_darkgray text-left pr-0.5 hidden xl:inline">All Leagues</span>
     </button>
   );
 } 

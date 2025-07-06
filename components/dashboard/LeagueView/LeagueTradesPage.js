@@ -28,29 +28,29 @@ export default function LeagueTradesPage() {
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
-      <div className="grid grid-cols-22 gap-2 w-full items-center pt-2.5  pb-2.5 border-b border-pb_lightgray">
+      <div className="grid grid-cols-22 gap-1.5 w-full items-center pt-1.5  pb-1.5 border-b border-pb_lightgray">
         {/* Left part */}
-        <div className="col-span-5 flex gap-2">
-          <CurrentLeagueTeamDisplay className="h-9 flex-1" />
+        <div className="col-span-5 flex gap-1.5">
+          <CurrentLeagueTeamDisplay className="h-button flex-1" />
         </div>
 
         {/* Middle part */}
         <div className="col-span-12 flex justify-between">
           <div className="truncate pr-3">
-            <CurrentLeagueContext className="h-9" />
+            <CurrentLeagueContext className="h-button" />
           </div>
           <div className="flex justify-end gap-2">
-            <ValueSwapButton className="h-9 flex-shrink-0" />
-            <ScreenshotButton className="h-9" />
-            <ShareLinkButton className="h-9" />
-            <LeagueSettingsButton className="h-9" />
-            <SyncLeagueButton className="h-9" />
+            <ValueSwapButton className="h-button flex-shrink-0" />
+            <ScreenshotButton className="h-button" />
+            <ShareLinkButton className="h-button" />
+            <LeagueSettingsButton className="h-button" />
+            <SyncLeagueButton className="h-button" />
           </div>
         </div>
 
         {/* Right part */}
         <div className="col-span-5">
-          <OpponentSelectorButton className="h-9 w-full" />
+          <OpponentSelectorButton className="h-button w-full" />
         </div>
       </div>
 

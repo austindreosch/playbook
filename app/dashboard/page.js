@@ -485,7 +485,7 @@ export default function DashboardPage() {
         {SHOW_DEBUG_DRAWER && (
           <>
             <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
-              <Bug className="h-4 w-4" />
+              <Bug className="h-icon-sm w-icon-sm" />
             </Button>
             <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
           </>
@@ -501,32 +501,32 @@ export default function DashboardPage() {
       {SHOW_DEBUG_DRAWER && (
         <>
           <Button onClick={toggleDebugDrawer} variant="outline" size="icon" className="fixed top-4 right-4 z-50">
-            <Bug className="h-4 w-4" />
+            <Bug className="h-icon-sm w-icon-sm" />
           </Button>
           <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
         </>
       )}
 
-      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
+      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl pt-2 flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
           {/* Dashboard Tab Selector */}
-          <div className="w-3/5">
+          <div className="w-[65%] lg:w-[55%]">
             <DashboardTabs />
           </div>
 
           {/* Imported League Selector */}
-          <div className="flex gap-2 w-2/5 justify-end pb-2.5">
+          <div className="flex gap-1.5 w-[35%] lg:w-[45%] justify-end items-start self-start">
 
-            <AllLeaguesButton className="h-9" /> {/* New Page View*/}
-            <LeagueSelectorButton className="h-9" /> {/* New Page View*/}
-            <ImportLeagueButton className="h-9" />  {/* New Page View*/}
-            <DashboardSettingsButton className="h-9" />
+            <AllLeaguesButton className="h-button" /> {/* New Page View*/}
+            <LeagueSelectorButton className="h-button" /> {/* New Page View*/}
+            <ImportLeagueButton className="h-button" />  {/* New Page View*/}
+            <DashboardSettingsButton className="h-button" />
           </div>
 
           {/* Selectors Divider */}
-          <div className="absolute bottom-0 right-0 w-2/5">
-            <div className="h-[1px] w-full bg-pb_lightgray"></div>
+          <div className="absolute bottom-0 right-0 w-[35%] lg:w-[45%]">
+            <div className="h-[1px] w-full bg-pb_lightergray"></div>
           </div>
         </div>
 

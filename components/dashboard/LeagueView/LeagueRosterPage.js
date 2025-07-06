@@ -20,23 +20,23 @@ export default function LeagueRosterPage() {
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
-      <div className="flex w-full pt-2.5">
+      <div className="flex w-full pt-1.5">
         <div className="flex w-full justify-between ">
-          <div className="flex gap-2">
-            <CurrentLeagueTeamDisplay className="h-9" />
-            <CurrentLeagueContext className="h-9" />
+          <div className="flex gap-1.5">
+            <CurrentLeagueTeamDisplay className="h-button" />
+            <CurrentLeagueContext className="h-button" />
           </div>
-          <div className="flex gap-2">
-            {/* <EditWidgetsButton className="h-9" /> */}
-            <LeagueSettingsButton className="h-9" />
-            <SyncLeagueButton className="h-9" />
-            <RankingsSelectorButton className="h-9" />
+          <div className="flex gap-1.5">
+            {/* <EditWidgetsButton className="h-button" /> */}
+            <LeagueSettingsButton className="h-button" />
+            <SyncLeagueButton className="h-button" />
+            <RankingsSelectorButton className="h-button" />
           </div>
         </div>
       </div>
 
       {/* Divider */}
-      <div className="w-full py-2.5">
+      <div className="w-full py-1.5">
         <div className="h-[1px] w-full bg-pb_lightestgray"></div>
       </div>
 

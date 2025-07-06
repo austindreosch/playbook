@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
           </Suspense>
           <AOSInitializer />
           <ConditionalNavBar />
-            <main className="mt-12 md:mt-16 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
+            <main className="mt-10 md:mt-12 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
             {children}
           </main>
           <Toaster />
