@@ -70,6 +70,21 @@ export default function RankingsPage() {
   const { user, isLoading: authLoading } = useUser();
   const router = useRouter();
 
+  // Dynamic page title based on current state
+  useEffect(() => {
+    let title = 'Rankings';
+    
+    if (selectedSport) {
+      title = `${selectedSport}`;
+    }
+    
+    if (activeRanking?.title) {
+      title = `${selectedSport}`;
+    }
+    
+    document.title = `Playbook Rankings | ${title}`;
+  }, [selectedSport,]);
+
   // -- Store Hooks --
   const {
     activeRanking,

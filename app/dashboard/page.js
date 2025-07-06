@@ -55,6 +55,18 @@ const SHOW_DEBUG_DRAWER = process.env.NODE_ENV !== 'production' || process.env.N
 const InDevelopmentDashboard = () => {
   const [currentTab, setCurrentTab] = useState('overview');
   const [showModal, setShowModal] = useState(true);
+
+  // Dynamic page title for development dashboard
+  useEffect(() => {
+    const titleMap = {
+      overview: 'Overview',
+      roster: 'Roster', 
+      trades: 'Trades'
+    };
+    
+    const title = titleMap[currentTab] || 'Dashboard';
+    document.title = `Playbook Dashboard | ${title}`;
+  }, [currentTab]);
   
   // Dashboard design images mapped to tabs
   const designImages = {
@@ -290,7 +302,7 @@ const InDevelopmentDashboard = () => {
           <img
             src={designImages[currentTab]}
             alt={`Dashboard ${currentTab} design preview`}
-            className="w-full h-full object-cover object-top"
+            className="w-full h-auto max-w-full object-contain object-top"
             onError={(e) => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
@@ -302,7 +314,7 @@ const InDevelopmentDashboard = () => {
               <p>{currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} Design Preview Coming Soon</p>
             </div>
           </div>
-        </div>11
+        </div>
       </div>
       </div>
     </>
@@ -337,6 +349,28 @@ export default function DashboardPage() {
     // Rehydrate the store on mount to ensure we have the latest persisted dummy data
     rehydrate();
   }, [rehydrate]);
+
+  // Dynamic page title based on current state
+  useEffect(() => {
+    const titleMap = {
+      overview: 'Overview',
+      roster: 'Roster', 
+      trades: 'Trades',
+      scouting: 'Scouting',
+      waiver: 'Waiver',
+      trends: 'Trends'
+    };
+    
+    let title = 'Dashboard';
+    
+    if (isAllLeaguesView) {
+      title = 'All Leagues';
+    } else if (currentTab && titleMap[currentTab]) {
+      title = titleMap[currentTab];
+    }
+    
+    document.title = `Playbook Dashboard | ${title}`;
+  }, [currentTab, isAllLeaguesView]);
 
   useEffect(() => {
     if (SHOW_DEBUG_DRAWER) {

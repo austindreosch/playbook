@@ -1,3 +1,7 @@
+export const metadata = {
+  title: 'About Us'
+}
+
 import React from 'react';
 
 const FeatureCard = ({ title, description, imageUrl }) => (

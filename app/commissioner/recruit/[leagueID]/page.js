@@ -126,11 +126,6 @@ export default function CommissionerRecruitPage() {
   };
 
   useEffect(() => {
-    // Set document title with slight delay to override layout
-    setTimeout(() => {
-      document.title = 'Playbook | Recruitment Hub';
-    }, 100);
-    
     // Fetch league data from dummy database
     const fetchLeagueData = async () => {
       try {
@@ -140,13 +135,6 @@ export default function CommissionerRecruitPage() {
         }
         const data = await response.json();
         setLeagueData(data);
-        
-        // Update title with league name once loaded
-        if (data?.leagueName) {
-          setTimeout(() => {
-            document.title = `Playbook | Recruit - ${data.leagueName}`;
-          }, 100);
-        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -156,6 +144,15 @@ export default function CommissionerRecruitPage() {
 
     fetchLeagueData();
   }, [leagueID]);
+
+  // Dynamic page title based on league data
+  useEffect(() => {
+    if (leagueData?.leagueName) {
+      document.title = `Playbook Recruitment Hub | ${leagueData.leagueName}`;
+    } else {
+      document.title = 'Playbook Recruit | League';
+    }
+  }, [leagueData?.leagueName]);
 
   if (loading) {
     return (
