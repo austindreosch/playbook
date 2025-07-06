@@ -1,9 +1,10 @@
 'use client';
 
-import { baseball, basketball, football } from "@lucide/lab";
+import { baseball, basketball, football, lunchBox } from "@lucide/lab";
 const Basketball = createLucideIcon('basketball', basketball);
 const Football = createLucideIcon('football', football);
 const Baseball = createLucideIcon('baseball', baseball); 
+const Lunchbox = createLucideIcon('lunchbox', lunchBox);
 
 import FantraxIcon from '@/components/icons/FantraxIcon';
 import LeagueSafeIcon from '@/components/icons/LeagueSafeIcon';
@@ -15,10 +16,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertCircle, AlertTriangle, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, Boxes, Calendar, ChartBarStacked, ChartCandlestick, Clock, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, Mail, Mailbox, Medal, MessageSquare, NotebookTabs, Pyramid, Settings, Shield, ShieldUser, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlignHorizontalDistributeCenter, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, BookOpenText, Boxes, Calendar, ChartBarStacked, ChartCandlestick, ClipboardList, Clock, ContactRound, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, LucideClipboardSignature, Mail, Mailbox, MailPlus, Medal, Megaphone, MessageSquare, NotebookTabs, Pyramid, Scale, Settings, Settings2, Shield, ShieldHalf, ShieldUser, SquareArrowOutUpRight, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users, Wrench } from 'lucide-react';
 
 
 
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -46,17 +48,81 @@ export default function CommissionerRecruitPage() {
 
   // Function to get position pill styling  
   const getPositionPill = (position) => {
-    const pos = position.split('/')[0]; // Get first position if multiple
-    const colorMap = {
-      'PG': 'bg-pb_pastelblue text-pb_darkgray',
-      'SG': 'bg-pb_pastelgreen text-pb_darkgray', 
-      'SF': 'bg-pb_pastelorange text-pb_darkgray',
-      'PF': 'bg-pb_pastelpurple text-pb_darkgray',
-      'C': 'bg-pb_pastelred text-pb_darkgray'
-    };
+    const positions = position.split(',').filter(pos => pos.trim() !== 'Flx');
     
-    const colorClass = colorMap[pos] || 'bg-pb_pastelstone text-pb_darkgray';
-    return `${colorClass} px-2 py-1 rounded-sm text-xs font-medium w-10 text-center shrink-0`;
+    if (positions.length === 2) {
+      // Dual position - create split background using inline styles
+      return 'relative px-2 py-1 rounded-sm text-xs font-medium text-center shrink-0 text-pb_darkgray overflow-hidden w-11 h-6';
+    } else {
+      // Single position
+      const colorMap = {
+        'PG': 'bg-pb_pastelblue text-pb_darkgray',
+        'SG': 'bg-pb_pastelgreen text-pb_darkgray', 
+        'SF': 'bg-pb_pastelorange text-pb_darkgray',
+        'PF': 'bg-pb_pastelpurple text-pb_darkgray',
+        'C': 'bg-pb_pastelred text-pb_darkgray',
+        'G': 'bg-pb_pastelblue text-pb_darkgray',
+        'F': 'bg-pb_pastelpurple text-pb_darkgray'
+      };
+      
+      const colorClass = colorMap[positions[0]] || 'bg-pb_pastelstone text-pb_darkgray';
+      return `${colorClass} px-2 py-1 rounded-sm text-xs font-medium text-center shrink-0 w-11`;
+    }
+  };
+
+  const getPositionStyle = (position) => {
+    const positions = position.split(',').filter(pos => pos.trim() !== 'Flx');
+    
+    if (positions.length === 2) {
+      const colorMap = {
+        'PG': '#79addc',  // pb_pastelblue
+        'SG': '#b8dca7',  // pb_pastelgreen
+        'SF': '#f5d491',  // pb_pastelorange
+        'PF': '#ababef',  // pb_pastelpurple
+        'C': '#f17e92',   // pb_pastelred
+        'G': '#79addc',   // pb_pastelblue
+        'F': '#ababef'    // pb_pastelpurple
+      };
+      
+      const color1 = colorMap[positions[0]] || '#d6d3c2';
+      const color2 = colorMap[positions[1]] || '#d6d3c2';
+      
+      return {
+        background: `linear-gradient(90deg, ${color1} 50%, ${color2} 50%)`
+      };
+    }
+    
+    return {};
+  };
+
+  const getDisplayPositions = (position) => {
+    // Split by comma and filter out "Flx"
+    const positions = position.split(',').filter(pos => pos.trim() !== 'Flx');
+    return positions.join('/');
+  };
+
+  const getDraftPickColor = (pick) => {
+    // Extract year from draft pick (e.g., "2025 1st" -> "2025")
+    const year = pick.match(/(\d{4})/)?.[1];
+    if (!year) return 'bg-pb_green/10 text-pb_greendisabled border-pb_green/30';
+    
+    // Dynamic color assignment based on year - completely year agnostic
+    const colors = [
+      'bg-pb_green/10 text-pb_greendisabled border-pb_green/30',
+      'bg-pb_blue/10 text-pb_blue border-pb_blue/30',
+      'bg-pb_orangedisabled/10 text-pb_orangedisabled border-pb_orangedisabled/30',
+      'bg-pb_red/10 text-pb_red border-pb_red/30',
+      'bg-pb_purple/10 text-pb_purple border-pb_purple/30',
+    ];
+    
+    // Use year modulo to cycle through colors
+    const colorIndex = parseInt(year) % colors.length;
+    return colors[colorIndex];
+  };
+
+  const isFirstRoundPick = (pick) => {
+    // Check if it's a first round pick (contains "1st" or matches "1.XX" pattern)
+    return pick.includes('1st') || /1\.\d+/.test(pick);
   };
 
   useEffect(() => {
@@ -113,199 +179,202 @@ export default function CommissionerRecruitPage() {
     );
   }
 
-  const parseRulebook = (rulebook) => {
-    // Return your exact rulebook text
-    return [
-      {
-        title: "Format",
-        content: `**Dynasty**
-The league will be true dynasty format. Players will never decay based on team tenure or be force dropped from a roster. Following the start-up draft, all subsequent yearly drafts will be rookie-only drafts.
 
-**12 Teams** PG, SG, SF, PF, C, G, F, UTIL (3), BENCH (3), IR (3)
-Each team will have a roster of up to 21 players, three being Injury Reserve slots only available to sufficiently injured players. We will also have five Minor League slots for younger players to be stashed. To be eligible for Minor League you must have played less than 175 games. Only 10 players may be active on any given day (as players on the bench do not add to team scoring totals), and owners will be free to change which players are active each day prior to the tip-off time of the opening game of the day. 
-
-All further League rule decisions for either rule changes or rules not listed on these pages will be subject to a league-wide vote.
-`
-      },
-      {
-        title: "Matchups",
-        content: `**Head to Head - Each Category** FG%, FT%, 3PM, PTS, REB, AST, STL, BLK, TO
-We play Head to Head - Each Category (Weekly) with the standard 9-cat setup. 
-For each weekly scoring period, team totals in all 9 categories are accumulated and a win, loss or tie is credited in each category based on the matchup results (i.e. 5-3-1 in a 9 category league). 
-
-There will be a hard cap limit of 40 games played for each scoring period. You will maintain all stats from games played on the day you reach the cap, regardless if it exceeds the cap slightly. These matchup results are added over the course of the season and are totaled as season standings. The teams in the top 6 places in the season standings at the end of the season will enter the playoffs. (See the Playoffs section for more.)
-
-Rosters will lock individually at the time of each player’s respective game times.
-`
-      },
-
-      {
-        title: "Prize Pool",
-        content: `A **$75 league buy-in fee** will be collected from all members prior to the 2019 start-up draft. Once all buy-in fees have been paid, both the draft and the league will start. 
-
-To ensure competitive integrity and longevity in the dynasty format, the league buy-in fee **for all subsequent seasons will be collected ahead of schedule**. Any owner who fails to submit their buy-in fee for the following season by the deadline will forfeit their place in the league and will not be able to collect any prize money, even for the current season.
-
-**This makes the prize pool $900.** 
-1st place will receive 550$. Second place will receive 275$. 3rd place will receive 75$.
-`
-      },
-      {
-        title: "Trades",
-        content: `Trades must abide by all owner conduct rules. One of the key responsibilities of each owner as part of **your commitment to this league is the competitive integrity** of trading. Please be diligent and cautious when making trades, as it critically affects the experiences of all other owners in the league. Trading and its effects on competitive integrity will be each owner’s responsibility. In 99% of situations, you will be the one accountable for your own actions, and will be required to live with them along with the rest of us.
-
-**The league will be commissioner veto only**, with an agenda of being as hands off as possible. In extreme situations only, if a trade is deemed by the commissioner to be excessively self-destructive or nonsensical, it will be discussed and likely reversed. 
-
-In any unusual situation whereby a team (through technological error) completes an accidental trade that can be explained reasonably and is reported in league chat or to the commissioner directly within 5-10 minutes of the trade occurring can be reversed.
-
-Please double and triple check your trades before and after they are executed, to be able to catch any honest mistakes and message the commissioner in time to take advantage of this forgiveness period. 
-
-All other trades will be upheld. 
-`
-      },
-      {
-        title: "Owner Conduct",
-        content: `**No collusion.** Fraternizing with, or manipulating, another player in private to achieve an outcome that could disrupt another team's fair chances of success and/or tip the competitive balance in your favor.
-
-**No sandbagging.** You must always be engaged, playing and setting coherent lineups, regardless of the strength of your team. Season &quot;tanking&quot; is allowed only through trading. 
-
-**Set your lineups.** The absolute minimum requirement for playing in the league is making sure your roster is properly placed and off the bench for every matchup. It's your responsibility to make sure that your match-ups' competitive integrity isn't spoiled by your ineptness or indifference towards this essential duty.
-
-**No roster self-destructing.** Any malicious or nonsensical player drops or trades reasonably diagnosed as reckless and indicative of a player choosing to disregard the competitive integrity of the league will be undone and if needed, the offending team will be held frozen until a replacement owner can be found.`
-      },
-      {
-        title: "Draft",
-        content: `The draft will commence some time after the July 1st beginning of free agency, once all major free agents have signed and settled. The start-up draft will be a snake draft, and all subsequent drafts will be linear draft format, much like the real NBA draft. (1st pick will also get 13th pick.)
-
-Draft position for all future rookie drafts will be selected based on previous season standings, with one exception. The 12th, 11th, and 10th place teams from the previous season will be placed in a random **draft lottery** to decide who gets the 1st, 2nd, and 3rd pick in the draft. Every pick following will be assigned in reverse order of the previous year's standings. 9th place will get the 4th pick, 8th place will get the 5th pick, and so on. The draft lottery results will be decided by a random choice of 3 mixed ping pong balls assigned to each of the 3 worst standing teams from the previous season. First ball selection will have the 1st pick, the second ball selection will have the 2nd pick, and the leftover team gets the 3rd pick.
-
-After the draft, all players not drafted will enter into the Waiver Wire system. Every player on the waiver wire will be available to any owner to make a claim on for 1 day. The winner of the waiver claim will be decided by Waiver Wire Order, and any players not claimed with the waiver wire period will become a Free Agent. All Free Agents are first come first serve, and do not affect Waiver Order. If you successfully claim a player from the waiver wire, your Waiver Order will drop to last priority.
-`
-      },
-      {
-        title: "Playoffs",
-        content: `6 teams will enter the playoffs after the regular season matchups, these teams are decided by league standings at the end of the season.
-
-First round, **seeds (1) and (2) will both get a bye**. Two matchups will be played between seeds (3) v.s. (6) and seeds (4) v.s. (5).
-
-Second round, the playoff bracket will be reseeded, placing seed (1) against the **lowest available seed** to make it out of the first round. Seed (2) will be placed against the other first round victor.
-
-Third and final round, the two winners of the second round of matchups will face off to decide who gets 1st place and 2nd place prizes - the losers will face off in a third place matchup.
-
-First and second round matchups will have a scoring period of one week each. And **the third round prize matchup will have a scoring period of two weeks**.
-
-(To be clear, there is no preset option on Fantrax to set up two week playoffs, but I will be able to customize playoffs and create the same matchup for two consecutive weeks, and the totals will be added together to crown the 1st prize winner.)`
-      },
-    ];
-  };
-
-  const ruleSections = parseRulebook(leagueData?.fullRulebook);
+  const ruleSections = leagueData?.rulebook ? Object.entries(leagueData.rulebook).map(([title, content]) => ({ title, content })) : [];
 
   return (
-      <div className="">
-        <div className="container mx-auto w-full pt-5">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-4">
-          <Card className="px-6 h-10 flex items-center bg-white border border-lightergray shadow-sm">
-            <div className="flex-1 flex items-center text-center gap-3">
-              <Book className="w-4 h-4 text-pb_darkgray" />
-              <h1 className="text-lg font-bold text-pb_darkgray">
-                The League
-              </h1>
-              <span className="text-md   text-pb_textgray">
-                (2025-2026)
-              </span>
+      <div className="pb-12">
+        <div className="container mx-auto w-full pt-5 pb-5">
+                {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 gap-2">
+          {/* Mobile Layout */}
+          <div className="flex flex-col gap-2 lg:hidden">
+            {/* Row 1: Recruitment Hub + Available Spots */}
+            <div className="flex items-center gap-2">
+              <Card className="px-3 h-8 sm:h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg flex-1">
+                <div className="flex items-center gap-2">
+                  <Megaphone className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-sm font-bold text-pb_darkgray">
+                    Recruitment Hub
+                  </span>
+                </div>
+              </Card>
+              <Card className="px-2 sm:px-3 h-8 sm:h-10 flex items-center bg-pb_green border border-pb_green-900 hover:bg-pb_greenhover shadow-sm rounded-lg flex-1">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium text-xs sm:text-sm">{leagueData?.availableTeams.length} Spots Available</span>
+                </div>
+              </Card>
             </div>
-          </Card>
-          
-          {/* Key Details Cards */}
-          <div className="flex flex-wrap gap-2 ml-4">
-             {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-2">
-                <Basketball className="w-4 h-4 text-pb_darkgray" /> 
-                <span className="text-pb_darkgray font-medium text-sm">NBA</span>
-              </div>
-            </Card>  */}
             
-            {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-2">
-                <LandPlot className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">Dynasty</span>
-              </div>
-            </Card> */}
-            
-            {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-2">
-                <Pyramid className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">Categories</span>
-              </div>
-            </Card> */}
-            
-            {/* <Card className="px-3 h-10 flex items-center bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-2">
-                <Swords className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">H2H</span>
-              </div>
-            </Card>  */}
-            
-            <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm">
-              <div className="flex items-center gap-2">
-                <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">Fantrax</span>
+            {/* Row 2: League Info (always on one line) */}
+            <Card className="px-3 py-2 sm:py-2 h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+              <div className="flex items-center gap-2 sm:gap-4 w-full justify-between">
+                <div className="flex items-center gap-2">
+                  <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-pb_darkgray font-medium text-xs sm:text-sm">{leagueData?.settings?.platform}</span>
+                </div>
+                <div className="h-4 w-px bg-pb_lightgray"></div>
+                <div className="flex items-center gap-3 flex-1">
+                  <h1 className="text-sm sm:text-base font-semibold text-pb_darkgray">
+                    {leagueData?.leagueName}
+                  </h1>
+                  <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
+                    ID: f1zwi0wum3y5041b
+                  </span>
+                </div>
               </div>
             </Card>
             
+            {/* Row 3: Discord + LeagueSafe */}
+            <div className="flex gap-2">
+              <Card 
+                className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors flex-1"
+                onClick={() => window.open(leagueData?.settings?.discordLink, '_blank')}
+              >
+                <div className="flex items-center gap-2">
+                  <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
+                  <span className="text-pb_darkgray font-medium text-xs">Discord</span>
+                  <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                </div>
+              </Card>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Card className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors flex-1">
+                    <div className="flex items-center gap-2">
+                      <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
+                      <span className="text-pb_darkgray font-medium text-xs">LeagueSafe</span>
+                      <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                    </div>
+                  </Card>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-pb_darkgray">
+                      <AlertTriangle className="h-5 w-5 text-pb_orange" />
+                      Verify With Commissioner
+                    </DialogTitle>
+                    <DialogDescription className="text-pb_textgray">
+                      Please reach out to the league commissioner and confirm arrangements before making any payments.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-center mt-4">
+                    <Button 
+                      onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
+                      className="bg-pb_blue hover:bg-pb_bluehover text-white"
+                    >
+                      Continue to LeagueSafe
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex lg:items-center gap-2">
+            <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+              <div className="flex items-center gap-2">
+                <Megaphone className="w-5 h-5 mr-1 text-pb_darkgray" />
+                <span className="text-md font-bold text-pb_darkgray">
+                  Recruitment Hub
+                </span>
+              </div>
+            </Card>
+            <Card className="px-3 py-2 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <FantraxIcon className="w-4 h-4 mr-1 text-pb_darkgray" />
+                  <span className="text-pb_darkgray font-medium text-sm">{leagueData?.settings?.platform}</span>
+                </div>
+                <div className="h-4 w-px bg-pb_lightgray"></div>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-sm font-bold text-pb_darkgray">
+                    {leagueData?.leagueName}
+                  </h1>
+                  <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
+                    ID: f1zwi0wum3y5041b
+                  </span>
+                </div>
+              </div>
+            </Card>
+          </div>
+            
+          {/* Desktop Right Side */}
+          <div className="hidden lg:flex gap-2">
             <Card 
-              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => window.open('https://discord.gg/your-invite-link', '_blank')}
+              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors"
+              onClick={() => window.open(leagueData?.settings?.discordLink, '_blank')}
             >
               <div className="flex items-center gap-2">
                 <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">Discord Group Chat</span>
-                <ExternalLink className="w-3 h-3 text-pb_darkgray ml-1" />
+                <span className="text-pb_darkgray font-medium text-sm">Discord</span>
+                <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
               </div>
             </Card>
             
-            <Card 
-              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm cursor-pointer hover:bg-gray-50 transition-colors"
-              onClick={() => window.open('https://leaguesafe.com/your-league-link', '_blank')}
-            >
-              <div className="flex items-center gap-2">
-                <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">LeagueSafe Page</span>
-                <ExternalLink className="w-3 h-3 text-pb_darkgray ml-1" />
-              </div>
-            </Card>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors">
+                  <div className="flex items-center gap-2">
+                    <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
+                    <span className="text-pb_darkgray font-medium text-sm">LeagueSafe</span>
+                    <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                  </div>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-pb_darkgray">
+                    <AlertTriangle className="h-5 w-5 text-pb_orange" />
+                    Verify With Commissioner
+                  </DialogTitle>
+                  <DialogDescription className="text-pb_textgray">
+                    Please reach out to the league commissioner and confirm arrangements before making any payments.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex justify-center mt-4">
+                  <Button 
+                    onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
+                    className="bg-pb_blue hover:bg-pb_bluehover text-white"
+                  >
+                    Continue to LeagueSafe
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             
-            <Card className="px-3 h-10 flex items-center bg-pb_green border border-pb_green shadow-sm">
+            <Card className="px-3 h-10 flex items-center bg-pb_green border border-pb_green-900 hover:bg-pb_greenhover shadow-sm rounded-lg">
               <div className="flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-white" />
-                <span className="text-white font-medium text-sm">{leagueData?.availableSpots || 2} Spots Available</span>
+                <span className="text-white font-medium text-sm">{leagueData?.availableTeams.length} Spots Available</span>
               </div>
             </Card>
           </div>
         </div>
-
-                 <div className="grid grid-cols-1 lg:grid-cols-16 gap-2">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-16 gap-2">
            {/* Left Column - League Details & Commissioner Info */}
            <div className="lg:col-span-3 space-y-2">
                          {/* League Information */}
-             <Card className="shadow-md border border-lightergray bg-white">
-               <CardHeader className="pb-3">
+             <Card className="shadow-md border border-lightergray bg-white rounded-lg">
+               <CardHeader className="p-4">
                  <CardTitle className="flex items-center gap-2 text-base font-bold text-pb_darkgray">
-                   <NotebookTabs className="h-5 w-5 " />
+                   <Settings2 className="h-5 w-5 mr-1" />
                    League Details
                  </CardTitle>
                </CardHeader>
-               <Separator className="mt-[3px] mb-3 w-[92%] mx-auto" />
+               {/* <Separator className="mt-[3px] mb-3 w-[92%] mx-auto" /> */}
 
-               <CardContent className="pt-0 space-y-2">
+               <CardContent className="p-4 pt-0 space-y-2">
                  {/* Format & Scoring */}
                  <div className="grid grid-cols-2 gap-2">
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
                      <Basketball className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Sport</span>
-                       <span className="font-bold text-pb_darkgray text-xs">NBA</span>
+                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.sport}</span>
                      </div>
                    </div>
                    
@@ -313,7 +382,7 @@ First and second round matchups will have a scoring period of one week each. And
                      <Binoculars className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Format</span>
-                       <span className="font-bold text-pb_darkgray text-xs">Dynasty</span>
+                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.format}</span>
                      </div>
                    </div>
                    
@@ -321,7 +390,7 @@ First and second round matchups will have a scoring period of one week each. And
                     <Boxes className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Scoring</span>
-                       <span className="font-bold text-pb_darkgray text-xs">Categories</span>
+                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.scoring}</span>
                      </div>
                    </div>
                    
@@ -337,11 +406,11 @@ First and second round matchups will have a scoring period of one week each. And
                  {/* Key Numbers */}
                  <div className="grid grid-cols-2 gap-2">
                    <div className="text-center py-1 rounded-lg border">
-                     <div className="text-lg font-bold text-pb_darkgray">12</div>
+                     <div className="text-lg font-bold text-pb_darkgray">{leagueData?.totalTeams}</div>
                      <div className="text-xs text-pb_textlightgray font-medium">Teams</div>
                    </div>
                    <div className="text-center py-1 rounded-lg border">
-                     <div className="text-lg font-bold text-pb_darkgray">6</div>
+                     <div className="text-lg font-bold text-pb_darkgray">{leagueData?.settings?.playoffs?.teams}</div>
                      <div className="text-xs text-pb_textlightgray font-medium">Playoff Spots</div>
                    </div>
                  </div>
@@ -350,19 +419,19 @@ First and second round matchups will have a scoring period of one week each. And
                  <div className="space-y-2">
                    <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg">
                      <span className="text-pb_textlightgray text-xs font-medium">League Fee</span>
-                     <span className="font-bold text-pb_darkgray text-xs">$75</span>
+                     <span className="font-bold text-pb_darkgray text-xs">{leagueData?.settings?.entryFee}</span>
                    </div>
                    <TooltipProvider>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                           <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg cursor-help">
                             <span className="text-pb_textlightgray text-xs font-medium">Advanced Payments</span>
-                            <span className="font-bold text-pb_darkgray text-xs">1YR</span>
+                            <span className="font-bold text-pb_darkgray text-xs">{leagueData?.settings?.advancedPayments} YR</span>
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="max-w-xs text-sm">
-                            Owners are always paid 1 year in advance, not just for the current season. Owners are not eligible collect prize money without being current. This ensures league continuity and competitive integrity.
+                            Owners are always paid {leagueData?.settings?.advancedPayments} year{leagueData?.settings?.advancedPayments !== '1' ? 's' : ''} in advance, not just for the current season. Owners are not eligible collect prize money without being current. This ensures league continuity and competitive integrity.
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -373,64 +442,85 @@ First and second round matchups will have a scoring period of one week each. And
                  <div className="pt-2">
                    <h4 className="text-sm font-bold text-pb_darkgray mb-3 flex items-center gap-2">
                      <Users className="h-4 w-4 text-pb_darkgray" />
-                     Roster Structure
+                     Roster Structure ({(() => {
+                       const rosterStructure = leagueData?.settings?.roster?.structure;
+                       if (!rosterStructure) return 0;
+                       return rosterStructure.split(',').length;
+                     })()})
                    </h4>
                    <div className="flex flex-wrap gap-1">
-                     {/* Active Roster */}
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">G</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">G</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">G</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">F</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">F</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">F</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">C</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">FLX</div>
-                     <div className="bg-white border border-lightergray rounded py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">FLX</div>
-                     <div className="bg-white border border-lightergray rounded  py-1 text-center text-xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">FLX</div>
-                     
-                                           {/* Bench */}
-                      <div className="bg-pb_green/20 border border-pb_green/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">BENCH</div>
-                      <div className="bg-pb_green/20 border border-pb_green/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">BENCH</div>
-                      <div className="bg-pb_green/20 border border-pb_green/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">BENCH</div>
-                      
-                      {/* IR */}
-                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
-                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
-                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
-                      <div className="bg-pb_red/20 border border-pb_red/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">IR</div>
-                      
-                      {/* Minors */}
-                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
-                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
-                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
-                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
-                      <div className="bg-pb_blue/10 border border-pb_blue/30 rounded py-1 text-center text-2xs font-medium text-pb_midgray flex-none w-[calc(20%-0.2rem)]">MINOR</div>
+                     {/* Dynamic Roster Structure */}
+                     {(() => {
+                       const getRosterSlotStyle = (position) => {
+                         const baseClasses = "rounded py-1 text-center font-medium flex-none w-[calc(20%-0.2rem)]";
+                         
+                         switch (position?.toUpperCase()) {
+                           case 'BENCH':
+                             return `${baseClasses} text-2xs text-pb_textlightestgray border border-lightergray`;
+                           case 'IR':
+                             return `${baseClasses} text-2xs text-pb_textlightestgray border border-lightergray`;
+                           case 'MINOR':
+                             return `${baseClasses} text-2xs text-pb_textlightestgray border border-lightergray`;
+                           default:
+                             // Active roster positions (G, F, C, FLX, etc.) - use position-specific colors
+                             const colorMap = {
+                               'PG': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
+                               'SG': 'bg-pb_pastelgreen text-pb_darkgray border-pb_pastelgreen/30', 
+                               'SF': 'bg-pb_pastelorange text-pb_darkgray border-pb_pastelorange/30',
+                               'PF': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
+                               'C': 'bg-pb_pastelred text-pb_darkgray border-pb_pastelred/30',
+                               'G': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
+                               'F': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
+                               'FLX': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30'
+                             };
+                             
+                             const colorClass = colorMap[position?.toUpperCase()] || 'bg-white border-lightergray text-pb_midgray';
+                             return `${baseClasses} ${colorClass} text-xs`;
+                         }
+                       };
+                       
+                        const rosterStructure = leagueData?.settings?.roster?.structure;
+                        
+                        if (!rosterStructure) {
+                          return <div className="text-xs text-pb_textgray">Loading roster structure...</div>;
+                        }
+                        
+                        const positions = rosterStructure.split(',').map(pos => pos.trim());
+                        
+                        return positions.map((position, index) => (
+                          <div key={index} className={getRosterSlotStyle(position)}>
+                            {position}
+                          </div>
+                        ));
+                     })()}
                    </div>
                  </div>
+                 
+                 
                </CardContent>
              </Card>
 
                          {/* Commissioner Information */}
-             <Card className="shadow-md">
-               <CardHeader className="pb-0">
-                 <CardTitle className="flex items-center pb-2 text-md">
-                   <MessageSquare className="h-6 w-6 pr-1 text-pb_blue" />
+             <Card className="shadow-md rounded-lg">
+               <CardHeader className="p-4 pb-0">
+                 <CardTitle className="flex items-center pb-2 text-sm">
+                   <MessageSquare className="h-4 w-4 mr-2 text-pb_darkgray" />
                    Commissioner
                  </CardTitle>
                </CardHeader>
-               <CardContent className="pt-0">
+               <CardContent className="p-4 pt-0">
                  
                  {/* Contact Methods */}
                  <div className="space-y-2">
                    <div className="flex items-center gap-3 py-2 px-3 bg-gray-50 border border-gray-200 rounded-lg">
-                     <Mailbox className="w-4 h-4 text-pb_darkgray" />
+                     <Mail className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col flex-1">
                        <span className="text-pb_darkgray text-xs font-medium">Email</span>
-                       <span className="text-pb_textgray text-xs">austindreosch@gmail.com</span>
+                       <span className="text-pb_textgray text-xs">{leagueData?.commissioner?.email}</span>
                      </div>
                      <button 
-                       onClick={() => window.open('mailto:austindreosch@gmail.com', '_blank')}
-                       className="p-1 hover:bg-gray-200 rounded transition-colors"
+                       onClick={() => window.open(`mailto:${leagueData?.commissioner?.email}`, '_blank')}
+                       className="p-1 hover:bg-pb_backgroundgray rounded transition-colors"
                      >
                        <ArrowRight className="w-3 h-3 text-pb_darkgray" />
                      </button>
@@ -439,10 +529,10 @@ First and second round matchups will have a scoring period of one week each. And
                      <DiscordIcon className="w-4 h-4 text-indigo-500" />
                      <div className="flex flex-col flex-1">
                        <span className="text-indigo-700 text-xs font-medium">Discord</span>
-                       <span className="text-indigo-600 text-xs">austindreosch</span>
+                       <span className="text-indigo-600 text-xs">{leagueData?.commissioner?.discord}</span>
                      </div>
                      <button 
-                       onClick={() => window.open('https://discord.com/users/austindreosch', '_blank')}
+                       onClick={() => window.open(`https://discord.com/users/${leagueData?.commissioner?.discord}`, '_blank')}
                        className="p-1 hover:bg-indigo-200 rounded transition-colors"
                      >
                        <ArrowRight className="w-3 h-3 text-indigo-600" />
@@ -452,10 +542,10 @@ First and second round matchups will have a scoring period of one week each. And
                      <RedditIcon className="w-4 h-4 text-orange-500" />
                      <div className="flex flex-col flex-1">
                        <span className="text-orange-700 text-xs font-medium">Reddit</span>
-                       <span className="text-orange-600 text-xs">lookalive9</span>
+                       <span className="text-orange-600 text-xs">{leagueData?.commissioner?.reddit}</span>
                      </div>
                      <button 
-                       onClick={() => window.open('https://reddit.com/user/lookalive9', '_blank')}
+                       onClick={() => window.open(`https://reddit.com/user/${leagueData?.commissioner?.reddit}`, '_blank')}
                        className="p-1 hover:bg-orange-200 rounded transition-colors"
                      >
                        <ArrowRight className="w-3 h-3 text-orange-600" />
@@ -470,8 +560,8 @@ First and second round matchups will have a scoring period of one week each. And
            {/* Middle Column - Available Teams */}
            <div className="lg:col-span-5 space-y-2">
                          {/* Available Teams - Vertical Tabs with Compact Rows */}
-             <Card className="shadow-md">
-               <CardHeader className="pb-2">
+             <Card className="shadow-md rounded-lg" style={{ '--card-height': '70vh' }}>
+               <CardHeader className="p-4">
                  <div className="flex items-center justify-between">
                    <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
                      <UserCheck className="h-6 w-6 pr-1 " />
@@ -497,141 +587,137 @@ First and second round matchups will have a scoring period of one week each. And
                            All League Teams
                          </DialogTitle>
                                                 <DialogDescription>
-                         View all {leagueData?.totalTeams || 12} teams in the league.
+                         View all {leagueData?.totalTeams} teams in the league.
                        </DialogDescription>
                        </DialogHeader>
                        
                        <ScrollArea className="h-[70vh] w-full">
-                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1">
-                           {/* Available Teams First */}
-                           {leagueData?.availableTeams?.map((team) => (
-                             <Card key={team.teamId} className="h-fit border-pb_blue bg-pb_blue/5">
-                               <CardHeader className="pb-2">
-                                 <div className="flex items-center justify-between">
-                                   <CardTitle className="text-sm font-semibold text-pb_darkgray truncate">
-                                     {team.teamName}
-                                   </CardTitle>
-                                   <Badge className="bg-pb_blue text-white text-xs px-2 py-1 font-medium">
-                                     AVAILABLE
-                                   </Badge>
-                                 </div>
-                               </CardHeader>
-                               <CardContent className="pt-0 space-y-3">
-                                 {/* Full Roster */}
-                                 <div>
-                                   <div className="space-y-1">
-                                     {team.currentRoster?.map((player, i) => (
-                                       <div key={i} className="flex items-center justify-between py-1 px-2 bg-white rounded text-xs border border-pb_blue/20">
-                                         <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
-                                         <div className="flex items-center gap-2 shrink-0">
-                                           <span className="text-pb_textgray w-8 text-center">{player.team}</span>
-                                           <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
-                                         </div>
-                                       </div>
-                                     ))}
+                         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 p-1 space-y-4">
+                           {/* All Teams - with availability status */}
+                           {leagueData?.allTeams?.map((team) => {
+                             const isAvailable = leagueData?.availableTeams?.some(availableTeam => availableTeam.teamId === team.teamId);
+                             return (
+                               <Card key={team.teamId} className={`break-inside-avoid mb-4 w-full ${isAvailable ? 'border-pb_blue bg-pb_blue/5' : 'border-gray-200'}`}>
+                                 <CardHeader className="pb-4">
+                                   <div className="flex items-center justify-between">
+                                     <CardTitle className="text-sm font-semibold text-pb_darkgray truncate">
+                                       {team.teamName}
+                                     </CardTitle>
+                                     {isAvailable && (
+                                       <Badge className="bg-pb_blue text-white text-xs px-2 py-1 font-medium">
+                                         AVAILABLE
+                                       </Badge>
+                                     )}
                                    </div>
-                                 </div>
-                                 
-                                 
-                               </CardContent>
-                             </Card>
-                           ))}
-                           
-                           {/* Filled Teams */}
-                           {leagueData?.allTeams?.map((team) => (
-                             <Card key={team.teamId} className="h-fit border-gray-200">
-                               <CardHeader className="pb-2">
-                                 <CardTitle className="text-sm font-semibold text-pb_darkgray truncate">
-                                   {team.teamName}
-                                 </CardTitle>
-                               </CardHeader>
-                               <CardContent className="pt-0 space-y-3">
-                                 {/* Full Roster */}
-                                 <div>
-                                   <div className="space-y-1">
-                                     {team.currentRoster?.map((player, i) => (
-                                       <div key={i} className="flex items-center justify-between py-1 px-2 bg-pb_backgroundgray rounded text-xs border border-pb_lightergray">
-                                         <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
-                                         <div className="flex items-center gap-2 shrink-0">
-                                           <span className="text-pb_textgray w-8 text-center">{player.team}</span>
-                                           <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
+                                 </CardHeader>
+                                 <CardContent className="p-4 pt-0 space-y-3">
+                                   {/* Full Roster */}
+                                   <div>
+                                     <div className="space-y-1">
+                                       {team.currentRoster?.map((player, i) => (
+                                         <div key={i} className={`flex items-center justify-between py-1 px-2 rounded text-xs border ${isAvailable ? 'bg-white border-pb_blue/20' : 'bg-pb_backgroundgray border-pb_lightergray'}`}>
+                                           <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
+                                           <div className="flex items-center gap-2 shrink-0">
+                                             <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                             {(() => {
+                                               const positions = player.position.split(',').filter(pos => pos.trim() !== 'Flx');
+                                               if (positions.length === 2) {
+                                                 return (
+                                                   <span className={getPositionPill(player.position)} style={getPositionStyle(player.position)}>
+                                                     <span className="absolute inset-y-0 left-0 w-1/2 flex items-center justify-center">{positions[0]}</span>
+                                                     <span className="absolute inset-y-0 right-0 w-1/2 flex items-center justify-center">{positions[1]}</span>
+                                                   </span>
+                                                 );
+                                               } else {
+                                                 return <span className={getPositionPill(player.position)} style={getPositionStyle(player.position)}>{getDisplayPositions(player.position)}</span>;
+                                               }
+                                             })()}
+                                           </div>
                                          </div>
-                                       </div>
-                                     ))}
+                                       ))}
+                                     </div>
                                    </div>
-                                 </div>
-                                 
-                               </CardContent>
-                             </Card>
-                           ))}
+                                   
+                                   {/* Draft Picks */}
+                                   {team.draftPicks && team.draftPicks.length > 0 && (
+                                     <div className="">
+                                       <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
+                                                                                <div className="flex flex-wrap gap-1 justify-start">
+                                           {team.draftPicks.map((pick, index) => (
+                                             <span key={index} className={`${getDraftPickColor(pick)} border px-2 py-1 rounded text-xs ${isFirstRoundPick(pick) ? 'font-bold' : 'font-medium'} flex items-center`}>
+                                             <ShieldUser className="h-4 w-4 mr-1" />{pick}
+                                           </span>
+                                           ))}
+                                         </div>
+                                     </div>
+                                   )}
+                                   
+                                 </CardContent>
+                               </Card>
+                             );
+                           })}
                          </div>
                        </ScrollArea>
                      </DialogContent>
                    </Dialog>
                  </div>
                </CardHeader>
-               <Separator className="mt-0.5 mb-3 w-[95%] mx-auto" />
-               <CardContent className="pt-0">
+               {/* <Separator className="mt-0.5 mb-3 w-[95%] mx-auto" /> */}
+               <CardContent className="p-4 pt-0 lg:h-[var(--card-height)]">
                  {leagueData?.availableTeams?.length > 0 ? (
-                   <Tabs defaultValue="team-0" className="w-full">
-                     {/* Horizontal Tab List */}
-                     <TabsList className="grid w-full grid-cols-2 mb-4 border border-lightestgray bg-pb_backgroundgray">
-                       {leagueData?.availableTeams?.map((team, index) => (
-                         <TabsTrigger 
-                           key={team.teamId} 
-                           value={`team-${index}`}
-                           className="data-[state=active]:bg-pb_green data-[state=active]:text-white text-xs h-full"
-                         >
-                           {team.teamName}
-                         </TabsTrigger>
-                       ))}
-                     </TabsList>
+                   <div className="lg:h-full lg:overflow-hidden">
+                     <Tabs defaultValue="team-0" className="w-full lg:h-full">
+                       {/* Horizontal Tab List */}
+                       <TabsList className={`grid w-full mb-4 border border-lightestgray bg-pb_backgroundgray ${
+                         leagueData?.availableTeams?.length === 1 ? 'grid-cols-1' :
+                         leagueData?.availableTeams?.length === 2 ? 'grid-cols-2' :
+                         leagueData?.availableTeams?.length === 3 ? 'grid-cols-3' :
+                         leagueData?.availableTeams?.length === 4 ? 'grid-cols-4' :
+                         leagueData?.availableTeams?.length >= 5 ? 'grid-cols-5' : 'grid-cols-3'
+                       }`}>
+                         {leagueData?.availableTeams?.map((team, index) => (
+                           <TabsTrigger 
+                             key={team.teamId} 
+                             value={`team-${index}`}
+                             className="data-[state=active]:bg-pb_green data-[state=active]:text-white text-xs h-full"
+                           >
+                             {team.teamName}
+                           </TabsTrigger>
+                         ))}
+                       </TabsList>
 
-                     {/* Tab Content */}
-                     <div className="w-full overflow-y-auto">
-                       {leagueData?.availableTeams?.map((team, index) => (
-                         <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0">
-                           <div className="space-y-1">
+                       {/* Tab Content */}
+                       <div className="flex flex-col pr-2 lg:h-[calc(100%-58px)]">
+                         {leagueData?.availableTeams?.map((team, index) => (
+                           <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0 flex flex-col lg:h-full space-y-4">
                              {/* Team Header */}
-                             <div className="flex items-center justify-between pb-2 px-0 mb-2.5">
+                             <div className="flex items-center justify-between px-0">
                                {/* <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3> */}
                                <div className="flex gap-2">
-                                 {team.teamStrengths?.slice(0, 2).map((strength, i) => {
+                                 {team.teamStrengths?.slice(0, 3).map((strength, i) => {
                                    const getStrengthIcon = (strengthName) => {
                                      switch (strengthName?.toLowerCase()) {
-                                       case 'rebounding':
-                                         return <Target className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'scoring':
-                                         return <TrendingUp className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'assists':
-                                         return <ArrowRightLeft className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'defense':
-                                         return <Shield className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'blocks':
-                                         return <Grid2X2X className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'steals':
-                                         return <Eye className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'three-pointers':
-                                       case '3-pointers':
-                                         return <Binoculars className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'free throws':
-                                         return <Goal className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'field goals':
-                                         return <Star className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'youth':
                                        case 'young core':
-                                         return <Users className="h-3 w-3 mr-1 text-pb_blue" />;
-                                       case 'veteran leadership':
-                                         return <Trophy className="h-3 w-3 mr-1 text-pb_blue" />;
+                                         return <Binoculars className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                       case 'veteran core':
+                                         return <ShieldHalf className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                       case 'balanced':
+                                         return <Scale className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                       case 'previous champion x3':
+                                         return <Trophy className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                       case 'flexible':
+                                         return <AlignHorizontalDistributeCenter className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                       case 'rebuilding':
+                                         return <Wrench className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
                                        case 'depth':
-                                         return <Boxes className="h-3 w-3 mr-1 text-pb_blue" />;
+                                         return <Boxes className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
                                        default:
-                                         return <Star className="h-3 w-3 mr-1 text-pb_blue" />;
+                                         return <Star className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
                                      }
                                    };
                                    
                                    return (
-                                     <Badge key={i} className="bg-white text-pb_darkgray border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md">
+                                     <Badge key={i} className="bg-white text-pb_darkgray border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md hover:bg-pb_backgroundgray transition-colors">
                                        {getStrengthIcon(strength)}
                                        {strength}
                                      </Badge>
@@ -640,31 +726,79 @@ First and second round matchups will have a scoring period of one week each. And
                                </div>
                              </div>
 
-                                                                                        {/* Current Roster - Enhanced */}
-                               <div>
-                                 <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner">
-                                   <div className="space-y-1">
-                                     {team.currentRoster?.map((player, i) => (
-                                       <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors">
-                                         <div className="flex-1 min-w-0">
-                                           <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
-                                         </div>
-                                         <div className="flex items-center gap-2 shrink-0 text-xs">
-                                           <span className="text-pb_textgray w-8 text-center">{player.team}</span>
-                                           <span className={getPositionPill(player.position)}>{player.position.split('/')[0]}</span>
-                                         </div>
+                             {/* Current Roster - Enhanced with Scrolling */}
+                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner flex-1 lg:overflow-hidden">
+                               <div 
+                                 className="lg:h-full lg:overflow-y-auto"
+                                 style={{
+                                   scrollbarWidth: 'thin',
+                                   scrollbarColor: '#d1d5db transparent'
+                                 }}
+                               >
+                                 <style jsx>{`
+                                   @media (min-width: 1024px) {
+                                     div::-webkit-scrollbar {
+                                       width: 6px;
+                                     }
+                                     div::-webkit-scrollbar-track {
+                                       background: transparent;
+                                     }
+                                     div::-webkit-scrollbar-thumb {
+                                       background-color: #d1d5db;
+                                       border-radius: 3px;
+                                     }
+                                     div::-webkit-scrollbar-thumb:hover {
+                                       background-color: #9ca3af;
+                                     }
+                                   }
+                                 `}</style>
+                                 <div className="space-y-1">
+                                   {team.currentRoster?.map((player, i) => (
+                                     <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-pb_backgroundgray transition-colors">
+                                       <div className="flex-1 min-w-0">
+                                         <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
                                        </div>
-                                     ))}
-                                   </div>
+                                       <div className="flex items-center gap-2 shrink-0 text-xs">
+                                         <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                         {(() => {
+                                           const positions = player.position.split(',').filter(pos => pos.trim() !== 'Flx');
+                                           if (positions.length === 2) {
+                                             return (
+                                               <span className={getPositionPill(player.position)} style={getPositionStyle(player.position)}>
+                                                 <span className="absolute inset-y-0 left-0 w-1/2 flex items-center justify-center">{positions[0]}</span>
+                                                 <span className="absolute inset-y-0 right-0 w-1/2 flex items-center justify-center">{positions[1]}</span>
+                                               </span>
+                                             );
+                                           } else {
+                                             return <span className={getPositionPill(player.position)} style={getPositionStyle(player.position)}>{getDisplayPositions(player.position)}</span>;
+                                           }
+                                         })()}
+                                       </div>
+                                     </div>
+                                   ))}
                                  </div>
                                </div>
+                             </div>
 
+                             {/* Draft Picks - Always Visible */}
+                             {team.draftPicks && team.draftPicks.length > 0 && (
+                               <div className="flex-shrink-0 mt-4">
+                                 <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
+                                                                    <div className="flex flex-wrap gap-1 justify-start">
+                                     {team.draftPicks.map((pick, index) => (
+                                           <span key={index} className={`${getDraftPickColor(pick)} border px-3 py-1 rounded text-xs ${isFirstRoundPick(pick) ? 'font-bold' : 'font-medium'} flex items-center`}>
+                                           <ShieldUser className="h-4 w-4 mr-1" />{pick}
+                                         </span>
+                                     ))}
+                                   </div>
+                               </div>
+                             )}
 
-                           </div>
-                         </TabsContent>
-                       ))}
-                     </div>
-                   </Tabs>
+                           </TabsContent>
+                         ))}
+                       </div>
+                     </Tabs>
+                   </div>
                  ) : (
                    <div className="flex items-center justify-center py-8">
                      <p className="text-pb_textgray">No available teams information loaded.</p>
@@ -674,92 +808,99 @@ First and second round matchups will have a scoring period of one week each. And
              </Card>
            </div>
 
-           {/* Right Column - League Rules */}
+                      {/* Right Column - League Rules */}
            <div className="lg:col-span-8 space-y-2">
              {/* League Rules - Left-Justified Tabs Display */}
-             <Card className="shadow-md">
-               <CardHeader className="pb-2">
-                 <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
-                   <FileText className="h-6 w-6 pr-1" />
-                   Rulebook
-                 </CardTitle>
+             <Card className="shadow-md rounded-lg" style={{ '--card-height': '70vh' }}>
+               <CardHeader className="p-4">
+                 <div className="flex items-center justify-between">
+                   <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
+                     <FileText className="h-6 w-6 pr-1" />
+                     Rulebook
+                   </CardTitle>
+                   <div className="h-7"></div>
+                 </div>
                </CardHeader>
-               <Separator className="mt-[7px] mb-3 w-[95%] mx-auto" />
-               <CardContent className="pt-0">
+               {/* <Separator className="mt-[7px] mb-3 w-[95%] mx-auto" /> */}
+               <CardContent className="p-4 pt-0 lg:h-[var(--card-height)]">
                  {ruleSections.length > 0 ? (
-                   <Tabs defaultValue="rule-0" className="w-full" orientation="horizontal">
-                     <div className="flex h-[600px]">
-                       {/* Left Sidebar with Tabs */}
-                       <div className="w-40 border-r border-gray-200">
-                         <TabsList className="flex flex-col h-full w-full p-0 pr-1 bg-transparent space-y-1 items-start justify-start">
-                           {ruleSections.map((section, index) => {
-                             const getIcon = (title) => {
-                               switch (title) {
-                                 case 'Format':
-                                   return <AlignLeft className="h-4 w-4" />;
-                                 case 'Scoring System':
-                                   return <Target className="h-4 w-4" />;
-                                 case 'Prize Pool':
-                                   return <Medal className="h-4 w-4" />;
-                                 case 'Owner Conduct':
-                                   return <Handshake className="h-4 w-4" />;
-                                 case 'Trades':
-                                   return <ArrowRightLeft className="h-4 w-4" />;
-                                 case 'Draft':
-                                   return <ShieldUser className="h-4 w-4" />;
-                                 case 'Playoffs':
-                                   return <Goal className="h-4 w-4" />;
-                                case 'Matchups':
-                                  return <Swords className="h-4 w-4" />;
-                                 default:
-                                   return <FileText className="h-4 w-4" />;
-                               }
-                             };
+                   <div className="lg:h-full lg:overflow-hidden">
+                                            <Tabs defaultValue="rule-0" className="w-full lg:h-full" orientation="horizontal">
+                         <div className="flex lg:h-full">
+                           {/* Left Sidebar with Tabs */}
+                         <div className="w-20 lg:w-40 border-r border-gray-200 lg:h-full">
+                           <TabsList className="flex flex-col lg:h-full w-full p-0 pr-1 bg-transparent space-y-1 items-start justify-start">
+                             {ruleSections.map((section, index) => {
+                               const getIcon = (title) => {
+                                 switch (title) {
+                                   case 'Format':
+                                     return <AlignLeft className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   case 'Scoring System':
+                                     return <Target className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   case 'Prize Pool':
+                                     return <Medal className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   case 'Conduct':
+                                     return <Handshake className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   case 'Trades':
+                                     return <ArrowRightLeft className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   case 'Draft':
+                                     return <ShieldUser className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                    case 'Playoffs':
+                                      return <Goal className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                  case 'Waiver':
+                                    return <ContactRound className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                  case 'Matchups':
+                                    return <Swords className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                   default:
+                                     return <FileText className="h-3 w-3 lg:h-4 lg:w-4" />;
+                                 }
+                               };
 
-                             return (
-                               <TabsTrigger
+                               return (
+                                 <TabsTrigger
+                                   key={index}
+                                   value={`rule-${index}`}
+                                   className="w-full justify-start text-left px-2 py-2 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium text-pb_textgray hover:text-pb_blue data-[state=active]:hover:bg-pb_bluehover data-[state=active]:hover:text-white hover:bg-pb_blue/10 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
+                                 >
+                                   <div className="flex flex-col lg:flex-row items-center lg:gap-2 w-full justify-start">
+                                     {getIcon(section.title)}
+                                     <span className="truncate text-left text-xs lg:text-sm leading-tight mt-1 lg:mt-0">{section.title}</span>
+                                   </div>
+                                 </TabsTrigger>
+                               );
+                             })}
+                           </TabsList>
+                         </div>
+
+                         {/* Right Content Area */}
+                         <div className="flex-1 lg:h-full lg:overflow-hidden">
+                           <ScrollArea className="lg:h-full">
+                             {ruleSections.map((section, index) => (
+                               <TabsContent
                                  key={index}
                                  value={`rule-${index}`}
-                                 className="w-full justify-start text-left px-3 py-2 text-sm font-medium text-pb_textgray hover:text-pb_blue data-[state=active]:hover:bg-pb_bluehover data-[state=active]:hover:text-white hover:bg-pb_blue/10 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
+                                 className="mt-0 px-2 lg:px-4 focus-visible:outline-none lg:h-full"
                                >
-                                 <div className="flex items-center gap-2 w-full justify-start">
-                                   {getIcon(section.title)}
-                                   <span className="truncate text-left">{section.title}</span>
+                                 <div className="space-y-3 lg:space-y-4">
+                                   <h2 className="text-sm lg:text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
+                                     {section.title}
+                                   </h2>
+                                   <div className="prose prose-sm max-w-none">
+                                     <div 
+                                       className="whitespace-pre-wrap text-xs lg:text-sm text-pb_darkgray leading-relaxed"
+                                       dangerouslySetInnerHTML={{
+                                         __html: section.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-pb_blue">$1</strong>')
+                                       }}
+                                     />
+                                   </div>
                                  </div>
-                               </TabsTrigger>
-                             );
-                           })}
-                         </TabsList>
+                               </TabsContent>
+                             ))}
+                           </ScrollArea>
+                         </div>
                        </div>
-
-                       {/* Right Content Area */}
-                       <div className="flex-1 overflow-hidden">
-                         <ScrollArea className="h-full">
-                           {ruleSections.map((section, index) => (
-                             <TabsContent
-                               key={index}
-                               value={`rule-${index}`}
-                               className="mt-0 px-4 h-full focus-visible:outline-none"
-                             >
-                               <div className="space-y-4">
-                                 <h2 className="text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
-                                   {section.title}
-                                 </h2>
-                                 <div className="prose prose-sm max-w-none">
-                                   <div 
-                                     className="whitespace-pre-wrap text-sm text-pb_darkgray leading-relaxed"
-                                     dangerouslySetInnerHTML={{
-                                       __html: section.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-pb_blue">$1</strong>')
-                                     }}
-                                   />
-                                 </div>
-                               </div>
-                             </TabsContent>
-                           ))}
-                         </ScrollArea>
-                       </div>
-                     </div>
-                   </Tabs>
+                     </Tabs>
+                   </div>
                  ) : (
                    <div className="p-4 text-center">
                      <FileText className="h-6 w-6 text-pb_lightgray mx-auto mb-2" />
@@ -770,7 +911,62 @@ First and second round matchups will have a scoring period of one week each. And
              </Card>
            </div>
         </div>
+      
+        {/* Footer - App Advertisement */}
+        <footer className="lg:fixed lg:bottom-0 lg:left-0 lg:right-0 border-t border-pb_lightgray py-2 lg:z-10 bg-white">
+          <div className="container mx-auto px-4 lg:px-0">
+            <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-between text-xs gap-3 lg:gap-0">
+              <div className="flex flex-col items-center lg:flex-row lg:items-center gap-3 lg:gap-0">
+                <div className="flex flex-col items-center lg:flex-row lg:items-center mt-4 lg:mt-0">
+                  <div className="flex items-center mb-1 lg:mb-0">
+                    <Image src="/logo-tpfull.png" alt="Playbook Fantasy Sports" width={18} height={18} className="mr-2" />
+                    <p className="text-pb_textgray text-sm font-bold">
+                      Playbook
+                    </p>
+                  </div>
+                  <p className="text-pb_textgray text-center lg:text-left lg:ml-2">
+                    The AI-powered fantasy sports command center that learns your leagues and strategy.
+                  </p>
+                </div>
+
+                <div className="h-4.5 w-px bg-pb_lightgray mx-3 ml-5 hidden lg:block"></div>
+
+                <div className="flex items-center gap-1">
+                  <Button 
+                    size="sm"
+                    variant="ghost"
+                    className="text-pb_blue hover:bg-pb_blue hover:text-white px-2 py-1 h-6 text-xs"
+                    onClick={() => window.open('/login', '_blank')}
+                  >
+                    <LucideClipboardSignature className="w-4 h-4" />
+                    Join the Waitlist
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="ghost"
+                    className="text-pb_textgray hover:bg-pb_lightergray  px-2 py-1 h-6 text-xs"
+                    onClick={() => window.open('/about', '_blank')}
+                  >
+                    <BookOpenText className="w-4 h-4" />
+                    Learn More
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <Lunchbox className="h-4 w-4 text-pb_textgray mb-[2px] mr-1" />
+                <p className="text-pb_textgray font-bold">
+                  Commissioner Tools              
+                </p>
+                <p className="text-pb_textgray ml-[3px]">
+                  are in early development.              
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </footer>
+        </div>
       </div>
-    </div>
-  );
+  );  
 } 
