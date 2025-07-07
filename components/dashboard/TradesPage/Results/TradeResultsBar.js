@@ -88,7 +88,7 @@ export default function TradeResultsBar() {
     <div className="w-full mx-auto">
       {/* Main bar container */}
       <div className="relative rounded-lg overflow-hidden shadow-sm">
-        <div className="flex h-12 relative">
+        <div className="flex h-9 relative">
           {/* Players Received (Green) - always on the left */}
           <div 
             style={{ width: `${winningPercentage}%` }} 
@@ -96,8 +96,8 @@ export default function TradeResultsBar() {
           >
             {isWinningTrade && (
               <div className="flex items-center gap-2 z-10">
-                <ThumbsUp className="h-5 w-5" />
-                <span className="font-bold text-lg">{`${Math.round(winningPercentage)}%`}</span>
+                <ThumbsUp className="h-icon w-icon" />
+                <span className="font-bold text-sm">{`${Math.round(winningPercentage)}%`}</span>
               </div>
             )}
           </div>
@@ -109,7 +109,7 @@ export default function TradeResultsBar() {
             {!isWinningTrade && (
               <div className="flex items-center gap-2 z-10">
                 <span className="font-bold text-lg">{`${Math.round(winningPercentage)}%`}</span>
-                <ThumbsDown className="h-5 w-5" />
+                <ThumbsDown className="h-icon w-icon" />
               </div>
             )}
           </div>
@@ -117,11 +117,11 @@ export default function TradeResultsBar() {
       </div>
 
       {/* Player name labels */}
-      <div className="flex w-full mt-2 items-center">
+      <div className="flex w-full mt-1.5 items-center">
         {/* Adjustment Value Label (Left side) */}
         {valueAdjustment > 0 && receivedFewerPlayers && (
           <div
-            className={`text-sm font-semibold text-center text-pb_greendisabled`}
+            className={`text-2xs font-semibold text-center leading-none text-pb_greendisabled`}
             style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
           >
             +
@@ -131,7 +131,7 @@ export default function TradeResultsBar() {
         {playersReceived.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${receivedColor}disabled`}
+            className={`text-2xs font-semibold text-center truncate px-1 leading-none text-pb_greendisabled/80`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
@@ -142,7 +142,7 @@ export default function TradeResultsBar() {
         {playersSent.map((player) => (
           <div
             key={player.id}
-            className={`text-xs font-semibold text-center truncate px-1 text-${sentColor}disabled`}
+            className={`text-2xs font-semibold text-center truncate px-1 leading-none text-${sentColor}disabled/80`}
             style={{ width: `${(player.value / totalVisualValue) * 100}%` }}
           >
             {player.name.split(' ').pop().toUpperCase()}
@@ -151,7 +151,7 @@ export default function TradeResultsBar() {
         {/* Adjustment Value Label (Right side) */}
         {valueAdjustment > 0 && !receivedFewerPlayers && (
           <div
-            className={`text-xs font-semibold text-center text-pb_reddisabled`}
+            className={`text-sm leading-none text-center text-pb_reddisabled/80`}
             style={{ width: `${(valueAdjustment / totalVisualValue) * 100}%` }}
           >
             +
@@ -160,7 +160,7 @@ export default function TradeResultsBar() {
       </div>
 
       {/* Bottom thin line indicator */}
-      <div className="flex h-2 relative w-full items-center mb-8">
+      <div className="flex h-2 relative w-full items-center mb-7">
         {visualSegments.map((segment, index) => (
           <div
             key={segment.id}
@@ -183,7 +183,7 @@ export default function TradeResultsBar() {
             transform: 'translateX(-50%)'
           }}
         >
-          <span className={`mt-2 inline-block font-bold text-xl text-${isWinningTrade ? receivedColor : sentColor}`}>
+          <span className={`mt-2 inline-block font-bold text-lg leading-none text-${isWinningTrade ? receivedColor : sentColor}`}>
             {finalValueMargin >= 0 ? '+' : ''}{finalValueMargin.toLocaleString()}
           </span>
         </div>

@@ -12,17 +12,17 @@ export default function TradeControlsPanel() {
   const [tradeAggressiveness, setTradeAggressiveness] = useState("respectful");
 
   return (
-    <div className="grid grid-cols-[1fr_auto] items-center w-full gap-2 flex-shrink-0 h-full">
+    <div className="grid grid-cols-[1fr_auto] items-center w-full gap-1.5 flex-shrink-0 h-full">
       <div className="relative flex items-center h-full col-start-1">
-        <Button className="bg-pb_blue hover:bg-pb_bluehover text-white font-bold py-1 px-3.5 pr-4.5 rounded-l-md rounded-r-none flex items-center justify-center gap-2 text-sm h-full">
-          <View className="h-5 w-5" />
-          <span className="ml-0.5">Find Smart Trade</span>
+        <Button className="h-full bg-pb_blue hover:bg-pb_bluehover text-white font-bold py-1 px-3.5 pr-4.5 rounded-l-md rounded-r-none flex items-center justify-center gap-2">
+          <View className="h-icon w-icon" />
+          <span className="text-button ml-0.5">Find Smart Trade</span>
         </Button>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="bg-pb_blue hover:bg-pb_bluehover text-white h-full px-3 rounded-r-md rounded-l-none border-l-2 border-white/20">
-              <Settings className="h-5 w-5" />
+            <Button className="h-full bg-pb_blue hover:bg-pb_bluehover text-white px-3 rounded-r-md rounded-l-none border-l-2 border-white/20">
+              <Settings className="h-icon w-icon" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 
@@ -124,23 +124,23 @@ export default function TradeControlsPanel() {
         </DropdownMenu>
         
       </div>
-
-      <div className="flex items-center gap-2 h-full col-start-2">
-        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <Save className="w-4 h-4 text-pb_darkgray" />
-          <span className="text-sm font-medium text-pb_darkgray">Save</span>
+      
+      <div className="flex items-center gap-1.5 h-full col-start-2">
+        <button className="h-full flex items-center rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray">
+          <Save className="w-icon h-icon mr-2 text-pb_darkgray" />
+          <span className="text-button font-semibold text-pb_darkgray leading-none">Save</span>
         </button>
-        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <CopyPlus className="w-4 h-4 text-pb_darkgray" />
-          <span className="text-sm font-medium text-pb_darkgray">Copy</span>
+        <button className="h-full flex items-center  rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray">
+          <CopyPlus className="w-icon h-icon mr-2 text-pb_darkgray" />
+          <span className="text-button font-semibold text-pb_darkgray leading-none">Copy</span>
         </button>
-        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <Trash2 className="w-4 h-4 text-pb_darkgray" />
-          <span className="text-sm font-medium text-pb_darkgray">Clear</span>
+        <button className="h-full flex items-center  rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray">
+          <Trash2 className="w-icon h-icon mr-2 text-pb_darkgray" />
+          <span className="text-button font-semibold text-pb_darkgray leading-none">Clear</span>
         </button>
-        <button className="flex items-center gap-2 rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray h-full">
-          <History className="w-4 h-4 text-pb_darkgray" />
-          <span className="text-sm font-medium text-pb_darkgray">Trade History</span>
+        <button className="h-full flex items-center rounded-md border shadow-sm select-none px-3 transition-colors border-pb_lightgray bg-white hover:bg-pb_lightestgray">
+          <History className="w-icon h-icon mr-2 text-pb_darkgray" />
+          <span className="text-button font-semibold text-pb_darkgray leading-none">Trade History</span>
         </button>
       </div>
     </div>

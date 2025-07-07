@@ -62,25 +62,23 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 px-3 pt-2">
-          <div className="space-y-4 mb-4">
+        <div className="col-span-12 px-3 pt-2 h-full">
+          <div className="space-y-1.5 mb-1.5">
             <TradeResultsBlock />
             <TradeImpactBar />
-            <div className="grid grid-cols-[7fr_3fr] gap-1">
+            <div className="grid grid-cols-[7fr_3fr] gap-1.5 h-30">
                 <TradeOutcome />
                 <TradeHistoricalView />
             </div>
             <Separator className="bg-pb_lightergray"/>
           </div>
-          <div className="">
+          <div className="h-full">
             <TradeCalculatorBlock /> 
-            {/* <Separator className="bg-pb_lightergray my-3"/> */}
-            {/* <TradeHistoryBlock /> */}
           </div>
         </div>
 
         {/* Right Column */}
-        <div className="col-span-5 border-l border-pb_lightgray">
+        <div className="col-span-5 border-l border-pb_textlightergray">
           <OpponentTeamBlock className="" />
         </div>
       </div>

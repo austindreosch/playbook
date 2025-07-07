@@ -77,12 +77,12 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
     : "bg-gray-600 text-white";
 
   return (
-    <Card className={`flex-1 rounded-lg border-1.5 shadow-inner flex flex-col min-h-[400px] min-w-0 ${containerClasses}`}>
+    <Card className={`flex-1 rounded-lg border-1.5 shadow-inner flex flex-col h-full min-w-0 ${containerClasses}`}>
       <CardHeader className={`flex flex-row items-center justify-between p-2 px-3.5 mb-2 flex-shrink-0 rounded-t-lg ${headerClasses}`}>
         <CardTitle className={`text-xs font-bold uppercase tracking-wider ${titleClasses}`}>{type}</CardTitle>
         <div className={`text-lg font-bold ${totalClasses}`}>{total.toLocaleString()}</div>
       </CardHeader>
-      <CardContent className="p-2 overflow-y-auto">
+      <CardContent className="p-2 flex-1 overflow-y-auto">
         <div className="flex flex-col gap-1">
           {players.map((player, index) => (
             isOpponent ? (
@@ -120,10 +120,10 @@ export default function TradeCalculatorBlock() {
 
   return (
   <div className="w-full flex flex-col space-y-4">
-    <div className="flex h-9">
+    <div className="flex h-button">
       <TradeControlsPanel />
     </div>
-    <div className="flex-1 rounded-lg flex justify-center gap-4">
+         <div className="flex-1 h-full flex justify-center gap-4">
       <TradePanel type="YOU SEND" players={sendPlayers} total={sendTotal} valueAdjustment={sendAdjustment} />
       <TradePanel type="YOU RECEIVE" players={receivePlayers} total={receiveTotal} valueAdjustment={receiveAdjustment} />
     </div>

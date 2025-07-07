@@ -36,12 +36,12 @@ export default function OpponentTeamBlock({ className }) {
 
   return (
     <div className={`flex h-full w-full flex-col gap-[2px] bg-pb_lightgray rounded-br-lg ${className}`}>
-      <div className="flex flex-col gap-[1px]">
+      <div className="flex flex-col gap-[1px] flex-shrink-0">
         <TeamOverviewBar team={opponentTeam} isOpponent={true} />
         <TeamPositionStrengthBar team={opponentTeam} isOpponent={true} />
         {CategoryStrengthComponent && <CategoryStrengthComponent team={opponentTeam} isOpponent={true} />}
       </div>
-      <div className="flex-grow min-h-0">
+      <div className="flex-1 min-h-0">
         <TradeRosterBlock team={opponentTeam} isOpponent={true} />
       </div>
     </div>
