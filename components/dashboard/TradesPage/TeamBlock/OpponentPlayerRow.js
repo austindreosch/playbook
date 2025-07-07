@@ -23,7 +23,7 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
   // Dark theme styling for opponent
   const containerClasses = "bg-pb_darkgray border border-pb_textgray";
   const textClasses = "text-white";
-  const expandedBgClasses = "bg-pb_darkgray";
+  const expandedBgClasses = "bg-pb_mddarkgray";
   const borderClasses = "border-pb_textgray";
 
   return (
@@ -52,26 +52,26 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
       </div>
 
       {isExpandable && isExpanded && (
-        <div className={`p-3 border-t ${borderClasses} ${expandedBgClasses}`}>
+        <div className={`p-1.5 border-t ${borderClasses} ${expandedBgClasses}`}>
             <div className="flex items-center justify-around">
                 {/* Favorite Button */}
                 <div 
                     onClick={() => handleStatusClick('favorite')}
-                    className="flex flex-col items-center cursor-pointer group w-20"
+                    className="flex flex-col items-center cursor-pointer group w-14"
                 >
                     <div className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-colors",
+                        "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'favorite' 
                           ? 'bg-pb_mddarkgray'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Heart className={cn(
-                            "w-5 h-5",
+                            "w-3.5 h-3.5",
                             status === 'favorite' ? 'text-white' : 'text-gray-500'
                         )} />
                     </div>
                     <span className={cn(
-                        "mt-1 text-xs font-semibold",
+                        "mt-0.5 text-3xs font-medium",
                         status === 'favorite' 
                           ? 'text-white'
                           : 'text-gray-300'
@@ -83,21 +83,21 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                 {/* Target Button */}
                 <div 
                     onClick={() => handleStatusClick('target')}
-                    className="flex flex-col items-center cursor-pointer group w-20"
+                    className="flex flex-col items-center cursor-pointer group w-14"
                 >
                     <div className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-colors",
+                        "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'target' 
                           ? 'bg-pb_mddarkgray'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Crosshair className={cn(
-                            "w-5 h-5",
+                            "w-3.5 h-3.5",
                             status === 'target' ? 'text-white' : 'text-gray-500'
                         )} />
                     </div>
                     <span className={cn(
-                        "mt-1 text-xs font-semibold",
+                        "mt-0.5 text-3xs font-medium",
                         status === 'target' 
                           ? 'text-white'
                           : 'text-gray-300'
@@ -109,21 +109,21 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                 {/* Trade Block Button */}
                 <div 
                     onClick={() => handleStatusClick('tradeBlock')}
-                    className="flex flex-col items-center cursor-pointer group w-20"
+                    className="flex flex-col items-center cursor-pointer group w-14"
                 >
                     <div className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-colors",
+                        "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'tradeBlock' 
                           ? 'bg-pb_mddarkgray'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <HandHelping className={cn(
-                            "w-5 h-5",
+                            "w-3.5 h-3.5",
                             status === 'tradeBlock' ? 'text-white' : 'text-gray-500'
                         )} />
                     </div>
                     <span className={cn(
-                        "mt-1 text-xs font-semibold",
+                        "mt-0.5 text-3xs font-medium",
                         status === 'tradeBlock' 
                           ? 'text-white'
                           : 'text-gray-300'
@@ -135,26 +135,26 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                 {/* Not Interested Button */}
                 <div 
                     onClick={() => handleStatusClick('notInterested')}
-                    className="flex flex-col items-center cursor-pointer group w-20"
+                    className="flex flex-col items-center cursor-pointer group w-14"
                 >
                     <div className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-colors",
+                        "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'notInterested' 
                           ? 'bg-pb_red'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Ban className={cn(
-                            "w-5 h-5",
+                            "w-3.5 h-3.5",
                             status === 'notInterested' ? 'text-white' : 'text-gray-500'
                         )} />
                     </div>
                     <span className={cn(
-                        "mt-1 text-xs font-semibold",
+                        "mt-0.5 text-3xs font-medium",
                         status === 'notInterested' 
                           ? 'text-pb_red'
                           : 'text-gray-300'
                     )}>
-                        Not Interested
+                        Blocked
                     </span>
                 </div>
             </div>
