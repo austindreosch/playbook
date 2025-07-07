@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+PROTECTED CODE BLOCKS - Do not edit, modify, delete, or reformat any code sections that are enclosed within decorative comment borders (using characters like ╔ ╗ ╚ ╝ ═ ║) or contain explicit warnings such as "DO NOT TOUCH", "DO NOT MODIFY", "BLUEPRINT", or "TEMPLATE". These sections contain critical data structures, configuration templates, or schema definitions that serve as the foundation for the application. Modifying these areas can break data consistency, corrupt player objects, or cause system-wide failures. If changes are needed to these protected sections, they must be reviewed and approved by the lead developer. When working with these files, focus only on implementation code outside the protected comment blocks.

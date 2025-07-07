@@ -232,7 +232,7 @@ module.exports = {
   				DEFAULT: '#ffcd51'
   			},
   			pb_green: {
-  				'50': '#eef4f4',
+  				'50': '#e5f7ed',
   				'100': '#def5e9',
   				'200': '#cdf0de',
   				'300': '#bdebd3',
@@ -241,7 +241,6 @@ module.exports = {
   				'600': '#8bdcb1',
   				'700': '#7ad7a6',
   				'800': '#6ad29b',
-  				'900': '#47a473',
   				DEFAULT: '#59cd90'
   			},
   			pb_greenhover: '#50b982',
@@ -256,7 +255,6 @@ module.exports = {
   				'600': '#f39286',
   				'700': '#f18275',
   				'800': '#f07363',
-  				'900': '#be4f42',
   				DEFAULT: '#ee6352'
   			},
   			pb_redhover: '#d6594a',

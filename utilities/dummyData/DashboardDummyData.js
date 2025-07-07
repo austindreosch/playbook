@@ -105,15 +105,16 @@ export const dashboardDummyData = {
           "score": 10.3,
           "status": "active",
           "stats": {
-            "FG%": 46.2,
-            "FT%": 78.5,
-            "3PM": 1.4,
-            "PTS": 19.8,
-            "REB": 10.2,
-            "AST": 3.1,
-            "STL": 1.2,
-            "BLK": 3.4,
-            "TO": 2.8
+            "FG%": 0.524,
+            "FT%": 0.891,
+            "3PM": 2.8,
+            "PTS": 28.4,
+            "REB": 12.7,
+            "AST": 4.2,
+            "STL": 2.3,
+            "BLK": 4.1,
+            "TO": 1.2,
+            "zScoreSum": 15.8
           }
         },
         {
@@ -123,15 +124,16 @@ export const dashboardDummyData = {
           "score": 8.04,
           "status": "active",
           "stats": {
-            "FG%": 54.6,
-            "FT%": 88.2,
-            "3PM": 1.2,
-            "PTS": 31.2,
-            "REB": 5.6,
-            "AST": 6.4,
-            "STL": 2.1,
-            "BLK": 0.8,
-            "TO": 2.4
+            "FG%": 0.567,
+            "FT%": 0.902,
+            "3PM": 3.4,
+            "PTS": 32.1,
+            "REB": 6.8,
+            "AST": 9.2,
+            "STL": 2.8,
+            "BLK": 1.1,
+            "TO": 1.8,
+            "zScoreSum": 14.2
           }
         },
         {
@@ -141,15 +143,16 @@ export const dashboardDummyData = {
           "score": 7.82,
           "status": "active",
           "stats": {
-            "FG%": 46.1,
-            "FT%": 83.4,
-            "3PM": 2.7,
-            "PTS": 26.5,
-            "REB": 5.4,
-            "AST": 5.1,
-            "STL": 1.3,
-            "BLK": 0.6,
-            "TO": 2.7
+            "FG%": 0.478,
+            "FT%": 0.834,
+            "3PM": 3.7,
+            "PTS": 27.3,
+            "REB": 5.9,
+            "AST": 6.1,
+            "STL": 1.8,
+            "BLK": 0.9,
+            "TO": 2.4,
+            "zScoreSum": 12.6
           }
         },
         {
@@ -159,15 +162,16 @@ export const dashboardDummyData = {
           "score": 7.65,
           "status": "active",
           "stats": {
-            "FG%": 50.2,
-            "FT%": 87.1,
-            "3PM": 3.2,
-            "PTS": 24.7,
-            "REB": 4.1,
-            "AST": 12.1,
-            "STL": 1.1,
-            "BLK": 0.5,
-            "TO": 2.6
+            "FG%": 0.492,
+            "FT%": 0.871,
+            "3PM": 4.1,
+            "PTS": 22.7,
+            "REB": 4.3,
+            "AST": 11.8,
+            "STL": 1.6,
+            "BLK": 0.7,
+            "TO": 2.1,
+            "zScoreSum": 11.4
           }
         },
         {
@@ -177,15 +181,16 @@ export const dashboardDummyData = {
           "score": 7.44,
           "status": "active",
           "stats": {
-            "FG%": 61.2,
-            "FT%": 71.5,
-            "3PM": 0.4,
-            "PTS": 19.2,
-            "REB": 12.8,
-            "AST": 7.6,
-            "STL": 0.8,
-            "BLK": 0.7,
-            "TO": 2.9
+            "FG%": 0.634,
+            "FT%": 0.743,
+            "3PM": 0.8,
+            "PTS": 21.2,
+            "REB": 14.1,
+            "AST": 8.9,
+            "STL": 1.2,
+            "BLK": 1.4,
+            "TO": 3.2,
+            "zScoreSum": 10.1
           }
         },
         {
@@ -195,15 +200,187 @@ export const dashboardDummyData = {
           "score": 7.21,
           "status": "active",
           "stats": {
-            "FG%": 48.7,
-            "FT%": 89.2,
-            "3PM": 2.1,
-            "PTS": 27.4,
-            "REB": 4.8,
+            "FG%": 0.456,
+            "FT%": 0.887,
+            "3PM": 2.9,
+            "PTS": 29.4,
+            "REB": 4.2,
+            "AST": 7.8,
+            "STL": 1.1,
+            "BLK": 0.3,
+            "TO": 2.7,
+            "zScoreSum": 8.9
+          }
+        },
+        {
+          "rank": 7,
+          "name": "Russell Westbrook",
+          "position": "PG",
+          "score": 6.85,
+          "status": "active",
+          "stats": {
+            "FG%": 0.398,
+            "FT%": 0.671,
+            "3PM": 1.4,
+            "PTS": 18.9,
+            "REB": 8.1,
             "AST": 7.2,
-            "STL": 0.9,
+            "STL": 1.7,
             "BLK": 0.4,
-            "TO": 2.5
+            "TO": 4.8,
+            "zScoreSum": 6.8
+          }
+        },
+        {
+          "rank": 8,
+          "name": "Ben Simmons",
+          "position": "PG",
+          "score": 5.92,
+          "status": "active",
+          "stats": {
+            "FG%": 0.567,
+            "FT%": 0.348,
+            "3PM": 0.0,
+            "PTS": 7.2,
+            "REB": 8.9,
+            "AST": 6.4,
+            "STL": 1.8,
+            "BLK": 1.2,
+            "TO": 3.6,
+            "zScoreSum": 4.1
+          }
+        },
+        {
+          "rank": 9,
+          "name": "Andre Drummond",
+          "position": "C",
+          "score": 5.45,
+          "status": "active",
+          "stats": {
+            "FG%": 0.612,
+            "FT%": 0.521,
+            "3PM": 0.1,
+            "PTS": 9.8,
+            "REB": 16.3,
+            "AST": 1.2,
+            "STL": 0.6,
+            "BLK": 2.1,
+            "TO": 2.4,
+            "zScoreSum": 3.7
+          }
+        },
+        {
+          "rank": 10,
+          "name": "Marcus Smart",
+          "position": "PG",
+          "score": 4.73,
+          "status": "active",
+          "stats": {
+            "FG%": 0.357,
+            "FT%": 0.698,
+            "3PM": 2.1,
+            "PTS": 12.4,
+            "REB": 3.1,
+            "AST": 5.9,
+            "STL": 2.4,
+            "BLK": 0.5,
+            "TO": 4.1,
+            "zScoreSum": 2.8
+          }
+        },
+        {
+          "rank": 11,
+          "name": "Kyle Lowry",
+          "position": "PG",
+          "score": 3.88,
+          "status": "active",
+          "stats": {
+            "FG%": 0.389,
+            "FT%": 0.812,
+            "3PM": 1.6,
+            "PTS": 6.9,
+            "REB": 2.8,
+            "AST": 3.4,
+            "STL": 0.9,
+            "BLK": 0.1,
+            "TO": 3.8,
+            "zScoreSum": 1.2
+          }
+        },
+        {
+          "rank": 12,
+          "name": "DeAndre Jordan",
+          "position": "C",
+          "score": 2.95,
+          "status": "active",
+          "stats": {
+            "FG%": 0.721,
+            "FT%": 0.412,
+            "3PM": 0.0,
+            "PTS": 3.8,
+            "REB": 7.9,
+            "AST": 0.6,
+            "STL": 0.2,
+            "BLK": 0.8,
+            "TO": 1.1,
+            "zScoreSum": 0.4
+          }
+        },
+        {
+          "rank": 13,
+          "name": "Lonzo Ball",
+          "position": "PG",
+          "score": 2.15,
+          "status": "active",
+          "stats": {
+            "FG%": 0.341,
+            "FT%": 0.782,
+            "3PM": 3.2,
+            "PTS": 11.2,
+            "REB": 4.6,
+            "AST": 5.8,
+            "STL": 1.4,
+            "BLK": 0.6,
+            "TO": 2.9,
+            "zScoreSum": -0.8
+          }
+        },
+        {
+          "rank": 14,
+          "name": "Dwight Howard",
+          "position": "C",
+          "score": 1.87,
+          "status": "active",
+          "stats": {
+            "FG%": 0.598,
+            "FT%": 0.284,
+            "3PM": 0.0,
+            "PTS": 5.4,
+            "REB": 9.7,
+            "AST": 0.8,
+            "STL": 0.4,
+            "BLK": 1.6,
+            "TO": 1.8,
+            "zScoreSum": -1.6
+          }
+        },
+        {
+          "rank": 15,
+          "name": "Kendrick Nunn",
+          "position": "PG",
+          "score": 1.42,
+          "status": "active",
+          "stats": {
+            "FG%": 0.327,
+            "FT%": 0.693,
+            "3PM": 1.8,
+            "PTS": 8.7,
+            "REB": 2.1,
+            "AST": 2.9,
+            "STL": 0.7,
+            "BLK": 0.2,
+            "TO": 4.7,
+            "zScoreSum": -2.9
           }
         }
       ],

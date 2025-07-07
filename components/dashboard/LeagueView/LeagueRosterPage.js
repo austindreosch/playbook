@@ -12,7 +12,7 @@ import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueB
 import PlaybookScoreBlock from '@/components/dashboard/RosterPage/PlaybookScoreBlock';
 import PlayerPerformanceBlock from '@/components/dashboard/RosterPage/PlayerPerformanceBlock';
 import PlayerProfileBlock from '@/components/dashboard/RosterPage/PlayerProfileBlock';
-import RosterFullBlock from '@/components/dashboard/RosterPage/RosterFullBlock';
+import RosterFullBlock from '@/components/dashboard/RosterPage/RosterBlock/RosterFullBlock';
 import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFullImportLeague';
 
 
@@ -43,13 +43,13 @@ export default function LeagueRosterPage() {
       {/* Main Content */}
       <div className="grid grid-cols-18 gap-1.5 flex-grow min-h-0">
         {/* Left Column */}
-        <div className="col-span-10">
-          {/* <RosterFullBlock /> */}
-          <RosterFullImportLeague />
+        <div className="col-span-11">
+          <RosterFullBlock />
+          {/* <RosterFullImportLeague /> */}
         </div>
 
         {/* Right Column */}
-        <div className="col-span-8 grid grid-rows-[8fr_5fr] gap-1.5">
+        <div className="col-span-7 grid grid-rows-[8fr_5fr] gap-1.5">
             {/* Top Row */}
             <div className="grid grid-cols-2 gap-1.5">
                 <PlayerProfileBlock />
