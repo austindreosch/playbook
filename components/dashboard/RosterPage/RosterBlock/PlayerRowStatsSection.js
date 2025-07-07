@@ -157,94 +157,123 @@ const formatStatValue = (value, category) => {
 
 
 
-// ╔════════════════════════════════════════════════════════════════╗
-// ║                    📊 DATA BLUEPRINT 📊                       ║
-// ║              DO NOT TOUCH STRUCTURE - ONLY VALUES             ║
-// ║                                                                ║
-// ║ This section defines the data structure for this individual    ║
-// ║ component. It normalizes external data into a consistent       ║
-// ║ internal format, keeping the component stable despite          ║
-// ║ upstream changes.                                              ║
-// ╚════════════════════════════════════════════════════════════════╝
 
-export const blueprint = {
-  id: '',
-  name: '',
-  position: '',
-  team: '',
-  sport: '',
-
-  stats: {
-    nba: {
-      'FG%': { value: null, zScore: null },
-      'PPG': { value: null, zScore: null },
-      'FT%': { value: null, zScore: null },
-      '3PM': { value: null, zScore: null },
-      'PTS': { value: null, zScore: null },
-      'REB': { value: null, zScore: null },
-      'AST': { value: null, zScore: null },
-      'STL': { value: null, zScore: null },
-      'BLK': { value: null, zScore: null },
-      'TO': { value: null, zScore: null },
-      'ORB': { value: null, zScore: null },
-      'DRB': { value: null, zScore: null },
-      'TS%': { value: null, zScore: null },
-      'ATO': { value: null, zScore: null },
-      '3P%': { value: null, zScore: null },
-      'FGM': { value: null, zScore: null },
-      'FTM': { value: null, zScore: null },
-    },
-
-    mlb: {
-      hitting: {
-        'R': { value: null, zScore: null },
-        'HR': { value: null, zScore: null },
-        'RBI': { value: null, zScore: null },
-        'SB': { value: null, zScore: null },
-        'AVG': { value: null, zScore: null },
-        'H': { value: null, zScore: null },
-        'OBP': { value: null, zScore: null },
-        'SLG': { value: null, zScore: null },
-        'OPS': { value: null, zScore: null },
-        '2B': { value: null, zScore: null },
-        '3B': { value: null, zScore: null },
-        'TB': { value: null, zScore: null },
-      },
-      pitching: {
-        'W': { value: null, zScore: null },
-        'K': { value: null, zScore: null },
-        'SV': { value: null, zScore: null },
-        'ERA': { value: null, zScore: null },
-        'WHIP': { value: null, zScore: null },
-        'QS': { value: null, zScore: null },
-        'SVH': { value: null, zScore: null },
-        'HLD': { value: null, zScore: null },
-        'K_BB': { value: null, zScore: null },
-        'K_9': { value: null, zScore: null },
-        'IP': { value: null, zScore: null },
-      }
-    },
-
-    nfl: {
-      'PPG': { value: null, zScore: null },
-      'OPG': { value: null, zScore: null },
-      'OPE': { value: null, zScore: null },
-      'YPS': { value: null, zScore: null },
-      'YD%': { value: null, zScore: null },
-      'PR%': { value: null, zScore: null },
-      'TD%': { value: null, zScore: null },
-      'BP%': { value: null, zScore: null },
-    },
-  },
-};
-
-// ════════════════════════════════════════════════════════
-//      🚫 DO NOT MODIFY THIS BLUEPRINT 🚫
-// ════════════════════════════════════════════════════════
-
-const RosterStatsSection = memo(({ categories, playerStats, player, rowIndex }) => {
-  // Calculate Z-Score sum (placeholder for now)
+const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex }) => {
+  // Debug logging
+  console.log('PlayerRowStatsSection received:', { 
+    categories, 
+    playerStats, 
+    player: player,
+    playerName: player?.name,
+    playerSport: player?.sport 
+  });
+  
+  // Calculate Z-Score sum from blueprint
   const zScoreSum = playerStats?.zScoreSum || 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // ╔════════════════════════════════════════════════════════════════╗
+  // ║                    📊 DATA BLUEPRINT 📊                       ║
+  // ║              DO NOT TOUCH STRUCTURE - ONLY VALUES              ║
+  // ║                                                                ║
+  // ║ This section defines the data structure for this individual    ║
+  // ║ component. It normalizes external data into a consistent       ║
+  // ║ internal format, keeping the component stable despite          ║
+  // ║ upstream changes.                                              ║
+  // ╚════════════════════════════════════════════════════════════════╝
+  const blueprint = {
+    id: player?.id || player?.playerId || '',
+    name: player?.name || '',
+    position: player?.position || '',
+    team: player?.team || '',
+    sport: player?.sport || '',
+    playbookScore: player?.playbookScore || playerStats?.playbookScore || null,
+    stats: {
+      nba: {
+        'FG%': { value: playerStats?.['FG%'], zScore: playerStats?.zScores?.['FG%'] || null },
+        'FT%': { value: playerStats?.['FT%'], zScore: playerStats?.zScores?.['FT%'] || null },
+        '3PM': { value: playerStats?.['3PM'], zScore: playerStats?.zScores?.['3PM'] || null },
+        'PTS': { value: playerStats?.['PTS'], zScore: playerStats?.zScores?.['PTS'] || null },
+        'REB': { value: playerStats?.['REB'], zScore: playerStats?.zScores?.['REB'] || null },
+        'AST': { value: playerStats?.['AST'], zScore: playerStats?.zScores?.['AST'] || null },
+        'STL': { value: playerStats?.['STL'], zScore: playerStats?.zScores?.['STL'] || null },
+        'BLK': { value: playerStats?.['BLK'], zScore: playerStats?.zScores?.['BLK'] || null },
+        'TO': { value: playerStats?.['TO'], zScore: playerStats?.zScores?.['TO'] || null },
+        'ORB': { value: playerStats?.['ORB'], zScore: playerStats?.zScores?.['ORB'] || null },
+        'DRB': { value: playerStats?.['DRB'], zScore: playerStats?.zScores?.['DRB'] || null },
+        'TS%': { value: playerStats?.['TS%'], zScore: playerStats?.zScores?.['TS%'] || null },
+        'ATO': { value: playerStats?.['ATO'], zScore: playerStats?.zScores?.['ATO'] || null },
+        '3P%': { value: playerStats?.['3P%'], zScore: playerStats?.zScores?.['3P%'] || null },
+        'FGM': { value: playerStats?.['FGM'], zScore: playerStats?.zScores?.['FGM'] || null },
+        'FTM': { value: playerStats?.['FTM'], zScore: playerStats?.zScores?.['FTM'] || null },
+        'PPG': { value: playerStats?.['PPG'], zScore: playerStats?.zScores?.['PPG'] || null },
+      },
+
+      mlb: {
+        hitting: {
+          'R': { value: playerStats?.['R'], zScore: playerStats?.zScores?.['R'] || null },
+          'HR': { value: playerStats?.['HR'], zScore: playerStats?.zScores?.['HR'] || null },
+          'RBI': { value: playerStats?.['RBI'], zScore: playerStats?.zScores?.['RBI'] || null },
+          'SB': { value: playerStats?.['SB'], zScore: playerStats?.zScores?.['SB'] || null },
+          'AVG': { value: playerStats?.['AVG'], zScore: playerStats?.zScores?.['AVG'] || null },
+          'H': { value: playerStats?.['H'], zScore: playerStats?.zScores?.['H'] || null },
+          'OBP': { value: playerStats?.['OBP'], zScore: playerStats?.zScores?.['OBP'] || null },
+          'SLG': { value: playerStats?.['SLG'], zScore: playerStats?.zScores?.['SLG'] || null },
+          'OPS': { value: playerStats?.['OPS'], zScore: playerStats?.zScores?.['OPS'] || null },
+          '2B': { value: playerStats?.['2B'], zScore: playerStats?.zScores?.['2B'] || null },
+          '3B': { value: playerStats?.['3B'], zScore: playerStats?.zScores?.['3B'] || null },
+          'TB': { value: playerStats?.['TB'], zScore: playerStats?.zScores?.['TB'] || null },
+        },
+        pitching: {
+          'W': { value: playerStats?.['W'], zScore: playerStats?.zScores?.['W'] || null },
+          'K': { value: playerStats?.['K'], zScore: playerStats?.zScores?.['K'] || null },
+          'SV': { value: playerStats?.['SV'], zScore: playerStats?.zScores?.['SV'] || null },
+          'ERA': { value: playerStats?.['ERA'], zScore: playerStats?.zScores?.['ERA'] || null },
+          'WHIP': { value: playerStats?.['WHIP'], zScore: playerStats?.zScores?.['WHIP'] || null },
+          'QS': { value: playerStats?.['QS'], zScore: playerStats?.zScores?.['QS'] || null },
+          'SVH': { value: playerStats?.['SVH'], zScore: playerStats?.zScores?.['SVH'] || null },
+          'HLD': { value: playerStats?.['HLD'], zScore: playerStats?.zScores?.['HLD'] || null },
+          'K_BB': { value: playerStats?.['K_BB'], zScore: playerStats?.zScores?.['K_BB'] || null },
+          'K_9': { value: playerStats?.['K_9'], zScore: playerStats?.zScores?.['K_9'] || null },
+          'IP': { value: playerStats?.['IP'], zScore: playerStats?.zScores?.['IP'] || null },
+        }
+      },
+
+      nfl: {
+        'PPG': { value: playerStats?.['PPG'], zScore: playerStats?.zScores?.['PPG'] || null },
+        'OPG': { value: playerStats?.['OPG'], zScore: playerStats?.zScores?.['OPG'] || null },
+        'OPE': { value: playerStats?.['OPE'], zScore: playerStats?.zScores?.['OPE'] || null },
+        'YPS': { value: playerStats?.['YPS'], zScore: playerStats?.zScores?.['YPS'] || null },
+        'YD%': { value: playerStats?.['YD%'], zScore: playerStats?.zScores?.['YD%'] || null },
+        'PR%': { value: playerStats?.['PR%'], zScore: playerStats?.zScores?.['PR%'] || null },
+        'TD%': { value: playerStats?.['TD%'], zScore: playerStats?.zScores?.['TD%'] || null },
+        'BP%': { value: playerStats?.['BP%'], zScore: playerStats?.zScores?.['BP%'] || null },
+      },
+    },
+  };
+  // ══════════════════════════════════════════════════════════════
+  //      🚫 DO NOT MODIFY THIS BLUEPRINT STRUCTURE 🚫
+  // ══════════════════════════════════════════════════════════════
+
 
   return (
     <div className="flex w-full h-full gap-0.5">
@@ -260,11 +289,36 @@ const RosterStatsSection = memo(({ categories, playerStats, player, rowIndex }) 
       </div>
 
       {categories.map((categoryAbbrev, index) => {
-        const statValue = playerStats?.[categoryAbbrev];
+        // Get stat value and z-score from blueprint structure - sport agnostic
+        let statValue = null;
+        let zScore = null;
+        const sport = player?.sport?.toLowerCase();
+        
+        if (sport && blueprint.stats[sport]) {
+          if (sport === 'mlb') {
+            // For MLB, check both hitting and pitching categories
+            if (blueprint.stats.mlb.hitting[categoryAbbrev]) {
+              statValue = blueprint.stats.mlb.hitting[categoryAbbrev].value;
+              zScore = blueprint.stats.mlb.hitting[categoryAbbrev].zScore;
+            } else if (blueprint.stats.mlb.pitching[categoryAbbrev]) {
+              statValue = blueprint.stats.mlb.pitching[categoryAbbrev].value;
+              zScore = blueprint.stats.mlb.pitching[categoryAbbrev].zScore;
+            }
+          } else if (blueprint.stats[sport][categoryAbbrev]) {
+            // For NBA and NFL, direct access
+            statValue = blueprint.stats[sport][categoryAbbrev].value;
+            zScore = blueprint.stats[sport][categoryAbbrev].zScore;
+          }
+        }
+        
         let formattedValue = formatStatValue(statValue, categoryAbbrev);
         let colors = getStatColors(statValue, categoryAbbrev);
         
-        const title = `${categoryAbbrev}: ${formattedValue || '-'}`;
+        // Enhanced tooltip - show stat value and overall z-score sum on every cell
+        let title = `${categoryAbbrev}: ${formattedValue || '-'}`;
+        if (typeof zScoreSum === 'number') {
+          title += ` | Player Z-Score Sum: ${zScoreSum.toFixed(2)}`;
+        }
 
         // Cell background color logic - use light gray for empty cells
         let cellBgClass;
@@ -296,6 +350,6 @@ const RosterStatsSection = memo(({ categories, playerStats, player, rowIndex }) 
   );
 });
 
-RosterStatsSection.displayName = 'RosterStatsSection';
+PlayerRowStatsSection.displayName = 'PlayerRowStatsSection';
 
-export default RosterStatsSection; 
+export default PlayerRowStatsSection; 

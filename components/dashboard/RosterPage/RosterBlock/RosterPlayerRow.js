@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useState } from 'react';
-import RosterStatsSection from './PlayerRowStatsSection';
+import PlayerRowStatsSection from './PlayerRowStatsSection';
 
 // Player Row Component exactly matching RankingsPlayerRow structure
 const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleExpand, rowIndex }) => {
@@ -10,8 +10,8 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
   const playerTeam = player.team || 'FA';
   const defaultImageSrc = '/avatar-default.png';
 
-  // Generate dummy Playbook score out of 999 based on player index/rank
-  const playbookScore = Math.max(1, Math.floor(999 - (rank - 1) * 15 - Math.random() * 20));
+  // Use actual Playbook score from player data, fallback to dummy if not available
+  const playbookScore = player.playbookScore || playerStats?.playbookScore || Math.max(1, Math.floor(999 - (rank - 1) * 15 - Math.random() * 20));
 
   const handleImageError = (event) => {
     if (event.target.src !== defaultImageSrc) {
@@ -60,7 +60,7 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
 
         {/* Stats section - flexible width */}
         <div className="flex flex-grow min-w-0 h-full">
-          <RosterStatsSection 
+          <PlayerRowStatsSection 
             categories={categories}
             playerStats={player.stats}
             player={player}

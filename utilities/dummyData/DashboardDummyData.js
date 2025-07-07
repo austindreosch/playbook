@@ -102,7 +102,10 @@ export const dashboardDummyData = {
           "rank": 1,
           "name": "Victor Wembanyama",
           "position": "C",
+          "team": "SAS",
+          "sport": "nba",
           "score": 10.3,
+          "playbookScore": 987,
           "status": "active",
           "stats": {
             "FG%": 0.524,
@@ -115,13 +118,27 @@ export const dashboardDummyData = {
             "BLK": 4.1,
             "TO": 1.2,
             "zScoreSum": 15.8
+          },
+          "zScores": {
+            "FG%": 1.2,
+            "FT%": 2.1,
+            "3PM": 1.8,
+            "PTS": 2.4,
+            "REB": 2.8,
+            "AST": 0.8,
+            "STL": 2.6,
+            "BLK": 3.2,
+            "TO": 0.9
           }
         },
         {
           "rank": 2,
           "name": "Shai Gilgeous-Alexander",
           "position": "PG",
+          "team": "OKC",
+          "sport": "nba",
           "score": 8.04,
+          "playbookScore": 965,
           "status": "active",
           "stats": {
             "FG%": 0.567,
@@ -134,13 +151,27 @@ export const dashboardDummyData = {
             "BLK": 1.1,
             "TO": 1.8,
             "zScoreSum": 14.2
+          },
+          "zScores": {
+            "FG%": 2.1,
+            "FT%": 2.3,
+            "3PM": 2.2,
+            "PTS": 2.9,
+            "REB": 0.8,
+            "AST": 2.4,
+            "STL": 3.1,
+            "BLK": 0.6,
+            "TO": 0.0
           }
         },
         {
           "rank": 3,
           "name": "Anthony Edwards",
           "position": "SG",
+          "team": "MIN",
+          "sport": "nba",
           "score": 7.82,
+          "playbookScore": 943,
           "status": "active",
           "stats": {
             "FG%": 0.478,
@@ -153,13 +184,27 @@ export const dashboardDummyData = {
             "BLK": 0.9,
             "TO": 2.4,
             "zScoreSum": 12.6
+          },
+          "zScores": {
+            "FG%": 0.3,
+            "FT%": 1.2,
+            "3PM": 2.4,
+            "PTS": 2.1,
+            "REB": 0.4,
+            "AST": 1.5,
+            "STL": 1.8,
+            "BLK": 0.4,
+            "TO": -0.5
           }
         },
         {
           "rank": 4,
           "name": "Tyrese Haliburton",
           "position": "PG",
+          "team": "IND",
+          "sport": "nba",
           "score": 7.65,
+          "playbookScore": 921,
           "status": "active",
           "stats": {
             "FG%": 0.492,
@@ -172,13 +217,27 @@ export const dashboardDummyData = {
             "BLK": 0.7,
             "TO": 2.1,
             "zScoreSum": 11.4
+          },
+          "zScores": {
+            "FG%": 0.6,
+            "FT%": 1.7,
+            "3PM": 2.8,
+            "PTS": 1.4,
+            "REB": -0.2,
+            "AST": 3.1,
+            "STL": 1.4,
+            "BLK": 0.2,
+            "TO": -0.2
           }
         },
         {
           "rank": 5,
           "name": "Domantas Sabonis",
           "position": "C",
+          "team": "SAC",
+          "sport": "nba",
           "score": 7.44,
+          "playbookScore": 899,
           "status": "active",
           "stats": {
             "FG%": 0.634,
@@ -191,13 +250,27 @@ export const dashboardDummyData = {
             "BLK": 1.4,
             "TO": 3.2,
             "zScoreSum": 10.1
+          },
+          "zScores": {
+            "FG%": 3.2,
+            "FT%": -0.2,
+            "3PM": -0.8,
+            "PTS": 1.1,
+            "REB": 3.2,
+            "AST": 2.2,
+            "STL": 0.7,
+            "BLK": 0.9,
+            "TO": -1.2
           }
         },
         {
           "rank": 6,
           "name": "Devin Booker",
           "position": "SG",
+          "team": "PHX",
+          "sport": "nba",
           "score": 7.21,
+          "playbookScore": 876,
           "status": "active",
           "stats": {
             "FG%": 0.456,
@@ -210,13 +283,27 @@ export const dashboardDummyData = {
             "BLK": 0.3,
             "TO": 2.7,
             "zScoreSum": 8.9
+          },
+          "zScores": {
+            "FG%": -0.1,
+            "FT%": 2.0,
+            "3PM": 1.9,
+            "PTS": 2.5,
+            "REB": -0.3,
+            "AST": 1.9,
+            "STL": 0.5,
+            "BLK": -0.8,
+            "TO": -0.7
           }
         },
         {
           "rank": 7,
           "name": "Russell Westbrook",
           "position": "PG",
+          "team": "DEN",
+          "sport": "nba",
           "score": 6.85,
+          "playbookScore": 745,
           "status": "active",
           "stats": {
             "FG%": 0.398,
@@ -229,13 +316,27 @@ export const dashboardDummyData = {
             "BLK": 0.4,
             "TO": 4.8,
             "zScoreSum": 6.8
+          },
+          "zScores": {
+            "FG%": -1.2,
+            "FT%": -1.2,
+            "3PM": 0.1,
+            "PTS": 0.6,
+            "REB": 1.2,
+            "AST": 1.7,
+            "STL": 1.6,
+            "BLK": -0.6,
+            "TO": -2.4
           }
         },
         {
           "rank": 8,
           "name": "Ben Simmons",
           "position": "PG",
+          "team": "BKN",
+          "sport": "nba",
           "score": 5.92,
+          "playbookScore": 612,
           "status": "active",
           "stats": {
             "FG%": 0.567,
@@ -248,13 +349,27 @@ export const dashboardDummyData = {
             "BLK": 1.2,
             "TO": 3.6,
             "zScoreSum": 4.1
+          },
+          "zScores": {
+            "FG%": 2.1,
+            "FT%": -3.8,
+            "3PM": -1.8,
+            "PTS": -1.8,
+            "REB": 1.4,
+            "AST": 1.4,
+            "STL": 1.8,
+            "BLK": 0.7,
+            "TO": -1.6
           }
         },
         {
           "rank": 9,
           "name": "Andre Drummond",
           "position": "C",
+          "team": "CHI",
+          "sport": "nba",
           "score": 5.45,
+          "playbookScore": 543,
           "status": "active",
           "stats": {
             "FG%": 0.612,
@@ -267,13 +382,27 @@ export const dashboardDummyData = {
             "BLK": 2.1,
             "TO": 2.4,
             "zScoreSum": 3.7
+          },
+          "zScores": {
+            "FG%": 2.8,
+            "FT%": -2.1,
+            "3PM": -1.6,
+            "PTS": -1.2,
+            "REB": 3.8,
+            "AST": -1.4,
+            "STL": -0.2,
+            "BLK": 1.6,
+            "TO": -0.5
           }
         },
         {
           "rank": 10,
           "name": "Marcus Smart",
           "position": "PG",
+          "team": "MEM",
+          "sport": "nba",
           "score": 4.73,
+          "playbookScore": 487,
           "status": "active",
           "stats": {
             "FG%": 0.357,
@@ -286,13 +415,27 @@ export const dashboardDummyData = {
             "BLK": 0.5,
             "TO": 4.1,
             "zScoreSum": 2.8
+          },
+          "zScores": {
+            "FG%": -2.1,
+            "FT%": -0.8,
+            "3PM": 1.2,
+            "PTS": -0.5,
+            "REB": -0.9,
+            "AST": 1.3,
+            "STL": 2.7,
+            "BLK": -0.2,
+            "TO": -1.9
           }
         },
         {
           "rank": 11,
           "name": "Kyle Lowry",
           "position": "PG",
+          "team": "PHI",
+          "sport": "nba",
           "score": 3.88,
+          "playbookScore": 321,
           "status": "active",
           "stats": {
             "FG%": 0.389,
@@ -305,13 +448,27 @@ export const dashboardDummyData = {
             "BLK": 0.1,
             "TO": 3.8,
             "zScoreSum": 1.2
+          },
+          "zScores": {
+            "FG%": -1.5,
+            "FT%": 0.9,
+            "3PM": 0.5,
+            "PTS": -1.9,
+            "REB": -1.1,
+            "AST": 0.3,
+            "STL": 0.2,
+            "BLK": -1.2,
+            "TO": -1.8
           }
         },
         {
           "rank": 12,
           "name": "DeAndre Jordan",
           "position": "C",
+          "team": "DEN",
+          "sport": "nba",
           "score": 2.95,
+          "playbookScore": 234,
           "status": "active",
           "stats": {
             "FG%": 0.721,
@@ -324,13 +481,27 @@ export const dashboardDummyData = {
             "BLK": 0.8,
             "TO": 1.1,
             "zScoreSum": 0.4
+          },
+          "zScores": {
+            "FG%": 4.2,
+            "FT%": -3.1,
+            "3PM": -1.8,
+            "PTS": -2.5,
+            "REB": 1.1,
+            "AST": -1.6,
+            "STL": -0.8,
+            "BLK": 0.3,
+            "TO": 0.5
           }
         },
         {
           "rank": 13,
           "name": "Lonzo Ball",
           "position": "PG",
+          "team": "CHI",
+          "sport": "nba",
           "score": 2.15,
+          "playbookScore": 198,
           "status": "active",
           "stats": {
             "FG%": 0.341,
@@ -343,13 +514,27 @@ export const dashboardDummyData = {
             "BLK": 0.6,
             "TO": 2.9,
             "zScoreSum": -0.8
+          },
+          "zScores": {
+            "FG%": -2.4,
+            "FT%": 0.5,
+            "3PM": 2.1,
+            "PTS": -0.8,
+            "REB": -0.4,
+            "AST": 1.2,
+            "STL": 1.0,
+            "BLK": 0.0,
+            "TO": -0.9
           }
         },
         {
           "rank": 14,
           "name": "Dwight Howard",
           "position": "C",
+          "team": "TAI",
+          "sport": "nba",
           "score": 1.87,
+          "playbookScore": 145,
           "status": "active",
           "stats": {
             "FG%": 0.598,
@@ -362,13 +547,27 @@ export const dashboardDummyData = {
             "BLK": 1.6,
             "TO": 1.8,
             "zScoreSum": -1.6
+          },
+          "zScores": {
+            "FG%": 2.5,
+            "FT%": -4.2,
+            "3PM": -1.8,
+            "PTS": -2.2,
+            "REB": 1.5,
+            "AST": -1.5,
+            "STL": -0.6,
+            "BLK": 1.1,
+            "TO": 0.0
           }
         },
         {
           "rank": 15,
           "name": "Kendrick Nunn",
           "position": "PG",
+          "team": "PHX",
+          "sport": "nba",
           "score": 1.42,
+          "playbookScore": 87,
           "status": "active",
           "stats": {
             "FG%": 0.327,
@@ -381,6 +580,17 @@ export const dashboardDummyData = {
             "BLK": 0.2,
             "TO": 4.7,
             "zScoreSum": -2.9
+          },
+          "zScores": {
+            "FG%": -2.6,
+            "FT%": -0.9,
+            "3PM": 0.8,
+            "PTS": -1.4,
+            "REB": -1.4,
+            "AST": 0.1,
+            "STL": -0.1,
+            "BLK": -0.9,
+            "TO": -2.3
           }
         }
       ],
@@ -563,6 +773,7 @@ export const dashboardDummyData = {
           "name": "Patrick Mahomes",
           "position": "QB",
           "score": 25.1,
+          "playbookScore": 976,
           "status": "active",
           "stats": {
             "PassingYds": 4500,
@@ -570,6 +781,13 @@ export const dashboardDummyData = {
             "INT": 10,
             "RushingYds": 300,
             "RushingTD": 3
+          },
+          "zScores": {
+            "PassingYds": 2.8,
+            "PassingTD": 2.6,
+            "INT": -0.8,
+            "RushingYds": 1.2,
+            "RushingTD": 0.9
           }
         },
         {
@@ -577,12 +795,19 @@ export const dashboardDummyData = {
           "name": "Christian McCaffrey",
           "position": "RB",
           "score": 22.8,
+          "playbookScore": 954,
           "status": "active",
           "stats": {
             "RushingYds": 1200,
             "RushingTD": 10,
             "ReceivingYds": 800,
             "ReceivingTD": 5
+          },
+          "zScores": {
+            "RushingYds": 2.1,
+            "RushingTD": 1.8,
+            "ReceivingYds": 2.4,
+            "ReceivingTD": 1.6
           }
         },
         {
@@ -590,11 +815,17 @@ export const dashboardDummyData = {
           "name": "Justin Jefferson",
           "position": "WR",
           "score": 19.5,
+          "playbookScore": 932,
           "status": "active",
           "stats": {
             "Receptions": 100,
             "ReceivingYds": 1500,
             "ReceivingTD": 10
+          },
+          "zScores": {
+            "Receptions": 2.2,
+            "ReceivingYds": 2.9,
+            "ReceivingTD": 2.3
           }
         },
         {
@@ -602,11 +833,17 @@ export const dashboardDummyData = {
           "name": "Travis Kelce",
           "position": "TE",
           "score": 17.2,
+          "playbookScore": 887,
           "status": "active",
           "stats": {
             "Receptions": 90,
             "ReceivingYds": 1100,
             "ReceivingTD": 9
+          },
+          "zScores": {
+            "Receptions": 2.8,
+            "ReceivingYds": 2.6,
+            "ReceivingTD": 2.7
           }
         }
       ],
@@ -752,6 +989,7 @@ export const dashboardDummyData = {
           "name": "Shohei Ohtani",
           "position": "SP/DH",
           "score": 18.2,
+          "playbookScore": 993,
           "status": "active",
           "stats": {
             "ERA": 2.50,
@@ -761,6 +999,15 @@ export const dashboardDummyData = {
             "HR": 40,
             "RBI": 90,
             "AVG": 0.280
+          },
+          "zScores": {
+            "ERA": 2.1,
+            "WHIP": 2.4,
+            "SO": 2.3,
+            "W": 1.8,
+            "HR": 2.6,
+            "RBI": 2.2,
+            "AVG": 1.5
           }
         },
         {
@@ -768,12 +1015,19 @@ export const dashboardDummyData = {
           "name": "Ronald Acuna Jr.",
           "position": "OF",
           "score": 15.7,
+          "playbookScore": 967,
           "status": "active",
           "stats": {
             "HR": 40,
             "RBI": 100,
             "SB": 70,
             "AVG": 0.330
+          },
+          "zScores": {
+            "HR": 2.6,
+            "RBI": 2.5,
+            "SB": 3.2,
+            "AVG": 2.8
           }
         },
         {
@@ -781,12 +1035,19 @@ export const dashboardDummyData = {
           "name": "Gerrit Cole",
           "position": "SP",
           "score": 14.1,
+          "playbookScore": 945,
           "status": "active",
           "stats": {
             "ERA": 2.80,
             "WHIP": 1.00,
             "SO": 250,
             "W": 18
+          },
+          "zScores": {
+            "ERA": 1.8,
+            "WHIP": 2.0,
+            "SO": 2.9,
+            "W": 2.2
           }
         }
       ],
@@ -909,6 +1170,9 @@ export const dashboardDummyData = {
     }
   ]
 };
+
+
+
 
 // ============================================================================
 // UTILITY FUNCTIONS FOR UPDATING DUMMY DATA
