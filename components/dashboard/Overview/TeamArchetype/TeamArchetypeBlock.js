@@ -44,7 +44,7 @@ export default function TeamArchetypeBlock() {
 
 
     return (
-    <div className="w-full h-full bg-white rounded-lg border border-gray-300 shadow-sm p-4 flex flex-col overflow-hidden">
+    <div className="w-full h-full bg-white rounded-lg border border-gray-300 shadow-sm p-3 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <Dna className="w-icon h-icon text-pb_darkgray" />
@@ -108,14 +108,14 @@ export default function TeamArchetypeBlock() {
         </div>
 
         {/* Metrics List */}
-        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 flex-shrink-0">
+        <div className="grid grid-cols-2 gap-y-2 gap-x-8 flex-shrink-0 justify-center items-center px-6">
           {metrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <div key={index} className="flex items-center gap-1.5 text-xs">
-                <Icon className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" strokeWidth={2} />
-                <span className="text-gray-600 flex-1 truncate">{metric.label}</span>
-                <span className="font-medium text-gray-800 bg-gray-100 px-1.5 py-0.5 rounded text-2xs">
+              <div key={index} className="flex items-center gap-2">
+                <Icon className="w-icon h-icon text-pb_darkgray flex-shrink-0" strokeWidth={2} />
+                <span className="text-sm text-pb_darkgray w-16">{metric.label}</span>
+                <span className="font-semibold w-10 h-6 flex items-center justify-center text-pb_darkgray bg-white rounded text-sm border border-pb_lightgray ml-auto">
                   {metric.rank}
                 </span>
               </div>
