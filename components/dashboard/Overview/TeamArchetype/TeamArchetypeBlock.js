@@ -39,9 +39,27 @@ export default function TeamArchetypeBlock() {
     },
   };
 
-
-
-
+  // Custom tick component that renders icons
+  const CustomTick = ({ payload, x, y, textAnchor, ...props }) => {
+    const iconMap = {
+      'Value': ChartCandlestick,
+      'Power': BicepsFlexed,
+      'Victory': Trophy,
+      'Age': TimerReset,
+      'Futures': ShieldUser
+    };
+    
+    const Icon = iconMap[payload.value];
+    if (!Icon) return null;
+    
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <foreignObject x="-8" y="-8" width="16" height="16">
+          <Icon className="w-icon-sm h-icon-sm text-pb_textgray" strokeWidth={2} />
+        </foreignObject>
+      </g>
+    );
+  };
 
     return (
     <div className="w-full h-full bg-white rounded-lg border border-gray-300 shadow-sm p-3 flex flex-col overflow-hidden">
@@ -53,7 +71,7 @@ export default function TeamArchetypeBlock() {
 
       <div className="flex items-center min-h-0">
         {/* Metrics List */}
-        <div className=" space-y-1 flex flex-col justify-center">
+        <div className=" space-y-1 flex flex-col justify-center pl-1 pt-2">
           {metrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
@@ -71,11 +89,13 @@ export default function TeamArchetypeBlock() {
         </div>
 
         {/* Radar Chart Container */}
-        <div className="relative w-full" >
-           <ChartContainer config={chartConfig} className="h-full w-full">
+        <div className="flex-1 h-full overflow-hidden flex items-center justify-center" >
+           <ChartContainer config={chartConfig} className="h-full w-full max-w-full mt-4">
              <RadarChart 
                data={radarData} 
-               margin={{ top: 15, right: 15, bottom: 15, left: 15 }}
+               margin={{ }}
+               width="100%"
+               height="100%"
              >
                <PolarGrid 
                  gridType="polygon" 
@@ -85,7 +105,8 @@ export default function TeamArchetypeBlock() {
                />
                <PolarAngleAxis 
                  dataKey="metric" 
-                 tick={false}
+                 tick={CustomTick}
+                 tickSize={15}
                />
                <PolarRadiusAxis 
                  domain={[0, 10]} 
@@ -101,28 +122,6 @@ export default function TeamArchetypeBlock() {
                />
              </RadarChart>
            </ChartContainer>
-          
-          {/* Icon labels positioned absolutely */}
-          {/* Top - Value */}
-          <div className="absolute top-[5px] left-1/2 -translate-x-1/2">
-            <TrendingUp className="w-4 h-4 text-gray-500" strokeWidth={2} />
-          </div>
-          {/* Top Right - Power */}
-          <div className="absolute top-[35px] right-[15px]">
-            <Zap className="w-4 h-4 text-gray-500" strokeWidth={2} />
-          </div>
-          {/* Bottom Right - Victory */}
-          <div className="absolute bottom-[35px] right-[15px]">
-            <Trophy className="w-4 h-4 text-gray-500" strokeWidth={2} />
-          </div>
-          {/* Bottom Left - Age */}
-          <div className="absolute bottom-[35px] left-[15px]">
-            <Clock className="w-4 h-4 text-gray-500" strokeWidth={2} />
-          </div>
-                    {/* Top Left - Futures */}
-          <div className="absolute top-[35px] left-[15px]">
-            <Shield className="w-4 h-4 text-gray-500" strokeWidth={2} />
-          </div>
         </div>
 
 
@@ -130,7 +129,7 @@ export default function TeamArchetypeBlock() {
 
 
       {/* Bottom Container */}
-      <div className="flex flex-col gap-2 h-1/5">
+      <div className="flex flex-col gap-2">
 
       </div>
 
