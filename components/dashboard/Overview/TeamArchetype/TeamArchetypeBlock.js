@@ -1,5 +1,5 @@
 import { ChartContainer } from '@/components/ui/chart';
-import { Clock, Dna, Shield, TrendingUp, Trophy, Zap } from 'lucide-react';
+import { BicepsFlexed, ChartCandlestick, Clock, Dna, Shield, ShieldUser, TimerReset, TrendingUp, Trophy, Zap } from 'lucide-react';
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from 'recharts';
 
 
@@ -25,11 +25,11 @@ export default function TeamArchetypeBlock() {
   ];
 
   const metrics = [
-    { icon: TrendingUp, label: 'Value', rank: '5th' },
-    { icon: Zap, label: 'Power', rank: '4th' },
+    { icon: ChartCandlestick, label: 'Value', rank: '5th' },
+    { icon: BicepsFlexed, label: 'Power', rank: '4th' },
     { icon: Trophy, label: 'Victory', rank: '2nd' },
-    { icon: Clock, label: 'Age', rank: '9th' },
-    { icon: Shield, label: 'Futures', rank: '7th' }
+    { icon: TimerReset, label: 'Age', rank: '9th' },
+    { icon: ShieldUser, label: 'Futures', rank: '7th' }
   ];
 
   const chartConfig = {
@@ -51,13 +51,31 @@ export default function TeamArchetypeBlock() {
         <h3 className="text-sm font-semibold text-pb_darkgray">Team Archetype</h3>
       </div>
 
-      <div className="flex flex-col gap-3 flex-1 min-h-0">
+      <div className="flex items-center min-h-0">
+        {/* Metrics List */}
+        <div className=" space-y-1 flex flex-col justify-center">
+          {metrics.map((metric, index) => {
+            const Icon = metric.icon;
+            return (
+              <div key={index} className="flex flex-col items-start gap-1">
+                <div className="flex items-center gap-2">
+                  <Icon className="w-icon-sm h-icon-sm text-pb_darkgray flex-shrink-0" strokeWidth={2} />
+                  <span className="text-button text-pb_darkgray">{metric.label}</span>
+                </div>
+                <span className="font-semibold w-9 h-5.5 flex items-center justify-center text-pb_darkgray bg-white rounded text-button border border-pb_lightgray ml-6">
+                  {metric.rank}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
         {/* Radar Chart Container */}
-        <div className="relative w-full flex-1 min-h-0 overflow-hidden">
+        <div className="relative w-full" >
            <ChartContainer config={chartConfig} className="h-full w-full">
              <RadarChart 
                data={radarData} 
-               margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+               margin={{ top: 15, right: 15, bottom: 15, left: 15 }}
              >
                <PolarGrid 
                  gridType="polygon" 
@@ -86,44 +104,38 @@ export default function TeamArchetypeBlock() {
           
           {/* Icon labels positioned absolutely */}
           {/* Top - Value */}
-          <div className="absolute top-[6%] left-1/2 -translate-x-1/2">
-            <TrendingUp className="w-3.5 h-3.5 text-gray-500" strokeWidth={2} />
+          <div className="absolute top-[5px] left-1/2 -translate-x-1/2">
+            <TrendingUp className="w-4 h-4 text-gray-500" strokeWidth={2} />
           </div>
           {/* Top Right - Power */}
-          <div className="absolute top-[18%] right-[18%]">
-            <Zap className="w-3.5 h-3.5 text-gray-500" strokeWidth={2} />
+          <div className="absolute top-[35px] right-[15px]">
+            <Zap className="w-4 h-4 text-gray-500" strokeWidth={2} />
           </div>
           {/* Bottom Right - Victory */}
-          <div className="absolute bottom-[18%] right-[18%]">
-            <Trophy className="w-3.5 h-3.5 text-gray-500" strokeWidth={2} />
+          <div className="absolute bottom-[35px] right-[15px]">
+            <Trophy className="w-4 h-4 text-gray-500" strokeWidth={2} />
           </div>
           {/* Bottom Left - Age */}
-          <div className="absolute bottom-[18%] left-[18%]">
-            <Clock className="w-3.5 h-3.5 text-gray-500" strokeWidth={2} />
+          <div className="absolute bottom-[35px] left-[15px]">
+            <Clock className="w-4 h-4 text-gray-500" strokeWidth={2} />
           </div>
-          {/* Top Left - Futures */}
-          <div className="absolute top-[18%] left-[18%]">
-            <Shield className="w-3.5 h-3.5 text-gray-500" strokeWidth={2} />
+                    {/* Top Left - Futures */}
+          <div className="absolute top-[35px] left-[15px]">
+            <Shield className="w-4 h-4 text-gray-500" strokeWidth={2} />
           </div>
         </div>
 
-        {/* Metrics List */}
-        <div className="grid grid-cols-2 gap-y-2 gap-x-8 flex-shrink-0 justify-center items-center px-6">
-          {metrics.map((metric, index) => {
-            const Icon = metric.icon;
-            return (
-              <div key={index} className="flex items-center gap-2">
-                <Icon className="w-icon h-icon text-pb_darkgray flex-shrink-0" strokeWidth={2} />
-                <span className="text-sm text-pb_darkgray w-16">{metric.label}</span>
-                <span className="font-semibold w-10 h-6 flex items-center justify-center text-pb_darkgray bg-white rounded text-sm border border-pb_lightgray ml-auto">
-                  {metric.rank}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+
       </div>
-      
+
+
+      {/* Bottom Container */}
+      <div className="flex flex-col gap-2 h-1/5">
+
+      </div>
+
+
+
     </div>
   );
 }
