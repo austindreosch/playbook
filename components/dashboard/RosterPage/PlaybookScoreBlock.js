@@ -135,7 +135,7 @@ export default function PlaybookScoreBlock() {
             {createDonutChart()}
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl font-bold text-gray-900">{scoreData.totalScore}</span>
+            <span className="text-4xl font-mono font-bold text-gray-900">{scoreData.totalScore}</span>
           </div>
         </div>
         <div className="absolute bottom-0 right-8">

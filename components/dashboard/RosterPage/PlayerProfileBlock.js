@@ -1,15 +1,24 @@
 'use client';
 
-import { Activity, BarChart3, Calendar, Flame, Scale, ScanSearch, Star, TrendingUp, Zap } from 'lucide-react';
+import TraitTag from '@/components/common/TraitTag';
+import EmptyIcon from '@/components/icons/EmptyIcon';
+import { Separator } from '@/components/ui/separator';
+import { Activity, Bandage, BarChart3, Calendar, Clock, Flame, Goal, Heart, Scale, ScanSearch, Shield, ShieldHalf, Star, TimerReset, TrendingUp, Users, Watch, Zap } from 'lucide-react';
 
 export default function PlayerProfileBlock() {
   // TODO: This data should come from selected player and be sport-agnostic
   const playerData = {
     name: "Nikola Jokic",
-    jerseyNumber: "#2",
-    teamColor: "#1d428a", // TODO: Map team colors by sport
-    teamAbbrev: "C", // TODO: This should be team abbreviation 
+    positionRank: "#2",
+    positionColor: "#ababef", // TODO: Map team colors by sport
+    position: "C", // TODO: This should be team abbreviation 
     image: "/avatar-default.png", // TODO: Use actual player headshots
+    // Grid stats
+    mpg: "31.3",
+    team: "DEN", 
+    age: "29",
+    rosterPercentage: "84%",
+    playoffScheduleGrade: "A-",
     stats: {
       primary: [
         { value: "27.6", label: "PPG" }, // TODO: Sport-specific primary stats
@@ -23,8 +32,7 @@ export default function PlayerProfileBlock() {
       ]
     },
     tags: {
-      attributes: ["Balanced", "Elite Positional Assists"], // TODO: Sport-specific attributes
-      status: ["Star", "Hot Streak", "Usage Spike"] // TODO: Dynamic status tags
+      traitIds: ["star", "hot_streak", "usage_spike", "balanced", "elite_assists"] // TODO: Sport-specific trait IDs
     },
     valueComparisons: [
       {
@@ -65,17 +73,7 @@ export default function PlayerProfileBlock() {
     }
   };
 
-  const getTagIcon = (tag) => {
-    // TODO: Map icons based on tag types for different sports
-    const iconMap = {
-      "Star": Star,
-      "Hot Streak": Flame,
-      "Usage Spike": Activity,
-      "Balanced": Scale,
-      "Elite Positional Assists": Zap
-    };
-    return iconMap[tag] || Activity;
-  };
+
 
   const createLineChart = () => {
     const { dataPoints, yAxisMin, yAxisMax } = playerData.historicalData;
@@ -91,7 +89,8 @@ export default function PlayerProfileBlock() {
       const y = height - padding - ((point.value - yAxisMin) / yRange) * (height - padding * 2);
       return `${x},${y}`;
     }).join(' ');
-    
+  
+
     return (
       <svg width={width} height={height} className="w-full">
         {/* Grid line at middle */}
@@ -128,6 +127,9 @@ export default function PlayerProfileBlock() {
     );
   };
 
+
+
+
   return (
     <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3">
       <div className="flex items-center gap-2 mb-3">
@@ -136,74 +138,82 @@ export default function PlayerProfileBlock() {
       </div>
       
       {/* Player Info Section */}
-      <div className="flex items-start gap-3 mb-4">
+      <div className="flex gap-3 mb-4">
+        {/* Player Image */}
         <img 
           src={playerData.image} 
           alt={playerData.name}
-          className="w-12 h-12 rounded-lg object-cover"
+          className="w-14 rounded-lg object-cover flex-shrink-0"
         />
+        {/* Player Info */}
         <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold text-pb_darkgray">{playerData.name}</h4>
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-semibold text-pb_blue">{playerData.name}</h4>
             <div className="flex items-center gap-1">
-              <span className="text-2xs text-pb_textgray">{playerData.jerseyNumber}</span>
+              <span className="text-2xs text-pb_textgray">{playerData.positionRank}</span>
               <div 
-                className="w-4 h-4 rounded text-2xs text-white flex items-center justify-center font-medium"
-                style={{ backgroundColor: playerData.teamColor }}
+                className="w-4 h-4 rounded text-2xs text-pb_darkgray/80 flex items-center justify-center font-medium"
+                style={{ backgroundColor: playerData.positionColor }}
               >
-                {playerData.teamAbbrev}
+                {playerData.position}
               </div>
             </div>
           </div>
           
-          {/* Primary Stats Row */}
-          <div className="flex items-center justify-between mb-1">
-            {playerData.stats.primary.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xs font-medium text-pb_darkgray">{stat.value}</div>
-              </div>
-            ))}
-          </div>
+          <Separator className="my-1 mb1.5" />
           
-          {/* Secondary Stats Row */}
-          <div className="flex items-center justify-between">
-            {playerData.stats.secondary.map((stat, index) => (
-              <div key={index} className="text-center">
-                {stat.label === "Trend" ? (
-                  <div className={`text-2xs font-medium px-1 py-0.5 rounded ${stat.isPositive ? 'bg-pb_green text-white' : 'bg-pb_red text-white'}`}>
-                    {stat.value}
-                  </div>
-                ) : (
-                  <div className="text-2xs font-medium text-pb_darkgray">{stat.value}</div>
-                )}
+          {/* Stats Grid - 2 rows x 3 columns */}
+          <div className="grid grid-cols-3 grid-rows-2 gap-x-5 gap-y-2">
+            {/* Top row */}
+            <div className="grid grid-cols-3">
+              <Watch className="col-span-1 w-icon-xs h-icon-xs flex justify-start my-auto text-pb_mddarkgray" />
+              <div className="col-span-2 w-full text-2xs font-medium text-pb_textlightergray flex items-center justify-center">{playerData.mpg || <EmptyIcon className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}</div>
+            </div>
+            
+            <div className="grid grid-cols-3">
+              <ShieldHalf className="col-span-1 w-icon-xs h-icon-xs flex justify-start my-auto text-pb_mddarkgray" />
+              <div className="col-span-2 w-full text-2xs font-medium text-pb_textlightergray flex items-center justify-center">{playerData.team || <EmptyIcon className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}</div>
+            </div>
+              
+            <div className="grid grid-cols-3">
+              <TimerReset className="col-span-1 w-icon-xs h-icon-xs flex justify-start my-auto text-pb_mddarkgray" />
+              <div className="col-span-2 w-full text-2xs font-medium text-pb_textlightergray flex items-center justify-center">{playerData.age || <EmptyIcon className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}</div>
+            </div>
+              
+            {/* Bottom row */}
+            <div className="grid grid-cols-3">
+              <Users className="col-span-1 w-icon-xs h-icon-xs flex justify-start my-auto text-pb_mddarkgray" />
+              <div className="col-span-2 w-full text-2xs font-medium text-pb_textlightergray flex items-center justify-center">{playerData.rosterPercentage || <EmptyIcon className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}</div>
+            </div>
+              
+            <div className="grid grid-cols-3">
+              <Goal className="col-span-1 w-icon-xs h-icon-xs flex justify-start my-auto text-pb_mddarkgray" />
+              <div className="col-span-2 w-full text-2xs font-medium text-pb_textlightergray flex items-center justify-center">{playerData.playoffScheduleGrade || <EmptyIcon className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}</div>
+            </div>
+              
+            <div className="grid grid-cols-3">
+              <Bandage className="col-span-1 w-icon-xs h-icon-xs flex justify-start my-auto text-pb_mddarkgray" />
+              <div className="col-span-2 w-full text-2xs font-medium text-pb_textlightergray flex items-center justify-center">
+                <div className="w-6 h-4 bg-pb_green text-white text-2xs font-medium rounded-sm2 flex items-center justify-center">
+                  H
+                </div>
               </div>
-            ))}
+            </div>
           </div>
+
+          
         </div>
+
       </div>
       
+
+
       {/* Tags Section */}
       <div className="mb-4">
-        {/* Attribute Tags */}
-        <div className="flex flex-wrap gap-1 mb-2">
-          {playerData.tags.attributes.map((tag, index) => (
-            <span key={index} className="px-2 py-1 bg-pb_lightergray text-2xs text-pb_textgray rounded font-medium">
-              {tag}
-            </span>
-          ))}
-        </div>
-        
-        {/* Status Tags */}
         <div className="flex flex-wrap gap-1">
-          {playerData.tags.status.map((tag, index) => {
-            const IconComponent = getTagIcon(tag);
-            return (
-              <div key={index} className="flex items-center gap-1 px-2 py-1 bg-pb_lightergray text-2xs text-pb_textgray rounded">
-                <IconComponent className="w-3 h-3" />
-                <span className="font-medium">{tag}</span>
-              </div>
-            );
-          })}
+          {playerData.tags.traitIds.map((traitId, index) => (
+            <TraitTag key={index} traitId={traitId} />
+          ))}
         </div>
       </div>
       

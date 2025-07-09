@@ -165,6 +165,7 @@ module.exports = {
 			'xlg': '1.375rem',
 			'md': '1rem',
   			smd: '.925rem',
+			'nums': '.825rem',
 			'button': '.775rem',
   			'2xs': '.650rem',
   			'3xs': '.600rem',
@@ -182,6 +183,10 @@ module.exports = {
   			sans: [
   				'din-2014',
   				'sans-serif'
+  			],
+  			mono: [
+  				'var(--font-dm-mono)',
+  				'monospace'
   			]
   		},
   		colors: {
@@ -311,6 +316,7 @@ module.exports = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)',
+  			sm2: 'calc(var(--radius) - 5px)',
   			xs: 'calc(var(--radius) - 6px)'
   		},
   		boxShadow: {

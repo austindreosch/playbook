@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { DM_Sans } from 'next/font/google';
+import { DM_Mono, DM_Sans } from 'next/font/google';
 import Script from 'next/script';
 import { Suspense } from 'react';
 import ConditionalNavBar from '../components/ConditionalNavBar';
@@ -16,6 +16,13 @@ config.autoAddCss = false
 const dmSans = DM_Sans({
   subsets: ['latin'],
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap'
+})
+
+const dmMono = DM_Mono({
+  subsets: ['latin'],
+  weight: ['300', '400', '500'],
+  variable: '--font-dm-mono',
   display: 'swap'
 })
 
@@ -69,7 +76,7 @@ export default function RootLayout({ children }) {
         }} />
       </head>
             <UserProvider>
-      <body className={`${dmSans.className} bg-pb_paperwhite min-h-0`}>
+      <body className={`${dmSans.className} ${dmMono.variable} bg-pb_paperwhite min-h-0`}>
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>

@@ -2,6 +2,7 @@
 
 import { memo, useState } from 'react';
 import PlayerRowStatsSection from './PlayerRowStatsSection';
+import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 
 // Player Row Component exactly matching RankingsPlayerRow structure
 const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleExpand, rowIndex }) => {
@@ -27,9 +28,9 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
         onClick={onToggleExpand}
       >
         {/* Left section with fixed widths - exactly matching RankingsPlayerRow */}
-        <div className="flex items-center w-[35%] flex-shrink-0 relative h-full ml-1">
+        <div className={`${ROSTER_COLUMN_CLASSES.playerInfoSectionRow}  `}>
           {/* Playbook Score instead of rank number */}
-          <div className="w-9 h-6 text-button text-center select-none rounded-sm border border-pb_lightergray flex items-center justify-center font-bold">
+          <div className={`${ROSTER_COLUMN_CLASSES.playbookScoreBox} font-mono text-sm font-semibold text-pb_darkgray select-none rounded-sm border border-pb_lightergray`}>
             {playbookScore}
           </div>
 
@@ -59,7 +60,7 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
         </div>
 
         {/* Stats section - flexible width */}
-        <div className="flex flex-grow min-w-0 h-full">
+        <div className="flex-grow min-w-0 h-full">
           <PlayerRowStatsSection 
             categories={categories}
             playerStats={player.stats}

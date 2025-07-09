@@ -114,14 +114,14 @@ export default function PlayerPerformanceBlock() {
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-sm font-semibold ${index === 0 ? 'text-pb_darkgray' : 'text-pb_textlightgray'}`}>
+                  <span className={`text-sm font-semibold font-mono ${index === 0 ? 'text-pb_darkgray' : 'text-pb_textlightgray'}`}>
                     {metric.value}
                   </span>
                   <div className="flex flex-col gap-1">
                     {metric.changes.map((change, changeIndex) => (
                       <div key={changeIndex} className="flex items-center gap-1">
                         <TrendingUp className="w-3 h-3 text-pb_green" />
-                        <span className="text-2xs font-medium text-pb_green">{change.value}</span>
+                        <span className="text-2xs font-medium font-mono text-pb_green">{change.value}</span>
                       </div>
                     ))}
                   </div>
@@ -177,9 +177,9 @@ export default function PlayerPerformanceBlock() {
                 <tr key={gameIndex} className="border-t border-pb_lightergray">
                   <td className="py-1 px-1 text-pb_textgray">{game.date}</td>
                   <td className="py-1 px-1 text-pb_textgray">{game.opponent}</td>
-                  <td className="py-1 px-1 text-pb_textgray">{game.minutes}</td>
+                  <td className="py-1 px-1 font-mono text-pb_textgray">{game.minutes}</td>
                   {Object.entries(game.stats).map(([statKey, statValue], statIndex) => (
-                    <td key={statIndex} className="py-1 px-1 text-pb_darkgray font-medium">
+                    <td key={statIndex} className="py-1 px-1 font-mono text-pb_darkgray font-medium">
                       {statValue}
                     </td>
                   ))}

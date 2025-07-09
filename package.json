@@ -63,6 +63,7 @@
     "framer-motion": "^12.6.3",
     "fs": "^0.0.1-security",
     "fuse.js": "^7.1.0",
+    "geist": "^1.4.2",
     "gtag": "^1.0.1",
     "idb-keyval": "^6.2.2",
     "kerberos": "^2.0.1",

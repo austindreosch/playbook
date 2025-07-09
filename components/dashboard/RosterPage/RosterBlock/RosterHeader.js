@@ -2,18 +2,19 @@
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ChevronDown, ChevronUp, Compass, SigmaSquare } from "lucide-react";
+import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 
 // Header Component exactly matching RankingsPlayerListHeader
 const RosterHeader = ({ categories, onSort, sortConfig }) => {
   return (
     <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
       <div className="flex h-8 items-center">
-        {/* Left section exactly matching RankingsPlayerListHeader */}
-        <div className="flex items-center w-[30%]">
+        {/* Left section - Player Info Area */}
+        <div className={ROSTER_COLUMN_CLASSES.playerInfoSectionHeader}>
           <div className="flex flex-1 bg-transparent hover:bg-gray-600 transition-colors cursor-pointer min-w-0">
             {/* Compass icon above rankings - clickable to reset to ranking order */}
             <div 
-              className="flex items-center justify-center w-9 h-full hover:bg-gray-600 cursor-pointer"
+              className={`${ROSTER_COLUMN_CLASSES.compassIcon} hover:bg-gray-600 cursor-pointer`}
               onClick={() => onSort(null)}
               title="Sort by Ranking (Default Order)"
             >
@@ -23,12 +24,12 @@ const RosterHeader = ({ categories, onSort, sortConfig }) => {
           </div>
         </div>
 
-        {/* Stats Headers exactly matching RankingsPlayerListHeader */}
-        <div className="flex flex-1 h-full gap-[2px] font-bold overflow-visible">
+        {/* Stats Headers */}
+        <div className={`${ROSTER_COLUMN_CLASSES.statsContainer} font-bold overflow-visible`}>
           {/* Z-Score Sum Sort Button */}
           <div
             key="zScoreSum"
-            className="flex-1 h-full flex flex-col items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1 relative"
+            className={`${ROSTER_COLUMN_CLASSES.headerZScoreColumn} hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1`}
             onClick={() => onSort('zScoreSum')}
             title="Sort by Z-Score Sum"
           >
@@ -49,7 +50,7 @@ const RosterHeader = ({ categories, onSort, sortConfig }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
-                    className="flex-1 h-full flex items-center justify-center hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1 relative"
+                    className={`${ROSTER_COLUMN_CLASSES.headerStatColumn} hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1`}
                     onClick={() => onSort(abbrev)}
                   >
                     {/* Centered abbreviation */}

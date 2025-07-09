@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import EmptyStatIndicator from '../../../common/EmptyStatIndicator';
+import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 
 
 
@@ -276,14 +277,14 @@ const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex 
 
 
   return (
-    <div className="flex w-full h-full gap-0.5">
+    <div className={ROSTER_COLUMN_CLASSES.statsContainer}>
       {/* Z-Score Sum main value column */}
       <div
         key="zScoreSum_main"
-        className="flex-1 text-center h-full flex items-center justify-center select-none bg-gray-50"
+        className={`${ROSTER_COLUMN_CLASSES.zScoreColumn} select-none`}
         title={`Z-Score Sum: ${typeof zScoreSum === 'number' ? zScoreSum.toFixed(2) : '-'}`}
       >
-        <span className="text-button text-pb_darkgray font-medium">
+        <span className="text-button font-semibold text-pb_textgray">
           {typeof zScoreSum === 'number' ? zScoreSum.toFixed(2) : '-'}
         </span>
       </div>
@@ -331,11 +332,11 @@ const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex 
         return (
           <div
             key={categoryAbbrev}
-            className={`flex-1 text-center h-full flex items-center justify-center select-none ${cellBgClass}`}
+            className={`${ROSTER_COLUMN_CLASSES.statColumn} ${cellBgClass} select-none`}
             title={title}
           >
             {formattedValue !== '' ? (
-              <span className={`text-button font-medium ${colors.textColor}`}>
+              <span className={`text-nums font-medium text-pb_mddarkgray`}>
                 {formattedValue}
               </span>
             ) : (
