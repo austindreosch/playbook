@@ -3,7 +3,7 @@
 import TraitTag from '@/components/common/TraitTag';
 import EmptyIcon from '@/components/icons/EmptyIcon';
 import { Separator } from '@/components/ui/separator';
-import { Activity, Bandage, BarChart3, Calendar, Clock, Flame, Goal, Heart, Scale, ScanSearch, Shield, ShieldHalf, Star, TimerReset, TrendingUp, Users, Watch, Zap } from 'lucide-react';
+import { Activity, Bandage, BarChart3, Calendar, ClipboardMinus, Clock, Compass, Flame, Goal, Heart, Scale, ScanSearch, Shield, ShieldHalf, Sprout, Star, TimerReset, TrendingUp, Users, Watch, Zap } from 'lucide-react';
 
 export default function PlayerProfileBlock() {
   // TODO: This data should come from selected player and be sport-agnostic
@@ -210,7 +210,7 @@ export default function PlayerProfileBlock() {
 
       {/* Tags Section */}
       <div className="mb-4">
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1 items-center justify-center">
           {playerData.tags.traitIds.map((traitId, index) => (
             <TraitTag key={index} traitId={traitId} />
           ))}
@@ -218,41 +218,61 @@ export default function PlayerProfileBlock() {
       </div>
       
       {/* Value Comparison Table */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-pb_darkgray">Value</span>
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-3 h-3 text-pb_textgray" />
-            <Calendar className="w-3 h-3 text-pb_textgray" />
-          </div>
-        </div>
-        
-        <div className="space-y-1">
-          {playerData.valueComparisons.map((comparison, index) => (
-            <div key={index} className="flex items-center justify-between">
+      <div className="mb-6">
+        <div className="flex gap-4">
+          {/* Left side - Value rows */}
+          <div className="flex-1">
+            <div className="flex items-center mb-2">
+              <span className="text-xs font-semibold text-pb_darkgray">Value</span>
               <div className="flex items-center gap-2">
-                <ScanSearch className="w-3 h-3 text-pb_textgray" />
-                <span className="text-2xs font-medium text-pb_darkgray">{comparison.type}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xs font-semibold text-pb_darkgray">{comparison.value}</span>
-                <span className="text-2xs text-pb_textgray w-4 text-center">{comparison.rank}</span>
-                {comparison.change && (
-                  <div className="text-right min-w-12">
-                    <div className={`text-2xs font-medium ${comparison.changeType === 'positive' ? 'text-pb_green' : 'text-pb_red'}`}>
-                      {comparison.changeType === 'negative' ? '▼' : ''} {comparison.change}
-                    </div>
-                    {comparison.subtitle && (
-                      <div className="text-3xs text-pb_textgray">{comparison.subtitle}</div>
-                    )}
-                  </div>
-                )}
+                <BarChart3 className="w-icon-sm h-icon-sm text-pb_textgray" />
+                <Calendar className="w-icon-sm h-icon-sm text-pb_textgray" />
               </div>
             </div>
-          ))}
+            <div className="space-y-2">
+              {/* Playbook row (highlighted) */}
+              <div className="flex items-center gap-2">
+                <Compass className="w-icon-sm h-icon-sm text-pb_darkgray" />
+                <span className="text-2xs font-semibold text-pb_darkgray">Playbook</span>
+                <span className="text-2xs font-bold text-pb_darkgray ml-auto">981</span>
+                <span className="text-2xs text-pb_darkgray w-4 text-center">3</span>
+              </div>
+
+              {/* Standard row (muted) */}
+              <div className="flex items-center justify-center mx-auto text-center gap-2 opacity-50">
+                <ClipboardMinus className="w-icon-sm h-icon-sm text-pb_textgray" />
+                <span className="text-2xs font-medium text-pb_textgray">Standard</span>
+                <span className="text-2xs text-pb_textgray ml-auto ">957</span>
+                <span className="text-2xs text-pb_textgray w-4 text-center">4</span>
+              </div>
+
+              {/* Redraft row (muted) */}
+              <div className="flex items-center gap-2 opacity-50">
+                <Sprout className="w-icon-sm h-icon-sm text-pb_textgray" />
+                <span className="text-2xs font-medium text-pb_textgray">Redraft</span>
+                <span className="text-2xs text-pb_textgray ml-auto">999</span>
+                <span className="text-2xs text-pb_textgray w-4 text-center">1</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - Change indicators */}
+          <div className="flex flex-col justify-center text-center space-y-1 w-20">
+            <div>
+              <div className="text-md font-medium text-pb_green">▲ 6%</div>
+              <div className="text-3xs text-pb_textgray leading-tight">Playbook<br />Differential</div>
+            </div>
+            <div>
+              <div className="text-md font-medium text-pb_red">▼ 2%</div>
+              <div className="text-3xs text-pb_textgray leading-tight">Value Over<br />Last 30</div>
+            </div>
+          </div>
         </div>
       </div>
+
       
+
+
       {/* Historical View */}
       <div>
         <div className="flex items-center justify-between mb-2">

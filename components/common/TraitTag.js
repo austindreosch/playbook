@@ -61,7 +61,7 @@ export default function TraitTag({ traitId, className = "", showTooltip = true }
     console.warn(`Unknown trait ID: ${traitId}`);
     return (
       <div className={`flex items-center px-2 text-2xs text-pb_textgray rounded border border-pb_lightgray ${className}`}>
-        <Activity className="w-icon-xs h-icon-xs mr-3" />
+        <Activity className="w-icon-2xs h-icon-2xs mr-3" />
         <span className="font-medium leading-loose">{traitId}</span>
       </div>
     );
@@ -70,9 +70,9 @@ export default function TraitTag({ traitId, className = "", showTooltip = true }
   const IconComponent = trait.icon;
   
   const tagElement = (
-    <div className={`flex items-center px-2 h-6    text-2xs text-pb_textgray rounded border border-pb_lightgray ${className}`}>
-      <IconComponent className="w-icon-xs h-icon-xs mr-1" />
-      <span className="font-medium">{trait.name}</span>
+    <div className={`flex items-center px-2 h-6    text-2xs text-pb_mddarkgray rounded border border-pb_lightgray ${className}`}>
+      <IconComponent className="w-icon-2xs h-icon-2xs mr-1.5" />
+      <span className="">{trait.name}</span>
     </div>
   );
   

@@ -42,6 +42,7 @@ module.exports = {
   			'1.5': '1.9px'
   		},
   		width: {
+			'icon-2xs': '0.7rem',
 			'icon-xs': '0.8rem',
 			'icon-sm': '0.9rem',
 			'icon': '1.1rem',
