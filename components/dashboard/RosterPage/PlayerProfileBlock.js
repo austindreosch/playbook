@@ -218,14 +218,16 @@ export default function PlayerProfileBlock() {
       </div>
       
       {/* Value Comparison Table */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="flex gap-4">
           {/* Left side - Value rows */}
-          <div className="flex-1">
-            <div className="flex items-center mb-2">
-              <span className="text-xs font-semibold text-pb_darkgray">Value</span>
-              <div className="flex items-center gap-2">
+          <div className="flex-1 space-y-2.5">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-semibold text-pb_darkgray flex-1">Value</span>
+              <div className="w-10 flex justify-center">
                 <BarChart3 className="w-icon-sm h-icon-sm text-pb_textgray" />
+              </div>
+              <div className="w-6 flex justify-center">
                 <Calendar className="w-icon-sm h-icon-sm text-pb_textgray" />
               </div>
             </div>
@@ -233,25 +235,37 @@ export default function PlayerProfileBlock() {
               {/* Playbook row (highlighted) */}
               <div className="flex items-center gap-2">
                 <Compass className="w-icon-sm h-icon-sm text-pb_darkgray" />
-                <span className="text-2xs font-semibold text-pb_darkgray">Playbook</span>
-                <span className="text-2xs font-bold text-pb_darkgray ml-auto">981</span>
-                <span className="text-2xs text-pb_darkgray w-4 text-center">3</span>
+                <span className="text-2xs font-semibold text-pb_darkgray flex-1">Playbook</span>
+                <div className="w-10 flex justify-center">
+                  <span className="text-2xs font-bold text-pb_darkgray">981</span>
+                </div>
+                <div className="w-6 flex justify-center">
+                  <span className="text-2xs text-pb_darkgray">3</span>
+                </div>
               </div>
 
               {/* Standard row (muted) */}
-              <div className="flex items-center justify-center mx-auto text-center gap-2 opacity-50">
+              <div className="flex items-center gap-2 opacity-50">
                 <ClipboardMinus className="w-icon-sm h-icon-sm text-pb_textgray" />
-                <span className="text-2xs font-medium text-pb_textgray">Standard</span>
-                <span className="text-2xs text-pb_textgray ml-auto ">957</span>
-                <span className="text-2xs text-pb_textgray w-4 text-center">4</span>
+                <span className="text-2xs font-medium text-pb_textgray flex-1">Standard</span>
+                <div className="w-10 flex justify-center">
+                  <span className="text-2xs text-pb_textgray">957</span>
+                </div>
+                <div className="w-6 flex justify-center">
+                  <span className="text-2xs text-pb_textgray">4</span>
+                </div>
               </div>
 
               {/* Redraft row (muted) */}
               <div className="flex items-center gap-2 opacity-50">
                 <Sprout className="w-icon-sm h-icon-sm text-pb_textgray" />
-                <span className="text-2xs font-medium text-pb_textgray">Redraft</span>
-                <span className="text-2xs text-pb_textgray ml-auto">999</span>
-                <span className="text-2xs text-pb_textgray w-4 text-center">1</span>
+                <span className="text-2xs font-medium text-pb_textgray flex-1">Redraft</span>
+                <div className="w-10 flex justify-center">
+                  <span className="text-2xs text-pb_textgray">999</span>
+                </div>
+                <div className="w-6 flex justify-center">
+                  <span className="text-2xs text-pb_textgray">1</span>
+                </div>
               </div>
             </div>
           </div>
@@ -259,11 +273,11 @@ export default function PlayerProfileBlock() {
           {/* Right side - Change indicators */}
           <div className="flex flex-col justify-center text-center space-y-1 w-20">
             <div>
-              <div className="text-md font-medium text-pb_green">▲ 6%</div>
+              <div className="text-sm font-medium text-pb_green">▲ 6%</div>
               <div className="text-3xs text-pb_textgray leading-tight">Playbook<br />Differential</div>
             </div>
             <div>
-              <div className="text-md font-medium text-pb_red">▼ 2%</div>
+              <div className="text-sm font-medium text-pb_red">▼ 2%</div>
               <div className="text-3xs text-pb_textgray leading-tight">Value Over<br />Last 30</div>
             </div>
           </div>
@@ -274,31 +288,22 @@ export default function PlayerProfileBlock() {
 
 
       {/* Historical View */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-pb_darkgray">Historical View</span>
+      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative h-24 overflow-hidden">
+        <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
+        <div className="absolute top-1.5 right-2.5 z-10">
           <div className="flex rounded border border-pb_lightgray">
-            <button className="px-2 py-1 text-2xs font-medium bg-pb_lightergray text-pb_darkgray rounded-l">
+            <button className="px-1.5 py-0.5 text-3xs font-medium bg-pb_lightergray text-pb_darkgray rounded-l">
               Stats
             </button>
-            <button className="px-2 py-1 text-2xs font-medium text-pb_textgray rounded-r">
+            <button className="px-1.5 py-0.5 text-3xs font-medium text-pb_textgray rounded-r">
               Value
             </button>
           </div>
         </div>
         
         {/* Chart Container */}
-        <div className="relative">
-          {/* Y-axis labels */}
-          <div className="absolute left-0 top-0 h-20 flex flex-col justify-between text-3xs text-pb_textgray">
-            <span>{playerData.historicalData.yAxisMax}</span>
-            <span>{playerData.historicalData.yAxisMin}</span>
-          </div>
-          
-          {/* Chart */}
-          <div className="ml-6">
-            {createLineChart()}
-          </div>
+        <div className="h-full w-full mt-3">
+          {createLineChart()}
         </div>
       </div>
     </div>
