@@ -75,15 +75,18 @@ export default function RootLayout({ children }) {
           `
         }} />
       </head>
-            <UserProvider>
+      <UserProvider>
       <body className={`${dmSans.className} ${dmMono.variable} bg-pb_paperwhite min-h-0`}>
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>
           <AOSInitializer />
           <ConditionalNavBar />
-            <main className="mt-10 md:mt-12 flex-1 min-h-0 overflow-y-auto">            <MasterDatasetInitializer />
-            {children}
+            <main className="mt-10 md:mt-12 flex-1 min-h-0 overflow-y-auto">
+            <MasterDatasetInitializer />
+                         <div className="container mx-auto px-0.5 sm:px-1 lg:px-0">
+              {children}
+            </div>
           </main>
           <Toaster />
         </body>

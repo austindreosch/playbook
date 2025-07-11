@@ -216,7 +216,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl py-8 pb-12">
+            <div className="max-w-7xl mx-auto py-8 pb-12">
       <div className="text-left mb-6 px-4 2xl:px-0">
         <h1 className="text-4xl font-bold tracking-tight text-pb_darkgray">Let&rsquo;s build your Playbook together.</h1>
         <p className="text-md text-pb_textgray mt-2">A few quick questions so we can build the features you need most - totally optional, but every response helps.</p>

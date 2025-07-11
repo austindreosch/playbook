@@ -104,14 +104,11 @@ export default function PlaybookScoreBlock() {
   };
 
   return (
-    <div className="w-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-sm p-4">
+    <div className="w-full h-full bg-white rounded-lg border border-gray-200 shadow-sm p-3 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Compass className="w-5 h-5 text-gray-700" />
-          <h3 className="text-base font-semibold text-gray-900">Playbook Score</h3>
-        </div>
-        <HelpCircle className="w-4 h-4 text-gray-400" />
+      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
+        <Compass className="w-icon h-icon text-pb_darkgray" />
+        <h3 className="text-sm font-semibold text-pb_darkgray">Playbook Score</h3>
       </div>
       
       {/* League format and status */}
@@ -131,7 +128,7 @@ export default function PlaybookScoreBlock() {
       </div>
       
       {/* Donut Chart */}
-      <div className="flex justify-center mb-6 relative">
+      <div className="flex justify-center mb-6 relative flex-1 items-center">
         <div className="relative">
           <svg width="140" height="140" className="transform -rotate-90">
             {createDonutChart()}
@@ -146,7 +143,7 @@ export default function PlaybookScoreBlock() {
       </div>
       
       {/* Metrics Rows */}
-      <div className="space-y-3">
+      <div className="space-y-3 flex-shrink-0">
         {scoreData.metrics.map((metric, index) => {
           const IconComponent = metric.icon;
           return (

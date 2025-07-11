@@ -177,7 +177,7 @@ const InDevelopmentDashboard = () => {
         </div>
       )}
 
-      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
+      <div className="h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-6xl py-4 flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar - Same as real dashboard */}
       <div className="space-y-2 md:space-y-0">
         {/* Mobile: Stacked Layout */}
@@ -507,7 +507,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <div className="container mx-auto h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-5xl pt-2 flex flex-col overflow-hidden">
+      <div className="h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-5xl pt-2 flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
           {/* Dashboard Tab Selector */}

@@ -3,7 +3,7 @@ import { Skeleton } from "../ui/skeleton";
 export default function DashboardSkeleton() {
   return (
     <div className="absolute inset-x-0 top-16 bottom-0">
-      <div className="container mx-auto h-full py-4 flex flex-col">
+      <div className="h-full py-4 flex flex-col">
         {/* Top navigation bar */}
         <div className="relative flex items-center">
           <Skeleton className="h-11 w-3/5 rounded-br-none bg-pb_lightgray" />

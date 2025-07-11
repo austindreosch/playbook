@@ -406,7 +406,7 @@ export default function RankingsPage() {
   if (authLoading) {
     // Render detailed page skeletons while authentication is in progress
     return (
-      <div className="container mx-auto p-4">
+      <div className="p-4">
         <div className="flex justify-between items-center mb-8 pt-2">
           <Skeleton className="h-4 w-48" />
           <div className="flex items-center gap-2">
@@ -462,7 +462,7 @@ export default function RankingsPage() {
   // Show sign-up card if not authenticated (and auth is no longer loading)
   if (!user) {
     return (
-      <div className="container mx-auto p-4">
+      <div className="p-4">
         <div className="max-w-4xl mx-auto mt-12">
           <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
             <div className="text-center mb-8">
@@ -515,7 +515,7 @@ export default function RankingsPage() {
 
   if (isPageLoading) {
     return (
-      <div className="container mx-auto p-4">
+      <div className="p-4">
         <div className="flex justify-between items-center mb-8 pt-2">
           <Skeleton className="h-4 w-48" />
           <div className="flex items-center gap-2">
@@ -571,7 +571,7 @@ export default function RankingsPage() {
   // Error check AFTER hooks - Also simplify to rely on pageError first
   if (pageError) { // Use the derived pageError state
       return (
-          <div className="container mx-auto p-4 text-red-500">
+          <div className="p-4 text-red-500">
               Error: {pageError} 
           </div>
       );

@@ -160,7 +160,7 @@ export default function PlayerProfileBlock() {
             </div>
           </div>
           
-          <Separator className="my-1 mb1.5" />
+          <Separator className="my-1 mb-1.5" />
           
           {/* Stats Grid - 2 rows x 3 columns */}
           <div className="grid grid-cols-3 grid-rows-2 gap-x-5 gap-y-2">
@@ -288,7 +288,7 @@ export default function PlayerProfileBlock() {
 
 
       {/* Historical View */}
-      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative flex-1 min-h-16 overflow-hidden">
+      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative overflow-hidden flex-1 min-h-20 flex flex-col">
         <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
         <div className="absolute top-1.5 right-2.5 z-10">
           <div className="flex rounded border border-pb_lightgray">
@@ -302,7 +302,7 @@ export default function PlayerProfileBlock() {
         </div>
         
         {/* Chart Container */}
-        <div className="h-full w-full mt-3">
+        <div className="flex-1 w-full mt-3 flex items-end">
           {createLineChart()}
         </div>
       </div>

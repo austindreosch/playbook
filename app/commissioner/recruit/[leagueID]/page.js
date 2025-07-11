@@ -193,7 +193,7 @@ export default function CommissionerRecruitPage() {
 
   return (
       <div className="pb-12">
-        <div className="container mx-auto w-full pt-5 pb-5">
+        <div className="w-full pt-5 pb-5">
                 {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-3 gap-2">
           {/* Mobile Layout */}
@@ -923,7 +923,7 @@ export default function CommissionerRecruitPage() {
       
         {/* Footer - App Advertisement */}
         <footer className="lg:fixed lg:bottom-0 lg:left-0 lg:right-0 border-t border-pb_lightgray py-2 lg:z-10 bg-white">
-          <div className="container mx-auto px-4 lg:px-0">
+          <div className="px-4 lg:px-0">
             <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-between text-xs gap-3 lg:gap-0">
               <div className="flex flex-col items-center lg:flex-row lg:items-center gap-3 lg:gap-0">
                 <div className="flex flex-col items-center lg:flex-row lg:items-center mt-4 lg:mt-0">
