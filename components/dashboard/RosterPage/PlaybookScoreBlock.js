@@ -143,7 +143,7 @@ export default function PlaybookScoreBlock() {
       </div>
       
       {/* Metrics Rows */}
-      <div className="space-y-3 flex-shrink-0">
+      <div className="space-y-3 flex-shrink-0 overflow-auto max-h-32">
         {scoreData.metrics.map((metric, index) => {
           const IconComponent = metric.icon;
           return (
