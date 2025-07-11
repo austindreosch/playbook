@@ -1,9 +1,18 @@
 'use client';
 
-import { Compass, Globe, Heart, HelpCircle, Shield, Users } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Shield, Users } from 'lucide-react';
+import { useState } from 'react';
 
 export default function PlaybookScoreBlock() {
   // TODO: These values should come from actual data/calculations based on the sport
+  const [metricSelections, setMetricSelections] = useState({
+    0: "Prefer",  // Favor
+    1: "Faith",   // Prospect  
+    2: "Ironman", // Injuries
+    3: "Prefer"   // Global Favor
+  });
+
   const scoreData = {
     totalScore: 981,
     leagueFormat: "Dynasty • H2H • Categories",
@@ -16,26 +25,22 @@ export default function PlaybookScoreBlock() {
       { 
         icon: Heart, 
         label: "Favor", 
-        selectedOption: "Prefer", 
-        options: ["Prefer", "Dislike"] 
+        options: ["Prefer", "", "Dislike"] 
       },
       { 
         icon: Users, 
         label: "Prospect", 
-        selectedOption: "Faith", 
-        options: ["Faith", "Doubt"] 
+        options: ["Faith", "", "Doubt"] 
       },
       { 
         icon: Shield, 
         label: "Injuries", 
-        selectedOption: "Ironman", 
-        options: ["Prone", "Ironman"] 
+        options: ["Prone", "", "Ironman"] 
       },
       { 
         icon: Globe, 
         label: "Global Favor", 
-        selectedOption: "Prefer", 
-        options: ["Prefer", "Dislike"] 
+        options: ["Prefer", "", "Dislike"] 
       }
     ]
   };
@@ -74,31 +79,28 @@ export default function PlaybookScoreBlock() {
     });
   };
 
-  const getButtonStyles = (option, selectedOption, index) => {
-    const isSelected = option === selectedOption;
+  const handleMetricChange = (metricIndex, value) => {
+    setMetricSelections(prev => ({
+      ...prev,
+      [metricIndex]: value
+    }));
+  };
+
+  const getButtonStyles = (option, selectedOption, buttonIndex) => {
+    // Handle empty middle button (neutral)
+    if (option === "") {
+      return "data-[state=active]:bg-pb_lightergray data-[state=active]:text-pb_textgray bg-white text-pb_textlightestgray";
+    }
     
-    // Define color schemes for each metric based on the design
-    const colorSchemes = {
-      0: { // Favor
-        prefer: isSelected ? "bg-green-500 text-white" : "bg-white text-gray-500 border border-gray-200",
-        dislike: isSelected ? "bg-red-500 text-white" : "bg-white text-gray-500 border border-gray-200"
-      },
-      1: { // Prospect  
-        faith: isSelected ? "bg-green-500 text-white" : "bg-white text-gray-500 border border-gray-200",
-        doubt: isSelected ? "bg-red-500 text-white" : "bg-white text-gray-500 border border-gray-200"
-      },
-      2: { // Injuries
-        prone: isSelected ? "bg-red-500 text-white" : "bg-white text-gray-500 border border-gray-200",
-        ironman: isSelected ? "bg-red-500 text-white" : "bg-white text-gray-500 border border-gray-200"
-      },
-      3: { // Global Favor
-        prefer: isSelected ? "bg-gray-700 text-white" : "bg-white text-gray-500 border border-gray-200",
-        dislike: isSelected ? "bg-red-500 text-white" : "bg-white text-gray-500 border border-gray-200"
-      }
-    };
+    // Define styles based on button position: 0=positive (green), 2=negative (red)
+    if (buttonIndex === 0) { // First button - positive
+      return "data-[state=active]:bg-pb_green bg-white text-pb_textlightestgray hover:bg-gray-50";
+    } else if (buttonIndex === 2) { // Third button - negative  
+      return "data-[state=active]:bg-pb_red bg-white text-pb_textlightestgray hover:bg-gray-50";
+    }
     
-    const scheme = colorSchemes[index];
-    return scheme[option.toLowerCase()] || "bg-white text-gray-500 border border-gray-200";
+    // Fallback
+    return "bg-white text-pb_textlightestgray hover:bg-gray-50";
   };
 
   return (
@@ -150,19 +152,26 @@ export default function PlaybookScoreBlock() {
           return (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <IconComponent className="w-4 h-4 text-gray-600" />
-                <span className="text-sm text-gray-900 font-medium">{metric.label}</span>
+                <IconComponent className="w-icon-sm h-icon-sm text-pb_darkgray" />
+                <span className="text-button text-pb_darkgray font-medium">{metric.label}</span>
               </div>
-              <div className="flex items-center gap-1">
-                {metric.options.map((option) => (
-                  <button
-                    key={option}
-                    className={`px-3 py-1 text-xs font-medium rounded transition-colors ${getButtonStyles(option, metric.selectedOption, index)}`}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
+              <Tabs 
+                value={metricSelections[index]} 
+                onValueChange={(value) => handleMetricChange(index, value)}
+                className="w-auto"
+              >
+                <TabsList className="h-auto p-0  border border-pb_lightgray grid w-36" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+                  {metric.options.map((option, buttonIndex) => (
+                    <TabsTrigger
+                      key={buttonIndex}
+                      value={option}
+                      className={`px-2 h-6 text-2xs font-medium data-[state=active]:text-white border-r border-pb_lightgray last:border-r-0 first:rounded-l last:rounded-r rounded-none w-full ${getButtonStyles(option, metricSelections[index], buttonIndex)}`}
+                    >
+                      {option || <GitCommitHorizontal className="w-icon-sm h-icon-sm text-pb_textlightestgray" />}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
             </div>
           );
         })}

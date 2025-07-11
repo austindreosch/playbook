@@ -131,14 +131,14 @@ export default function PlayerProfileBlock() {
 
 
   return (
-    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col">
+      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <ScanSearch className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-sm font-semibold text-pb_darkgray">Player Profile</h3>
       </div>
       
       {/* Player Info Section */}
-      <div className="flex gap-3 mb-4">
+      <div className="flex gap-3 mb-4 flex-shrink-0">
         {/* Player Image */}
         <img 
           src={playerData.image} 
@@ -209,8 +209,8 @@ export default function PlayerProfileBlock() {
 
 
       {/* Tags Section */}
-      <div className="mb-4">
-        <div className="flex flex-wrap gap-1 items-center justify-center">
+      <div className="mb-4 flex-shrink-0">
+        <div className="flex flex-wrap gap-1 items-center justify-start">
           {playerData.tags.traitIds.map((traitId, index) => (
             <TraitTag key={index} traitId={traitId} />
           ))}
@@ -218,7 +218,7 @@ export default function PlayerProfileBlock() {
       </div>
       
       {/* Value Comparison Table */}
-      <div className="mb-4">
+      <div className="mb-4 flex-shrink-0">
         <div className="flex gap-4">
           {/* Left side - Value rows */}
           <div className="flex-1 space-y-2.5">
@@ -288,7 +288,7 @@ export default function PlayerProfileBlock() {
 
 
       {/* Historical View */}
-      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative h-24 overflow-hidden">
+      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative flex-1 min-h-16 overflow-hidden">
         <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
         <div className="absolute top-1.5 right-2.5 z-10">
           <div className="flex rounded border border-pb_lightgray">

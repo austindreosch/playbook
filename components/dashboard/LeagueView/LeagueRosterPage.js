@@ -49,14 +49,14 @@ export default function LeagueRosterPage() {
         </div>
 
         {/* Right Column */}
-        <div className="col-span-7 grid grid-rows-[8fr_4fr] gap-1.5">
+        <div className="col-span-7 flex flex-col gap-1.5 h-full">
             {/* Top Row */}
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-1.5 h-[70%]">
                 <PlayerProfileBlock />
                 <PlaybookScoreBlock />
             </div>
             {/* Bottom Row */}
-            <div>
+            <div className="flex-1">
                 <PlayerPerformanceBlock />
             </div>
         </div>
