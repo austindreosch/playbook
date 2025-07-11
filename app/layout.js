@@ -36,7 +36,6 @@ export const metadata = {
   keywords: ['fantasy sports', 'AI', 'rankings', 'trades', 'fantasy football', 'fantasy basketball', 'fantasy hockey', 'fantasy baseball', 'fantasy soccer', 'fantasy golf', 'fantasy tennis', 'fantasy racing', 'fantasy football rankings', 'fantasy basketball rankings', 'fantasy hockey rankings', 'fantasy baseball rankings', 'fantasy soccer rankings', 'fantasy golf rankings', 'fantasy tennis rankings', 'fantasy racing rankings'],
 }
 
-const NAVBAR_HEIGHT = 64; // 16px padding top + 48px navbar height
 
 export default function RootLayout({ children }) {
   return (
@@ -76,15 +75,15 @@ export default function RootLayout({ children }) {
         }} />
       </head>
       <UserProvider>
-      <body className={`${dmSans.className} ${dmMono.variable} bg-pb_paperwhite min-h-0`}>
+      <body className={`${dmSans.className} ${dmMono.variable} bg-pb_paperwhite h-full flex flex-col`}>
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>
           <AOSInitializer />
           <ConditionalNavBar />
-            <main className="mt-10 md:mt-12 flex-1 min-h-0 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto pt-10 md:pt-12 flex flex-col">
             <MasterDatasetInitializer />
-            <div className="container mx-auto px-1 2xl:px-0">
+            <div className="container mx-auto px-1 2xl:px-0 flex-1 flex flex-col py-1.5">
               {children}
             </div>
           </main>

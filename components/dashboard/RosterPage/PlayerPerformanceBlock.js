@@ -95,13 +95,13 @@ export default function PlayerPerformanceBlock() {
   const impactStats = ["AST", "PTS", "FG%", "3PM", "FT%", "REB", "STL", "BLK", "TO"];
 
   return (
-    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col">
+      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <SigmaSquare className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-sm font-semibold text-pb_darkgray">Performance</h3>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 flex-shrink-0">
         {/* Performance Metrics */}
         <div>
           <div className="space-y-2">
@@ -159,9 +159,9 @@ export default function PlayerPerformanceBlock() {
       </div>
 
       {/* Recent Games Table */}
-      <div>
-        <h4 className="text-xs font-semibold text-pb_darkgray mb-2">Recent Games</h4>
-        <div className="overflow-x-auto">
+      <div className="flex-1 min-h-0 flex flex-col">
+        <h4 className="text-xs font-semibold text-pb_darkgray mb-2 flex-shrink-0">Recent Games</h4>
+        <div className="overflow-auto flex-1">
           <table className="w-full text-2xs">
             <thead>
               <tr className="text-pb_textgray">

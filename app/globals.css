@@ -79,6 +79,94 @@
     background: hsl(var(--background));
   }
 
+  /* Disable slashed zeros in DM Mono font and enable tabular numbers */
+  .font-mono {
+    font-feature-settings: "ss01" 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* TEMPORARY: Visualize max-h- constraint */
+  /* .max-h-5xl {
+    position: relative;
+  }
+  .max-h-5xl::before {
+    content: "max-h-5xl (1024px)";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .max-h-5xl::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed red;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  .max-w-7xl {
+    position: relative;
+  }
+  .max-w-7xl::before {
+    content: "max-w-7xl (1280px)";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 255, 0.8);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .max-w-7xl::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed blue;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  .max-h-7xl {
+    position: relative;
+  }
+  .max-h-7xl::before {
+    content: "max-h-7xl (1280px)";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(0, 128, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .max-h-7xl::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px dashed green;
+    pointer-events: none;
+    z-index: 9998;
+  } */
+
   /* width */
   ::-webkit-scrollbar {
     width: 10px;

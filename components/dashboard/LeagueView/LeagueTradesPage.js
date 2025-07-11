@@ -62,7 +62,7 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Center Column */}
-        <div className="col-span-12 px-3 pt-2 h-full flex flex-col">
+        <div className="col-span-12 px-3 pt-3 h-full flex flex-col">
           <div className="space-y-1.5 mb-1.5 flex-shrink-0">
             <TradeResultsBlock />
             <TradeImpactBar />

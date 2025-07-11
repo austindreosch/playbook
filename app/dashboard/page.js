@@ -507,7 +507,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <div className="h-[calc(100vh-3rem)] md:h-[calc(100vh-4rem)] max-h-5xl pt-2 flex flex-col overflow-hidden">
+      <div className="h-full max-h-5xl flex flex-col overflow-hidden">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center">
           {/* Dashboard Tab Selector */}
