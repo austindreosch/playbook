@@ -1,8 +1,15 @@
 'use client';
 
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Shield, Users } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Label, Pie, PieChart } from "recharts";
 
 export default function PlaybookScoreBlock() {
   // TODO: These values should come from actual data/calculations based on the sport
@@ -12,14 +19,18 @@ export default function PlaybookScoreBlock() {
     2: "Ironman", // Injuries
     3: "Prefer"   // Global Favor
   });
+  
+  const [calculatedInnerRadius, setCalculatedInnerRadius] = useState(50);
+  const chartContainerRef = useRef(null);
+  const desiredThickness = 30; // Desired thickness in pixels
 
   const scoreData = {
     totalScore: 981,
     leagueFormat: "Dynasty • H2H • Categories",
     teamStatus: "Contending",
     segments: [
-      { value: 45, color: "#4A90E2" }, // blue segment
-      { value: 55, color: "#F5A623" }, // orange/yellow segment
+      { category: "primary", value: 45, fill: "#4A90E2" }, // blue segment
+      { category: "secondary", value: 55, fill: "#F5A623" }, // orange/yellow segment
     ],
     metrics: [
       { 
@@ -42,42 +53,43 @@ export default function PlaybookScoreBlock() {
         label: "Global Favor", 
         options: ["Prefer", "", "Dislike"] 
       }
-    ]
+        ]
   };
 
-  // Create SVG donut chart
-  const createDonutChart = () => {
-    const radius = 70;
-    const strokeWidth = 24;
-    const normalizedRadius = radius - strokeWidth * 0.5;
-    const circumference = normalizedRadius * 2 * Math.PI;
-    
-    let currentAngle = 0;
-    
-    return scoreData.segments.map((segment, index) => {
-      const strokeDasharray = `${(segment.value / 100) * circumference} ${circumference}`;
-      const rotation = currentAngle;
-      currentAngle += (segment.value / 100) * 360;
-      
-      return (
-        <circle
-          key={index}
-          cx={radius}
-          cy={radius}
-          r={normalizedRadius}
-          fill="transparent"
-          stroke={segment.color}
-          strokeWidth={strokeWidth}
-          strokeDasharray={strokeDasharray}
-          strokeDashoffset={0}
-          style={{
-            transform: `rotate(${rotation}deg)`,
-            transformOrigin: `${radius}px ${radius}px`,
-          }}
-        />
-      );
-    });
+  const chartConfig = {
+    value: {
+      label: "Score",
+    },
+    primary: {
+      label: "Primary",
+      color: "#4A90E2",
+    },
+    secondary: {
+      label: "Secondary", 
+      color: "#F5A623",
+    },
   };
+
+  const totalScore = useMemo(() => {
+    return scoreData.segments.reduce((acc, curr) => acc + curr.value, 0);
+  }, []);
+
+  useEffect(() => {
+    const calculateInnerRadius = () => {
+      if (chartContainerRef.current) {
+        const containerRect = chartContainerRef.current.getBoundingClientRect();
+        const containerSize = Math.min(containerRect.width, containerRect.height);
+        const outerRadius = containerSize / 2;
+        const calculatedInner = Math.max(0, outerRadius - desiredThickness);
+        setCalculatedInnerRadius(calculatedInner);
+      }
+    };
+
+    calculateInnerRadius();
+    window.addEventListener('resize', calculateInnerRadius);
+    
+    return () => window.removeEventListener('resize', calculateInnerRadius);
+  }, [desiredThickness]);
 
   const handleMetricChange = (metricIndex, value) => {
     setMetricSelections(prev => ({
@@ -127,30 +139,75 @@ export default function PlaybookScoreBlock() {
         </div>
       </div>
       
-      {/* Donut Chart */}
-      <div className="flex justify-center mb-6 relative flex-1 items-center">
-        <div className="relative">
-          <svg width="140" height="140" className="transform -rotate-90">
-            {createDonutChart()}
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl font-mono font-bold text-gray-900">{scoreData.totalScore}</span>
-          </div>
-        </div>
-        <div className="absolute bottom-0 right-8">
-          <HelpCircle className="w-4 h-4 text-gray-400" />
-        </div>
+            {/* Donut Chart */}
+      <div className="flex justify-center mb-3 relative flex-1 items-center">
+        <ChartContainer
+          ref={chartContainerRef}
+          config={chartConfig}
+          className="mx-auto h-full w-full p-0"
+        >
+          <PieChart 
+            width="100%" 
+            height="100%" 
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+          >
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Pie
+              data={scoreData.segments}
+              dataKey="value"
+              nameKey="category"
+              cx="50%"
+              cy="50%"
+              outerRadius="100%"
+              innerRadius={calculatedInnerRadius}
+              strokeWidth={8}
+            >
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) - 8}
+                          className="fill-gray-900 text-2xl font-mono font-bold"
+                        >
+                          {scoreData.totalScore}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          y={(viewBox.cy || 0) + 12}
+                          className="fill-gray-500 text-xs"
+                        >
+                          Playbook Score
+                        </tspan>
+                      </text>
+                    )
+                  }
+                }}
+              />
+            </Pie>
+          </PieChart>
+        </ChartContainer>
       </div>
       
       {/* Metrics Rows */}
-      <div className="space-y-3 flex-shrink-0 overflow-auto max-h-32">
+      <div className="space-y-2 flex-shrink-0 overflow-auto max-h-32">
         {scoreData.metrics.map((metric, index) => {
           const IconComponent = metric.icon;
           return (
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <IconComponent className="w-icon-sm h-icon-sm text-pb_darkgray" />
-                <span className="text-button text-pb_darkgray font-medium">{metric.label}</span>
+                <IconComponent className="w-icon-xs h-icon-xs text-pb_darkgray" />
+                <span className="text-xs text-pb_darkgray font-medium">{metric.label}</span>
               </div>
               <Tabs 
                 value={metricSelections[index]} 

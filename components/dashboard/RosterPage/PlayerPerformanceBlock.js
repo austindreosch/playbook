@@ -145,7 +145,7 @@ export default function PlayerPerformanceBlock() {
         {/* Impact Distribution */}
         <div>
           <h4 className="text-xs font-semibold text-pb_darkgray mb-2">Impact Distribution</h4>
-          <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-5 gap-1">
             {impactStats.map((stat, index) => (
               <div 
                 key={index}
