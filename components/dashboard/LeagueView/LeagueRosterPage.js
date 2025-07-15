@@ -66,7 +66,7 @@ export default function LeagueRosterPage() {
                 </div>
             </div>
             {/* Bottom Row */}
-            <div className="flex-1 overflow-hidden mb-1.5">
+            <div className="flex-1 overflow-hidden">
                 <PlayerPerformanceBlock />
             </div>
         </div>

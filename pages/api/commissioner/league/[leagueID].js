@@ -11,13 +11,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Check if this is the playbook recruit dummy league
-    if (leagueID === '8k2m9x7p4w1e6r3t') {
-      // Read CSV files directly
-      const csvDir = path.join(process.cwd(), 'public', 'docs', 'commissioner');
-      
+    // Check if CSV files exist for this league
+    const csvDir = path.join(process.cwd(), 'public', 'docs', 'commissioner');
+    
+    // Try to read league-specific CSV files
+    const settingsFile = path.join(csvDir, `${leagueID} - League Settings.csv`);
+    const rulebookFile = path.join(csvDir, `${leagueID} - Rulebook.csv`);
+    const playersFile = path.join(csvDir, `${leagueID} - Players.csv`);
+    
+    // Check if files exist
+    if (fs.existsSync(settingsFile) && fs.existsSync(rulebookFile) && fs.existsSync(playersFile)) {
       // Read League Settings CSV
-      const settingsCSV = fs.readFileSync(path.join(csvDir, 'PlaybookRecruitDummyDatabase - League Settings.csv'), 'utf8');
+      const settingsCSV = fs.readFileSync(settingsFile, 'utf8');
       const settingsData = Papa.parse(settingsCSV, { header: true }).data;
       const settings = {};
       settingsData.forEach(row => {
@@ -27,7 +32,7 @@ export default async function handler(req, res) {
       });
       
       // Read Rulebook CSV
-      const rulebookCSV = fs.readFileSync(path.join(csvDir, 'PlaybookRecruitDummyDatabase - Rulebook.csv'), 'utf8');
+      const rulebookCSV = fs.readFileSync(rulebookFile, 'utf8');
       const rulebookData = Papa.parse(rulebookCSV, { header: true }).data;
       const rulebook = {};
       rulebookData.forEach(row => {
@@ -37,7 +42,7 @@ export default async function handler(req, res) {
       });
       
       // Read Players CSV
-      const playersCSV = fs.readFileSync(path.join(csvDir, 'PlaybookRecruitDummyDatabase - Players.csv'), 'utf8');
+      const playersCSV = fs.readFileSync(playersFile, 'utf8');
       const playersData = Papa.parse(playersCSV, { header: true }).data;
       
       // Group players by team
@@ -52,7 +57,7 @@ export default async function handler(req, res) {
           }
           teamPlayers[player.TeamName].push({
             name: player.PlayerName,
-            team: player.NBATeam,
+            team: player.NFLTeam || player.NBATeam || player.MLBTeam || 'N/A',
             position: player.Position
           });
         }
@@ -100,8 +105,9 @@ export default async function handler(req, res) {
       
       // Build league data object
       const leagueData = {
-        leagueId: '8k2m9x7p4w1e6r3t',
-        leagueName: 'The League',
+        leagueId: leagueID,
+        leagueName: settings.LeagueName,
+        platformLeagueId: settings.PlatformLeagueId || 'Unknown',
         sport: settings.Sport ,
         format: settings.Format ,
         scoring: settings.Scoring ,

@@ -1,14 +1,16 @@
 Setting,Value
-Sport,NBA
+LeagueName,Elite NFL Dynasty League
+PlatformLeagueId,sl_98x7m4n2k5p1q8w
+Sport,NFL
 Format,Dynasty
-Scoring,Categories
-Matchup,H2H (Each)
-Platform,Fantrax
-Teams,12
-Playoff Spots,6
-League Fee,$75
-Advanced Payments,1
-Roster Structure,"G,G,G,F,F,F,C,FLX,FLX,FLX,BENCH,BENCH,BENCH,IR,IR,IR,IR,MINOR,MINOR,MINOR,MINOR,MINOR"
+Scoring,PPR
+Matchup,H2H
+Platform,Sleeper
+Teams,10
+Playoff Spots,4
+League Fee,$125
+Advanced Payments,2
+Roster Structure,"QB,RB,RB,WR,WR,WR,TE,FLEX,FLEX,DEF,K,BENCH,BENCH,BENCH,BENCH,BENCH,BENCH,IR,IR,TAXI,TAXI,TAXI"
 AvailableTeams,"Team A, Team B, Team C"
 Team A Strengths,"Veteran Core,Balanced,Previous Champion x3"
 Team B Strengths,"Young Core,Flexible,Balanced"
@@ -25,11 +27,11 @@ Triple Twigs Draft Picks,"2025 1.02, 2025 2.02, 2025 3.02, 2026 1st, 2026 2nd, 2
 Tune Squad Draft Picks,"2025 3.11, 2026 1st, 2026 2nd, 2026 3rd"
 Winning is Overrated Draft Picks,"2025 2.05, 2025 3.05, 2026 1st, 2026 2nd, 2026 2nd, 2026 3rd"
 Finals MVP Alperen Şengün Draft Picks,""
-CommissionerEmail,austindreosch@gmail.com
-CommissionerDiscord,austindreosch
-CommissionerReddit,lookalive9
-DiscordLink,https://discord.gg/YT3NrBcerV
-LeagueSafeLink,https://www.leaguesafe.com/join/4282062
+CommissionerEmail,commish.nfl@gmail.com
+CommissionerDiscord,nfl_commish_mike
+CommissionerReddit,NFLDynastyGuru
+DiscordLink,https://discord.gg/NFLDynasty2025
+LeagueSafeLink,https://www.leaguesafe.com/join/9876543
 
 
 

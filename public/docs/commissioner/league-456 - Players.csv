@@ -1,0 +1,256 @@
+TeamName,PlayerName,NFLTeam,Position
+Team A,Josh Allen,BUF,QB
+Team A,Saquon Barkley,PHI,RB
+Team A,Christian McCaffrey,SF,RB
+Team A,Cooper Kupp,LAR,WR
+Team A,Tyreek Hill,MIA,WR
+Team A,Davante Adams,LV,WR
+Team A,Travis Kelce,KC,TE
+Team A,A.J. Brown,PHI,WR
+Team A,Breece Hall,NYJ,RB
+Team A,Ja'Marr Chase,CIN,WR
+Team A,Stefon Diggs,HOU,WR
+Team A,DeAndre Hopkins,KC,WR
+Team A,Tony Pollard,TEN,RB
+Team A,Tee Higgins,CIN,WR
+Team A,Calvin Ridley,TEN,WR
+Team A,Jaylen Waddle,MIA,WR
+Team A,Tyler Lockett,SEA,WR
+Team A,Geno Smith,SEA,QB
+Team A,Alexander Mattison,LV,RB
+Team B,Lamar Jackson,BAL,QB
+Team B,Derrick Henry,BAL,RB
+Team B,Josh Jacobs,GB,RB
+Team B,DeVonta Smith,PHI,WR
+Team B,Amon-Ra St. Brown,DET,WR
+Team B,CeeDee Lamb,DAL,WR
+Team B,George Kittle,SF,TE
+Team B,Malik Nabers,NYG,WR
+Team B,D.J. Moore,CHI,WR
+Team B,Alvin Kamara,NO,RB
+Team B,Isiah Pacheco,KC,RB
+Team B,Rome Odunze,CHI,WR
+Team B,Marvin Harrison Jr.,ARI,WR
+Team B,Brock Bowers,LV,TE
+Team B,Caleb Williams,CHI,QB
+Team B,Jayden Daniels,WAS,QB
+Team B,49ers,SF,DEF
+Team B,Justin Tucker,BAL,K
+Team B,Rhamondre Stevenson,NE,RB
+Team C,Dak Prescott,DAL,QB
+Team C,Jonathan Taylor,IND,RB
+Team C,Bijan Robinson,ATL,RB
+Team C,Mike Evans,TB,WR
+Team C,DK Metcalf,SEA,WR
+Team C,Amari Cooper,BUF,WR
+Team C,Mark Andrews,BAL,TE
+Team C,Puka Nacua,LAR,WR
+Team C,Brian Robinson Jr.,WAS,RB
+Team C,Courtland Sutton,DEN,WR
+Team C,Zay Flowers,BAL,WR
+Team C,Jordan Addison,MIN,WR
+Team C,Rachaad White,TB,RB
+Team C,Kendre Miller,NO,RB
+Team C,Tua Tagovailoa,MIA,QB
+Team C,Anthony Richardson,IND,QB
+Team C,Cowboys,DAL,DEF
+Team C,Harrison Butker,KC,K
+Team C,Jalen McMillan,TB,WR
+Team C,Trey McBride,ARI,TE
+Finals MVP Alperen Şengün,Tyrese Haliburton,IND,"G,Flx"
+Finals MVP Alperen Şengün,LaMelo Ball,CHA,"G,Flx"
+Finals MVP Alperen Şengün,Alperen Sengun,HOU,"C,Flx"
+Finals MVP Alperen Şengün,Donovan Mitchell,CLE,"G,Flx"
+Finals MVP Alperen Şengün,Bam Adebayo,MIA,"F,C,Flx"
+Finals MVP Alperen Şengün,Franz Wagner,ORL,"F,Flx"
+Finals MVP Alperen Şengün,Brandon Ingram,TOR,"F,Flx"
+Finals MVP Alperen Şengün,Darius Garland,CLE,"G,Flx"
+Finals MVP Alperen Şengün,Desmond Bane,ORL,"G,F,Flx"
+Finals MVP Alperen Şengün,Wendell Carter,ORL,"C,Flx"
+Finals MVP Alperen Şengün,Jaden McDaniels,MIN,"F,Flx"
+Finals MVP Alperen Şengün,Gary Trent,MIL,"G,F,Flx"
+Finals MVP Alperen Şengün,Lonzo Ball,CLE,"G,Flx"
+Finals MVP Alperen Şengün,Dillon Brooks,PHO,"G,F,Flx"
+Finals MVP Alperen Şengün,Royce O'Neale,PHO,"F,Flx"
+Finals MVP Alperen Şengün,Julian Champagnie,SA,"F,Flx"
+Finals MVP Alperen Şengün,Kris Murray,POR,"F,Flx"
+Finals MVP Alperen Şengün,Andre Drummond,PHI,"C,Flx"
+Finals MVP Alperen Şengün,Harrison Barnes,SA,"F,Flx"
+Finals MVP Alperen Şengün,Scotty Pippen,MEM,"G,Flx"
+Finals MVP Alperen Şengün,Craig Porter,CLE,"G,Flx"
+Finals MVP Alperen Şengün,Jamarion Sharp,(N/A),"C,Flx"
+Huerters De' Fox Shai,Shai Gilgeous-Alexander,OKC,"G,Flx"
+Huerters De' Fox Shai,Nikola Jokic,DEN,"C,Flx"
+Huerters De' Fox Shai,Scottie Barnes,TOR,"F,Flx"
+Huerters De' Fox Shai,Tyrese Maxey,PHI,"G,Flx"
+Huerters De' Fox Shai,De'Aaron Fox,SA,"G,Flx"
+Huerters De' Fox Shai,Jalen Williams,OKC,"G,F,Flx"
+Huerters De' Fox Shai,Mikal Bridges,NY,"G,F,Flx"
+Huerters De' Fox Shai,Jalen Johnson,ATL,"F,Flx"
+Huerters De' Fox Shai,Keegan Murray,SAC,"F,Flx"
+Huerters De' Fox Shai,Jaren Jackson,MEM,"F,C,Flx"
+Huerters De' Fox Shai,Jarrett Allen,CLE,"C,Flx"
+Huerters De' Fox Shai,Zaccharie Risacher,ATL,"F,Flx"
+Huerters De' Fox Shai,Trey Murphy,NO,"F,Flx"
+Huerters De' Fox Shai,Cam Whitmore,HOU,"F,Flx"
+Huerters De' Fox Shai,Onyeka Okongwu,ATL,"C,Flx"
+Huerters De' Fox Shai,Jaime Jaquez,MIA,"G,F,Flx"
+Huerters De' Fox Shai,Johnny Furphy,IND,"G,F,Flx"
+Huerters De' Fox Shai,Ja'Kobe Walter,TOR,"G,Flx"
+Huerters De' Fox Shai,Jaylon Tyson,CLE,"G,Flx"
+Huerters De' Fox Shai,Kevin Huerter,CHI,"G,Flx"
+Huerters De' Fox Shai,Malik Beasley,DET,"G,Flx"
+Huerters De' Fox Shai,Jared Butler,PHI,"G,Flx"
+Moneyball,OG Anunoby,NY,"F,Flx"
+Moneyball,Devin Vassell,SA,"G,F,Flx"
+Moneyball,Myles Turner,MIL,"C,Flx"
+Moneyball,Nicolas Claxton,BKN,"C,Flx"
+Moneyball,Clint Capela,HOU,"C,Flx"
+Moneyball,Ivica Zubac,LAC,"C,Flx"
+Moneyball,Deandre Ayton,LAL,"C,Flx"
+Moneyball,Alex Caruso,OKC,"G,F,Flx"
+Moneyball,Jrue Holiday,POR,"G,Flx"
+Moneyball,Christian Braun,DEN,"G,F,Flx"
+Moneyball,Dalton Knecht,LAL,"G,F,Flx"
+Moneyball,Fred VanVleet,HOU,"G,Flx"
+Moneyball,Matisse Thybulle,POR,"G,F,Flx"
+Moneyball,Ben Sheppard,IND,"G,Flx"
+Moneyball,Toumani Camara,POR,"F,Flx"
+Moneyball,Jake LaRavia,LAL,"F,Flx"
+Moneyball,Draymond Green,GS,"F,C,Flx"
+Moneyball,Nick Richards,PHO,"C,Flx"
+Moneyball,Jusuf Nurkic,UTA,"C,Flx"
+Moneyball,Marcus Smart,WAS,"G,Flx"
+Moneyball,Nick Smith,CHA,"G,Flx"
+Moneyball,Ben Simmons,LAC,"G,Flx"
+Poole's Moving Castle,Cason Wallace,OKC,"G,F,Flx"
+Poole's Moving Castle,Donovan Clingan,POR,"C,Flx"
+Poole's Moving Castle,Anfernee Simons,BOS,"G,Flx"
+Poole's Moving Castle,Coby White,CHI,"G,Flx"
+Poole's Moving Castle,Deni Avdija,POR,"G,F,Flx"
+Poole's Moving Castle,Jeremy Sochan,SA,"F,Flx"
+Poole's Moving Castle,Tidjane Salaun,CHA,"F,Flx"
+Poole's Moving Castle,Jaylen Wells,MEM,"G,F,Flx"
+Poole's Moving Castle,Yves Missi,NO,"C,Flx"
+Poole's Moving Castle,Payton Pritchard,BOS,"G,Flx"
+Poole's Moving Castle,Cameron Thomas,BKN,"G,F,Flx"
+Poole's Moving Castle,Ayo Dosunmu,CHI,"G,F,Flx"
+Poole's Moving Castle,Devin Carter,SAC,"G,Flx"
+Poole's Moving Castle,Nikola Topic,OKC,"G,Flx"
+Poole's Moving Castle,Keon Ellis,SAC,"G,Flx"
+Poole's Moving Castle,John Collins,UTA,"F,Flx"
+Poole's Moving Castle,Taylor Hendricks,UTA,"F,Flx"
+Poole's Moving Castle,Day'Ron Sharpe,BKN,"C,Flx"
+Poole's Moving Castle,Daniel Gafford,DAL,"C,Flx"
+Poole's Moving Castle,Jordan Poole,NO,"G,Flx"
+Poole's Moving Castle,Collin Sexton,CHA,"G,Flx"
+Poole's Moving Castle,Miles McBride,NY,"G,Flx"
+Secret Stuff,Anthony Edwards,MIN,"G,F,Flx"
+Secret Stuff,Jalen Green,PHO,"G,Flx"
+Secret Stuff,Austin Reaves,LAL,"G,F,Flx"
+Secret Stuff,Stephon Castle,SA,"G,Flx"
+Secret Stuff,Cade Cunningham,DET,"G,Flx"
+Secret Stuff,Keyonte George,UTA,"G,Flx"
+Secret Stuff,Immanuel Quickley,TOR,"G,Flx"
+Secret Stuff,Jared McCain,PHI,"G,Flx"
+Secret Stuff,Shaedon Sharpe,POR,"G,F,Flx"
+Secret Stuff,Cody Williams,UTA,"G,Flx"
+Secret Stuff,Anthony Black,ORL,"G,Flx"
+Secret Stuff,Kyshawn George,WAS,"G,F,Flx"
+Secret Stuff,AJ Johnson,WAS,"G,Flx"
+Secret Stuff,Reed Sheppard,HOU,"G,Flx"
+Secret Stuff,Amen Thompson,HOU,"G,F,Flx"
+Secret Stuff,Bennedict Mathurin,IND,"F,Flx"
+Secret Stuff,Bilal Coulibaly,WAS,"F,Flx"
+Secret Stuff,Karlo Matkovic,NO,"F,C,Flx"
+Secret Stuff,Naz Reid,MIN,"F,C,Flx"
+Secret Stuff,Jalen Duren,DET,"C,Flx"
+Secret Stuff,Kel'el Ware,MIA,"C,Flx"
+Secret Stuff,Dereck Lively,DAL,"C,Flx"
+Sir This is a Wemby's,Dyson Daniels,ATL,"G,F,Flx"
+Sir This is a Wemby's,Josh Giddey,CHI,"G,Flx"
+Sir This is a Wemby's,Jamal Murray,DEN,"G,Flx"
+Sir This is a Wemby's,Josh Hart,NY,"G,F,Flx"
+Sir This is a Wemby's,Jalen Suggs,ORL,"G,Flx"
+Sir This is a Wemby's,Quentin Grimes,PHI,"G,F,Flx"
+Sir This is a Wemby's,Terrence Shannon,MIN,"G,Flx"
+Sir This is a Wemby's,Pelle Larsson,MIA,"G,F,Flx"
+Sir This is a Wemby's,Brandon Miller,CHA,"F,Flx"
+Sir This is a Wemby's,Jabari Smith,HOU,"F,Flx"
+Sir This is a Wemby's,Miles Bridges,CHA,"F,Flx"
+Sir This is a Wemby's,Cameron Johnson,DEN,"F,Flx"
+Sir This is a Wemby's,Ron Holland,DET,"F,Flx"
+Sir This is a Wemby's,GG Jackson,MEM,"F,Flx"
+Sir This is a Wemby's,Noah Clowney,BKN,"F,C,Flx"
+Sir This is a Wemby's,Herbert Jones,NO,"F,Flx"
+Sir This is a Wemby's,DaRon Holmes,DEN,"F,C,Flx"
+Sir This is a Wemby's,Jonathan Mogbo,TOR,"F,C,Flx"
+Sir This is a Wemby's,Victor Wembanyama,SA,"C,Flx"
+Sir This is a Wemby's,Isaiah Jackson,IND,"C,Flx"
+Sir This is a Wemby's,Robert Williams,POR,"C,Flx"
+Sir This is a Wemby's,Trayce Jackson-Davis,GS,"C,Flx"
+Triple Twigs,Scoot Henderson,POR,"G,Flx"
+Triple Twigs,Tyler Herro,MIA,"G,Flx"
+Triple Twigs,Keon Johnson,BKN,"G,Flx"
+Triple Twigs,Isaiah Collier,UTA,"G,Flx"
+Triple Twigs,Kevin Porter,MIL,"G,Flx"
+Triple Twigs,Cole Anthony,MEM,"G,Flx"
+Triple Twigs,Ryan Rollins,MIL,"G,Flx"
+Triple Twigs,Kobe Bufkin,ATL,"G,Flx"
+Triple Twigs,Jaden Ivey,DET,"G,Flx"
+Triple Twigs,Robert Dillingham,MIN,"G,Flx"
+Triple Twigs,De'Andre Hunter,CLE,"F,Flx"
+Triple Twigs,Ausar Thompson,DET,"F,Flx"
+Triple Twigs,Paolo Banchero,ORL,"F,Flx"
+Triple Twigs,Tari Eason,HOU,"F,Flx"
+Triple Twigs,Saddiq Bey,NO,"F,Flx"
+Triple Twigs,Justin Edwards,PHI,"G,F,Flx"
+Triple Twigs,Dillon Jones,WAS,"F,Flx"
+Triple Twigs,Brice Sensabaugh,UTA,"F,Flx"
+Triple Twigs,Alex Sarr,WAS,"F,C,Flx"
+Triple Twigs,Chet Holmgren,OKC,"F,C,Flx"
+Triple Twigs,Walker Kessler,UTA,"C,Flx"
+Triple Twigs,Mark Williams,PHO,"C,Flx"
+Tune Squad,James Harden,LAC,"G,Flx"
+Tune Squad,Buddy Hield,GS,"G,F,Flx"
+Tune Squad,Chris Paul,SA,"G,Flx"
+Tune Squad,CJ McCollum,WAS,"G,Flx"
+Tune Squad,Bradley Beal,PHO,"G,Flx"
+Tune Squad,Norman Powell,LAC,"G,F,Flx"
+Tune Squad,Kyrie Irving,DAL,"G,Flx"
+Tune Squad,Damian Lillard,MIL,"G,Flx"
+Tune Squad,Jaden Springer,UTA,"G,Flx"
+Tune Squad,DeMar DeRozan,SAC,"F,Flx"
+Tune Squad,LeBron James,LAL,"F,Flx"
+Tune Squad,Kawhi Leonard,LAC,"F,Flx"
+Tune Squad,Tobias Harris,DET,"F,Flx"
+Tune Squad,Keldon Johnson,SA,"G,F,Flx"
+Tune Squad,Khris Middleton,WAS,"F,Flx"
+Tune Squad,Ryan Dunn,PHO,"F,Flx"
+Tune Squad,Josh Minott,BOS,"F,Flx"
+Tune Squad,Jett Howard,ORL,"F,Flx"
+Tune Squad,Nikola Vucevic,CHI,"C,Flx"
+Tune Squad,Al Horford,BOS,"C,Flx"
+Tune Squad,Isaiah Stewart,DET,"C,Flx"
+Tune Squad,Jay Huff,MEM,"C,Flx"
+Winning is Overrated,Stephen Curry,GS,"G,Flx"
+Winning is Overrated,Nickeil Alexander-Walker,ATL,"G,Flx"
+Winning is Overrated,Donte DiVincenzo,MIN,"G,Flx"
+Winning is Overrated,Mike Conley,MIN,"G,Flx"
+Winning is Overrated,Dejounte Murray,NO,"G,Flx"
+Winning is Overrated,Brandon Williams,DAL,"G,Flx"
+Winning is Overrated,Kevin Durant,HOU,"F,Flx"
+Winning is Overrated,Jonathan Kuminga,GS,"F,C,Flx"
+Winning is Overrated,Giannis Antetokounmpo,MIL,"F,C,Flx"
+Winning is Overrated,Lauri Markkanen,UTA,"F,Flx"
+Winning is Overrated,Naji Marshall,DAL,"F,Flx"
+Winning is Overrated,Paul George,PHI,"F,Flx"
+Winning is Overrated,Jerami Grant,POR,"F,Flx"
+Winning is Overrated,Tyler Smith,MIL,"F,Flx"
+Winning is Overrated,Karl-Anthony Towns,NY,"C,Flx"
+Winning is Overrated,Brook Lopez,LAC,"C,Flx"
+Winning is Overrated,Orlando Robinson,TOR,"C,Flx"
+Winning is Overrated,Kristaps Porzingis,ATL,"C,Flx"
+Winning is Overrated,Goga Bitadze,ORL,"C,Flx"
+Winning is Overrated,Adem Bona,PHI,"C,Flx"
+Winning is Overrated,Guerschon Yabusele,NY,"F,C,Flx"

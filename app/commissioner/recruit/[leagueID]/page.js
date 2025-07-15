@@ -56,13 +56,22 @@ export default function CommissionerRecruitPage() {
     } else {
       // Single position
       const colorMap = {
+        // NBA positions
         'PG': 'bg-pb_pastelblue text-pb_darkgray',
         'SG': 'bg-pb_pastelgreen text-pb_darkgray', 
         'SF': 'bg-pb_pastelorange text-pb_darkgray',
         'PF': 'bg-pb_pastelpurple text-pb_darkgray',
         'C': 'bg-pb_pastelred text-pb_darkgray',
         'G': 'bg-pb_pastelblue text-pb_darkgray',
-        'F': 'bg-pb_pastelpurple text-pb_darkgray'
+        'F': 'bg-pb_pastelpurple text-pb_darkgray',
+        // NFL positions
+        'QB': 'bg-pb_pastelblue text-pb_darkgray',
+        'RB': 'bg-pb_pastelgreen text-pb_darkgray',
+        'WR': 'bg-pb_pastelorange text-pb_darkgray',
+        'TE': 'bg-pb_pastelpurple text-pb_darkgray',
+        'DEF': 'bg-pb_pastelred text-pb_darkgray',
+        'K': 'bg-pb_pastelstone text-pb_darkgray',
+        'FLEX': 'bg-pb_pastelstone text-pb_darkgray'
       };
       
       const colorClass = colorMap[positions[0]] || 'bg-pb_pastelstone text-pb_darkgray';
@@ -75,13 +84,22 @@ export default function CommissionerRecruitPage() {
     
     if (positions.length === 2) {
       const colorMap = {
+        // NBA positions
         'PG': '#79addc',  // pb_pastelblue
         'SG': '#b8dca7',  // pb_pastelgreen
         'SF': '#f5d491',  // pb_pastelorange
         'PF': '#ababef',  // pb_pastelpurple
         'C': '#f17e92',   // pb_pastelred
         'G': '#79addc',   // pb_pastelblue
-        'F': '#ababef'    // pb_pastelpurple
+        'F': '#ababef',   // pb_pastelpurple
+        // NFL positions
+        'QB': '#79addc',  // pb_pastelblue
+        'RB': '#b8dca7',  // pb_pastelgreen
+        'WR': '#f5d491',  // pb_pastelorange
+        'TE': '#ababef',  // pb_pastelpurple
+        'DEF': '#f17e92', // pb_pastelred
+        'K': '#d6d3c2',   // pb_pastelstone
+        'FLEX': '#d6d3c2' // pb_pastelstone
       };
       
       const color1 = colorMap[positions[0]] || '#d6d3c2';
@@ -220,7 +238,14 @@ export default function CommissionerRecruitPage() {
             <Card className="px-3 py-2 sm:py-2 h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
               <div className="flex items-center gap-2 sm:gap-4 w-full justify-between">
                 <div className="flex items-center gap-2">
-                  <FantraxIcon className="w-4 h-4 text-pb_darkgray" />
+                  {(() => {
+                    const platform = leagueData?.settings?.platform?.toLowerCase();
+                    if (platform === 'fantrax') {
+                      return <FantraxIcon className="w-4 h-4 text-pb_darkgray" />;
+                    } else {
+                      return <Settings className="w-4 h-4 text-pb_darkgray" />;
+                    }
+                  })()}
                   <span className="text-pb_darkgray font-medium text-xs sm:text-sm">{leagueData?.settings?.platform}</span>
                 </div>
                 <div className="h-4 w-px bg-pb_lightgray"></div>
@@ -229,7 +254,7 @@ export default function CommissionerRecruitPage() {
                     {leagueData?.leagueName}
                   </h1>
                   <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
-                    ID: f1zwi0wum3y5041b
+                    ID: {leagueData?.platformLeagueId || leagueID}
                   </span>
                 </div>
               </div>
@@ -294,7 +319,14 @@ export default function CommissionerRecruitPage() {
             <Card className="px-3 py-2 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <FantraxIcon className="w-4 h-4 mr-1 text-pb_darkgray" />
+                  {(() => {
+                    const platform = leagueData?.settings?.platform?.toLowerCase();
+                    if (platform === 'fantrax') {
+                      return <FantraxIcon className="w-4 h-4 mr-1 text-pb_darkgray" />;
+                    } else {
+                      return <Settings className="w-4 h-4 mr-1 text-pb_darkgray" />;
+                    }
+                  })()}
                   <span className="text-pb_darkgray font-medium text-sm">{leagueData?.settings?.platform}</span>
                 </div>
                 <div className="h-4 w-px bg-pb_lightgray"></div>
@@ -303,7 +335,7 @@ export default function CommissionerRecruitPage() {
                     {leagueData?.leagueName}
                   </h1>
                   <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
-                    ID: f1zwi0wum3y5041b
+                    ID: {leagueData?.platformLeagueId || leagueID}
                   </span>
                 </div>
               </div>
@@ -380,7 +412,16 @@ export default function CommissionerRecruitPage() {
                  {/* Format & Scoring */}
                  <div className="grid grid-cols-2 gap-2">
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                     <Basketball className="w-4 h-4 text-pb_darkgray" />
+                     {(() => {
+                       const sport = leagueData?.sport?.toLowerCase();
+                       if (sport === 'nfl') {
+                         return <Football className="w-4 h-4 text-pb_darkgray" />;
+                       } else if (sport === 'mlb') {
+                         return <Baseball className="w-4 h-4 text-pb_darkgray" />;
+                       } else {
+                         return <Basketball className="w-4 h-4 text-pb_darkgray" />;
+                       }
+                     })()}
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Sport</span>
                        <span className="font-bold text-pb_darkgray text-xs">{leagueData?.sport}</span>
@@ -473,6 +514,7 @@ export default function CommissionerRecruitPage() {
                            default:
                              // Active roster positions (G, F, C, FLX, etc.) - use position-specific colors
                              const colorMap = {
+                               // NBA positions
                                'PG': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
                                'SG': 'bg-pb_pastelgreen text-pb_darkgray border-pb_pastelgreen/30', 
                                'SF': 'bg-pb_pastelorange text-pb_darkgray border-pb_pastelorange/30',
@@ -480,7 +522,16 @@ export default function CommissionerRecruitPage() {
                                'C': 'bg-pb_pastelred text-pb_darkgray border-pb_pastelred/30',
                                'G': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
                                'F': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
-                               'FLX': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30'
+                               'FLX': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30',
+                               // NFL positions
+                               'QB': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
+                               'RB': 'bg-pb_pastelgreen text-pb_darkgray border-pb_pastelgreen/30',
+                               'WR': 'bg-pb_pastelorange text-pb_darkgray border-pb_pastelorange/30',
+                               'TE': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
+                               'DEF': 'bg-pb_pastelred text-pb_darkgray border-pb_pastelred/30',
+                               'K': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30',
+                               'FLEX': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30',
+                               'TAXI': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30'
                              };
                              
                              const colorClass = colorMap[position?.toUpperCase()] || 'bg-white border-lightergray text-pb_midgray';
@@ -651,7 +702,7 @@ export default function CommissionerRecruitPage() {
                                    {team.draftPicks && team.draftPicks.length > 0 && (
                                      <div className="">
                                        <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
-                                                                                <div className="flex flex-wrap gap-1 justify-start">
+                                            <div className="flex flex-wrap gap-1 justify-start overflow-y-auto" style={{ height: '50px' }}>
                                            {team.draftPicks.map((pick, index) => (
                                              <span key={index} className={`${getDraftPickColor(pick)} border px-2 py-1 rounded text-xs ${isFirstRoundPick(pick) ? 'font-bold' : 'font-medium'} flex items-center`}>
                                              <ShieldUser className="h-4 w-4 mr-1" />{pick}
@@ -736,9 +787,9 @@ export default function CommissionerRecruitPage() {
                              </div>
 
                              {/* Current Roster - Enhanced with Scrolling */}
-                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner flex-1 lg:overflow-hidden">
+                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner" style={{ height: 'calc(100% - 160px)' }}>
                                <div 
-                                 className="lg:h-full lg:overflow-y-auto"
+                                 className="h-full overflow-y-auto"
                                  style={{
                                    scrollbarWidth: 'thin',
                                    scrollbarColor: '#d1d5db transparent'
@@ -790,18 +841,20 @@ export default function CommissionerRecruitPage() {
                              </div>
 
                              {/* Draft Picks - Always Visible */}
-                             {team.draftPicks && team.draftPicks.length > 0 && (
-                               <div className="flex-shrink-0 mt-4">
+                             <div className="flex-shrink-0 mt-4" style={{ height: '120px' }}>
                                  <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
-                                                                    <div className="flex flex-wrap gap-1 justify-start">
-                                     {team.draftPicks.map((pick, index) => (
-                                           <span key={index} className={`${getDraftPickColor(pick)} border px-3 py-1 rounded text-xs ${isFirstRoundPick(pick) ? 'font-bold' : 'font-medium'} flex items-center`}>
-                                           <ShieldUser className="h-4 w-4 mr-1" />{pick}
-                                         </span>
-                                     ))}
-                                   </div>
+                                <div className="flex flex-wrap gap-1 justify-start overflow-y-auto" style={{ height: '90px' }}>
+                                 {team.draftPicks && team.draftPicks.length > 0 ? (
+                                   team.draftPicks.map((pick, index) => (
+                                     <span key={index} className={`${getDraftPickColor(pick)} border px-3 py-1 rounded text-xs ${isFirstRoundPick(pick) ? 'font-bold' : 'font-medium'} flex items-center flex-shrink-0`} style={{ height: '24px' }}>
+                                       <ShieldUser className="h-4 w-4 mr-1" />{pick}
+                                     </span>
+                                   ))
+                                 ) : (
+                                   <span className="text-xs text-pb_textgray italic">No draft picks</span>
+                                 )}
                                </div>
-                             )}
+                             </div>
 
                            </TabsContent>
                          ))}
