@@ -7,6 +7,7 @@ import { DM_Mono, DM_Sans } from 'next/font/google';
 import Script from 'next/script';
 import { Suspense } from 'react';
 import ConditionalNavBar from '../components/ConditionalNavBar';
+import ConditionalWrapper from '../components/ConditionalWrapper';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
 import { GA_MEASUREMENT_ID } from '../lib/gtag';
@@ -83,9 +84,9 @@ export default function RootLayout({ children }) {
           <ConditionalNavBar />
           <main className="flex-1 overflow-y-auto pt-10 md:pt-12 flex flex-col">
             <MasterDatasetInitializer />
-            <div className="container mx-auto px-1 2xl:px-0 flex-1 flex flex-col py-1.5">
+            <ConditionalWrapper>
               {children}
-            </div>
+            </ConditionalWrapper>
           </main>
           <Toaster />
         </body>
