@@ -22,7 +22,7 @@ export default function PlaybookScoreBlock() {
   
   const [calculatedInnerRadius, setCalculatedInnerRadius] = useState(50);
   const chartContainerRef = useRef(null);
-  const desiredThickness = 30; // Desired thickness in pixels
+  const desiredThickness = 40; // Desired thickness in pixels
 
   const scoreData = {
     totalScore: 981,
@@ -164,39 +164,15 @@ export default function PlaybookScoreBlock() {
               outerRadius="100%"
               innerRadius={calculatedInnerRadius}
               strokeWidth={8}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) - 8}
-                          className="fill-gray-900 text-2xl font-mono font-bold"
-                        >
-                          {scoreData.totalScore}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 12}
-                          className="fill-gray-500 text-xs"
-                        >
-                          Playbook Score
-                        </tspan>
-                      </text>
-                    )
-                  }
-                }}
-              />
-            </Pie>
+            />
           </PieChart>
         </ChartContainer>
+        
+        {/* Center Text Overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="text-5xl font-bold text-gray-900">{totalScore}</div>
+          {/* <div className="text-xs text-gray-500">Playbook Score</div> */}
+        </div>
       </div>
       
       {/* Metrics Rows */}
