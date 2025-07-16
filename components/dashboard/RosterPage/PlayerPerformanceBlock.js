@@ -20,12 +20,6 @@ export default function PlayerPerformanceBlock() {
         changes: []
       }
     ],
-    // TODO: Impact categories should be sport-specific (NBA/NFL/MLB)
-    impactDistribution: {
-      positive: ["AST", "PTS", "FG%", "3PM", "FT%"], // Strong positive impact
-      neutral: ["REB", "STL"], // Moderate impact  
-      negative: ["BLK", "TO"] // Negative impact
-    },
     // TODO: Recent games structure should adapt to sport (NBA/NFL/MLB have different stat structures)
     recentGames: [
       {
@@ -76,23 +70,104 @@ export default function PlayerPerformanceBlock() {
     ]
   };
 
-  const getImpactColor = (statType) => {
-    const { positive, neutral, negative } = performanceData.impactDistribution;
-    
-    if (positive.includes(statType)) {
-      return "bg-pb_green text-white";
-    } else if (negative.includes(statType)) {
-      return "bg-pb_red text-white"; 
-    } else if (neutral.includes(statType)) {
-      return "bg-pb_lightergray text-pb_textgray";
-    }
-    return "bg-pb_lightergray text-pb_textgray";
+  // TODO: This should come from actual player z-score calculations based on sport-specific stats
+  const impactStatsWithScores = [
+    { name: "AST", zScore: 2.3 },
+    { name: "PTS", zScore: 1.8 },
+    { name: "FG%", zScore: 1.2 },
+    { name: "3PM", zScore: 0.9 },
+    { name: "FT%", zScore: 0.7 },
+    { name: "REB", zScore: 0.5 },
+    { name: "STL", zScore: 0.3 },
+    { name: "BLK", zScore: -0.2 },
+    { name: "TO", zScore: -1.1 }
+  ];
+
+  const getImpactColor = (zScore) => {
+    if (zScore >= 2.5) return "bg-pb_green-800 text-pb_darkgray/80";
+    if (zScore >= 2.0) return "bg-pb_green-700 text-pb_darkgray/80";
+    if (zScore >= 1.5) return "bg-pb_green-600 text-pb_darkgray/80";
+    if (zScore >= 1.0) return "bg-pb_green-500 text-pb_darkgray/80";
+    if (zScore >= 0.5) return "bg-pb_green-400 text-pb_darkgray/80";
+    if (zScore >= 0.1) return "bg-pb_green-300 text-pb_darkgray/80";
+    if (zScore >= 0) return "bg-pb_green-50 text-pb_darkgray/80";
+    if (zScore >= -0.1) return "bg-pb_red-50 text-pb_darkgray/80";
+    if (zScore >= -0.5) return "bg-pb_red-300 text-pb_darkgray/80";
+    if (zScore >= -1.0) return "bg-pb_red-400 text-pb_darkgray/80";
+    if (zScore >= -1.5) return "bg-pb_red-500 text-pb_darkgray/80";
+    if (zScore >= -2.0) return "bg-pb_red-600 text-pb_darkgray/80";
+    if (zScore >= -2.5) return "bg-pb_red-700 text-pb_darkgray/80";
+    return "bg-pb_red-800 text-pb_darkgray/80";
   };
+
+  /**
+   * Return bar widths (sum = 100 %) that are proportional to |zScore|.
+   * Negative and positive impacts of the same magnitude look equally large.
+   */
+  const calculateProportionalWidths = (statEntries, minWidthPercent = 3) => {
+    const count          = statEntries.length;
+    const baseTotal      = minWidthPercent * count;         // guaranteed %
+    const remainingWidth = 100 - baseTotal;
+
+    // magnitude‑only weighting
+    const mags           = statEntries.map(s => Math.abs(s.zScore));
+    const magSum         = mags.reduce((t, v) => t + v, 0);
+
+    // if everything is exactly 0, just split evenly
+    if (!magSum) return Array(count).fill(100 / count);
+
+    const rawWidths = mags.map(mag =>
+      minWidthPercent + (mag / magSum) * remainingWidth
+    );
+
+    // normalise to counter tiny FP drift
+    const total = rawWidths.reduce((t, v) => t + v, 0);
+    return rawWidths.map(w => (w / total) * 100);
+  };
+
+
+
+
+
+  // Distribute stats across two rows dynamically based on cumulative width
+  const distributeStatsAcrossRows = (stats) => {
+    // Calculate all widths first as if in one row
+    const allWidths = calculateProportionalWidths(stats);
+    
+    const row1 = [];
+    const row2 = [];
+    let row1Width = 0;
+    
+    // Distribute stats to rows, trying to balance the widths
+    stats.forEach((stat, index) => {
+      const width = allWidths[index];
+      
+      // If adding to row1 would exceed ~50% or row1 already has good coverage, add to row2
+      if (row1Width + width > 50 && row1.length > 0) {
+        row2.push({ stat, width });
+      } else {
+        row1.push({ stat, width });
+        row1Width += width;
+      }
+    });
+    
+    // Recalculate widths for each row to fill 100% of their respective row
+    const row1Stats = row1.map(item => item.stat);
+    const row2Stats = row2.map(item => item.stat);
+    
+    const row1FinalWidths = calculateProportionalWidths(row1Stats);
+    const row2FinalWidths = calculateProportionalWidths(row2Stats);
+    
+    return {
+      row1: row1Stats.map((stat, index) => ({ stat, width: row1FinalWidths[index] })),
+      row2: row2Stats.map((stat, index) => ({ stat, width: row2FinalWidths[index] }))
+    };
+  };
+
+  const { row1, row2 } = distributeStatsAcrossRows(impactStatsWithScores);
 
   // TODO: Column headers should be sport-specific
   const gameStatsColumns = ["DAY", "OPP", "MIN", "FGA", "FGM", "FTA", "FTM", "3PM", "PTS", "REB", "AST", "STL", "BLK", "TO", "PF"];
-  
-  const impactStats = ["AST", "PTS", "FG%", "3PM", "FT%", "REB", "STL", "BLK", "TO"];
 
   return (
     <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col overflow-hidden">
@@ -141,17 +216,38 @@ export default function PlayerPerformanceBlock() {
         {/* Impact Distribution */}
         <div>
           <h4 className="text-xs font-semibold text-pb_darkgray mb-1">Impact Distribution</h4>
-          <div className="grid grid-cols-5 gap-1">
-            {impactStats.map((stat, index) => (
-              <div 
-                key={index}
-                className={`text-center py-1 px-1 text-2xs font-medium rounded ${getImpactColor(stat)}`}
-              >
-                {stat}
-              </div>
-            ))}
+          <div className="border border-pb_lightgray rounded-md overflow-hidden">
+            {/* First Row */}
+            <div className="flex">
+              {row1.map((item, index) => (
+                <div 
+                  key={index}
+                  className={`text-center h-7 px-1 text-2xs font-bold transition-all flex justify-center items-center duration-300 ${getImpactColor(item.stat.zScore)}`}
+                  style={{ width: `${item.width}%` }}
+                  title={`${item.stat.name} (z-score: ${item.stat.zScore.toFixed(2)})`}
+                >
+                  <div className="">{item.stat.name}</div>
+                </div>
+              ))}
+            </div>
+            {/* Second Row */}
+            <div className="flex">
+              {row2.map((item, index) => (
+                <div 
+                  key={index}
+                  className={`text-center h-7 px-1 text-2xs font-bold transition-all flex justify-center items-center duration-300 ${getImpactColor(item.stat.zScore)}`}
+                  style={{ width: `${item.width}%` }}
+                  title={`${item.stat.name} (z-score: ${item.stat.zScore.toFixed(2)})`}
+                >
+                  <div className="">{item.stat.name}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
+
+        
       </div>
 
       {/* Recent Games Table */}
@@ -187,4 +283,4 @@ export default function PlayerPerformanceBlock() {
       </div>
     </div>
   );
-} 
+}
