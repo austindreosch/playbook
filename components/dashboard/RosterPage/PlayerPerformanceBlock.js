@@ -1,6 +1,7 @@
 'use client';
 
-import { SigmaSquare, TrendingUp } from 'lucide-react';
+import { ClipboardMinus, Compass, SigmaSquare, TrendingUp } from 'lucide-react';
+import ImpactDistributionBlock from '../../common/ImpactDistributionBlock';
 
 export default function PlayerPerformanceBlock() {
   // TODO: This data should come from selected player and be sport-agnostic
@@ -83,89 +84,6 @@ export default function PlayerPerformanceBlock() {
     { name: "TO", zScore: -1.1 }
   ];
 
-  const getImpactColor = (zScore) => {
-    if (zScore >= 2.5) return "bg-pb_green-800 text-pb_darkgray/80";
-    if (zScore >= 2.0) return "bg-pb_green-700 text-pb_darkgray/80";
-    if (zScore >= 1.5) return "bg-pb_green-600 text-pb_darkgray/80";
-    if (zScore >= 1.0) return "bg-pb_green-500 text-pb_darkgray/80";
-    if (zScore >= 0.5) return "bg-pb_green-400 text-pb_darkgray/80";
-    if (zScore >= 0.1) return "bg-pb_green-300 text-pb_darkgray/80";
-    if (zScore >= 0) return "bg-pb_green-50 text-pb_darkgray/80";
-    if (zScore >= -0.1) return "bg-pb_red-50 text-pb_darkgray/80";
-    if (zScore >= -0.5) return "bg-pb_red-300 text-pb_darkgray/80";
-    if (zScore >= -1.0) return "bg-pb_red-400 text-pb_darkgray/80";
-    if (zScore >= -1.5) return "bg-pb_red-500 text-pb_darkgray/80";
-    if (zScore >= -2.0) return "bg-pb_red-600 text-pb_darkgray/80";
-    if (zScore >= -2.5) return "bg-pb_red-700 text-pb_darkgray/80";
-    return "bg-pb_red-800 text-pb_darkgray/80";
-  };
-
-  /**
-   * Return bar widths (sum = 100 %) that are proportional to |zScore|.
-   * Negative and positive impacts of the same magnitude look equally large.
-   */
-  const calculateProportionalWidths = (statEntries, minWidthPercent = 3) => {
-    const count          = statEntries.length;
-    const baseTotal      = minWidthPercent * count;         // guaranteed %
-    const remainingWidth = 100 - baseTotal;
-
-    // magnitude‑only weighting
-    const mags           = statEntries.map(s => Math.abs(s.zScore));
-    const magSum         = mags.reduce((t, v) => t + v, 0);
-
-    // if everything is exactly 0, just split evenly
-    if (!magSum) return Array(count).fill(100 / count);
-
-    const rawWidths = mags.map(mag =>
-      minWidthPercent + (mag / magSum) * remainingWidth
-    );
-
-    // normalise to counter tiny FP drift
-    const total = rawWidths.reduce((t, v) => t + v, 0);
-    return rawWidths.map(w => (w / total) * 100);
-  };
-
-
-
-
-
-  // Distribute stats across two rows dynamically based on cumulative width
-  const distributeStatsAcrossRows = (stats) => {
-    // Calculate all widths first as if in one row
-    const allWidths = calculateProportionalWidths(stats);
-    
-    const row1 = [];
-    const row2 = [];
-    let row1Width = 0;
-    
-    // Distribute stats to rows, trying to balance the widths
-    stats.forEach((stat, index) => {
-      const width = allWidths[index];
-      
-      // If adding to row1 would exceed ~50% or row1 already has good coverage, add to row2
-      if (row1Width + width > 50 && row1.length > 0) {
-        row2.push({ stat, width });
-      } else {
-        row1.push({ stat, width });
-        row1Width += width;
-      }
-    });
-    
-    // Recalculate widths for each row to fill 100% of their respective row
-    const row1Stats = row1.map(item => item.stat);
-    const row2Stats = row2.map(item => item.stat);
-    
-    const row1FinalWidths = calculateProportionalWidths(row1Stats);
-    const row2FinalWidths = calculateProportionalWidths(row2Stats);
-    
-    return {
-      row1: row1Stats.map((stat, index) => ({ stat, width: row1FinalWidths[index] })),
-      row2: row2Stats.map((stat, index) => ({ stat, width: row2FinalWidths[index] }))
-    };
-  };
-
-  const { row1, row2 } = distributeStatsAcrossRows(impactStatsWithScores);
-
   // TODO: Column headers should be sport-specific
   const gameStatsColumns = ["DAY", "OPP", "MIN", "FGA", "FGM", "FTA", "FTM", "3PM", "PTS", "REB", "AST", "STL", "BLK", "TO", "PF"];
 
@@ -176,78 +94,38 @@ export default function PlayerPerformanceBlock() {
         <h3 className="text-sm font-semibold text-pb_darkgray">Performance</h3>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 flex-shrink-0">
+      {/* Top Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-4 flex-shrink-0">
+
         {/* Performance Metrics */}
-        <div className="space-y-1">
-          {performanceData.metrics.map((metric, index) => (
-            <div key={index} className="flex items-baseline justify-between">
-              <div className="flex items-baseline gap-2">
-                <SigmaSquare className="w-icon-xs h-icon-xs text-pb_textgray self-center" />
-                <span className={`text-2xs font-medium ${index === 0 ? 'text-pb_darkgray' : 'text-pb_textlightgray'}`}>
-                  {metric.type}
-                </span>
+        <div className="flex flex-row gap-1 w-full">
+          <div className="border border-pb_lightgray w-full p-2">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <Compass className="w-icon-xs h-icon-xs text-pb_darkgray" />
+                <span className="text-xs font-medium text-pb_darkgray">Playbook</span>
               </div>
-              <div className="flex items-baseline gap-3">
-                <span className={`text-sm font-semibold font-mono ${index === 0 ? 'text-pb_darkgray' : 'text-pb_textlightgray'}`}>
-                  {metric.value}
-                </span>
-                <div className="flex gap-2">
-                  {metric.changes.map((change, changeIndex) => (
-                    <div key={changeIndex} className="flex items-baseline gap-1">
-                      <TrendingUp className="w-icon-xs h-icon-xs text-pb_green self-center" />
-                      <span className="text-2xs font-medium font-mono text-pb_green">{change.value}</span>
-                    </div>
-                  ))}
-                </div>
+              <span className="text-sm font-bold text-pb_darkgray">94</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ClipboardMinus className="w-icon-xs h-icon-xs text-pb_textgray" />
+                <span className="text-xs font-medium text-pb_textgray">Standard</span>
               </div>
+              <span className="text-sm font-bold text-pb_textgray">99</span>
             </div>
-          ))}
-          {performanceData.metrics[0].changes.length > 0 && (
-            <div className="mt-1 text-right flex justify-end gap-4 text-2xs text-pb_textgray">
-              {performanceData.metrics[0].changes.map((change, index) => (
-                <div key={index}>
-                  {change.label}
-                </div>
-              ))}
-            </div>
-          )}
+          </div>
+          <div className='border border-pb_lightgray w-full'>
+            yo2
+          </div>
+        
         </div>
 
         {/* Impact Distribution */}
         <div>
           <h4 className="text-xs font-semibold text-pb_darkgray mb-1">Impact Distribution</h4>
-          <div className="border border-pb_lightgray rounded-md overflow-hidden">
-            {/* First Row */}
-            <div className="flex">
-              {row1.map((item, index) => (
-                <div 
-                  key={index}
-                  className={`text-center h-7 px-1 text-2xs font-bold transition-all flex justify-center items-center duration-300 ${getImpactColor(item.stat.zScore)}`}
-                  style={{ width: `${item.width}%` }}
-                  title={`${item.stat.name} (z-score: ${item.stat.zScore.toFixed(2)})`}
-                >
-                  <div className="">{item.stat.name}</div>
-                </div>
-              ))}
-            </div>
-            {/* Second Row */}
-            <div className="flex">
-              {row2.map((item, index) => (
-                <div 
-                  key={index}
-                  className={`text-center h-7 px-1 text-2xs font-bold transition-all flex justify-center items-center duration-300 ${getImpactColor(item.stat.zScore)}`}
-                  style={{ width: `${item.width}%` }}
-                  title={`${item.stat.name} (z-score: ${item.stat.zScore.toFixed(2)})`}
-                >
-                  <div className="">{item.stat.name}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ImpactDistributionBlock stats={impactStatsWithScores} />
         </div>
-
-
-        
       </div>
 
       {/* Recent Games Table */}

@@ -256,6 +256,7 @@ module.exports = {
   				'600': '#8bdcb1',
   				'700': '#7ad7a6',
   				'800': '#6ad29b',
+				'900': '#59cd90',
   				DEFAULT: '#59cd90'
   			},
   			pb_greenhover: '#50b982',
@@ -270,6 +271,7 @@ module.exports = {
   				'600': '#f39286',
   				'700': '#f18275',
   				'800': '#f07363',
+				'900': '#ee6352',
   				DEFAULT: '#ee6352'
   			},
   			pb_redhover: '#d6594a',
