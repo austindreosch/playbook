@@ -236,7 +236,7 @@ export default function PlayerPerformanceBlock() {
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         <h4 className="text-xs font-semibold text-pb_darkgray mb-1 flex-shrink-0">Recent Games</h4>
         <div className="flex-1 overflow-auto">
-          <table className="w-full text-2xs">
+          <table className="w-full text-2xs table-fixed">
             <thead className="sticky top-0">
               <tr>
                 {gameStatsColumns.map((column, index) => {
@@ -246,15 +246,58 @@ export default function PlayerPerformanceBlock() {
                     typeof col === 'object' ? col.key === columnKey : col === columnKey
                   );
                   
-                  const headerClass = isContextColumn 
-                    ? "py-1 px-1 font-normal text-pb_textlightergray"
-                    : "py-1 px-1 font-medium text-pb_darkgray";
+                  // Determine display text and merged state
+                  let displayText = typeof column === 'object' ? column.icon : column;
+                  let isFirstOfMergedPair = false;
+                  let isSecondOfMergedPair = false;
+                  let mergedLabel = '';
+                  
+                  if (hoveredShootingPair === 'fg' && columnKey === 'FGA') {
+                    isFirstOfMergedPair = true;
+                    mergedLabel = 'FG%';
+                  } else if (hoveredShootingPair === 'fg' && columnKey === 'FGM') {
+                    isSecondOfMergedPair = true;
+                  } else if (hoveredShootingPair === 'ft' && columnKey === 'FTA') {
+                    isFirstOfMergedPair = true;
+                    mergedLabel = 'FT%';
+                  } else if (hoveredShootingPair === 'ft' && columnKey === 'FTM') {
+                    isSecondOfMergedPair = true;
+                  }
+                  
+                  let headerClass = isContextColumn 
+                    ? "py-1 px-1 font-normal text-pb_textlightergray w-8 relative"
+                    : "py-1 px-1 font-medium text-pb_darkgray w-8 relative";
+                  
+                  // Add background for merged headers
+                  if (isFirstOfMergedPair || isSecondOfMergedPair) {
+                    headerClass += "";
+                  }
                   
                   return (
                     <th key={index} className={headerClass}>
-                      <div className="flex items-center justify-center">
-                        {typeof column === 'object' ? column.icon : column}
-                      </div>
+                      {isFirstOfMergedPair && (
+                        <>
+                          <div className="absolute left-0 z-10 pointer-events-none"
+                               style={{
+                                 width: 'calc(200% + 2px)',
+                                 height: '1px',
+                                 backgroundColor: 'rgb(209, 213, 219)',
+                                 top: '50%',
+                                 marginTop: '-0.5px'
+                               }}></div>
+                          <div className="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center z-20 pointer-events-none"
+                               style={{width: 'calc(200% + 2px)', left: '0'}}>
+                            <span className="bg-white px-1 font-medium text-pb_darkgray ">
+                              {mergedLabel}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                      {!isFirstOfMergedPair && !isSecondOfMergedPair && (
+                        <div className="flex items-center justify-center">
+                          {displayText}
+                        </div>
+                      )}
                     </th>
                   );
                 })}
@@ -318,12 +361,12 @@ export default function PlayerPerformanceBlock() {
                                               (hoveredShootingPair === 'ft' && columnKey === 'FTA');
                     
                     let cellClass = isContextColumn 
-                      ? "py-0.5 px-1 text-pb_textlightergray text-center"
-                      : "py-0.5 px-1 font-mono text-pb_textgray font-medium text-center";
+                      ? "py-0.5 px-1 text-pb_textlightergray text-center w-8"
+                      : "py-0.5 px-1 font-mono text-pb_textgray font-medium text-center w-8";
                     
-                    // Add background and border styling for merged percentage cells
+                    // Add relative positioning for merged percentage cells (no background)
                     if (isMergedPercentage) {
-                      cellClass += " bg-pb_lightestgray relative";
+                      cellClass += " relative";
                     }
                     
                     return (
