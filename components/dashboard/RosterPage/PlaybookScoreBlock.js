@@ -7,7 +7,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Shield, Users } from 'lucide-react';
+import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Shield, Users } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Label, Pie, PieChart } from "recharts";
 
@@ -70,9 +70,6 @@ export default function PlaybookScoreBlock() {
     },
   };
 
-  const totalScore = useMemo(() => {
-    return scoreData.segments.reduce((acc, curr) => acc + curr.value, 0);
-  }, []);
 
   useEffect(() => {
     const calculateInnerRadius = () => {
@@ -116,15 +113,20 @@ export default function PlaybookScoreBlock() {
   };
 
   return (
-    <div className="w-full h-full bg-white rounded-lg border border-gray-200 shadow-sm p-3 flex flex-col">
+    <div className="w-full h-full bg-white rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
-        <Compass className="w-icon h-icon text-pb_darkgray" />
-        <h3 className="text-sm font-semibold text-pb_darkgray">Playbook Score</h3>
+      <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
+        <div className='flex items-center gap-2 flex-shrink-0'>
+          <Compass className="w-icon h-icon text-pb_darkgray" />
+          <h3 className="text-sm font-semibold text-pb_darkgray">Playbook Score</h3>
+        </div>
+        <div className='flex items-center gap-1'>
+          <CircleHelp className="w-icon-sm h-icon-sm text-pb_textgray" />
+        </div>
       </div>
       
       {/* League format and status */}
-      <div className="flex items-center justify-between mb-6 text-xs text-gray-500">
+      {/* <div className="flex items-center justify-between mb-6 text-xs text-gray-500">
         <div className="flex items-center gap-1">
           <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center">
             <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
@@ -137,7 +139,7 @@ export default function PlaybookScoreBlock() {
           </div>
           <span>{scoreData.teamStatus}</span>
         </div>
-      </div>
+      </div> */}
       
             {/* Donut Chart */}
       <div className="flex justify-center mb-3 relative flex-1 items-center">
@@ -170,7 +172,7 @@ export default function PlaybookScoreBlock() {
         
         {/* Center Text Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="text-5xl font-bold text-gray-900">{totalScore}</div>
+          <div className="text-5xl font-bold text-gray-900">{scoreData.totalScore}</div>
           {/* <div className="text-xs text-gray-500">Playbook Score</div> */}
         </div>
       </div>

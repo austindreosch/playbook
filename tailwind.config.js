@@ -188,6 +188,7 @@ module.exports = {
   		},
 		lineHeight: {
 			'relaxed-plus': '1.9',
+			'tighter': '1.1',
 		},
   		fontFamily: {
   			sans: [
