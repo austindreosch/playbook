@@ -15,9 +15,9 @@ import DashboardWidgetWall from '@/components/dashboard/Overview/WidgetWall/Dash
 
 export default function LeagueOverviewPage() {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* League View Header Bar */}
-      <div className="flex w-full pt-1.5">
+      <div className="flex w-full pt-1.5 flex-shrink-0">
         <div className="flex w-full justify-between ">
           <div className="flex gap-1.5">
             <CurrentLeagueTeamDisplay className="h-button" />
@@ -33,17 +33,17 @@ export default function LeagueOverviewPage() {
       </div>
 
       {/* Divider */}
-      <div className="w-full py-1.5">
+      <div className="w-full py-1.5 flex-shrink-0">
         <div className="h-[1px] w-full bg-pb_lightestgray"></div>
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-11 w-full flex-1 min-h-0 gap-1.5">
-        <div className="col-span-3 min-h-0">
+      <div className="grid grid-cols-11 w-full flex-1 min-h-0 gap-1.5 overflow-hidden">
+        <div className="col-span-3 flex-shrink-0 overflow-hidden">
           {/* <RosterViewImportLeague /> */}
           <RosterViewBlock />
         </div>
-        <main className="col-span-8 min-h-0 h-full">
+        <main className="col-span-8 min-h-0 overflow-hidden">
           <DashboardWidgetWall />
         </main>
       </div>

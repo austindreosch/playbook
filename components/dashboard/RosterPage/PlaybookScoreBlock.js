@@ -6,8 +6,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Shield, Users } from 'lucide-react';
+import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Settings, Shield, Users, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Label, Pie, PieChart } from "recharts";
 
@@ -22,7 +23,36 @@ export default function PlaybookScoreBlock() {
   
   const [calculatedInnerRadius, setCalculatedInnerRadius] = useState(50);
   const chartContainerRef = useRef(null);
+  const containerRef = useRef(null);
   const desiredThickness = 40; // Desired thickness in pixels
+
+  // NEW: State for height detection and popup management
+  const [isHeightConstrained, setIsHeightConstrained] = useState(false);
+  const [showMetricsPopup, setShowMetricsPopup] = useState(false);
+
+  // NEW: Height detection effect
+  useEffect(() => {
+    const updateHeightConstraints = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const containerHeight = rect.height;
+        
+        // Consider constrained if height is less than 500px (matching PlayerProfile for testing)
+        const constrained = containerHeight < 500;
+        setIsHeightConstrained(constrained);
+      }
+    };
+
+    updateHeightConstraints();
+    window.addEventListener('resize', updateHeightConstraints);
+    
+    const timer = setTimeout(updateHeightConstraints, 300);
+    
+    return () => {
+      window.removeEventListener('resize', updateHeightConstraints);
+      clearTimeout(timer);
+    };
+  }, []);
 
   const scoreData = {
     totalScore: 981,
@@ -53,7 +83,7 @@ export default function PlaybookScoreBlock() {
         label: "Global Favor", 
         options: ["Prefer", "", "Dislike"] 
       }
-        ]
+    ]
   };
 
   const chartConfig = {
@@ -112,37 +142,61 @@ export default function PlaybookScoreBlock() {
     return "bg-white text-pb_textlightestgray hover:bg-gray-50";
   };
 
+  // NEW: Metrics component for reuse
+  const MetricsControls = () => (
+    <div className="space-y-3">
+      {scoreData.metrics.map((metric, index) => {
+        const IconComponent = metric.icon;
+        return (
+          <div key={index} className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <IconComponent className="w-icon-xs h-icon-xs text-pb_darkgray" />
+              <span className="text-xs text-pb_darkgray font-medium">{metric.label}</span>
+            </div>
+            <Tabs 
+              value={metricSelections[index]} 
+              onValueChange={(value) => handleMetricChange(index, value)}
+              className="w-auto"
+            >
+              <TabsList className="h-auto p-0 border border-pb_lightgray grid w-36" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+                {metric.options.map((option, buttonIndex) => (
+                  <TabsTrigger
+                    key={buttonIndex}
+                    value={option}
+                    className={`px-2 h-6 text-2xs font-medium data-[state=active]:text-white border-r border-pb_lightgray last:border-r-0 first:rounded-l last:rounded-r rounded-none w-full ${getButtonStyles(option, metricSelections[index], buttonIndex)}`}
+                  >
+                    {option || <GitCommitHorizontal className="w-icon-sm h-icon-sm text-pb_textlightestgray" />}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
-    <div className="w-full h-full bg-white rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white">
+    <div ref={containerRef} className="w-full h-full bg-white rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
         <div className='flex items-center gap-2 flex-shrink-0'>
           <Compass className="w-icon h-icon text-pb_darkgray" />
           <h3 className="text-sm font-semibold text-pb_darkgray">Playbook Score</h3>
+          {/* NEW: Height constraint indicator */}
+          {isHeightConstrained && (
+            <span className="text-3xs text-pb_textgray">
+              (Compact)
+            </span>
+          )}
         </div>
         <div className='flex items-center gap-1'>
           <CircleHelp className="w-icon-sm h-icon-sm text-pb_textgray" />
         </div>
       </div>
       
-      {/* League format and status */}
-      {/* <div className="flex items-center justify-between mb-6 text-xs text-gray-500">
-        <div className="flex items-center gap-1">
-          <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
-          <span>{scoreData.leagueFormat}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center">
-            <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-          </div>
-          <span>{scoreData.teamStatus}</span>
-        </div>
-      </div> */}
-      
-            {/* Donut Chart */}
-      <div className="flex justify-center mb-3 relative flex-1 items-center">
+      {/* Donut Chart */}
+      <div className="relative flex-1 min-h-0">
         <ChartContainer
           ref={chartContainerRef}
           config={chartConfig}
@@ -173,41 +227,38 @@ export default function PlaybookScoreBlock() {
         {/* Center Text Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <div className="text-5xl font-bold text-gray-900">{scoreData.totalScore}</div>
-          {/* <div className="text-xs text-gray-500">Playbook Score</div> */}
         </div>
       </div>
       
-      {/* Metrics Rows */}
-      <div className="space-y-2 flex-shrink-0 overflow-auto max-h-32">
-        {scoreData.metrics.map((metric, index) => {
-          const IconComponent = metric.icon;
-          return (
-            <div key={index} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <IconComponent className="w-icon-xs h-icon-xs text-pb_darkgray" />
-                <span className="text-xs text-pb_darkgray font-medium">{metric.label}</span>
+      {/* Metrics Section - Dynamic based on height */}
+      {!isHeightConstrained ? (
+        <div className="space-y-2 flex-shrink-0 mt-3">
+          <MetricsControls />
+        </div>
+      ) : (
+        <div className="flex-shrink-0 mt-3 flex justify-center">
+          <Popover open={showMetricsPopup} onOpenChange={setShowMetricsPopup}>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors">
+                <Settings className="w-4 h-4" />
+                <span>Configure Metrics</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-3" align="center">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-semibold text-pb_darkgray">Playbook Metrics</h4>
+                <button 
+                  onClick={() => setShowMetricsPopup(false)}
+                  className="w-4 h-4 flex items-center justify-center hover:bg-gray-100 rounded"
+                >
+                  <X className="w-3 h-3 text-pb_textgray" />
+                </button>
               </div>
-              <Tabs 
-                value={metricSelections[index]} 
-                onValueChange={(value) => handleMetricChange(index, value)}
-                className="w-auto"
-              >
-                <TabsList className="h-auto p-0  border border-pb_lightgray grid w-36" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                  {metric.options.map((option, buttonIndex) => (
-                    <TabsTrigger
-                      key={buttonIndex}
-                      value={option}
-                      className={`px-2 h-6 text-2xs font-medium data-[state=active]:text-white border-r border-pb_lightgray last:border-r-0 first:rounded-l last:rounded-r rounded-none w-full ${getButtonStyles(option, metricSelections[index], buttonIndex)}`}
-                    >
-                      {option || <GitCommitHorizontal className="w-icon-sm h-icon-sm text-pb_textlightestgray" />}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </Tabs>
-            </div>
-          );
-        })}
-      </div>
+              <MetricsControls />
+            </PopoverContent>
+          </Popover>
+        </div>
+      )}
     </div>
   );
 }

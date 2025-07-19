@@ -37,68 +37,70 @@ export default function TeamProfileBlock() {
   ];
 
   return (
-    <div className="w-full h-full bg-white rounded-lg border border-gray-300 shadow-sm p-3">
+    <div className="w-full h-full bg-white rounded-lg border border-gray-300 shadow-sm p-3 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-2 flex-shrink-0">
         <Users className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-sm font-semibold text-pb_darkgray">Team Profile</h3>
       </div>
 
-      {/* Position Stats - Single row with values below */}
-      <div className="flex gap-1 mb-3">
-        {positions.map((pos, index) => (
-          <div key={index} className="flex-1">
-            <div className={`${pos.color} text-white text-xs font-semibold py-1.5 rounded-t text-center`}>
-              {pos.label}
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent">
+        {/* Position Stats - Single row with values below */}
+        <div className="flex gap-1 mb-2 flex-shrink-0">
+          {positions.map((pos, index) => (
+            <div key={index} className="flex-1 min-w-0">
+              <div className={`${pos.color} text-white text-xs font-semibold py-1 rounded-t text-center`}>
+                {pos.label}
+              </div>
+              <div className="bg-gray-100 text-gray-500 text-xs py-0.5 text-center">
+                {pos.value}
+              </div>
             </div>
-            <div className="bg-gray-100 text-gray-500 text-xs py-1 text-center">
-              {pos.value}
-            </div>
+          ))}
+        </div>
+
+        {/* Stats Grid - Two rows */}
+        <div className="space-y-1 mb-2 flex-shrink-0">
+          <div className="flex gap-1">
+            {statsRow1.map((stat, index) => (
+              <div key={index} className={`flex-1 ${stat.color} text-white text-xs font-semibold py-1 rounded text-center min-w-0`}>
+                {stat.label}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* Stats Grid - Two rows */}
-      <div className="space-y-1 mb-3">
-        <div className="flex gap-1">
-          {statsRow1.map((stat, index) => (
-            <div key={index} className={`flex-1 ${stat.color} text-white text-xs font-semibold py-1.5 rounded text-center`}>
-              {stat.label}
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-1">
-          {statsRow2.map((stat, index) => (
-            <div key={index} className={`flex-1 ${stat.color} ${stat.label ? 'text-white' : ''} text-xs font-semibold py-1.5 rounded text-center`}>
-              {stat.label}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tags - Two rows */}
-      <div className="space-y-2">
-        <div className="flex gap-2">
-          {tags.slice(0, 3).map((tag, index) => {
-            const Icon = tag.icon;
-            return (
-              <div key={index} className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-full bg-white">
-                <Icon className="w-3.5 h-3.5 text-gray-600" strokeWidth={2} />
-                <span className="text-xs text-gray-600">{tag.label}</span>
+          <div className="flex gap-1">
+            {statsRow2.map((stat, index) => (
+              <div key={index} className={`flex-1 ${stat.color} ${stat.label ? 'text-white' : ''} text-xs font-semibold py-1 rounded text-center min-w-0`}>
+                {stat.label}
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
-        <div className="flex gap-2">
-          {tags.slice(3).map((tag, index) => {
-            const Icon = tag.icon;
-            return (
-              <div key={index + 3} className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-full bg-white">
-                <Icon className="w-3.5 h-3.5 text-gray-600" strokeWidth={2} />
-                <span className="text-xs text-gray-600">{tag.label}</span>
-              </div>
-            );
-          })}
+
+        {/* Tags - Two rows */}
+        <div className="space-y-1.5 flex-shrink-0">
+          <div className="flex gap-1 flex-wrap">
+            {tags.slice(0, 3).map((tag, index) => {
+              const Icon = tag.icon;
+              return (
+                <div key={index} className="flex items-center gap-1 px-2 py-1 border border-gray-300 rounded-full bg-white flex-1 min-w-0">
+                  <Icon className="w-3 h-3 text-gray-600 flex-shrink-0" strokeWidth={2} />
+                  <span className="text-xs text-gray-600 truncate">{tag.label}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex gap-1 flex-wrap">
+            {tags.slice(3).map((tag, index) => {
+              const Icon = tag.icon;
+              return (
+                <div key={index + 3} className="flex items-center gap-1 px-2 py-1 border border-gray-300 rounded-full bg-white flex-1 min-w-0">
+                  <Icon className="w-3 h-3 text-gray-600 flex-shrink-0" strokeWidth={2} />
+                  <span className="text-xs text-gray-600 truncate">{tag.label}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

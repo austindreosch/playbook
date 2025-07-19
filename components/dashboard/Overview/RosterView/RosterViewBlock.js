@@ -44,48 +44,48 @@ export default function RosterViewImportLeague() {
 
 
   return (
-    <div className="w-full h-full bg-pb_backgroundgray">
+    <div className="w-full h-full bg-pb_backgroundgray flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-800 text-white px-4 py-3 flex items-center justify-between rounded-lg">
-        <Target className="w-5 h-5" strokeWidth={2} />
-        <SlidersHorizontal className="w-5 h-5" strokeWidth={2} />
-        <Maximize2 className="w-5 h-5" strokeWidth={2} />
+      <div className="bg-gray-800 text-white px-3 py-2 flex items-center justify-between rounded-lg flex-shrink-0">
+        <Target className="w-4 h-4" strokeWidth={2} />
+        <SlidersHorizontal className="w-4 h-4" strokeWidth={2} />
+        <Maximize2 className="w-4 h-4" strokeWidth={2} />
       </div>
 
       {/* Player List */}
-      <div className="p-2 space-y-1">
+      <div className="p-1.5 space-y-1 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent">
         {players.map((player) => {
           const Icon = player.icon;
           
           return (
-            <div key={player.rank} className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3 flex items-center hover:shadow-md transition-shadow">
+            <div key={player.rank} className="bg-white rounded-lg shadow-sm border border-gray-200 px-2 py-2 flex items-center hover:shadow-md transition-shadow min-h-0">
               {/* Rank */}
-              <div className="w-8 text-lg font-medium text-gray-700">
+              <div className="w-6 text-sm font-medium text-gray-700 flex-shrink-0">
                 {player.rank}
               </div>
 
               {/* Avatar */}
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-sm mx-3">
+              <div className="w-7 h-7 bg-gray-200 rounded-full flex items-center justify-center text-xs mx-2 flex-shrink-0">
                 {getAvatar(player.rank)}
               </div>
 
               {/* Name and Position */}
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-800 font-medium">{player.name}</span>
-                  <span className="text-gray-400 text-sm uppercase">{player.position}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-800 font-medium text-sm truncate">{player.name}</span>
+                  <span className="text-gray-400 text-xs uppercase flex-shrink-0">{player.position}</span>
                 </div>
               </div>
 
               {/* Icon */}
-              <div className="w-8 flex justify-center">
+              <div className="w-5 flex justify-center flex-shrink-0">
                 {Icon && (
-                  <Icon className={`w-5 h-5 ${player.iconColor || 'text-gray-600'}`} strokeWidth={2} />
+                  <Icon className={`w-4 h-4 ${player.iconColor || 'text-gray-600'}`} strokeWidth={2} />
                 )}
               </div>
 
               {/* Value */}
-              <div className="w-16 text-right text-gray-600 font-medium">
+              <div className="w-12 text-right text-gray-600 font-medium text-xs flex-shrink-0">
                 {player.value.toFixed(2)}
               </div>
             </div>

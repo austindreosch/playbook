@@ -64,23 +64,23 @@ export default function TeamArchetypeBlock() {
     return (
     <div className="w-full h-full bg-white rounded-lg border border-gray-300 shadow-sm p-3 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3 flex-shrink-0">
+      <div className="flex items-center gap-2 mb-2 flex-shrink-0">
         <Dna className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-sm font-semibold text-pb_darkgray">Team Archetype</h3>
       </div>
 
-      <div className="flex items-center min-h-0">
+      <div className="flex items-center flex-1 min-h-0">
         {/* Metrics List */}
-        <div className=" space-y-1 flex flex-col justify-center pl-1 pt-2">
+        <div className="space-y-1 flex flex-col justify-center pl-1 flex-shrink-0">
           {metrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <div key={index} className="flex flex-col items-start gap-1">
-                <div className="flex items-center gap-2">
-                  <Icon className="w-icon-sm h-icon-sm text-pb_darkgray flex-shrink-0" strokeWidth={2} />
-                  <span className="text-button text-pb_darkgray">{metric.label}</span>
+              <div key={index} className="flex flex-col items-start gap-0.5">
+                <div className="flex items-center gap-1">
+                  <Icon className="w-3 h-3 text-pb_darkgray flex-shrink-0" strokeWidth={2} />
+                  <span className="text-xs text-pb_darkgray">{metric.label}</span>
                 </div>
-                <span className="font-semibold w-9 h-5.5 flex items-center justify-center text-pb_darkgray bg-white rounded text-button border border-pb_lightgray ml-6">
+                <span className="font-semibold w-7 h-4 flex items-center justify-center text-pb_darkgray bg-white rounded text-xs border border-pb_lightgray ml-4">
                   {metric.rank}
                 </span>
               </div>
@@ -89,11 +89,11 @@ export default function TeamArchetypeBlock() {
         </div>
 
         {/* Radar Chart Container */}
-        <div className="flex-1 h-full overflow-hidden flex items-center justify-center" >
-           <ChartContainer config={chartConfig} className="h-full w-full max-w-full mt-4">
+        <div className="flex-1 h-full min-w-0 overflow-hidden flex items-center justify-center">
+           <ChartContainer config={chartConfig} className="h-full w-full max-w-full">
              <RadarChart 
                data={radarData} 
-               margin={{ }}
+               margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
                width="100%"
                height="100%"
              >
@@ -106,7 +106,7 @@ export default function TeamArchetypeBlock() {
                <PolarAngleAxis 
                  dataKey="metric" 
                  tick={CustomTick}
-                 tickSize={15}
+                 tickSize={12}
                />
                <PolarRadiusAxis 
                  domain={[0, 10]} 
@@ -123,18 +123,7 @@ export default function TeamArchetypeBlock() {
              </RadarChart>
            </ChartContainer>
         </div>
-
-
       </div>
-
-
-      {/* Bottom Container */}
-      <div className="flex flex-col gap-2">
-
-      </div>
-
-
-
     </div>
   );
 }

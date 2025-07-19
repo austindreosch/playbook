@@ -17,6 +17,7 @@ import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFull
 
 
 export default function LeagueRosterPage() {
+
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
@@ -41,18 +42,12 @@ export default function LeagueRosterPage() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-18 gap-1.5 flex-grow min-h-0">
+      <div className="grid grid-cols-17 gap-1.5 flex-grow min-h-0">
         {/* Left Column */}
         <div className="col-span-10">
           <RosterFullBlock />
           {/* <RosterFullImportLeague /> */}
         </div>
-
-                  {/* Debug vertical line showing 60/40 split */}
-          <div className="col-span-1 flex flex-col w-2 mx-auto">
-            <div className="h-[55%] bg-red-500"></div>
-            <div className="flex-1 bg-blue-500"></div>
-          </div>
 
         {/* Right Column */}
         <div className="col-span-7 flex flex-col gap-1.5 h-full">
@@ -70,9 +65,6 @@ export default function LeagueRosterPage() {
                 <PlayerPerformanceBlock />
             </div>
         </div>
-
-
-        
       </div>
     </div>
   );
