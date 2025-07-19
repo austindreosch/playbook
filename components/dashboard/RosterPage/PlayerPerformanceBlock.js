@@ -19,7 +19,14 @@ const SPORT_CONFIG = {
     percentagePairs: [
       { made: "FGM", attempt: "FGA", display: "FG%" },
       { made: "FTM", attempt: "FTA", display: "FT%" }
-    ]
+    ],
+    normalization: {
+      baseStatKey: "MIN", // Minutes played
+      targetValue: 36, // Per 36 minutes
+      targetLabel: "36", // Display as "Per 36"
+      excludeStats: ["Date", "Opp", "MIN", "PF", "FG%", "FT%"], // Don't normalize these
+      parseTime: true // Convert "34:47" format to decimal minutes
+    }
   },
   nfl: {
     contextColumns: [
@@ -31,7 +38,14 @@ const SPORT_CONFIG = {
     pointsStats: ["PASS_ATT", "PASS_COMP", "PASS_YDS", "PASS_TD", "RUSH_ATT", "RUSH_YDS", "RUSH_TD", "REC", "REC_YDS", "REC_TD"],
     percentagePairs: [
       { made: "PASS_COMP", attempt: "PASS_ATT", display: "COMP%" }
-    ]
+    ],
+    normalization: {
+      baseStatKey: "SNAP", // Snaps played
+      targetValue: 10, // Per 10 touches/snaps
+      targetLabel: "10", // Display as "Per 10"
+      excludeStats: ["Date", "Opp", "SNAP", "PEN", "COMP%"], // Don't normalize these
+      parseTime: false // Raw numbers, no time parsing
+    }
   },
   mlb: {
     contextColumns: [
@@ -41,7 +55,14 @@ const SPORT_CONFIG = {
       "ERA"
     ],
     pointsStats: ["AB", "H", "R", "RBI", "HR", "BB", "SO", "AVG"],
-    percentagePairs: [] // TODO: Add MLB percentage pairs if needed
+    percentagePairs: [], // TODO: Add MLB percentage pairs if needed
+    normalization: {
+      baseStatKey: "AB", // At bats or plate appearances
+      targetValue: 4, // Per 4 plate appearances
+      targetLabel: "4PA", // Display as "Per 4PA"
+      excludeStats: ["Date", "Opp", "INN", "ERA", "AVG"], // Don't normalize these
+      parseTime: false // Raw numbers, no time parsing
+    }
   }
 };
 
@@ -78,7 +99,32 @@ const calculatePercentage = (made, attempt) => {
   return attempt > 0 ? ((made / attempt) * 100).toFixed(1) : '0.0';
 };
 
-const getCellValue = (columnKey, game, contextColumns, showPercentages, sport) => {
+// Normalization helper functions
+const parseTimeToMinutes = (timeString) => {
+  if (typeof timeString !== 'string' || !timeString.includes(':')) {
+    return parseFloat(timeString) || 0;
+  }
+  const [minutes, seconds] = timeString.split(':').map(Number);
+  return minutes + (seconds / 60);
+};
+
+const normalizeStatValue = (statValue, baseValue, targetValue, config) => {
+  if (baseValue === 0) return 0;
+  
+  // Parse base value if it's a time format
+  const parsedBaseValue = config.parseTime ? parseTimeToMinutes(baseValue) : parseFloat(baseValue);
+  
+  if (parsedBaseValue === 0) return 0;
+  
+  const normalizedValue = (parseFloat(statValue) * targetValue) / parsedBaseValue;
+  return normalizedValue % 1 === 0 ? normalizedValue.toString() : normalizedValue.toFixed(1);
+};
+
+const shouldNormalizeStat = (columnKey, config) => {
+  return !config.excludeStats.includes(columnKey);
+};
+
+const getCellValue = (columnKey, game, contextColumns, showPercentages, hoveredNormalizedColumn, sport) => {
   const config = getSportConfig(sport);
   
   // Handle context columns
@@ -92,8 +138,8 @@ const getCellValue = (columnKey, game, contextColumns, showPercentages, sport) =
     case 'INN':
       return game.minutes;
     default:
-      // Handle stat columns
-      const baseValue = game.stats[columnKey] || '';
+      // Handle stat columns - use !== undefined to include 0 values
+      let baseValue = game.stats[columnKey] !== undefined ? game.stats[columnKey] : '';
       
       // Handle merged percentage display - show all percentages when hovering
       if (showPercentages) {
@@ -102,6 +148,19 @@ const getCellValue = (columnKey, game, contextColumns, showPercentages, sport) =
           const made = game.stats[pair.made] || 0;
           const attempt = game.stats[pair.attempt] || 0;
           return `${calculatePercentage(made, attempt)}%`;
+        }
+      }
+      
+      // Handle normalization if this specific column is being hovered
+      if (hoveredNormalizedColumn === columnKey && shouldNormalizeStat(columnKey, config.normalization)) {
+        const baseStatValue = game.minutes; // This maps to the base stat (MIN, SNAP, AB, etc.)
+        if (baseStatValue && baseValue !== '') {
+          return normalizeStatValue(
+            baseValue, 
+            baseStatValue, 
+            config.normalization.targetValue, 
+            config.normalization
+          );
         }
       }
       
@@ -117,6 +176,9 @@ export default function PlayerPerformanceBlock() {
   
   // State for hover effects on percentage columns
   const [showPercentages, setShowPercentages] = useState(false);
+  
+  // State for individual column normalization hover
+  const [hoveredNormalizedColumn, setHoveredNormalizedColumn] = useState(null);
   
   // Get sport configuration
   const sportConfig = getSportConfig(currentSport);
@@ -274,7 +336,7 @@ export default function PlayerPerformanceBlock() {
       {/* Recent Games Table */}
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         <h4 className="text-xs font-semibold text-pb_darkgray mb-1 flex-shrink-0">Recent Games</h4>
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto" style={{paddingTop: '25px', marginTop: '-25px'}}>
           <table className="w-full text-2xs table-fixed">
             <thead className="sticky top-0">
               <tr>
@@ -311,6 +373,15 @@ export default function PlayerPerformanceBlock() {
                   
                   return (
                     <th key={index} className={headerClass}>
+                      {/* Floating Per 36m label above header */}
+                      {hoveredNormalizedColumn === columnKey && shouldNormalizeStat(columnKey, sportConfig.normalization) && !showPercentages && (
+                        <div className="absolute left-1/2 transform -translate-x-1/2 z-50 pointer-events-none" 
+                        style={{top: '-20px'}}>
+                          <div className="bg-pb_lightergray text-pb_textgray shadow-sm text-3xs px-1 py-[1px] rounded text-center leading-none min-w-max">
+                             Per {sportConfig.normalization.targetLabel}<br/>Min
+                          </div>
+                        </div>
+                      )}
                       {shouldShowPercentageHeader && (
                         <div className="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center z-20 pointer-events-none" 
                              style={{width: 'calc(200% + 2px)', left: '0'}}>
@@ -346,7 +417,7 @@ export default function PlayerPerformanceBlock() {
                     }
                     
                     // Get the value for this column
-                    let cellValue = getCellValue(columnKey, game, contextColumns, showPercentages, currentSport);
+                    let cellValue = getCellValue(columnKey, game, contextColumns, showPercentages, hoveredNormalizedColumn, currentSport);
                     let colSpan = 1;
                     
                     // Handle merged percentage display
@@ -366,6 +437,11 @@ export default function PlayerPerformanceBlock() {
                       cellClass = cellClass.replace("text-pb_textgray", "text-pb_textlightestgray");
                     }
                     
+                    // Add light gray text when hovering over this specific normalizable stat column
+                    if (hoveredNormalizedColumn === columnKey && shouldNormalizeStat(columnKey, sportConfig.normalization)) {
+                      cellClass = cellClass.replace("text-pb_textgray", "text-pb_textlightestgray tracking-tighter");
+                    }
+                    
                     // Add relative positioning for merged percentage cells (no background)
                     if (isMergedPercentage) {
                       cellClass += " relative";
@@ -381,11 +457,21 @@ export default function PlayerPerformanceBlock() {
                           if (hoveredPair) {
                             setShowPercentages(true);
                           }
+                          
+                          // Check if this is a normalizable stat column
+                          if (shouldNormalizeStat(columnKey, sportConfig.normalization)) {
+                            setHoveredNormalizedColumn(columnKey);
+                          }
                         }}
                         onMouseLeave={() => {
                           const hoveredPair = findPercentagePair(columnKey, currentSport);
                           if (hoveredPair) {
                             setShowPercentages(false);
+                          }
+                          
+                          // Clear normalized column hover
+                          if (shouldNormalizeStat(columnKey, sportConfig.normalization)) {
+                            setHoveredNormalizedColumn(null);
                           }
                         }}
                       >
