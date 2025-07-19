@@ -42,7 +42,6 @@ export default function OpponentSelectorButton({ className = '' }) {
   // EVENT HANDLERS
   // =================================================================
   const handleOpponentSelect = (team) => {
-    console.log('🔄 Opponent selected:', team);
     setSelectedOpponent(team);
     setIsOpen(false);
     // TODO: Add logic to update trade context with selected opponent

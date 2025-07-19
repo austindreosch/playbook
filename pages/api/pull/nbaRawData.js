@@ -59,15 +59,11 @@ function delay(ms) {
 async function fetchWithAuth(url, endpoint) {
     try {
         await delay(100);
-        console.log(`Fetching ${endpoint}:`, url); // Log the URL we're hitting
-
         const response = await fetch(url, {
             headers: {
                 "Authorization": `Basic ${Buffer.from(`${process.env.MYSPORTSFEEDS_API_KEY}:MYSPORTSFEEDS`).toString('base64')}`
             }
         });
-
-        console.log(`${endpoint} response status:`, response.status);
 
         if (!response.ok) {
             const text = await response.text();
@@ -76,7 +72,6 @@ async function fetchWithAuth(url, endpoint) {
         }
 
         const data = await response.json();
-        console.log(`${endpoint} data received:`, Object.keys(data).length > 0 ? 'yes' : 'no');
         return data;
     } catch (error) {
         console.error(`Failed to fetch ${endpoint}:`, error.message);
@@ -107,8 +102,6 @@ function validateData(data, endpoint, errors) {
 // Helper function to update a single endpoint in the database
 async function updateEndpoint(collection, sport, addon, endpoint, data, errors) {
     try {
-        console.log(`Attempting to store ${sport}.${addon}.${endpoint} data...`);
-
         const document = {
             sport: sport,
             addon: addon,
@@ -122,8 +115,6 @@ async function updateEndpoint(collection, sport, addon, endpoint, data, errors) 
             { $set: document },
             { upsert: true }
         );
-
-        console.log(`${sport}.${addon}.${endpoint} update result:`, result);
         return result;
     } catch (error) {
         console.error(`Error updating ${sport}.${addon}.${endpoint} data:`, error);
@@ -158,7 +149,6 @@ export default async function handler(req, res) {
 
     try {
         await client.connect({ serverSelectionTimeoutMS: 5000 });
-        console.log('Connected to MongoDB');
 
         const db = client.db('playbook');
         const statsCollection = db.collection('stats');
@@ -169,7 +159,6 @@ export default async function handler(req, res) {
         //                    1. FETCH AND STORE CORE DATA
         //=============================================================================
 
-        console.log('Fetching and storing CORE data...');
 
         // Seasonal games
         const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/games.json`, 'seasonalGames');
@@ -205,7 +194,6 @@ export default async function handler(req, res) {
         //                    2. FETCH AND STORE STATS DATA
         //=============================================================================
 
-        console.log('Fetching and storing STATS data...');
 
         // Daily player gamelogs
         const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
@@ -232,7 +220,6 @@ export default async function handler(req, res) {
         if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) {
             const currentProcessingSeason = process.env.MYSPORTSFEEDS_NBA_SEASON;
             if (MANUAL_STAT_OVERRIDES && MANUAL_STAT_OVERRIDES.length > 0) {
-                console.log(`Checking for manual stat overrides for NBA season: ${currentProcessingSeason}...`);
                 seasonalPlayerStats.playerStatsTotals.forEach(playerStat => {
                     if (!playerStat.player || !playerStat.stats) return;
                     const msfId = String(playerStat.player.id);
@@ -242,14 +229,11 @@ export default async function handler(req, res) {
                         rule.targetSeason === currentProcessingSeason
                     );
                     if (overrideRule && overrideRule.statOverrides) {
-                        console.log(`Applying override for player MSF ID: ${msfId} for NBA season ${currentProcessingSeason}`);
                         Object.entries(overrideRule.statOverrides).forEach(([statPath, correctedValue]) => {
-                            console.log(`  Overriding stat ${statPath} for player ${msfId}. Old value: ${playerStat.stats[statPath]}, New value: ${correctedValue}`);
                             set(playerStat.stats, statPath, correctedValue);
                         });
                     }
                 });
-                console.log('NBA manual stat overrides application complete.');
             }
         }
         // +++ END MANUAL STAT OVERRIDES FOR NBA +++
@@ -268,7 +252,6 @@ export default async function handler(req, res) {
         //                    3. FETCH AND STORE DETAILED DATA
         //=============================================================================
 
-        console.log('Fetching and storing DETAILED data...');
 
         // TODO: These are game-specific endpoints - Would need to first fetch the daily games to get the game IDs, then loop through each game ID to fetch these detailed endpoints
 
@@ -303,7 +286,6 @@ export default async function handler(req, res) {
         //                    4. FETCH AND STORE PROJECTIONS DATA
         //=============================================================================
 
-        console.log('Fetching and storing PROJECTIONS data...');
 
         // Daily player gamelogs projections
         const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
@@ -327,7 +309,6 @@ export default async function handler(req, res) {
         //                    5. RETURN RESULTS
         //=============================================================================
 
-        console.log('All data has been fetched and stored');
 
         res.status(200).json({
             success: true,
@@ -343,7 +324,6 @@ export default async function handler(req, res) {
     } finally {
         if (client.topology?.isConnected()) {
             await client.close();
-            console.log('MongoDB connection closed');
         }
     }
 }

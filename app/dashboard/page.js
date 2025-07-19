@@ -436,7 +436,6 @@ export default function DashboardPage() {
     const handleKeyDown = (event) => {
       // Check for Ctrl + Shift + D
       if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-        console.log('Debug toast triggered!');
         showVerificationToast();
       }
       if (SHOW_DEBUG_DRAWER && event.key === '0') {
@@ -460,7 +459,6 @@ export default function DashboardPage() {
     const handleKeyDown = (event) => {
       // Check for Ctrl + Shift + L
       if (event.ctrlKey && event.shiftKey && event.key === 'L') {
-        console.log('Debug loading toggle triggered!');
         setDebugLoading(prev => !prev);
       }
     };

@@ -69,7 +69,6 @@ export default async function handler(req, res) {
                         const doc = await collection.findOne(query);
                         // Store the 'data' field from the MongoDB document, or null if not found
                         fetchedData[sportKey][endpointName] = doc?.data || null;
-                        // console.log(`Fetched: ${collectionName}/${sportKey}/${endpointName} - Found: ${!!doc}`);
                     } catch (err) {
                         console.error(`Error fetching ${collectionName}/${sportKey}/${endpointName}:`, err);
                         fetchedData[sportKey][endpointName] = null; // Mark as null on error

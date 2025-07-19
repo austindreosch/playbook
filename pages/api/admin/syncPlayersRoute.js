@@ -8,7 +8,6 @@ const ADMIN_ROLE = 'Admin';
 const ROLE_NAMESPACE = process.env.AUTH0_ROLE_NAMESPACE || 'http://localhost:3000/roles'; // Example, replace if needed
 
 export default async function handler(req, res) {
-    console.log("Received request to /api/admin/syncPlayersRoute");
 
     // --- Auth0 Session Check ---
     const session = await getSession(req, res);
@@ -16,7 +15,6 @@ export default async function handler(req, res) {
         console.warn("Unauthorized: No valid session found.");
         return res.status(401).json({ message: 'Unauthorized: Not logged in' });
     }
-    console.log(`Session found for user: ${session.user.sub}`);
 
     // --- (Optional but Recommended) Role Check ---
     // Checks if the user has the 'admin' role within the defined namespace.
@@ -27,7 +25,6 @@ export default async function handler(req, res) {
          console.warn(`Forbidden: User ${session.user.sub} lacks required role '${ADMIN_ROLE}'. Roles: ${userRoles.join(', ')}`);
          return res.status(403).json({ message: `Forbidden: Requires '${ADMIN_ROLE}' role` });
     }
-    console.log(`User ${session.user.sub} has required role '${ADMIN_ROLE}'. Proceeding...`);
 
     // --- Original Logic (POST check & Task Execution) ---
     if (req.method !== 'POST') {
@@ -37,9 +34,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        console.log("Triggering syncPlayersFromStatsCollection...");
         const result = await syncPlayersFromStatsCollection();
-        console.log("syncPlayersFromStatsCollection finished execution.");
 
         if (result.errors && result.errors.length > 0) {
              console.warn("Sync completed, but with informational messages/conflicts:", result.errors);
@@ -50,7 +45,6 @@ export default async function handler(req, res) {
              });
         }
 
-        console.log("Sync completed successfully without any warnings/conflicts from the task.");
         return res.status(200).json({
             message: 'Player synchronization task completed successfully.',
             details: result,

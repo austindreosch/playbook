@@ -60,7 +60,6 @@ export default async function handler(req, res) {
             isLatest: true // <<< ADDED: Only look for the latest active rankings
         };
 
-        console.log("Querying for source ranking with:", query);
 
         const sourceRanking = await sourceRankingsCollection
             .find(query)
@@ -72,7 +71,6 @@ export default async function handler(req, res) {
             console.error("No matching source ranking found for query:", query);
             return res.status(404).json({ message: `Could not find a suitable source ranking for the selected criteria.` });
         }
-        console.log(`Found source ranking: ID ${sourceRanking._id}, Source ${sourceRanking.source}, Version ${sourceRanking.version}`);
 
         // Check if found source ranking has data
         if (!sourceRanking.rankings || !Array.isArray(sourceRanking.rankings) || sourceRanking.rankings.length === 0) {
@@ -122,7 +120,6 @@ export default async function handler(req, res) {
             format: sourceRanking.format.toLowerCase(),
             scoring: sourceRanking.scoring.toLowerCase(),
             categories: (() => {
-                console.log('[Create API - Init Categories Block] Generating categories from SPORT_CONFIGS.');
                 const sportKey = sourceRanking.sport?.toLowerCase();
                 const currentScoringType = scoring.toLowerCase(); // Get the scoring type for the list being created
                 const sportConfig = SPORT_CONFIGS[sportKey];
@@ -134,11 +131,9 @@ export default async function handler(req, res) {
                         if (currentScoringType === 'points') {
                             // For Points leagues, use ptsEnabled flag from config
                             isEnabledByDefault = catData.ptsEnabled === true;
-                            // console.log(`[Create API - Init] Points league. Cat: ${catKey}, catData.ptsEnabled: ${catData.ptsEnabled}, isEnabledByDefault: ${isEnabledByDefault}`);
                         } else {
                             // For Categories leagues, use the original enabled flag from config
                             isEnabledByDefault = catData.enabled === true;
-                            // console.log(`[Create API - Init] Categories league. Cat: ${catKey}, catData.enabled: ${catData.enabled}, isEnabledByDefault: ${isEnabledByDefault}`);
                         }
 
                         newCategories[catKey] = {
@@ -150,7 +145,6 @@ export default async function handler(req, res) {
                 } else {
                     console.warn(`[Create API - Init Categories Block] No categories found in SPORT_CONFIGS for sport: ${sportKey}`);
                 }
-                // console.log(`[Create API - Init Categories Block] Initial categories generated for ${currentScoringType} ${sportKey}:`, JSON.stringify(newCategories, null, 2));
                 return newCategories;
             })(),
             ...(sourceRanking.sport.toLowerCase() === 'nfl' && {
@@ -175,20 +169,16 @@ export default async function handler(req, res) {
             const categoriesToUpdate = newUserRankingDoc.categories;
             let primaryPointsKey = null;
 
-            console.log(`[Create API - Points Defaults] Applying for sport: ${sportKey}, scoring: ${newUserRankingDoc.scoring}`);
 
             if (sportKey === 'nfl') {
                 const pprType = newUserRankingDoc.pprSetting; // e.g., '1ppr', '0.5ppr', '0ppr' (already toLowerCase)
                 if (pprType === '1ppr') primaryPointsKey = 'PPG1ppr';
                 else if (pprType === '0.5ppr') primaryPointsKey = 'PPG0.5ppr';
                 else if (pprType === '0ppr') primaryPointsKey = 'PPG0ppr';
-                console.log(`[Create API - Points Defaults] NFL pprType: ${pprType}, determined primaryPointsKey: ${primaryPointsKey}`);
             } else if (sportKey === 'nba') {
                 primaryPointsKey = 'PPG'; // TODO: Verify this is the correct key from SPORT_CONFIGS.nba.categories for overall fantasy points
-                console.log(`[Create API - Points Defaults] NBA primaryPointsKey set to: ${primaryPointsKey}`);
             } else if (sportKey === 'mlb') {
                 primaryPointsKey = 'PPG'; // TODO: Verify this is the correct key from SPORT_CONFIGS.mlb.categories for overall fantasy points
-                console.log(`[Create API - Points Defaults] MLB primaryPointsKey set to: ${primaryPointsKey}`);
             }
 
             if (typeof categoriesToUpdate === 'object' && categoriesToUpdate !== null) {
@@ -199,7 +189,6 @@ export default async function handler(req, res) {
                         categoriesToUpdate[catKey].multiplier = 0;
                     }
                 });
-                 console.log('[Create API - Points Defaults] Categories after points league multiplier adjustment:', JSON.stringify(categoriesToUpdate, null, 2));
             } else {
                 console.warn('[Create API - Points Defaults] categoriesToUpdate is not an object or is null. Skipping adjustment.');
             }
@@ -231,10 +220,8 @@ export default async function handler(req, res) {
         }
 
         // 4. Insert the new document
-        console.log(`Inserting new user ranking: '${newUserRankingDoc.name}' for user ${userId}, based on source ID ${sourceRanking._id}`);
         const insertResult = await userRankingsCollection.insertOne(newUserRankingDoc);
         const newUserRankingId = insertResult.insertedId;
-        console.log(`New user ranking created with ID: ${newUserRankingId}`);
 
         // --- Respond --- //
         return res.status(201).json({ 

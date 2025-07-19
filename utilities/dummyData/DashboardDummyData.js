@@ -1193,7 +1193,6 @@ export const getCurrentDummyData = () => {
       const parsedData = JSON.parse(savedData);
       // Update our mutable copy
       mutableDashboardData = parsedData;
-      console.log('📂 Loaded updated dummy data from localStorage');
       return parsedData;
     }
   } catch (error) {
@@ -1211,7 +1210,6 @@ export const getCurrentDummyData = () => {
 const saveDummyDataToStorage = (data) => {
   try {
     localStorage.setItem('dashboardDummyData', JSON.stringify(data));
-    console.log('💾 Saved updated dummy data to localStorage');
   } catch (error) {
     console.warn('⚠️ Failed to save dummy data to localStorage:', error);
   }
@@ -1249,7 +1247,6 @@ export const updateLeagueLastSync = (leagueName, newLastSync) => {
   // Save to localStorage for persistence
   saveDummyDataToStorage(updatedData);
   
-  console.log('🔄 Updated lastSync for league:', leagueName, 'to:', newLastSync);
   return updatedData;
 };
 
@@ -1376,7 +1373,6 @@ export const resetDummyData = () => {
   
   mutableDashboardData = originalData;
   localStorage.removeItem('dashboardDummyData');
-  console.log('🔄 Reset dummy data to original values');
 };
 
 // Create a function that returns the current data (either from localStorage or original)

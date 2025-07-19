@@ -13,11 +13,8 @@ function NavBar() {
     const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID; // Get admin ID
     const isAdmin = user && user.sub === adminSub; // Determine if user is admin
 
-    // Only log user changes if needed for debugging
     useEffect(() => {
-        if (process.env.NODE_ENV === 'development') {
-            // console.log('User state changed:', user);
-        }
+        // User state effect for potential future use
     }, [user]);
 
     return (

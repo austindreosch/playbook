@@ -116,7 +116,6 @@ export const getLeagueInfo = async (leagueId) => {
     const leagueInfoResponse = await axios.get(leagueInfoUrl);
     const leagueInfoData = leagueInfoResponse.data;
 
-    // console.log(leagueInfoData);
     const positionConstraints = leagueInfoData.rosterInfo.positionConstraints;
     const positionArray = generatePositionArray(positionConstraints);
 
@@ -185,7 +184,6 @@ export const getLeagueDataForImport = async (leagueId, leagueName, provider) => 
       }
     }
 
-    console.log("formattedLeagueData: ", leagueData);
     return leagueData;
 
   } catch (error) {

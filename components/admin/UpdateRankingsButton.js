@@ -29,7 +29,6 @@ function UpdateRankingsButton({ sport, format, scoring }) {
       });
 
       const saveData = await saveResponse.json();
-      console.log('📥 Save response:', saveData);
 
       if (!saveResponse.ok) {
         throw new Error(saveData.error || 'Failed to save rankings');
@@ -38,7 +37,6 @@ function UpdateRankingsButton({ sport, format, scoring }) {
       if (saveData.skipped) {
         setError('No changes detected in rankings. Skipping update.');
       } else {
-        console.log('✅ Rankings updated successfully:', saveData);
       }
     } catch (error) {
       console.error('❌ Update failed:', error.message);

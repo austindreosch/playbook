@@ -17,16 +17,13 @@ if (!mongoUri) {
 
 async function clearAllNameVariants() {
   const client = new MongoClient(mongoUri);
-  console.log('Attempting to connect to MongoDB...');
 
   try {
     await client.connect();
-    console.log('Connected successfully to MongoDB.');
 
     const db = client.db(DB_NAME);
     const playersCollection = db.collection(PLAYERS_COLLECTION);
 
-    console.log(`Attempting to set 'nameVariants' to [primaryName] for all documents in '${PLAYERS_COLLECTION}'...`);
 
     const result = await playersCollection.updateMany(
       {}, // Empty filter matches all documents
@@ -39,7 +36,6 @@ async function clearAllNameVariants() {
       ]
     );
 
-    console.log(`Operation complete. Matched ${result.matchedCount} documents and modified ${result.modifiedCount} documents.`);
     if (result.matchedCount !== result.modifiedCount) {
         console.warn('Warning: Not all matched documents were modified. This might happen if some documents already had an empty nameVariants array.');
     }
@@ -50,7 +46,6 @@ async function clearAllNameVariants() {
     // Ensure the client connection is closed even if errors occurred
     if (client) {
         await client.close();
-        console.log('MongoDB connection closed.');
     }
   }
 }

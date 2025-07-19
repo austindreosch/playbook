@@ -60,15 +60,11 @@ function delay(ms) {
 async function fetchWithAuth(url, endpoint) {
     try {
         await delay(100);
-        console.log(`Fetching ${endpoint}:`, url); // Log the URL we're hitting
-
         const response = await fetch(url, {
             headers: {
                 "Authorization": `Basic ${Buffer.from(`${process.env.MYSPORTSFEEDS_API_KEY}:MYSPORTSFEEDS`).toString('base64')}`
             }
         });
-
-        console.log(`${endpoint} response status:`, response.status);
 
         if (!response.ok) {
             const text = await response.text();
@@ -77,7 +73,6 @@ async function fetchWithAuth(url, endpoint) {
         }
 
         const data = await response.json();
-        console.log(`${endpoint} data received:`, Object.keys(data).length > 0 ? 'yes' : 'no');
         return data;
     } catch (error) {
         console.error(`Failed to fetch ${endpoint}:`, error.message);
@@ -108,8 +103,6 @@ function validateData(data, endpoint, errors) {
 // Helper function to update a single endpoint in the database
 async function updateEndpoint(collection, sport, addon, endpoint, data, errors) {
     try {
-        console.log(`Attempting to store ${sport}.${addon}.${endpoint} data...`);
-
         const document = {
             sport: sport,
             addon: addon,
@@ -123,8 +116,6 @@ async function updateEndpoint(collection, sport, addon, endpoint, data, errors) 
             { $set: document },
             { upsert: true }
         );
-
-        console.log(`${sport}.${addon}.${endpoint} update result:`, result);
         return result;
     } catch (error) {
         console.error(`Error updating ${sport}.${addon}.${endpoint} data:`, error);
@@ -160,7 +151,6 @@ export default async function handler(req, res) {
 
     try {
         await client.connect({ serverSelectionTimeoutMS: 5000 });
-        console.log('Connected to MongoDB');
 
         const db = client.db('playbook');
         const statsCollection = db.collection('stats');
@@ -169,13 +159,11 @@ export default async function handler(req, res) {
 
         // Use dedicated environment variables for current and projection seasons
         const currentSeason = process.env.MYSPORTSFEEDS_NFL_SEASON;
-        console.log(`Using Current Season: ${currentSeason}, Projection Season Env: ${process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON}`);
 
         //=============================================================================
         //                    1. FETCH AND STORE CORE DATA (Uses currentSeason)
         //=============================================================================
 
-        console.log('Fetching and storing CORE data...');
 
         // TODO: UNCOMMENT WHEN DONE TESTING
 
@@ -213,7 +201,6 @@ export default async function handler(req, res) {
         //                    2. FETCH AND STORE STATS DATA
         //=============================================================================
 
-        console.log('Fetching and storing STATS data...');
 
 
         // Seasonal player stats (remove defensive players)
@@ -234,7 +221,6 @@ export default async function handler(req, res) {
             // +++ APPLY MANUAL STAT OVERRIDES +++
             const currentProcessingSeason = process.env.MYSPORTSFEEDS_NFL_SEASON;
             if (MANUAL_STAT_OVERRIDES && MANUAL_STAT_OVERRIDES.length > 0) {
-                console.log(`Checking for manual stat overrides for NFL season: ${currentProcessingSeason}...`);
                 seasonalPlayerStats.playerStatsTotals.forEach(playerStat => {
                     if (!playerStat.player || !playerStat.stats) return;
 
@@ -247,16 +233,13 @@ export default async function handler(req, res) {
                     );
 
                     if (overrideRule && overrideRule.statOverrides) {
-                        console.log(`Applying override for player MSF ID: ${msfId} for season ${currentProcessingSeason}`);
                         Object.entries(overrideRule.statOverrides).forEach(([statPath, correctedValue]) => {
                             // 'statPath' is relative to playerStat.stats object
                             // e.g., 'snapCounts.offenseSnaps'
-                            console.log(`  Overriding stat ${statPath} for player ${msfId}. Old value: ${playerStat.stats[statPath]}, New value: ${correctedValue}`);
                             set(playerStat.stats, statPath, correctedValue);
                         });
                     }
                 });
-                console.log('Manual stat overrides application complete.');
             }
             // +++ END APPLY MANUAL STAT OVERRIDES +++
         }
@@ -304,7 +287,6 @@ export default async function handler(req, res) {
         //                    3. FETCH AND STORE DETAILED DATA
         //=============================================================================
 
-        console.log('Fetching and storing DETAILED data...');
 
         // TODO: These are game-specific endpoints - Would need to first fetch the daily games to get the game IDs, then loop through each game ID to fetch these detailed endpoints
 
@@ -325,8 +307,6 @@ export default async function handler(req, res) {
         // Filter out defensive/non-offensive players if data exists (assuming data.players is the array)
         if (players && players.players) { // Check if the 'players' object and its nested 'players' array exist
             const initialCount = players.players.length;
-            console.log(`Filtering detailed players. Initial count: ${initialCount}`);
-
             // Use the SAME defensivePositions Set defined earlier for seasonalPlayerStats (around line 222)
             const offensivePlayers = players.players.filter(playerEntry => {
                 const position = playerEntry.player?.primaryPosition?.toUpperCase(); // Check position safely
@@ -335,7 +315,6 @@ export default async function handler(req, res) {
             });
             // Replace the original player list with the filtered one
             players.players = offensivePlayers;
-            console.log(`Filtering detailed players. Final count: ${offensivePlayers.length}`);
         } else {
             console.log('Skipping detailed player filtering - players.players array not found.');
         }
@@ -363,7 +342,6 @@ export default async function handler(req, res) {
         //                    4. FETCH AND STORE PROJECTIONS DATA (Uses projectionSeason)
         //=============================================================================
 
-        console.log('Fetching and storing PROJECTIONS data for season:', process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON);
 
         const projectionFilterPositions = new Set([
             'DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT', 'MLB', 'K'
@@ -416,20 +394,11 @@ export default async function handler(req, res) {
         // Filter out defensive players directly on the assumed raw API response structure
         if (seasonalPlayerStatsProjections && seasonalPlayerStatsProjections.playerStatsProjectedTotals) {
             const initialCount = seasonalPlayerStatsProjections.playerStatsProjectedTotals.length;
-            console.log(`Filtering seasonal projections. Initial count: ${initialCount}`);
-
             const offensivePlayers = seasonalPlayerStatsProjections.playerStatsProjectedTotals.filter(playerStat => {
                 const position = playerStat.player?.primaryPosition?.toUpperCase();
                 const shouldKeep = !(position && projectionFilterPositions.has(position));
-                // Log if filtering out
-                // if (position && projectionFilterPositions.has(position)) {
-                //     console.log(`Filtering out: ${playerStat.player?.firstName} ${playerStat.player?.lastName} - Position: ${position}`);
-                // }
                 return shouldKeep;
             });
-
-            const finalCount = offensivePlayers.length;
-            console.log(`Filtering seasonal projections. Final count: ${finalCount}`);
 
             // Replace the original player list with the filtered one directly on the response object
             seasonalPlayerStatsProjections.playerStatsProjectedTotals = offensivePlayers;
@@ -447,7 +416,6 @@ export default async function handler(req, res) {
         //                    5. RETURN RESULTS
         //=============================================================================
 
-        console.log('All data has been fetched and stored');
 
         res.status(200).json({
             success: true,
@@ -463,7 +431,6 @@ export default async function handler(req, res) {
     } finally {
         if (client.topology?.isConnected()) {
             await client.close();
-            console.log('MongoDB connection closed');
         }
     }
 }

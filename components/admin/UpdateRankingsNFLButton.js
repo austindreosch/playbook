@@ -21,14 +21,11 @@ function UpdateRankingsNFLButton() {
       });
 
       const saveData = await saveResponse.json();
-      console.log('📥 Save response:', saveData);
 
       if (!saveResponse.ok) {
         throw new Error(saveData.error || saveData.details || 'Failed to save NFL rankings');
       }
 
-      // Log the detailed results array from the new API
-      console.log('✅ Update All NFL Rankings Response:', saveData);
     } catch (error) {
       console.error('❌ Update failed:', error.message);
       setError(error.message);

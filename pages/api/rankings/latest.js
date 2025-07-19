@@ -61,7 +61,6 @@ export default async function handler(req, res) {
             }
         }
 
-        console.log('API [/api/rankings/latest] final constructed query:', query);
 
         // Get the latest version matching the constructed query
         const latestVersion = await collection.findOne(
@@ -72,13 +71,11 @@ export default async function handler(req, res) {
         );
 
         if (!latestVersion) {
-             console.log('API [/api/rankings/latest] No ranking found for query:', query);
             return res.status(404).json({
                 error: `No latest ranking found matching the criteria`
             });
         }
 
-        console.log('API [/api/rankings/latest] Found ranking document:', latestVersion._id);
         // Return the *entire document* for backward compatibility
         res.status(200).json(latestVersion); 
 

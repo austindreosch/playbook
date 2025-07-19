@@ -54,7 +54,6 @@ export default async function handler(req, res) {
         if (playerUpdateResult.matchedCount === 0) {
             throw new Error(`Player with ID ${selectedPlayerId} not found.`);
         }
-        console.log(`Updated nameVariants for player ${selectedPlayerId}. Modified: ${playerUpdateResult.modifiedCount}`);
 
         // 2. Update Ranking Document: Find the specific ranking entry and update it
         const rankingUpdateResult = await rankingsCollection.updateOne(
@@ -77,7 +76,6 @@ export default async function handler(req, res) {
             // Decide if this is an error or just a warning. For now, proceed but don't report success.
             return res.status(404).json({ message: `Ranking entry not found or already updated for Rank ${unmatchedRank}, Name '${unmatchedName}'` });
         }
-        console.log(`Updated ranking entry in doc ${rankingDocId}. Modified: ${rankingUpdateResult.modifiedCount}`);
 
         // --- Respond --- //
         return res.status(200).json({ message: 'Player linked and ranking updated successfully.' });

@@ -84,14 +84,12 @@ export default function RankingsSelectorButton({ className = '' }) {
   // EVENT HANDLERS
   // =================================================================
   const handleRankingSelect = (ranking) => {
-    console.log('🔄 Ranking selected:', ranking);
     setSelectedRanking(ranking);
     setIsOpen(false);
     // TODO: Add logic to actually switch to the selected ranking
   };
 
   const handleButtonClick = () => {
-    console.log('🖱️ Rankings button clicked');
     setIsOpen(!isOpen);
   };
 

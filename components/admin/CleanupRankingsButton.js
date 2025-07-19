@@ -20,13 +20,11 @@ function CleanupRankingsButton() {
             });
 
             const data = await response.json();
-            console.log('🧹 Cleanup response:', data);
 
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to cleanup rankings');
             }
 
-            console.log('✅ Rankings cleaned up successfully:', data);
         } catch (error) {
             console.error('❌ Cleanup failed:', error.message);
             setError(error.message);

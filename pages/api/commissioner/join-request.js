@@ -32,7 +32,6 @@ export default async function handler(req, res) {
     };
 
     // TODO: Store join request in database/Google Sheets
-    console.log('New join request:', joinRequest);
 
     // TODO: Send notification to commissioner
     // await sendNotificationToCommissioner(leagueID, joinRequest);

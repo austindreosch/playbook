@@ -107,9 +107,6 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false)
   const [firstNameError, setFirstNameError] = useState('');
 
-  // useEffect(() => {
-  //   console.log({ user, isLoading, error });
-  // }, [user, isLoading, error]);
 
   const handleCheckboxChange = (setter, value) => {
     setter((prev) =>
@@ -121,7 +118,6 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submit button clicked, handleSubmit function triggered.");
 
     if (!user) {
       return;

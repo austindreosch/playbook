@@ -30,7 +30,6 @@ export default async function handler(req, res) {
 
     try {
         const db = await getDb();
-        console.log('Querying user rankings for user:', session.user.sub);
 
         const userRankings = await db.collection('user_rankings')
             .find({ userId: session.user.sub })
@@ -50,7 +49,6 @@ export default async function handler(req, res) {
             .sort({ 'lastUpdated': -1 })
             .toArray();
 
-        console.log(`Found ${userRankings.length} rankings for user`);
         
         // Add cache control headers
         res.setHeader('Cache-Control', 'no-store'); // Always return fresh data

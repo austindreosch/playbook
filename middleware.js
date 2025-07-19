@@ -11,34 +11,27 @@ export async function middleware(req) {
 
   if (session?.user) {
     const { user } = session;
-    console.log('[Middleware] Found session. User object:', JSON.stringify(user, null, 2));
 
     const registrationComplete = user[REGISTRATION_COMPLETE_CLAIM];
 
     if (!user.email_verified && pathname !== '/verify-email') {
-      console.log('[Middleware] User not verified. Redirecting to /verify-email');
       return NextResponse.redirect(new URL('/verify-email', req.url));
     }
 
     if (user.email_verified) {
       const loginsCount = user[LOGIN_COUNT_CLAIM];
-      console.log(`[Middleware] Logins count from claim: ${loginsCount}, Registration complete: ${registrationComplete}`);
 
       if (loginsCount === 1 && !registrationComplete && pathname !== '/register') {
-        console.log('[Middleware] First login, registration not complete. Redirecting to /register.');
         return NextResponse.redirect(new URL('/register', req.url));
       }
 
       if ((loginsCount > 1 || registrationComplete) && (pathname === '/verify-email' || pathname === '/register')) {
-        console.log('[Middleware] Existing user or registration complete on onboarding page. Redirecting to /dashboard.');
         return NextResponse.redirect(new URL('/dashboard', req.url));
       }
     }
   } else {
-    console.log('[Middleware] No session found.');
   }
 
-  console.log(`[Middleware] Allowing request to ${pathname}`);
   return res;
 }
 

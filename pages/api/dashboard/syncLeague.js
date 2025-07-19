@@ -67,7 +67,6 @@ export default async function handler(req, res) {
       }
     };
 
-    console.log('🔄 League sync completed:', response);
 
     res.status(200).json(response);
   } catch (error) {

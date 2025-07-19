@@ -21,7 +21,6 @@ function DetailBlock() {
           setLeagues(userLeagues);
           // Automatically select the first team
           setSelectedTeamId(userLeagues[0]?.userTeamId || null);
-          console.log('User leagues: ', userLeagues);
         } else {
           console.error('Failed to fetch leagues');
         }

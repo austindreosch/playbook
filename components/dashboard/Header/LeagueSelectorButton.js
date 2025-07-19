@@ -53,18 +53,14 @@ export default function LeagueSelectorButton({ className = "" }) {
   // EVENT HANDLERS
   // =================================================================
   const handleLeagueSelect = (leagueName) => {
-    console.log('🔄 League selected:', leagueName);
     setCurrentLeague(leagueName);
     setIsOpen(false);
   };
 
   const handleButtonClick = () => {
-    console.log('🖱️ Button clicked');
-    
     // If not in league view, directly enter the current league
     if (!isLeagueView) {
       if (currentLeagueId) {
-        console.log('🔄 Entering current league:', currentLeagueId);
         setCurrentLeague(currentLeagueId);
       }
       return;
@@ -126,15 +122,6 @@ export default function LeagueSelectorButton({ className = "" }) {
     };
   }, [isOpen]);
 
-  // Debug logging
-  console.log('🔍 LeagueSelectorButton Debug:', {
-    currentView,
-    currentLeagueId,
-    leaguesCount: leagues.length,
-    displayName,
-    isLeagueView,
-    isOpen
-  });
 
   // =================================================================
   // RENDER

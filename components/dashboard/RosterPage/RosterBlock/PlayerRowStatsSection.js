@@ -160,15 +160,6 @@ const formatStatValue = (value, category) => {
 
 
 const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex }) => {
-  // Debug logging
-  console.log('PlayerRowStatsSection received:', { 
-    categories, 
-    playerStats, 
-    player: player,
-    playerName: player?.name,
-    playerSport: player?.sport 
-  });
-  
   // Calculate Z-Score sum from blueprint
   const zScoreSum = playerStats?.zScoreSum || 0;
 

@@ -34,7 +34,6 @@ export default function SyncPlayersButton() {
                  setStatusMessage(`Sync completed with ${data.details.errors.length} errors. Check logs.`);
                  setIsError(true); // Indicate partial failure/warnings
             } else {
-                console.log("Sync Success Response:", data);
                 setStatusMessage(data.message || 'Sync completed successfully!');
                 setIsError(false);
             }

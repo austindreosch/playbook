@@ -53,12 +53,6 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
 
             if (rankingDocId) {
                 // --- Original Logic: Link and update ranking doc --- 
-                console.log("Calling link-player API with data:", {
-                    unmatchedName: player.name,
-                    unmatchedRank: player.userRank,
-                    selectedPlayerId: selectedPlayerId,
-                    rankingDocId: rankingDocId
-                });
                 response = await fetch('/api/admin/link-player', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -73,12 +67,10 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
                  if (!response.ok) {
                      throw new Error(data.message || `Failed to link player (${response.status})`);
                  }
-                 console.log(`Successfully linked '${player.name}' to ID ${selectedPlayerId} and updated ranking doc.`);
                  alert(`Successfully linked '${player.name}' to ID ${selectedPlayerId}`); 
 
             } else {
                 // --- New Logic: Just add name variant --- 
-                console.log("Calling add-name-variant API...");
                  response = await fetch('/api/admin/add-name-variant', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -91,7 +83,6 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
                  if (!response.ok) {
                      throw new Error(data.message || `Failed to add name variant (${response.status})`);
                  }
-                 console.log(`Successfully added '${player.name}' as variant to player ID ${selectedPlayerId}.`);
                  alert(`Successfully added '${player.name}' as variant. Player will be matched on next sync.`);
             }
 
@@ -144,7 +135,6 @@ export default function UnmatchedPlayerResolver({ player, sport, rankingDocId, o
             }
 
             // Adjust success message based on response
-            console.log(`Create prospect response:`, data);
             alert(data.message || `Successfully created prospect '${player.name}'.`); 
             
             // Call the callback to remove this item from the parent list

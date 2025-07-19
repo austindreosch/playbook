@@ -12,7 +12,6 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
     const userRankings = useUserRankings(state => state.rankings);
     const activeRanking = useUserRankings(state => state.activeRanking);
     const activeRankingId = activeRanking?._id;
-    // console.log('Side panel rankings:', userRankings); // DEBUG: Log rankings in side panel
 
     // Sort rankings with active one at top, then by date
     const sortedRankings = useMemo(() => {

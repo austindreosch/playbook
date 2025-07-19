@@ -42,19 +42,8 @@ const useDummyDashboardData = create((set, get) => ({
   updateFromCurrentLeague: () => {
     const currentLeague = useDashboardContext.getState().getCurrentLeague();
     
-    console.log('🔍 DEBUG: Current league from context:', currentLeague);
-    console.log('🔍 DEBUG: Dashboard context state:', useDashboardContext.getState());
     
     if (currentLeague) {
-      console.log('🔄 Updating dashboard data from current league:', currentLeague.leagueDetails?.leagueName);
-      console.log('🔍 DEBUG: League widget data:', {
-        scheduleStrength: currentLeague.scheduleStrength,
-        teamArchetype: currentLeague.teamArchetype,
-        teamProfile: currentLeague.teamProfile,
-        teamAdvisor: currentLeague.teamAdvisor,
-        actionSteps: currentLeague.actionSteps,
-        newsFeed: currentLeague.newsFeed
-      });
       
       set({
         scheduleStrength: currentLeague.scheduleStrength || {},
@@ -66,7 +55,6 @@ const useDummyDashboardData = create((set, get) => ({
       });
     } else {
       console.warn('⚠️  No current league found, using empty dashboard data');
-      console.log('🔍 DEBUG: Available leagues:', useDashboardContext.getState().leagues);
       set({
         scheduleStrength: {},
         teamArchetype: {},
@@ -80,7 +68,6 @@ const useDummyDashboardData = create((set, get) => ({
 
   // Initialize with current league data
   initialize: () => {
-    console.log('🚀 Initializing dummy dashboard data...');
     get().updateFromCurrentLeague();
   },
 
@@ -95,7 +82,6 @@ const useDummyDashboardData = create((set, get) => ({
 
   // Manual refresh function for debugging
   refresh: () => {
-    console.log('🔄 Manual refresh triggered');
     get().updateFromCurrentLeague();
   },
 
@@ -103,7 +89,6 @@ const useDummyDashboardData = create((set, get) => ({
 
 // Delay initialization to ensure dashboard context is ready
 setTimeout(() => {
-  console.log('⏰ Delayed initialization starting...');
   useDummyDashboardData.getState().initialize();
 }, 100);
 

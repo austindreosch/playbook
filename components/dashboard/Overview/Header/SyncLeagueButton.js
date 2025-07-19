@@ -78,7 +78,6 @@ export default function SyncLeagueButton({ className = '' }) {
       }
 
       const result = await response.json();
-      console.log('✅ League synced successfully:', result);
       
       // ============================================================================
       // DUMMY STATE UPDATE - REPLACE WITH REAL DATABASE REFRESH

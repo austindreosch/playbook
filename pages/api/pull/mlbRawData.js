@@ -29,8 +29,6 @@ function delay(ms) {
 async function fetchWithAuth(url, endpoint) {
     try {
         await delay(100);
-        console.log(`Fetching: ${endpoint}`);
-
         const response = await fetch(url, {
             headers: {
                 "Authorization": `Basic ${Buffer.from(`${process.env.MYSPORTSFEEDS_API_KEY}:MYSPORTSFEEDS`).toString('base64')}`
@@ -43,7 +41,6 @@ async function fetchWithAuth(url, endpoint) {
         }
 
         const data = await response.json();
-        console.log(`✅ ${endpoint}: Data received successfully`);
         return data;
     } catch (error) {
         console.error(`❌ ${endpoint}: ${error.message}`);
@@ -336,7 +333,6 @@ export default async function handler(req, res) {
         if (seasonalPlayerStats && seasonalPlayerStats.playerStatsTotals) {
             const currentProcessingSeason = process.env.MYSPORTSFEEDS_MLB_SEASON;
             if (MANUAL_STAT_OVERRIDES && MANUAL_STAT_OVERRIDES.length > 0) {
-                console.log(`Checking for manual stat overrides for MLB season: ${currentProcessingSeason}...`);
                 seasonalPlayerStats.playerStatsTotals.forEach(playerStat => {
                     if (!playerStat.player || !playerStat.stats) return;
                     const msfId = String(playerStat.player.id);
@@ -346,14 +342,11 @@ export default async function handler(req, res) {
                         rule.targetSeason === currentProcessingSeason
                     );
                     if (overrideRule && overrideRule.statOverrides) {
-                        console.log(`Applying override for player MSF ID: ${msfId} for MLB season ${currentProcessingSeason}`);
                         Object.entries(overrideRule.statOverrides).forEach(([statPath, correctedValue]) => {
-                            console.log(`  Overriding stat ${statPath} for player ${msfId}. Old value: ${playerStat.stats[statPath]}, New value: ${correctedValue}`);
                             set(playerStat.stats, statPath, correctedValue);
                         });
                     }
                 });
-                console.log('MLB manual stat overrides application complete.');
             }
         }
         // +++ END MANUAL STAT OVERRIDES FOR MLB +++

@@ -23,7 +23,6 @@ const useUserRankings = create(
             // Helper to trigger debounced save if there are changes
             const triggerDebouncedSave = () => {
                 if (get().hasUnsavedChanges && debouncedSaveChanges) {
-                    // console.log('[useUserRankings] Triggering debounced save.');
                     debouncedSaveChanges();
                 }
             };
@@ -57,8 +56,6 @@ const useUserRankings = create(
                     try {
                         const response = await fetch('/api/user-rankings');
                         const data = await response.json();
-                        // console.log('[DEBUG] Raw API response from /api/user-rankings:', data);
-                        // console.log('Fetched rankings:', data); // DEBUG: Log all rankings fetched
                         
                         const nflRankingsInData = data.filter(r => r.sport === 'nfl' || r.sport === 'NFL');
                         if (nflRankingsInData.length > 0) {
@@ -241,11 +238,9 @@ const useUserRankings = create(
                 // Save changes to the database
                 saveChanges: async () => {
                     const { activeRanking, activeRankingIsDirty } = get();
-                    // console.log('[saveChanges] Called. IsDirty:', activeRankingIsDirty, 'ActiveRanking:', !!activeRanking);
                     if (!activeRankingIsDirty || !activeRanking) {
                         return Promise.resolve();
                     }
-                    // console.log('[saveChanges] Proceeding with save for ranking:', activeRanking._id);
                     // setState({ isLoading: true }); // Optional
                     try {
                         const response = await fetch(`/api/user-rankings/${activeRanking._id}`, {
@@ -287,23 +282,18 @@ const useUserRankings = create(
                 // --- NEW: Flush Pending Changes ---
                 flushPendingChanges: async () => {
                     if (debouncedSaveChanges && typeof debouncedSaveChanges.cancel === 'function') {
-                        // console.log('[flushPendingChanges] Cancelling pending debounced save.');
                         debouncedSaveChanges.cancel(); // Cancel any scheduled debounced save
                     }
                     const { activeRankingIsDirty, activeRanking } = get();
                     if (activeRankingIsDirty && activeRanking) {
-                        // console.log('[flushPendingChanges] Flushing pending changes for activeRanking:', activeRanking._id);
                         return get().saveChanges(); // saveChanges now returns a promise
                     }
-                    // console.log('[flushPendingChanges] No pending changes to flush or no active ranking.');
                     return Promise.resolve(); // If no changes or no active ranking, resolve immediately
                 },
                 // --- END NEW ---
 
                 initAutoSave: () => {
-                    // console.log('[initAutoSave] Initializing debounced auto-save.');
                     debouncedSaveChanges = debounce(() => {
-                        // console.log('[debouncedSaveChanges] Debounced function triggered.');
                         get().saveChanges();
                     }, SAVE_DEBOUNCE_MILLISECONDS);
 
@@ -311,12 +301,10 @@ const useUserRankings = create(
                     const handlePageUnload = () => {
                         const { activeRankingIsDirty, activeRanking } = get();
                         if (activeRankingIsDirty && activeRanking && navigator.sendBeacon) {
-                            // console.log('[handlePageUnload] Sending beacon for unsaved changes for ranking:', activeRanking._id);
                             const status = navigator.sendBeacon(
                                 `/api/user-rankings/beacon-save/${activeRanking._id}`,
                                 JSON.stringify(activeRanking)
                             );
-                            // console.log('[handlePageUnload] Beacon status:', status);
                             if (status) {
                                 // If beacon is sent, assume it will work (fire and forget)
                                 // Optionally, clear dirty status here, but it's tricky because we don't get a response
@@ -324,7 +312,6 @@ const useUserRankings = create(
                             }
                         } else if (activeRankingIsDirty && activeRanking) {
                             // Fallback for browsers not supporting sendBeacon, or if a synchronous save is desired (less reliable)
-                            // console.log('[handlePageUnload] sendBeacon not supported or not used, attempting synchronous save (less reliable).');
                             // Note: A full saveChanges() here is unlikely to complete during unload.
                         }
                     };
@@ -333,7 +320,6 @@ const useUserRankings = create(
 
                     // Cleanup function
                     return () => {
-                        // console.log('[initAutoSave] Cleaning up auto-save (cancelling debounced save and removing unload listener).');
                         if (debouncedSaveChanges && typeof debouncedSaveChanges.cancel === 'function') {
                             debouncedSaveChanges.cancel();
                         }
@@ -486,7 +472,6 @@ const useUserRankings = create(
 
                 // --- NEW: Fetch Consensus Rankings Action --- ADDED
                 fetchConsensusRankings: async (criteria) => {
-                    console.log('[useUserRankings DEBUG - fetchConsensusRankings] Called with criteria:', JSON.parse(JSON.stringify(criteria))); // Log received criteria
                     if (!criteria || !criteria.sport || !criteria.format || !criteria.scoring) {
                         setState({ ecrError: 'Missing required criteria for ECR fetch', isEcrLoading: false });
                         return;
@@ -529,15 +514,12 @@ const useUserRankings = create(
                         let redraftRankingsData = null; 
                         if (redraftResponse.ok) {
                             redraftRankingsData = await redraftResponse.json();
-                            console.log('[useUserRankings DEBUG - fetchConsensusRankings] Raw redraftRankingsData from API:', JSON.parse(JSON.stringify(redraftRankingsData))); // Log API response
                         } else {
-                            console.warn('[useUserRankings - fetchConsensusRankings] Redraft ECR fetch failed. Status:', redraftResponse.status); // Log failure
                             // Redraft fetch failed
                         }
 
                         const standardEcrToSet = standardRankingsData?.rankings || []; 
                         const redraftEcrToSet = redraftRankingsData?.rankings || []; 
-                        console.log('[useUserRankings DEBUG - fetchConsensusRankings] redraftEcrToSet (before setState):', JSON.parse(JSON.stringify(redraftEcrToSet))); // Log data being set
 
                         setState({
                             standardEcrRankings: standardEcrToSet,
@@ -568,7 +550,6 @@ const useUserRankings = create(
 
                 // --- NEW: Select and Fetch Full Ranking Details ---
                 selectAndTouchRanking: async (rankingId) => {
-                    console.log('[useUserRankings DEBUG - selectAndTouchRanking] Called with rankingId:', rankingId); // Log entry and rankingId
                     if (!rankingId) {
                         console.error("[selectAndTouchRanking] No rankingId provided."); // Keep critical errors
                         setState({ activeRanking: null, selectionLoading: false, error: 'No ranking ID provided for selection.' });
@@ -586,7 +567,6 @@ const useUserRankings = create(
                             throw new Error(errorData.error || `API request failed with status ${response.status}`);
                         }
                         const fullRankingData = await response.json();
-                        console.log('[useUserRankings DEBUG - selectAndTouchRanking] Fetched fullRankingData:', JSON.parse(JSON.stringify(fullRankingData))); // Log fetched data
 
                         if (!fullRankingData || !Array.isArray(fullRankingData.rankings)) {
                              const errorMsg = `Fetched data for ranking ${rankingId} is incomplete (missing 'rankings' array).`;
@@ -614,14 +594,12 @@ const useUserRankings = create(
                             pprSetting: fullRankingData.pprSetting, 
                             flexSetting: fullRankingData.flexSetting 
                         };
-                        console.log('[useUserRankings DEBUG - selectAndTouchRanking] About to call fetchConsensusRankings with criteria:', JSON.parse(JSON.stringify(criteria))); // Log before call
                         get().fetchConsensusRankings(criteria);
 
                         return fullRankingData; 
 
                     } catch (error) {
                         console.error(`[selectAndTouchRanking] Error fetching ranking ${rankingId}:`, error); // Keep critical errors
-                        console.error('[useUserRankings DEBUG - selectAndTouchRanking] Error caught:', error); // Log caught error
                         setState({
                             error: `Failed to load ranking ${rankingId}: ${error.message}`,
                         });

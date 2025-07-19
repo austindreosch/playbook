@@ -31,7 +31,6 @@ export default function ManualLeagueForm({ userId }) {
   
       const teamCount = leagueInfo.leagueTeamCount;
       setLeagueTeamCount(teamCount);
-      console.log(leagueTeamCount);
 
       const teams = leagueInfo.teams;
       const teamNames = [];

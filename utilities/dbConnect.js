@@ -11,8 +11,8 @@ async function dbConnect(req, res, next) {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.log('Database connection failed:', err));
+  .then(() => {})
+  .catch(err => console.error('Database connection failed:', err));
 
   connection.isConnected = mongoose.connection.readyState;
 }

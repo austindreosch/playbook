@@ -353,8 +353,6 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         return acc;
     }, {});
 
-    // Add a temporary log during testing to verify the map
-    // console.log("Processed Team Stats Map:", JSON.stringify(teamStatsMap, null, 2));
 
     // Step 2: Calculate raw advanced stats for each player
     let playersWithAdvancedStats = mergedPlayers.map(player => {
@@ -484,7 +482,6 @@ export function processNflPlayerData(mergedPlayers, teamStatsTotals) {
         finalPlayers.push(...processedPositionPlayers);
     }
 
-    // console.log("Finished processing NFL player data with fetched team stats and Z-scores.");
     return finalPlayers;
 }
 

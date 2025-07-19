@@ -17,14 +17,10 @@ const CreateAllRankingsButton = () => {
     const [isBulkCreating, setIsBulkCreating] = useState(false);
     // const [feedbackMessage, setFeedbackMessage] = useState(''); // Removed feedback message state
 
-    // For debugging - you can remove this later
-    // console.log('AdminButton User Sub:', user?.sub);
-    // console.log('AdminButton ENV Admin ID:', process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID);
 
     const createRankingListAPI = async (payload) => {
         // This function is a simplified version of the one in AddRankingListButton
         // It focuses on just the API call and error handling for bulk creation
-        console.log("Admin submitting payload:", payload);
         const createResponse = await fetch('/api/user-rankings/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -86,7 +82,6 @@ const CreateAllRankingsButton = () => {
                 await createRankingListAPI(payload);
                 successes++;
                 createdListNames.push(variant.name);
-                console.log(`Successfully created: ${variant.name}`);
             } catch (error) {
                 failures++;
                 failedListDetails.push({ name: variant.name, error: error.message });
@@ -119,7 +114,6 @@ const CreateAllRankingsButton = () => {
     const isAdmin = user && user.sub === process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
 
     if (!isAdmin) {
-        // console.log('AdminButton: Not rendering because user.sub does not match NEXT_PUBLIC_AUTH0_ADMIN_ID or user is not logged in.');
         return null; // Don't render anything if not admin
     }
 

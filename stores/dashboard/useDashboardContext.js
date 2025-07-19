@@ -82,7 +82,6 @@ const saveDashboardStateToLocalStorage = (currentView, currentTab, currentLeague
       timestamp: Date.now()
     };
     localStorage.setItem('dashboardUIState', JSON.stringify(dashboardState));
-    console.log('💾 Saved dashboard state to localStorage:', dashboardState);
   } catch (error) {
     console.warn('⚠️  Failed to save dashboard state to localStorage:', error);
   }
@@ -101,7 +100,6 @@ const loadDashboardStateFromLocalStorage = () => {
     
     // Validate the loaded state
     if (typeof state.currentView === 'string' && typeof state.currentTab === 'string') {
-      console.log('📂 Loaded dashboard state from localStorage:', state);
       return {
         currentView: state.currentView,
         currentTab: state.currentTab,
@@ -201,7 +199,6 @@ const processUserRankingsInput = (rawRankings) => {
  * @returns {Object} Normalized league context data matching schema ONLY
  */
 const processLeagueContextInput = (rawData) => {
-  console.log(' INPUT: Processing league context data...');
   
   // Process leagues
   const processedLeagues = processLeaguesInput(rawData.leagues || []);
@@ -241,7 +238,6 @@ const processLeagueContextInput = (rawData) => {
 // ============================================================================
 // Process only league data from dummy data through our input pipeline
 
-console.log('🔄 INITIALIZING: Processing league context dummy data...');
 const processedLeagueData = processLeagueContextInput(getDashboardDummyData());
 const initialLeagues = processedLeagueData.leagues;
 const initialLeague = initialLeagues[0] || null;
@@ -278,22 +274,7 @@ const initialAvailableTabs = calculateAvailableTabs(initialIsAllLeaguesView);
 // Determine initial tab: localStorage → config default
 const initialCurrentTab = savedCurrentTab || getDefaultTab(initialIsAllLeaguesView);
 
-console.log('📊 INITIALIZED LEAGUE CONTEXT:', {
-  leaguesCount: initialLeagues.length,
-  currentLeagueId: processedLeagueData.currentLeagueId,
-  currentView: initialCurrentView,
-  isAllLeaguesView: initialIsAllLeaguesView,
-  currentTab: initialCurrentTab,
-  availableTabsCount: initialAvailableTabs.length,
-  hasLeagueData: initialLeagues.length > 0,
-  fieldsInStore: Object.keys(processedLeagueData)
-});
 
-console.log('🔍 DEBUG PROCESSED DATA:', {
-  userRankings: processedLeagueData.userRankings,
-  currentTab: processedLeagueData.currentTab,
-  dashboardSettings: processedLeagueData.dashboardSettings
-});
 
 // ============================================================================
 // ZUSTAND STORE DEFINITION
@@ -352,7 +333,6 @@ const useDashboardContext = create(
         await storage.set('rankings', DUMMY_RANKINGS);
         await storage.set('widgetLayout', initialWidgetLayout);
         get().loadDashboardData();
-        console.log('🔄 Dashboard data has been reset to dummy data.');
       },
 
       // ----------------------------------------------------------------------------
@@ -414,7 +394,6 @@ const useDashboardContext = create(
        * In a real implementation, this would be replaced by fetching from a database.
        */
       rehydrate: () => {
-        console.log('🔄 Rehydrating dashboard context from dummy data...');
         const freshData = getDashboardDummyData();
         const processedData = processLeagueContextInput(freshData);
         
@@ -425,8 +404,6 @@ const useDashboardContext = create(
           dashboardSettings: processedData.dashboardSettings,
           tradeValueMode: processedData.tradeValueMode,
         });
-        
-        console.log('✅ Dashboard context rehydrated');
       },
 
       /**
@@ -435,7 +412,6 @@ const useDashboardContext = create(
        * @param {Object} rawData - Raw league context data from API
        */
       setLeagueContext: (rawData) => {
-        console.log('📥 INPUT ACTION: setLeagueContext called');
         const processedData = processLeagueContextInput(rawData);
         
         // ONLY set the exact fields from schema (UI state remains unchanged)
@@ -464,7 +440,6 @@ const useDashboardContext = create(
           saveDashboardStateToLocalStorage('league', defaultTab, processedData.currentLeagueId);
         }
         
-        console.log('✅ INPUT ACTION: League context data updated');
       },
 
       /**
@@ -472,7 +447,6 @@ const useDashboardContext = create(
        * @param {Array} rawLeagues - Raw league data from API
        */
       setLeagues: (rawLeagues) => {
-        console.log('📥 INPUT ACTION: setLeagues called');
         const processedLeagues = processLeaguesInput(rawLeagues);
         const newCurrentLeagueId = processedLeagues[0]?.leagueDetails?.leagueName || null;
         
@@ -481,10 +455,6 @@ const useDashboardContext = create(
           currentLeagueId: newCurrentLeagueId,
         });
         
-        console.log('✅ INPUT ACTION: Leagues updated', {
-          count: processedLeagues.length,
-          currentLeagueId: newCurrentLeagueId
-        });
       },
 
       /**
@@ -492,7 +462,6 @@ const useDashboardContext = create(
        * @param {string} leagueId - League identifier
        */
       setCurrentLeague: (leagueId) => {
-        console.log('📥 INPUT ACTION: setCurrentLeague called', { leagueId });
         const { leagues, currentTab } = get();
         const leagueExists = leagues.some(league => 
           league.leagueDetails?.leagueName === leagueId
@@ -516,7 +485,6 @@ const useDashboardContext = create(
           // Save UI state to localStorage including the currentLeagueId
           saveDashboardStateToLocalStorage('league', newCurrentTab, leagueId);
           
-          console.log('✅ INPUT ACTION: Current league updated and switched to individual view');
         } else {
           console.warn('⚠️  INPUT ACTION: League not found:', leagueId);
         }
@@ -527,7 +495,6 @@ const useDashboardContext = create(
        * @param {Object} updates - Object containing updates for current league
        */
       updateCurrentLeagueData: (updates) => {
-        console.log('📥 INPUT ACTION: updateCurrentLeagueData called');
         const { leagues, currentLeagueId } = get();
         
         const updatedLeagues = leagues.map(league => {
@@ -545,7 +512,6 @@ const useDashboardContext = create(
         });
         
         set({ leagues: updatedLeagues });
-        console.log('✅ INPUT ACTION: Current league data updated');
       },
 
       /**
@@ -553,9 +519,7 @@ const useDashboardContext = create(
        * @param {Array} rankings - Array of user rankings
        */
       setUserRankings: (rankings) => {
-        console.log('📥 INPUT ACTION: setUserRankings called');
         set({ userRankings: Array.isArray(rankings) ? rankings : [] });
-        console.log('✅ INPUT ACTION: User rankings updated');
       },
 
       /**
@@ -563,7 +527,6 @@ const useDashboardContext = create(
        * @param {string} tabId - The ID of the tab to set as active
        */
       setCurrentTab: (tabId) => {
-        console.log('📥 INPUT ACTION: setCurrentTab called', { tabId });
         const { availableTabs } = get();
         const tabExists = availableTabs.some(tab => tab.id === tabId && tab.enabled);
         
@@ -574,7 +537,6 @@ const useDashboardContext = create(
           const { currentView, currentLeagueId } = get();
           saveDashboardStateToLocalStorage(currentView, tabId, currentLeagueId);
           
-          console.log('✅ INPUT ACTION: Current tab updated');
         } else {
           console.warn('⚠️  INPUT ACTION: Tab not available or disabled:', tabId);
           // Fallback to default tab
@@ -593,7 +555,6 @@ const useDashboardContext = create(
        * Note: currentLeagueId is preserved so we remember the last selected league
        */
       setAllLeaguesView: () => {
-        console.log('📥 INPUT ACTION: setAllLeaguesView called');
         const { currentLeagueId } = get();
         const newAvailableTabs = calculateAvailableTabs(true);
         const defaultTab = getDefaultTab(true);
@@ -609,7 +570,6 @@ const useDashboardContext = create(
         // Save UI state to localStorage including the preserved currentLeagueId
         saveDashboardStateToLocalStorage('allLeagues', defaultTab, currentLeagueId);
         
-        console.log('✅ INPUT ACTION: Switched to All Leagues view (preserved currentLeagueId)');
       },
 
       /**
@@ -617,7 +577,6 @@ const useDashboardContext = create(
        * @param {string} leagueId - League identifier (optional, uses current if not provided)
        */
       setIndividualLeagueView: (leagueId = null) => {
-        console.log('📥 INPUT ACTION: setIndividualLeagueView called', { leagueId });
         const { leagues, currentLeagueId } = get();
         
         // Use provided leagueId or current one, or fallback to first available league
@@ -647,7 +606,6 @@ const useDashboardContext = create(
           // Save UI state to localStorage including the currentLeagueId
           saveDashboardStateToLocalStorage('league', defaultTab, targetLeagueId);
           
-          console.log('✅ INPUT ACTION: Switched to individual league view');
         } else {
           console.warn('⚠️  INPUT ACTION: League not found:', targetLeagueId);
         }
@@ -658,10 +616,8 @@ const useDashboardContext = create(
        * @param {Object} settingsUpdate - Object containing dashboard settings updates
        */
       updateDashboardSettings: (settingsUpdate) => {
-        console.log('📥 INPUT ACTION: updateDashboardSettings called');
         const { dashboardSettings } = get();
         set({ dashboardSettings: { ...dashboardSettings, ...settingsUpdate } });
-        console.log('✅ INPUT ACTION: Dashboard settings updated');
       },
 
       /**
@@ -669,7 +625,6 @@ const useDashboardContext = create(
        * @param {string} newLastSync - New lastSync timestamp (ISO string)
        */
       updateLastSync: async (newLastSync) => {
-        console.log('📥 INPUT ACTION: updateLastSync called', { newLastSync });
         const { leagues, currentLeagueId } = get();
         
         if (!currentLeagueId) {
@@ -699,7 +654,6 @@ const useDashboardContext = create(
 
         // Update the store with fresh data
         set({ leagues: updatedLeagues });
-        console.log('✅ INPUT ACTION: LastSync updated for league:', currentLeagueId);
         
         // ============================================================================
         // REAL IMPLEMENTATION PLACEHOLDER - ADD DATABASE UPDATE HERE
@@ -736,10 +690,6 @@ const useDashboardContext = create(
           league.leagueDetails?.leagueName === currentLeagueId
         );
         
-        console.log('📤 OUTPUT: getCurrentLeague called', {
-          found: !!currentLeague,
-          leagueId: currentLeagueId
-        });
         
         return currentLeague || null;
       },
@@ -750,7 +700,6 @@ const useDashboardContext = create(
        */
       getCurrentLeaguePlayers: () => {
         const currentLeague = get().getCurrentLeague();
-        console.log('📤 OUTPUT: getCurrentLeaguePlayers called');
         return currentLeague?.players || [];
       },
 
@@ -760,7 +709,6 @@ const useDashboardContext = create(
        */
       getCurrentLeagueDetails: () => {
         const currentLeague = get().getCurrentLeague();
-        console.log('📤 OUTPUT: getCurrentLeagueDetails called');
         return currentLeague?.leagueDetails || {};
       },
 
@@ -770,7 +718,6 @@ const useDashboardContext = create(
        */
       getCurrentLeagueStandings: () => {
         const currentLeague = get().getCurrentLeague();
-        console.log('📤 OUTPUT: getCurrentLeagueStandings called');
         return currentLeague?.standings || {};
       },
 
@@ -780,7 +727,6 @@ const useDashboardContext = create(
        */
       getCurrentLeagueMatchup: () => {
         const currentLeague = get().getCurrentLeague();
-        console.log('📤 OUTPUT: getCurrentLeagueMatchup called');
         return currentLeague?.matchup || {};
       },
 
@@ -800,7 +746,6 @@ const useDashboardContext = create(
           leagues,
         };
         
-        console.log('📤 OUTPUT: getLeagueContextExport called');
         return exportData;
       },
 
@@ -838,7 +783,6 @@ const useDashboardContext = create(
           },
         };
         
-        console.log('📤 OUTPUT: getLeagueContextStatus called');
         return status;
       },
 
@@ -856,7 +800,6 @@ const useDashboardContext = create(
                         (typeof data === 'object' && data !== null) ? Object.keys(data).length > 0 :
                         data !== null && data !== undefined;
         
-        console.log('📤 OUTPUT: currentLeagueHasData called', { dataType, hasData });
         return hasData;
       },
 
@@ -866,7 +809,6 @@ const useDashboardContext = create(
 
       setTradeValueMode: (mode) => {
         set({ tradeValueMode: mode });
-        console.log(`TRADE_VALUE_MODE: Switched to ${mode}`);
       },
 
     }),

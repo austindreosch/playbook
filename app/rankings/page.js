@@ -139,8 +139,6 @@ export default function RankingsPage() {
             const { flushPendingChanges } = useUserRankings.getState();
             if (typeof flushPendingChanges === 'function') {
                 await flushPendingChanges();
-            } else {
-                // console.warn('[handleRankingSelect] flushPendingChanges function not found.');
             }
         } catch (err) {
             console.error(`[handleRankingSelect] Error flushing changes for ${currentStoreActiveRankingId}:`, err);
@@ -318,8 +316,6 @@ export default function RankingsPage() {
             }
             // Directly call selectAndTouchRanking to ensure ECR data is fetched for the initial ranking
             selectAndTouchRanking(idToLoad);
-        } else {
-            //  console.log('[InitialLoadEffect Ref ] No idToLoad determined. rankingToLoad was:', rankingToLoad);
         }
     } 
   }, [

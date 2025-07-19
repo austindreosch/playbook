@@ -26,7 +26,7 @@ export default function PlayerProfileBlock() {
         // Based on debug measurements: in 730px main content, top row gets ~438px
         // For 620px window, top row would get ~338px (620 * 0.6 = 372, minus gaps ~338px)
         // So we should compact when height is less than 380px to handle 620px scenario
-        const constrained = containerHeight < 500; // Temporarily high for testing
+        const constrained = containerHeight < 380; // More reasonable threshold
         setIsHeightConstrained(constrained);
         
         // When constrained, show only 2 tags max to ensure single row
@@ -179,12 +179,6 @@ export default function PlayerProfileBlock() {
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <ScanSearch className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-sm font-semibold text-pb_darkgray">Player Profile</h3>
-        {/* NEW: Height constraint indicator */}
-        {isHeightConstrained && (
-          <span className="text-3xs text-pb_textgray">
-            (Compact)
-          </span>
-        )}
       </div>
       
       {/* Player Info Section */}
@@ -297,95 +291,50 @@ export default function PlayerProfileBlock() {
       {/* Value Comparison Table */}
       <div className="mb-4 flex-shrink-0">
         <div className="flex gap-4">
-          {/* Left side - Value rows */}
-          <div className="flex-1 space-y-2.5">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-semibold text-pb_darkgray flex-1">Value</span>
-              <div className="w-10 flex justify-center">
-                <BarChart3 className="w-icon-sm h-icon-sm text-pb_textgray" />
-              </div>
-              <div className="w-6 flex justify-center">
-                <Calendar className="w-icon-sm h-icon-sm text-pb_textgray" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              {/* Playbook row (highlighted) */}
-              <div className="flex items-center gap-2">
-                <Compass className="w-icon-sm h-icon-sm text-pb_darkgray" />
-                <span className="text-2xs font-semibold text-pb_darkgray flex-1">Playbook</span>
-                <div className="w-10 flex justify-center">
-                  <span className="text-2xs font-bold text-pb_darkgray">981</span>
-                </div>
-                <div className="w-6 flex justify-center">
-                  <span className="text-2xs text-pb_darkgray">3</span>
-                </div>
-              </div>
-
-              {/* Standard row (muted) */}
-              <div className="flex items-center gap-2 opacity-50">
-                <ClipboardMinus className="w-icon-sm h-icon-sm text-pb_textgray" />
-                <span className="text-2xs font-medium text-pb_textgray flex-1">Standard</span>
-                <div className="w-10 flex justify-center">
-                  <span className="text-2xs text-pb_textgray">957</span>
-                </div>
-                <div className="w-6 flex justify-center">
-                  <span className="text-2xs text-pb_textgray">4</span>
-                </div>
-              </div>
-
-              {/* Redraft row (muted) */}
-              <div className="flex items-center gap-2 opacity-50">
-                <Sprout className="w-icon-sm h-icon-sm text-pb_textgray" />
-                <span className="text-2xs font-medium text-pb_textgray flex-1">Redraft</span>
-                <div className="w-10 flex justify-center">
-                  <span className="text-2xs text-pb_textgray">999</span>
-                </div>
-                <div className="w-6 flex justify-center">
-                  <span className="text-2xs text-pb_textgray">1</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Right side - Change indicators */}
-          <div className="flex flex-col justify-center text-center space-y-1 w-20">
-            <div>
+          <div className="flex flex-row justify-between text-center w-full px-1">
+            <div className="flex flex-col justify-center items-center text-center flex-1">
               <div className="text-sm font-medium text-pb_green">▲ 6%</div>
               <div className="text-3xs text-pb_textgray leading-tight">Playbook<br />Differential</div>
             </div>
-            <div>
+            <div className="w-px h-8 bg-pb_lightgray self-center"></div>
+            <div className="flex flex-col justify-center items-center text-center flex-1">
               <div className="text-sm font-medium text-pb_red">▼ 2%</div>
               <div className="text-3xs text-pb_textgray leading-tight">Value Over<br />Last 30</div>
+            </div>
+            <div className="w-px h-8 bg-pb_lightgray self-center"></div>
+            <div className="flex flex-col justify-center items-center text-center flex-1">
+              <div className="text-sm font-medium text-pb_red">▼ 21%</div>
+              <div className="text-3xs text-pb_textgray leading-tight">Performance vs.<br />Offseason Proj.</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Historical View - Collapsible when height constrained */}
-      {!isHeightConstrained ? (
-        <div className="relative flex-1 border border-pb_lightergray rounded bg-pb_backgroundgray min-h-0">
-          <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
-          <div className="absolute top-1.5 right-2.5 z-10">
-            <div className="flex rounded border border-pb_lightgray">
-              <button className="px-1.5 py-0.5 text-3xs font-medium bg-pb_lightergray text-pb_darkgray rounded-l">
-                Stats
-              </button>
-              <button className="px-1.5 py-0.5 text-3xs font-medium text-pb_textgray rounded-r">
-                Value
-              </button>
-            </div>
-          </div>
-          
-          {/* Chart Container */}
-          <div className="flex-1 w-full mt-3 flex items-end">
-            {createLineChart()}
+      {/* Historical View - Always visible, but compact when height constrained */}
+      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative overflow-hidden flex-1 min-h-20 flex flex-col">
+        <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
+        <div className="absolute top-1.5 right-2.5 z-10">
+          <div className="flex rounded border border-pb_lightgray">
+            <button className="px-1.5 py-0.5 text-3xs font-medium bg-pb_lightergray text-pb_darkgray rounded-l">
+              Stats
+            </button>
+            <button className="px-1.5 py-0.5 text-3xs font-medium text-pb_textgray rounded-r">
+              Value
+            </button>
           </div>
         </div>
-      ) : (
-        <div className="text-center py-2 text-3xs text-pb_textgray border border-pb_lightergray rounded bg-pb_backgroundgray">
-          Historical View (hidden in compact mode)
+        
+        {/* Chart Container */}
+        <div className="flex-1 w-full mt-3 flex items-end">
+          {createLineChart()}
         </div>
-      )}
+      </div>
+
+
+
+
     </div>
   );
 } 

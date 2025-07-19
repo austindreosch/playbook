@@ -115,7 +115,6 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
             positionWeights: SPORT_CONFIGS[formData.sport.toLowerCase()]?.formats?.[formData.format.toLowerCase()]?.defaultPositionWeights || {},
         };
 
-        console.log("Submitting payload:", payload);
 
         try {
             const createResponse = await fetch('/api/user-rankings/create', {
