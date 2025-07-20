@@ -11,6 +11,7 @@ module.exports = {
     'prettier-plugin-tailwindcss',
     require('tailwindcss-animate'),
     require('tailwind-scrollbar'),
+    require('daisyui'),
   ],
   daisyui: {
     themes: [
@@ -31,6 +32,19 @@ module.exports = {
   },
   theme: {
   	extend: {
+		screens: {
+			xs: '475px',
+			'2xs': '375px',
+			'3xs': '275px',
+			mdlg: '896px',
+			
+			xsh: { raw: '(min-height: 480px)' },
+			smh: { raw: '(min-height: 620px)' },
+			mdh: { raw: '(min-height: 900px)' },
+			lgh: { raw: '(min-height: 1250px)' },
+			xlh: { raw: '(min-height: 1400px)' },
+			'2xlh': { raw: '(min-height: 2000px)' },
+		},
   		container: {
   			screens: {
   				'sm': '640px',
@@ -165,12 +179,7 @@ module.exports = {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
   			'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
   		},
-  		screens: {
-  			xs: '475px',
-  			'2xs': '375px',
-  			'3xs': '275px',
-  			mdlg: '896px'
-  		},
+
   		fontSize: {
 			'xlg': '1.375rem',
 			'md': '1rem',
@@ -434,14 +443,5 @@ module.exports = {
   			'spin-and-pulse': 'spin-and-pulse 0.8s ease-in-out infinite'
   		}
   	}
-  },
-  plugins: [
-    'prettier-plugin-tailwindcss',
-    require('tailwindcss-animate'),
-    require('tailwind-scrollbar'),
-  ],
+  }
 }
-
-
-
-
