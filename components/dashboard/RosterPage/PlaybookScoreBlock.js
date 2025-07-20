@@ -192,18 +192,12 @@ export default function PlaybookScoreBlock() {
   );
 
   return (
-    <div ref={containerRef} className="w-full h-full bg-white rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white overflow-hidden">
+    <div ref={containerRef} className="w-full h-full bg-white rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
         <div className='flex items-center gap-2 flex-shrink-0'>
           <Compass className="w-icon h-icon text-pb_darkgray" />
           <h3 className="text-sm font-semibold text-pb_darkgray">Playbook Score</h3>
-          {/* NEW: Height constraint indicator */}
-          {isHeightConstrained && (
-            <span className="text-3xs text-pb_textgray">
-              (Compact)
-            </span>
-          )}
         </div>
         <div className='flex items-center gap-1'>
           <CircleHelp className="w-icon-sm h-icon-sm text-pb_textgray" />
@@ -211,7 +205,7 @@ export default function PlaybookScoreBlock() {
       </div>
       
       {/* Donut Chart */}
-      <div className="relative flex-1 min-h-0">
+      <div className="relative flex-shrink-0 h-40 max-h-40 min-h-40">
         <ChartContainer
           ref={chartContainerRef}
           config={chartConfig}
@@ -282,6 +276,12 @@ export default function PlaybookScoreBlock() {
           </Popover>
         </div>
       )}
+
+
+
+
+
+      
     </div>
   );
 }
