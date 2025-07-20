@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { formatStatValue, getSportConfig, getSportPrimaryStats, getSportTraits } from '@/lib/utils/sportConfig';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { Activity, Bandage, BarChart3, Calendar, ChevronRight, ClipboardMinus, Clock, Compass, Flame, Goal, Heart, MoreHorizontal, Scale, ScanSearch, Shield, ShieldHalf, Sprout, Star, TimerReset, TrendingUp, Users, Watch, X, Zap } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react'; // Added useEffect, useRef, useState
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 export default function PlayerProfileBlock() {
   const { getCurrentLeague, getSelectedPlayer } = useDashboardContext();
@@ -103,6 +103,94 @@ export default function PlayerProfileBlock() {
     return selectedPlayer || dummyPlayer;
   }, [selectedPlayer, primaryStats, sportTraits]);
 
+  const tagsContainerRef = useRef(null);
+  const hiddenMeasureRef = useRef(null);
+  const [showPopover, setShowPopover] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [visibleTagsCount, setVisibleTagsCount] = useState(playerData.tags.traitIds.length);
+
+  // Calculate how many tags can fit dynamically by measuring actual widths
+  useEffect(() => {
+    const calculateVisibleTags = () => {
+      const screenHeight = window.innerHeight;
+      const isSmall = screenHeight <= 650;
+      setIsSmallScreen(isSmall);
+
+      if (!tagsContainerRef.current || !hiddenMeasureRef.current) return;
+
+      const containerWidth = tagsContainerRef.current.offsetWidth;
+      const gap = 4;
+      const viewAllButtonWidth = 70; // Approximate View All button width
+      
+      // Measure actual tag widths
+      const tagElements = hiddenMeasureRef.current.children;
+      const totalTags = playerData.tags.traitIds.length;
+      
+      console.log('Dynamic calc:', { containerWidth, totalTags, isSmall });
+      
+      if (isSmall) {
+        // Small screens: 1 row only - fit as many as possible with View All
+        let currentWidth = 0;
+        let fittingTags = 0;
+        
+        for (let i = 0; i < tagElements.length; i++) {
+          const tagWidth = tagElements[i].offsetWidth;
+          const neededWidth = currentWidth + tagWidth + (fittingTags > 0 ? gap : 0);
+          
+          // Check if we can fit this tag + View All button
+          if (neededWidth + gap + viewAllButtonWidth <= containerWidth) {
+            currentWidth = neededWidth;
+            fittingTags++;
+          } else {
+            break;
+          }
+        }
+        
+        console.log('Small screen: fitting', fittingTags, 'tags');
+        setVisibleTagsCount(Math.min(fittingTags, totalTags));
+        
+      } else {
+        // Large screens: 3 rows max - count tags that fit in 3 rows, reserve space for View All
+        let currentRowWidth = 0;
+        let currentRow = 1;
+        let fittingTags = 0;
+        
+        for (let i = 0; i < tagElements.length; i++) {
+          const tagWidth = tagElements[i].offsetWidth;
+          const neededWidth = currentRowWidth + tagWidth + (currentRowWidth > 0 ? gap : 0);
+          
+          if (neededWidth <= containerWidth) {
+            // Fits in current row
+            currentRowWidth = neededWidth;
+            fittingTags++;
+          } else if (currentRow < 3) {
+            // Start new row
+            currentRow++;
+            currentRowWidth = tagWidth;
+            fittingTags++;
+          } else {
+            // Would exceed 3 rows
+            break;
+          }
+        }
+        
+        // Reserve space for View All button
+        const maxVisibleTags = Math.max(0, fittingTags - 1);
+        console.log('Large screen: fitting', maxVisibleTags, 'tags in 3 rows');
+        setVisibleTagsCount(maxVisibleTags);
+      }
+    };
+
+    calculateVisibleTags();
+    window.addEventListener('resize', calculateVisibleTags);
+    
+    const timer = setTimeout(calculateVisibleTags, 100);
+    
+    return () => {
+      window.removeEventListener('resize', calculateVisibleTags);
+      clearTimeout(timer);
+    };
+  }, [playerData.tags.traitIds]);
 
 
   const createLineChart = () => {
@@ -233,13 +321,53 @@ export default function PlayerProfileBlock() {
         </div>
       </div>
 
-      {/* --- UPDATED TAGS SECTION --- */}
+      {/* --- REFACTORED TAGS SECTION --- */}
       <div className="mb-4 flex-shrink-0 w-full">
-        {/* Simple flex container with height limits and overflow hidden */}
-        <div className="flex flex-wrap gap-1 overflow-hidden min-h-4 max-h-4 xl:max-h-16">
+        {/* Hidden container for measuring actual tag widths */}
+        <div 
+          ref={hiddenMeasureRef}
+          className="absolute invisible pointer-events-none flex flex-wrap gap-1"
+          style={{ width: tagsContainerRef.current?.offsetWidth || '100%' }}
+        >
           {playerData.tags.traitIds.map((traitId, index) => (
-            <TraitTag key={index} traitId={traitId} />
+            <TraitTag key={`measure-${index}`} traitId={traitId} />
           ))}
+        </div>
+
+        {/* Visible tags container - only render calculated number of tags */}
+        <div 
+          ref={tagsContainerRef}
+          className="flex gap-1 flex-wrap"
+          style={isSmallScreen ? { 
+            height: '24px', // Exact height for one row
+            flexWrap: 'nowrap'
+          } : {
+            maxHeight: '84px', // 3 rows max on larger screens
+            alignContent: 'flex-start'
+          }}
+        >
+          {/* Render only the visible tags */}
+          {playerData.tags.traitIds.slice(0, visibleTagsCount).map((traitId, index) => (
+            <TraitTag key={index} traitId={traitId} className="flex-shrink-0" />
+          ))}
+          
+          {/* View All button - show when there are more tags than visible */}
+          {visibleTagsCount < playerData.tags.traitIds.length && (
+            <Popover open={showPopover} onOpenChange={setShowPopover}>
+              <PopoverTrigger asChild>
+                <button className="flex items-center px-2 h-6 text-2xs text-white bg-pb_blue hover:bg-pb_darkblue rounded border border-pb_blue flex-shrink-0">
+                  <span>View All</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto max-w-80 p-3" align="start">
+                <div className="flex flex-wrap gap-1">
+                  {playerData.tags.traitIds.map((traitId, index) => (
+                    <TraitTag key={`popover-${index}`} traitId={traitId} showTooltip={false} />
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
       </div>
       
