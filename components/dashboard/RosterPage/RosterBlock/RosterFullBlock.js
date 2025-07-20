@@ -1,6 +1,7 @@
 'use client';
 
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+import { getSportCategories, getSportConfig } from '@/lib/utils/sportConfig';
 import { useMemo, useState } from 'react';
 import RosterHeader from './RosterHeader';
 import RosterPlayerRow from './RosterPlayerRow';
@@ -11,16 +12,26 @@ export default function RosterFullBlock() {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'desc' });
   
-  // NBA stat categories exactly matching what was requested
-  const categories = ['FG%', 'FT%', '3PM', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO'];
-  
   const currentLeague = getCurrentLeague();
   
-  // Filter for NBA league and get players
+  // Get sport-specific categories - use league categories if available, otherwise sport defaults
+  const categories = useMemo(() => {
+    if (!currentLeague?.leagueDetails?.sport) return [];
+    return getSportCategories(
+      currentLeague.leagueDetails.sport,
+      currentLeague.leagueDetails.categories // TODO: Replace with actual league categories from API
+    );
+  }, [currentLeague?.leagueDetails?.sport, currentLeague?.leagueDetails?.categories]);
+  
+  // Get sport configuration for display
+  const sportConfig = useMemo(() => {
+    if (!currentLeague?.leagueDetails?.sport) return getSportConfig('nba'); // Default fallback
+    return getSportConfig(currentLeague.leagueDetails.sport);
+  }, [currentLeague?.leagueDetails?.sport]);
+  
+  // Get players - now works for all sports
   const players = useMemo(() => {
-    if (!currentLeague || currentLeague.leagueDetails?.sport !== 'NBA') {
-      return [];
-    }
+    if (!currentLeague) return [];
     return currentLeague.players || [];
   }, [currentLeague]);
 
@@ -73,12 +84,12 @@ export default function RosterFullBlock() {
     });
   };
 
-  if (!currentLeague || currentLeague.leagueDetails?.sport !== 'NBA') {
+  if (!currentLeague || !currentLeague.leagueDetails?.sport) {
     return (
       <div className="w-full h-full bg-pb_backgroundgray rounded-lg border-1.5 border-pb_lightgray shadow-inner flex items-center justify-center">
         <div className="text-center text-pb_textgray">
-          <p className="text-lg font-semibold mb-2">No NBA Roster Available</p>
-          <p className="text-sm">Please select an NBA league to view your roster</p>
+          <p className="text-lg font-semibold mb-2">No Roster Available</p>
+          <p className="text-sm">Please select a league to view your roster</p>
         </div>
       </div>
     );

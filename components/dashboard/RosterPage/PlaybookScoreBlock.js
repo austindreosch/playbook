@@ -8,11 +8,26 @@ import {
 } from "@/components/ui/chart";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getLeagueFormatDisplay, getSportConfig } from '@/lib/utils/sportConfig';
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Settings, Shield, Users, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Label, Pie, PieChart } from "recharts";
 
 export default function PlaybookScoreBlock() {
+  const { getCurrentLeague } = useDashboardContext();
+  const currentLeague = getCurrentLeague();
+  
+  // Get sport configuration and league format
+  const sportConfig = useMemo(() => {
+    const sport = currentLeague?.leagueDetails?.sport || 'nba';
+    return getSportConfig(sport);
+  }, [currentLeague?.leagueDetails?.sport]);
+  
+  const leagueFormatDisplay = useMemo(() => {
+    return getLeagueFormatDisplay(currentLeague?.leagueDetails);
+  }, [currentLeague?.leagueDetails]);
+  
   // TODO: These values should come from actual data/calculations based on the sport
   const [metricSelections, setMetricSelections] = useState({
     0: "Prefer",  // Favor
@@ -56,8 +71,8 @@ export default function PlaybookScoreBlock() {
 
   const scoreData = {
     totalScore: 981,
-    leagueFormat: "Dynasty • H2H • Categories",
-    teamStatus: "Contending",
+    leagueFormat: leagueFormatDisplay,
+    teamStatus: "Contending", // TODO: Make dynamic based on team performance analysis
     segments: [
       { category: "primary", value: 45, fill: "#4A90E2" }, // blue segment
       { category: "secondary", value: 55, fill: "#F5A623" }, // orange/yellow segment
@@ -230,6 +245,14 @@ export default function PlaybookScoreBlock() {
         </div>
       </div>
       
+      {/* Score Context */}
+      <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className="text-3xs text-pb_textgray">
+            
+          </span>
+        </div>
+      </div>
       {/* Metrics Section - Dynamic based on height */}
       {!isHeightConstrained ? (
         <div className="space-y-2 flex-shrink-0 mt-3">

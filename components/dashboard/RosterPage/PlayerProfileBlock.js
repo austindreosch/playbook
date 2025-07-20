@@ -4,59 +4,35 @@ import TraitTag from '@/components/common/TraitTag';
 import EmptyIcon from '@/components/icons/EmptyIcon';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { formatStatValue, getSportConfig, getSportPrimaryStats, getSportTraits } from '@/lib/utils/sportConfig';
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { Activity, Bandage, BarChart3, Calendar, ChevronRight, ClipboardMinus, Clock, Compass, Flame, Goal, Heart, MoreHorizontal, Scale, ScanSearch, Shield, ShieldHalf, Sprout, Star, TimerReset, TrendingUp, Users, Watch, X, Zap } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react'; // Added useEffect, useRef, useState
 
 export default function PlayerProfileBlock() {
-  // NEW: State for height detection and tag management
-  const containerRef = useRef(null);
-  const tagsRef = useRef(null);
-  const [isHeightConstrained, setIsHeightConstrained] = useState(false);
-  const [visibleTagsCount, setVisibleTagsCount] = useState(null);
-  const [showTagsPopover, setShowTagsPopover] = useState(false);
-
-  // NEW: Effect to monitor container height and determine tag truncation
-  useEffect(() => {
-    const updateHeightConstraints = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const containerHeight = rect.height;
-        
-        // More intelligent constraint detection:
-        // Based on debug measurements: in 730px main content, top row gets ~438px
-        // For 620px window, top row would get ~338px (620 * 0.6 = 372, minus gaps ~338px)
-        // So we should compact when height is less than 380px to handle 620px scenario
-        const constrained = containerHeight < 380; // More reasonable threshold
-        setIsHeightConstrained(constrained);
-        
-        // When constrained, show only 2 tags max to ensure single row
-        if (constrained) {
-          setVisibleTagsCount(2);
-        } else {
-          setVisibleTagsCount(null); // Show all tags when not constrained
-        }
-      }
-    };
-
-    updateHeightConstraints();
-    window.addEventListener('resize', updateHeightConstraints);
-    
-    // Delay to ensure DOM is ready and measure properly
-    const timer = setTimeout(updateHeightConstraints, 300);
-    
-    return () => {
-      window.removeEventListener('resize', updateHeightConstraints);
-      clearTimeout(timer);
-    };
-  }, []);
-
+  const { getCurrentLeague, getSelectedPlayer } = useDashboardContext();
+  const currentLeague = getCurrentLeague();
+  const selectedPlayer = getSelectedPlayer();
+  
+  // Get sport configuration
+  const sportConfig = useMemo(() => {
+    const sport = currentLeague?.leagueDetails?.sport || 'nba';
+    return getSportConfig(sport);
+  }, [currentLeague?.leagueDetails?.sport]);
+  
+  const primaryStats = getSportPrimaryStats(currentLeague?.leagueDetails?.sport || 'nba');
+  const sportTraits = getSportTraits(currentLeague?.leagueDetails?.sport || 'nba');
+  
   // TODO: This data should come from selected player and be sport-agnostic
-  const playerData = {
-    name: "Nikola Jokic",
-    positionRank: "#2",
-    positionColor: "#ababef", // TODO: Map team colors by sport
-    position: "C", // TODO: This should be team abbreviation 
-    image: "/avatar-default.png", // TODO: Use actual player headshots
+  // For now, using dummy data but structured to be easily replaceable
+  const playerData = useMemo(() => {
+    // If we have a selected player, use their data, otherwise use dummy data
+    const dummyPlayer = {
+      name: "Nikola Jokic",
+      positionRank: "#2",
+      positionColor: "#ababef", // TODO: Map position colors by sport
+      position: "C", // TODO: This should be position abbreviation 
+      image: "/avatar-default.png", // TODO: Use actual player headshots
     // Grid stats
     mpg: "31.3",
     team: "DEN", 
@@ -64,10 +40,13 @@ export default function PlayerProfileBlock() {
     rosterPercentage: "84%",
     playoffScheduleGrade: "A-",
     stats: {
+      // Use sport-specific primary stats from config
       primary: [
-        { value: "27.6", label: "PPG" }, // TODO: Sport-specific primary stats
-        { value: "PHI", label: "Team" },
-        { value: "31.3", label: "MPG" }
+        ...primaryStats.slice(0, 3).map(stat => ({
+          value: "27.6", // TODO: Replace with actual player stat value
+          label: stat.label
+        })),
+        { value: "DEN", label: "Team" }
       ],
       secondary: [
         { value: "99%", label: "Health" },
@@ -76,7 +55,10 @@ export default function PlayerProfileBlock() {
       ]
     },
     tags: {
-      traitIds: ["star", "hot_streak", "usage_spike", "balanced", "elite_assists"] // TODO: Sport-specific trait IDs
+      // Use sport-specific traits from config
+      traitIds: [
+        ...sportTraits
+      ]
     },
     valueComparisons: [
       {
@@ -116,6 +98,10 @@ export default function PlayerProfileBlock() {
       yAxisMax: 160
     }
   };
+    
+    // TODO: Replace dummy data with actual selected player data when available
+    return selectedPlayer || dummyPlayer;
+  }, [selectedPlayer, primaryStats, sportTraits]);
 
 
 
@@ -175,7 +161,7 @@ export default function PlayerProfileBlock() {
 
 
   return (
-    <div ref={containerRef} className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white overflow-hidden">
+    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white overflow-hidden">
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <ScanSearch className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-sm font-semibold text-pb_darkgray">Player Profile</h3>
@@ -247,44 +233,13 @@ export default function PlayerProfileBlock() {
         </div>
       </div>
 
-      {/* Tags Section - Height Responsive */}
-      <div className="mb-4 flex-shrink-0">
-        <div className="flex items-center gap-1">
-          <div ref={tagsRef} className={`flex gap-1 items-center justify-start flex-1 ${isHeightConstrained ? 'flex-nowrap overflow-hidden' : 'flex-wrap'}`}>
-            {playerData.tags.traitIds
-              .slice(0, visibleTagsCount || playerData.tags.traitIds.length)
-              .map((traitId, index) => (
-                <TraitTag key={index} traitId={traitId} />
-              ))}
-          </div>
-          
-          {/* Show More Button - Only when tags are truncated */}
-          {visibleTagsCount && visibleTagsCount < playerData.tags.traitIds.length && (
-            <Popover open={showTagsPopover} onOpenChange={setShowTagsPopover}>
-              <PopoverTrigger asChild>
-                <button className="flex items-center gap-1 px-2 py-1 text-3xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors">
-                  <span>+{playerData.tags.traitIds.length - visibleTagsCount}</span>
-                  <MoreHorizontal className="w-3 h-3" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-3" align="start">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xs font-semibold text-pb_darkgray">All Player Traits</h4>
-                  <button 
-                    onClick={() => setShowTagsPopover(false)}
-                    className="w-4 h-4 flex items-center justify-center hover:bg-gray-100 rounded"
-                  >
-                    <X className="w-3 h-3 text-pb_textgray" />
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {playerData.tags.traitIds.map((traitId, index) => (
-                    <TraitTag key={index} traitId={traitId} />
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
-          )}
+      {/* --- UPDATED TAGS SECTION --- */}
+      <div className="mb-4 flex-shrink-0 w-full">
+        {/* Simple flex container with height limits and overflow hidden */}
+        <div className="flex flex-wrap gap-1 overflow-hidden min-h-4 max-h-4 xl:max-h-16">
+          {playerData.tags.traitIds.map((traitId, index) => (
+            <TraitTag key={index} traitId={traitId} />
+          ))}
         </div>
       </div>
       
@@ -313,7 +268,7 @@ export default function PlayerProfileBlock() {
       </div>
 
       {/* Historical View - Always visible, but compact when height constrained */}
-      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative overflow-hidden flex-1 min-h-20 flex flex-col">
+      <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative overflow-hidden flex-1 min-h-20 max-h-32 flex flex-col">
         <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
         <div className="absolute top-1.5 right-2.5 z-10">
           <div className="flex rounded border border-pb_lightgray">

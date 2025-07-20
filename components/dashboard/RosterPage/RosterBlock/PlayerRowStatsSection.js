@@ -1,5 +1,7 @@
 'use client';
 
+import { getColorForStat, getSportColorThresholds } from '@/lib/utils/sportConfig';
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { memo } from 'react';
 import EmptyStatIndicator from '../../../common/EmptyStatIndicator';
 import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
@@ -12,53 +14,22 @@ import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 
 
 
-// Color coding function with ALL 10 green and 10 red shades
-const getStatColors = (value, category) => {
+// Sport-agnostic color coding function
+const getStatColors = (value, category, sport, zScore = null) => {
   if (value === null || value === undefined) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
   
-  // Basketball stat thresholds for color coding with 10 levels each
-  const thresholds = {
-    'FG%': { 
-      excellent: [0.650, 0.600, 0.550, 0.520, 0.500], // 5 green levels (darkest to lightest)
-      poor: [0.470, 0.450, 0.430, 0.400, 0.350] // 5 red levels (lightest to darkest)
-    },
-    'FT%': { 
-      excellent: [0.900, 0.875, 0.850, 0.825, 0.800], // 5 green levels
-      poor: [0.750, 0.700, 0.650, 0.600, 0.500] // 5 red levels
-    },
-    '3PM': { 
-      excellent: [4.0, 3.5, 3.0, 2.8, 2.5], // 5 green levels
-      poor: [2.0, 1.7, 1.5, 1.2, 0.8] // 5 red levels
-    },
-    'PTS': { 
-      excellent: [30, 27, 25, 23, 20], // 5 green levels
-      poor: [15, 12, 10, 8, 5] // 5 red levels
-    },
-    'REB': { 
-      excellent: [15, 12, 10, 9, 8], // 5 green levels
-      poor: [6, 5, 4, 3, 2] // 5 red levels
-    },
-    'AST': { 
-      excellent: [11, 9, 8, 7, 6], // 5 green levels
-      poor: [4, 3.5, 3, 2.5, 1.5] // 5 red levels
-    },
-    'STL': { 
-      excellent: [2.5, 2.2, 2.0, 1.8, 1.5], // 5 green levels
-      poor: [1.0, 0.8, 0.6, 0.4, 0.2] // 5 red levels
-    },
-    'BLK': { 
-      excellent: [3.5, 3.0, 2.5, 2.2, 2.0], // 5 green levels
-      poor: [1.0, 0.8, 0.6, 0.4, 0.2] // 5 red levels
-    },
-    'TO': { 
-      excellent: [1.2, 1.5, 1.8, 2.0, 2.2], // 5 green levels (lower is better)
-      poor: [2.8, 3.2, 3.6, 4.0, 5.0], // 5 red levels
-      inverse: true
-    }
-  };
-
-  const threshold = thresholds[category];
-  if (!threshold) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
+  // Use Z-Score if available for more accurate coloring
+  if (zScore !== null && zScore !== undefined) {
+    if (zScore >= 1.5) return { bgColor: 'bg-green-200', textColor: 'text-green-800' };
+    if (zScore >= 0.5) return { bgColor: 'bg-green-100', textColor: 'text-green-700' };
+    if (zScore >= -0.5) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
+    if (zScore >= -1.5) return { bgColor: 'bg-red-100', textColor: 'text-red-700' };
+    return { bgColor: 'bg-red-200', textColor: 'text-red-800' };
+  }
+  
+  // Fallback to sport-specific threshold-based coloring
+  const thresholds = getSportColorThresholds(sport)[category];
+  if (!thresholds) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
 
   let bgColor;
   const textColor = 'text-pb_darkgray/90';
@@ -73,45 +44,45 @@ const getStatColors = (value, category) => {
     'bg-pb_red-400', 'bg-pb_red-500', 'bg-pb_red-600', 'bg-pb_red-700', 'bg-pb_red-800'
   ];
   
-  if (threshold.inverse) {
+  if (thresholds.inverse) {
     // Lower is better for turnovers
-    if (value <= threshold.excellent[0]) bgColor = greenShades[0]; // Darkest green
-    else if (value <= threshold.excellent[1]) bgColor = greenShades[1];
-    else if (value <= threshold.excellent[2]) bgColor = greenShades[2];
-    else if (value <= threshold.excellent[3]) bgColor = greenShades[3];
-    else if (value <= threshold.excellent[4]) bgColor = greenShades[4];
-    else if (value <= (threshold.excellent[4] + threshold.poor[0]) / 2) bgColor = greenShades[5];
-    else if (value <= (threshold.excellent[4] + threshold.poor[0]) / 1.5) bgColor = greenShades[6];
-    else if (value <= (threshold.excellent[4] + threshold.poor[0]) / 1.2) bgColor = greenShades[7];
-    else if (value <= threshold.poor[0]) bgColor = greenShades[8];
-    else if (value <= threshold.poor[1]) bgColor = redShades[1];
-    else if (value <= threshold.poor[2]) bgColor = redShades[2];
-    else if (value <= threshold.poor[3]) bgColor = redShades[3];
-    else if (value <= threshold.poor[4]) bgColor = redShades[4];
-    else if (value <= threshold.poor[4] * 1.2) bgColor = redShades[5];
-    else if (value <= threshold.poor[4] * 1.4) bgColor = redShades[6];
-    else if (value <= threshold.poor[4] * 1.6) bgColor = redShades[7];
-    else if (value <= threshold.poor[4] * 1.8) bgColor = redShades[8];
+    if (value <= thresholds.excellent[0]) bgColor = greenShades[0]; // Darkest green
+    else if (value <= thresholds.excellent[1]) bgColor = greenShades[1];
+    else if (value <= thresholds.excellent[2]) bgColor = greenShades[2];
+    else if (value <= thresholds.excellent[3]) bgColor = greenShades[3];
+    else if (value <= thresholds.excellent[4]) bgColor = greenShades[4];
+    else if (value <= (thresholds.excellent[4] + thresholds.poor[0]) / 2) bgColor = greenShades[5];
+    else if (value <= (thresholds.excellent[4] + thresholds.poor[0]) / 1.5) bgColor = greenShades[6];
+    else if (value <= (thresholds.excellent[4] + thresholds.poor[0]) / 1.2) bgColor = greenShades[7];
+    else if (value <= thresholds.poor[0]) bgColor = greenShades[8];
+    else if (value <= thresholds.poor[1]) bgColor = redShades[1];
+    else if (value <= thresholds.poor[2]) bgColor = redShades[2];
+    else if (value <= thresholds.poor[3]) bgColor = redShades[3];
+    else if (value <= thresholds.poor[4]) bgColor = redShades[4];
+    else if (value <= thresholds.poor[4] * 1.2) bgColor = redShades[5];
+    else if (value <= thresholds.poor[4] * 1.4) bgColor = redShades[6];
+    else if (value <= thresholds.poor[4] * 1.6) bgColor = redShades[7];
+    else if (value <= thresholds.poor[4] * 1.8) bgColor = redShades[8];
     else bgColor = redShades[9]; // Darkest red
   } else {
     // Higher is better for most stats
-    if (value >= threshold.excellent[0]) bgColor = greenShades[0]; // Darkest green
-    else if (value >= threshold.excellent[1]) bgColor = greenShades[1];
-    else if (value >= threshold.excellent[2]) bgColor = greenShades[2];
-    else if (value >= threshold.excellent[3]) bgColor = greenShades[3];
-    else if (value >= threshold.excellent[4]) bgColor = greenShades[4];
-    else if (value >= (threshold.excellent[4] + threshold.poor[0]) / 1.2) bgColor = greenShades[5];
-    else if (value >= (threshold.excellent[4] + threshold.poor[0]) / 1.5) bgColor = greenShades[6];
-    else if (value >= (threshold.excellent[4] + threshold.poor[0]) / 2) bgColor = greenShades[7];
-    else if (value >= threshold.poor[0]) bgColor = greenShades[8];
-    else if (value >= threshold.poor[1]) bgColor = redShades[1];
-    else if (value >= threshold.poor[2]) bgColor = redShades[2];
-    else if (value >= threshold.poor[3]) bgColor = redShades[3];
-    else if (value >= threshold.poor[4]) bgColor = redShades[4];
-    else if (value >= threshold.poor[4] * 0.8) bgColor = redShades[5];
-    else if (value >= threshold.poor[4] * 0.6) bgColor = redShades[6];
-    else if (value >= threshold.poor[4] * 0.4) bgColor = redShades[7];
-    else if (value >= threshold.poor[4] * 0.2) bgColor = redShades[8];
+    if (value >= thresholds.excellent[0]) bgColor = greenShades[0]; // Darkest green
+    else if (value >= thresholds.excellent[1]) bgColor = greenShades[1];
+    else if (value >= thresholds.excellent[2]) bgColor = greenShades[2];
+    else if (value >= thresholds.excellent[3]) bgColor = greenShades[3];
+    else if (value >= thresholds.excellent[4]) bgColor = greenShades[4];
+    else if (value >= (thresholds.excellent[4] + thresholds.poor[0]) / 1.2) bgColor = greenShades[5];
+    else if (value >= (thresholds.excellent[4] + thresholds.poor[0]) / 1.5) bgColor = greenShades[6];
+    else if (value >= (thresholds.excellent[4] + thresholds.poor[0]) / 2) bgColor = greenShades[7];
+    else if (value >= thresholds.poor[0]) bgColor = greenShades[8];
+    else if (value >= thresholds.poor[1]) bgColor = redShades[1];
+    else if (value >= thresholds.poor[2]) bgColor = redShades[2];
+    else if (value >= thresholds.poor[3]) bgColor = redShades[3];
+    else if (value >= thresholds.poor[4]) bgColor = redShades[4];
+    else if (value >= thresholds.poor[4] * 0.8) bgColor = redShades[5];
+    else if (value >= thresholds.poor[4] * 0.6) bgColor = redShades[6];
+    else if (value >= thresholds.poor[4] * 0.4) bgColor = redShades[7];
+    else if (value >= thresholds.poor[4] * 0.2) bgColor = redShades[8];
     else bgColor = redShades[9]; // Darkest red
   }
 
@@ -160,6 +131,10 @@ const formatStatValue = (value, category) => {
 
 
 const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex }) => {
+  const { getCurrentLeague } = useDashboardContext();
+  const currentLeague = getCurrentLeague();
+  const sport = currentLeague?.leagueDetails?.sport?.toLowerCase() || 'nba';
+  
   // Calculate Z-Score sum from blueprint
   const zScoreSum = playerStats?.zScoreSum || 0;
 
@@ -304,7 +279,7 @@ const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex 
         }
         
         let formattedValue = formatStatValue(statValue, categoryAbbrev);
-        let colors = getStatColors(statValue, categoryAbbrev);
+        let colors = getStatColors(statValue, categoryAbbrev, sport, zScore);
         
         // Enhanced tooltip - show stat value and overall z-score sum on every cell
         let title = `${categoryAbbrev}: ${formattedValue || '-'}`;

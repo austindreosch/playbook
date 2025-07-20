@@ -295,6 +295,7 @@ const useDashboardContext = create(
       widgetLayout: initialWidgetLayout,
       layoutBeforeEdit: null, // To store layout on entering edit mode
       tradeValueMode: initialTradeValueMode,
+      selectedPlayerId: null, // NEW: State to hold the ID of the currently selected player
 
       // =================================================================
       // ACTIONS
@@ -366,6 +367,16 @@ const useDashboardContext = create(
         });
       },
 
+      // Sets the current view mode for the dashboard (e.g., 'allLeagues', 'league')
+      setCurrentView: (view) => {
+        set({ currentView: view });
+      },
+
+      // Sets the currently selected player by ID
+      setSelectedPlayer: (playerId) => {
+        set({ selectedPlayerId: playerId });
+      },
+
       // ============================================================================
       // STORE STATE (ONLY the fields from DASHBOARD_CONTEXT_SCHEMA)
       // ============================================================================
@@ -384,6 +395,7 @@ const useDashboardContext = create(
       leagues: processedLeagueData.leagues,
       tradeValueMode: processedLeagueData.tradeValueMode,
       leagueTeams: processedLeagueData.leagueTeams,
+      selectedPlayerId: null, // NEW: State to hold the ID of the currently selected player
       // ============================================================================
       // INPUT ACTIONS (Data Entry Points)
       // ============================================================================
@@ -809,6 +821,17 @@ const useDashboardContext = create(
 
       setTradeValueMode: (mode) => {
         set({ tradeValueMode: mode });
+      },
+
+      // Gets the currently selected player object from the current league's players array
+      getSelectedPlayer: () => {
+        const { selectedPlayerId, getCurrentLeague } = get();
+        if (!selectedPlayerId) return null;
+
+        const currentLeague = getCurrentLeague();
+        if (!currentLeague || !Array.isArray(currentLeague.players)) return null;
+
+        return currentLeague.players.find(player => player.id === selectedPlayerId || player.playerId === selectedPlayerId);
       },
 
     }),
