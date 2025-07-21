@@ -16,17 +16,24 @@ import Newsletter from '@/components/LandingPage/newsletter';
 import Testimonials from '@/components/LandingPage/testimonials';
 
 export default function Home() {
-  return (
-    <>
-      <Hero />
-      <Features />
-      <FeaturesBlocks />
-      <FeatureRoadmap />
-      <Testimonials />
-      <Newsletter />
-      <Footer />
-    </>
-  )
+  console.log('Home component rendering...');
+  
+  try {
+    return (
+      <>
+        <Hero />
+        <Features />
+        <FeaturesBlocks />
+        <FeatureRoadmap />
+        <Testimonials />
+        <Newsletter />
+        <Footer />
+      </>
+    )
+  } catch (error) {
+    console.error('Error in Home component:', error);
+    return <div className="p-8 text-center">Error loading page: {error.message}</div>;
+  }
 }
 
 

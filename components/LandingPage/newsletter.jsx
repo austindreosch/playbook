@@ -1,13 +1,13 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useDevUser } from "@/components/DevUserProvider";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Newsletter() {
   const router = useRouter();
-  const { user, isLoading } = useUser();
+  const { user, isLoading } = useDevUser();
 
   const handleSignUp = () => {
     if (isLoading) return;

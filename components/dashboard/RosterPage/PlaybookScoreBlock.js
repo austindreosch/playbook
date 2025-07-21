@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getLeagueFormatDisplay, getSportConfig } from '@/lib/utils/sportConfig';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
-import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Settings, Shield, Users, X } from 'lucide-react';
+import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Settings, Shield, Trophy, Users, X, Zap } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Label, Pie, PieChart } from "recharts";
 
@@ -41,33 +41,8 @@ export default function PlaybookScoreBlock() {
   const containerRef = useRef(null);
   const desiredThickness = 40; // Desired thickness in pixels
 
-  // NEW: State for height detection and popup management
-  const [isHeightConstrained, setIsHeightConstrained] = useState(false);
+  // State for popup management
   const [showMetricsPopup, setShowMetricsPopup] = useState(false);
-
-  // NEW: Height detection effect
-  useEffect(() => {
-    const updateHeightConstraints = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const containerHeight = rect.height;
-        
-        // Consider constrained if height is less than 500px (matching PlayerProfile for testing)
-        const constrained = containerHeight < 500;
-        setIsHeightConstrained(constrained);
-      }
-    };
-
-    updateHeightConstraints();
-    window.addEventListener('resize', updateHeightConstraints);
-    
-    const timer = setTimeout(updateHeightConstraints, 300);
-    
-    return () => {
-      window.removeEventListener('resize', updateHeightConstraints);
-      clearTimeout(timer);
-    };
-  }, []);
 
   const scoreData = {
     totalScore: 981,
@@ -158,29 +133,29 @@ export default function PlaybookScoreBlock() {
   };
 
   // NEW: Metrics component for reuse
-  const MetricsControls = () => (
-    <div className="space-y-3">
+  const MetricsControls = ({ className = "" }) => (
+    <div className={`space-y-2 ${className}`}>
       {scoreData.metrics.map((metric, index) => {
         const IconComponent = metric.icon;
         return (
           <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <IconComponent className="w-icon-xs h-icon-xs text-pb_darkgray" />
-              <span className="text-xs text-pb_darkgray font-medium">{metric.label}</span>
+              <span className="text-2xs text-pb_darkgray font-medium">{metric.label}</span>
             </div>
             <Tabs 
               value={metricSelections[index]} 
               onValueChange={(value) => handleMetricChange(index, value)}
               className="w-auto"
             >
-              <TabsList className="h-auto p-0 border border-pb_lightgray grid w-36" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
+              <TabsList className="h-auto p-0 border border-pb_lightgray grid w-32" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
                 {metric.options.map((option, buttonIndex) => (
                   <TabsTrigger
                     key={buttonIndex}
                     value={option}
-                    className={`px-2 h-6 text-2xs font-medium data-[state=active]:text-white border-r border-pb_lightgray last:border-r-0 first:rounded-l last:rounded-r rounded-none w-full ${getButtonStyles(option, metricSelections[index], buttonIndex)}`}
+                    className={`px-1.5 h-5 text-2xs font-medium data-[state=active]:text-white border-r border-pb_lightgray last:border-r-0 first:rounded-l last:rounded-r rounded-none w-full ${getButtonStyles(option, metricSelections[index], buttonIndex)}`}
                   >
-                    {option || <GitCommitHorizontal className="w-icon-sm h-icon-sm text-pb_textlightestgray" />}
+                    {option || <GitCommitHorizontal className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -205,7 +180,7 @@ export default function PlaybookScoreBlock() {
       </div>
       
       {/* Donut Chart */}
-      <div className="relative flex-shrink-0 h-40 max-h-40 min-h-40">
+      <div className="relative flex-shrink-0 h-full max-h-60 min-h-40">
         <ChartContainer
           ref={chartContainerRef}
           config={chartConfig}
@@ -241,41 +216,50 @@ export default function PlaybookScoreBlock() {
       
       {/* Score Context */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-3xs text-pb_textgray">
-            
-          </span>
+        {/* Standard */}
+        <div className="flex items-center gap-1  rounded px-2 py-1 min-w-[90px]">
+          <Trophy className="w-4 h-4 text-pb_gold mr-1" />
+          <span className="text-2xs text-pb_textgray font-medium">Standard</span>
+          <span className="ml-2 text-xs font-bold text-pb_darkgray">957</span>
+        </div>
+        {/* Redraft */}
+        <div className="flex items-center gap-1  rounded px-2 py-1 min-w-[90px]">
+          <Zap className="w-4 h-4 text-pb_blue mr-1" />
+          <span className="text-2xs text-pb_textgray font-medium">Redraft</span>
+          <span className="ml-2 text-xs font-bold text-pb_darkgray">999</span>
         </div>
       </div>
-      {/* Metrics Section - Dynamic based on height */}
-      {!isHeightConstrained ? (
-        <div className="space-y-2 flex-shrink-0 mt-3">
-          <MetricsControls />
+
+
+      {/* Metrics Section - Using height constraint classes */}
+      <div className="smh:hidden mdh:block lgh:block">
+        <div className="space-y-2 flex-shrink-0 mt-0">
+          <MetricsControls className="mr-0 space-x-0 px-4" />
         </div>
-      ) : (
-        <div className="flex-shrink-0 mt-3 flex justify-center">
-          <Popover open={showMetricsPopup} onOpenChange={setShowMetricsPopup}>
-            <PopoverTrigger asChild>
-              <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors">
-                <Settings className="w-4 h-4" />
-                <span>Configure Metrics</span>
+      </div>
+      
+      <div className="smh:block mdh:hidden lgh:hidden flex-shrink-0 mt-3 flex justify-center">
+        <Popover open={showMetricsPopup} onOpenChange={setShowMetricsPopup}>
+          <PopoverTrigger asChild>
+            <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors">
+              <Settings className="w-4 h-4" />
+              <span>Configure Metrics</span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 p-3" align="center">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-semibold text-pb_darkgray">Playbook Metrics</h4>
+              <button 
+                onClick={() => setShowMetricsPopup(false)}
+                className="w-4 h-4 flex items-center justify-center hover:bg-gray-100 rounded"
+              >
+                <X className="w-3 h-3 text-pb_textgray" />
               </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-3" align="center">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs font-semibold text-pb_darkgray">Playbook Metrics</h4>
-                <button 
-                  onClick={() => setShowMetricsPopup(false)}
-                  className="w-4 h-4 flex items-center justify-center hover:bg-gray-100 rounded"
-                >
-                  <X className="w-3 h-3 text-pb_textgray" />
-                </button>
-              </div>
-              <MetricsControls />
-            </PopoverContent>
-          </Popover>
-        </div>
-      )}
+            </div>
+            <MetricsControls />
+          </PopoverContent>
+        </Popover>
+      </div>
 
 
 

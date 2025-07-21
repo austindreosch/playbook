@@ -1,0 +1,83 @@
+{
+    "piny.project_settings": {
+        "open-pages": [
+            "pinyfakepage.html"
+        ],
+        "component-settings": {
+            "app/dashboard/page.js:::Temp": {
+                "route": "/dashboard"
+            }
+        },
+        "app-routes": {
+            "routes": [
+                "/",
+                "/about",
+                "/admin",
+                "/api/admin/add-name-variant",
+                "/api/admin/create-prospect-player",
+                "/api/admin/deleteRankingPlayer",
+                "/api/admin/link-player",
+                "/api/admin/syncCsvRankingsRoute",
+                "/api/admin/syncFantasyCalcRankingsRoute",
+                "/api/admin/syncPlayersRoute",
+                "/api/auth/login",
+                "/api/auth/logout",
+                "/api/auth/post-verification-redirect",
+                "/api/auth/resend-verification",
+                "/api/commissioner/join-request",
+                "/api/commissioner/leagues/available",
+                "/api/dashboard/syncLeague",
+                "/api/fetch/NBA/GetAllPlayers",
+                "/api/fetch/NBA/NBAStats",
+                "/api/fetch/NBA/deprecated/GetNBADynastyCatsRankings",
+                "/api/fetch/NBA/deprecated/GetNBARedraftCatsRankings",
+                "/api/fetch/NBA/deprecated/NBADynastyCatsRankingsStore",
+                "/api/fetch/NBA/deprecated/NBARedraftCatsRankingsStore",
+                "/api/fetch/fetchExpertRankings",
+                "/api/fetch/user",
+                "/api/importleague",
+                "/api/load/MasterDatasetFetch",
+                "/api/load/leagues",
+                "/api/players/list",
+                "/api/players/master",
+                "/api/players/search",
+                "/api/pull/mlbRawData",
+                "/api/pull/nbaRawData",
+                "/api/pull/nflRawData",
+                "/api/rankings/cleanup",
+                "/api/rankings/create",
+                "/api/rankings/history",
+                "/api/rankings/latest",
+                "/api/save/saveExpertRankingsFromCSV",
+                "/api/save/saveExpertRankingsNFL",
+                "/api/user",
+                "/api/user-rankings",
+                "/api/user-rankings/create",
+                "/dashboard",
+                "/import",
+                "/landing",
+                "/rankings",
+                "/register",
+                "/verify-email"
+            ],
+            "current_route": "/dashboard"
+        },
+        "tw-external-config": {
+            "external_config_url": null,
+            "external_source_url": null
+        },
+        "source-folders": null,
+        "preview-url": "http://localhost:3000",
+        "ai-project-brief": null,
+        "urls": {
+            "pinyfakepage.html": {
+                "open-page-views": [
+                    {
+                        "w": 1650,
+                        "h": 900
+                    }
+                ]
+            }
+        }
+    }
+}

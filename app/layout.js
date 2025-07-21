@@ -1,6 +1,5 @@
 import AOSInitializer from '@/components/LandingPage/internal/AOSInitializer';
 import { Toaster } from "@/components/ui/sonner";
-import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { DM_Mono, DM_Sans } from 'next/font/google';
@@ -8,6 +7,7 @@ import Script from 'next/script';
 import { Suspense } from 'react';
 import ConditionalNavBar from '../components/ConditionalNavBar';
 import ConditionalWrapper from '../components/ConditionalWrapper';
+import { DevUserProvider } from '../components/DevUserProvider';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
 import { GA_MEASUREMENT_ID } from '../lib/gtag';
@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
           `
         }} />
       </head>
-      <UserProvider>
+      <DevUserProvider>
       <body className={`${dmSans.className} ${dmMono.variable} bg-pb_paperwhite h-full flex flex-col`}>
           <Suspense fallback={null}>
             <GoogleAnalytics />
@@ -89,8 +89,20 @@ export default function RootLayout({ children }) {
             </ConditionalWrapper>
           </main>
           <Toaster />
+
+
+          {process.env.NODE_ENV === 'development' && process.env.PINY_VISUAL_SELECT === 'true' && (
+         <Script
+            src="/_piny/piny.phone.js"
+            strategy="afterInteractive" 
+         />)}
+
+
+
+
+
         </body>
-      </UserProvider>
+      </DevUserProvider>
     </html>
   )
 }

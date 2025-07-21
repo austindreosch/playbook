@@ -3,7 +3,7 @@
 'use client'
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useDevUser } from '@/components/DevUserProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import DebugDrawer from '../../components/debug/DebugDrawer';
@@ -337,7 +337,7 @@ export default function DashboardPage() {
   const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
 
   const router = useRouter();
-  const { user, error, isLoading: isUserLoading } = useUser();
+  const { user, error, isLoading: isUserLoading } = useDevUser();
   const [isSending, setIsSending] = useState(false);
   const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
 
