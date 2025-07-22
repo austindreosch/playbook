@@ -118,16 +118,26 @@ export default function PlayerProfileBlock() {
   
 
   return (
-    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white overflow-hidden flex-grow justify-between">
+    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col bg-white overflow-hidden">
       <div className="flex items-center gap-2 mb-3 flex-shrink-0">
         <ScanSearch className="w-icon h-icon text-pb_darkgray" />
         <h3 className="text-xs mdh:text-sm font-semibold text-pb_darkgray">Player Profile</h3>
       </div>
       
-      <PlayerInfoSection playerData={playerData} />
-      <TraitTagContainer traitIds={playerData.tags.traitIds} maxRows={3} className="mb-4 flex-shrink-0" />
-      <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
-      <HistoricalViewGraph historicalData={playerData.historicalData} />
+      <div className="flex flex-col flex-1 min-h-0 gap-2">
+        <div className="flex-shrink-0">
+          <PlayerInfoSection playerData={playerData} />
+        </div>
+        <div className="flex-shrink-0">
+          <TraitTagContainer traitIds={playerData.tags.traitIds} maxRows={3} className="" />
+        </div>
+        <div className="flex-shrink-0">
+          <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
+        </div>
+        <div className="flex-1 min-h-0">
+          <HistoricalViewGraph historicalData={playerData.historicalData} />
+        </div>
+      </div>
 
     </div>
   );

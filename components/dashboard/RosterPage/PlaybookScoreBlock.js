@@ -127,9 +127,9 @@ export default function PlaybookScoreBlock() {
         </div>
       </div>
       {/* Main content: evenly spread inner components */}
-      <div className="flex flex-col justify-between flex-1 h-full">
+      <div className="flex flex-col flex-1 min-h-0">
         {/* Donut Chart */}
-        <div className="relative flex-1 basis-0 min-h-32 max-h-52">
+        <div className="relative flex-1 min-h-24 max-h-40">
           <ChartContainer
             ref={chartContainerRef}
             config={chartConfig}
@@ -162,29 +162,31 @@ export default function PlaybookScoreBlock() {
           </div>
         </div>
         {/* Score Context */}
-        <div className="flex items-center justify-between gap-2 flex-shrink-0 mdh:mt-5">
+        <div className="flex items-center justify-between gap-2 flex-shrink-0 mt-2">
           {/* Standard */}
-          <div className="flex items-center gap-1  rounded px-2 min-w-[90px]">
+          <div className="flex items-center gap-1 rounded px-2 min-w-[90px]">
             <Trophy className="w-icon-xs h-icon-xs text-pb_textlightergray mr-1" />
             <span className="text-2xs text-pb_textlightergray font-medium">Standard</span>
             <span className="ml-2 text-xs font-bold text-pb_textlightergray">957</span>
           </div>
           {/* Redraft */}
-          <div className="flex items-center gap-1  rounded px-2 min-w-[90px]">
+          <div className="flex items-center gap-1 rounded px-2 min-w-[90px]">
             <Zap className="w-icon-xs h-icon-xs text-pb_textlightergray mr-1" />
             <span className="text-2xs text-pb_textlightergray font-medium">Redraft</span>
             <span className="ml-2 text-xs font-bold text-pb_textlightergray">999</span>
           </div>
         </div>
         {/* Separator between score context and metrics controls */}
-        <Separator className="my-2" />
+        <Separator className="my-1" />
         {/* Metrics Section - now a single component */}
-        <MetricControlsSection
-          scoreData={scoreData}
-          metricSelections={metricSelections}
-          onMetricChange={handleMetricChange}
-          className="px-1"
-        />
+        <div className="flex-shrink-0">
+          <MetricControlsSection
+            scoreData={scoreData}
+            metricSelections={metricSelections}
+            onMetricChange={handleMetricChange}
+            className="px-1"
+          />
+        </div>
       </div>
     </div>
   );

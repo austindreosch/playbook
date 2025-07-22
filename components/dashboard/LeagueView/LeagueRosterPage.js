@@ -62,20 +62,20 @@ export default function LeagueRosterPage() {
         </div>
 
 
-        {/* Right Column  - I WANT TO REMOVE THIS OVERFLOW-HIDDEN */}
-        <div className="col-span-7 flex flex-col gap-1.5 flex-1 overflow-hidden"> 
+        {/* Right Column */}
+        <div className="col-span-7 flex flex-col gap-1.5 flex-1 min-h-0"> 
             {/* Top Row */}
-            <div className="grid grid-cols-2 gap-1.5 flex-[3]">
-                <div className="">
-                    <PlayerProfileBlock className="overflow-hidden"/>
+            <div className="grid grid-cols-2 gap-1.5 flex-[3] min-h-0">
+                <div className="min-h-0">
+                    <PlayerProfileBlock className="h-full"/>
                 </div>
-                <div className="">
-                    <PlaybookScoreBlock className="overflow-hidden"/>
+                <div className="min-h-0">
+                    <PlaybookScoreBlock className="h-full"/>
                 </div>
             </div>
             {/* Bottom Row */}
-            <div className="flex-[2] ">
-                <PlayerPerformanceBlock className="overflow-hidden"/>
+            <div className="flex-[2] min-h-0">
+                <PlayerPerformanceBlock className="h-full"/>
             </div>
         </div>
       </div>
