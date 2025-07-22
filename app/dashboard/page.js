@@ -1,9 +1,9 @@
 //  /dashboard page
 
 'use client'
+import { useDevUser } from '@/components/DevUserProvider';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { useDevUser } from '@/components/DevUserProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import DebugDrawer from '../../components/debug/DebugDrawer';

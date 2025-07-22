@@ -145,7 +145,7 @@ export default function TraitTagContainer({ traitIds, maxRows = 3, className = "
         {visibleTagsCount < traitIds.length && (
           <Popover open={showPopover} onOpenChange={setShowPopover}>
             <PopoverTrigger asChild>
-              <button className={`flex items-center text-white bg-pb_blue hover:bg-pb_darkblue rounded border border-pb_blue flex-shrink-0 ${
+              <button className={`flex items-center text-pb_darkgray hover:text-pb_darkgray rounded border border-pb_lightgray flex-shrink-0 ${
                 isSmallScreen ? 'px-1.5 h-5 text-3xs' : 'px-1.5 h-6 text-2xs'
               }`}>
                 <span>View All</span>

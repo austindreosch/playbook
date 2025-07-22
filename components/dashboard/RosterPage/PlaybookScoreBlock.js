@@ -7,12 +7,14 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getLeagueFormatDisplay, getSportConfig } from '@/lib/utils/sportConfig';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { CircleHelp, CircleQuestionMark, Compass, GitCommitHorizontal, Globe, Heart, HelpCircle, Settings, Shield, Trophy, Users, X, Zap } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Label, Pie, PieChart } from "recharts";
+import MetricControlsSection from './MetricControlsSection';
 
 export default function PlaybookScoreBlock() {
   const { getCurrentLeague } = useDashboardContext();
@@ -40,9 +42,6 @@ export default function PlaybookScoreBlock() {
   const chartContainerRef = useRef(null);
   const containerRef = useRef(null);
   const desiredThickness = 40; // Desired thickness in pixels
-
-  // State for popup management
-  const [showMetricsPopup, setShowMetricsPopup] = useState(false);
 
   const scoreData = {
     totalScore: 981,
@@ -115,57 +114,6 @@ export default function PlaybookScoreBlock() {
     }));
   };
 
-  const getButtonStyles = (option, selectedOption, buttonIndex) => {
-    // Handle empty middle button (neutral)
-    if (option === "") {
-      return "data-[state=active]:bg-pb_lightergray data-[state=active]:text-pb_textgray bg-white text-pb_textlightestgray";
-    }
-    
-    // Define styles based on button position: 0=positive (green), 2=negative (red)
-    if (buttonIndex === 0) { // First button - positive
-      return "data-[state=active]:bg-pb_green bg-white text-pb_textlightestgray hover:bg-gray-50";
-    } else if (buttonIndex === 2) { // Third button - negative  
-      return "data-[state=active]:bg-pb_red bg-white text-pb_textlightestgray hover:bg-gray-50";
-    }
-    
-    // Fallback
-    return "bg-white text-pb_textlightestgray hover:bg-gray-50";
-  };
-
-  // NEW: Metrics component for reuse
-  const MetricsControls = ({ className = "" }) => (
-    <div className={`space-y-2 ${className}`}>
-      {scoreData.metrics.map((metric, index) => {
-        const IconComponent = metric.icon;
-        return (
-          <div key={index} className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <IconComponent className="w-icon-xs h-icon-xs text-pb_darkgray" />
-              <span className="text-2xs text-pb_darkgray font-medium">{metric.label}</span>
-            </div>
-            <Tabs 
-              value={metricSelections[index]} 
-              onValueChange={(value) => handleMetricChange(index, value)}
-              className="w-auto"
-            >
-              <TabsList className="h-auto p-0 border border-pb_lightgray grid w-32" style={{ gridTemplateColumns: '1fr auto 1fr' }}>
-                {metric.options.map((option, buttonIndex) => (
-                  <TabsTrigger
-                    key={buttonIndex}
-                    value={option}
-                    className={`px-1.5 h-5 text-2xs font-medium data-[state=active]:text-white border-r border-pb_lightgray last:border-r-0 first:rounded-l last:rounded-r rounded-none w-full ${getButtonStyles(option, metricSelections[index], buttonIndex)}`}
-                  >
-                    {option || <GitCommitHorizontal className="w-icon-xs h-icon-xs text-pb_textlightestgray" />}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-        );
-      })}
-    </div>
-  );
-
   return (
     <div ref={containerRef} className="w-full h-full bg-white rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col overflow-hidden">
       {/* Header */}
@@ -178,94 +126,66 @@ export default function PlaybookScoreBlock() {
           <CircleHelp className="w-icon-sm h-icon-sm text-pb_textgray" />
         </div>
       </div>
-      
-      {/* Donut Chart */}
-      <div className="relative flex-shrink-0 h-full max-h-60 min-h-40">
-        <ChartContainer
-          ref={chartContainerRef}
-          config={chartConfig}
-          className="mx-auto h-full w-full p-0"
-        >
-          <PieChart 
-            width="100%" 
-            height="100%" 
-            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+      {/* Main content: evenly spread inner components */}
+      <div className="flex flex-col justify-between flex-1 h-full">
+        {/* Donut Chart */}
+        <div className="relative flex-1 basis-0 min-h-32 max-h-52">
+          <ChartContainer
+            ref={chartContainerRef}
+            config={chartConfig}
+            className="mx-auto h-full w-full p-0"
           >
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={scoreData.segments}
-              dataKey="value"
-              nameKey="category"
-              cx="50%"
-              cy="50%"
-              outerRadius="100%"
-              innerRadius={calculatedInnerRadius}
-              strokeWidth={8}
-            />
-          </PieChart>
-        </ChartContainer>
-        
-        {/* Center Text Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div className="text-5xl font-bold text-gray-900">{scoreData.totalScore}</div>
+            <PieChart 
+              width="100%" 
+              height="100%" 
+              margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            >
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={scoreData.segments}
+                dataKey="value"
+                nameKey="category"
+                cx="50%"
+                cy="50%"
+                outerRadius="100%"
+                innerRadius={calculatedInnerRadius}
+                strokeWidth={8}
+              />
+            </PieChart>
+          </ChartContainer>
+          {/* Center Text Overlay */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <div className="text-5xl font-bold text-gray-900">{scoreData.totalScore}</div>
+          </div>
         </div>
-      </div>
-      
-      {/* Score Context */}
-      <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
-        {/* Standard */}
-        <div className="flex items-center gap-1  rounded px-2 py-1 min-w-[90px]">
-          <Trophy className="w-4 h-4 text-pb_gold mr-1" />
-          <span className="text-2xs text-pb_textgray font-medium">Standard</span>
-          <span className="ml-2 text-xs font-bold text-pb_darkgray">957</span>
+        {/* Score Context */}
+        <div className="flex items-center justify-between gap-2 flex-shrink-0 mdh:mt-5">
+          {/* Standard */}
+          <div className="flex items-center gap-1  rounded px-2 min-w-[90px]">
+            <Trophy className="w-icon-xs h-icon-xs text-pb_textlightergray mr-1" />
+            <span className="text-2xs text-pb_textlightergray font-medium">Standard</span>
+            <span className="ml-2 text-xs font-bold text-pb_textlightergray">957</span>
+          </div>
+          {/* Redraft */}
+          <div className="flex items-center gap-1  rounded px-2 min-w-[90px]">
+            <Zap className="w-icon-xs h-icon-xs text-pb_textlightergray mr-1" />
+            <span className="text-2xs text-pb_textlightergray font-medium">Redraft</span>
+            <span className="ml-2 text-xs font-bold text-pb_textlightergray">999</span>
+          </div>
         </div>
-        {/* Redraft */}
-        <div className="flex items-center gap-1  rounded px-2 py-1 min-w-[90px]">
-          <Zap className="w-4 h-4 text-pb_blue mr-1" />
-          <span className="text-2xs text-pb_textgray font-medium">Redraft</span>
-          <span className="ml-2 text-xs font-bold text-pb_darkgray">999</span>
-        </div>
+        {/* Separator between score context and metrics controls */}
+        <Separator className="my-2" />
+        {/* Metrics Section - now a single component */}
+        <MetricControlsSection
+          scoreData={scoreData}
+          metricSelections={metricSelections}
+          onMetricChange={handleMetricChange}
+          className="px-1"
+        />
       </div>
-
-
-      {/* Metrics Section - Using height constraint classes */}
-      <div className="smh:hidden mdh:block lgh:block">
-        <div className="space-y-2 flex-shrink-0 mt-0">
-          <MetricsControls className="mr-0 space-x-0 px-4" />
-        </div>
-      </div>
-      
-      <div className="smh:block mdh:hidden lgh:hidden flex-shrink-0 mt-3 flex justify-center">
-        <Popover open={showMetricsPopup} onOpenChange={setShowMetricsPopup}>
-          <PopoverTrigger asChild>
-            <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors">
-              <Settings className="w-4 h-4" />
-              <span>Configure Metrics</span>
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-3" align="center">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-xs font-semibold text-pb_darkgray">Playbook Metrics</h4>
-              <button 
-                onClick={() => setShowMetricsPopup(false)}
-                className="w-4 h-4 flex items-center justify-center hover:bg-gray-100 rounded"
-              >
-                <X className="w-3 h-3 text-pb_textgray" />
-              </button>
-            </div>
-            <MetricsControls />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-
-
-
-
-      
     </div>
   );
 }

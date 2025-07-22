@@ -52,16 +52,16 @@ export default function LeagueRosterPage() {
         {/* Right Column */}
         <div className="col-span-7 flex flex-col gap-1.5 h-full">
             {/* Top Row */}
-            <div className="grid grid-cols-2 gap-1.5 h-[75%] smh:h-[70%] mdh:h-[60%] lgh:h-[55%] overflow-hidden">
+            <div className="grid grid-cols-2 gap-1.5 flex-[3] min-h-0">
                 <div className="overflow-hidden">
-                    <PlayerProfileBlock />
+                    {/* <PlayerProfileBlock /> */}
                 </div>
                 <div className="overflow-hidden">
-                    <PlaybookScoreBlock />
+                    {/* <PlaybookScoreBlock /> */}
                 </div>
             </div>
             {/* Bottom Row */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-[2] min-h-0 overflow-hidden">
                 <PlayerPerformanceBlock />
             </div>
         </div>
