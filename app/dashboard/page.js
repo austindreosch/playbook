@@ -505,7 +505,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <div className="h-[calc(100vh-3.25rem)] flex flex-col overflow-hidden">
+      <div className="h-[calc(100vh-6rem)]">
         {/* Dashboard Tab Selectors Bar */}
         <div className="relative flex items-center pt-1.5">
           {/* Dashboard Tab Selector */}
@@ -529,7 +529,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-grow min-h-0 h-full">
+        <div className="h-full min-h-0">
           {isAllLeaguesView ? (
             <div className="flex items-center justify-center w-full h-full"><p>All Leagues View (Coming Soon)</p></div>
           ) : !currentLeagueId ? (

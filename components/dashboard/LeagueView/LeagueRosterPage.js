@@ -42,27 +42,40 @@ export default function LeagueRosterPage() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-17 gap-1.5 h-full">
+      <div className="grid grid-cols-17 gap-1.5 flex-1 min-h-0">
         {/* Left Column */}
-        <div className="col-span-10">
+        <div className="col-span-9 min-h-0">
           <RosterFullBlock />
           {/* <RosterFullImportLeague /> */}
         </div>
 
-        {/* Right Column */}
-        <div className="col-span-7 flex flex-col gap-1.5 min-h-0">
+        {/* TEST DUMMY DIVIDER */}
+        <div className="col-span-1 flex flex-col gap-1.5 flex-1 items-center justify-center">
+          {/* Top segment of the vertical line, matching flex-[3] of right column */}
+          <div className="flex-[3] flex flex-col w-[3px]">
+            <div className="h-full bg-pb_blue w-full"></div>
+          </div>
+          {/* Bottom segment of the vertical line, matching flex-[2] of right column */}
+          <div className="flex-[2] flex flex-col w-[3px]">
+            <div className="h-full bg-pb_red w-full"></div>
+          </div>
+        </div>
+
+
+        {/* Right Column  - I WANT TO REMOVE THIS OVERFLOW-HIDDEN */}
+        <div className="col-span-7 flex flex-col gap-1.5 flex-1 overflow-hidden"> 
             {/* Top Row */}
-            <div className="grid grid-cols-2 gap-1.5 flex-[3] min-h-0">
-                <div className="overflow-hidden">
-                    {/* <PlayerProfileBlock /> */}
+            <div className="grid grid-cols-2 gap-1.5 flex-[3]">
+                <div className="">
+                    <PlayerProfileBlock className="overflow-hidden"/>
                 </div>
-                <div className="overflow-hidden">
-                    {/* <PlaybookScoreBlock /> */}
+                <div className="">
+                    <PlaybookScoreBlock className="overflow-hidden"/>
                 </div>
             </div>
             {/* Bottom Row */}
-            <div className="flex-[2] min-h-0 overflow-hidden">
-                <PlayerPerformanceBlock />
+            <div className="flex-[2] ">
+                <PlayerPerformanceBlock className="overflow-hidden"/>
             </div>
         </div>
       </div>

@@ -96,7 +96,7 @@ export default function RosterFullBlock() {
   }
 
   return (
-    <div className="w-full h-full bg-white flex flex-col gap-1">
+    <div className="w-full h-full min-h-0 bg-white flex flex-col gap-1">
       {/* Header exactly matching RankingsPlayerListHeader */}
       <RosterHeader 
         categories={categories} 
@@ -105,7 +105,7 @@ export default function RosterFullBlock() {
       />
       
       {/* Player List exactly matching RankingsPlayerListContainer structure */}
-      <div className="flex-1 overflow-y-auto space-y-0.5">
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-0.5">
         {sortedPlayers.length > 0 ? (
           sortedPlayers.map((player, index) => (
             <RosterPlayerRow
