@@ -273,8 +273,8 @@ export default function PlayerPerformanceBlock() {
   return (
     <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 flex-shrink-0">
-        <SigmaSquare className="w-icon h-icon text-pb_darkgray" />
-        <h3 className="text-sm font-semibold text-pb_darkgray">Performance</h3>
+        <SigmaSquare className="icon-sm mdh:icon text-pb_darkgray" />
+        <h3 className="text-xs mdh:text-sm font-semibold text-pb_darkgray">Performance</h3>
       </div>
       
       {/* Top Row */}
@@ -286,14 +286,14 @@ export default function PlayerPerformanceBlock() {
           <div className=" w-full">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <Compass className="w-icon-sm h-icon-sm text-pb_darkgray" />
+                <Compass className="icon-xs mdh:icon-sm text-pb_darkgray" />
                 <span className="text-xs font-medium text-pb_darkgray">Playbook</span>
               </div>
               <span className="text-sm font-medium font-mono text-pb_darkgray">13.87</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ClipboardMinus className="w-icon-sm h-icon-sm text-pb_textlightestgray" />
+                <ClipboardMinus className="icon-xs mdh:icon-sm text-pb_textlightestgray" />
                 <span className="text-xs font-medium text-pb_textlightestgray">Standard</span>
               </div>
               <span className="text-sm font-medium font-mono text-pb_textlightestgray">13.25</span>

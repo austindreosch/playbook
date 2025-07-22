@@ -119,11 +119,11 @@ export default function PlaybookScoreBlock() {
       {/* Header */}
       <div className="flex items-center justify-between gap-2 mb-3 flex-shrink-0">
         <div className='flex items-center gap-2 flex-shrink-0'>
-          <Compass className="w-icon h-icon text-pb_darkgray" />
-          <h3 className="text-sm font-semibold text-pb_darkgray">Playbook Score</h3>
+          <Compass className="icon-sm mdh:icon text-pb_darkgray" />
+          <h3 className="text-xs mdh:text-sm  font-semibold text-pb_darkgray">Playbook Score</h3>
         </div>
-        <div className='flex items-center gap-1'>
-          <CircleHelp className="w-icon-sm h-icon-sm text-pb_textgray" />
+        <div className="flex items-center gap-1">
+          <CircleHelp className="icon-xs mdh:icon-sm text-pb_textgray" />
         </div>
       </div>
       {/* Main content: evenly spread inner components */}

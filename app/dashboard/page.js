@@ -5,7 +5,7 @@ import { useDevUser } from '@/components/DevUserProvider';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DebugDrawer from '../../components/debug/DebugDrawer';
 // import { ThreeCircles } from 'react-loader-spinner';
 import { Activity, Bug, ChevronRight, Construction, Eye, HardHat, HelpCircle, Sparkles, SquareSquare, User, X } from 'lucide-react';
@@ -381,13 +381,13 @@ export default function DashboardPage() {
     }
   }, []);
 
-  const toggleDebugDrawer = () => {
+  const toggleDebugDrawer = useCallback(() => {
     setIsDebugDrawerOpen(prev => {
       const newState = !prev;
       localStorage.setItem('debugDrawerIsOpen', JSON.stringify(newState));
       return newState;
     });
-  };
+  }, []); // Empty dependency array as setIsDebugDrawerOpen is stable and localStorage is global
 
   const showVerificationToast = () => {
     const handleResend = async () => {

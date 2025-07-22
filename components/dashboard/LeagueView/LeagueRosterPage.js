@@ -44,28 +44,26 @@ export default function LeagueRosterPage() {
       {/* Main Content */}
       <div className="grid grid-cols-17 gap-1.5 flex-1 min-h-0">
         {/* Left Column */}
-        <div className="col-span-9 min-h-0">
+        <div className="col-span-10 min-h-0">
           <RosterFullBlock />
           {/* <RosterFullImportLeague /> */}
         </div>
 
         {/* TEST DUMMY DIVIDER */}
-        <div className="col-span-1 flex flex-col gap-1.5 flex-1 items-center justify-center">
-          {/* Top segment of the vertical line, matching flex-[3] of right column */}
+        {/* <div className="col-span-1 flex flex-col gap-1.5 flex-1 items-center justify-center">
           <div className="flex-[3] flex flex-col w-[3px]">
             <div className="h-full bg-pb_blue w-full"></div>
           </div>
-          {/* Bottom segment of the vertical line, matching flex-[2] of right column */}
           <div className="flex-[2] flex flex-col w-[3px]">
             <div className="h-full bg-pb_red w-full"></div>
           </div>
-        </div>
+        </div> */}
 
 
         {/* Right Column */}
-        <div className="col-span-7 flex flex-col gap-1.5 flex-1 min-h-0"> 
+        <div className="col-span-7 flex flex-col gap-1 mdh:gap-1.5 flex-1 min-h-0"> 
             {/* Top Row */}
-            <div className="grid grid-cols-2 gap-1.5 flex-[3] min-h-0">
+            <div className="grid grid-cols-2 gap-1 mdh:gap-1.5 flex-[3] min-h-0">
                 <div className="min-h-0">
                     <PlayerProfileBlock className="h-full"/>
                 </div>

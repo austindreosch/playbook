@@ -11,25 +11,24 @@ module.exports = {
     'prettier-plugin-tailwindcss',
     require('tailwindcss-animate'),
     require('tailwind-scrollbar'),
-    require('daisyui'),
-  ],
-  daisyui: {
-    themes: [
-      {
-        mytheme: {
-          "primary": "#ffd166",
-          "secondary": "#3c91e6",
-          "accent": "#f59e0b",
-          "neutral": "#4b5d67",
-          "base-100": "#f5f5f5",
-          "info": "#42a9e0",
-          "success": "#4caf50",
-          "warning": "#ffc107",
-          "error": "#d32f2f",
+    function ({ addUtilities, theme }) {
+      const newUtilities = {
+        '.icon': {
+          width: theme('width.icon'),
+          height: theme('height.icon'),
         },
-      },
-    ],
-  },
+        '.icon-sm': {
+          width: theme('width.icon-sm'),
+          height: theme('height.icon-sm'),
+        },
+        '.icon-xs': {
+          width: theme('width.icon-xs'),
+          height: theme('height.icon-xs'),
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
   theme: {
   	extend: {
 		screens: {
@@ -39,8 +38,8 @@ module.exports = {
 			mdlg: '896px',
 			
 			xsh: { raw: '(min-height: 480px)' },
-			smh: { raw: '(min-height: 620px)' },
-			mdh: { raw: '(min-height: 900px)' },
+			smh: { raw: '(min-height: 610px)' },
+			mdh: { raw: '(min-height: 890px)' },
 			lgh: { raw: '(min-height: 1250px)' },
 			xlh: { raw: '(min-height: 1400px)' },
 			'2xlh': { raw: '(min-height: 2000px)' },

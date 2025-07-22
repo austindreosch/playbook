@@ -27,9 +27,10 @@ function MetricControlsSection({ scoreData, metricSelections, onMetricChange, cl
       {scoreData.metrics.map((metric, index) => {
         const IconComponent = metric.icon;
         return (
-          <div key={index} className="flex items-center justify-between">
+          // Correctly structured div for each metric row
+          <div key={index} className="flex items-center justify-center">
             <div className="flex items-center gap-1.5">
-              <IconComponent className="w-icon-xs h-icon-xs text-pb_darkgray" />
+              <IconComponent className="icon-xs text-pb_darkgray" />
               <span className="text-2xs text-pb_darkgray font-medium">{metric.label}</span>
             </div>
             <Tabs 
@@ -64,10 +65,10 @@ function MetricControlsSection({ scoreData, metricSelections, onMetricChange, cl
         </div>
       </div>
       {/* Mobile: show controls in popover */}
-      <div className={`smh:block mdh:hidden lgh:hidden flex-shrink-0 mt-3 flex justify-center ${className}`}>
+      <div className={`smh:block mdh:hidden lgh:hidden flex-shrink-0 mt-3 flex justify-center w-full ${className}`}>
         <Popover open={showMetricsPopup} onOpenChange={setShowMetricsPopup}>
           <PopoverTrigger asChild>
-            <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors">
+            <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors mx-auto">
               <Settings className="w-4 h-4" />
               <span>Configure Metrics</span>
             </button>
