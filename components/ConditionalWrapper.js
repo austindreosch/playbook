@@ -17,7 +17,7 @@ export default function ConditionalWrapper({ children }) {
         </div>
       ) : (
         // Other pages: render children with container wrapper
-        <div className="container mx-auto px-1 2xl:px-0 flex-1 flex flex-col py-1.5">
+        <div className="container mx-auto px-1 2xl:px-0">
           {children}
         </div>
       )}
