@@ -65,7 +65,7 @@ function MetricControlsSection({ scoreData, metricSelections, onMetricChange, cl
         </div>
       </div>
       {/* Mobile: show controls in popover */}
-      <div className={`smh:block mdh:hidden lgh:hidden flex-shrink-0 mt-3 flex justify-center w-full ${className}`}>
+      <div className={`smh:block mdh:hidden lgh:hidden flex-shrink-0 flex justify-center w-full ${className}`}>
         <Popover open={showMetricsPopup} onOpenChange={setShowMetricsPopup}>
           <PopoverTrigger asChild>
             <button className="flex items-center gap-2 px-3 py-2 text-xs text-pb_textgray hover:text-pb_darkgray hover:bg-gray-50 rounded border border-pb_lightergray transition-colors mx-auto">

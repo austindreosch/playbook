@@ -53,7 +53,7 @@ export default function HistoricalViewGraph({ historicalData }) {
   };
 
   return (
-    <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative overflow-hidden flex-shrink-0 min-h-20 max-h-24 h-24 flex flex-col">
+    <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 relative overflow-hidden flex-shrink-0 min-h-20 max-h-24 h-24 flex flex-col">
       <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
       <div className="absolute top-1.5 right-2.5 z-10">
         <div className="flex rounded border border-pb_lightgray">
