@@ -15,6 +15,9 @@ import PlayerProfileBlock from '@/components/dashboard/RosterPage/PlayerProfileB
 import RosterFullBlock from '@/components/dashboard/RosterPage/RosterBlock/RosterFullBlock';
 import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFullImportLeague';
 
+// NEW STUFF FROM ALIGN
+import WidgetSpendingSummary from '../RosterPage/PlaybookScore/widget-spending-summary';
+
 
 export default function LeagueRosterPage() {
 
@@ -68,7 +71,8 @@ export default function LeagueRosterPage() {
                     <PlayerProfileBlock className="h-full"/>
                 </div>
                 <div className="min-h-0">
-                    <PlaybookScoreBlock className="h-full"/>
+                    {/* <PlaybookScoreBlock className="h-full"/> */}
+                    <WidgetSpendingSummary className="h-full"/>
                 </div>
             </div>
             {/* Bottom Row */}

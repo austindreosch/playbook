@@ -1,8 +1,8 @@
 'use client';
 
 import { UserProvider } from '@auth0/nextjs-auth0/client';
-import { shouldBypassAuth, mockUser } from '../lib/devSession';
 import { createContext, useContext } from 'react';
+import { mockUser, shouldBypassAuth } from '../lib/devSession';
 
 // Create a context for the development bypass
 const DevAuthContext = createContext();

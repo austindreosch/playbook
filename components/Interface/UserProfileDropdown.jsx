@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -6,15 +6,25 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu-pb.jsx";
 import { getDisplayEmail, getInitials } from '@/utilities/stringUtils';
 import { CreditCard, LogOut, Settings, User, UserPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { Button } from "../ui/button.tsx";
 
 const UserProfileDropdown = ({ user }) => {
     const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
     const isAdmin = user && user.sub === adminSub;
+
+    // Default to a loading state if user data isn't available yet
+    if (!user) {
+        return (
+            <Button variant="ghost" size="icon" className="rounded-full">
+                <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
+            </Button>
+        );
+    }
 
     return (
         <DropdownMenu>

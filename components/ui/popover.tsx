@@ -85,4 +85,8 @@ export {
   PopoverTrigger as Trigger,
   PopoverContent as Content,
   PopoverClose as Close,
+  // Backward compatibility exports
+  PopoverRoot as Popover,
+  PopoverTrigger,
+  PopoverContent,
 };

@@ -439,4 +439,10 @@ export {
   SelectTrigger as Trigger,
   TriggerIcon,
   SelectValue as Value,
+  // Backward compatibility exports
+  SelectRoot as Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 };

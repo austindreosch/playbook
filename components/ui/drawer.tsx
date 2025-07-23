@@ -153,4 +153,13 @@ export {
   DrawerTitle as Title,
   DrawerBody as Body,
   DrawerFooter as Footer,
+  // Backward compatibility exports
+  DrawerRoot as Drawer,
+  DrawerTrigger,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+  DrawerBody as DrawerDescription, // Map description to body for compatibility
 };

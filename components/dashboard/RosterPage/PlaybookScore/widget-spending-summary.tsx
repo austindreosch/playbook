@@ -1,21 +1,21 @@
 'use client';
 
 import {
-    RiFileListLine,
-    RiMoneyDollarCircleLine,
-    RiPieChartLine,
-    RiShoppingBag3Line,
+  RiFileListLine,
+  RiMoneyDollarCircleLine,
+  RiPieChartLine,
+  RiShoppingBag3Line,
 } from '@remixicon/react';
 import * as React from 'react';
 
-import IllustrationEmptySpendingSummary from '@/components/empty-state-illustrations/spending-summary';
-import SpendingSummaryPieChart from '@/components/spending-summary-pie-chart';
+import IllustrationEmptySpendingSummary from '@/components/alignui/empty-state-illustrations/spending-summary';
+import SpendingSummaryPieChart from '@/components/alignui/spending-summary-pie-chart';
+import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Divider from '@/components/ui/divider';
 import * as Select from '@/components/ui/select';
-import * as WidgetBox from '@/components/widget-box';
 import { cnExt } from '@/utils/cn';
 
-import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
+// import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 
 const periods = [
   {
@@ -50,7 +50,7 @@ export default function WidgetSpendingSummary({
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiPieChartLine} />
         Spending Summary
-        <Select.Root variant='compact' size='xsmall' defaultValue='last-year'>
+        <Select.Root variant='compact' size='xsmall' defaultValue='last-year' hasError={false}>
           <Select.Trigger>
             <Select.Value />
           </Select.Trigger>
@@ -123,7 +123,7 @@ export default function WidgetSpendingSummary({
             Your weekly spending limit is{' '}
             <span className='text-label-xs'>$2000</span>.
           </div>
-          <IconInfoCustomFill className='size-4 text-text-disabled-300' />
+          <img src="/icons/icon-info-custom-fill.svg" className='size-4 text-text-disabled-300' />
         </div>
       </div>
     </WidgetBox.Root>

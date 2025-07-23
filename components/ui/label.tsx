@@ -70,4 +70,4 @@ function LabelSub({
   );
 }
 
-export { LabelRoot as Root, LabelAsterisk as Asterisk, LabelSub as Sub };
+export { LabelRoot as Root, LabelAsterisk as Asterisk, LabelSub as Sub, LabelRoot as Label };

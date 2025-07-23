@@ -121,4 +121,9 @@ export {
   TooltipRoot as Root,
   TooltipTrigger as Trigger,
   TooltipContent as Content,
+  // Backward compatibility exports
+  TooltipProvider,
+  TooltipRoot as Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 };

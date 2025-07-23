@@ -1,6 +1,6 @@
 import { Cell, Pie, PieChart } from 'recharts';
 
-import { ChartContainer, type ChartConfig } from '@/components/chart';
+import { ChartContainer, type ChartConfig } from '@/components/alignui/chart';
 
 export const CIRCLE_SIZE = 248;
 const INNER_RADIUS = 99;
