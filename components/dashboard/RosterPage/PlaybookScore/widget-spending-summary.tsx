@@ -49,7 +49,7 @@ export default function WidgetSpendingSummary({
     <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiPieChartLine} />
-        Spending Summary
+        Playbook Score
         <Select.Root variant='compact' size='xsmall' defaultValue='last-year' hasError={false}>
           <Select.Trigger>
             <Select.Value />
@@ -64,20 +64,20 @@ export default function WidgetSpendingSummary({
         </Select.Root>
       </WidgetBox.Header>
 
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5'>
         <Divider.Root />
 
-        <div className='mx-auto grid w-fit justify-center'>
+        <div className='mx-auto grid w-full max-w-fit justify-center'>
           <SpendingSummaryPieChart
             data={chartData}
             className='[grid-area:1/1]'
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 pb-2 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-subheading-xs text-text-sub-600'>
+            {/* <span className='pointer-events-auto text-subheading-xs text-text-sub-600'>
               SPEND
-            </span>
-            <span className='pointer-events-auto text-title-h5 text-text-strong-950'>
-              $1,800.00
+            </span> */}
+            <span className='pointer-events-auto text-title-h1 text-text-strong-950'>
+              981
             </span>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function WidgetSpendingSummary({
         <Divider.Root />
 
         <div className='grid grid-cols-3 divide-x divide-stroke-soft-200'>
-          <div className='flex flex-col items-center gap-3 px-2 text-center'>
+          <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
             <div className='flex size-8 items-center justify-center rounded-full bg-information-lighter'>
               <RiShoppingBag3Line className='size-5 text-information-base' />
             </div>
@@ -96,7 +96,7 @@ export default function WidgetSpendingSummary({
               <div className='text-label-sm'>$900.00</div>
             </div>
           </div>
-          <div className='flex flex-col items-center gap-3 px-2 text-center'>
+          <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
             <div className='flex size-8 items-center justify-center rounded-full bg-verified-lighter'>
               <RiFileListLine className='size-5 text-verified-base' />
             </div>
@@ -107,7 +107,7 @@ export default function WidgetSpendingSummary({
               <div className='text-label-sm'>$600.00</div>
             </div>
           </div>
-          <div className='flex flex-col items-center gap-3 px-2 text-center'>
+          <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
             <div className='flex size-8 items-center justify-center rounded-full bg-faded-lighter'>
               <RiMoneyDollarCircleLine className='size-5 text-faded-base' />
             </div>

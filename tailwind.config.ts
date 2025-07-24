@@ -4,177 +4,177 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 
 export const texts = {
   'title-h1': [
-    '3.5rem',
+    '2.75rem',
     {
-      lineHeight: '4rem',
+      lineHeight: '3.25rem',
       letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
   'title-h2': [
-    '3rem',
+    '2.25rem',
     {
-      lineHeight: '3.5rem',
+      lineHeight: '2.75rem',
       letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
   'title-h3': [
-    '2.5rem',
+    '1.875rem',
     {
-      lineHeight: '3rem',
+      lineHeight: '2.25rem',
       letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
   'title-h4': [
-    '2rem',
+    '1.5rem',
     {
-      lineHeight: '2.5rem',
+      lineHeight: '1.875rem',
       letterSpacing: '-0.005em',
       fontWeight: '500',
     },
   ],
   'title-h5': [
-    '1.5rem',
+    '1.125rem',
     {
-      lineHeight: '2rem',
+      lineHeight: '1.375rem',
       letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
   'title-h6': [
-    '1.25rem',
+    '1rem',
     {
-      lineHeight: '1.75rem',
+      lineHeight: '1.375rem',
       letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
   'label-xl': [
-    '1.5rem',
+    '1.125rem',
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem',
       letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
   'label-lg': [
-    '1.125rem',
+    '0.875rem',
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.25rem',
       letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
   'label-md': [
-    '1rem',
+    '0.8rem',
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.2rem',
       letterSpacing: '-0.011em',
       fontWeight: '500',
     },
   ],
   'label-sm': [
-    '.875rem',
+    '0.7rem',
     {
-      lineHeight: '1.25rem',
+      lineHeight: '0.9rem',
       letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],
   'label-xs': [
-    '.75rem',
+    '0.625rem',
     {
-      lineHeight: '1rem',
+      lineHeight: '0.8rem',
       letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
   'paragraph-xl': [
-    '1.5rem',
+    '1.125rem',
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem',
       letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
   'paragraph-lg': [
-    '1.125rem',
+    '0.875rem',
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.25rem',
       letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
   'paragraph-md': [
-    '1rem',
+    '0.8rem',
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.2rem',
       letterSpacing: '-0.011em',
       fontWeight: '400',
     },
   ],
   'paragraph-sm': [
-    '.875rem',
+    '0.7rem',
     {
-      lineHeight: '1.25rem',
+      lineHeight: '1rem',
       letterSpacing: '-0.006em',
       fontWeight: '400',
     },
   ],
   'paragraph-xs': [
-    '.75rem',
+    '0.625rem',
     {
-      lineHeight: '1rem',
+      lineHeight: '0.8rem',
       letterSpacing: '0em',
       fontWeight: '400',
     },
   ],
   'subheading-md': [
-    '1rem',
+    '0.8rem',
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.2rem',
       letterSpacing: '0.06em',
       fontWeight: '500',
     },
   ],
   'subheading-sm': [
-    '.875rem',
+    '0.7rem',
     {
-      lineHeight: '1.25rem',
+      lineHeight: '1rem',
       letterSpacing: '0.06em',
       fontWeight: '500',
     },
   ],
   'subheading-xs': [
-    '.75rem',
+    '0.6rem',
     {
-      lineHeight: '1rem',
+      lineHeight: '0.75rem',
       letterSpacing: '0.04em',
       fontWeight: '500',
     },
   ],
   'subheading-2xs': [
-    '.6875rem',
+    '0.55rem',
     {
-      lineHeight: '.75rem',
+      lineHeight: '0.7rem',
       letterSpacing: '0.02em',
       fontWeight: '500',
     },
   ],
   'doc-label': [
-    '1.125rem',
+    '0.875rem',
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem',
       letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
   'doc-paragraph': [
-    '1.125rem',
+    '0.875rem',
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem',
       letterSpacing: '-0.015em',
       fontWeight: '400',
     },

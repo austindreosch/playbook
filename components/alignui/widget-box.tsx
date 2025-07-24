@@ -8,7 +8,7 @@ function WidgetBox({
   return (
     <div
       className={cnExt(
-        'w-full min-w-0 rounded-2xl bg-bg-white-0 p-4 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
+        'w-full min-w-0 rounded-lg bg-bg-white-0 p-3 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
         className,
       )}
       {...rest}
@@ -47,7 +47,7 @@ function WidgetBoxHeaderIcon<T extends React.ElementType>({
 }
 
 export {
-  WidgetBox as Root,
   WidgetBoxHeader as Header,
-  WidgetBoxHeaderIcon as HeaderIcon,
+  WidgetBoxHeaderIcon as HeaderIcon, WidgetBox as Root
 };
+

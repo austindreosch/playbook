@@ -43,6 +43,24 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    /* AlignUI Color System */
+    --neutral-950: 221.54 31.71% 8.04%;
+    --neutral-900: 226.15 21.31% 11.96%;
+    --neutral-800: 227.14 17.07% 16.08%;
+    --neutral-700: 221.25 15.69% 20%;
+    --neutral-600: 222 10.87% 36.08%;
+    --neutral-500: 221.05 7.76% 48.04%;
+    --neutral-400: 220 11.48% 64.12%;
+    --neutral-300: 218.57 15.22% 81.96%;
+    --neutral-200: 220 17.65% 90%;
+    --neutral-100: 210 30% 96.08%;
+    --neutral-50: 216 33.33% 97.06%;
+    --neutral-0: 0 0% 100%;
+
+    --bg-white-0: var(--neutral-0);
+    --stroke-soft-200: var(--neutral-200);
+    --text-sub-600: var(--neutral-600);
   }
   .dark {
     --background: 222.2 84% 4.9%;
