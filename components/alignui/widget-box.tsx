@@ -23,8 +23,8 @@ function WidgetBoxHeader({
   return (
     <div
       className={cnExt(
-        'grid auto-cols-auto grid-flow-col grid-cols-1 items-center gap-2 has-[>svg:first-child]:grid-cols-[auto,minmax(0,1fr)]',
-        'h-12 pb-4 text-label-sm md:text-label-md',
+        'flex items-center gap-2',
+        'h-8 pb-3 text-label-sm md:text-label-lg',
         className,
       )}
       {...rest}
@@ -40,7 +40,7 @@ function WidgetBoxHeaderIcon<T extends React.ElementType>({
   const Component = as || 'div';
   return (
     <Component
-      className={cnExt('size-6 text-text-sub-600', className)}
+      className={cnExt('icon text-text-sub-600', className)}
       {...rest}
     />
   );

@@ -177,7 +177,7 @@ export const selectVariants = tv({
       size: 'xsmall',
       variant: 'compact',
       class: {
-        triggerRoot: 'h-8 gap-0.5 rounded-lg pl-2.5 pr-1.5',
+        triggerRoot: 'h-6 gap-0.5 rounded-lg pl-2.5 pr-1.5',
         triggerIcon: '-ml-0.5 size-4',
         selectItemIcon: 'size-4 bg-[length:1rem] group-has-[&]/trigger:-ml-0.5',
       },

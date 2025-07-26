@@ -15,7 +15,7 @@ import * as Badge from '@/components/ui/badge';
 import * as Divider from '@/components/ui/divider';
 import * as Select from '@/components/ui/select';
 import { cnExt } from '@/utils/cn';
-import { ClipboardMinus } from 'lucide-react';
+import { ClipboardMinus, Compass } from 'lucide-react';
 
 // import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 
@@ -50,9 +50,10 @@ export default function WidgetSpendingSummary({
   return (
     <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
-        <WidgetBox.HeaderIcon as={RiPieChartLine} />
+        <WidgetBox.HeaderIcon as={Compass} className="icon" />
         Playbook Score
-        <Select.Root variant='compact' size='xsmall' defaultValue='last-year' hasError={false}>
+        <div className="ml-auto">
+          <Select.Root variant='compact' size='xsmall' defaultValue='last-year' hasError={false}>
           <Select.Trigger>
             <Select.Value />
           </Select.Trigger>
@@ -64,6 +65,7 @@ export default function WidgetSpendingSummary({
             ))}
           </Select.Content>
         </Select.Root>
+        </div>
       </WidgetBox.Header>
 
       <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5'>
@@ -124,14 +126,14 @@ export default function WidgetSpendingSummary({
           </div>
         </div> */}
 
-        <div className='flex items-center gap-2'>
-          <ClipboardMinus className='icon-sm text-text-disabled-300' />
-          <div className='text-label-sm text-text-strong-950'>Standard</div>
-          <div className='text-title-h5 text-text-strong-950'>962</div>
-              <Badge.Root variant='light' color='green' size='medium'>
-                +1.8% 
-              </Badge.Root>
-            </div>
+        <div className='flex items-center gap-2 text-text-disabled-300'>
+          <ClipboardMinus className='icon-sm ' />
+          <div className='text-label-sm'>Standard</div>
+          <div className='text-label-lg '>962</div>
+          <Badge.Root variant='outline' color='gray' size='medium'>
+            3
+          </Badge.Root>
+        </div>
 
         {/* weekly spending limit */}
 
@@ -140,7 +142,7 @@ export default function WidgetSpendingSummary({
             Your weekly spending limit is{' '}
             <span className='text-label-xs'>$2000</span>.
           </div>
-          <img src="/icons/icon-info-custom-fill.svg" className='size-4 text-text-disabled-300' />
+          <img src="/icons/icon-info-custom-fill.svg" alt="" className='size-4 text-text-disabled-300' />
         </div>
       </div>
     </WidgetBox.Root>

@@ -45,6 +45,9 @@ export const badgeVariants = tv({
       stroke: {
         root: 'ring-1 ring-inset ring-current',
       },
+      outline: {
+        root: 'bg-white ring-1 ring-inset ring-stroke-soft-200',
+      },
     },
     color: {
       gray: {},
@@ -356,6 +359,79 @@ export const badgeVariants = tv({
       color: 'teal',
       class: {
         root: 'text-stable-base',
+      },
+    },
+    //#endregion
+
+    //#region variant=outline
+    {
+      variant: 'outline',
+      color: 'gray',
+      class: {
+        root: 'text-faded-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'blue',
+      class: {
+        root: 'text-information-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'orange',
+      class: {
+        root: 'text-warning-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'red',
+      class: {
+        root: 'text-error-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'green',
+      class: {
+        root: 'text-success-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'yellow',
+      class: {
+        root: 'text-away-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'purple',
+      class: {
+        root: 'text-feature-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'sky',
+      class: {
+        root: 'text-verified-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'pink',
+      class: {
+        root: 'text-highlighted-dark',
+      },
+    },
+    {
+      variant: 'outline',
+      color: 'teal',
+      class: {
+        root: 'text-stable-dark',
       },
     },
     //#endregion

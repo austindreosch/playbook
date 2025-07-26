@@ -1,52 +1,35 @@
 # Tailwind Config Size Hierarchy Reference
 
-## 📝 **Text Sizes**
+## 📝 **Text Sizes** (Ordered by Size - Largest to Smallest)
 
-### **Title Hierarchy** (font-weight: 500)
-| Class | Size | Pixels | Use Case |
-|-------|------|--------|----------|
-| `text-title-h1` | 2.75rem | 44px | Largest headings |
-| `text-title-h2` | 2.25rem | 36px | Main page titles |
-| `text-title-h3` | 1.875rem | 30px | Section headers |
-| `text-title-h4` | 1.5rem | 24px | Subsection headers |
-| `text-title-h5` | 1.125rem | 18px | Card titles |
-| `text-title-h6` | 1rem | 16px | Small headings |
-
-### **Label Hierarchy** (font-weight: 500)
-| Class | Size | Pixels | Use Case |
-|-------|------|--------|----------|
-| `text-label-xl` | 1.125rem | 18px | Large labels |
-| `text-label-lg` | 0.875rem | 14px | Standard labels |
-| `text-label-md` | 0.8rem | 12.8px | Medium labels |
-| `text-label-sm` | 0.7rem | 11.2px | Small labels |
-| `text-label-xs` | 0.625rem | 10px | Extra small labels |
-
-### **Paragraph Hierarchy** (font-weight: 400)
-| Class | Size | Pixels | Use Case |
-|-------|------|--------|----------|
-| `text-paragraph-xl` | 1.125rem | 18px | Large body text |
-| `text-paragraph-lg` | 0.875rem | 14px | Standard body text |
-| `text-paragraph-md` | 0.8rem | 12.8px | Medium body text |
-| `text-paragraph-sm` | 0.7rem | 11.2px | Small body text |
-| `text-paragraph-xs` | 0.625rem | 10px | Extra small body text |
-
-### **Subheading Hierarchy** (font-weight: 500, uppercase)
-| Class | Size | Pixels | Use Case |
-|-------|------|--------|----------|
-| `text-subheading-md` | 0.8rem | 12.8px | Medium subheadings |
-| `text-subheading-sm` | 0.7rem | 11.2px | Small subheadings |
-| `text-subheading-xs` | 0.6rem | 9.6px | Extra small subheadings |
-| `text-subheading-2xs` | 0.55rem | 8.8px | Tiny subheadings |
-
-### **Document Text**
-| Class | Size | Pixels | Use Case |
-|-------|------|--------|----------|
-| `text-doc-label` | 0.875rem | 14px | Document labels |
-| `text-doc-paragraph` | 0.875rem | 14px | Document body text |
+| Class | Size | Pixels | Category | Use Case |
+|-------|------|--------|----------|----------|
+| `text-title-h1` | 2.75rem | 44px | Title | Largest headings |
+| `text-title-h2` | 2.25rem | 36px | Title | Main page titles |
+| `text-title-h3` | 1.875rem | 30px | Title | Section headers |
+| `text-title-h4` | 1.5rem | 24px | Title | Subsection headers |
+| `text-title-h5` | 1.125rem | 18px | Title | Card titles |
+| `text-title-h6` | 1rem | 16px | Title | Small headings |
+| `text-label-xl` | 1.125rem | 18px | Label | Large labels |
+| `text-paragraph-xl` | 1.125rem | 18px | Paragraph | Large body text |
+| `text-label-lg` | 0.875rem | 14px | Label | Standard labels |
+| `text-paragraph-lg` | 0.875rem | 14px | Paragraph | Standard body text |
+| `text-doc-label` | 0.875rem | 14px | Document | Document labels |
+| `text-doc-paragraph` | 0.875rem | 14px | Document | Document body text |
+| `text-label-md` | 0.8rem | 12.8px | Label | Medium labels |
+| `text-paragraph-md` | 0.8rem | 12.8px | Paragraph | Medium body text |
+| `text-subheading-md` | 0.8rem | 12.8px | Subheading | Medium subheadings |
+| `text-label-sm` | 0.7rem | 11.2px | Label | Small labels |
+| `text-paragraph-sm` | 0.7rem | 11.2px | Paragraph | Small body text |
+| `text-subheading-sm` | 0.7rem | 11.2px | Subheading | Small subheadings |
+| `text-label-xs` | 0.625rem | 10px | Label | Extra small labels |
+| `text-paragraph-xs` | 0.625rem | 10px | Paragraph | Extra small body text |
+| `text-subheading-xs` | 0.6rem | 9.6px | Subheading | Extra small subheadings |
+| `text-subheading-2xs` | 0.55rem | 8.8px | Subheading | Tiny subheadings |
 
 ---
 
-## 🎯 **Icon Sizes**
+## 🎯 **Icon Sizes** (Ordered by Size - Largest to Smallest)
 
 | Class | Size | Pixels | Use Case |
 |-------|------|--------|----------|
@@ -64,7 +47,7 @@
 |-------|------|--------|----------|
 | `h-button` | 1.875rem | 30px | Standard button height |
 
-### **Custom Widths** (in rem)
+### **Custom Widths** (Ordered by Size - Largest to Smallest)
 | Class | Size | Pixels |
 |-------|------|--------|
 | `w-120` | 30rem | 480px |
@@ -92,23 +75,23 @@
 | `w-54` | 13.5rem | 216px |
 | `w-50` | 12.5rem | 200px |
 
-### **Custom Heights**
+### **Custom Heights** (Ordered by Size - Largest to Smallest)
 | Class | Size | Pixels |
 |-------|------|--------|
 | `h-30` | 7.5rem | 120px |
 | `h-18` | 4.5rem | 72px |
 
-### **Max Heights**
+### **Max Heights** (Ordered by Size - Largest to Smallest)
 | Class | Size | Pixels |
 |-------|------|--------|
 | `max-h-8xl` | 90rem | 1440px |
 | `max-h-7xl` | 80rem | 1280px |
 | `max-h-6xl` | 72rem | 1152px |
-| `max-h-5xl` | 64rem | 1024px |
+| `max-h-5xl` | 64rem | 1024px |  
 | `max-h-4xl` | 56rem | 896px |
 | `max-h-3xl` | 48rem | 768px |
 
-### **Max Widths**
+### **Max Widths** (Ordered by Size - Largest to Smallest)
 | Class | Size | Pixels |
 |-------|------|--------|
 | `max-w-11xl` | 120rem | 1920px |
@@ -119,7 +102,7 @@
 
 ---
 
-## 🔄 **Border Radius**
+## 🔄 **Border Radius** (Ordered by Size - Largest to Smallest)
 | Class | Size | Pixels |
 |-------|------|--------|
 | `rounded-20` | 1.25rem | 20px |
@@ -129,23 +112,41 @@
 
 ## 📱 **Breakpoints**
 
-### **Width Breakpoints**
-| Class | Size |
-|-------|------|
-| `mdlg` | 896px |
-| `xs` | 475px |
-| `2xs` | 375px |
-| `3xs` | 275px |
+### **Width Breakpoints** (Ordered by Size - Largest to Smallest)
 
-### **Height Breakpoints**
-| Class | Size |
-|-------|------|
-| `2xlh` | min-height: 2000px |
-| `xlh` | min-height: 1400px |
-| `lgh` | min-height: 1250px |
-| `mdh` | min-height: 890px |
-| `smh` | min-height: 610px |
-| `xsh` | min-height: 480px |
+| Class | Size | Notes |
+|-------|------|-------|
+| `2xl` | 1536px | Standard Tailwind |
+| `xl` | 1280px | Standard Tailwind |
+| `lg` | 1024px | Standard Tailwind |
+| `mdlg` | 896px | Custom |
+| `md` | 768px | Standard Tailwind |
+| `sm` | 640px | Standard Tailwind |
+| `xs` | 475px | Custom |
+| `2xs` | 375px | Custom |
+| `3xs` | 275px | Custom |
+
+### **Height Breakpoints** (Ordered by Size - Largest to Smallest)
+
+#### **Custom Height Breakpoints**
+| Class | Size | Use Case |
+|-------|------|----------|
+| `2xlh` | min-height: 2000px | Very tall screens |
+| `xlh` | min-height: 1400px | Extra tall screens |
+| `lgh` | min-height: 1250px | Large tall screens |
+| `mdh` | min-height: 890px | Medium tall screens |
+| `smh` | min-height: 610px | Small tall screens |
+| `xsh` | min-height: 480px | Extra small tall screens |
+
+### **Container Breakpoints**
+| Class | Size | Use Case |
+|-------|------|----------|
+| `container` | Responsive | Centered container with max-widths |
+| `container-sm` | 640px | Small container |
+| `container-md` | 768px | Medium container |
+| `container-lg` | 1024px | Large container |
+| `container-xl` | 1280px | Extra large container |
+| `container-2xl` | 1540px | Extra extra large container |
 
 ---
 
