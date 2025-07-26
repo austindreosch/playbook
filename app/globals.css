@@ -84,6 +84,19 @@
     --sky-100: 200 100% 91.76%;
     --sky-50: 201 100% 96.08%;
 
+    /* Green color palette */
+    --green-950: 148.47 72.84% 15.88%;
+    --green-900: 148.46 63.93% 23.92%;
+    --green-800: 147.69 63.64% 28.04%;
+    --green-700: 148.21 71.78% 31.96%;
+    --green-600: 147.95 71.57% 40%;
+    --green-500: 148.15 72.32% 43.92%;
+    --green-400: 147.78 72.32% 56.08%;
+    --green-300: 147.96 72.03% 71.96%;
+    --green-200: 148.24 71.83% 86.08%;
+    --green-100: 154.88 84.31% 90%;
+    --green-50: 147.69 72.22% 92.94%;
+
     /* Semantic color mappings */
     --bg-white-0: var(--neutral-0);
     --bg-soft-200: var(--neutral-200);
@@ -102,6 +115,17 @@
     --verified-lighter: var(--sky-50);
     --faded-base: var(--neutral-500);
     --faded-lighter: var(--neutral-100);
+    
+    --success-dark: var(--green-950);
+    --success-base: var(--green-500);
+    --success-light: var(--green-200);
+    --success-lighter: var(--green-50);
+    
+    /* Additional semantic colors */
+    --bg-weak-50: var(--neutral-50);
+    --text-soft-400: var(--neutral-400);
+    --primary-base: var(--blue-500);
+    --primary-alpha-10: var(--blue-500) / 10%;
   }
   .dark {
     --background: 222.2 84% 4.9%;

@@ -11,9 +11,11 @@ import * as React from 'react';
 import IllustrationEmptySpendingSummary from '@/components/alignui/empty-state-illustrations/spending-summary';
 import SpendingSummaryPieChart from '@/components/alignui/spending-summary-pie-chart';
 import * as WidgetBox from '@/components/alignui/widget-box';
+import * as Badge from '@/components/ui/badge';
 import * as Divider from '@/components/ui/divider';
 import * as Select from '@/components/ui/select';
 import { cnExt } from '@/utils/cn';
+import { ClipboardMinus } from 'lucide-react';
 
 // import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 
@@ -84,7 +86,11 @@ export default function WidgetSpendingSummary({
 
         <Divider.Root />
 
-        <div className='grid grid-cols-3 divide-x divide-stroke-soft-200'>
+
+
+      {/* 3 columns */}
+
+        {/* <div className='grid grid-cols-3 divide-x divide-stroke-soft-200'>
           <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
             <div className='flex size-8 items-center justify-center rounded-full bg-information-lighter'>
               <RiShoppingBag3Line className='size-5 text-information-base' />
@@ -116,7 +122,18 @@ export default function WidgetSpendingSummary({
               <div className='text-label-sm'>$900.00</div>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        <div className='flex items-center gap-2'>
+          <ClipboardMinus className='icon-sm text-text-disabled-300' />
+          <div className='text-label-sm text-text-strong-950'>Standard</div>
+          <div className='text-title-h5 text-text-strong-950'>962</div>
+              <Badge.Root variant='light' color='green' size='medium'>
+                +1.8% 
+              </Badge.Root>
+            </div>
+
+        {/* weekly spending limit */}
 
         <div className='flex items-center gap-1 rounded-md bg-bg-white-0 py-1.5 pl-2.5 pr-1.5 ring-1 ring-inset ring-stroke-soft-200'>
           <div className='flex-1 text-paragraph-xs text-text-sub-600'>
