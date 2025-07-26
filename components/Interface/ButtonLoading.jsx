@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 import { Loader2 } from "lucide-react";
 
 export function ButtonLoading() {

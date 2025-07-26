@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/alignui/button';
 import { Check, LayoutDashboard, RotateCcw, X } from 'lucide-react';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 

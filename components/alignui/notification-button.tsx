@@ -8,14 +8,14 @@ import {
   RiSettings2Line,
 } from '@remixicon/react';
 
-import * as Avatar from '@/components/ui/avatar';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as Divider from '@/components/ui/divider';
-import * as LinkButton from '@/components/ui/link-button';
-import * as Popover from '@/components/ui/popover';
-import * as TabMenuHorizontal from '@/components/ui/tab-menu-horizontal';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as CompactButton from '@/components/alignui/compact-button';
+import * as Divider from '@/components/alignui/divider';
+import * as LinkButton from '@/components/alignui/link-button';
+import * as Popover from '@/components/alignui/popover';
+import * as TabMenuHorizontal from '@/components/alignui/tab-menu-horizontal';
 import * as TopbarItemButton from '@/components/topbar-item-button';
 
 export default function NotificationButton({

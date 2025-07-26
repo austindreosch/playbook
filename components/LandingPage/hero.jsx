@@ -5,7 +5,7 @@ import Slide2 from '@/components/LandingPage/assets/2.jpg';
 import Slide3 from '@/components/LandingPage/assets/3.jpg';
 import BasketballHero from '@/components/LandingPage/assets/basketball-hero.png';
 import JumbotronImage from '@/components/LandingPage/assets/jumbotron.png';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/alignui/button';
 import { useDevUser } from '@/components/DevUserProvider';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

@@ -17,7 +17,7 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { cn } from '@/utils/cn';
-import * as Divider from '@/components/ui/divider';
+import * as Divider from '@/components/alignui/divider';
 import { CompanySwitch } from '@/components/company-switch';
 import { UserButton } from '@/components/user-button';
 

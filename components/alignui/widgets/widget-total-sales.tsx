@@ -19,9 +19,9 @@ import {
 } from 'recharts';
 
 import { cn } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as ButtonGroup from '@/components/ui/button-group';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as ButtonGroup from '@/components/alignui/button-group';
 import { weeklySalesData } from '@/app/(main)/analytics/total-sales-data';
 
 export function WidgetTotalSales() {

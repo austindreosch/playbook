@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 import { useToast } from "@/hooks/use-toast";
 import useMediaQuery from '@/hooks/useMediaQuery'; // Import the new hook
 import { SPORT_CONFIGS } from "@/lib/config"; // Import SPORT_CONFIGS

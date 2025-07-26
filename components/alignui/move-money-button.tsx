@@ -2,7 +2,7 @@
 
 import { RiArrowRightUpLine } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
+import * as Button from '@/components/alignui/button';
 
 export function MoveMoneyButton({ className }: { className?: string }) {
   return (

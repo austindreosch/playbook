@@ -3,7 +3,7 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
 
-import * as Button from '@/components/ui/button';
+import * as Button from '@/components/alignui/button';
 
 import 'leaflet/dist/leaflet.css';
 

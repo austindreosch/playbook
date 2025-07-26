@@ -1,4 +1,4 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/alignui/popover';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GitCommitHorizontal, Settings, X } from 'lucide-react';
 import { useState } from 'react';

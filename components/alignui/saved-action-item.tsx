@@ -5,9 +5,9 @@ import { RiArrowRightSLine } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
 import { currencyFormatter } from '@/utils/number-formatter';
-import * as Avatar from '@/components/ui/avatar';
-import * as Badge from '@/components/ui/badge';
-import * as CompactButton from '@/components/ui/compact-button';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Badge from '@/components/alignui/badge';
+import * as CompactButton from '@/components/alignui/compact-button';
 
 export type SavedAction = {
   name: string;

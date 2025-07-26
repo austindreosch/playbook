@@ -18,7 +18,7 @@ import {
   useMapEvent,
 } from 'react-leaflet';
 
-import * as CompactButton from '@/components/ui/compact-button';
+import * as CompactButton from '@/components/alignui/compact-button';
 
 import type { LocationData } from './widget-geogprahy';
 

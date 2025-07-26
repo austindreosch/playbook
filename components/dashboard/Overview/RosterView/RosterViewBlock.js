@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/alignui/button';
 import { AlertTriangle, FileText, FileUp, Heart, Maximize2, Plus, SlidersHorizontal, Snowflake, Target, TrendingDown, TrendingUp, Wrench } from 'lucide-react';
 import Link from 'next/link';
 

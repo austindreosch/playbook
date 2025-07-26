@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Tooltip from '@/components/alignui/tooltip';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';
 

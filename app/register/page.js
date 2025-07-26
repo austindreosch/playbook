@@ -2,9 +2,9 @@
 
 'use client'
 
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/alignui/checkbox';
+import { Input } from '@/components/alignui/input';
+import { Label } from '@/components/alignui/label';
 import { Separator } from '@/components/ui/separator';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { baseball, basketball, football, footballHelmet, golfDriver, iceHockey, soccerBall, steeringWheel, tire, toolbox } from '@lucide/lab';

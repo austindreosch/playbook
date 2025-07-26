@@ -1,8 +1,8 @@
 'use client';
 
 import TraitTag from '@/components/common/TraitTag';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Root as ButtonRoot } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/alignui/popover';
+import { Root as ButtonRoot } from '@/components/alignui/button';
 import { useEffect, useRef, useState } from 'react';
 
 export default function TraitTagContainer({ traitIds, maxRows = 3, className = "" }) {

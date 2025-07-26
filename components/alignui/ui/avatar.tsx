@@ -322,24 +322,4 @@ export {
   AvatarStatus as Status,
   AvatarBrandLogo as BrandLogo,
   AvatarNotification as Notification,
-  AvatarRoot as Avatar,
-  AvatarImage,
 };
-
-// Create AvatarFallback component for compatibility
-const AvatarFallback = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { placeholderType?: 'user' | 'company' }>(
-  ({ children, className, placeholderType = 'user', ...rest }, forwardedRef) => {
-    return (
-      <div
-        ref={forwardedRef}
-        className={cn('flex items-center justify-center size-full rounded-full bg-bg-soft-200 text-static-black', className)}
-        {...rest}
-      >
-        {children || (placeholderType === 'company' ? <IconEmptyCompany /> : <IconEmptyUser />)}
-      </div>
-    );
-  }
-);
-AvatarFallback.displayName = 'AvatarFallback';
-
-export { AvatarFallback };

@@ -21,7 +21,7 @@ import {
   compactNumFormatter,
   currencyFormatter,
 } from '@/utils/number-formatter';
-import { tooltipVariants } from '@/components/ui/tooltip';
+import { tooltipVariants } from '@/components/alignui/tooltip';
 import { type ChartConfig } from '@/components/chart';
 
 const YAxisLeftTick = ({ y, payload: { value } }: any) => (

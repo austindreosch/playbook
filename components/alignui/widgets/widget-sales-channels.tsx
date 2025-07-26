@@ -4,9 +4,9 @@ import * as React from 'react';
 import * as SelectPrimitives from '@radix-ui/react-select';
 import { RiArrowDownSLine } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
-import * as Select from '@/components/ui/select';
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Button from '@/components/alignui/button';
+import * as Select from '@/components/alignui/select';
+import * as Tooltip from '@/components/alignui/tooltip';
 
 import { CategoryBarChart } from '../chart-category-bar';
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';

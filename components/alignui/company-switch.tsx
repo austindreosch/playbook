@@ -4,7 +4,7 @@ import * as React from 'react';
 import { RiCheckLine, RiExpandUpDownLine } from '@remixicon/react';
 
 import { cn, cnExt } from '@/utils/cn';
-import * as Dropdown from '@/components/ui/dropdown';
+import * as Dropdown from '@/components/alignui/dropdown';
 
 const companies = [
   {

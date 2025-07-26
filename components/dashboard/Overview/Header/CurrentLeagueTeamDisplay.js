@@ -2,7 +2,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card";
+} from "@/components/alignui/hover-card";
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { BookUser } from 'lucide-react';
 

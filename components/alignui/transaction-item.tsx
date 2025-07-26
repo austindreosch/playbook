@@ -7,7 +7,7 @@ import { type Transaction } from '@/lib/cards-data';
 import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/date-formatter';
 import { currencyFormatter } from '@/utils/number-formatter';
-import * as CompactButton from '@/components/ui/compact-button';
+import * as CompactButton from '@/components/alignui/compact-button';
 
 export const TransactionItem = React.forwardRef<
   HTMLButtonElement,

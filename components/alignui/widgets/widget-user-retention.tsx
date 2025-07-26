@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';
 

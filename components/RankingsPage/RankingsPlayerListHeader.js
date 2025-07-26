@@ -11,17 +11,17 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from '@/components/alignui/button';
+import { Input } from "@/components/alignui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/alignui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/alignui/select";
+import { Switch } from "@/components/alignui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/alignui/tooltip";
 import { SPORT_CONFIGS } from '@/lib/config';
 import useUserRankings from '@/stores/useUserRankings';
 import { ArrowUpNarrowWideIcon, Loader2, MoreHorizontal, SigmaSquareIcon } from 'lucide-react';
 import React, { useState } from 'react';
-import { Label } from '../ui/label';
+import { Label } from '../alignui/label';
 import { DataViewSelector } from './Selectors/DataViewSelector';
 import { FilterSelector } from './Selectors/FilterSelector';
 import { PositionSelector } from './Selectors/PositionSelector';

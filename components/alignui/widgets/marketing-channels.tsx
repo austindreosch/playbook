@@ -9,8 +9,8 @@ import {
   RiUser6Line,
 } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Button from '@/components/alignui/button';
+import * as Tooltip from '@/components/alignui/tooltip';
 import { CategoryBarChart } from '@/components/chart-category-bar';
 import { DashedDivider } from '@/components/dashed-divider';
 

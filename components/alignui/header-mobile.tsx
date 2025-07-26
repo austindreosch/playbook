@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import * as Divider from '@/components/ui/divider';
+import * as Divider from '@/components/alignui/divider';
 import NotificationButton from '@/components/notification-button';
 import { SearchMenuButton } from '@/components/search';
 import MobileMenu from '@/app/(main)/mobile-menu';

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
-import * as ButtonGroup from '@/components/ui/button-group';
+import * as ButtonGroup from '@/components/alignui/button-group';
 
 export function CardSwitchContainer({
   children,

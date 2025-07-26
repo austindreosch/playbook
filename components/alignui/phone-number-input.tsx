@@ -14,8 +14,8 @@ import examplePhoneNumbers from 'libphonenumber-js/examples.mobile.json';
 import { selectedCountries } from '@/lib/countries';
 import countryNames from '@/lib/country-names.json';
 import { cn } from '@/utils/cn';
-import * as Input from '@/components/ui/input';
-import { selectVariants } from '@/components/ui/select';
+import * as Input from '@/components/alignui/input';
+import { selectVariants } from '@/components/alignui/select';
 
 const countriesWithPhoneAndName = selectedCountries.reduce(
   (acc, code) => {

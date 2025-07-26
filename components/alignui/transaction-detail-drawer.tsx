@@ -4,10 +4,10 @@ import * as React from 'react';
 import { RiRefreshLine, RiShareLine } from '@remixicon/react';
 import { useAtom } from 'jotai';
 
-import * as Avatar from '@/components/ui/avatar';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as Drawer from '@/components/ui/drawer';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as Drawer from '@/components/alignui/drawer';
 import { transactionDetailModalOpenAtom } from '@/components/transactions-table';
 
 export function TransactionDetailDrawer() {

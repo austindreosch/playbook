@@ -8,12 +8,12 @@ import { scaleLinear } from 'd3-scale';
 import { format, getWeek } from 'date-fns';
 
 import { cn } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as Select from '@/components/ui/select';
-import * as TabMenuHorizontal from '@/components/ui/tab-menu-horizontal';
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as Select from '@/components/alignui/select';
+import * as TabMenuHorizontal from '@/components/alignui/tab-menu-horizontal';
+import * as Tooltip from '@/components/alignui/tooltip';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';
 import IconStatusInProgress from '~/icons/status/in-progress.svg';

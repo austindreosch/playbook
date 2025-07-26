@@ -1,5 +1,5 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Root as TagRoot, Icon as TagIcon } from '@/components/ui/tag';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/alignui/popover';
+import { Root as TagRoot, Icon as TagIcon } from '@/components/alignui/tag';
 import { TRAIT_METADATA } from '@/lib/utils/sportConfig';
 import { Activity } from 'lucide-react';
 import React from 'react';
@@ -11,11 +11,8 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
   if (!trait) {
     console.warn(`Unknown trait ID: ${traitId}`);
     return (
-      <TagRoot 
-        variant="stroke" 
-        className={`${size === "small" ? "h-5 text-3xs" : "h-6 text-xs"} ${className}`}
-      >
-        <TagIcon as={Activity} className="icon-sm" />
+      <TagRoot variant="stroke" className={`r ${className}`}>
+        <TagIcon as={Activity} className="icon-xs" />
         <span className="font-medium">{traitId}</span>
       </TagRoot>
     );
@@ -24,11 +21,8 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
   const IconComponent = trait.icon;
   
   const tagElement = (
-    <TagRoot 
-      variant="stroke" 
-      className={`${size === "small" ? "h-5 text-3xs" : "h-6 text-xs"} ${className}`}
-    >
-      <TagIcon as={IconComponent} className="icon-" />
+    <TagRoot variant="stroke" className={` ${className}`}>
+      <TagIcon as={IconComponent} className="icon-xs" />
       <span>{trait.label}</span>
     </TagRoot>
   );

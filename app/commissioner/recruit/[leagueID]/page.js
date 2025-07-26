@@ -8,14 +8,14 @@ const Lunchbox = createLucideIcon('lunchbox', lunchBox);
 
 import FantraxIcon from '@/components/icons/FantraxIcon';
 import LeagueSafeIcon from '@/components/icons/LeagueSafeIcon';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/alignui/badge';
+import { Button } from '@/components/alignui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/alignui/tooltip';
 import { AlertCircle, AlertTriangle, AlignHorizontalDistributeCenter, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, BookOpenText, Boxes, Calendar, ChartBarStacked, ChartCandlestick, ClipboardList, Clock, ContactRound, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, LucideClipboardSignature, Mail, Mailbox, MailPlus, Medal, Megaphone, MessageSquare, NotebookTabs, Pyramid, Scale, Settings, Settings2, Shield, ShieldHalf, ShieldUser, SquareArrowOutUpRight, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users, Wrench } from 'lucide-react';
 
 

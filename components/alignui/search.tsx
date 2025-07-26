@@ -16,11 +16,11 @@ import {
 import { atom, useAtom, useSetAtom } from 'jotai';
 
 import { cn } from '@/utils/cn';
-import * as CommandMenu from '@/components/ui/command-menu';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as Kbd from '@/components/ui/kbd';
-import * as LinkButton from '@/components/ui/link-button';
-import * as Tag from '@/components/ui/tag';
+import * as CommandMenu from '@/components/alignui/command-menu';
+import * as CompactButton from '@/components/alignui/compact-button';
+import * as Kbd from '@/components/alignui/kbd';
+import * as LinkButton from '@/components/alignui/link-button';
+import * as Tag from '@/components/alignui/tag';
 import * as TopbarItemButton from '@/components/topbar-item-button';
 
 import IconCmd from '~/icons/icon-cmd.svg';

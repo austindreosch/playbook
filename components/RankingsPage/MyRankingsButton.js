@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
+} from "@/components/alignui/drawer";
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { cn } from "@/lib/utils";
 import { BookCopy } from 'lucide-react';

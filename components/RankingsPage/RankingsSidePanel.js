@@ -1,7 +1,7 @@
 'use client';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/alignui/select";
+import { Switch } from "@/components/alignui/switch";
 import useUserRankings from '@/stores/useUserRankings';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Clock } from 'lucide-react';

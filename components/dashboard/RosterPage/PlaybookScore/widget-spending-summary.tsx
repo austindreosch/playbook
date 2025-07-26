@@ -11,9 +11,9 @@ import * as React from 'react';
 import IllustrationEmptySpendingSummary from '@/components/alignui/empty-state-illustrations/spending-summary';
 import SpendingSummaryPieChart from '@/components/alignui/spending-summary-pie-chart';
 import * as WidgetBox from '@/components/alignui/widget-box';
-import * as Badge from '@/components/ui/badge';
-import * as Divider from '@/components/ui/divider';
-import * as Select from '@/components/ui/select';
+import * as Badge from '@/components/alignui/badge';
+import * as Divider from '@/components/alignui/divider';
+import * as Select from '@/components/alignui/select';
 import { cnExt } from '@/utils/cn';
 import { ClipboardMinus, Compass } from 'lucide-react';
 

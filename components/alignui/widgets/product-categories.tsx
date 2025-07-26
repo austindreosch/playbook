@@ -6,8 +6,8 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
 import { useAnimateNumber } from '@/hooks/use-animate-number';
-import * as Button from '@/components/ui/button';
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Button from '@/components/alignui/button';
+import * as Tooltip from '@/components/alignui/tooltip';
 import { ProgressChart } from '@/components/progress-chart';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';

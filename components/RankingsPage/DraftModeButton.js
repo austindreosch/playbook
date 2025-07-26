@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -9,8 +9,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/alignui/label";
+import { Switch } from "@/components/alignui/switch";
 import { cn } from "@/lib/utils";
 import { Eye, RotateCcw, ScrollText, SlidersHorizontal } from 'lucide-react';
 import React from 'react';

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/alignui/avatar.jsx";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,7 +11,7 @@ import { getDisplayEmail, getInitials } from '@/utilities/stringUtils';
 import { CreditCard, LogOut, Settings, User, UserPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { Button } from "../ui/button.tsx";
+import { Button } from "../alignui/button.jsx";
 
 const UserProfileDropdown = ({ user }) => {
     const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;

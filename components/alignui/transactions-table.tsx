@@ -32,12 +32,12 @@ import { atom, useSetAtom } from 'jotai';
 import { cn } from '@/utils/cn';
 import { formatDate } from '@/utils/date-formatter';
 import { currencyFormatter } from '@/utils/number-formatter';
-import * as Avatar from '@/components/ui/avatar';
-import * as Button from '@/components/ui/button';
-import * as Checkbox from '@/components/ui/checkbox';
-import * as Pagination from '@/components/ui/pagination';
-import * as Select from '@/components/ui/select';
-import * as Table from '@/components/ui/table';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Button from '@/components/alignui/button';
+import * as Checkbox from '@/components/alignui/checkbox';
+import * as Pagination from '@/components/alignui/pagination';
+import * as Select from '@/components/alignui/select';
+import * as Table from '@/components/alignui/table';
 
 import { TransactionDetailDrawer } from './transaction-detail-drawer';
 

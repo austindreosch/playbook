@@ -4,7 +4,7 @@ import { RiCheckboxCircleFill, RiWifiLine } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
 import { currencyFormatter } from '@/utils/number-formatter';
-import * as StatusBadge from '@/components/ui/status-badge';
+import * as StatusBadge from '@/components/alignui/status-badge';
 
 function SVGCardBg(props: React.SVGProps<SVGSVGElement>) {
   return (

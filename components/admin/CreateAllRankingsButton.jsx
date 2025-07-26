@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 import { SPORT_CONFIGS } from "@/lib/config";
 import { getDefaultCategories } from "@/lib/rankingUtils";
 import useUserRankings from '@/stores/useUserRankings';

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Tooltip from '@/components/alignui/tooltip';
 import { LegendDot } from '@/components/legend-dot';
 import PieChart from '@/components/pie-chart';
 

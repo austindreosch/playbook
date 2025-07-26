@@ -15,10 +15,10 @@ import {
 import { useTheme } from 'next-themes';
 
 import { cn, cnExt } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as Divider from '@/components/ui/divider';
-import * as Dropdown from '@/components/ui/dropdown';
-import * as Switch from '@/components/ui/switch';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Divider from '@/components/alignui/divider';
+import * as Dropdown from '@/components/alignui/dropdown';
+import * as Switch from '@/components/alignui/switch';
 
 import IconVerifiedFill from '~/icons/icon-verified-fill.svg';
 

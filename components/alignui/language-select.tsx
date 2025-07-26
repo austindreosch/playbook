@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { RiGlobalLine } from '@remixicon/react';
 
-import * as Select from '@/components/ui/select';
+import * as Select from '@/components/alignui/select';
 
 const languages = [
   {

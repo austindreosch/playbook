@@ -1,6 +1,6 @@
 'use client';
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/alignui/tooltip";
 import { ChevronDown, ChevronUp, Compass, SigmaSquare } from "lucide-react";
 import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 

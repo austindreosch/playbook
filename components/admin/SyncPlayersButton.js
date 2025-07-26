@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 // Using ShadCN Button component as per project setup - adjust if using a different one
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 
 export default function SyncPlayersButton() {
     const [isLoading, setIsLoading] = useState(false);

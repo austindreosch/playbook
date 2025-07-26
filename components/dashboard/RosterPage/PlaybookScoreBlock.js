@@ -6,7 +6,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/alignui/popover';
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getLeagueFormatDisplay, getSportConfig } from '@/lib/utils/sportConfig';

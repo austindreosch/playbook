@@ -4,9 +4,9 @@ import * as React from 'react';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { scaleLinear } from 'd3-scale';
 
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as ButtonGroup from '@/components/ui/button-group';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as ButtonGroup from '@/components/alignui/button-group';
 
 type ProductPerformance = {
   value: number;

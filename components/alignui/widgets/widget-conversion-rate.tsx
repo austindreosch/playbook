@@ -5,9 +5,9 @@ import { RiArrowDownLine, RiArrowUpLine } from '@remixicon/react';
 import { format } from 'date-fns';
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
 
 function StackedAreaChartComponent() {
   // Generate sample data for 6 months with ISO dates

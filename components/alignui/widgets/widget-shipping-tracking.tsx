@@ -11,10 +11,10 @@ import {
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
 import { cn } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Select from '@/components/ui/select';
-import * as Tooltip from '@/components/ui/tooltip';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Select from '@/components/alignui/select';
+import * as Tooltip from '@/components/alignui/tooltip';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';
 import { ClipboardMinus } from 'lucide-react';

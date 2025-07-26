@@ -18,7 +18,7 @@ import {
 import type { AxisDomain } from 'recharts/types/util/types';
 
 import { cn } from '@/utils/cn';
-import { tooltipVariants } from '@/components/ui/tooltip';
+import { tooltipVariants } from '@/components/alignui/tooltip';
 
 const TOOLTIP_OFFSET = 4;
 const CORNER_RADIUS = 8;

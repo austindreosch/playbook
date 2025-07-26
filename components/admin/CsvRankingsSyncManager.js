@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/alignui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"; // Example using ShadCN Card
 import { useState } from 'react';
 import UnmatchedPlayerResolver from './UnmatchedPlayerResolver'; // Import the new component

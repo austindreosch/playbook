@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { RiArrowLeftDownLine, RiArrowRightUpLine } from '@remixicon/react';
 
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
 
 import { DashedDividerVertical } from '../dashed-divider';
 
