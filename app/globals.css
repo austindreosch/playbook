@@ -58,9 +58,50 @@
     --neutral-50: 216 33.33% 97.06%;
     --neutral-0: 0 0% 100%;
 
+    /* Blue color palette */
+    --blue-950: 228.14 70.49% 23.92%;
+    --blue-900: 228 70.55% 31.96%;
+    --blue-800: 228.17 69.61% 40%;
+    --blue-700: 228.07 69.8% 48.04%;
+    --blue-600: 228 80.36% 56.08%;
+    --blue-500: 227.94 100% 60%;
+    --blue-400: 222.12 100% 70.39%;
+    --blue-300: 219.81 100% 79.61%;
+    --blue-200: 220 100% 87.65%;
+    --blue-100: 221.43 100% 91.76%;
+    --blue-50: 222 100% 96.08%;
+
+    /* Sky color palette */
+    --sky-950: 200.23 70.49% 23.92%;
+    --sky-900: 199.83 70.55% 31.96%;
+    --sky-800: 199.86 69.61% 40%;
+    --sky-700: 200 69.8% 48.04%;
+    --sky-600: 200 80.36% 56.08%;
+    --sky-500: 199.89 100% 63.92%;
+    --sky-400: 199.87 100% 70.39%;
+    --sky-300: 200.19 100% 79.61%;
+    --sky-200: 200 100% 87.65%;
+    --sky-100: 200 100% 91.76%;
+    --sky-50: 201 100% 96.08%;
+
+    /* Semantic color mappings */
     --bg-white-0: var(--neutral-0);
+    --bg-soft-200: var(--neutral-200);
     --stroke-soft-200: var(--neutral-200);
+    --stroke-white-0: var(--neutral-0);
     --text-sub-600: var(--neutral-600);
+    --text-strong-950: var(--neutral-950);
+    --text-disabled-300: var(--neutral-300);
+
+    /* Brand color mappings */
+    --information-base: var(--blue-500);
+    --information-light: var(--blue-200);
+    --information-lighter: var(--blue-50);
+    --verified-base: var(--sky-500);
+    --verified-light: var(--sky-200);
+    --verified-lighter: var(--sky-50);
+    --faded-base: var(--neutral-500);
+    --faded-lighter: var(--neutral-100);
   }
   .dark {
     --background: 222.2 84% 4.9%;

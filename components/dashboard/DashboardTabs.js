@@ -1,6 +1,26 @@
 import { trackUserAction } from '@/lib/gtag';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
-import { EllipsisVertical } from 'lucide-react';
+import { 
+  EllipsisVertical, 
+  LayoutDashboard, 
+  Users, 
+  ArrowLeftRight, 
+  Search, 
+  FileText, 
+  TrendingUp,
+  Swords
+} from 'lucide-react';
+
+// Icon mapping for tabs
+const tabIcons = {
+  overview: LayoutDashboard,
+  roster: Users,
+  trades: ArrowLeftRight,
+  scouting: Search,
+  waiver: FileText,
+  trends: TrendingUp,
+  matchups: Swords,
+};
 
 export default function DashboardTabs() {
   // =================================================================
@@ -23,24 +43,29 @@ export default function DashboardTabs() {
 
   return (
     <div className="h-9 w-full flex items-center rounded-t-lg gap-0.5 overflow-hidden border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5">
-      {availableTabs.map(({ id, label, enabled }) => (
-        <button
-          key={id}
-          disabled={!enabled}
-          className={`
-            flex-1 flex items-center justify-center text-xs tracking-wider leading-relaxed uppercase focus:outline-none select-none transition-colors
+      {availableTabs.map(({ id, label, enabled }) => {
+        const IconComponent = tabIcons[id];
+        return (
+          <button
+            key={id}
+            disabled={!enabled}
+            className={`
+              flex-1 flex items-center justify-center gap-2 text-label-xs tracking-wider leading-relaxed uppercase focus:outline-none select-none transition-colors
                           ${currentTab === id
                 ? 'h-full bg-pb_paperwhite text-pb_darkgray font-semibold  border border-pb_darkgray border-b-0 rounded-t-lg mt-1'
-                : 'h-full text-white hover:bg-pb_mddarkgray font-semibold rounded-md mt-[5px] '}
+                : 'h-full text-white hover:bg-pb_mddarkgray font-semibold rounded-md mt-[5px] hover:mt-2 hover:mb-[3px]'}
             disabled:opacity-70 disabled:cursor-not-allowed
           `}
-          onClick={() => handleClick(id)}
-        >
-          {/* ---- DISPLAY DATA ---- */}
-          {/* Display tab label */}
-          {label}
-        </button>
-      ))}
+            onClick={() => handleClick(id)}
+          >
+            {/* Icon */}
+            {IconComponent && <IconComponent className="icon-sm" />}
+            {/* ---- DISPLAY DATA ---- */}
+            {/* Display tab label */}
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -72,42 +97,52 @@ export function DummyDashboardTabs({ currentTab, onTabClick }) {
     <div className="h-9 w-full flex items-center rounded-t-lg gap-0.5 overflow-hidden border-pb_darkgray border-b-0 bg-pb_darkgray px-0.5">
       {/* Desktop: Show all tabs */}
       <div className="hidden md:contents">
-        {dummyTabs.map(({ id, label, enabled }) => (
-          <button
-            key={id}
-            disabled={!enabled}
-            onClick={() => handleClick(id, enabled)}
-            className={`
-              flex-1 flex items-center justify-center text-xs tracking-wider leading-relaxed uppercase focus:outline-none select-none transition-colors
-              ${currentTab === id
-                ? 'h-full bg-pb_paperwhite text-pb_darkgray font-semibold border border-pb_darkgray border-b-0 rounded-t-lg mt-1'
-                : 'h-full text-white hover:bg-pb_mddarkgray font-semibold rounded-md mt-[5px]'}
-              ${enabled ? 'cursor-pointer' : 'disabled:opacity-70 disabled:cursor-not-allowed'}
-            `}
-          >
-            {label}
-          </button>
-        ))}
+        {dummyTabs.map(({ id, label, enabled }) => {
+          const IconComponent = tabIcons[id];
+          return (
+            <button
+              key={id}
+              disabled={!enabled}
+              onClick={() => handleClick(id, enabled)}
+              className={`
+                flex-1 flex items-center justify-center gap-1.5 text-label-xs tracking-wider leading-relaxed uppercase focus:outline-none select-none transition-colors
+                ${currentTab === id
+                  ? 'h-full bg-pb_paperwhite text-pb_darkgray font-semibold border border-pb_darkgray border-b-0 rounded-t-lg mt-1'
+                  : 'h-full text-white hover:bg-pb_mddarkgray font-semibold rounded-md mt-[5px] hover:mt-2 hover:mb-[3px]'}
+                ${enabled ? 'cursor-pointer' : 'disabled:opacity-70 disabled:cursor-not-allowed'}
+              `}
+            >
+              {/* Icon */}
+              {IconComponent && <IconComponent className="h-3 w-3" />}
+              {label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Mobile: Show main 3 tabs + "..." */}
       <div className="md:hidden contents">
-        {mainTabs.map(({ id, label, enabled }) => (
-          <button
-            key={id}
-            disabled={!enabled}
-            onClick={() => handleClick(id, enabled)}
-            className={`
-              flex-1 flex items-center justify-center text-xs tracking-wider leading-relaxed uppercase focus:outline-none select-none transition-colors
-              ${currentTab === id
-                ? 'h-full bg-pb_paperwhite text-pb_darkgray font-semibold border border-pb_darkgray border-b-0 rounded-t-lg mt-1'
-                : 'h-full text-white hover:bg-pb_mddarkgray font-semibold rounded-md mt-[5px]'}
-              ${enabled ? 'cursor-pointer' : 'disabled:opacity-70 disabled:cursor-not-allowed'}
-            `}
-          >
-            {label}
-          </button>
-        ))}
+        {mainTabs.map(({ id, label, enabled }) => {
+          const IconComponent = tabIcons[id];
+          return (
+            <button
+              key={id}
+              disabled={!enabled}
+              onClick={() => handleClick(id, enabled)}
+              className={`
+                flex-1 flex items-center justify-center gap-1.5 text-label-xs tracking-wider leading-relaxed uppercase focus:outline-none select-none transition-colors
+                ${currentTab === id
+                  ? 'h-full bg-pb_paperwhite text-pb_darkgray font-semibold border border-pb_darkgray border-b-0 rounded-t-lg mt-1'
+                  : 'h-full text-white hover:bg-pb_mddarkgray font-semibold rounded-md mt-[5px] hover:mt-2 hover:mb-[3px]'}
+                ${enabled ? 'cursor-pointer' : 'disabled:opacity-70 disabled:cursor-not-allowed'}
+              `}
+            >
+              {/* Icon */}
+              {IconComponent && <IconComponent className="h-3 w-3" />}
+              {label}
+            </button>
+          );
+        })}
         
         {/* "⋮" button for other tabs */}
         <button
@@ -116,7 +151,7 @@ export function DummyDashboardTabs({ currentTab, onTabClick }) {
             focus:outline-none select-none transition-colors
             h-full text-white/50 rounded-md mt-1.5 mx-0.5 cursor-not-allowed"
         >
-          <EllipsisVertical className="h-4 w-4" />
+          <EllipsisVertical className="icon-sm" />
         </button>
       </div>
     </div>
