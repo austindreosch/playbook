@@ -2,7 +2,7 @@
 
 import TraitTag from '@/components/common/TraitTag';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/alignui/popover';
-import { Root as ButtonRoot } from '@/components/alignui/button';
+import { Root as TagRoot } from '@/components/alignui/tag';
 import { useEffect, useRef, useState } from 'react';
 
 export default function TraitTagContainer({ traitIds, maxRows = 3, className = "" }) {
@@ -113,14 +113,12 @@ export default function TraitTagContainer({ traitIds, maxRows = 3, className = "
           />
         ))}
         {/* Hidden View All button for measuring */}
-        <ButtonRoot 
-          variant="neutral" 
-          mode="stroke" 
-          size={isSmallScreen ? "xxsmall" : "xxsmall"}
+        <TagRoot 
+          variant="stroke" 
           className="flex-shrink-0"
         >
           <span>View All</span>
-        </ButtonRoot>
+        </TagRoot>
       </div>
 
       {/* Visible tags container - only render calculated number of tags */}
@@ -149,14 +147,12 @@ export default function TraitTagContainer({ traitIds, maxRows = 3, className = "
         {visibleTagsCount < traitIds.length && (
           <Popover open={showPopover} onOpenChange={setShowPopover}>
             <PopoverTrigger asChild>
-              <ButtonRoot 
-                variant="neutral" 
-                mode="stroke" 
-                size={isSmallScreen ? "xxsmall" : "xxsmall"}
+              <TagRoot 
+                variant="stroke" 
                 className="flex-shrink-0"
               >
                 <span>View All</span>
-              </ButtonRoot>
+              </TagRoot>
             </PopoverTrigger>
             <PopoverContent className="w-auto max-w-80 p-3" align="start">
               <div className="flex flex-wrap gap-1">

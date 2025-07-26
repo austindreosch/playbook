@@ -60,6 +60,22 @@ export const tagVariants = tv({
           'hover:bg-bg-white-0 hover:ring-stroke-soft-200',
         ],
       },
+      pill: {
+        root: [
+          // base
+          'h-8 rounded-full pl-1.5 pr-3 text-paragraph-sm bg-bg-white-0 ring-stroke-soft-200',
+          // hover
+          'hover:bg-bg-weak-50 hover:ring-transparent',
+          // focus-within
+          'focus-within:bg-bg-weak-50 focus-within:ring-transparent',
+        ],
+        dismissIcon: [
+          // hover
+          'group-hover/dismiss-button:text-text-sub-600',
+          // focus
+          'group-focus/dismiss-button:text-text-sub-600',
+        ],
+      },
     },
     disabled: {
       true: {
