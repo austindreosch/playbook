@@ -32,7 +32,9 @@ export default function SpendingSummaryPieChart({
     <div
       className={className}
       style={{
-        width: CIRCLE_SIZE,
+        width: '100%',
+        maxWidth: CIRCLE_SIZE,
+        aspectRatio: '2 / 1',
       }}
     >
       <ChartContainer config={chartConfig} className='h-[124px] w-full'>

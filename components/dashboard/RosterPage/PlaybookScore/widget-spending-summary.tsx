@@ -71,15 +71,12 @@ export default function WidgetSpendingSummary({
       <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5'>
         <Divider.Root />
 
-        <div className='mx-auto grid w-full max-w-fit justify-center'>
+        <div className='mx-auto grid w-full max-w-[248px] justify-center'>
           <SpendingSummaryPieChart
             data={chartData}
-            className='[grid-area:1/1]'
+            className='[grid-area:1/1] w-full'
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 pb-2 text-center [grid-area:1/1]'>
-            {/* <span className='pointer-events-auto text-subheading-xs text-text-sub-600'>
-              SPEND
-            </span> */}
             <span className='pointer-events-auto text-title-h1 text-text-strong-950'>
               981
             </span>

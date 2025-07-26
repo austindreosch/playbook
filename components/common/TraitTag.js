@@ -15,7 +15,7 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
         variant="stroke" 
         className={`${size === "small" ? "h-5 text-3xs" : "h-6 text-xs"} ${className}`}
       >
-        <TagIcon as={Activity} className="size-3" />
+        <TagIcon as={Activity} className="icon-sm" />
         <span className="font-medium">{traitId}</span>
       </TagRoot>
     );
@@ -28,7 +28,7 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
       variant="stroke" 
       className={`${size === "small" ? "h-5 text-3xs" : "h-6 text-xs"} ${className}`}
     >
-      <TagIcon as={IconComponent} className="size-3" />
+      <TagIcon as={IconComponent} className="icon-" />
       <span>{trait.label}</span>
     </TagRoot>
   );
