@@ -24,23 +24,31 @@ export const chartConfig = {
 export default function SpendingSummaryPieChart({
   data,
   className,
+  maxWidth = CIRCLE_SIZE,
 }: {
   data: any;
   className?: string;
+  maxWidth?: number | string;
 }) {
+  const actualWidth = typeof maxWidth === 'number' ? maxWidth : CIRCLE_SIZE;
+  const scaleFactor = actualWidth / CIRCLE_SIZE;
+  const chartHeight = 124 * scaleFactor;
+  const innerRadius = INNER_RADIUS * scaleFactor;
+  const outerRadius = OUTER_RADIUS * scaleFactor;
+
   return (
     <div
       className={className}
       style={{
         width: '100%',
-        maxWidth: CIRCLE_SIZE,
+        maxWidth: maxWidth,
         aspectRatio: '2 / 1',
       }}
     >
-      <ChartContainer config={chartConfig} className='h-[124px] w-full'>
+      <ChartContainer config={chartConfig} className='w-full' style={{ height: chartHeight }}>
         <PieChart
-          width={248}
-          height={124}
+          width={actualWidth}
+          height={chartHeight}
           margin={{
             top: 0,
             bottom: 0,
@@ -50,12 +58,12 @@ export default function SpendingSummaryPieChart({
         >
           <Pie
             dataKey='value'
-            width={CIRCLE_SIZE}
-            height={CIRCLE_SIZE}
-            cx={CIRCLE_SIZE / 2}
-            cy={CIRCLE_SIZE / 2}
-            innerRadius={INNER_RADIUS}
-            outerRadius={OUTER_RADIUS}
+            width={actualWidth}
+            height={actualWidth}
+            cx={actualWidth / 2}
+            cy={actualWidth / 2}
+            innerRadius={innerRadius}
+            outerRadius={outerRadius}
             data={data}
             startAngle={180}
             endAngle={0}

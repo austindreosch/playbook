@@ -161,7 +161,7 @@ export default function SyncLeagueButton({ className = '' }) {
         ) : (
           <>
             <Clock className={`w-3 h-3 mr-1 ${isLoading ? 'text-white' : 'text-pb_midgray'}`} />
-            <span className={`whitespace-nowrap text-xs ${isLoading ? 'text-white' : 'text-pb_midgray'}`}>
+            <span className={`whitespace-nowrap text-2xs ${isLoading ? 'text-white' : 'text-pb_midgray'}`}>
               {formatLastSync(lastSyncDate)}
             </span>
           </>

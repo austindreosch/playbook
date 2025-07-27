@@ -71,6 +71,7 @@ export default function WidgetSpendingSummary({
           <SpendingSummaryPieChart
             data={chartData}
             className='[grid-area:1/1]'
+            maxWidth={248}
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 pb-2 text-center [grid-area:1/1]'>
             <span className='pointer-events-auto text-subheading-xs text-text-sub-600'>

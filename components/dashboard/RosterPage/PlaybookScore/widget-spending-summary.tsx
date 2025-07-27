@@ -69,12 +69,13 @@ export default function WidgetSpendingSummary({
       </WidgetBox.Header>
 
       <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5'>
-        <Divider.Root />
+        {/* <Divider.Root /> */}
 
-        <div className='mx-auto grid w-full max-w-[248px] justify-center'>
+        <div className='mx-auto grid w-full justify-center'>
           <SpendingSummaryPieChart
             data={chartData}
             className='[grid-area:1/1] w-full'
+            maxWidth={200}
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 pb-2 text-center [grid-area:1/1]'>
             <span className='pointer-events-auto text-title-h1 text-text-strong-950'>
@@ -94,7 +95,7 @@ export default function WidgetSpendingSummary({
             </div>
             <div className="flex items-center gap-2 mt-1">
               <div className="text-label-lg">972</div>
-            <div className="w-px h-4 bg-stroke-soft-200" />
+              <div className="w-px h-4 bg-stroke-soft-200" />
               <Badge.Root variant="rank" color="gray" size="medium">
                 3
               </Badge.Root>
@@ -108,12 +109,21 @@ export default function WidgetSpendingSummary({
             </div>
             <div className="flex items-center gap-2 mt-1">
               <div className="text-label-lg">998</div>
-            <div className="w-px h-4 bg-stroke-soft-200" />
+              <div className="w-px h-4 bg-stroke-soft-200" />
               <Badge.Root variant="rank" color="gray" size="medium">
                 1
               </Badge.Root>
             </div>
           </div>
+
+
+
+        {/* IF ON SMALL WIDTH SCREEN, SHOW A THIRD COLUMN */}
+        <div className="flex mdh:hidden  flex-1 min-h-[64px] min-w-[64px] border border-stroke-soft-200 flex-col items-center gap-1">
+        </div>
+
+
+
         </div>
 
         {/* weekly spending limit */}
@@ -125,6 +135,12 @@ export default function WidgetSpendingSummary({
           </div>
           <img src="/icons/icon-info-custom-fill.svg" alt="" className='size-4 text-text-disabled-300' />
         </div>
+
+
+
+
+
+
       </div>
     </WidgetBox.Root>
   );
