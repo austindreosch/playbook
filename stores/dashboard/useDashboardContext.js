@@ -93,6 +93,11 @@ const saveDashboardStateToLocalStorage = (currentView, currentTab, currentLeague
  */
 const loadDashboardStateFromLocalStorage = () => {
   try {
+    // Check if we're in the browser before accessing localStorage
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    
     const saved = localStorage.getItem('dashboardUIState');
     if (!saved) return null;
     

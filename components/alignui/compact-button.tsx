@@ -60,11 +60,11 @@ export const compactButtonVariants = tv({
     size: {
       large: {
         root: 'size-6',
-        icon: 'size-5',
+        icon: 'icon',
       },
       medium: {
         root: 'size-5',
-        icon: 'size-[18px]',
+        icon: 'icon-sm',
       },
     },
     fullRadius: {

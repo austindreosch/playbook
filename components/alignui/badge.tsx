@@ -48,6 +48,9 @@ export const badgeVariants = tv({
       outline: {
         root: 'bg-white ring-1 ring-inset ring-stroke-soft-200',
       },
+      rank: {
+        root: 'w-6.5 rounded-sm ring-1 ring-inset ring-stroke-soft-200',
+      },
     },
     color: {
       gray: {},
@@ -374,7 +377,7 @@ export const badgeVariants = tv({
     {
       variant: 'outline',
       color: 'blue',
-``      class: {
+      class: {
         root: 'text-information-dark',
       },
     },
@@ -402,7 +405,7 @@ export const badgeVariants = tv({
     {
       variant: 'outline',
       color: 'yellow',
-      class
+      class: {
         root: 'text-away-dark',
       },
     },

@@ -15,7 +15,7 @@ import * as Badge from '@/components/alignui/badge';
 import * as Divider from '@/components/alignui/divider';
 import * as Select from '@/components/alignui/select';
 import { cnExt } from '@/utils/cn';
-import { ClipboardMinus, Compass } from 'lucide-react';
+import { ClipboardMinus, Compass, Sprout } from 'lucide-react';
 
 // import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 
@@ -86,50 +86,34 @@ export default function WidgetSpendingSummary({
         <Divider.Root />
 
 
-
-      {/* 3 columns */}
-
-        {/* <div className='grid grid-cols-3 divide-x divide-stroke-soft-200'>
-          <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
-            <div className='flex size-8 items-center justify-center rounded-full bg-information-lighter'>
-              <RiShoppingBag3Line className='size-5 text-information-base' />
+        <div className="flex items-center gap-8 mx-auto">
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2">
+              <ClipboardMinus className="icon-sm" />
+              <div className="text-label-sm">Standard</div>
             </div>
-            <div className='space-y-1'>
-              <div className='text-paragraph-xs text-text-sub-600'>
-                Shopping
-              </div>
-              <div className='text-label-sm'>$900.00</div>
-            </div>
-          </div>
-          <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
-            <div className='flex size-8 items-center justify-center rounded-full bg-verified-lighter'>
-              <RiFileListLine className='size-5 text-verified-base' />
-            </div>
-            <div className='space-y-1'>
-              <div className='text-paragraph-xs text-text-sub-600'>
-                Utilities
-              </div>
-              <div className='text-label-sm'>$600.00</div>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="text-label-lg">972</div>
+            <div className="w-px h-4 bg-stroke-soft-200" />
+              <Badge.Root variant="rank" color="gray" size="medium">
+                3
+              </Badge.Root>
             </div>
           </div>
-          <div className='flex flex-col items-center gap-2 smh:gap-3 mdh:gap-4 px-2 text-center'>
-            <div className='flex size-8 items-center justify-center rounded-full bg-faded-lighter'>
-              <RiMoneyDollarCircleLine className='size-5 text-faded-base' />
+
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2">
+              <Sprout className="icon-sm" />
+              <div className="text-label-sm">Redraft</div>
             </div>
-            <div className='space-y-1'>
-              <div className='text-paragraph-xs text-text-sub-600'>Others</div>
-              <div className='text-label-sm'>$900.00</div>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="text-label-lg">998</div>
+            <div className="w-px h-4 bg-stroke-soft-200" />
+              <Badge.Root variant="rank" color="gray" size="medium">
+                1
+              </Badge.Root>
             </div>
           </div>
-        </div> */}
-
-        <div className='flex items-center gap-2 text-text-disabled-300'>
-          <ClipboardMinus className='icon-sm ' />
-          <div className='text-label-sm'>Standard</div>
-          <div className='text-label-lg '>962</div>
-          <Badge.Root variant='outline' color='gray' size='medium'>
-            3
-          </Badge.Root>
         </div>
 
         {/* weekly spending limit */}

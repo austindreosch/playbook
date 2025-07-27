@@ -1187,6 +1187,11 @@ let mutableDashboardData = { ...dashboardDummyData };
  */
 export const getCurrentDummyData = () => {
   try {
+    // Check if we're in the browser before accessing localStorage
+    if (typeof window === 'undefined') {
+      return { ...originalDummyData };
+    }
+    
     // Try to get updated data from localStorage first
     const savedData = localStorage.getItem('dashboardDummyData');
     if (savedData) {

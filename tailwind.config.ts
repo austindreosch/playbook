@@ -454,6 +454,7 @@ const config = {
       text: {
         'strong-950': 'hsl(var(--text-strong-950))',
         'sub-600': 'hsl(var(--text-sub-600))',
+        'mid-500': 'hsl(var(--text-mid-500))',
         'soft-400': 'hsl(var(--text-soft-400))',
         'disabled-300': 'hsl(var(--text-disabled-300))',
         'white-0': 'hsl(var(--text-white-0))',
