@@ -374,7 +374,7 @@ export const badgeVariants = tv({
     {
       variant: 'outline',
       color: 'blue',
-      class: {
+``      class: {
         root: 'text-information-dark',
       },
     },
@@ -402,7 +402,7 @@ export const badgeVariants = tv({
     {
       variant: 'outline',
       color: 'yellow',
-      class: {
+      class
         root: 'text-away-dark',
       },
     },

@@ -100,10 +100,7 @@ const contactsList: Contact[] = [
   },
 ];
 
-type ContactPillProps = Pick<Contact, 'person'> &
-  React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    selected?: boolean;
-  };
+
 
 const ContactPill = React.forwardRef<HTMLButtonElement, ContactPillProps>(
   ({ id, person, selected, className, ...rest }, forwardedRef) => {
