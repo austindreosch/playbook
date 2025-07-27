@@ -15,7 +15,8 @@ import * as Badge from '@/components/alignui/badge';
 import * as Divider from '@/components/alignui/divider';
 import * as Select from '@/components/alignui/select';
 import { cnExt } from '@/utils/cn';
-import { ClipboardMinus, Compass, Sprout } from 'lucide-react';
+import { ClipboardMinus, Compass, Search, Sprout } from 'lucide-react';
+import * as Button from '@/components/alignui/button';
 
 // import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 
@@ -47,8 +48,29 @@ const chartData = [
 export default function WidgetSpendingSummary({
   ...rest
 }: React.ComponentPropsWithoutRef<typeof WidgetBox.Root>) {
+  const [chartMaxWidth, setChartMaxWidth] = React.useState(250);
+
+  React.useEffect(() => {
+    const updateChartSize = () => {
+      const viewportHeight = window.innerHeight;
+      if (viewportHeight <= 620) {
+        setChartMaxWidth(180);
+      } else if (viewportHeight >= 900) {
+        setChartMaxWidth(250);
+      } else {
+        // Linear interpolation between 180 and 250 for heights between 620 and 900
+        const ratio = (viewportHeight - 620) / (900 - 620);
+        setChartMaxWidth(Math.round(180 + (250 - 180) * ratio));
+      }
+    };
+
+    updateChartSize();
+    window.addEventListener('resize', updateChartSize);
+    return () => window.removeEventListener('resize', updateChartSize);
+  }, []);
+
   return (
-    <WidgetBox.Root {...rest}>
+    <WidgetBox.Root className="h-[60vh] flex flex-col" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Compass} className="icon" />
         Playbook Score
@@ -68,23 +90,23 @@ export default function WidgetSpendingSummary({
         </div>
       </WidgetBox.Header>
 
-      <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5'>
+      <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5 flex-1 pb-0'>
         {/* <Divider.Root /> */}
 
         <div className='mx-auto grid w-full justify-center'>
           <SpendingSummaryPieChart
             data={chartData}
             className='[grid-area:1/1] w-full'
-            maxWidth={200}
+            maxWidth={chartMaxWidth}
           />
-          <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 pb-2 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-title-h1 text-text-strong-950'>
+          <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
+            <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
               981
             </span>
           </div>
         </div>
 
-        <Divider.Root />
+        <Divider.Root /> 
 
 
         <div className="flex items-center gap-8 mx-auto">
@@ -94,11 +116,11 @@ export default function WidgetSpendingSummary({
               <div className="text-label-sm">Standard</div>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <div className="text-label-lg">972</div>
-              <div className="w-px h-4 bg-stroke-soft-200" />
               <Badge.Root variant="rank" color="gray" size="medium">
                 3
               </Badge.Root>
+              <div className="w-px h-4 bg-stroke-soft-200" />
+              <div className="text-label-lg">972</div>
             </div>
           </div>
 
@@ -108,33 +130,21 @@ export default function WidgetSpendingSummary({
               <div className="text-label-sm">Redraft</div>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <div className="text-label-lg">998</div>
-              <div className="w-px h-4 bg-stroke-soft-200" />
               <Badge.Root variant="rank" color="gray" size="medium">
                 1
               </Badge.Root>
+              <div className="w-px h-4 bg-stroke-soft-200" />
+              <div className="text-label-lg">998</div>
             </div>
           </div>
 
-
-
-        {/* IF ON SMALL WIDTH SCREEN, SHOW A THIRD COLUMN */}
-        <div className="flex mdh:hidden  flex-1 min-h-[64px] min-w-[64px] border border-stroke-soft-200 flex-col items-center gap-1">
         </div>
 
-
-
-        </div>
-
-        {/* weekly spending limit */}
-
-        <div className='flex items-center gap-1 rounded-md bg-bg-white-0 py-1.5 pl-2.5 pr-1.5 ring-1 ring-inset ring-stroke-soft-200'>
-          <div className='flex-1 text-paragraph-xs text-text-sub-600'>
-            Your weekly spending limit is{' '}
-            <span className='text-label-xs'>$2000</span>.
-          </div>
-          <img src="/icons/icon-info-custom-fill.svg" alt="" className='size-4 text-text-disabled-300' />
-        </div>
+        {/* IF ON SMALL WIDTH SCREEN, SHOW BUTTON INSTEAD */}
+        <Button.Root variant='neutral' mode='stroke' size='xsmall' className='w-full flex items-center gap-2 justify-center'>
+          <Search className='icon-sm' />
+          <span className='text-label-m'>Evaluation Panel</span>
+        </Button.Root>
 
 
 
