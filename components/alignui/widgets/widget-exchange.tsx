@@ -4,13 +4,13 @@ import * as React from 'react';
 import { RiArrowLeftRightLine, RiRefreshLine } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as Divider from '@/components/ui/divider';
+import * as Button from '@/components/alignui/button';
+import * as CompactButton from '@/components/alignui/compact-button';
+import * as Divider from '@/components/alignui/divider';
 import * as CurrencySelect from '@/components/currency-select';
-import IllustrationEmptyExchange from '@/components/empty-state-illustrations/exchange';
+import IllustrationEmptyExchange from '@/components/alignui/empty-state-illustrations/exchange';
 import { MotionNumber } from '@/components/motion-number';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const currencies = [
   { value: 'USD', label: 'USD', icon: '/flags/US.svg' },

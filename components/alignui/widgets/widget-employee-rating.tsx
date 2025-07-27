@@ -2,10 +2,10 @@
 
 import { RiUserStarLine } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import SparkLineChart from '@/components/chart-spark-line';
-import * as WidgetBox from '@/components/widget-box';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import SparkLineChart from '@/components/alignui/chart-spark-line';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 import IconStarFill from '~/icons/icon-star-fill.svg';

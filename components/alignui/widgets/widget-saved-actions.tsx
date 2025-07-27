@@ -9,11 +9,11 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import IllustrationEmptySavedActions from '@/components/empty-state-illustrations/saved-actions';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import IllustrationEmptySavedActions from '@/components/alignui/empty-state-illustrations/saved-actions';
 import { SavedAction, SavedActionItem } from '@/components/saved-action-item';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const savedActions: (SavedAction & { id: string })[] = [
   {

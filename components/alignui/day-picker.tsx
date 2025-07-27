@@ -15,7 +15,7 @@ import {
 } from 'date-fns';
 
 import { cn, cnExt } from '@/utils/cn';
-import * as CompactButton from '@/components/ui/compact-button';
+import * as CompactButton from '@/components/alignui/compact-button';
 
 type DayPickerProps = {
   defaultDate: Date;

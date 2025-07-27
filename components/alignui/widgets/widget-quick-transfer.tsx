@@ -18,13 +18,13 @@ import {
 } from 'react-aria-components';
 
 import { cn, cnExt } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import { type AvatarRootProps } from '@/components/ui/avatar';
-import * as Button from '@/components/ui/button';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as Divider from '@/components/ui/divider';
-import IllustrationEmptyQuickTransfer from '@/components/empty-state-illustrations/quick-transfer';
-import * as WidgetBox from '@/components/widget-box';
+import * as Avatar from '@/components/alignui/avatar';
+import { type AvatarRootProps } from '@/components/alignui/avatar';
+import * as Button from '@/components/alignui/button';
+import * as CompactButton from '@/components/alignui/compact-button';
+import * as Divider from '@/components/alignui/divider';
+import IllustrationEmptyQuickTransfer from '@/components/alignui/empty-state-illustrations/quick-transfer';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 type Contact = {
   id: string;

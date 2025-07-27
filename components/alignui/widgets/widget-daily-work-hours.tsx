@@ -4,14 +4,14 @@ import * as React from 'react';
 import { RiTimerLine } from '@remixicon/react';
 import { intervalToDuration } from 'date-fns';
 
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
 import {
   CategoryBarChart,
   CategoryBarChartEmpty,
   type CategoryBarChartProps,
-} from '@/components/chart-category-bar';
-import * as WidgetBox from '@/components/widget-box';
+} from '@/components/alignui/chart-category-bar';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const workHoursData: CategoryBarChartProps['data'] = [
   { label: 'Pause Time', value: 60 * 60 * 3 * 1000 + 60 * 51 * 1000 }, // 3 hours 51 minutes

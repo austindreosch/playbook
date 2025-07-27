@@ -3,8 +3,8 @@
 import * as React from 'react';
 
 import * as Tooltip from '@/components/alignui/tooltip';
-import { LegendDot } from '@/components/legend-dot';
-import PieChart from '@/components/pie-chart';
+import { LegendDot } from '@/components/alignui/legend-dot';
+import PieChart from '@/components/alignui/spending-summary-pie-chart';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';
 

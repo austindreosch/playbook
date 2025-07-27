@@ -8,12 +8,12 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import { GaugeChart } from '@/components/chart-gauge';
-import IllustrationEmptyTimeOff from '@/components/empty-state-illustrations/time-off';
-import * as WidgetBox from '@/components/widget-box';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import { GaugeChart } from '@/components/alignui/chart-gauge';
+import IllustrationEmptyTimeOff from '@/components/alignui/empty-state-illustrations/time-off';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetTimeOff({
   ...rest

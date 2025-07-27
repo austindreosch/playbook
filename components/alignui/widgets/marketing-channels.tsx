@@ -11,7 +11,7 @@ import {
 
 import * as Button from '@/components/alignui/button';
 import * as Tooltip from '@/components/alignui/tooltip';
-import { CategoryBarChart } from '@/components/chart-category-bar';
+import { CategoryBarChart } from '@/components/alignui/chart-category-bar';
 import { DashedDivider } from '@/components/dashed-divider';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';

@@ -2,10 +2,10 @@
 
 import { RiAddLine, RiSpeedUpLine } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import { ScoreTrackChart } from '@/components/score-track-chart';
-import * as WidgetBox from '@/components/widget-box';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import { ScoreTrackChart } from '@/components/alignui/score-track-chart';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetCreditScore({
   ...rest

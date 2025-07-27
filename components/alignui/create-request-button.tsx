@@ -2,7 +2,7 @@
 
 import { RiAddLine } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
+import * as Button from '@/components/alignui/button';
 
 export function CreateRequestButton({ className }: { className?: string }) {
   return (

@@ -9,11 +9,11 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Divider from '@/components/ui/divider';
-import * as Select from '@/components/ui/select';
-import IllustrationEmptySpendingSummary from '@/components/empty-state-illustrations/spending-summary';
+import * as Divider from '@/components/alignui/divider';
+import * as Select from '@/components/alignui/select';
+import IllustrationEmptySpendingSummary from '@/components/alignui/empty-state-illustrations/spending-summary';
 import SpendingSummaryPieChart from '@/components/spending-summary-pie-chart';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 

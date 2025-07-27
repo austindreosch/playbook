@@ -9,10 +9,10 @@ import {
 } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import IllustrationEmptyTimeTracker from '@/components/empty-state-illustrations/time-tracker';
+import * as Button from '@/components/alignui/button';
+import IllustrationEmptyTimeTracker from '@/components/alignui/empty-state-illustrations/time-tracker';
 import { TimeTracker } from '@/components/time-tracker';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 function TimeTrackItem() {
   const [isOngoing, setIsOngoing] = React.useState(false);

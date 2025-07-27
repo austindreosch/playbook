@@ -4,10 +4,10 @@ import * as React from 'react';
 import { RiBarChartBoxLine } from '@remixicon/react';
 
 import { cn, cnExt } from '@/utils/cn';
-import * as Divider from '@/components/ui/divider';
-import * as Select from '@/components/ui/select';
+import * as Divider from '@/components/alignui/divider';
+import * as Select from '@/components/alignui/select';
 import VerticalBarChart from '@/components/vertical-bar-chart';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const periods = [
   { value: 'weekly', label: 'Weekly' },

@@ -16,19 +16,19 @@ import {
 } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as AvatarGroupCompact from '@/components/ui/avatar-group-compact';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as Input from '@/components/ui/input';
-import * as Kbd from '@/components/ui/kbd';
-import * as TabMenuHorizontal from '@/components/ui/tab-menu-horizontal';
+import * as Avatar from '@/components/alignui/avatar';
+import * as AvatarGroupCompact from '@/components/alignui/avatar-group-compact';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as CompactButton from '@/components/alignui/compact-button';
+import * as Input from '@/components/alignui/input';
+import * as Kbd from '@/components/alignui/kbd';
+import * as TabMenuHorizontal from '@/components/alignui/tab-menu-horizontal';
 import DayPicker from '@/components/day-picker';
-import IllustrationEmptyScheduleEvents from '@/components/empty-state-illustrations/schedule-events';
-import IllustrationEmptyScheduleHoliday from '@/components/empty-state-illustrations/schedule-holiday';
-import IllustrationEmptyScheduleMeetings from '@/components/empty-state-illustrations/schedule-meetings';
-import * as WidgetBox from '@/components/widget-box';
+import IllustrationEmptyScheduleEvents from '@/components/alignui/empty-state-illustrations/schedule-events';
+import IllustrationEmptyScheduleHoliday from '@/components/alignui/empty-state-illustrations/schedule-holiday';
+import IllustrationEmptyScheduleMeetings from '@/components/alignui/empty-state-illustrations/schedule-meetings';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 import IconCmd from '~/icons/icon-cmd.svg';
 

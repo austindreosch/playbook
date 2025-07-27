@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 
 import { cn } from '@/utils/cn';
-import * as Textarea from '@/components/ui/textarea';
+import * as Textarea from '@/components/alignui/textarea';
 
 type RatingBarWithTextareaProps = {
   data: {

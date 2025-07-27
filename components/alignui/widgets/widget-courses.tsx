@@ -17,15 +17,15 @@ import {
 } from '@tanstack/react-table';
 
 import { cnExt } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as Button from '@/components/ui/button';
-import * as Input from '@/components/ui/input';
-import * as Kbd from '@/components/ui/kbd';
-import * as ProgressBar from '@/components/ui/progress-bar';
-import * as StatusBadge from '@/components/ui/status-badge';
-import * as Table from '@/components/ui/table';
-import IllustrationEmptyCourses from '@/components/empty-state-illustrations/courses';
-import * as WidgetBox from '@/components/widget-box';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Button from '@/components/alignui/button';
+import * as Input from '@/components/alignui/input';
+import * as Kbd from '@/components/alignui/kbd';
+import * as ProgressBar from '@/components/alignui/progress-bar';
+import * as StatusBadge from '@/components/alignui/status-badge';
+import * as Table from '@/components/alignui/table';
+import IllustrationEmptyCourses from '@/components/alignui/empty-state-illustrations/courses';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 import IconCmd from '~/icons/icon-cmd.svg';
 

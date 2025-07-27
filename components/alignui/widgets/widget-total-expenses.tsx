@@ -3,8 +3,8 @@
 import { RiArrowLeftDownLine } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import SparkLineChart from '@/components/chart-spark-line';
+import * as Badge from '@/components/alignui/badge';
+import SparkLineChart from '@/components/alignui/chart-spark-line';
 
 const chartData = [
   { week: '1', value: 500 },

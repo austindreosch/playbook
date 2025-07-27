@@ -6,7 +6,7 @@ import { RiSearch2Line } from '@remixicon/react';
 
 import { cn } from '@/utils/cn';
 import * as Button from '@/components/alignui/button';
-import * as ScrollArea from '@/components/ui/scroll-area';
+import * as ScrollArea from '@/components/alignui/scroll-area';
 import * as Tooltip from '@/components/alignui/tooltip';
 
 import IconInfoCustom from '~/icons/icon-info-custom-fill.svg';

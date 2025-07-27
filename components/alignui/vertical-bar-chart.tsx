@@ -22,7 +22,7 @@ import {
   currencyFormatter,
 } from '@/utils/number-formatter';
 import { tooltipVariants } from '@/components/alignui/tooltip';
-import { type ChartConfig } from '@/components/chart';
+import { type ChartConfig } from '@/components/alignui/chart';
 
 const YAxisLeftTick = ({ y, payload: { value } }: any) => (
   <Text

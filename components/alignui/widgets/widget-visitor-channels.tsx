@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as Badge from '@/components/alignui/badge';
 import * as Button from '@/components/alignui/button';
 import * as Divider from '@/components/alignui/divider';
-import { CategoryBarChart } from '@/components/chart-category-bar';
+import { CategoryBarChart } from '@/components/alignui/chart-category-bar';
 
 const channelsData = [
   { label: 'Organic Search', value: 45 },

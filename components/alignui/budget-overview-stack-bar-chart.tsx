@@ -4,7 +4,7 @@ import React from 'react';
 import { Bar, BarChart, BarProps, XAxis, YAxis } from 'recharts';
 
 import useBreakpoint from '@/hooks/use-breakpoint';
-import { ChartContainer, type ChartConfig } from '@/components/chart';
+import { ChartContainer, type ChartConfig } from '@/components/alignui/chart';
 
 const GAP = 2;
 

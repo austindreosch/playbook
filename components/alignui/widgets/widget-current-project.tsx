@@ -8,13 +8,13 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as AvatarGroup from '@/components/ui/avatar-group';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import IllustrationEmptyCurrentProject from '@/components/empty-state-illustrations/current-project';
-import * as WidgetBox from '@/components/widget-box';
+import * as Avatar from '@/components/alignui/avatar';
+import * as AvatarGroup from '@/components/alignui/avatar-group';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import IllustrationEmptyCurrentProject from '@/components/alignui/empty-state-illustrations/current-project';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetCurrentProject({
   ...rest

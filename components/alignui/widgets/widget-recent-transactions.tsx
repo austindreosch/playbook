@@ -9,11 +9,11 @@ import {
 
 import { type Transaction } from '@/lib/cards-data';
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as SegmentedControl from '@/components/ui/segmented-control';
-import IllustrationEmptyRecentTransactions from '@/components/empty-state-illustrations/recent-transactions';
+import * as Button from '@/components/alignui/button';
+import * as SegmentedControl from '@/components/alignui/segmented-control';
+import IllustrationEmptyRecentTransactions from '@/components/alignui/empty-state-illustrations/recent-transactions';
 import { TransactionItem } from '@/components/transaction-item';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const transactions: Transaction[] = [
   {

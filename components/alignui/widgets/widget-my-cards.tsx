@@ -11,16 +11,16 @@ import {
   type TypeVirtualCard,
 } from '@/lib/cards-data';
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as SegmentedControl from '@/components/ui/segmented-control';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as SegmentedControl from '@/components/alignui/segmented-control';
 import { CardSwitchContainer } from '@/components/card-switch-container';
-import IllustrationEmptyMyCards from '@/components/empty-state-illustrations/my-cards';
+import IllustrationEmptyMyCards from '@/components/alignui/empty-state-illustrations/my-cards';
 import { MotionNumber } from '@/components/motion-number';
 import { PhysicalCard } from '@/components/physical-card';
 import { TransactionItem } from '@/components/transaction-item';
 import { VirtualCard } from '@/components/virtual-card';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const MTransactionItem = motion(TransactionItem);
 

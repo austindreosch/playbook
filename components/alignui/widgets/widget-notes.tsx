@@ -12,11 +12,11 @@ import {
 import { format } from 'date-fns';
 
 import { cnExt } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import IllustrationEmptyNotes from '@/components/empty-state-illustrations/notes';
-import * as WidgetBox from '@/components/widget-box';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import IllustrationEmptyNotes from '@/components/alignui/empty-state-illustrations/notes';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 type NoteItemProps = {
   title: string;

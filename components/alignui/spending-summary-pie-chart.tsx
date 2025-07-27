@@ -19,6 +19,18 @@ export const chartConfig = {
     label: 'Others',
     color: 'hsl(var(--bg-soft-200))',
   },
+  power: {
+    label: 'Power',
+    color: '#F5A623', // Yellow
+  },
+  dynasty: {
+    label: 'Dynasty Value',
+    color: '#4A90E2', // Blue
+  },
+  missing: {
+    label: 'Remaining',
+    color: '#9CA3AF', // Gray
+  },
 } satisfies ChartConfig;
 
 export default function SpendingSummaryPieChart({

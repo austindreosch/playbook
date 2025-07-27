@@ -14,7 +14,7 @@ import {
 } from 'date-fns';
 import { TimerRenderer, useStopwatch } from 'react-use-precision-timer';
 
-import * as LinkButton from '@/components/ui/link-button';
+import * as LinkButton from '@/components/alignui/link-button';
 import { DigitScroll } from '@/components/digit-scroll';
 
 function formatTime(ms: number) {

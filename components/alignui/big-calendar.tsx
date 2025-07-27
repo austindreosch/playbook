@@ -23,9 +23,9 @@ import {
 } from 'date-fns';
 
 import { cn, cnExt, type ClassValue } from '@/utils/cn';
-import { type AvatarRootProps } from '@/components/ui/avatar';
-import * as Avatar from '@/components/ui/avatar';
-import * as AvatarGroup from '@/components/ui/avatar-group';
+import { type AvatarRootProps } from '@/components/alignui/avatar';
+import * as Avatar from '@/components/alignui/avatar';
+import * as AvatarGroup from '@/components/alignui/avatar-group';
 
 const getHourRange = (
   calendarData: CalendarData[],

@@ -4,7 +4,7 @@ import { scaleLinear } from 'd3-scale';
 
 import { cn, cnExt } from '@/utils/cn';
 import { CHART_COLORS as COLORS } from '@/utils/consts';
-import { LegendDot } from '@/components/legend-dot';
+import { LegendDot } from '@/components/alignui/legend-dot';
 
 type LegendProps = {
   color?: (typeof COLORS)[number] | (string & {});

@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import * as Badge from '@/components/alignui/badge';
 import * as Button from '@/components/alignui/button';
-import { LegendDot } from '@/components/legend-dot';
+import { LegendDot } from '@/components/alignui/legend-dot';
 
 import BubbleChart, { SalesData } from '../bubble-chart';
 import IconArrowTrendDown from '~/icons/arrow-trend-down.svg';

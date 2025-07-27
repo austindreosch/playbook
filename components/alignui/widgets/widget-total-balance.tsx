@@ -3,9 +3,9 @@
 import { format } from 'date-fns';
 
 import { cnExt } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Select from '@/components/ui/select';
-import ChartStepLine from '@/components/chart-step-line';
+import * as Badge from '@/components/alignui/badge';
+import * as Select from '@/components/alignui/select';
+import ChartStepLine from '@/components/alignui/chart-step-line';
 
 const currencies = [
   { value: 'USD', label: 'USD', icon: '/flags/US.svg' },

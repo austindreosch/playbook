@@ -6,14 +6,14 @@ import { RiAddLine, RiArrowRightSLine, RiBankCardLine } from '@remixicon/react';
 
 import { virtualCardsData } from '@/lib/cards-data';
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as ButtonGroup from '@/components/ui/button-group';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as ProgressCircle from '@/components/ui/progress-circle';
+import * as Button from '@/components/alignui/button';
+import * as ButtonGroup from '@/components/alignui/button-group';
+import * as CompactButton from '@/components/alignui/compact-button';
+import * as ProgressCircle from '@/components/alignui/progress-circle';
 import { CardSwitchContainer } from '@/components/card-switch-container';
-import IllustrationEmptyMyCards from '@/components/empty-state-illustrations/my-cards';
+import IllustrationEmptyMyCards from '@/components/alignui/empty-state-illustrations/my-cards';
 import { VirtualCard } from '@/components/virtual-card';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetMyCardsCompact({
   className,

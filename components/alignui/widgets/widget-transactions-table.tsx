@@ -9,9 +9,9 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as Input from '@/components/ui/input';
-import * as Kbd from '@/components/ui/kbd';
+import * as Button from '@/components/alignui/button';
+import * as Input from '@/components/alignui/input';
+import * as Kbd from '@/components/alignui/kbd';
 import {
   TransactionsTable,
   type TransactionTableData,

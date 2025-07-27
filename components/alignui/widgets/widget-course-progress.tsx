@@ -1,10 +1,10 @@
 import { RiBook3Line } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as LinkButton from '@/components/ui/link-button';
-import * as ProgressCircle from '@/components/ui/progress-circle';
-import * as WidgetBox from '@/components/widget-box';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as LinkButton from '@/components/alignui/link-button';
+import * as ProgressCircle from '@/components/alignui/progress-circle';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetCourseProgress({
   ...rest

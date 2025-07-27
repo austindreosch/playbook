@@ -3,12 +3,12 @@
 import { RiIndeterminateCircleFill, RiMacbookLine } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import IllustrationEmptyStatusTracker from '@/components/empty-state-illustrations/status-tracker';
-import * as WidgetBox from '@/components/widget-box';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import IllustrationEmptyStatusTracker from '@/components/alignui/empty-state-illustrations/status-tracker';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetStatusTracker({
   ...rest

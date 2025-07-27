@@ -9,13 +9,13 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Avatar from '@/components/ui/avatar';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as SegmentedControl from '@/components/ui/segmented-control';
-import IllustrationEmptyEmployeeSpotlight from '@/components/empty-state-illustrations/employee-spotlight';
+import * as Avatar from '@/components/alignui/avatar';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as SegmentedControl from '@/components/alignui/segmented-control';
+import IllustrationEmptyEmployeeSpotlight from '@/components/alignui/empty-state-illustrations/employee-spotlight';
 import { SvgStickerFrame } from '@/components/sticker-frame';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 import IconHeartFill from '~/icons/icon-heart-fill.svg';
 import IconHeartLine from '~/icons/icon-heart-line.svg';

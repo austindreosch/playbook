@@ -5,12 +5,12 @@ import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { RiFileChartLine, RiTimeFill } from '@remixicon/react';
 import { format, intervalToDuration } from 'date-fns';
 
-import * as Button from '@/components/ui/button';
-import * as ButtonGroup from '@/components/ui/button-group';
-import * as Divider from '@/components/ui/divider';
-import ChartStepLine from '@/components/chart-step-line';
-import IllustrationEmptyWorkHourAnalysis from '@/components/empty-state-illustrations/work-hour-analysis';
-import * as WidgetBox from '@/components/widget-box';
+import * as Button from '@/components/alignui/button';
+import * as ButtonGroup from '@/components/alignui/button-group';
+import * as Divider from '@/components/alignui/divider';
+import ChartStepLine from '@/components/alignui/chart-step-line';
+import IllustrationEmptyWorkHourAnalysis from '@/components/alignui/empty-state-illustrations/work-hour-analysis';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 

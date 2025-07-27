@@ -12,7 +12,7 @@ import {
 
 import * as Badge from '@/components/alignui/badge';
 import * as Button from '@/components/alignui/button';
-import { LegendDot } from '@/components/legend-dot';
+import { LegendDot } from '@/components/alignui/legend-dot';
 
 const data = [
   {

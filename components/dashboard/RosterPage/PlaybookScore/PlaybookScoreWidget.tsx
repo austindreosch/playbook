@@ -13,16 +13,27 @@ import * as Select from '@/components/alignui/select';
 import { cnExt } from '@/utils/cn';
 import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe } from 'lucide-react';
 import * as Button from '@/components/alignui/button';
-import MetricControlsSection from '../MetricControlsSection';
+import UserPlayerPreferencesPanel from '../UserPlayerPreferencesPanel';
 
 // import IconInfoCustomFill from '~/icons/icon-info-custom-fill.svg';
 
 
-const chartData = [
-  { id: 'shopping', name: 'Shopping', value: 400 },
-  { id: 'utilities', name: 'Utilities', value: 300 },
-  { id: 'others', name: 'Others', value: 300 },
-];
+// Dynamic chart data calculation
+const calculateChartData = (totalScore, maxScore = 999, powerRatio = 0.6, dynastyRatio = 0.4) => {
+  const scoreRatio = totalScore / maxScore;
+  const missingScore = maxScore - totalScore;
+  
+  // Calculate proportions for the filled portion
+  const filledPortion = totalScore;
+  const powerValue = filledPortion * powerRatio;
+  const dynastyValue = filledPortion * dynastyRatio;
+  
+  return [
+    { id: 'power', name: 'Power', value: powerValue },
+    { id: 'dynasty', name: 'Dynasty Value', value: dynastyValue },
+    { id: 'missing', name: 'Remaining', value: missingScore },
+  ];
+};
 
 export default function PlaybookScoreBlock({
   ...rest
@@ -30,16 +41,25 @@ export default function PlaybookScoreBlock({
   const [chartMaxWidth, setChartMaxWidth] = React.useState(250);
   const [isClient, setIsClient] = React.useState(false);
   
-  // Metrics state and data
-  const [metricSelections, setMetricSelections] = React.useState({
-    0: "Prefer",  // Favor
-    1: "Faith",   // Prospect  
-    2: "Ironman", // Injuries
-    3: "Prefer"   // Global Favor
-  });
+  // Individual state for each preference type
+  const [favorPreference, setFavorPreference] = React.useState("Prefer");
+  const [prospectPreference, setProspectPreference] = React.useState("Faith");
+  const [injuriesPreference, setInjuriesPreference] = React.useState("Ironman");
+  const [globalFavorPreference, setGlobalFavorPreference] = React.useState("Prefer");
+
+  // Combined state for backward compatibility with the component
+  const metricSelections = {
+    0: favorPreference,
+    1: prospectPreference,
+    2: injuriesPreference,
+    3: globalFavorPreference
+  };
   
   const scoreData = {
     totalScore: 981,
+    maxScore: 999,
+    powerRatio: 0.6, // 60% Power
+    dynastyRatio: 0.4, // 40% Dynasty Value
     segments: [
       { category: "primary", value: 45, fill: "#4A90E2" },
       { category: "secondary", value: 55, fill: "#F5A623" },
@@ -68,12 +88,72 @@ export default function PlaybookScoreBlock({
     ]
   };
 
-  const handleMetricChange = (metricIndex, value) => {
-    setMetricSelections(prev => ({
-      ...prev,
-      [metricIndex]: value
-    }));
+  const handleMetricChange = (metricIndex: number, value: string) => {
+    switch (metricIndex) {
+      case 0: // Favor
+        setFavorPreference(value);
+        break;
+      case 1: // Prospect
+        setProspectPreference(value);
+        break;
+      case 2: // Injuries
+        setInjuriesPreference(value);
+        break;
+      case 3: // Global Favor
+        setGlobalFavorPreference(value);
+        break;
+      default:
+        console.warn(`Unknown metric index: ${metricIndex}`);
+    }
   };
+
+  // Calculate dynamic chart data
+  const chartData = calculateChartData(
+    scoreData.totalScore,
+    scoreData.maxScore,
+    scoreData.powerRatio,
+    scoreData.dynastyRatio
+  );
+
+  // Load preferences from localStorage on mount
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFavor = localStorage.getItem('userPreference_favor');
+      const savedProspect = localStorage.getItem('userPreference_prospect');
+      const savedInjuries = localStorage.getItem('userPreference_injuries');
+      const savedGlobalFavor = localStorage.getItem('userPreference_globalFavor');
+
+      if (savedFavor) setFavorPreference(savedFavor);
+      if (savedProspect) setProspectPreference(savedProspect);
+      if (savedInjuries) setInjuriesPreference(savedInjuries);
+      if (savedGlobalFavor) setGlobalFavorPreference(savedGlobalFavor);
+    }
+  }, []);
+
+  // Save preferences to localStorage when they change
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userPreference_favor', favorPreference);
+    }
+  }, [favorPreference]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userPreference_prospect', prospectPreference);
+    }
+  }, [prospectPreference]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userPreference_injuries', injuriesPreference);
+    }
+  }, [injuriesPreference]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('userPreference_globalFavor', globalFavorPreference);
+    }
+  }, [globalFavorPreference]);
 
   React.useEffect(() => {
     setIsClient(true);
@@ -130,7 +210,7 @@ export default function PlaybookScoreBlock({
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
             <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
-              981
+              {scoreData.totalScore}
             </span>
           </div>
         </div>
@@ -141,45 +221,42 @@ export default function PlaybookScoreBlock({
         <div className="flex items-center gap-8 mx-auto">
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <ClipboardMinus className="icon-sm" />
-              <div className="text-label-sm">Standard</div>
+              <div className="text-label-sm">STANDARD</div>
             </div>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge.Root variant="rank" color="gray" size="medium">
-                3
-              </Badge.Root>
+            <div className="flex items-center gap-4 mt-1">
+              <div className="flex items-center gap-0.5">
+                <ClipboardMinus className="icon-sm" />
+                <Badge.Root variant="rank" color="gray" size="medium">
+                  3
+                </Badge.Root>
+              </div>
               <div className="w-px h-4 bg-stroke-soft-200" />
-              <div className="text-label-lg">972</div>
+              <div className="text-label-lg text-">972</div>
             </div>
           </div>
 
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <Sprout className="icon-sm" />
-              <div className="text-label-sm">Redraft</div>
+              <div className="text-label-sm">REDRAFT</div>
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <Badge.Root variant="rank" color="gray" size="medium">
-                1
-              </Badge.Root>
+              <div className="flex items-center gap-0.5">
+                <Sprout className="icon-sm" />
+                <Badge.Root variant="rank" color="gray" size="medium">
+                  1
+                </Badge.Root>
+              </div>
               <div className="w-px h-4 bg-stroke-soft-200" />
               <div className="text-label-lg">998</div>
             </div>
           </div>
-
         </div>
 
         {/* Metrics Controls - shows controls on mdh+ viewports, button on smaller */}
-        <MetricControlsSection
+        <UserPlayerPreferencesPanel
           scoreData={scoreData}
-          metricSelections={metricSelections}
-          onMetricChange={handleMetricChange}
           className="px-1"
         />
-
-
-
-
 
 
       </div>

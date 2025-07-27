@@ -2,7 +2,7 @@
 
 import { RiCalendarCheckLine } from '@remixicon/react';
 
-import * as Button from '@/components/ui/button';
+import * as Button from '@/components/alignui/button';
 
 export function ScheduleButton({ className }: { className?: string }) {
   return (

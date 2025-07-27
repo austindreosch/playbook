@@ -3,12 +3,12 @@
 import { RiFileListLine, RiMore2Line } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as LinkButton from '@/components/ui/link-button';
-import IllustrationEmptyMySubscriptions from '@/components/empty-state-illustrations/my-subscriptions';
-import * as WidgetBox from '@/components/widget-box';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as LinkButton from '@/components/alignui/link-button';
+import IllustrationEmptyMySubscriptions from '@/components/alignui/empty-state-illustrations/my-subscriptions';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 export default function WidgetMySubscriptions({
   ...rest

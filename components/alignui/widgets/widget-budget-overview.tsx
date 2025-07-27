@@ -10,17 +10,17 @@ import {
 } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import * as Select from '@/components/ui/select';
+import * as Badge from '@/components/alignui/badge';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import * as Select from '@/components/alignui/select';
 import {
   BudgetOverviewChart,
   chartConfig,
-} from '@/components/budget-overview-stack-bar-chart';
-import { ChartLegend } from '@/components/chart';
-import IllustrationEmptyBudgetOverview from '@/components/empty-state-illustrations/budget-overview';
-import * as WidgetBox from '@/components/widget-box';
+} from '@/components/alignui/budget-overview-stack-bar-chart';
+import { ChartLegend } from '@/components/alignui/chart';
+import IllustrationEmptyBudgetOverview from '@/components/alignui/empty-state-illustrations/budget-overview';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 const periods = [
   {

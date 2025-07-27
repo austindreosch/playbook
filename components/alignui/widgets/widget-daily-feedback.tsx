@@ -4,11 +4,11 @@ import * as React from 'react';
 import { RiDiscussLine } from '@remixicon/react';
 
 import { cnExt } from '@/utils/cn';
-import * as Button from '@/components/ui/button';
-import * as Divider from '@/components/ui/divider';
-import IllustrationEmptyDailyFeedback from '@/components/empty-state-illustrations/daily-feedback';
+import * as Button from '@/components/alignui/button';
+import * as Divider from '@/components/alignui/divider';
+import IllustrationEmptyDailyFeedback from '@/components/alignui/empty-state-illustrations/daily-feedback';
 import { RatingBarWithTextarea } from '@/components/rating-bar-with-textarea';
-import * as WidgetBox from '@/components/widget-box';
+import * as WidgetBox from '@/components/alignui/widget-box';
 
 function Step1() {
   const [selectedRating, setSelectedRating] = React.useState<string>();

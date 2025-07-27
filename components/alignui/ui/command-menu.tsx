@@ -9,7 +9,7 @@ import { Command } from 'cmdk';
 import { cn, cnExt } from '@/utils/cn';
 import { PolymorphicComponentProps } from '@/utils/polymorphic';
 import { tv, type VariantProps } from '@/utils/tv';
-import * as Modal from '@/components/ui/modal';
+import * as Modal from '@/components/alignui/modal';
 
 const CommandDialogTitle = Modal.Title;
 const CommandDialogDescription = Modal.Description;
