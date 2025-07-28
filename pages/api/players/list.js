@@ -1,67 +1,72 @@
-import { MongoClient } from 'mongodb';
-import { CORE_DATA_SOURCE_KEY } from '../../../lib/config'; // Adjust path as needed
-
-const mongoUri = process.env.MONGODB_URI;
-const DB_NAME = 'playbook';
-const PLAYERS_COLLECTION = 'players';
+import { getDatabase } from '../../../lib/mongodb';
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        res.setHeader('Allow', ['GET']);
+        return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
 
-    const { sport } = req.query;
+    const { sport, limit = 50, offset = 0 } = req.query;
 
     if (!sport) {
-        return res.status(400).json({ error: 'Sport query parameter is required' });
+        return res.status(400).json({ message: 'Missing required query parameter: sport' });
     }
 
-    const lowerCaseSport = sport.toLowerCase();
-    let client;
+    // Basic validation for sport
+    const allowedSports = ['nba', 'nfl', 'mlb'];
+    if (!allowedSports.includes(sport.toLowerCase())) {
+        return res.status(400).json({ message: `Invalid sport parameter. Allowed: ${allowedSports.join(', ')}` });
+    }
+
+    // Validate and parse pagination parameters
+    const limitNum = Math.min(parseInt(limit) || 50, 100); // Cap at 100
+    const offsetNum = Math.max(parseInt(offset) || 0, 0);
 
     try {
-        client = new MongoClient(mongoUri);
-        await client.connect();
-        const db = client.db(DB_NAME);
-        const playersCollection = db.collection(PLAYERS_COLLECTION);
+        const db = await getDatabase();
+        const playersCollection = db.collection('players');
 
-        console.log(`API: Fetching player identities for sport: ${lowerCaseSport}`);
+        // Query for players by sport with pagination
+        const query = { sport: sport.toLowerCase() };
+        
+        const players = await playersCollection
+            .find(query)
+            .skip(offsetNum)
+            .limit(limitNum)
+            .project({ 
+                _id: 1, 
+                primaryName: 1, 
+                position: 1, 
+                team: 1,
+                sport: 1 
+            })
+            .sort({ primaryName: 1 }) // Sort alphabetically
+            .toArray();
 
-        const players = await playersCollection.find(
-            { sport: lowerCaseSport },
-            {
-                projection: {
-                    _id: 1, // Keep the default _id as playbookId
-                    [`${CORE_DATA_SOURCE_KEY}.id`]: 1, // Get the MySportsFeeds ID
-                    primaryName: 1,
-                    position: 1,
-                    teamId: 1,
-                    teamName: 1,
-                    // Add any other essential lightweight fields needed for base display
-                }
+        // Get total count for pagination info
+        const totalCount = await playersCollection.countDocuments(query);
+
+        return res.status(200).json({
+            players,
+            pagination: {
+                total: totalCount,
+                limit: limitNum,
+                offset: offsetNum,
+                hasMore: (offsetNum + limitNum) < totalCount
             }
-        ).toArray();
-
-        console.log(`API: Found ${players.length} player identities for ${lowerCaseSport}`);
-
-        // Map the result to a cleaner structure, renaming _id to playbookId
-        const playerIdentities = players.map(p => ({
-            playbookId: p._id.toString(), // Ensure playbookId is a string
-            mySportsFeedsId: p[CORE_DATA_SOURCE_KEY]?.id?.toString() || null, // Ensure it's a string or null
-            primaryName: p.primaryName,
-            position: p.position,
-            teamId: p.teamId,
-            teamName: p.teamName,
-        }));
-
-        res.status(200).json(playerIdentities);
+        });
 
     } catch (error) {
-        console.error(`API Error fetching player identities for ${lowerCaseSport}:`, error);
-        res.status(500).json({ error: 'Failed to fetch player identities', details: error.message });
-    } finally {
-        if (client) {
-            await client.close();
-        }
+        console.error('Player list API error:', {
+            message: error.message,
+            stack: error.stack,
+            sport,
+            limit: limitNum,
+            offset: offsetNum
+        });
+        return res.status(500).json({ 
+            message: 'Internal Server Error fetching players',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 } 

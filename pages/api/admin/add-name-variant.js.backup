@@ -1,6 +1,6 @@
+import { MongoClient, ObjectId } from 'mongodb';
 
-
-import { getDatabase } from '../../../lib/mongodb.js';
+const mongoUri = process.env.MONGODB_URI;
 const DB_NAME = 'playbook';
 const PLAYERS_COLLECTION = 'players';
 
@@ -25,9 +25,11 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Invalid ObjectId format for playerId' });
     }
 
-    
+    const client = new MongoClient(mongoUri);
+
     try {
-                const db = client.db(DB_NAME);
+        await client.connect();
+        const db = client.db(DB_NAME);
         const playersCollection = db.collection(PLAYERS_COLLECTION);
 
         console.log(`Attempting to add variant '${newNameVariant}' to player ID ${playerId}`);
@@ -51,5 +53,9 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error('Add name variant API error:', error);
         return res.status(500).json({ message: error.message || 'Internal Server Error adding name variant.' });
+    } finally {
+        if (client) {
+            await client.close();
+        }
     }
 } 

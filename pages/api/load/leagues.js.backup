@@ -1,9 +1,12 @@
-import { getDatabase } from '../../../lib/mongodb.js';
 import { MongoClient } from 'mongodb';
 import { calculateScore } from '../../../utilities/calculateScore'; // adjust the path accordingly
 
+const mongoUri = process.env.MONGODB_URI;
+
 async function connectToDatabase() {
-      return await getDatabase();
+  const client = new MongoClient(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+  await client.connect();
+  return client.db('playbook');
 }
 
 /* -----------------------------------------------------------

@@ -1,91 +1,83 @@
-import { MongoClient } from 'mongodb';
-
-const mongoUri = process.env.MONGODB_URI;
-const RANKINGS_COLLECTION = 'rankings'; // Ensure correct collection name
-
-// Helper to safely lowercase strings
-const safeLowerCase = (str) => (typeof str === 'string' ? str.toLowerCase() : str);
+import { getDatabase } from '../../../lib/mongodb';
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Destructure all potential parameters
-    const { 
-        sport, 
-        format, 
-        scoring,    // Optional
-        source,     // Optional
-        pprSetting, // Optional
-        flexSetting, // Optional
-        // fetchConsensus // Flag removed as source is ignored
-    } = req.query;
+    const { sport, format, scoring, flexSetting, pprSetting } = req.query;
 
-    // Basic validation (only for required fields)
-    if (!sport || !format) {
+    // Validate required parameters
+    if (!sport || !format || !scoring) {
         return res.status(400).json({
-            error: 'Missing required query parameters: sport, format'
+            error: 'Missing required parameters',
+            details: 'sport, format, and scoring are required'
         });
     }
 
-    let client;
-
     try {
-        client = new MongoClient(mongoUri); // Initialize the client
-        await client.connect();
-        const db = client.db('playbook');
-        const collection = db.collection(RANKINGS_COLLECTION);
+        const db = await getDatabase();
+        const rankingsCollection = db.collection('rankings');
 
-        // Start building the query dynamically
+        // Build query object
         const query = {
-            sport: safeLowerCase(sport),
-            format: safeLowerCase(format),
+            sport: sport.toUpperCase(),
+            format: format.charAt(0).toUpperCase() + format.slice(1).toLowerCase(),
+            scoring: scoring.charAt(0).toUpperCase() + scoring.slice(1).toLowerCase(),
             isLatest: true
         };
 
-        // Source field is intentionally ignored for fetching the latest ranking
-
-        // Add scoring if present
-        if (scoring) {
-            query.scoring = safeLowerCase(scoring);
-        }
-        
-        // Add NFL-specific optional fields
-        if (safeLowerCase(sport) === 'nfl') {
-            if (pprSetting) {
-                query.pprSetting = safeLowerCase(pprSetting);
-            }
+        // Add NFL-specific parameters if provided
+        if (sport.toUpperCase() === 'NFL') {
             if (flexSetting) {
-                query.flexSetting = safeLowerCase(flexSetting);
+                query.flexSetting = flexSetting.toLowerCase();
+            }
+            if (pprSetting) {
+                query.pprSetting = pprSetting.toLowerCase();
             }
         }
 
+        console.log('Rankings query:', query);
 
-        // Get the latest version matching the constructed query
-        const latestVersion = await collection.findOne(
-            query,
-            {
-                sort: { dateFetched: -1 } // Sort by dateFetched to get the most recent
-            }
-        );
+        // Find the latest ranking document
+        const rankingDoc = await rankingsCollection.findOne(query, {
+            sort: { publishedAt: -1 }
+        });
 
-        if (!latestVersion) {
+        if (!rankingDoc) {
             return res.status(404).json({
-                error: `No latest ranking found matching the criteria`
+                error: 'No rankings found',
+                details: `No rankings found for the specified criteria: ${JSON.stringify(query)}`
             });
         }
 
-        // Return the *entire document* for backward compatibility
-        res.status(200).json(latestVersion); 
+        // Return the ranking document
+        return res.status(200).json({
+            success: true,
+            data: {
+                _id: rankingDoc._id,
+                sport: rankingDoc.sport,
+                format: rankingDoc.format,
+                scoring: rankingDoc.scoring,
+                flexSetting: rankingDoc.flexSetting,
+                pprSetting: rankingDoc.pprSetting,
+                publishedAt: rankingDoc.publishedAt,
+                source: rankingDoc.source,
+                version: rankingDoc.version,
+                rankings: rankingDoc.rankings || [],
+                totalCount: rankingDoc.rankings?.length || 0
+            }
+        });
 
     } catch (error) {
-        console.error('Error fetching latest rankings:', error);
-        res.status(500).json({ error: 'Failed to fetch latest rankings' });
-    } finally {
-        // Ensure client is defined and topology exists before checking connection
-        if (client && client.topology && client.topology.isConnected()) { 
-            await client.close();
-        }
+        console.error('Error fetching latest rankings:', {
+            message: error.message,
+            stack: error.stack,
+            query: { sport, format, scoring, flexSetting, pprSetting }
+        });
+        return res.status(500).json({
+            error: 'Failed to fetch latest rankings',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 } 

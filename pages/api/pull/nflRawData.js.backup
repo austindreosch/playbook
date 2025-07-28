@@ -27,10 +27,11 @@
 // nfl > dailyDfsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nfl/2024-2025-regular/date/{YYYYMMDD}/dfs_projections.json
 // nfl > seasonalPlayerStatsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nfl/2024-2025-regular/player_stats_totals_projections.json
 
-import { getDatabase } from '../../../lib/mongodb.js';
+
 import { set } from 'lodash'; // IMPORT LODASH.SET
 import { MongoClient } from 'mongodb';
 import { MANUAL_STAT_OVERRIDES } from '../../../lib/config'; // IMPORT OVERRIDES
+
 
 //=============================================================================
 //                            HELPER FUNCTIONS
@@ -143,11 +144,15 @@ export default async function handler(req, res) {
         throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
     }
 
-    
+    const client = new MongoClient(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+
     try {
         await client.connect({ serverSelectionTimeoutMS: 5000 });
 
-        const db = await getDatabase();
+        const db = client.db('playbook');
         const statsCollection = db.collection('stats');
 
         const errors = [];
@@ -158,6 +163,7 @@ export default async function handler(req, res) {
         //=============================================================================
         //                    1. FETCH AND STORE CORE DATA (Uses currentSeason)
         //=============================================================================
+
 
         // TODO: UNCOMMENT WHEN DONE TESTING
 
@@ -194,6 +200,8 @@ export default async function handler(req, res) {
         //=============================================================================
         //                    2. FETCH AND STORE STATS DATA
         //=============================================================================
+
+
 
         // Seasonal player stats (remove defensive players)
         const seasonalPlayerStats = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/player_stats_totals.json`, 'seasonalPlayerStats');
@@ -279,6 +287,7 @@ export default async function handler(req, res) {
         //                    3. FETCH AND STORE DETAILED DATA
         //=============================================================================
 
+
         // TODO: These are game-specific endpoints - Would need to first fetch the daily games to get the game IDs, then loop through each game ID to fetch these detailed endpoints
 
         // Game boxscore
@@ -289,6 +298,8 @@ export default async function handler(req, res) {
 
         // Game lineup
         // https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_SEASON}/games/${formatGameId(new Date(), 'LAL', 'MIL')}/lineup.json
+
+
 
         // Players
         const players = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/players.json`, 'players');
@@ -331,6 +342,7 @@ export default async function handler(req, res) {
         //                    4. FETCH AND STORE PROJECTIONS DATA (Uses projectionSeason)
         //=============================================================================
 
+
         const projectionFilterPositions = new Set([
             'DE', 'DT', 'LB', 'CB', 'S', 'FS', 'SS', 'ILB', 'OLB', 'DL', 'DB', 'LS', 'G', 'OT', 'T', 'C', 'P', 'NT', 'MLB', 'K'
         ]);
@@ -353,6 +365,7 @@ export default async function handler(req, res) {
             await updateEndpoint(statsCollection, 'nfl', 'projections', 'dailyPlayerGamelogsProjections', dailyPlayerGamelogsProjections, errors);
         }
 
+
         // ---------------------------------------------------------------------
         // Daily dfs projections
         const dailyDfsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nfl/${process.env.MYSPORTSFEEDS_NFL_PROJECTION_SEASON}/date/${formatDate(new Date())}/dfs_projections.json`, 'dailyDfsProjections');
@@ -372,6 +385,7 @@ export default async function handler(req, res) {
         if (dailyDfsProjections && validateData(dailyDfsProjections, 'dailyDfsProjections', errors)) {
             await updateEndpoint(statsCollection, 'nfl', 'projections', 'dailyDfsProjections', dailyDfsProjections, errors);
         }
+
 
         // ---------------------------------------------------------------------
         // Seasonal player stats projections
@@ -402,6 +416,7 @@ export default async function handler(req, res) {
         //                    5. RETURN RESULTS
         //=============================================================================
 
+
         res.status(200).json({
             success: true,
             message: errors.length > 0
@@ -413,5 +428,9 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error('Error consolidating NFL data:', error);
         res.status(500).json({ error: 'Failed to consolidate NFL data', details: error.message });
+    } finally {
+        if (client.topology?.isConnected()) {
+            await client.close();
+        }
     }
 }

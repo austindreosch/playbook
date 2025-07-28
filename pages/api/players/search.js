@@ -1,6 +1,5 @@
-import { MongoClient } from 'mongodb';
+import { getDatabase } from '../../../lib/mongodb';
 
-const mongoUri = process.env.MONGODB_URI;
 const DB_NAME = 'playbook';
 const PLAYERS_COLLECTION = 'players';
 const SEARCH_LIMIT = 10; // Limit the number of search results
@@ -23,11 +22,8 @@ export default async function handler(req, res) {
          return res.status(400).json({ message: `Invalid sport parameter. Allowed: ${allowedSports.join(', ')}` });
     }
 
-    const client = new MongoClient(mongoUri);
-
     try {
-        await client.connect();
-        const db = client.db(DB_NAME);
+        const db = await getDatabase();
         const playersCollection = db.collection(PLAYERS_COLLECTION);
 
         // Create a case-insensitive regex for searching
@@ -52,11 +48,15 @@ export default async function handler(req, res) {
         return res.status(200).json({ players });
 
     } catch (error) {
-        console.error('Player search API error:', error);
-        return res.status(500).json({ message: 'Internal Server Error fetching players' });
-    } finally {
-        if (client) {
-            await client.close();
-        }
+        console.error('Player search API error:', {
+            message: error.message,
+            stack: error.stack,
+            searchTerm: name,
+            sport
+        });
+        return res.status(500).json({ 
+            message: 'Internal Server Error fetching players',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 } 

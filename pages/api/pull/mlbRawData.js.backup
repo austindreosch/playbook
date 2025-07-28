@@ -1,4 +1,3 @@
-import { getDatabase } from '../../../lib/mongodb.js';
 import { set } from 'lodash';
 import { MongoClient } from 'mongodb';
 import { MANUAL_STAT_OVERRIDES } from '../../../lib/config';
@@ -227,16 +226,18 @@ export default async function handler(req, res) {
         throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
     }
 
-        const summary = {
+    const client = new MongoClient(process.env.MONGODB_URI);
+    const summary = {
         success: true,
         endpoints: {},
         errors: []
     };
 
     try {
-                console.log('📊 MLB Data Sync: Starting...');
+        await client.connect();
+        console.log('📊 MLB Data Sync: Starting...');
 
-        const db = await getDatabase();
+        const db = client.db('playbook');
         const statsCollection = db.collection('stats');
         const errors = [];
         const currentSeason = process.env.MYSPORTSFEEDS_MLB_SEASON;
@@ -615,6 +616,11 @@ export default async function handler(req, res) {
             details: error.message,
             stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
+    } finally {
+        if (client.topology?.isConnected()) {
+            await client.close();
+            console.log('📊 MongoDB connection closed');
+        }
     }
 }
 

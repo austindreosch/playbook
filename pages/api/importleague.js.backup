@@ -1,5 +1,7 @@
-import { getDatabase } from '../../lib/mongodb.js';
 import { MongoClient } from 'mongodb';
+
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 /* -----------------------------------------------------------
     Endpoint to save imported league data in MongoDB
@@ -7,8 +9,9 @@ import { MongoClient } from 'mongodb';
 
 const handler = async (req, res) => {
   try {
-    
-    const db = await getDatabase();
+    await client.connect();
+
+    const db = client.db('playbook');
     const leaguesCollection = db.collection('leagues'); 
 
     if (req.method === 'GET') {
@@ -30,6 +33,9 @@ const handler = async (req, res) => {
   } catch (error) {
     console.error(error); 
     res.status(500).json({ success: false, message: 'Internal Server Error' });
-  };
+  } finally {
+    await client.close();
+  }
+};
 
 export default handler;

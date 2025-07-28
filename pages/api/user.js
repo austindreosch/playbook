@@ -2,24 +2,7 @@
 // endpoint for auth0 to call to create or update user in the database
 
 import { getSession, updateSession } from '@auth0/nextjs-auth0';
-import { MongoClient } from 'mongodb';
-
-const uri = process.env.MONGODB_URI;
-let cachedClient = null;
-let cachedDb = null;
-
-async function connectToDatabase() {
-  if (cachedDb) return cachedDb;
-
-  const client = cachedClient || new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  await client.connect();
-  cachedClient = client;
-  cachedDb = client.db('playbook');
-  return cachedDb;
-}
+import { getDatabase } from '../../lib/mongodb';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -29,7 +12,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const db = await connectToDatabase();
+      const db = await getDatabase();
       const usersCollection = db.collection('users');
 
       // Upsert user for Auth0 hook
@@ -59,7 +42,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const db = await connectToDatabase();
+      const db = await getDatabase();
       const usersCollection = db.collection('users');
 
       const updatePayload = { updatedAt: new Date() };

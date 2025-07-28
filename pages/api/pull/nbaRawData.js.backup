@@ -27,10 +27,10 @@
 // nba > dailyDfsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/date/{YYYYMMDD}/dfs_projections.json
 // nba > seasonalPlayerStatsProjections -> https://api.mysportsfeeds.com/v2.1/pull/nba/2024-2025-regular/player_stats_totals_projections.json
 
-import { getDatabase } from '../../../lib/mongodb.js';
 import { set } from 'lodash'; // IMPORT LODASH.SET
 import { MongoClient } from 'mongodb';
 import { MANUAL_STAT_OVERRIDES } from '../../../lib/config'; // IMPORT OVERRIDES
+
 
 //=============================================================================
 //                            HELPER FUNCTIONS
@@ -142,11 +142,15 @@ export default async function handler(req, res) {
         throw new Error(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
     }
 
-    
+    const client = new MongoClient(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+
     try {
         await client.connect({ serverSelectionTimeoutMS: 5000 });
 
-        const db = await getDatabase();
+        const db = client.db('playbook');
         const statsCollection = db.collection('stats');
 
         const errors = [];
@@ -154,6 +158,7 @@ export default async function handler(req, res) {
         //=============================================================================
         //                    1. FETCH AND STORE CORE DATA
         //=============================================================================
+
 
         // Seasonal games
         const seasonalGames = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/games.json`, 'seasonalGames');
@@ -188,6 +193,7 @@ export default async function handler(req, res) {
         //=============================================================================
         //                    2. FETCH AND STORE STATS DATA
         //=============================================================================
+
 
         // Daily player gamelogs
         const dailyPlayerGamelogs = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/player_gamelogs.json`, 'dailyPlayerGamelogs');
@@ -246,6 +252,7 @@ export default async function handler(req, res) {
         //                    3. FETCH AND STORE DETAILED DATA
         //=============================================================================
 
+
         // TODO: These are game-specific endpoints - Would need to first fetch the daily games to get the game IDs, then loop through each game ID to fetch these detailed endpoints
 
         // Game boxscore
@@ -279,6 +286,7 @@ export default async function handler(req, res) {
         //                    4. FETCH AND STORE PROJECTIONS DATA
         //=============================================================================
 
+
         // Daily player gamelogs projections
         const dailyPlayerGamelogsProjections = await fetchWithAuth(`https://api.mysportsfeeds.com/${process.env.MYSPORTSFEEDS_API_VERSION}/pull/nba/${process.env.MYSPORTSFEEDS_NBA_SEASON}/date/${formatDate(new Date())}/player_gamelogs_projections.json`, 'dailyPlayerGamelogsProjections');
         if (dailyPlayerGamelogsProjections && validateData(dailyPlayerGamelogsProjections, 'dailyPlayerGamelogsProjections', errors)) {
@@ -301,6 +309,7 @@ export default async function handler(req, res) {
         //                    5. RETURN RESULTS
         //=============================================================================
 
+
         res.status(200).json({
             success: true,
             message: errors.length > 0
@@ -312,5 +321,9 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error('Error consolidating NBA data:', error);
         res.status(500).json({ error: 'Failed to consolidate NBA data', details: error.message });
+    } finally {
+        if (client.topology?.isConnected()) {
+            await client.close();
+        }
     }
 }
