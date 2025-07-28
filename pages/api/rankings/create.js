@@ -1,6 +1,4 @@
 import { getDatabase } from '../../../lib/mongodb.js';
-import { MongoClient } from 'mongodb';
-
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });

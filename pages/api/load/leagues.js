@@ -1,5 +1,4 @@
 import { getDatabase } from '../../../lib/mongodb.js';
-import { MongoClient } from 'mongodb';
 import { calculateScore } from '../../../utilities/calculateScore'; // adjust the path accordingly
 
 async function connectToDatabase() {

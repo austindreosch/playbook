@@ -1,6 +1,5 @@
 import { getDatabase } from '../../../lib/mongodb.js';
 import { set } from 'lodash';
-import { MongoClient } from 'mongodb';
 import { MANUAL_STAT_OVERRIDES } from '../../../lib/config';
 
 //=============================================================================

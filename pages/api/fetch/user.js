@@ -1,8 +1,5 @@
 // /api/fetch/user.js
 import { getDatabase } from '../../../lib/mongodb.js';
-const { MongoClient } = require('mongodb');
-
- 
 
 export default async function handler(req, res) {
   try {
@@ -16,3 +13,4 @@ export default async function handler(req, res) {
     console.error('Failed to fetch user leagues', error);
     res.status(500).json({ error: 'An error occurred while fetching data' });
   }
+}

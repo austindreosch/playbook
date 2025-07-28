@@ -1,6 +1,4 @@
 import { getDatabase } from '../../lib/mongodb.js';
-import { MongoClient } from 'mongodb';
-
 /* -----------------------------------------------------------
     Endpoint to save imported league data in MongoDB
 ----------------------------------------------------------- */

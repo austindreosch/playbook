@@ -29,7 +29,6 @@
 
 import { getDatabase } from '../../../lib/mongodb.js';
 import { set } from 'lodash'; // IMPORT LODASH.SET
-import { MongoClient } from 'mongodb';
 import { MANUAL_STAT_OVERRIDES } from '../../../lib/config'; // IMPORT OVERRIDES
 
 //=============================================================================

@@ -10,8 +10,6 @@
  */
 
 import { getDatabase } from '../../../lib/mongodb.js';
-import { MongoClient } from 'mongodb';
-
 // Define the data required for each sport from specific collections
 const dataSources = {
     stats: { // Collection name
