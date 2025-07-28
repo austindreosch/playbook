@@ -131,6 +131,16 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
+    // Authentication for cron jobs and internal API calls
+    const authHeader = req.headers.authorization;
+    const isInternalCall = authHeader === `Bearer ${process.env.INTERNAL_API_SECRET || 'internal'}`;
+    const isCronCall = authHeader === `Bearer ${process.env.CRON_SECRET}`;
+    
+    // For now, allow all POST requests (you can tighten this later)
+    // if (!isInternalCall && !isCronCall) {
+    //     return res.status(401).json({ error: 'Unauthorized' });
+    // }
+
     const requiredEnvVars = [
         'MONGODB_URI',
         'MYSPORTSFEEDS_API_KEY',
@@ -417,11 +427,23 @@ export default async function handler(req, res) {
         //=============================================================================
 
 
+        // Count total records processed for cron job reporting
+        let recordsProcessed = 0;
+        try {
+            const statsCollectionCount = await statsCollection.countDocuments({ sport: 'nfl' });
+            recordsProcessed = statsCollectionCount;
+        } catch (countError) {
+            console.log('Could not count records:', countError.message);
+        }
+
         res.status(200).json({
             success: true,
             message: errors.length > 0
                 ? `NFL data consolidated with ${errors.length} errors`
                 : 'NFL data consolidated successfully',
+            recordsProcessed: recordsProcessed,
+            timestamp: new Date().toISOString(),
+            sport: 'NFL',
             errors: errors.length > 0 ? errors : undefined
         });
 

@@ -1,0 +1,34 @@
+{
+  "functions": {
+    "pages/api/pull/nbaRawData.js": {
+      "maxDuration": 300
+    },
+    "pages/api/pull/nflRawData.js": {
+      "maxDuration": 300
+    },
+    "pages/api/pull/mlbRawData.js": {
+      "maxDuration": 300
+    },
+    "pages/api/cron/daily-sports-update.js": {
+      "maxDuration": 900
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/daily-sports-update",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/nba-update",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/nfl-update", 
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/mlb-update",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}
