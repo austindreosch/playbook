@@ -82,7 +82,7 @@ export default function RootLayout({ children }) {
           </Suspense>
           <AOSInitializer />
           <ConditionalNavBar />
-          <main className="flex-1 overflow-y-auto pt-10 md:pt-12 flex flex-col min-h-0">
+          <main className="flex-1 overflow-y-auto pt-10 md:pt-12 min-h-0">
             <MasterDatasetInitializer />
             <ConditionalWrapper>
               {children}
