@@ -9,7 +9,6 @@ import RankingsSelectorButton from '@/components/dashboard/Overview/Header/Ranki
 import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
 
 // Roster Page Components
-// import PlaybookScoreBlock from'@/components/dashboard/RosterPage/PlaybookScoreBlock';
 import PlayerPerformanceBlock from '@/components/dashboard/RosterPage/PlayerPerformanceBlock';
 import PlayerProfileBlock from '@/components/dashboard/RosterPage/PlayerProfileBlock';
 import RosterFullBlock from '@/components/dashboard/RosterPage/RosterBlock/RosterFullBlock';
@@ -17,7 +16,7 @@ import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFull
 
 // NEW STUFF FROM ALIGN
 import PlaybookScoreWidget from '../RosterPage/PlaybookScore/PlaybookScoreWidget';
-
+import PlayerProfileWidget from '../RosterPage/PlayerProfile/PlayerProfileWidget';
 
 export default function LeagueRosterPage() {
 
@@ -71,7 +70,8 @@ export default function LeagueRosterPage() {
                     <PlayerProfileBlock className="h-full"/>
                 </div>
                 <div className="min-h-0">
-                    <PlaybookScoreWidget className="h-full"/>
+                    {/* <PlaybookScoreWidget className="h-full"/> */}
+                    <PlayerProfileWidget className="h-full"/>
                 </div>
             </div>
             {/* Bottom Row */}

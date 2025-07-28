@@ -1,15 +1,15 @@
 'use client';
 
 import TraitTagContainer from '@/components/common/TraitTagContainer';
-import PlayerInfoSection from '@/components/dashboard/RosterPage/PlayerInfoSection';
+import PlayerInfoSection from '@/components/dashboard/RosterPage/PlayerProfile/PlayerInfoSection';
 import EmptyIcon from '@/components/icons/EmptyIcon';
 import { Separator } from '@/components/ui/separator';
 import { formatStatValue, getSportConfig, getSportPrimaryStats, getSportTraits } from '@/lib/utils/sportConfig';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { ScanSearch } from 'lucide-react';
 import { useMemo } from 'react';
-import HistoricalViewGraph from './HistoricalViewGraph';
-import ValueComparisonTable from './ValueComparisonTable';
+import HistoricalViewGraph from './PlayerProfile/HistoricalViewGraph';
+import ValueComparisonTable from './PlayerProfile/ValueComparisonTable';
 
 export default function PlayerProfileBlock() {
   const { getCurrentLeague, getSelectedPlayer } = useDashboardContext();

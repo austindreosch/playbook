@@ -1,20 +1,15 @@
 'use client';
 
-import {
-  RiPieChartLine,
-} from '@remixicon/react';
 import * as React from 'react';
 
-import SpendingSummaryPieChart from '@/components/alignui/spending-summary-pie-chart';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Badge from '@/components/alignui/badge';
 import * as Divider from '@/components/alignui/divider';
 import * as Select from '@/components/alignui/select';
 import { cnExt } from '@/utils/cn';
-import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe, Info } from 'lucide-react';
+import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe, Info, ScanSearch } from 'lucide-react';
 import * as Button from '@/components/alignui/button';
 import * as Popover from '@/components/alignui/ui/popover';
-import UserPlayerPreferencesPanel from './UserPlayerPreferencesPanel';
 
 
 // Dynamic chart data calculation
@@ -34,7 +29,7 @@ const calculateChartData = (totalScore, maxScore = 999, powerRatio = 0.6, dynast
   ];
 };
 
-export default function PlaybookScoreBlock({
+export default function PlayerProfileWidget({
   ...rest
 }: React.ComponentPropsWithoutRef<typeof WidgetBox.Root>) {
   const [chartMaxWidth, setChartMaxWidth] = React.useState(250);
@@ -178,8 +173,8 @@ export default function PlaybookScoreBlock({
   return (
     <WidgetBox.Root className=" flex flex-col" {...rest}>
       <WidgetBox.Header>
-        <WidgetBox.HeaderIcon as={Compass} className="icon" />
-        Playbook Score
+        <WidgetBox.HeaderIcon as={ScanSearch} className="icon" />
+        Player Profile
 
         <div className="ml-auto">
           <Popover.Root>
@@ -211,69 +206,18 @@ export default function PlaybookScoreBlock({
       <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5 flex-1 pb-0'>
         <Divider.Root className='hidden mdh:block'/>
 
-        <div className='mx-auto grid w-full justify-center'>
-          <SpendingSummaryPieChart
-            data={chartData}
-            className='[grid-area:1/1] w-full'
-            maxWidth={chartMaxWidth}
-          />
-          <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
-              {scoreData.totalScore}
-            </span>
-          </div>
-        </div>
-
-        <Divider.Root /> 
-
-        {/*  CONTEXT FOR PLAYBOOK SCORE*/}
-        <div className="flex items-center gap-8 mx-auto">
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2">
-              <div className="text-label-sm">STANDARD</div>
-            </div>
-            <div className="flex items-center gap-4 mt-1">
-              <div className="flex items-center gap-0.5">
-                <ClipboardMinus className="icon-sm" />
-                <Badge.Root variant="rank" color="gray" size="medium">
-                  3
-                </Badge.Root>
-              </div>
-              <div className="w-px h-4 bg-stroke-soft-200" />
-              <div className="text-label-lg text-">972</div>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2">
-              <div className="text-label-sm">REDRAFT</div>
-            </div>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="flex items-center gap-0.5">
-                <Sprout className="icon-sm" />
-                <Badge.Root variant="rank" color="gray" size="medium">
-                  1
-                </Badge.Root>
-              </div>
-              <div className="w-px h-4 bg-stroke-soft-200" />
-              <div className="text-label-lg">998</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Metrics Controls - shows controls on mdh+ viewports, button on smaller */}
-        <UserPlayerPreferencesPanel
-          scoreData={scoreData}
-          className="px-1"
-        />
-
+        
 
       </div>
     </WidgetBox.Root>
   );
 }
 
-export function PlaybookScoreBlockEmpty({
+
+
+
+
+export function PlayerProfileWidgetEmpty({
   className,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) {
@@ -283,8 +227,8 @@ export function PlaybookScoreBlockEmpty({
       {...rest}
     >
       <WidgetBox.Header>
-        <WidgetBox.HeaderIcon as={RiPieChartLine} />
-        Playbook Score
+        <WidgetBox.HeaderIcon as={Compass} className="icon" />
+        Player Profile
       </WidgetBox.Header>
 
       <div className='flex flex-1 flex-col gap-4'>
