@@ -5,8 +5,7 @@ This guide provides step-by-step instructions for setting up automated daily spo
 ## 📋 Overview
 
 The system includes:
-- **Master cron job** (6:00 AM UTC) - Orchestrates all sports updates
-- **Individual sport cron jobs** (NBA: 7 AM, NFL: 8 AM, MLB: 9 AM UTC)
+- **Single master cron job** (6:00 AM UTC) - Updates all sports data sequentially
 - **Monitoring and management tools**
 - **Manual trigger capabilities**
 
@@ -55,29 +54,23 @@ ADMIN_SECRET=your_secure_random_string_32_chars
 After deployment, check the Vercel dashboard:
 1. Go to your project dashboard
 2. Navigate to Functions tab
-3. Look for cron jobs section - you should see 4 scheduled functions
+3. Look for cron jobs section - you should see 1 scheduled function
 
 ## 📅 Cron Schedule Details
 
 | Job | Schedule | Time (UTC) | Purpose |
 |-----|----------|------------|---------|
-| Master | `0 6 * * *` | 6:00 AM | Orchestrates all updates |
-| NBA | `0 7 * * *` | 7:00 AM | Individual NBA update |
-| NFL | `0 8 * * *` | 8:00 AM | Individual NFL update |
-| MLB | `0 9 * * *` | 9:00 AM | Individual MLB update |
+| Master | `0 6 * * *` | 6:00 AM | Updates all sports data (NBA, NFL, MLB) sequentially |
 
-### Why These Times?
+### Why This Time?
 - **Early morning UTC** ensures data is fresh for US users
 - **Sequential execution** prevents API rate limit issues
-- **1-hour spacing** allows for troubleshooting individual sports
+- **Single job** simplifies monitoring and reduces complexity
 
 ## 🔧 API Endpoints
 
 ### Cron Job Endpoints
-- `POST /api/cron/daily-sports-update` - Master orchestrator
-- `POST /api/cron/nba-update` - NBA only
-- `POST /api/cron/nfl-update` - NFL only  
-- `POST /api/cron/mlb-update` - MLB only
+- `POST /api/cron/daily-sports-update` - Updates all sports data sequentially
 
 ### Management Endpoints
 - `GET /api/cron/status` - System health and status
@@ -101,10 +94,10 @@ Response includes:
 curl -X POST https://your-app.vercel.app/api/cron/trigger \
   -H "Authorization: Bearer YOUR_ADMIN_SECRET" \
   -H "Content-Type: application/json" \
-  -d '{"job": "nba"}'
+  -d '{"job": "master"}'
 ```
 
-Available jobs: `nba`, `nfl`, `mlb`, `master`
+Available jobs: `master` (updates all sports)
 
 ## 🚨 Troubleshooting
 
@@ -155,10 +148,10 @@ Example format: `2025-2026-regular`
 ## 📈 Performance Expectations
 
 ### Execution Times
-- **NBA Update:** ~2-4 minutes
-- **NFL Update:** ~2-4 minutes
-- **MLB Update:** ~4-6 minutes (more endpoints)
-- **Master Update:** ~8-14 minutes total
+- **Master Update (All Sports):** ~8-14 minutes total
+  - NBA: ~2-4 minutes
+  - NFL: ~2-4 minutes  
+  - MLB: ~4-6 minutes (more endpoints)
 
 ### Data Volume
 - **NBA:** ~500-1000 records per update
@@ -194,8 +187,8 @@ Edit `vercel.json` cron schedules:
 3. Create individual cron endpoint: `/api/cron/newsport-update.js`
 4. Update master cron job to include new sport
 
-### Disable Individual Sports
-Comment out specific cron jobs in `vercel.json` or remove from master cron job array.
+### Disable Specific Sports
+Modify the sports array in `/api/cron/daily-sports-update.js` to remove unwanted sports.
 
 ## 📞 Support
 

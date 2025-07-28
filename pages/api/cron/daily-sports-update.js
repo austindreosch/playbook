@@ -1,11 +1,12 @@
 /**
- * Master Daily Sports Data Update Cron Job
+ * Daily Sports Data Update Cron Job
  * 
- * This endpoint orchestrates all daily sports data updates:
+ * This is the single cron job that handles all sports data updates:
  * - Runs at 6:00 AM UTC daily
- * - Updates NBA, NFL, and MLB data sequentially
+ * - Updates NBA, NFL, and MLB data sequentially  
  * - Includes comprehensive error handling and logging
  * - Respects MySportsFeeds API rate limits
+ * - Only active cron job in the system
  * 
  * Schedule: 0 6 * * * (6:00 AM UTC daily)
  */

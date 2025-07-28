@@ -26,26 +26,9 @@ export default async function handler(req, res) {
             master: {
                 name: 'Daily Sports Update (Master)',
                 schedule: '0 6 * * *',
-                description: 'Orchestrates all sports data updates',
-                path: '/api/cron/daily-sports-update'
-            },
-            nba: {
-                name: 'NBA Data Update',
-                schedule: '0 7 * * *',
-                description: 'Individual NBA data update',
-                path: '/api/cron/nba-update'
-            },
-            nfl: {
-                name: 'NFL Data Update',
-                schedule: '0 8 * * *',
-                description: 'Individual NFL data update',
-                path: '/api/cron/nfl-update'
-            },
-            mlb: {
-                name: 'MLB Data Update',
-                schedule: '0 9 * * *',
-                description: 'Individual MLB data update',
-                path: '/api/cron/mlb-update'
+                description: 'Updates all sports data (NBA, NFL, MLB) sequentially',
+                path: '/api/cron/daily-sports-update',
+                status: 'active'
             }
         },
         dataStatus: {},
@@ -113,16 +96,21 @@ export default async function handler(req, res) {
             statusReport.systemHealth.mysportsfeeds = 'error';
         }
 
-        // Calculate next run times (approximate)
+        // Calculate next run time for master job
         const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        const nextRunDate = new Date(now);
+        
+        // If it's past 6 AM today, schedule for tomorrow
+        if (now.getHours() >= 6) {
+            nextRunDate.setDate(nextRunDate.getDate() + 1);
+        }
+        
+        // Set to 6:00 AM
+        nextRunDate.setHours(6, 0, 0, 0);
 
-        statusReport.nextRuns = {
-            master: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 6, 0, 0).toISOString(),
-            nba: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 7, 0, 0).toISOString(),
-            nfl: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 8, 0, 0).toISOString(),
-            mlb: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 9, 0, 0).toISOString()
+        statusReport.nextRun = {
+            master: nextRunDate.toISOString(),
+            description: 'Next scheduled run of the daily sports update job'
         };
 
         res.status(200).json(statusReport);

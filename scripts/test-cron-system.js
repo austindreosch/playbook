@@ -107,8 +107,8 @@ async function testStatusEndpoint() {
     }
 }
 
-async function testManualTrigger(sport = 'nba') {
-    console.log(`\n🔧 Testing Manual Trigger (${sport.toUpperCase()})...`);
+async function testManualTrigger() {
+    console.log(`\n🔧 Testing Manual Trigger (Master Job)...`);
     
     if (!config.adminSecret) {
         console.log('❌ ADMIN_SECRET not set, skipping manual trigger test');
@@ -122,13 +122,13 @@ async function testManualTrigger(sport = 'nba') {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${config.adminSecret}`
             },
-            body: JSON.stringify({ job: sport })
+            body: JSON.stringify({ job: 'master' })
         });
         
         if (response.status === 200) {
-            console.log(`✅ Manual trigger for ${sport.toUpperCase()} successful`);
+            console.log(`✅ Manual trigger for master job successful`);
             console.log(`   Duration: ${response.data.duration}ms`);
-            console.log(`   Records processed: ${response.data.result?.recordsProcessed || 'unknown'}`);
+            console.log(`   Sports processed: ${response.data.result?.summary?.successful || 0}/${response.data.result?.summary?.successful + response.data.result?.summary?.failed || 0}`);
             return true;
         } else {
             console.log(`❌ Manual trigger failed: ${response.status}`);
@@ -150,8 +150,8 @@ async function testCronAuthentication() {
     }
     
     try {
-        // Test with correct auth
-        const response = await makeRequest(`${config.baseUrl}/api/cron/nba-update`, {
+        // Test with correct auth on master cron job
+        const response = await makeRequest(`${config.baseUrl}/api/cron/daily-sports-update`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${config.cronSecret}`,
@@ -187,12 +187,12 @@ async function runAllTests() {
     
     // Only test manual trigger if other tests pass
     if (results.envVars && results.status) {
-        console.log('\n⚠️  The next test will trigger an actual data update (NBA).');
-        console.log('   This will make real API calls and update your database.');
+        console.log('\n⚠️  The next test will trigger an actual data update (ALL SPORTS).');
+        console.log('   This will make real API calls and update your database for NBA, NFL, and MLB.');
         console.log('   Press Ctrl+C to cancel, or wait 5 seconds to continue...');
         
         await new Promise(resolve => setTimeout(resolve, 5000));
-        results.manualTrigger = await testManualTrigger('nba');
+        results.manualTrigger = await testManualTrigger();
     } else {
         console.log('\n⏭️  Skipping manual trigger test due to previous failures');
     }

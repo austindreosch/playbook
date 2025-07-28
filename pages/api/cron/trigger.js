@@ -8,7 +8,7 @@
  * - Returns detailed execution results
  * 
  * Usage: POST /api/cron/trigger
- * Body: { "job": "nba" | "nfl" | "mlb" | "master" }
+ * Body: { "job": "master" }
  */
 
 export default async function handler(req, res) {
@@ -28,19 +28,16 @@ export default async function handler(req, res) {
     const { job } = req.body;
     
     if (!job) {
-        return res.status(400).json({ error: 'Missing job parameter. Use: nba, nfl, mlb, or master' });
+        return res.status(400).json({ error: 'Missing job parameter. Use: master' });
     }
 
     const jobEndpoints = {
-        nba: '/api/cron/nba-update',
-        nfl: '/api/cron/nfl-update', 
-        mlb: '/api/cron/mlb-update',
         master: '/api/cron/daily-sports-update'
     };
 
     if (!jobEndpoints[job]) {
         return res.status(400).json({ 
-            error: 'Invalid job parameter',
+            error: 'Invalid job parameter. Only "master" is supported',
             allowedJobs: Object.keys(jobEndpoints)
         });
     }
