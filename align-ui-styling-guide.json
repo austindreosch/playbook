@@ -1,0 +1,538 @@
+{
+  "alignUIStyleGuide": {
+    "designSystem": {
+      "name": "AlignUI Design System",
+      "version": "v0.0.0",
+      "description": "A comprehensive component library with consistent styling patterns, semantic color system, and Tailwind CSS integration."
+    },
+    "corePhilosophy": {
+      "consistency": "All components follow consistent patterns for states, sizes, and variants",
+      "semantic": "Color and naming conventions are semantic and meaningful",
+      "accessibility": "Components are built with accessibility in mind using Radix UI primitives",
+      "composability": "Components are designed to work together harmoniously",
+      "scalability": "Design tokens and variants allow for easy customization and scaling"
+    },
+    "designTokens": {
+      "colors": {
+        "semantic": {
+          "primary": {
+            "description": "Main brand color used for primary actions and focus states",
+            "variants": ["dark", "darker", "base", "alpha-24", "alpha-16", "alpha-10"]
+          },
+          "neutral": {
+            "description": "Grayscale colors for general UI elements",
+            "scale": ["0", "50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"],
+            "alphas": ["alpha-24", "alpha-16", "alpha-10"]
+          },
+          "background": {
+            "description": "Background colors with semantic naming",
+            "tokens": {
+              "bg-strong-950": "Darkest background",
+              "bg-surface-800": "Dark surface background",
+              "bg-sub-300": "Subdued background",
+              "bg-soft-200": "Soft background",
+              "bg-weak-50": "Very light background",
+              "bg-white-0": "Pure white background"
+            }
+          },
+          "text": {
+            "description": "Text colors with hierarchy",
+            "tokens": {
+              "text-strong-950": "Primary text color",
+              "text-sub-600": "Secondary text color",
+              "text-mid-500": "Medium emphasis text",
+              "text-soft-400": "Soft text, often for placeholders",
+              "text-disabled-300": "Disabled text",
+              "text-white-0": "White text for dark backgrounds"
+            }
+          },
+          "stroke": {
+            "description": "Border and outline colors",
+            "tokens": {
+              "stroke-strong-950": "Strong borders",
+              "stroke-sub-300": "Medium borders", 
+              "stroke-soft-200": "Soft borders",
+              "stroke-white-0": "White borders"
+            }
+          }
+        },
+        "status": {
+          "error": {
+            "variants": ["dark", "base", "light", "lighter"],
+            "usage": "Error states, destructive actions, validation errors"
+          },
+          "warning": {
+            "variants": ["dark", "base", "light", "lighter"],
+            "usage": "Warning states, caution indicators"
+          },
+          "success": {
+            "variants": ["dark", "base", "light", "lighter"],
+            "usage": "Success states, confirmations, positive feedback"
+          },
+          "information": {
+            "variants": ["dark", "base", "light", "lighter"],
+            "usage": "Informational content, neutral notifications"
+          }
+        },
+        "specialty": {
+          "faded": "Muted, less prominent elements",
+          "away": "Away status, typically yellow/orange",
+          "feature": "Feature highlights, typically purple",
+          "verified": "Verification indicators, typically blue/sky",
+          "highlighted": "Special highlights, typically pink",
+          "stable": "Stable status indicators, typically teal"
+        }
+      },
+      "typography": {
+        "scale": {
+          "titles": {
+            "title-h1": "2.75rem / 52px line height / -0.01em tracking / 500 weight",
+            "title-h2": "2.25rem / 44px line height / -0.01em tracking / 500 weight",
+            "title-h3": "1.875rem / 36px line height / -0.01em tracking / 500 weight",
+            "title-h4": "1.5rem / 30px line height / -0.005em tracking / 500 weight",
+            "title-h5": "1.125rem / 22px line height / 0em tracking / 500 weight",
+            "title-h6": "1rem / 22px line height / 0em tracking / 500 weight"
+          },
+          "labels": {
+            "label-xl": "1.125rem / 24px line height / -0.015em tracking / 500 weight",
+            "label-lg": "0.875rem / 20px line height / -0.015em tracking / 500 weight",
+            "label-md": "0.8rem / 19.2px line height / -0.011em tracking / 500 weight",
+            "label-sm": "0.7rem / 14.4px line height / -0.006em tracking / 500 weight",
+            "label-xs": "0.625rem / 12.8px line height / 0em tracking / 500 weight"
+          },
+          "paragraphs": {
+            "paragraph-xl": "1.125rem / 24px line height / -0.015em tracking / 400 weight",
+            "paragraph-lg": "0.875rem / 20px line height / -0.015em tracking / 400 weight",
+            "paragraph-md": "0.8rem / 19.2px line height / -0.011em tracking / 400 weight",
+            "paragraph-sm": "0.7rem / 16px line height / -0.006em tracking / 400 weight",
+            "paragraph-xs": "0.625rem / 12.8px line height / 0em tracking / 400 weight"
+          },
+          "subheadings": {
+            "subheading-md": "0.8rem / 19.2px line height / 0.06em tracking / 500 weight",
+            "subheading-sm": "0.7rem / 16px line height / 0.06em tracking / 500 weight",
+            "subheading-xs": "0.6rem / 12px line height / 0.04em tracking / 500 weight",
+            "subheading-2xs": "0.55rem / 11.2px line height / 0.02em tracking / 500 weight"
+          }
+        }
+      },
+      "spacing": {
+        "scale": "Uses standard Tailwind spacing scale with custom additions",
+        "custom": {
+          "2.5": "0.625rem",
+          "3.5": "0.875rem", 
+          "4.5": "1.125rem",
+          "5.5": "1.375rem",
+          "6.5": "1.625rem",
+          "7.5": "1.875rem",
+          "8.5": "2.125rem",
+          "9.5": "2.375rem",
+          "10.5": "2.625rem",
+          "11.5": "2.875rem",
+          "12.5": "3.125rem"
+        }
+      },
+      "borderRadius": {
+        "system": {
+          "10": "0.625rem (10px)",
+          "20": "1.25rem (20px)",
+          "standard": "Uses Tailwind defaults (sm, md, lg, xl, etc.)"
+        }
+      },
+      "shadows": {
+        "elevation": {
+          "regular-xs": "0 1px 2px 0 #0a0d1408",
+          "regular-sm": "0 2px 4px #1b1c1d0a", 
+          "regular-md": "0 16px 32px -12px #0e121b1a"
+        },
+        "focus": {
+          "button-primary-focus": "0 0 0 2px white, 0 0 0 4px primary-alpha-10",
+          "button-important-focus": "0 0 0 2px white, 0 0 0 4px neutral-alpha-16",
+          "button-error-focus": "0 0 0 2px white, 0 0 0 4px red-alpha-10"
+        },
+        "specialty": {
+          "tooltip": "0 12px 24px 0 #0e121b0f, 0 1px 2px 0 #0e121b08",
+          "switch-thumb": "0 4px 8px 0 #1b1c1d0f, 0 2px 4px 0 #0e121b14"
+        }
+      }
+    },
+    "componentPatterns": {
+      "states": {
+        "interactive": {
+          "base": "Default appearance",
+          "hover": "Mouse hover state - typically subtle bg/color change",
+          "focus": "Keyboard focus state - typically outline/shadow",
+          "active": "Pressed/clicked state - typically darker",
+          "disabled": "Non-interactive state - typically muted colors"
+        },
+        "data": {
+          "placeholder": "Empty state styling (forms, selects)",
+          "filled": "Content present state",
+          "error": "Validation error state",
+          "loading": "Loading/processing state"
+        }
+      },
+      "sizes": {
+        "common": {
+          "xxsmall": "Compact interfaces, minimal space",
+          "xsmall": "Dense layouts, secondary actions", 
+          "small": "Standard secondary elements",
+          "medium": "Default size for most components",
+          "large": "Prominent elements, primary actions"
+        }
+      },
+      "variants": {
+        "appearance": {
+          "filled": "Solid background, high prominence",
+          "stroke": "Border only, medium prominence", 
+          "lighter": "Light background, subtle prominence",
+          "ghost": "Transparent background, minimal prominence"
+        }
+      }
+    },
+    "components": {
+      "button": {
+        "file": "components/alignui/button.tsx",
+        "description": "Primary interactive element with comprehensive variant system",
+        "variants": {
+          "variant": ["primary", "neutral", "error"],
+          "mode": ["filled", "stroke", "lighter", "ghost"],
+          "size": ["medium", "small", "xsmall", "xxsmall"]
+        },
+        "states": ["base", "hover", "focus", "disabled"],
+        "anatomy": {
+          "root": "Main button container with all styling",
+          "icon": "Icon within button, auto-sized per button size"
+        },
+        "usage": {
+          "primary": "Main actions, CTAs, form submissions",
+          "neutral": "Secondary actions, navigation",
+          "error": "Destructive actions, deletion, warnings"
+        },
+        "styling": {
+          "base": "relative inline-flex items-center justify-center whitespace-nowrap outline-none transition duration-200 ease-out",
+          "focus": "focus:outline-none",
+          "disabled": "disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-text-disabled-300"
+        }
+      },
+      "input": {
+        "file": "components/alignui/input.tsx", 
+        "description": "Form input with wrapper system and comprehensive state management",
+        "variants": {
+          "size": ["medium", "small", "xsmall"],
+          "hasError": [true, false]
+        },
+        "anatomy": {
+          "root": "Container with shadow and border styling",
+          "wrapper": "Inner container with padding and hover states",
+          "input": "Actual input element with typography",
+          "icon": "Icon elements with state-aware styling",
+          "affix": "Prefix/suffix content areas"
+        },
+        "states": {
+          "placeholder": "Empty state with muted text",
+          "filled": "Content present with full color",
+          "focus": "Active state with enhanced contrast",
+          "error": "Validation error with error color scheme",
+          "disabled": "Non-interactive with muted styling"
+        },
+        "styling": {
+          "base": "group relative flex w-full overflow-hidden bg-bg-white-0 text-text-strong-950 shadow-regular-xs",
+          "border": "before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-stroke-soft-200",
+          "hover": "hover:shadow-none",
+          "focus": "has-[input:focus]:shadow-button-important-focus has-[input:focus]:before:ring-stroke-strong-950"
+        }
+      },
+      "badge": {
+        "file": "components/alignui/badge.tsx",
+        "description": "Status indicators and labels with extensive color and variant system",
+        "variants": {
+          "size": ["small", "medium"],
+          "variant": ["filled", "light", "lighter", "stroke", "outline", "rank"],
+          "color": ["gray", "blue", "orange", "red", "green", "yellow", "purple", "sky", "pink", "teal"],
+          "disabled": [true, false],
+          "square": [true, false]
+        },
+        "anatomy": {
+          "root": "Main badge container",
+          "icon": "Icon within badge",
+          "dot": "Dot indicator element"
+        },
+        "usage": {
+          "status": "User status, system states",
+          "categories": "Content categorization",
+          "counts": "Numerical indicators",
+          "labels": "Content labeling and tagging"
+        },
+        "styling": {
+          "base": "inline-flex items-center justify-center rounded-full leading-none transition duration-200 ease-out"
+        }
+      },
+      "avatar": {
+        "file": "components/alignui/avatar.tsx",
+        "description": "User and entity representation with multiple size variants and indicators",
+        "variants": {
+          "size": ["80", "72", "64", "56", "48", "40", "32", "24", "20"],
+          "color": ["gray", "yellow", "blue", "sky", "purple", "red"],
+          "placeholderType": ["user", "company"]
+        },
+        "anatomy": {
+          "root": "Main avatar container", 
+          "image": "Avatar image element",
+          "indicator": "Positioned indicator container",
+          "status": "Status indicator (online, offline, busy, away)",
+          "brandLogo": "Brand logo overlay",
+          "notification": "Notification indicator"
+        },
+        "styling": {
+          "base": "relative flex shrink-0 items-center justify-center rounded-full select-none text-center uppercase"
+        }
+      },
+      "select": {
+        "file": "components/alignui/select.tsx",
+        "description": "Dropdown selection component with multiple presentation variants",
+        "variants": {
+          "size": ["medium", "small", "xsmall"],
+          "variant": ["default", "compact", "compactForInput", "inline"],
+          "hasError": [true, false]
+        },
+        "anatomy": {
+          "triggerRoot": "Main trigger button",
+          "triggerArrow": "Dropdown arrow indicator",
+          "triggerIcon": "Icon within trigger",
+          "content": "Dropdown content container",
+          "item": "Individual option items"
+        },
+        "states": {
+          "placeholder": "No selection made",
+          "selected": "Option selected",
+          "open": "Dropdown expanded",
+          "disabled": "Non-interactive"
+        }
+      },
+      "table": {
+        "file": "components/alignui/table.tsx",
+        "description": "Data table with consistent styling and hover states",
+        "anatomy": {
+          "root": "Table wrapper with overflow handling",
+          "header": "Table header section",
+          "head": "Header cell with background and typography",
+          "body": "Table body with spacing",
+          "row": "Table row with group styling",
+          "cell": "Table cell with hover states"
+        },
+        "styling": {
+          "header": "bg-bg-weak-50 px-3 py-2 text-left text-paragraph-sm text-text-sub-600",
+          "cell": "h-16 px-3 transition duration-200 ease-out group-hover/row:bg-bg-weak-50",
+          "spacing": "Configurable spacing between header and body"
+        }
+      },
+      "modal": {
+        "file": "components/alignui/modal.tsx",
+        "description": "Dialog/modal system with overlay and structured content areas",
+        "anatomy": {
+          "root": "Dialog root container",
+          "trigger": "Element that opens modal",
+          "overlay": "Background overlay with blur",
+          "content": "Main modal container",
+          "header": "Header section with icon and text",
+          "title": "Modal title",
+          "description": "Modal description", 
+          "body": "Main content area",
+          "footer": "Action area at bottom"
+        },
+        "styling": {
+          "overlay": "fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-overlay p-4 backdrop-blur-[10px]",
+          "content": "relative w-full max-w-[400px] rounded-20 bg-bg-white-0 shadow-regular-md",
+          "animations": "Fade and zoom in/out transitions"
+        }
+      },
+      "switch": {
+        "file": "components/alignui/switch.tsx",
+        "description": "Toggle switch with smooth animations and state management",
+        "states": ["unchecked", "checked", "disabled"],
+        "anatomy": {
+          "root": "Switch container",
+          "track": "Background track element", 
+          "thumb": "Moving thumb element"
+        },
+        "styling": {
+          "base": "group/switch block h-5 w-8 shrink-0 p-0.5 outline-none",
+          "track": "h-4 w-7 rounded-full bg-bg-soft-200 p-0.5 transition duration-200 ease-out",
+          "thumb": "pointer-events-none relative block size-3 transition-transform duration-200 ease-out data-[state=checked]:translate-x-3"
+        }
+      },
+      "checkbox": {
+        "file": "components/alignui/checkbox.tsx",
+        "description": "Checkbox with custom styling and indeterminate state support",
+        "states": ["unchecked", "checked", "indeterminate", "disabled"],
+        "styling": {
+          "base": "group/checkbox relative flex size-5 shrink-0 items-center justify-center outline-none",
+          "background": "Custom SVG background with state-based fills",
+          "icons": "Custom check and indeterminate icons"
+        }
+      },
+      "progressBar": {
+        "file": "components/alignui/progress-bar.tsx",
+        "description": "Progress indicator with color variants",
+        "variants": {
+          "color": ["blue", "red", "orange", "green"]
+        },
+        "props": {
+          "value": "Current progress value",
+          "max": "Maximum value (default 100)"
+        },
+        "styling": {
+          "base": "h-1.5 w-full rounded-full bg-bg-soft-200",
+          "progress": "h-full rounded-full transition-all duration-300 ease-out"
+        }
+      },
+      "tooltip": {
+        "file": "components/alignui/tooltip.tsx",
+        "description": "Tooltip with size and appearance variants",
+        "variants": {
+          "size": ["xsmall", "small", "medium"],
+          "variant": ["dark", "light"]
+        },
+        "anatomy": {
+          "content": "Tooltip content container",
+          "arrow": "Pointing arrow element"
+        },
+        "styling": {
+          "animations": "Fade and zoom in/out with directional slides",
+          "positioning": "Configurable side offset and positioning"
+        }
+      },
+      "divider": {
+        "file": "components/alignui/divider.tsx", 
+        "description": "Content separation with multiple styles",
+        "variants": {
+          "variant": ["line", "line-spacing", "line-text", "content", "text", "solid-text"]
+        },
+        "usage": {
+          "line": "Simple horizontal line",
+          "line-spacing": "Line with vertical spacing",
+          "line-text": "Line with centered text",
+          "content": "Line with custom content",
+          "text": "Text-only separator",
+          "solid-text": "Text with background"
+        }
+      },
+      "widgetBox": {
+        "file": "components/alignui/widget-box.tsx",
+        "description": "Container component for dashboard widgets and cards",
+        "anatomy": {
+          "root": "Main container with styling",
+          "header": "Header section with icon support",
+          "headerIcon": "Icon element for headers"
+        },
+        "styling": {
+          "base": "w-full min-w-0 rounded-lg bg-bg-white-0 p-3 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200"
+        }
+      },
+      "cardSwitchContainer": {
+        "file": "components/alignui/card-switch-container.tsx",
+        "description": "3D card switching container with navigation controls",
+        "features": ["3D flip animations", "Navigation buttons", "Active card tracking"],
+        "styling": {
+          "perspective": "[perspective:1000px] [transform-style:preserve-3d]",
+          "transforms": "rotateY transforms for 3D effect"
+        }
+      }
+    },
+    "widgets": {
+      "description": "Pre-built dashboard components combining base components",
+      "location": "components/alignui/widgets/",
+      "examples": [
+        "widget-budget-overview.tsx",
+        "widget-course-progress.tsx", 
+        "widget-my-cards.tsx",
+        "widget-quick-transfer.tsx",
+        "widget-schedule.tsx",
+        "widget-spending-summary.tsx",
+        "widget-time-tracker.tsx"
+      ],
+      "emptyStateIllustrations": {
+        "location": "components/alignui/empty-state-illustrations/",
+        "purpose": "Specialized illustrations for empty states in widgets",
+        "examples": [
+          "budget-overview.tsx",
+          "my-cards.tsx", 
+          "quick-transfer.tsx",
+          "schedule-meetings.tsx",
+          "time-tracker.tsx"
+        ]
+      }
+    },
+    "stylingPatterns": {
+      "transitions": {
+        "standard": "transition duration-200 ease-out",
+        "usage": "Applied to most interactive elements for smooth state changes"
+      },
+      "focus": {
+        "outline": "focus:outline-none (removes default browser outline)",
+        "custom": "Custom focus styles using box-shadow for better visibility",
+        "pattern": "Typically uses focus-visible: for keyboard-only focus"
+      },
+      "hover": {
+        "pattern": "Subtle background or color changes on hover",
+        "timing": "Uses standard transition duration",
+        "hierarchy": "Primary elements have more prominent hover states"
+      },
+      "disabled": {
+        "pattern": "disabled:pointer-events-none + muted colors",
+        "colors": "Uses text-disabled-300 and bg-weak-50",
+        "consistency": "Applied consistently across all interactive components"
+      },
+      "groups": {
+        "pattern": "Uses Tailwind group/groupname modifiers for complex hover states",
+        "example": "group/checkbox for checkbox container affecting multiple child elements"
+      },
+      "stateManagement": {
+        "data-attributes": "Uses data-[state] and data-[placeholder] for conditional styling",
+        "radixIntegration": "Leverages Radix UI data attributes for state-aware styling"
+      }
+    },
+    "bestPractices": {
+      "component": {
+        "structure": "Use compound component pattern with Root, Item, Icon sub-components",
+        "naming": "Consistent naming with component prefixes (Button, Input, etc.)",
+        "variants": "Use tv() (tailwind-variants) for comprehensive variant management",
+        "props": "Extend HTML element props for maximum flexibility"
+      },
+      "styling": {
+        "consistency": "Always use design tokens from the color system",
+        "states": "Implement all interactive states (hover, focus, disabled)",
+        "accessibility": "Include proper focus management and keyboard navigation",
+        "responsiveness": "Consider mobile-first responsive design patterns"
+      },
+      "customization": {
+        "className": "Always accept className prop for overrides",
+        "asChild": "Use asChild pattern for polymorphic components",
+        "slots": "Use slot-based styling for complex components",
+        "tokens": "Prefer semantic color tokens over specific color values"
+      }
+    },
+    "implementationGuidance": {
+      "newComponents": {
+        "1": "Start with tv() variant definition for styling",
+        "2": "Define component anatomy (root, sub-elements)",
+        "3": "Implement all size and appearance variants",
+        "4": "Add interactive states (hover, focus, disabled)",
+        "5": "Include accessibility features",
+        "6": "Test with dark/light themes if applicable"
+      },
+      "extendingComponents": {
+        "variants": "Add new variants to existing tv() definitions",
+        "colors": "Extend color variants using the semantic color system",
+        "sizes": "Follow the established size scale patterns",
+        "states": "Maintain consistency with existing state patterns"
+      },
+      "customStyling": {
+        "override": "Use className prop to override specific styles",
+        "extend": "Create new variants rather than overriding base styles",
+        "tokens": "Always use design tokens for consistent theming",
+        "responsive": "Use Tailwind responsive prefixes for adaptive design"
+      }
+    }
+  }
+}
