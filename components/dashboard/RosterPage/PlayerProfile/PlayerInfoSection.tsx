@@ -84,7 +84,7 @@ export default function PlayerInfoSection({
       </div>
 
       {/* Avatar */}
-      <div className="flex-shrink-0 w-16 h-16 flex items-center">
+      <div className="flex-shrink-0 w-16 h-16 flex items-center justify-center">
         <Avatar.Root
           placeholderType="user"
           className="w-full h-full"

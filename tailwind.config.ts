@@ -472,7 +472,7 @@ const config = {
       stroke: {
         'strong-950': 'hsl(var(--stroke-strong-950))',
         'sub-300': 'hsl(var(--stroke-sub-300))',
-        'soft-200': 'hsl(var(--stroke-soft-200))',
+        'soft-200': 'var(--stroke-soft-200)',
         'white-0': 'hsl(var(--stroke-white-0))',
       },
       faded: {

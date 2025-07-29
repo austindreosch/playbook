@@ -6,7 +6,7 @@
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    border-color: hsl(var(--border));
+    border-color: var(--border);
   }
 
   img {
@@ -18,110 +18,157 @@
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 215 20.2% 65.1%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --background: #ffffff;
+    --foreground: #0a0a0a;
+    --card: #ffffff;
+    --card-foreground: #0a0a0a;
+    --popover: #ffffff;
+    --popover-foreground: #0a0a0a;
+    --primary: #171717;
+    --primary-foreground: #fafafa;
+    --secondary: #f5f5f5;
+    --secondary-foreground: #171717;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --accent: #f5f5f5;
+    --accent-foreground: #171717;
+    --destructive: #dc2626;
+    --destructive-foreground: #fafafa;
+    --border: #e5e5e5;
+    --input: #e5e5e5;
+    --ring: #3b82f6;
+    --chart-1: #f97316;
+    --chart-2: #10b981;
+    --chart-3: #0ea5e9;
+    --chart-4: #eab308;
+    --chart-5: #f59e0b;
     --radius: 0.5rem;
 
-    /* AlignUI Color System */
-    --neutral-950: 221.54 31.71% 8.04%;
-    --neutral-900: 226.15 21.31% 11.96%;
-    --neutral-800: 227.14 17.07% 16.08%;
-    --neutral-700: 221.25 15.69% 20%;
-    --neutral-600: 222 10.87% 36.08%;
-    --neutral-500: 221.05 7.76% 48.04%;
-    --neutral-400: 220 11.48% 64.12%;
-    --neutral-300: 218.57 15.22% 81.96%;
-    --neutral-200: 220 17.65% 90%;
-    --neutral-100: 210 30% 96.08%;
-    --neutral-50: 216 33.33% 97.06%;
-    --neutral-0: 0 0% 100%;
+    /* Playbook Neutral System (based on #383838) */
+    --neutral-950: #2d2d2d;  /* pb_darkergray */
+    --neutral-900: #383838;  /* pb_darkgray */
+    --neutral-800: #4c4c4c;  /* pb_darkgrayhover */
+    --neutral-700: #606060;  /* pb_mddarkgray */
+    --neutral-600: #707070;  /* pb_midgray */
+    --neutral-500: #747474;  /* pb_textgray */
+    --neutral-400: #888888;  /* pb_textlightgray */
+    --neutral-300: #9c9c9c;  /* pb_textlightergray */
+    --neutral-200: #afafaf;  /* pb_textlightestgray */
+    --neutral-100: #c3c3c3;  /* pb_textlighterestgray */
+    --neutral-50: #d7d7d7;   /* pb_lightgray */
+    --neutral-0: #fcfcfc;    /* pb_paperwhite */
+    --neutral-alpha-24: rgba(56, 56, 56, 0.24);
+    --neutral-alpha-16: rgba(56, 56, 56, 0.16);
+    --neutral-alpha-10: rgba(56, 56, 56, 0.10);
 
-    /* Blue color palette */
-    --blue-950: 228.14 70.49% 23.92%;
-    --blue-900: 228 70.55% 31.96%;
-    --blue-800: 228.17 69.61% 40%;
-    --blue-700: 228.07 69.8% 48.04%;
-    --blue-600: 228 80.36% 56.08%;
-    --blue-500: 227.94 100% 60%;
-    --blue-400: 222.12 100% 70.39%;
-    --blue-300: 219.81 100% 79.61%;
-    --blue-200: 220 100% 87.65%;
-    --blue-100: 221.43 100% 91.76%;
-    --blue-50: 222 100% 96.08%;
+    /* Playbook Blue color palette */
+    --blue-950: #0a2a42;  /* pb_blue.900 */
+    --blue-900: #11466e;  /* pb_blue.800 */
+    --blue-800: #186299;  /* pb_blue.700 */
+    --blue-700: #1f7ec5;  /* pb_blue.600 */
+    --blue-600: #1f7ec5;  /* pb_bluehover */
+    --blue-500: #3898df;  /* pb_blue.500 */
+    --blue-400: #4ea3e2;  /* pb_blue.400 */
+    --blue-300: #64afe6;  /* pb_blue.300 */
+    --blue-200: #91c6ed;  /* pb_blue.200 */
+    --blue-100: #bdddf4;  /* pb_blue.100 */
+    --blue-50: #e9f4fb;   /* pb_blue.50 */
+    --blue-alpha-24: rgba(56, 152, 223, 0.24);
+    --blue-alpha-16: rgba(56, 152, 223, 0.16);
+    --blue-alpha-10: rgba(56, 152, 223, 0.10);
 
     /* Sky color palette */
-    --sky-950: 200.23 70.49% 23.92%;
-    --sky-900: 199.83 70.55% 31.96%;
-    --sky-800: 199.86 69.61% 40%;
-    --sky-700: 200 69.8% 48.04%;
-    --sky-600: 200 80.36% 56.08%;
-    --sky-500: 199.89 100% 63.92%;
-    --sky-400: 199.87 100% 70.39%;
-    --sky-300: 200.19 100% 79.61%;
-    --sky-200: 200 100% 87.65%;
-    --sky-100: 200 100% 91.76%;
-    --sky-50: 201 100% 96.08%;
+    --sky-950: #1e3b5b;
+    --sky-900: #26507a;
+    --sky-800: #2e6599;
+    --sky-700: #367bb8;
+    --sky-600: #4a95d7;
+    --sky-500: #3ba5f6;
+    --sky-400: #5cb8f8;
+    --sky-300: #8eccfa;
+    --sky-200: #bfe0fc;
+    --sky-100: #ddeffd;
+    --sky-50: #f0f9ff;
 
-    /* Green color palette */
-    --green-950: 148.47 72.84% 15.88%;
-    --green-900: 148.46 63.93% 23.92%;
-    --green-800: 147.69 63.64% 28.04%;
-    --green-700: 148.21 71.78% 31.96%;
-    --green-600: 147.95 71.57% 40%;
-    --green-500: 148.15 72.32% 43.92%;
-    --green-400: 147.78 72.32% 56.08%;
-    --green-300: 147.96 72.03% 71.96%;
-    --green-200: 148.24 71.83% 86.08%;
-    --green-100: 154.88 84.31% 90%;
-    --green-50: 147.69 72.22% 92.94%;
+    /* Playbook Green color palette */
+    --green-950: #3e9065;  /* pb_greendisabled */
+    --green-900: #50b982;  /* pb_greenhover */
+    --green-800: #59cd90;  /* pb_green.900 */
+    --green-700: #6ad29b;  /* pb_green.800 */
+    --green-600: #7ad7a6;  /* pb_green.700 */
+    --green-500: #8bdcb1;  /* pb_green.600 */
+    --green-400: #9be1bc;  /* pb_green.500 */
+    --green-300: #ace6c8;  /* pb_green.400 */
+    --green-200: #bdebd3;  /* pb_green.300 */
+    --green-100: #cdf0de;  /* pb_green.200 */
+    --green-50: #e5f7ed;   /* pb_green.50 */
+    --green-alpha-24: rgba(139, 220, 177, 0.24);
+    --green-alpha-16: rgba(139, 220, 177, 0.16);
+    --green-alpha-10: rgba(139, 220, 177, 0.10);
 
-    /* Red color palette */
-    --red-950: 0 84.2% 60.2%;
-    --red-900: 0 84.2% 60.2%;
-    --red-800: 0 84.2% 60.2%;
-    --red-700: 0 84.2% 60.2%;
-    --red-600: 0 84.2% 60.2%;
-    --red-500: 0 84.2% 60.2%;
-    --red-400: 0 84.2% 60.2%;
-    --red-300: 0 84.2% 60.2%;
-    --red-200: 0 84.2% 60.2%;
-    --red-100: 0 84.2% 60.2%;
-    --red-50: 0 84.2% 60.2%;
+    /* Playbook Red color palette */
+    --red-950: #a74539;  /* pb_reddisabled */
+    --red-900: #d6594a;  /* pb_redhover */
+    --red-800: #ee6352;  /* pb_red.900 */
+    --red-700: #f07363;  /* pb_red.800 */
+    --red-600: #f18275;  /* pb_red.700 */
+    --red-500: #f39286;  /* pb_red.600 */
+    --red-400: #f5a197;  /* pb_red.500 */
+    --red-300: #f7b1a9;  /* pb_red.400 */
+    --red-200: #f8c1ba;  /* pb_red.300 */
+    --red-100: #fad0cb;  /* pb_red.200 */
+    --red-50: #fdefee;   /* pb_red.50 */
+    --red-alpha-24: rgba(243, 146, 134, 0.24);
+    --red-alpha-16: rgba(243, 146, 134, 0.16);
+    --red-alpha-10: rgba(243, 146, 134, 0.10);
 
-    /* Purple color palette */
-    --purple-950: 262 83% 58%;
-    --purple-900: 262 83% 58%;
-    --purple-800: 262 83% 58%;
-    --purple-700: 262 83% 58%;
-    --purple-600: 262 83% 58%;
-    --purple-500: 262 83% 58%;
-    --purple-400: 262 83% 58%;
-    --purple-300: 262 83% 58%;
-    --purple-200: 262 83% 58%;
-    --purple-100: 262 83% 58%;
-    --purple-50: 262 83% 58%;
+    /* Playbook Orange color palette */
+    --orange-950: #b39039;  /* pb_orangedisabled */
+    --orange-900: #665220;  /* pb_orange.900 */
+    --orange-800: #997b31;  /* pb_orange.800 */
+    --orange-700: #cca441;  /* pb_orange.700 */
+    --orange-600: #e6b949;  /* pb_orangehover */
+    --orange-500: #ffcd51;  /* pb_orange DEFAULT */
+    --orange-400: #ffd262;  /* pb_orange.500 */
+    --orange-300: #ffd774;  /* pb_orange.400 */
+    --orange-200: #ffdc85;  /* pb_orange.300 */
+    --orange-100: #ffe197;  /* pb_orange.200 */
+    --orange-50: #fff5dc;   /* pb_orange.50 */
+    --orange-alpha-24: rgba(255, 205, 81, 0.24);
+    --orange-alpha-16: rgba(255, 205, 81, 0.16);
+    --orange-alpha-10: rgba(255, 205, 81, 0.10);
+
+    /* Playbook Yellow color palette (using pastelorange) */
+    --yellow-950: #c29750;  /* darker version of pastelorange */
+    --yellow-900: #d1a762;  /* darker version */
+    --yellow-800: #e0b873;  /* darker version */
+    --yellow-700: #edc985;  /* pb_pastelorange variations */
+    --yellow-600: #f1ce8b;  /* pb_pastelorange variations */
+    --yellow-500: #f5d491;  /* pb_pastelorange */
+    --yellow-400: #f7d99a;  /* lighter version */
+    --yellow-300: #f9dfa4;  /* lighter version */
+    --yellow-200: #fbe4ad;  /* lighter version */
+    --yellow-100: #fde9b7;  /* lighter version */
+    --yellow-50: #fef4db;   /* lighter version */
+    --yellow-alpha-24: rgba(245, 212, 145, 0.24);
+    --yellow-alpha-16: rgba(245, 212, 145, 0.16);
+    --yellow-alpha-10: rgba(245, 212, 145, 0.10);
+
+    /* Playbook Purple color palette (using pastelpurple) */
+    --purple-950: #7373c7;  /* darker version of pastelpurple */
+    --purple-900: #8282d1;  /* darker version */
+    --purple-800: #9090db;  /* darker version */
+    --purple-700: #9e9ee5;  /* pb_pastelpurple variations */
+    --purple-600: #a5a5ea;  /* pb_pastelpurple variations */
+    --purple-500: #ababef;  /* pb_pastelpurple */
+    --purple-400: #b5b5f2;  /* lighter version */
+    --purple-300: #bfbff4;  /* lighter version */
+    --purple-200: #c9c9f7;  /* lighter version */
+    --purple-100: #d3d3f9;  /* lighter version */
+    --purple-50: #e9e9fc;   /* lighter version */
+    --purple-alpha-24: rgba(171, 171, 239, 0.24);
+    --purple-alpha-16: rgba(171, 171, 239, 0.16);
+    --purple-alpha-10: rgba(171, 171, 239, 0.10);
 
     /* Semantic color mappings */
     --bg-white-0: var(--neutral-0);
