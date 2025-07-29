@@ -64,7 +64,7 @@ export default function PlayerInfoSection({
               <Badge.Root variant="rank" color="gray" size="small">
                  {playerData.positionRank}
               </Badge.Root>
-              <Badge.Root variant="filled" color="purple" size="small" className="text-subheading-sm font-medium">
+              <Badge.Root variant="filled" color="purple" size="small" className="text-subheading-sm font-bold">
                 {playerData.position}
               </Badge.Root>
             </div>
