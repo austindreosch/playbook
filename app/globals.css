@@ -110,6 +110,19 @@
     --red-100: 0 84.2% 60.2%;
     --red-50: 0 84.2% 60.2%;
 
+    /* Purple color palette */
+    --purple-950: 262 83% 58%;
+    --purple-900: 262 83% 58%;
+    --purple-800: 262 83% 58%;
+    --purple-700: 262 83% 58%;
+    --purple-600: 262 83% 58%;
+    --purple-500: 262 83% 58%;
+    --purple-400: 262 83% 58%;
+    --purple-300: 262 83% 58%;
+    --purple-200: 262 83% 58%;
+    --purple-100: 262 83% 58%;
+    --purple-50: 262 83% 58%;
+
     /* Semantic color mappings */
     --bg-white-0: var(--neutral-0);
     --bg-soft-200: var(--neutral-200);
@@ -133,6 +146,11 @@
     --success-base: var(--green-500);
     --success-light: var(--green-200);
     --success-lighter: var(--green-50);
+    
+    --feature-dark: var(--purple-700);
+    --feature-base: var(--purple-500);
+    --feature-light: var(--purple-200);
+    --feature-lighter: var(--purple-50);
     
     /* Additional semantic colors */
     --bg-weak-50: var(--neutral-50);

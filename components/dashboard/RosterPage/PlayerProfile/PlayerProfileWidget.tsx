@@ -12,7 +12,7 @@ import * as Button from '@/components/alignui/button';
 import * as Popover from '@/components/alignui/ui/popover';
 
 import HistoricalViewGraph from './HistoricalViewGraph';
-import PlayerInfoSection from './PlayerInfoSection';
+import PlayerInfoSection from './PlayerInfoSection.tsx';
 import TraitTagContainer from '@/components/common/TraitTagContainer';
 import ValueComparisonTable from './ValueComparisonTable';
 import { formatStatValue, getSportConfig, getSportPrimaryStats, getSportTraits } from '@/lib/utils/sportConfig';
@@ -273,8 +273,9 @@ export default function PlayerProfileWidget({
 
 
   // ============================================================
-  // ==================== PLAYER PROFILE WIDGET ==================
+  // ==================== PLAYER PROFILE WIDGET =================
   // ============================================================
+
   return (
     <WidgetBox.Root className=" flex flex-col" {...rest}>
       <WidgetBox.Header>
