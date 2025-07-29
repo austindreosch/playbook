@@ -7,6 +7,7 @@ import { Cable, ClipboardList, CreditCard, FileUp, Info, LayoutDashboard, ListOr
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 function NavBar() {
     const { user } = useDevUser();
@@ -45,6 +46,8 @@ function NavBar() {
                             ABOUT
                         </Link>
 
+                        <ThemeToggle />
+                        
                         {user ? (
                             <div className="">
                                 <UserProfileDropdown user={user} />
@@ -88,6 +91,12 @@ function NavBar() {
                                         <MessageSquareQuote className="h-5 w-5 mr-2.5 text-pb_darkgray" />ABOUT
                                     </Link>
                                 </DropdownMenuItem>
+
+                                <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                                <div className="px-3 py-3 flex items-center justify-between">
+                                    <span className="text-pb_darkgray font-bold text-base">Dark Mode</span>
+                                    <ThemeToggle />
+                                </div>
                                 
                                 {user ? (
                                     <>

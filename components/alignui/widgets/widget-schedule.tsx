@@ -24,13 +24,13 @@ import * as CompactButton from '@/components/alignui/compact-button';
 import * as Input from '@/components/alignui/input';
 import * as Kbd from '@/components/alignui/kbd';
 import * as TabMenuHorizontal from '@/components/alignui/tab-menu-horizontal';
-import DayPicker from '@/components/day-picker';
+import DayPicker from '@/components/alignui/day-picker';
 import IllustrationEmptyScheduleEvents from '@/components/alignui/empty-state-illustrations/schedule-events';
 import IllustrationEmptyScheduleHoliday from '@/components/alignui/empty-state-illustrations/schedule-holiday';
 import IllustrationEmptyScheduleMeetings from '@/components/alignui/empty-state-illustrations/schedule-meetings';
 import * as WidgetBox from '@/components/alignui/widget-box';
 
-import IconCmd from '~/icons/icon-cmd.svg';
+import IconCmd from '/icons/icon-cmd.svg';
 
 type Meeting = {
   id: string;

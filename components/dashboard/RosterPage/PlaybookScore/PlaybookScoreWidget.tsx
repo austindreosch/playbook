@@ -290,7 +290,7 @@ export function PlaybookScoreBlockEmpty({
       <div className='flex flex-1 flex-col gap-4'>
         <Divider.Root />
         <div className='flex flex-1 flex-col items-center justify-center gap-5 p-5'>
-          <div className='size-[108px] bg-gray-100 rounded-lg flex items-center justify-center'>Empty</div>
+          <div className='size-[108px] bg-bg-weak-50 rounded-lg flex items-center justify-center text-text-sub-600'>Empty</div>
           <div className='text-center text-paragraph-sm text-text-soft-400'>
             No Playbook Score data yet.
             <br />

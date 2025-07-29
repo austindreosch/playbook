@@ -459,6 +459,9 @@ const config = {
         'sub-300': 'hsl(var(--bg-sub-300))',
         'soft-200': 'hsl(var(--bg-soft-200))',
         'weak-50': 'hsl(var(--bg-weak-50))',
+        'weak-25': 'hsl(var(--bg-weak-25))',
+        'weak-10': 'hsl(var(--bg-weak-10))',
+        'weak-5': 'hsl(var(--bg-weak-5))',
         'white-0': 'hsl(var(--bg-white-0))',
       },
       text: {
@@ -472,7 +475,9 @@ const config = {
       stroke: {
         'strong-950': 'hsl(var(--stroke-strong-950))',
         'sub-300': 'hsl(var(--stroke-sub-300))',
-        'soft-200': 'var(--stroke-soft-200)',
+        'soft-200': 'hsl(var(--stroke-soft-200))',
+        'soft-100': 'hsl(var(--stroke-soft-100))',
+        'soft-50': 'hsl(var(--stroke-soft-50))',
         'white-0': 'hsl(var(--stroke-white-0))',
       },
       faded: {

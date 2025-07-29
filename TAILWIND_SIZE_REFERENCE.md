@@ -127,6 +127,109 @@
 
 ---
 
+## 🎨 **Border & Ring Styling**
+
+### **Border Widths** (Ordered by Size - Largest to Smallest)
+| Class | Size | Pixels | Use Case |
+|-------|------|--------|----------|
+| `border-10` | 10px | 10px | Thick borders |
+| `border-9` | 9px | 9px | Heavy borders |
+| `border-8` | 8px | 8px | Very thick borders |
+| `border-7` | 7px | 7px | Thick borders |
+| `border-6` | 6px | 6px | Medium-thick borders |
+| `border-5` | 5px | 5px | Medium borders |
+| `border-3` | 3px | 3px | Thick borders |
+| `border-1.5` | 1.9px | 1.9px | Custom thin borders |
+| `border` | 1px | 1px | Standard borders |
+| `border-0` | 0px | 0px | No border |
+
+### **Ring Widths** (Ordered by Size - Largest to Smallest)
+| Class | Size | Pixels | Use Case |
+|-------|------|--------|----------|
+| `ring-16` | 16px | 16px | Very thick focus rings |
+| `ring-12` | 12px | 12px | Thick focus rings |
+| `ring-10` | 10px | 10px | Heavy focus rings |
+| `ring-7` | 7px | 7px | Thick focus rings |
+| `ring-6` | 6px | 6px | Medium focus rings |
+| `ring-5` | 5px | 5px | Medium focus rings |
+| `ring-3` | 3px | 3px | Standard focus rings |
+| `ring-2` | 2px | 2px | Thin focus rings |
+| `ring-1` | 1px | 1px | Very thin focus rings |
+| `ring-0` | 0px | 0px | No ring |
+
+### **Ring Offset Widths** (Ordered by Size - Largest to Smallest)
+| Class | Size | Pixels | Use Case |
+|-------|------|--------|----------|
+| `ring-offset-16` | 16px | 16px | Large ring offsets |
+| `ring-offset-12` | 12px | 12px | Medium ring offsets |
+| `ring-offset-10` | 10px | 10px | Standard ring offsets |
+| `ring-offset-7` | 7px | 7px | Medium ring offsets |
+| `ring-offset-6` | 6px | 6px | Small ring offsets |
+| `ring-offset-5` | 5px | 5px | Small ring offsets |
+| `ring-offset-3` | 3px | 3px | Tiny ring offsets |
+| `ring-offset-2` | 2px | 2px | Very small ring offsets |
+| `ring-offset-1` | 1px | 1px | Minimal ring offsets |
+| `ring-offset-0` | 0px | 0px | No ring offset |
+
+---
+
+## 🎨 **Color System**
+
+### **Semantic Colors (Align UI Design System)**
+
+#### **Background Colors**
+| Class | Use Case | Description |
+|-------|----------|-------------|
+| `bg-bg-strong-950` | Dark backgrounds | Strongest background |
+| `bg-bg-surface-800` | Surface backgrounds | Dark surface areas |
+| `bg-bg-sub-300` | Sub backgrounds | Medium background |
+| `bg-bg-soft-200` | Soft backgrounds | Light background |
+| `bg-bg-weak-50` | Weak backgrounds | Very light background |
+| `bg-bg-weak-25` | Very weak backgrounds | Extra light background |
+| `bg-bg-weak-10` | Extremely weak backgrounds | Ultra light background |
+| `bg-bg-weak-5` | Minimal backgrounds | Subtle background |
+| `bg-bg-white-0` | White backgrounds | Pure white background |
+
+#### **Text Colors**
+| Class | Use Case | Description |
+|-------|----------|-------------|
+| `text-text-strong-950` | Primary text | Strongest text color |
+| `text-text-sub-600` | Secondary text | Medium text color |
+| `text-text-mid-500` | Mid text | Medium-light text |
+| `text-text-soft-400` | Soft text | Light text color |
+| `text-text-disabled-300` | Disabled text | Muted text color |
+| `text-text-white-0` | White text | Pure white text |
+
+#### **Stroke/Border Colors**
+| Class | Use Case | Description |
+|-------|----------|-------------|
+| `stroke-stroke-strong-950` | Strong borders | Darkest border color |
+| `stroke-stroke-sub-300` | Sub borders | Medium border color |
+| `stroke-stroke-soft-200` | Soft borders | Light border color |
+| `stroke-stroke-soft-100` | Very soft borders | Very light border color |
+| `stroke-stroke-soft-50` | Extremely soft borders | Ultra light border color |
+| `stroke-stroke-white-0` | White borders | White border color |
+
+#### **Ring Colors (Same as Stroke)**
+| Class | Use Case | Description |
+|-------|----------|-------------|
+| `ring-stroke-strong-950` | Strong rings | Darkest ring color |
+| `ring-stroke-sub-300` | Sub rings | Medium ring color |
+| `ring-stroke-soft-200` | Soft rings | Light ring color |
+| `ring-stroke-soft-100` | Very soft rings | Very light ring color |
+| `ring-stroke-soft-50` | Extremely soft rings | Ultra light ring color |
+| `ring-stroke-white-0` | White rings | White ring color |
+
+### **Standard Tailwind Colors**
+| Category | Examples | Use Case |
+|----------|----------|----------|
+| **Neutral** | `gray-50`, `gray-100`, `gray-200`, etc. | Basic UI elements |
+| **Primary** | `blue-500`, `blue-600`, `blue-700` | Brand colors |
+| **Semantic** | `red-500` (error), `green-500` (success), `yellow-500` (warning) | Status indicators |
+| **Extended** | `purple-500`, `orange-500`, `teal-500`, etc. | Additional options |
+
+---
+
 ## 📱 **Breakpoints**
 
 ### **Width Breakpoints** (Ordered by Size - Largest to Smallest)
@@ -185,6 +288,19 @@
 - **Small Actions**: Use `icon-sm` for secondary actions
 - **Tiny Indicators**: Use `icon-xs` or `icon-2xs` for status indicators
 
+### **Border & Ring Guidelines**
+- **Container Borders**: Use `ring-1 ring-inset ring-stroke-soft-200` for standard containers
+- **Focus States**: Use `ring-2 ring-stroke-strong-950` for focus indicators
+- **Interactive Elements**: Use `ring-1` for subtle borders, `ring-2` for emphasis
+- **Semantic Colors**: Prefer `stroke-soft-200` for light borders, `stroke-strong-950` for dark borders
+- **Double Ring Effect**: Use `before:` pseudo-element for sophisticated border effects
+
+### **Color System Guidelines**
+- **Align UI Colors**: Use semantic colors (`bg-bg-*`, `text-text-*`, `stroke-stroke-*`) for consistency
+- **Standard Colors**: Use standard Tailwind colors (`gray-*`, `blue-*`, etc.) for custom styling
+- **Dark Mode**: Semantic colors automatically adapt to theme changes
+- **Accessibility**: Ensure sufficient contrast between text and background colors
+
 ### **Responsive Design**
 - Combine with standard Tailwind breakpoints (`sm:`, `md:`, `lg:`, `xl:`)
 - Use height breakpoints for mobile-specific layouts
@@ -204,6 +320,18 @@
   <Icon className="icon-sm" />
   <span class="text-label-sm">Label</span>
 </div>
+
+<!-- Container with align UI styling -->
+<div class="relative overflow-hidden rounded-10 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200">
+  <div class="p-4">
+    <h3 class="text-title-h5 text-text-strong-950">Content</h3>
+  </div>
+</div>
+
+<!-- Focusable element with ring -->
+<button class="ring-2 ring-stroke-soft-200 focus:ring-2 focus:ring-stroke-strong-950">
+  Click me
+</button>
 ```
 
 ---
@@ -228,4 +356,19 @@
 <button class="h-button text-label-sm px-4 rounded-lg">
   Button Text
 </button>
-``` 
+```
+
+### **Standard Container**
+```html
+<div class="relative overflow-hidden rounded-10 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200">
+  <!-- Content -->
+</div>
+```
+
+### **Most Common Border/Ring Patterns**
+- **Light Container**: `ring-1 ring-inset ring-stroke-soft-200`
+- **Very Light Container**: `ring-1 ring-inset ring-stroke-soft-100`
+- **Ultra Light Container**: `ring-1 ring-inset ring-stroke-soft-50`
+- **Dark Container**: `ring-1 ring-inset ring-stroke-strong-950`
+- **Focus State**: `ring-2 ring-stroke-strong-950`
+- **No Border**: `ring-0` or `border-0` 

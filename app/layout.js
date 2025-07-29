@@ -10,6 +10,7 @@ import ConditionalWrapper from '../components/ConditionalWrapper';
 import { DevUserProvider } from '../components/DevUserProvider';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { GA_MEASUREMENT_ID } from '../lib/gtag';
 import './globals.css';
 config.autoAddCss = false
@@ -76,7 +77,8 @@ export default function RootLayout({ children }) {
         }} />
       </head>
       <DevUserProvider>
-      <body className={`${dmSans.className} ${dmMono.variable} bg-pb_paperwhite h-full flex flex-col`}>
+        <ThemeProvider>
+          <body className={`${dmSans.className} ${dmMono.variable} bg-bg-white-0 h-full flex flex-col`}>
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>
@@ -101,7 +103,8 @@ export default function RootLayout({ children }) {
 
 
 
-        </body>
+          </body>
+        </ThemeProvider>
       </DevUserProvider>
     </html>
   )

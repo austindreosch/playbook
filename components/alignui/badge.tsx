@@ -566,4 +566,4 @@ function BadgeDot({ size, variant, color, className, ...rest }: BadgeDotProps) {
 }
 BadgeDot.displayName = BADGE_DOT_NAME;
 
-export { BadgeRoot as Root, BadgeIcon as Icon, BadgeDot as Dot };
+export { BadgeRoot as Root, BadgeIcon as Icon, BadgeDot as Dot, BadgeRoot as Badge };

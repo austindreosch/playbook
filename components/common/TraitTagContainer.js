@@ -53,7 +53,7 @@ export default function TraitTagContainer({ traitIds, className = "" }) {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
       <div className='flex items-center justify-between gap-2'>
-        <div className='text-subheading-xs uppercase text-text-soft-400'>
+        <div className='text-subheading-xs uppercase tracking-wide text-text-soft-400'>
           Traits
         </div>
         <div className='flex gap-2'>
