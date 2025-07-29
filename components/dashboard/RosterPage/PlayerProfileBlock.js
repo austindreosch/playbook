@@ -124,7 +124,7 @@ export default function PlayerProfileBlock() {
         <h3 className="text-xs mdh:text-sm font-semibold text-pb_darkgray">Player Profile</h3>
       </div>
       
-      <div className="flex flex-col flex-1 min-h-0 gap-2">
+      <div className="flex flex-col flex-1 min-h-0 mdh:gap-4 gap-2">
         <div className="flex-shrink-0">
           <PlayerInfoSection playerData={playerData} />
         </div>

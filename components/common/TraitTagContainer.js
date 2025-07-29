@@ -13,39 +13,48 @@ export default function TraitTagContainer({ traitIds, className = "" }) {
 
   // Embla-like scroll logic (manual, since we don't use embla-carousel-react)
   useEffect(() => {
-    const el = emblaRef.current;
-    if (!el) return;
+    const container = emblaRef.current;
+    if (!container) return;
+
+    const scrollableEl = container.querySelector('.overflow-x-auto');
+    if (!scrollableEl) return;
 
     const updateButtonStates = () => {
-      setCanScrollPrev(el.scrollLeft > 0);
-      setCanScrollNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+      setCanScrollPrev(scrollableEl.scrollLeft > 0);
+      setCanScrollNext(scrollableEl.scrollLeft + scrollableEl.clientWidth < scrollableEl.scrollWidth - 1);
     };
 
-    el.addEventListener('scroll', updateButtonStates);
+    scrollableEl.addEventListener('scroll', updateButtonStates);
     window.addEventListener('resize', updateButtonStates);
     updateButtonStates();
     return () => {
-      el.removeEventListener('scroll', updateButtonStates);
+      scrollableEl.removeEventListener('scroll', updateButtonStates);
       window.removeEventListener('resize', updateButtonStates);
     };
   }, [traitIds]);
 
   const scrollPrev = () => {
-    const el = emblaRef.current;
-    if (!el) return;
-    el.scrollBy({ left: -120, behavior: 'smooth' });
+    const container = emblaRef.current;
+    if (!container) return;
+    const scrollableEl = container.querySelector('.overflow-x-auto');
+    if (scrollableEl) {
+      scrollableEl.scrollBy({ left: -120, behavior: 'smooth' });
+    }
   };
   const scrollNext = () => {
-    const el = emblaRef.current;
-    if (!el) return;
-    el.scrollBy({ left: 120, behavior: 'smooth' });
+    const container = emblaRef.current;
+    if (!container) return;
+    const scrollableEl = container.querySelector('.overflow-x-auto');
+    if (scrollableEl) {
+      scrollableEl.scrollBy({ left: 120, behavior: 'smooth' });
+    }
   };
 
   return (
-    <div className={`flex flex-col gap-3 ${className}`}>
+    <div className={`flex flex-col gap-2 ${className}`}>
       <div className='flex items-center justify-between gap-2'>
         <div className='text-subheading-xs uppercase text-text-soft-400'>
-          Traits ({traitIds.length})
+          Traits
         </div>
         <div className='flex gap-2'>
           <CompactButton.Root
@@ -68,7 +77,7 @@ export default function TraitTagContainer({ traitIds, className = "" }) {
       </div>
 
       <div className='-mx-[15px] overflow-hidden px-[15px]' ref={emblaRef}>
-        <div className='flex gap-2 overflow-x-auto' style={{ scrollBehavior: 'smooth' }}>
+        <div className='flex gap-2 overflow-x-auto scrollbar-hide' style={{ scrollBehavior: 'smooth' }}>
           {traitIds.map((traitId, idx) => (
             <TraitTag key={traitId || idx} traitId={traitId} size="normal" className="flex-shrink-0" />
           ))}

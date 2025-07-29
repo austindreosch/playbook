@@ -199,8 +199,8 @@ export default function PlaybookScoreBlock({
               className="max-w-xs p-4"
             >
               <p className="text-center text-sm">
-                Playbook Score evaluates your roster's strength across power and dynasty value metrics, 
-                helping you understand your team's competitive position and long-term potential.
+                Playbook Score evaluates your roster&apos;s strength across power and dynasty value metrics, 
+                helping you understand your team&apos;s competitive position and long-term potential.
               </p>
             </Popover.Content>
           </Popover.Root>

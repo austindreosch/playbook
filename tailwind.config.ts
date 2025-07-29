@@ -248,6 +248,16 @@ const config = {
           width: theme('width.icon-xs'),
           height: theme('height.icon-xs'),
         },
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+          /* Firefox */
+          'scrollbar-width': 'none',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        },
       };
       addUtilities(newUtilities);
     },

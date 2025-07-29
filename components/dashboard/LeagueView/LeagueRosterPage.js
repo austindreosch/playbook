@@ -67,11 +67,11 @@ export default function LeagueRosterPage() {
             {/* Top Row */}
             <div className="grid grid-cols-2 gap-1 mdh:gap-1.5 flex-[3] min-h-0">
                 <div className="min-h-0">
-                    <PlayerProfileBlock className="h-full"/>
+                    {/* <PlayerProfileBlock className="h-full"/> */}
+                    <PlayerProfileWidget className="h-full"/>
                 </div>
                 <div className="min-h-0">
-                    {/* <PlaybookScoreWidget className="h-full"/> */}
-                    <PlayerProfileWidget className="h-full"/>
+                    <PlaybookScoreWidget className="h-full"/>
                 </div>
             </div>
             {/* Bottom Row */}

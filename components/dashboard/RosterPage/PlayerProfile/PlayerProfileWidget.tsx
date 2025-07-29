@@ -11,6 +11,14 @@ import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe, Info, Sca
 import * as Button from '@/components/alignui/button';
 import * as Popover from '@/components/alignui/ui/popover';
 
+import HistoricalViewGraph from './HistoricalViewGraph';
+import PlayerInfoSection from './PlayerInfoSection';
+import TraitTagContainer from '@/components/common/TraitTagContainer';
+import ValueComparisonTable from './ValueComparisonTable';
+import { formatStatValue, getSportConfig, getSportPrimaryStats, getSportTraits } from '@/lib/utils/sportConfig';
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+import { useMemo } from 'react';
+
 
 // Dynamic chart data calculation
 const calculateChartData = (totalScore, maxScore = 999, powerRatio = 0.6, dynastyRatio = 0.4) => {
@@ -34,6 +42,99 @@ export default function PlayerProfileWidget({
 }: React.ComponentPropsWithoutRef<typeof WidgetBox.Root>) {
   const [chartMaxWidth, setChartMaxWidth] = React.useState(250);
   const [isClient, setIsClient] = React.useState(false);
+  
+  const { getCurrentLeague, getSelectedPlayer } = useDashboardContext();
+  const currentLeague = getCurrentLeague();
+  const selectedPlayer = getSelectedPlayer();
+  
+  // Get sport configuration
+  const sportConfig = useMemo(() => {
+    const sport = currentLeague?.leagueDetails?.sport || 'nba';
+    return getSportConfig(sport);
+  }, [currentLeague?.leagueDetails?.sport]);
+  
+  const primaryStats = getSportPrimaryStats(currentLeague?.leagueDetails?.sport || 'nba');
+  const sportTraits = getSportTraits(currentLeague?.leagueDetails?.sport || 'nba');
+  
+  // TODO: This data should come from selected player and be sport-agnostic
+  // For now, using dummy data but structured to be easily replaceable
+  const playerData = useMemo(() => {
+    // If we have a selected player, use their data, otherwise use dummy data
+    const dummyPlayer = {
+      name: "Nikola Jokic",
+      positionRank: "#2",
+      positionColor: "#ababef", // TODO: Map position colors by sport
+      position: "C", // TODO: This should be position abbreviation 
+      image: "/avatar-default.png", // TODO: Use actual player headshots
+    // Grid stats
+    mpg: "31.3",
+    team: "DEN", 
+    age: "29",
+    rosterPercentage: "84%",
+    playoffScheduleGrade: "A-",
+    stats: {
+      // Use sport-specific primary stats from config
+      primary: [
+        ...primaryStats.slice(0, 3).map(stat => ({
+          value: "27.6", // TODO: Replace with actual player stat value
+          label: stat.label
+        })),
+        { value: "DEN", label: "Team" }
+      ],
+      secondary: [
+        { value: "99%", label: "Health" },
+        { value: "A+", label: "Grade" },
+        { value: "H", label: "Trend", isPositive: true }
+      ]
+    },
+    tags: {
+      // Use sport-specific traits from config
+      traitIds: [
+        ...sportTraits
+      ]
+    },
+    valueComparisons: [
+      {
+        type: "Playbook",
+        value: 981,
+        rank: 3,
+        change: "+6%",
+        changeType: "positive",
+        subtitle: "Playbook Differential"
+      },
+      {
+        type: "Standard", 
+        value: 957,
+        rank: 4,
+        change: "2%",
+        changeType: "negative",
+        subtitle: "Value Over Last 30"
+      },
+      {
+        type: "Redraft",
+        value: 999,
+        rank: 1,
+        change: null,
+        changeType: null,
+        subtitle: null
+      }
+    ],
+    historicalData: {
+      currentView: "Stats", // "Stats" or "Value"
+      dataPoints: [
+        { period: 1, value: 120 },
+        { period: 2, value: 95 },
+        { period: 3, value: 145 },
+        { period: 4, value: 130 }
+      ],
+      yAxisMin: 60,
+      yAxisMax: 160
+    }
+  };
+    
+    // TODO: Replace dummy data with actual selected player data when available
+    return selectedPlayer || dummyPlayer;
+  }, [selectedPlayer, primaryStats, sportTraits]);
   
   // Individual state for each preference type
   const [favorPreference, setFavorPreference] = React.useState("Prefer");
@@ -170,6 +271,10 @@ export default function PlayerProfileWidget({
     return () => window.removeEventListener('resize', updateChartSize);
   }, []);
 
+
+  // ============================================================
+  // ==================== PLAYER PROFILE WIDGET ==================
+  // ============================================================
   return (
     <WidgetBox.Root className=" flex flex-col" {...rest}>
       <WidgetBox.Header>
@@ -194,8 +299,8 @@ export default function PlayerProfileWidget({
               className="max-w-xs p-4"
             >
               <p className="text-center text-sm">
-                Playbook Score evaluates your roster's strength across power and dynasty value metrics, 
-                helping you understand your team's competitive position and long-term potential.
+                Playbook Score evaluates your roster&apos;s strength across power and dynasty value metrics, 
+                helping you understand your team&apos;s competitive position and long-term potential.
               </p>
             </Popover.Content>
           </Popover.Root>
@@ -204,9 +309,21 @@ export default function PlayerProfileWidget({
       </WidgetBox.Header>
 
       <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5 flex-1 pb-0'>
-        <Divider.Root className='hidden mdh:block'/>
+        {/* <Divider.Root className='hidden mdh:block'/> */}
 
-        
+        <div className="flex-shrink-0">
+          <PlayerInfoSection playerData={playerData} />
+        </div>
+        <div className="flex-shrink-0">
+          <TraitTagContainer traitIds={playerData.tags.traitIds} className="" />
+        </div>
+        <div className="flex-shrink-0">
+          <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
+        </div>
+        <div className="flex-1 min-h-0 flex flex-col justify-end">
+          <HistoricalViewGraph historicalData={playerData.historicalData} />
+        </div>
+
 
       </div>
     </WidgetBox.Root>

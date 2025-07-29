@@ -7,25 +7,20 @@ import { Bandage, Goal, ShieldHalf, TimerReset, Users, Watch } from 'lucide-reac
 export default function PlayerInfoSection({ playerData }) {
   return (
     <div className="flex gap-2 mdh:gap-3 flex-shrink-0">
-      {/* Player Image */}
-      <img 
-        src={playerData.image} 
-        alt={playerData.name}
-        className="w-10 mdh:w-14 rounded-lg object-cover flex-shrink-0"
-      />
       {/* Player Info */}
       <div className="flex-1">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs mdh:text-sm font-semibold text-pb_blue">{playerData.name}</h4>
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-0.5 mdh:gap-1">
             <span className="text-3xs mdh:text-2xs text-pb_textgray">{playerData.positionRank}</span>
             <div 
               className="w-3 h-3 mdh:w-4 mdh:h-4 rounded text-3xs mdh:text-2xs text-pb_darkgray/80 flex items-center justify-center font-medium"
               style={{ backgroundColor: playerData.positionColor }}
             >
+              
               {playerData.position}
             </div>
           </div>
+          <h4 className="text-label-xs mdh:text-label-sm font-medium text-pb_blue">{playerData.name}</h4>
         </div>
         
         <Separator className="my-0.5 mb-1" />
@@ -69,6 +64,12 @@ export default function PlayerInfoSection({ playerData }) {
           </div>
         </div>
       </div>
+      {/* Player Image */}
+      <img 
+        src={playerData.image} 
+        alt={playerData.name}
+        className="w-10 mdh:w-14 rounded-lg object-cover flex-shrink-0"
+      />
     </div>
   );
 }

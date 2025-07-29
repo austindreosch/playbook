@@ -2,30 +2,47 @@
 
 ## 📝 **Text Sizes** (Ordered by Size - Largest to Smallest)
 
-| Class | Size | Pixels | Category | Use Case |
-|-------|------|--------|----------|----------|
-| `text-title-h1` | 2.75rem | 44px | Title | Largest headings |
-| `text-title-h2` | 2.25rem | 36px | Title | Main page titles |
-| `text-title-h3` | 1.875rem | 30px | Title | Section headers |
-| `text-title-h4` | 1.5rem | 24px | Title | Subsection headers |
-| `text-title-h5` | 1.125rem | 18px | Title | Card titles |
-| `text-title-h6` | 1rem | 16px | Title | Small headings |
-| `text-label-xl` | 1.125rem | 18px | Label | Large labels |
-| `text-paragraph-xl` | 1.125rem | 18px | Paragraph | Large body text |
-| `text-label-lg` | 0.875rem | 14px | Label | Standard labels |
-| `text-paragraph-lg` | 0.875rem | 14px | Paragraph | Standard body text |
-| `text-doc-label` | 0.875rem | 14px | Document | Document labels |
-| `text-doc-paragraph` | 0.875rem | 14px | Document | Document body text |
-| `text-label-md` | 0.8rem | 12.8px | Label | Medium labels |
-| `text-paragraph-md` | 0.8rem | 12.8px | Paragraph | Medium body text |
-| `text-subheading-md` | 0.8rem | 12.8px | Subheading | Medium subheadings |
-| `text-label-sm` | 0.7rem | 11.2px | Label | Small labels |
-| `text-paragraph-sm` | 0.7rem | 11.2px | Paragraph | Small body text |
-| `text-subheading-sm` | 0.7rem | 11.2px | Subheading | Small subheadings |
-| `text-label-xs` | 0.625rem | 10px | Label | Extra small labels |
-| `text-paragraph-xs` | 0.625rem | 10px | Paragraph | Extra small body text |
-| `text-subheading-xs` | 0.6rem | 9.6px | Subheading | Extra small subheadings |
-| `text-subheading-2xs` | 0.55rem | 8.8px | Subheading | Tiny subheadings |
+### **Title Text Styles**
+| Class | Size | Pixels | Letter Spacing | Category | Use Case |
+|-------|------|--------|----------------|----------|----------|
+| `text-title-h1` | 2.75rem | 44px | -0.01em | Title | Largest headings |
+| `text-title-h2` | 2.25rem | 36px | -0.01em | Title | Main page titles |
+| `text-title-h3` | 1.875rem | 30px | -0.01em | Title | Section headers |
+| `text-title-h4` | 1.5rem | 24px | -0.005em | Title | Subsection headers |
+| `text-title-h5` | 1.125rem | 18px | 0em | Title | Card titles |
+| `text-title-h6` | 1rem | 16px | 0em | Title | Small headings |
+
+### **Label Text Styles**
+| Class | Size | Pixels | Letter Spacing | Category | Use Case |
+|-------|------|--------|----------------|----------|----------|
+| `text-label-xl` | 1.125rem | 18px | -0.015em | Label | Large labels |
+| `text-label-lg` | 0.875rem | 14px | -0.015em | Label | Standard labels |
+| `text-label-md` | 0.8rem | 12.8px | -0.011em | Label | Medium labels |
+| `text-label-sm` | 0.7rem | 11.2px | -0.006em | Label | Small labels |
+| `text-label-xs` | 0.625rem | 10px | 0em | Label | Extra small labels |
+
+### **Paragraph Text Styles**
+| Class | Size | Pixels | Letter Spacing | Category | Use Case |
+|-------|------|--------|----------------|----------|----------|
+| `text-paragraph-xl` | 1.125rem | 18px | -0.015em | Paragraph | Large body text |
+| `text-paragraph-lg` | 0.875rem | 14px | -0.015em | Paragraph | Standard body text |
+| `text-paragraph-md` | 0.8rem | 12.8px | -0.011em | Paragraph | Medium body text |
+| `text-paragraph-sm` | 0.7rem | 11.2px | -0.006em | Paragraph | Small body text |
+| `text-paragraph-xs` | 0.625rem | 10px | 0em | Paragraph | Extra small body text |
+
+### **Subheading Text Styles**
+| Class | Size | Pixels | Letter Spacing | Category | Use Case |
+|-------|------|--------|----------------|----------|----------|
+| `text-subheading-md` | 0.8rem | 12.8px | 0.06em | Subheading | Medium subheadings |
+| `text-subheading-sm` | 0.7rem | 11.2px | 0.06em | Subheading | Small subheadings |
+| `text-subheading-xs` | 0.6rem | 9.6px | 0.04em | Subheading | Extra small subheadings |
+| `text-subheading-2xs` | 0.55rem | 8.8px | 0.02em | Subheading | Tiny subheadings |
+
+### **Document Text Styles**
+| Class | Size | Pixels | Letter Spacing | Category | Use Case |
+|-------|------|--------|----------------|----------|----------|
+| `text-doc-label` | 0.875rem | 14px | -0.015em | Document | Document labels |
+| `text-doc-paragraph` | 0.875rem | 14px | -0.015em | Document | Document body text |
 
 ---
 
@@ -40,7 +57,7 @@
 
 ---
 
-## 📏 **Spacing & Layout Sizes**
+## 📏 **Layout & Spacing Sizes**
 
 ### **Button Heights**
 | Class | Size | Pixels | Use Case |
@@ -157,6 +174,11 @@
 - **Interactive Elements**: Use `text-label-*` for buttons, tabs, and form labels
 - **Body Content**: Use `text-paragraph-*` for readable text content
 - **Captions**: Use `text-subheading-*` for secondary information
+
+### **Letter Spacing Guidelines**
+- **Tight Spacing** (-0.015em to -0.006em): Use for labels and interactive elements
+- **Neutral Spacing** (0em): Use for small text and basic content
+- **Wide Spacing** (0.02em to 0.06em): Use for subheadings and emphasis
 
 ### **Icon Sizing Guidelines**
 - **UI Icons**: Use `icon` for standard interface icons
