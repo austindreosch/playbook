@@ -1,0 +1,22 @@
+{
+  "functions": {
+    "pages/api/pull/nbaRawData.js": {
+      "maxDuration": 300
+    },
+    "pages/api/pull/nflRawData.js": {
+      "maxDuration": 300
+    },
+    "pages/api/pull/mlbRawData.js": {
+      "maxDuration": 300
+    },
+    "pages/api/cron/daily-sports-update.js": {
+      "maxDuration": 900
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/daily-sports-update",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}
