@@ -88,8 +88,8 @@ export default function Hero() {
         <div className="pt-20 pb-32 md:pt-32 md:pb-72">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-6 items-center">
             
-              {/* Left side - Text content */}
-              <div className="text-center px-4 md:px-0 pt-10 lg:text-left lg:pr-24 relative z-50">
+            {/* Left side - Text content */}
+            <div className="text-center px-4 md:px-0 pt-10 lg:text-left lg:pr-24 relative z-50">
               <h1 className="text-5xl md:text-6xl font-extrabold leading-tighter tracking-tighter mb-10 text-pb_darkgray" data-aos="zoom-y-out">
                 Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-pb_green">faster.</span>
               </h1>

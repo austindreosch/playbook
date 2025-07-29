@@ -12,7 +12,7 @@ export default function ConditionalWrapper({ children }) {
     <>
       {isLandingPage ? (
         // Landing page: render children without container wrapper
-        <div className="flex-1 flex min-h-0">
+        <div className="flex-1 min-h-0">
           {children}
         </div>
       ) : (
