@@ -17,10 +17,7 @@
  * - scoring: The scoring system (e.g., PPR, Standard)
  */
 
-
-import { MongoClient } from 'mongodb';
-
-const mongoUri = process.env.MONGODB_URI;
+import { getDatabase } from '../../../lib/mongodb';
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
@@ -36,11 +33,8 @@ export default async function handler(req, res) {
         });
     }
 
-    const client = new MongoClient(mongoUri);
-
     try {
-        await client.connect();
-        const db = client.db('playbook');
+        const db = await getDatabase();
         const rankingsCollection = db.collection('rankings');
         const statsCollection = db.collection('stats');
 
@@ -61,70 +55,81 @@ export default async function handler(req, res) {
             });
         }
 
-        const rankings = rankingsDoc?.rankings || [];
-
-        // Get player base stats using the consistent sport/endpoint query
-        const sportUpper = sport.toUpperCase();
-        const playerStatsQuery = {
-            sport: sportUpper,
-            endpoint: 'seasonalPlayerStats'
-        };
-
-        if (!['NBA', 'NFL', 'MLB'].includes(sportUpper)) {
-            return res.status(400).json({
-                error: 'Invalid sport',
-                details: `Sport ${sport} is not supported`
+        if (!rankingsDoc.rankings || !Array.isArray(rankingsDoc.rankings)) {
+            return res.status(404).json({
+                error: 'No ranking data available',
+                details: 'Rankings document exists but contains no ranking data'
             });
         }
 
-        const playerStatsDoc = await statsCollection.findOne(playerStatsQuery);
+        // Extract player IDs from rankings to query stats
+        const playerIds = rankingsDoc.rankings
+            .map(ranking => ranking.playbookId)
+            .filter(id => id); // Filter out null/undefined IDs
 
-        // Extract the player array from the correct path within the 'data' field
-        const allPlayers = playerStatsDoc?.data?.playerStatsTotals || [];
-
-        if (allPlayers.length === 0) {
-            console.warn(`No player stats found in DB for query:`, playerStatsQuery);
+        if (playerIds.length === 0) {
+            return res.status(404).json({
+                error: 'No valid player data',
+                details: 'No valid player IDs found in rankings'
+            });
         }
 
-        // Enrich rankings with player data
-        const enrichedRankings = rankings.map(r => {
-            const player = allPlayers.find(pStat => pStat.player?.id === r.playerId);
+        // Fetch player stats for all players in rankings
+        const playerStats = await statsCollection.find({
+            playbookId: { $in: playerIds },
+            sport: sport.toUpperCase()
+        }).toArray();
 
-            // Ensure we have the required fields
-            if (!r.playerId || !r.name || typeof r.rank !== 'number') {
-                console.error('Skipping invalid ranking data structure:', r);
-                return null;
-            }
-
-            return {
-                playerId: r.playerId,
-                name: r.name,
-                rank: r.rank,
-                position: player?.player?.primaryPosition || 'N/A',
-                team: player?.player?.currentTeam?.abbreviation || player?.team?.abbreviation || 'FA',
-            };
-        }).filter(Boolean); // Remove any null entries
-
-        if (enrichedRankings.length === 0) {
-            console.warn("No rankings could be successfully enriched with player data.");
-        }
-
-        res.status(200).json({
-            rankings: enrichedRankings,
-            metadata: {
-                sport,
-                format,
-                scoring,
-                totalPlayers: enrichedRankings.length,
-                lastUpdated: rankingsDoc.publishedAt
+        // Create a map for quick lookup of player stats
+        const statsMap = new Map();
+        playerStats.forEach(stat => {
+            if (stat.playbookId) {
+                statsMap.set(stat.playbookId.toString(), stat);
             }
         });
+
+        // Enrich rankings with player data
+        const enrichedRankings = rankingsDoc.rankings.map(ranking => {
+            const playerStat = statsMap.get(ranking.playbookId?.toString());
+            
+            return {
+                rank: ranking.rank || ranking.userRank,
+                playbookId: ranking.playbookId,
+                name: ranking.name || playerStat?.name || 'Unknown Player',
+                position: playerStat?.position || null,
+                team: playerStat?.team || null,
+                // Include any additional ranking data
+                ...ranking
+            };
+        });
+
+        // Sort by rank to ensure proper ordering
+        enrichedRankings.sort((a, b) => (a.rank || 999) - (b.rank || 999));
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                sport: rankingsDoc.sport,
+                format: rankingsDoc.format,
+                scoring: rankingsDoc.scoring,
+                publishedAt: rankingsDoc.publishedAt,
+                source: rankingsDoc.source,
+                rankings: enrichedRankings,
+                totalCount: enrichedRankings.length
+            }
+        });
+
     } catch (error) {
-        console.error(`Error fetching ${sport} ${format} ${scoring} rankings:`, error);
-        res.status(500).json({ error: 'Failed to fetch rankings' });
-    } finally {
-        if (client.topology?.isConnected()) {
-            await client.close();
-        }
+        console.error('Error fetching expert rankings:', {
+            message: error.message,
+            stack: error.stack,
+            sport,
+            format,
+            scoring
+        });
+        return res.status(500).json({
+            error: 'Failed to fetch expert rankings',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 } 

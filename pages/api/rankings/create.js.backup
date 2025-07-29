@@ -1,4 +1,5 @@
-import { getDatabase } from '../../../lib/mongodb.js';
+import { MongoClient } from 'mongodb';
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -32,9 +33,11 @@ export default async function handler(req, res) {
         });
     }
 
-    
+    const client = new MongoClient(process.env.MONGODB_URI);
+
     try {
-                const db = await getDatabase();
+        await client.connect();
+        const db = client.db('playbook');
 
         // Start a session for the transaction
         const session = client.startSession();
@@ -101,4 +104,7 @@ export default async function handler(req, res) {
             error: 'Failed to create rankings version',
             details: error.message
         });
-    } 
+    } finally {
+        await client.close();
+    }
+} 

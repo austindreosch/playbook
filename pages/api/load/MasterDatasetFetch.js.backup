@@ -9,7 +9,10 @@
  * - Returns formatted data for each sport in a consistent structure expected by the frontend.
  */
 
-import { getDatabase } from '../../../lib/mongodb.js';
+import { MongoClient } from 'mongodb';
+
+const mongoUri = process.env.MONGODB_URI;
+
 // Define the data required for each sport from specific collections
 const dataSources = {
     stats: { // Collection name
@@ -38,12 +41,14 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-        // fetchedData will store results keyed by sport, then endpoint:
+    const client = new MongoClient(mongoUri);
+    // fetchedData will store results keyed by sport, then endpoint:
     // { nba: { seasonalPlayerStats: {...}, seasonalPlayerStatsProjections: {...} }, nfl: { seasonalPlayerStats: {...}, seasonalTeamStats: {...} }, ... }
     const fetchedData = {};
 
     try {
-                const db = await getDatabase();
+        await client.connect();
+        const db = client.db('playbook');
 
         // Loop through collections defined in dataSources
         for (const collectionName in dataSources) {
@@ -112,5 +117,10 @@ export default async function handler(req, res) {
             stack: error.stack // Include stack for better debugging
         });
         res.status(500).json({ error: 'Failed to fetch master sports data' });
+    } finally {
+        // Ensure the client connection is closed even if errors occur
+        if (client.topology?.isConnected()) {
+            await client.close();
+        }
     }
 }

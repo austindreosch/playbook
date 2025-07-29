@@ -1,20 +1,5 @@
 import { getSession } from '@auth0/nextjs-auth0';
-import { MongoClient } from 'mongodb';
-
-const mongoUri = process.env.MONGODB_URI;
-
-// Create a connection pool
-let client = null;
-let db = null;
-
-async function getDb() {
-    if (!client) {
-        client = new MongoClient(mongoUri);
-        await client.connect();
-        db = client.db('playbook');
-    }
-    return db;
-}
+import { getDatabase } from '../../../lib/mongodb';
 
 // Get all user rankings
 export default async function handler(req, res) {
@@ -29,7 +14,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const db = await getDb();
+        const db = await getDatabase();
 
         const userRankings = await db.collection('user_rankings')
             .find({ userId: session.user.sub })
@@ -58,7 +43,6 @@ export default async function handler(req, res) {
             message: error.message,
             stack: error.stack,
             code: error.code,
-            mongoUri: mongoUri ? 'URI exists' : 'URI missing'
         });
         res.status(500).json({
             error: 'Failed to fetch user rankings',

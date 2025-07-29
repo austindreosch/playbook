@@ -1,6 +1,6 @@
+import { MongoClient, ObjectId } from 'mongodb';
 
-
-import { getDatabase } from '../../../lib/mongodb.js';
+const mongoUri = process.env.MONGODB_URI;
 const DB_NAME = 'playbook';
 const PLAYERS_COLLECTION = 'players';
 const RANKINGS_COLLECTION = 'rankings';
@@ -45,9 +45,11 @@ export default async function handler(req, res) {
         }
     }
 
-    
+    const client = new MongoClient(mongoUri);
+
     try {
-                const db = client.db(DB_NAME);
+        await client.connect();
+        const db = client.db(DB_NAME);
         const playersCollection = db.collection(PLAYERS_COLLECTION);
         const rankingsCollection = db.collection(RANKINGS_COLLECTION);
 
@@ -123,5 +125,9 @@ export default async function handler(req, res) {
             return res.status(409).json({ message: 'Conflict: A player with similar identifying information might already exist.'});
         }
         return res.status(500).json({ message: error.message || 'Internal Server Error creating prospect player.' });
+    } finally {
+        if (client) {
+            await client.close();
+        }
     }
 } 
