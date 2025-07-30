@@ -5,13 +5,19 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Cable, ClipboardList, CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, MessageSquareQuote, PanelsTopLeft, Settings as SettingsIcon, Shield, Target, UserPlus } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import UserProfileDropdown from './Interface/UserProfileDropdown';
 
 function NavBar() {
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
+    const [isClientMounted, setIsClientMounted] = useState(false);
     const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID; // Get admin ID
     const isAdmin = user && user.sub === adminSub; // Determine if user is admin
+
+    // Handle client-side mounting to prevent hydration mismatch
+    useEffect(() => {
+        setIsClientMounted(true);
+    }, []);
 
     // Only log user changes if needed for debugging
     useEffect(() => {
@@ -19,6 +25,90 @@ function NavBar() {
             // console.log('User state changed:', user);
         }
     }, [user]);
+
+    // Render a loading state until client is mounted to prevent hydration mismatch
+    const renderAuthSection = () => {
+        if (!isClientMounted || isLoading) {
+            return (
+                <div className="group text-pb_darkgray pl-3 py-2 rounded-md select-none flex items-center min-w-[80px]">
+                    <div className="w-4 h-4 mr-3 animate-pulse bg-pb_darkgray/20 rounded"></div>
+                    <span className="animate-pulse bg-pb_darkgray/20 rounded h-4 w-12"></span>
+                </div>
+            );
+        }
+
+        if (user) {
+            return (
+                <div className="py-2 pl-2">
+                    <UserProfileDropdown user={user} />
+                </div>
+            );
+        }
+
+        return (
+            <Link href="/api/auth/login" className="group text-pb_darkgray hover:text-white pl-3 py-2 rounded-md select-none flex items-center">
+                <LogIn className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
+                LOGIN
+            </Link>
+        );
+    };
+
+    const renderMobileAuthSection = () => {
+        if (!isClientMounted || isLoading) {
+            return (
+                <DropdownMenuItem className="text-pb_darkgray font-bold text-base px-3 py-3 flex items-center rounded-none">
+                    <div className="w-5 h-5 mr-2.5 animate-pulse bg-pb_darkgray/20 rounded"></div>
+                    <span className="animate-pulse bg-pb_darkgray/20 rounded h-4 w-16"></span>
+                </DropdownMenuItem>
+            );
+        }
+
+        if (user) {
+            return (
+                <>
+                    <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                    <DropdownMenuItem 
+                        className="text-pb_midgray font-bold text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50 cursor-not-allowed"
+                    >
+                        <CreditCard className="h-5 w-5 mr-2.5 text-pb_midgray" />Imports
+                    </DropdownMenuItem>
+
+                    {isAdmin && (
+                        <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none hover:bg-pb_lightgray hover:text-pb_darkgray">
+                            <span className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full cursor-pointer flex items-center">
+                                <UserPlus className="h-5 w-5 mr-2.5 text-pb_darkgray" />Admin Panel
+                            </span>
+                        </DropdownMenuItem>
+                    )}
+
+                    <DropdownMenuItem 
+                        className="text-pb_midgray font-bold text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50 cursor-not-allowed"
+                    >
+                        <SettingsIcon className="h-5 w-5 mr-2.5 text-pb_midgray" />Settings
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                    <DropdownMenuItem 
+                        className="text-pb_darkgray font-bold text-base px-3 py-3 focus:bg-pb_lightgray focus:text-pb_darkgray cursor-pointer flex items-center rounded-none"
+                        onSelect={() => window.location.pathname = '/api/auth/logout'}
+                    >
+                        <LogOut className="h-5 w-5 mr-2.5 text-pb_darkgray" />Logout
+                    </DropdownMenuItem>
+                </>
+            );
+        }
+
+        return (
+            <>
+                <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
+                <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
+                    <Link href="/api/auth/login" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
+                        <LogIn className="h-5 w-5 mr-2.5 text-pb_darkgray" />LOGIN
+                    </Link>
+                </DropdownMenuItem>
+            </>
+        );
+    };
 
     return (
         <nav className="bg-pb_orange shadow-md fixed top-0 left-0 right-0 z-50">
@@ -48,16 +138,7 @@ function NavBar() {
                             ABOUT
                         </Link>
 
-                        {user ? (
-                            <div className="py-2 pl-2">
-                                <UserProfileDropdown user={user} />
-                            </div>
-                        ) : (
-                            <Link href="/api/auth/login" className="group text-pb_darkgray hover:text-white pl-3 py-2 rounded-md select-none flex items-center">
-                                <LogIn className="h-4 w-4 mr-3 text-pb_darkgray group-hover:text-white" />
-                                LOGIN
-                            </Link>
-                        )}
+                        {renderAuthSection()}
                     </div>
 
                     {/* Hamburger Menu for mobile - hidden on md and larger screens */}
@@ -92,47 +173,7 @@ function NavBar() {
                                     </Link>
                                 </DropdownMenuItem>
                                 
-                                {user ? (
-                                    <>
-                                        <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
-                                        <DropdownMenuItem 
-                                            className="text-pb_midgray font-bold text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50 cursor-not-allowed"
-                                        >
-                                            <CreditCard className="h-5 w-5 mr-2.5 text-pb_midgray" />Imports
-                                        </DropdownMenuItem>
-
-                                        {isAdmin && (
-                                            <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none hover:bg-pb_lightgray hover:text-pb_darkgray">
-                                                <span className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full cursor-pointer flex items-center">
-                                                    <UserPlus className="h-5 w-5 mr-2.5 text-pb_darkgray" />Admin Panel
-                                                </span>
-                                            </DropdownMenuItem>
-                                        )}
-
-                                        <DropdownMenuItem 
-                                            className="text-pb_midgray font-bold text-base px-3 py-3 hover:bg-pb_lightgray hover:text-pb_darkgray focus:bg-pb_lightgray focus:text-pb_darkgray flex items-center rounded-none opacity-50 cursor-not-allowed"
-                                        >
-                                            <SettingsIcon className="h-5 w-5 mr-2.5 text-pb_midgray" />Settings
-                                        </DropdownMenuItem>
-
-                                        <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
-                                        <DropdownMenuItem 
-                                            className="text-pb_darkgray font-bold text-base px-3 py-3 focus:bg-pb_lightgray focus:text-pb_darkgray cursor-pointer flex items-center rounded-none"
-                                            onSelect={() => window.location.pathname = '/api/auth/logout'}
-                                        >
-                                            <LogOut className="h-5 w-5 mr-2.5 text-pb_darkgray" />Logout
-                                        </DropdownMenuItem>
-                                    </>
-                                ) : (
-                                    <>
-                                        <DropdownMenuSeparator className="bg-pb_lightgray my-1" />
-                                        <DropdownMenuItem asChild className="text-base px-3 py-3 focus:bg-pb_lightgray rounded-none">
-                                            <Link href="/api/auth/login" className="text-pb_darkgray font-bold focus:text-pb_darkgray block w-full flex items-center">
-                                                <LogIn className="h-5 w-5 mr-2.5 text-pb_darkgray" />LOGIN
-                                            </Link>
-                                        </DropdownMenuItem>
-                                    </>
-                                )}
+                                {renderMobileAuthSection()}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>

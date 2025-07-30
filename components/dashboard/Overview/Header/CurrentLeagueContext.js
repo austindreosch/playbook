@@ -53,4 +53,6 @@ export default function CurrentLeagueContext({
       )}
     </div>
   );
-} 
+}
+
+export default CurrentLeagueContext; 
