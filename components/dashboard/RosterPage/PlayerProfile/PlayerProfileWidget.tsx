@@ -280,7 +280,7 @@ function PlayerProfileWidget({
   // ============================================================
 
   return (
-    <WidgetBox.Root className=" flex flex-col" {...rest}>
+    <WidgetBox.Root fixedHeight className="h-full" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={ScanSearch} className="icon" />
         Player Profile
@@ -312,24 +312,17 @@ function PlayerProfileWidget({
 
       </WidgetBox.Header>
 
-      <div className='flex flex-col justify-between flex-1 pb-0 min-h-0'>
-        {/* <Divider.Root className='hidden mdh:block'/> */}
-
-        <div className="flex-shrink-0">
-          <PlayerInfoSection playerData={playerData} />
-        </div>
-        <div className="flex-shrink-0">
-          <TraitTagContainer traitIds={playerData.tags.traitIds} className="" />
-        </div>
-        <div className="flex-shrink-0">
-          <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
-        </div>
-        <div className="flex-1 min-h-0 flex flex-col justify-end">
-          {/* <HistoricalViewGraph historicalData={playerData.historicalData} /> */}
-          <HistoricalViewWidget historicalData={playerData.historicalData} />
-        </div>
-
-
+      <div className="flex-shrink-0">
+        <PlayerInfoSection playerData={playerData} />
+      </div>
+      
+      <div className="flex flex-col gap-2 flex-1 min-h-0 justify-center">
+        <TraitTagContainer traitIds={playerData.tags.traitIds} className="" />
+        <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
+      </div>
+      
+      <div className="flex-shrink-0">
+        <HistoricalViewWidget historicalData={playerData.historicalData} />
       </div>
     </WidgetBox.Root>
   );

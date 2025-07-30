@@ -176,7 +176,7 @@ export default function PlaybookScoreBlock({
   }, []);
 
   return (
-    <WidgetBox.Root className=" flex flex-col" {...rest}>
+    <WidgetBox.Root fixedHeight className="h-full" {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Compass} className="icon" />
         Playbook Score
@@ -208,24 +208,22 @@ export default function PlaybookScoreBlock({
 
       </WidgetBox.Header>
 
-      <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5 flex-1 pb-0'>
-
-        <div className='mx-auto grid w-full justify-center'>
-          <SpendingSummaryPieChart
-            data={chartData}
-            className='[grid-area:1/1] w-full'
-            maxWidth={chartMaxWidth}
-          />
-          <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
-              {scoreData.totalScore}
-            </span>
-          </div>
+      <div className='mx-auto grid w-full justify-center flex-shrink-0'>
+        <SpendingSummaryPieChart
+          data={chartData}
+          className='[grid-area:1/1] w-full'
+          maxWidth={chartMaxWidth}
+        />
+        <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
+          <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
+            {scoreData.totalScore}
+          </span>
         </div>
+      </div>
 
+      <div className="flex flex-col gap-3 flex-1 min-h-0 justify-center">
         <Divider.Root /> 
 
-        {/*  CONTEXT FOR PLAYBOOK SCORE*/}
         <div className="flex items-center gap-8 mx-auto">
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
@@ -259,14 +257,13 @@ export default function PlaybookScoreBlock({
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Metrics Controls - shows controls on mdh+ viewports, button on smaller */}
+      <div className="flex-shrink-0">
         <UserPlayerPreferencesPanel
           scoreData={scoreData}
           className="px-1"
         />
-
-
       </div>
     </WidgetBox.Root>
   );

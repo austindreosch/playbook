@@ -1,14 +1,20 @@
 import { cnExt } from '@/utils/cn';
 import type { PolymorphicComponentProps } from '@/utils/polymorphic';
 
+interface WidgetBoxProps extends React.HTMLAttributes<HTMLDivElement> {
+  fixedHeight?: boolean;
+}
+
 function WidgetBox({
   className,
+  fixedHeight = false,
   ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: WidgetBoxProps) {
   return (
     <div
       className={cnExt(
         'w-full min-w-0 rounded-lg bg-bg-white-0 px-3 py-2 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-100',
+        fixedHeight && 'flex flex-col justify-between',
         className,
       )}
       {...rest}
