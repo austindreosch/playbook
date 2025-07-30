@@ -7,7 +7,7 @@ import Script from 'next/script';
 import { Suspense } from 'react';
 import ConditionalNavBar from '../components/ConditionalNavBar';
 import ConditionalWrapper from '../components/ConditionalWrapper';
-import { DevUserProvider } from '../components/DevUserProvider';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -77,7 +77,7 @@ export default function RootLayout({ children }) {
           `
         }} />
       </head>
-      <DevUserProvider>
+      <UserProvider>
         <ThemeProvider>
           <TooltipProvider>
             <body className={`${dmSans.className} ${dmMono.variable} bg-bg-white-0 h-full flex flex-col`}>
@@ -108,7 +108,7 @@ export default function RootLayout({ children }) {
             </body>
           </TooltipProvider>
         </ThemeProvider>
-      </DevUserProvider>
+      </UserProvider>
     </html>
   )
 }

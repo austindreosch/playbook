@@ -6,13 +6,16 @@ import Slide3 from '@/components/LandingPage/assets/3.jpg';
 import BasketballHero from '@/components/LandingPage/assets/basketball-hero.png';
 import JumbotronImage from '@/components/LandingPage/assets/jumbotron.png';
 import { Button } from '@/components/alignui/button';
-import { useDevUser } from '@/components/DevUserProvider';
+import { ArrowRight, ChevronDown, ChevronRight, ExternalLink, FileCheck, PlayCircle, Star } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export default function Hero() {
   const router = useRouter();
-  const { user, isLoading } = useDevUser();
+  const { user, isLoading } = useUser();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);

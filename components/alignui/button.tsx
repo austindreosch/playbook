@@ -307,3 +307,6 @@ function ButtonIcon<T extends React.ElementType>({
 ButtonIcon.displayName = BUTTON_ICON_NAME;
 
 export { ButtonRoot as Root, ButtonIcon as Icon, ButtonRoot as Button };
+
+// Add default export to support both import patterns
+export default ButtonRoot;

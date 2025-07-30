@@ -2,7 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/alignui/avatar";
 import { Button } from "@/components/alignui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useDevUser } from './DevUserProvider';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { Cable, ClipboardList, CreditCard, FileUp, Info, LayoutDashboard, ListOrdered, LogIn, LogOut, Menu, MessageSquareQuote, PanelsTopLeft, Settings as SettingsIcon, Shield, Target, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
@@ -10,7 +10,7 @@ import UserProfileDropdown from './Interface/UserProfileDropdown';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 function NavBar() {
-    const { user } = useDevUser();
+    const { user } = useUser();
     const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID; // Get admin ID
     const isAdmin = user && user.sub === adminSub; // Determine if user is admin
 

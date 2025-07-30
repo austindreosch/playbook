@@ -1,13 +1,20 @@
 'use client';
 
+import React, { useState } from 'react';
 import { Button } from "@/components/alignui/button";
-import { useDevUser } from "@/components/DevUserProvider";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { 
+    CheckCircle, 
+    UserCheck, 
+    ChevronRight,
+    Sparkles
+} from 'lucide-react';
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Newsletter() {
   const router = useRouter();
-  const { user, isLoading } = useDevUser();
+  const { user, isLoading } = useUser();
 
   const handleSignUp = () => {
     if (isLoading) return;

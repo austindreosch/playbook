@@ -2,7 +2,7 @@
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDevUser } from '../DevUserProvider';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { Activity, AlignCenter, ChevronRight, Database, FileText, Flag, GripVertical, SquareSquare, User, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
@@ -264,7 +264,7 @@ const DebugDrawerContent = React.memo(function DebugDrawerContent({
 
 export default function DebugDrawer({ isOpen, onToggle }) {
   const [activeTab, setActiveTab] = useState('zustand-state');
-  const { user, isLoading, error } = useDevUser();
+  const { user, isLoading, error } = useUser();
   // Get entire dashboard context state automatically
   const dashboardContextFull = useDashboardContext();
   
