@@ -152,17 +152,17 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
 
   return (
     <>
-      {/* Medium height and larger: show controls directly */}
-      <div className={`smh:hidden mdh:block lgh:block ${className}`}>
+      {/* Always show controls for now - we'll add conditional logic back once this works */}
+      <div className={`block ${className}`}>
         <div className="flex-shrink-0 mt-0">
           <PreferencesControls />
         </div>
       </div>
-      {/* Small height: show Evaluation Panel button */}
-      <div className={`smh:block mdh:hidden lgh:hidden flex-shrink-0 flex justify-center w-full ${className}`}>
+      {/* Temporarily hide button completely */}
+      <div className={`hidden flex-shrink-0 flex justify-center w-full ${className}`}>
         <Button.Root variant='neutral' mode='stroke' size='xsmall' className='w-full flex items-center gap-2 justify-center'>
           <Search className='icon-xs' />
-          <span className='text-label-m'>Evaluation Panel</span>
+          <span className='text-label-m'>Preferences Panel</span>
         </Button.Root>
       </div>
     </>

@@ -1,6 +1,22 @@
 'use client';
 
-export default function HistoricalViewGraph({ historicalData }) {
+interface DataPoint {
+  period: number;
+  value: number;
+}
+
+interface HistoricalData {
+  currentView: string;
+  dataPoints: DataPoint[];
+  yAxisMin: number;
+  yAxisMax: number;
+}
+
+interface HistoricalViewGraphProps {
+  historicalData: HistoricalData;
+}
+
+export default function HistoricalViewGraph({ historicalData }: HistoricalViewGraphProps) {
   const createLineChart = () => {
     const { dataPoints, yAxisMin, yAxisMax } = historicalData;
     const width = 280;

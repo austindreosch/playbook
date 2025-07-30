@@ -5,18 +5,23 @@ import * as CompactButton from '@/components/alignui/compact-button';
 import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 import React, { useRef, useState, useEffect } from 'react';
 
-export default function TraitTagContainer({ traitIds, className = "" }) {
-  const [emblaApi, setEmblaApi] = useState(null);
+interface TraitTagContainerProps {
+  traitIds: string[];
+  className?: string;
+}
+
+export default function TraitTagContainer({ traitIds, className = "" }: TraitTagContainerProps) {
+  const [emblaApi, setEmblaApi] = useState<any>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const emblaRef = useRef(null);
+  const emblaRef = useRef<HTMLDivElement>(null);
 
   // Embla-like scroll logic (manual, since we don't use embla-carousel-react)
   useEffect(() => {
     const container = emblaRef.current;
     if (!container) return;
 
-    const scrollableEl = container.querySelector('.overflow-x-auto');
+    const scrollableEl = container.querySelector('.overflow-x-auto') as HTMLElement;
     if (!scrollableEl) return;
 
     const updateButtonStates = () => {
@@ -36,7 +41,7 @@ export default function TraitTagContainer({ traitIds, className = "" }) {
   const scrollPrev = () => {
     const container = emblaRef.current;
     if (!container) return;
-    const scrollableEl = container.querySelector('.overflow-x-auto');
+    const scrollableEl = container.querySelector('.overflow-x-auto') as HTMLElement;
     if (scrollableEl) {
       scrollableEl.scrollBy({ left: -120, behavior: 'smooth' });
     }
@@ -44,7 +49,7 @@ export default function TraitTagContainer({ traitIds, className = "" }) {
   const scrollNext = () => {
     const container = emblaRef.current;
     if (!container) return;
-    const scrollableEl = container.querySelector('.overflow-x-auto');
+    const scrollableEl = container.querySelector('.overflow-x-auto') as HTMLElement;
     if (scrollableEl) {
       scrollableEl.scrollBy({ left: 120, behavior: 'smooth' });
     }
