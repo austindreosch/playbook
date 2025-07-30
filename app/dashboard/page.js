@@ -1,7 +1,7 @@
 //  /dashboard page
 
 'use client'
-import { useDevUser } from '@/components/DevUserProvider.js';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from '@/components/alignui/button';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -336,7 +336,7 @@ export default function DashboardPage() {
   const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
 
   const router = useRouter();
-  const { user, error, isLoading: isUserLoading } = useDevUser();
+  const { user, error, isLoading: isUserLoading } = useUser();
   const [isSending, setIsSending] = useState(false);
   const [isDebugDrawerOpen, setIsDebugDrawerOpen] = useState(false);
 
