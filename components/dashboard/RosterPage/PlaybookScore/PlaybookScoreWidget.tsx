@@ -209,7 +209,6 @@ export default function PlaybookScoreBlock({
       </WidgetBox.Header>
 
       <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5 flex-1 pb-0'>
-        <Divider.Root className='hidden mdh:block'/>
 
         <div className='mx-auto grid w-full justify-center'>
           <SpendingSummaryPieChart
@@ -230,7 +229,7 @@ export default function PlaybookScoreBlock({
         <div className="flex items-center gap-8 mx-auto">
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <div className="text-label-sm">STANDARD</div>
+              <div className="text-label-sm text-text-sub-600">STANDARD</div>
             </div>
             <div className="flex items-center gap-4 mt-1">
               <div className="flex items-center gap-0.5">
@@ -246,7 +245,7 @@ export default function PlaybookScoreBlock({
 
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <div className="text-label-sm">REDRAFT</div>
+              <div className="text-label-sm text-text-sub-600">REDRAFT</div>
             </div>
             <div className="flex items-center gap-2 mt-1">
               <div className="flex items-center gap-0.5">

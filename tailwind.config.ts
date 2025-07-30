@@ -51,8 +51,16 @@ export const texts = {
       fontWeight: '500',
     },
   ],
-  'label-xl': [
+  'label-2xl': [
     '1.125rem',
+    {
+      lineHeight: '1.5rem',
+      letterSpacing: '-0.015em',
+      fontWeight: '500',
+    },
+  ],
+  'label-xl': [
+    '1rem',
     {
       lineHeight: '1.5rem',
       letterSpacing: '-0.015em',
@@ -466,6 +474,7 @@ const config = {
       },
       text: {
         'strong-950': 'hsl(var(--text-strong-950))',
+        'strong-900': 'hsl(var(--text-strong-900))',
         'sub-600': 'hsl(var(--text-sub-600))',
         'mid-500': 'hsl(var(--text-mid-500))',
         'soft-400': 'hsl(var(--text-soft-400))',
@@ -478,6 +487,8 @@ const config = {
         'soft-200': 'hsl(var(--stroke-soft-200))',
         'soft-100': 'hsl(var(--stroke-soft-100))',
         'soft-50': 'hsl(var(--stroke-soft-50))',
+        'soft-25': 'hsl(var(--stroke-soft-25))',
+        'soft-10': 'hsl(var(--stroke-soft-10))',
         'white-0': 'hsl(var(--stroke-white-0))',
       },
       faded: {
@@ -708,12 +719,12 @@ const config = {
         '2xs': '375px',
         '3xs': '275px',
         mdlg: '896px',
-        xsh: { raw: '(min-height: 480px)' },
-        smh: { raw: '(min-height: 610px)' },
-        mdh: { raw: '(min-height: 890px)' },
-        lgh: { raw: '(min-height: 1250px)' },
-        xlh: { raw: '(min-height: 1400px)' },
-        '2xlh': { raw: '(min-height: 2000px)' },
+        xsh: '(min-height: 480px)',
+        smh: '(min-height: 610px)',
+        mdh: '(min-height: 890px)',
+        lgh: '(min-height: 1250px)',
+        xlh: '(min-height: 1400px)',
+        '2xlh': '(min-height: 2000px)',
       },
       container: {
         screens: {

@@ -8,7 +8,7 @@ function WidgetBox({
   return (
     <div
       className={cnExt(
-        'w-full min-w-0 rounded-lg bg-bg-white-0 p-3 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
+        'w-full min-w-0 rounded-lg bg-bg-white-0 px-3 py-2 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-100',
         className,
       )}
       {...rest}
@@ -23,8 +23,8 @@ function WidgetBoxHeader({
   return (
     <div
       className={cnExt(
-        'flex items-center gap-2',
-        'h-8 pb-3 text-label-sm md:text-label-lg',
+        'flex items-center gap-2.5',
+        'h-8 mb-2 text-label-lg md:text-label-xl',
         className,
       )}
       {...rest}
@@ -40,7 +40,7 @@ function WidgetBoxHeaderIcon<T extends React.ElementType>({
   const Component = as || 'div';
   return (
     <Component
-      className={cnExt('icon text-text-sub-600', className)}
+      className={cnExt('icon text-text-strong-900', className)}
       {...rest}
     />
   );

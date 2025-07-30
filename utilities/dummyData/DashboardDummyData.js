@@ -1189,7 +1189,7 @@ export const getCurrentDummyData = () => {
   try {
     // Check if we're in the browser before accessing localStorage
     if (typeof window === 'undefined') {
-      return { ...originalDummyData };
+      return { ...dashboardDummyData };
     }
     
     // Try to get updated data from localStorage first

@@ -30,7 +30,7 @@ const SparkBarChart = <T extends string>({
       <BarChart
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-        barSize={12}
+        barSize={16}
       >
         <XAxis dataKey={index} hide />
         <YAxis hide />

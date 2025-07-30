@@ -3,16 +3,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export function useTabObserver({ onActiveTabChange } = {}) {
   const [mounted, setMounted] = useState(false);
   const listRef = useRef(null);
+  const callbackRef = useRef(onActiveTabChange);
+
+  // Update the callback ref when it changes
+  useEffect(() => {
+    callbackRef.current = onActiveTabChange;
+  }, [onActiveTabChange]);
 
   const updateActiveTab = useCallback(() => {
     if (!listRef.current || typeof window === 'undefined') return;
 
     const activeTab = listRef.current.querySelector('[data-state="active"]');
-    if (activeTab && onActiveTabChange) {
+    if (activeTab && callbackRef.current) {
       const { offsetWidth, offsetLeft } = activeTab;
-      onActiveTabChange(null, activeTab);
+      callbackRef.current(null, activeTab);
     }
-  }, [onActiveTabChange]);
+  }, []);
 
   useEffect(() => {
     // Only run on client side

@@ -12,12 +12,13 @@ import * as Button from '@/components/alignui/button';
 import * as Popover from '@/components/alignui/ui/popover';
 
 import HistoricalViewGraph from './HistoricalViewGraph';
-import PlayerInfoSection from './PlayerInfoSection.tsx';
+import PlayerInfoSection from './PlayerInfoSection';
 import TraitTagContainer from '@/components/common/TraitTagContainer';
 import ValueComparisonTable from './ValueComparisonTable';
 import { formatStatValue, getSportConfig, getSportPrimaryStats, getSportTraits } from '@/lib/utils/sportConfig';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { useMemo } from 'react';
+import HistoricalViewWidget from './HistoricalViewWidget';
 
 
 // Dynamic chart data calculation
@@ -37,7 +38,7 @@ const calculateChartData = (totalScore, maxScore = 999, powerRatio = 0.6, dynast
   ];
 };
 
-export default function PlayerProfileWidget({
+function PlayerProfileWidget({
   ...rest
 }: React.ComponentPropsWithoutRef<typeof WidgetBox.Root>) {
   const [chartMaxWidth, setChartMaxWidth] = React.useState(250);
@@ -125,7 +126,9 @@ export default function PlayerProfileWidget({
         { period: 1, value: 120 },
         { period: 2, value: 95 },
         { period: 3, value: 145 },
-        { period: 4, value: 130 }
+        { period: 4, value: 130 },
+        { period: 5, value: 110 },
+        { period: 6, value: 125 }
       ],
       yAxisMin: 60,
       yAxisMax: 160
@@ -309,7 +312,7 @@ export default function PlayerProfileWidget({
 
       </WidgetBox.Header>
 
-      <div className='flex flex-col gap-3 smh:gap-4 mdh:gap-5 flex-1 pb-0'>
+      <div className='flex flex-col justify-between flex-1 pb-0 min-h-0'>
         {/* <Divider.Root className='hidden mdh:block'/> */}
 
         <div className="flex-shrink-0">
@@ -322,7 +325,8 @@ export default function PlayerProfileWidget({
           <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
         </div>
         <div className="flex-1 min-h-0 flex flex-col justify-end">
-          <HistoricalViewGraph historicalData={playerData.historicalData} />
+          {/* <HistoricalViewGraph historicalData={playerData.historicalData} /> */}
+          <HistoricalViewWidget historicalData={playerData.historicalData} />
         </div>
 
 
@@ -330,6 +334,9 @@ export default function PlayerProfileWidget({
     </WidgetBox.Root>
   );
 }
+
+// Default export
+export default PlayerProfileWidget;
 
 
 

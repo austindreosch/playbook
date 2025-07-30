@@ -5,7 +5,8 @@
       "Bash(cat:*)",
       "Bash(npm run dev:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

@@ -214,9 +214,11 @@
     /* Semantic color mappings */
     --bg-white-0: var(--neutral-0);
     --bg-soft-200: var(--neutral-200);
-    --stroke-soft-200: var(--neutral-200);
-    --stroke-soft-100: var(--neutral-50);  /* pb_lightgray */
-    --stroke-soft-50: var(--neutral-100);  /* pb_textlighterestgray */
+    --stroke-soft-200: var(--neutral-200);  /* Darkest stroke */
+    --stroke-soft-100: var(--neutral-100); /* pb_textlighterestgray */
+    --stroke-soft-50: var(--neutral-50);   /* pb_lightgray - lighter than 100 */
+    --stroke-soft-25: var(--neutral-25);   /* Very light stroke */
+    --stroke-soft-10: var(--neutral-10);   /* Ultra light stroke */
     --stroke-white-0: var(--neutral-0);
     --text-sub-600: var(--neutral-600);
     --text-strong-950: var(--neutral-950);
@@ -273,11 +275,16 @@
     --away-light: var(--yellow-200);
     --away-lighter: var(--yellow-50);
     
+    /* Ultra-light neutral variants */
+    --neutral-25: 0 0% 90%;    /* Very light gray */
+    --neutral-10: 0 0% 96%;    /* Ultra light gray */
+    --neutral-5: 0 0% 98%;     /* Almost white */
+    
     /* Additional semantic colors */
     --bg-weak-50: var(--neutral-50);
-    --bg-weak-25: var(--neutral-100);
-    --bg-weak-10: var(--neutral-200);
-    --bg-weak-5: var(--neutral-300);
+    --bg-weak-25: var(--neutral-25);
+    --bg-weak-10: var(--neutral-10);
+    --bg-weak-5: var(--neutral-5);
     --text-soft-400: var(--neutral-400);
     --primary-base: #228cdb;  /* pb_blue DEFAULT */
     --primary-alpha-10: var(--blue-500) / 10%;
@@ -326,19 +333,26 @@
     /* Semantic color mappings for dark mode */
     --bg-white-0: var(--neutral-0);
     --bg-soft-200: var(--neutral-100);
-    --stroke-soft-200: var(--neutral-200);
-    --stroke-soft-100: var(--neutral-900);  /* pb_lightgray in dark mode */
-    --stroke-soft-50: var(--neutral-800);   /* pb_textlighterestgray in dark mode */
+    --stroke-soft-200: var(--neutral-200);  /* Darkest stroke in dark mode */
+    --stroke-soft-100: var(--neutral-100);  /* pb_textlighterestgray in dark mode */
+    --stroke-soft-50: var(--neutral-50);    /* pb_lightgray in dark mode - lighter than 100 */
+    --stroke-soft-25: var(--neutral-25);    /* Very dark stroke for dark mode */
+    --stroke-soft-10: var(--neutral-10);    /* Ultra dark stroke for dark mode */
     --stroke-white-0: var(--neutral-0);
     --text-sub-600: var(--neutral-400);
     --text-strong-950: var(--neutral-950);
     --text-disabled-300: var(--neutral-700);
 
+    /* Ultra-light neutral variants for dark mode */
+    --neutral-25: 0 0% 12%;    /* Very dark gray for dark mode */
+    --neutral-10: 0 0% 8%;     /* Ultra dark gray for dark mode */
+    --neutral-5: 0 0% 5%;      /* Almost black for dark mode */
+    
     /* Additional semantic colors for dark mode */
     --bg-weak-50: var(--neutral-50);
-    --bg-weak-25: var(--neutral-100);
-    --bg-weak-10: var(--neutral-200);
-    --bg-weak-5: var(--neutral-300);
+    --bg-weak-25: var(--neutral-25);
+    --bg-weak-10: var(--neutral-10);
+    --bg-weak-5: var(--neutral-5);
     --text-soft-400: var(--neutral-600);
     --bg-strong-950: var(--neutral-950);
     --bg-surface-800: var(--neutral-800);
