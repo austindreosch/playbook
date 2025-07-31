@@ -1,4 +1,8 @@
 {
+    "tailwindCSS.experimental.classRegex": [
+        ["([\"'`][^\"'`]*.*?[\"'`])", "[\"'`]([^\"'`]*).*?[\"'`]"],
+        ["([\"'`][^\"'`]*.*?[\"'`])", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    ],
     "piny.project_settings": {
         "open-pages": [
             "pinyfakepage.html"

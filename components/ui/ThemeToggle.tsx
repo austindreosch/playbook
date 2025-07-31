@@ -2,10 +2,14 @@
 
 import { Moon, Sun } from 'lucide-react';
 import * as Button from '@/components/alignui/button';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from 'next-themes';
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
 
   return (
     <Button.Root

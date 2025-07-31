@@ -1,6 +1,5 @@
 'use client';
 
-import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFullImportLeague';
 // import WidgetSchedule from '@/components/alignui/widgets/widget-schedule';
@@ -153,9 +152,5 @@ function DarkModeDemo() {
 }
 
 export default function DarkModeDemoPage() {
-  return (
-    <ThemeProvider>
-      <DarkModeDemo />
-    </ThemeProvider>
-  );
+  return <DarkModeDemo />;
 }

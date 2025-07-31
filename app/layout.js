@@ -10,10 +10,12 @@ import ConditionalWrapper from '../components/ConditionalWrapper';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import MasterDatasetInitializer from '../components/MasterDatasetInitializer';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeProvider } from 'next-themes';
 import { TooltipProvider } from '@/components/alignui/tooltip';
 import { GA_MEASUREMENT_ID } from '../lib/gtag';
 import './globals.css';
+import { Inter as FontSans } from 'next/font/google';
+import { cn } from '@/utils/cn';
 config.autoAddCss = false
 
 const dmSans = DM_Sans({
@@ -21,6 +23,12 @@ const dmSans = DM_Sans({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   display: 'swap'
 })
+
+const inter = FontSans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
+
 
 const dmMono = DM_Mono({
   subsets: ['latin'],
@@ -78,7 +86,7 @@ export default function RootLayout({ children }) {
         }} />
       </head>
       <UserProvider>
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
             <body className={`${dmSans.className} ${dmMono.variable} bg-bg-white-0 h-full flex flex-col`}>
           <Suspense fallback={null}>

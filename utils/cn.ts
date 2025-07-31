@@ -1,4 +1,4 @@
-import { borderRadii, shadows, texts } from '@/tailwind.config.ts';
+import { borderRadii, shadows, texts } from '@/tailwind.config';
 import clsx, { type ClassValue } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 
@@ -31,11 +31,6 @@ const customTwMerge = extendTailwindMerge(twMergeConfig);
 /**
  * Utilizes `clsx` with `tailwind-merge`, use in cases of possible class conflicts.
  */
-export function cnExt(...classes: ClassValue[]) {
+export function cn(...classes: ClassValue[]) {
   return customTwMerge(clsx(...classes));
 }
-
-/**
- * A direct export of `clsx` without `tailwind-merge`.
- */
-export const cn = clsx;
