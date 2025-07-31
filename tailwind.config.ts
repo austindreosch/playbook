@@ -916,34 +916,6 @@ const config = {
   			'background-pan': 'background-pan 3s linear infinite',
   			'spin-and-pulse': 'spin-and-pulse 0.8s ease-in-out infinite'
       },
-      utilities: {
-        '.hw-icon': {
-          width: '1.1rem !important',
-          height: '1.1rem !important',
-        },
-        '.hw-icon-sm': {
-          width: '0.9rem !important',
-          height: '0.9rem !important',
-        },
-        '.hw-icon-xs': {
-          width: '0.8rem !important',
-          height: '0.8rem !important',
-        },
-        '.hw-icon-2xs': {
-          width: '0.7rem !important',
-          height: '0.7rem !important',
-        },
-        '.scrollbar-hide': {
-          /* IE and Edge */
-          '-ms-overflow-style': 'none',
-          /* Firefox */
-          'scrollbar-width': 'none',
-          /* Safari and Chrome */
-          '&::-webkit-scrollbar': {
-            display: 'none'
-          }
-        },
-      },
       keyframes: {
         'accordion-down': {
           from: { height: '0', opacity: '0' },
@@ -1035,9 +1007,40 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate,
+  plugins: [
+    tailwindcssAnimate,
     'prettier-plugin-tailwindcss',
     require('tailwind-scrollbar'),
+    function({ addUtilities }) {
+      addUtilities({
+        '.hw-icon': {
+          'width': '1.1rem !important',
+          'height': '1.1rem !important',
+        },
+        '.hw-icon-sm': {
+          'width': '0.9rem !important',
+          'height': '0.9rem !important',
+        },
+        '.hw-icon-xs': {
+          'width': '0.8rem !important',
+          'height': '0.8rem !important',
+        },
+        '.hw-icon-2xs': {
+          'width': '0.7rem !important',
+          'height': '0.7rem !important',
+        },
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+          /* Firefox */
+          'scrollbar-width': 'none',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            'display': 'none'
+          }
+        },
+      })
+    },
   ],
 } satisfies Config;
 
