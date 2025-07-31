@@ -3,178 +3,195 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
 export const texts = {
-  'title-h1': [
-    '3.5rem',
+  'title-h0': [
+    '3.5rem', // 4.666666666666667rem * 0.75
     {
-      lineHeight: '4rem',
+      lineHeight: '4rem', // 5.333333333333333rem * 0.75
+      letterSpacing: '-0.01em',
+      fontWeight: '500',
+    },
+  ],
+
+  'title-h1': [
+    '2.625rem', // 3.5rem * 0.75
+    {
+      lineHeight: '3rem', // 4rem * 0.75
       letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
   'title-h2': [
-    '3rem',
+    '2.25rem', // 3rem * 0.75
     {
-      lineHeight: '3.5rem',
+      lineHeight: '2.625rem', // 3.5rem * 0.75
       letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
   'title-h3': [
-    '2.5rem',
+    '1.875rem', // 2.5rem * 0.75
     {
-      lineHeight: '3rem',
+      lineHeight: '2.25rem', // 3rem * 0.75
       letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
   'title-h4': [
-    '2rem',
+    '1.5rem', // 2rem * 0.75
     {
-      lineHeight: '2.5rem',
+      lineHeight: '1.875rem', // 2.5rem * 0.75
       letterSpacing: '-0.005em',
       fontWeight: '500',
     },
   ],
   'title-h5': [
-    '1.5rem',
+    '1.125rem', // 1.5rem * 0.75
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
   'title-h6': [
-    '1.25rem',
+    '0.9375rem', // 1.25rem * 0.75
     {
-      lineHeight: '1.75rem',
+      lineHeight: '1.3125rem', // 1.75rem * 0.75
       letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
-  'label-xl': [
-    '1.5rem',
+  'label-2xl': [
+    '1.125rem', // 1.5rem * 0.75
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
+     'label-xl': [
+     '0.984375rem', // 1.3125rem * 0.75 (between lg 0.84375rem and 2xl 1.125rem)
+     {
+       lineHeight: '1.3125rem', // 1.75rem * 0.75
+       letterSpacing: '-0.015em',
+       fontWeight: '500',
+     },
+   ],
   'label-lg': [
-    '1.125rem',
+    '0.84375rem', // 1.125rem * 0.75
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
   'label-md': [
-    '1rem',
+    '0.75rem', // 1rem * 0.75
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '-0.011em',
       fontWeight: '500',
     },
   ],
   'label-sm': [
-    '.875rem',
+    '0.65625rem', // 0.875rem * 0.75
     {
-      lineHeight: '1.25rem',
+      lineHeight: '0.9375rem', // 1.25rem * 0.75
       letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],
   'label-xs': [
-    '.75rem',
+    '0.5625rem', // 0.75rem * 0.75
     {
-      lineHeight: '1rem',
+      lineHeight: '0.75rem', // 1rem * 0.75
       letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
   'paragraph-xl': [
-    '1.5rem',
+    '1.125rem', // 1.5rem * 0.75
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
   'paragraph-lg': [
-    '1.125rem',
+    '0.84375rem', // 1.125rem * 0.75
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
   'paragraph-md': [
-    '1rem',
+    '0.75rem', // 1rem * 0.75
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '-0.011em',
       fontWeight: '400',
     },
   ],
   'paragraph-sm': [
-    '.875rem',
+    '0.65625rem', // 0.875rem * 0.75
     {
-      lineHeight: '1.25rem',
+      lineHeight: '0.9375rem', // 1.25rem * 0.75
       letterSpacing: '-0.006em',
       fontWeight: '400',
     },
   ],
   'paragraph-xs': [
-    '.75rem',
+    '0.5625rem', // 0.75rem * 0.75
     {
-      lineHeight: '1rem',
+      lineHeight: '0.75rem', // 1rem * 0.75
       letterSpacing: '0em',
       fontWeight: '400',
     },
   ],
   'subheading-md': [
-    '1rem',
+    '0.75rem', // 1rem * 0.75
     {
-      lineHeight: '1.5rem',
+      lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '0.06em',
       fontWeight: '500',
     },
   ],
   'subheading-sm': [
-    '.875rem',
+    '0.65625rem', // 0.875rem * 0.75
     {
-      lineHeight: '1.25rem',
+      lineHeight: '0.9375rem', // 1.25rem * 0.75
       letterSpacing: '0.06em',
       fontWeight: '500',
     },
   ],
   'subheading-xs': [
-    '.75rem',
+    '0.5625rem', // 0.75rem * 0.75
     {
-      lineHeight: '1rem',
+      lineHeight: '0.75rem', // 1rem * 0.75
       letterSpacing: '0.04em',
       fontWeight: '500',
     },
   ],
   'subheading-2xs': [
-    '.6875rem',
+    '0.515625rem', // 0.6875rem * 0.75
     {
-      lineHeight: '.75rem',
+      lineHeight: '0.5625rem', // 0.75rem * 0.75
       letterSpacing: '0.02em',
       fontWeight: '500',
     },
   ],
   'doc-label': [
-    '1.125rem',
+    '0.84375rem', // 1.125rem * 0.75
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
   'doc-paragraph': [
-    '1.125rem',
+    '0.84375rem', // 1.125rem * 0.75
     {
-      lineHeight: '2rem',
+      lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '-0.015em',
       fontWeight: '400',
     },
@@ -692,7 +709,7 @@ const config = {
       // ============================================================
 
       spacing: {
-        icon:     '1.1rem',
+        'icon':   '1.1rem',
         'icon-sm':'0.9rem',
         'icon-xs':'0.8rem',
         'icon-2xs':'0.7rem',
@@ -900,6 +917,22 @@ const config = {
   			'spin-and-pulse': 'spin-and-pulse 0.8s ease-in-out infinite'
       },
       utilities: {
+        '.hw-icon': {
+          width: '1.1rem !important',
+          height: '1.1rem !important',
+        },
+        '.hw-icon-sm': {
+          width: '0.9rem !important',
+          height: '0.9rem !important',
+        },
+        '.hw-icon-xs': {
+          width: '0.8rem !important',
+          height: '0.8rem !important',
+        },
+        '.hw-icon-2xs': {
+          width: '0.7rem !important',
+          height: '0.7rem !important',
+        },
         '.scrollbar-hide': {
           /* IE and Edge */
           '-ms-overflow-style': 'none',

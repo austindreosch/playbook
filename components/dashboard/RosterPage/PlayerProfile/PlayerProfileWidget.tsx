@@ -282,7 +282,7 @@ function PlayerProfileWidget({
   return (
     <WidgetBox.Root fixedHeight className="h-full" {...rest}>
       <WidgetBox.Header noMargin fixedHeight>
-        <WidgetBox.HeaderIcon as={ScanSearch} className="icon" />
+        <WidgetBox.HeaderIcon as={ScanSearch} className="" />
         Player Profile
 
         <div className="ml-auto">
@@ -317,7 +317,7 @@ function PlayerProfileWidget({
         <TraitTagContainer traitIds={playerData.tags.traitIds} />
         <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
         <HistoricalViewWidget historicalData={playerData.historicalData} />
-        
+
       </WidgetBox.Content>
     </WidgetBox.Root>
   );
