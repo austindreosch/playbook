@@ -1,30 +1,12 @@
 'use client';
 
 import * as React from 'react';
+import { format } from 'date-fns';
 
 import * as Badge from '@/components/alignui/badge';
 import * as Button from '@/components/alignui/button';
 import * as Tooltip from '@/components/alignui/tooltip';
-// Simple bar chart replacement to avoid import issues
-const SimpleBarChart = ({ data }: { data: Array<{ date: string; value: number }> }) => {
-  const maxValue = Math.max(...data.map(d => d.value));
-  
-  return (
-    <div className="flex items-end gap-1 h-[82px] justify-center">
-      {data.map((item, index) => (
-        <div key={index} className="flex flex-col items-center">
-          <div 
-            className="bg-blue-500 rounded-sm min-w-[16px] transition-all"
-            style={{ 
-              height: `${(item.value / maxValue) * 60}px`,
-              opacity: index % 2 === 0 ? 0.32 : 1
-            }}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
+import ChartStepLine from '@/components/alignui/chart-step-line';
 import { Info } from 'lucide-react';
 
 interface HistoricalData {
@@ -38,28 +20,27 @@ interface HistoricalViewWidgetProps {
   historicalData?: HistoricalData;
 }
 
+// Static data to prevent re-renders and flickering
+const fallbackChartData = [
+  { date: new Date('2023-06-01').toISOString(), value: 45 },
+  { date: new Date('2023-07-01').toISOString(), value: 32 },
+  { date: new Date('2023-08-01').toISOString(), value: 28 },
+  { date: new Date('2023-09-01').toISOString(), value: 41 },
+  { date: new Date('2023-10-01').toISOString(), value: 37 },
+  { date: new Date('2023-11-01').toISOString(), value: 44 },
+];
+
 export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps) {
-  const generateData = (): { date: string; value: number }[] => {
-    // If we have historicalData, use it; otherwise generate consistent dummy data
+  const data = React.useMemo(() => {
+    // If we have historicalData, use it; otherwise use static fallback data
     if (historicalData?.dataPoints) {
       return historicalData.dataPoints.slice(-6).map((point, index) => ({
-        date: `Period ${point.period}`,
+        date: new Date(2023, index + 5, 1).toISOString(),
         value: point.value,
       }));
     }
-
-    // Fallback to consistent dummy data (no Math.random to avoid hydration mismatch)
-    return [
-      { date: '2023-06-01', value: 45 },
-      { date: '2023-07-01', value: 32 },
-      { date: '2023-08-01', value: 28 },
-      { date: '2023-09-01', value: 41 },
-      { date: '2023-10-01', value: 37 },
-      { date: '2023-11-01', value: 44 },
-    ];
-  };
-
-  const data = generateData();
+    return fallbackChartData;
+  }, [historicalData]);
 
   return (
     <div className='relative flex w-full flex-col overflow-hidden rounded-md bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-50'>
@@ -81,10 +62,17 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
         </Button.Root>
       </div>
 
-      <div className='h-[86px] px-4'>
-        <div className='flex items-center justify-center'>
-          <SimpleBarChart data={data} />
-        </div>
+      <div className='px-4'>
+        <ChartStepLine
+          data={data}
+          index='date'
+          categories={['value']}
+          xAxisProps={{
+            tickFormatter: (value) => format(value, 'MMM').toLocaleUpperCase(),
+            tickMargin: 8,
+          }}
+          yAxisProps={{ hide: true }}
+        />
       </div>
     </div>
   );

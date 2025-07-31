@@ -13,8 +13,8 @@ function WidgetBox({
   return (
     <div
       className={cnExt(
-        'w-full min-w-0 rounded-lg bg-bg-white-0 px-3 py-2 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-100',
-        fixedHeight && 'flex flex-col justify-between',
+        'w-full min-w-0 rounded-lg bg-bg-white-0 shadow-regular-xs p-3 ring-1 ring-inset ring-stroke-soft-100',
+        fixedHeight ? 'flex flex-col justify-between' : '',
         className,
       )}
       {...rest}
@@ -22,15 +22,24 @@ function WidgetBox({
   );
 }
 
+interface WidgetBoxHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  noMargin?: boolean;
+  fixedHeight?: boolean;
+}
+
 function WidgetBoxHeader({
   className,
+  noMargin = false,
+  fixedHeight = false,
   ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: WidgetBoxHeaderProps) {
   return (
     <div
       className={cnExt(
-        'flex items-center gap-2.5',
-        'h-8 mb-2 text-label-lg md:text-label-xl',
+        'flex items-center gap-2.5 px-[2px]',
+        'h-6 text-label-lg md:text-label-xl mb-2',
+        !noMargin && '',
+        fixedHeight && '',
         className,
       )}
       {...rest}
@@ -52,8 +61,25 @@ function WidgetBoxHeaderIcon<T extends React.ElementType>({
   );
 }
 
+function WidgetBoxContent({
+  className,
+  children,
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div 
+      className={cnExt('flex-1 flex flex-col justify-between', className)} 
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+}
+
 export {
   WidgetBoxHeader as Header,
-  WidgetBoxHeaderIcon as HeaderIcon, WidgetBox as Root
+  WidgetBoxHeaderIcon as HeaderIcon,
+  WidgetBoxContent as Content,
+  WidgetBox as Root
 };
 

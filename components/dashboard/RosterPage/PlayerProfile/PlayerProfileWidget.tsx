@@ -281,7 +281,7 @@ function PlayerProfileWidget({
 
   return (
     <WidgetBox.Root fixedHeight className="h-full" {...rest}>
-      <WidgetBox.Header>
+      <WidgetBox.Header noMargin fixedHeight>
         <WidgetBox.HeaderIcon as={ScanSearch} className="icon" />
         Player Profile
 
@@ -312,18 +312,13 @@ function PlayerProfileWidget({
 
       </WidgetBox.Header>
 
-      <div className="flex-shrink-0">
+      <WidgetBox.Content>
         <PlayerInfoSection playerData={playerData} />
-      </div>
-      
-      <div className="flex flex-col gap-2 flex-1 min-h-0 justify-center">
-        <TraitTagContainer traitIds={playerData.tags.traitIds} className="" />
+        <TraitTagContainer traitIds={playerData.tags.traitIds} />
         <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
-      </div>
-      
-      <div className="flex-shrink-0">
         <HistoricalViewWidget historicalData={playerData.historicalData} />
-      </div>
+      </WidgetBox.Content>
+
     </WidgetBox.Root>
   );
 }

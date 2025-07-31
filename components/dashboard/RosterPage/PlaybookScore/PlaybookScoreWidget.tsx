@@ -177,7 +177,7 @@ export default function PlaybookScoreBlock({
 
   return (
     <WidgetBox.Root fixedHeight className="h-full" {...rest}>
-      <WidgetBox.Header>
+      <WidgetBox.Header noMargin fixedHeight>
         <WidgetBox.HeaderIcon as={Compass} className="icon" />
         Playbook Score
 
@@ -208,28 +208,31 @@ export default function PlaybookScoreBlock({
 
       </WidgetBox.Header>
 
-      <div className='mx-auto grid w-full justify-center flex-shrink-0'>
-        <SpendingSummaryPieChart
-          data={chartData}
-          className='[grid-area:1/1] w-full'
-          maxWidth={chartMaxWidth}
+      <WidgetBox.Content>
+
+        <div className='mx-auto grid w-full justify-center'>
+          <SpendingSummaryPieChart
+            data={chartData}
+            className='[grid-area:1/1] w-full'
+            maxWidth={chartMaxWidth}
         />
         <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
-          <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
-            {scoreData.totalScore}
-          </span>
+            <span className='pointer-events-auto text-title-h2 mdh:text-title-h1 text-text-strong-950 '>
+              {scoreData.totalScore}
+            </span>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-3 flex-1 min-h-0 justify-center">
-        <Divider.Root /> 
+        </div>
 
+        <Divider.Root className='mt-4' /> 
+
+        {/*  CONTEXT FOR PLAYBOOK SCORE*/}
         <div className="flex items-center gap-8 mx-auto">
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
               <div className="text-label-sm text-text-sub-600">STANDARD</div>
             </div>
-            <div className="flex items-center gap-4 mt-1">
+            <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
                 <ClipboardMinus className="icon-sm" />
                 <Badge.Root variant="rank" color="gray" size="medium">
@@ -245,7 +248,7 @@ export default function PlaybookScoreBlock({
             <div className="flex items-center gap-2">
               <div className="text-label-sm text-text-sub-600">REDRAFT</div>
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
                 <Sprout className="icon-sm" />
                 <Badge.Root variant="rank" color="gray" size="medium">
@@ -257,14 +260,12 @@ export default function PlaybookScoreBlock({
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex-shrink-0">
         <UserPlayerPreferencesPanel
           scoreData={scoreData}
           className="px-1"
         />
-      </div>
+      </WidgetBox.Content>
     </WidgetBox.Root>
   );
 }
