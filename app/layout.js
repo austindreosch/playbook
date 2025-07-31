@@ -18,17 +18,16 @@ import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/utils/cn';
 config.autoAddCss = false
 
+// const inter = FontSans({
+//   subsets: ['latin'],
+//   variable: '--font-sans',
+// });
+
 const dmSans = DM_Sans({
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-sans',
   display: 'swap'
 })
-
-const inter = FontSans({
-  subsets: ['latin'],
-  variable: '--font-sans',
-});
-
 
 const dmMono = DM_Mono({
   subsets: ['latin'],
@@ -84,9 +83,21 @@ export default function RootLayout({ children }) {
             });
           `
         }} />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              var theme = localStorage.getItem('theme');
+              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+            })();
+          `
+        }} />
       </head>
       <UserProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>
             <body className={`${dmSans.className} ${dmMono.variable} bg-bg-white-0 h-full flex flex-col`}>
           <Suspense fallback={null}>

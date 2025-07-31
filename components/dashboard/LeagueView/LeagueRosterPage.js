@@ -48,10 +48,10 @@ export default function LeagueRosterPage() {
       <div className="grid grid-cols-17 gap-1.5 flex-1 min-h-0">
         {/* Left Column */}
         <div className="col-span-10 min-h-0">
-          {/* <RosterFullBlock /> */}
+          <RosterFullBlock />
           {/* <RosterFullImportLeague /> */}
 
-          <WidgetTotalBalance />
+          {/* <WidgetTotalBalance /> */}
 
         </div>
 

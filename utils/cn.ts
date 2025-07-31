@@ -34,3 +34,20 @@ const customTwMerge = extendTailwindMerge(twMergeConfig);
 export function cn(...classes: ClassValue[]) {
   return customTwMerge(clsx(...classes));
 }
+
+/**
+ * Extended version of cn that supports conditional classes with an object
+ */
+export function cnExt(baseClasses: ClassValue, conditionalClasses?: Record<string, boolean>) {
+  const classes = [baseClasses];
+  
+  if (conditionalClasses) {
+    Object.entries(conditionalClasses).forEach(([className, condition]) => {
+      if (condition) {
+        classes.push(className);
+      }
+    });
+  }
+  
+  return cn(...classes);
+}
