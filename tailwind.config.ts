@@ -274,7 +274,6 @@ const config = {
       // ============↓↓↓↓↓↓ CUSTOM TAILWIND CONFIG ↓↓↓↓↓↓============
       // ============================================================
 
-      // neutral: '#FEF9F3',
       pb_darkergray: '#2d2d2d',
       pb_darkgray: '#383838', // primary black
       pb_darkgrayhover: '#4c4c4c',
@@ -361,14 +360,6 @@ const config = {
       // ============================================================
       // ============↑↑↑↑↑↑ CUSTOM TAILWIND CONFIG ↑↑↑↑↑↑============
       // ============================================================
-
-
-
-
-
-     
-
-
 
 
 
@@ -700,6 +691,12 @@ const config = {
       // ============↓↓↓↓↓↓ CUSTOM TAILWIND CONFIG ↓↓↓↓↓↓============
       // ============================================================
 
+      spacing: {
+        icon:     '1.1rem',
+        'icon-sm':'0.9rem',
+        'icon-xs':'0.8rem',
+        'icon-2xs':'0.7rem',
+      },
       borderWidth: {
   			'3': '3px',
   			'5': '5px',
@@ -745,7 +742,8 @@ const config = {
   			'9.5': '2.375rem',
   			'10.5': '2.625rem',
   			'11.5': '2.875rem',
-  			'12.5': '3.125rem'
+  			'12.5': '3.125rem',
+
   		},
   		height: {
   			'2.5': '0.625rem',
@@ -758,7 +756,10 @@ const config = {
   			'9.5': '2.375rem',
   			'10.5': '2.625rem',
   			'11.5': '2.875rem',
-  			'12.5': '3.125rem'
+  			'12.5': '3.125rem',
+
+        'button': '1.875rem',
+
   		},
   		maxHeight: {
   			'3xl': '48rem',
@@ -768,13 +769,13 @@ const config = {
   			'7xl': '80rem',
   			'8xl': '90rem'
   		},
-		maxWidth: {
-			'7xl': '80rem',
-			'8xl': '90rem',
-			'9xl': '100rem',
-			'10xl': '110rem',
-			'11xl': '120rem',
-		},
+      maxWidth: {
+        '7xl': '80rem',
+        '8xl': '90rem',
+        '9xl': '100rem',
+        '10xl': '110rem',
+        '11xl': '120rem',
+      },
   		ringOffsetWidth: {
   			'3': '3px',
   			'5': '5px',
@@ -814,8 +815,12 @@ const config = {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
   			'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
   		},
+      lineHeight: {
+        'relaxed-plus': '1.9',
+        'tighter': '1.1',
+      },
   		fontSize: {
-  			'2xs': '.650rem',
+        '2xs': '.650rem',
   			'3xs': '.600rem',
   			'4xs': '.550rem',
   			'5xs': '.500rem',
@@ -823,14 +828,26 @@ const config = {
   			'7xs': '.400rem',
   			'8xs': '.350rem',
   			'9xs': '.300rem',
+        
+        inherit: 'inherit',
+        'xlg': '1.375rem',
   			'md': '1rem',
-  			smd: '.925rem'
+  			'smd': '.925rem',
+        'button': '.775rem',
   		},
       screens: {
         'xs': '475px',
   			'2xs': '375px',
   			'3xs': '275px',
-  			mdlg: '896px',
+  			'mdlg': '896px',
+
+        'sh': { raw: '(min-height: 480px)' },
+        'smh': { raw: '(min-height: 610px)' },
+        'mdh': { raw: '(min-height: 890px)' },
+        'lgh': { raw: '(min-height: 1250px)' },
+        'xlh': { raw: '(min-height: 1400px)' },
+        '2xlh': { raw: '(min-height: 2000px)' },
+
         '3xl': '1600px', // 1600px
         '4xl': '1920px', // 1920px
         '5xl': '2560px', // 2560px
@@ -838,6 +855,17 @@ const config = {
         '7xl': '5120px', // 5120px
         '8xl': '6400px', // 6400px
         '9xl': '7680px', // 7680px
+
+
+      },
+      container: {
+        screens: {
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+          '2xl': '1540px',
+        },
       },
       
       // ============================================================
@@ -847,6 +875,10 @@ const config = {
   
       fontFamily: {
         sans: ['var(--font-sans)'],
+        mono: [
+          'var(--font-dm-mono)',
+          'monospace'
+        ]
       },
       borderRadius: {
         ...borderRadii,
@@ -866,6 +898,18 @@ const config = {
   			'fade-out': 'fade-out 0.5s ease-in-out',
   			'background-pan': 'background-pan 3s linear infinite',
   			'spin-and-pulse': 'spin-and-pulse 0.8s ease-in-out infinite'
+      },
+      utilities: {
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+          /* Firefox */
+          'scrollbar-width': 'none',
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        },
       },
       keyframes: {
         'accordion-down': {
@@ -951,13 +995,15 @@ const config = {
             '100%': {
               transform: 'scale(1) rotate(360deg)'
             }
-          }
+          },
+          'event-item-show': {
+            to: { opacity: '1', transform: 'translate3d(0,0,0)' },
+          },
       },
     },
   },
   plugins: [tailwindcssAnimate,
     'prettier-plugin-tailwindcss',
-    require('tailwindcss-animate'),
     require('tailwind-scrollbar'),
   ],
 } satisfies Config;
