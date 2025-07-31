@@ -251,6 +251,8 @@
     --stroke-strong-950: var(--neutral-950);
     --stroke-sub-300: var(--neutral-300);
     --stroke-soft-200: var(--neutral-200);
+    --stroke-soft-100: var(--neutral-100);
+    --stroke-soft-50: var(--neutral-50);
     --stroke-white-0: var(--neutral-0);
 
     --faded-dark: var(--neutral-800);
@@ -321,6 +323,8 @@
     --stroke-strong-950: var(--neutral-0);
     --stroke-sub-300: var(--neutral-600);
     --stroke-soft-200: var(--neutral-700);
+    --stroke-soft-100: var(--neutral-800);
+    --stroke-soft-50: var(--neutral-900);
     --stroke-white-0: var(--neutral-950);
 
     --faded-dark: var(--neutral-300);
