@@ -42,6 +42,7 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
     return fallbackChartData;
   }, [historicalData]);
 
+
   return (
     <div className='relative flex w-full flex-col overflow-hidden rounded-md bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-50'>
       <div className='flex items-start gap-2 p-3'>

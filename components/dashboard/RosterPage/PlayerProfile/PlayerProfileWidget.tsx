@@ -311,14 +311,14 @@ function PlayerProfileWidget({
         </div>
 
       </WidgetBox.Header>
-
       <WidgetBox.Content>
+
         <PlayerInfoSection playerData={playerData} />
         <TraitTagContainer traitIds={playerData.tags.traitIds} />
         <ValueComparisonTable valueComparisons={playerData.valueComparisons} />
         <HistoricalViewWidget historicalData={playerData.historicalData} />
+        
       </WidgetBox.Content>
-
     </WidgetBox.Root>
   );
 }
