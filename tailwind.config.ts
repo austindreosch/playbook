@@ -366,6 +366,7 @@ const config = {
       },
       pb_redhover: '#d6594a',
       pb_reddisabled: '#a74539',
+      
       pb_pastelblue: '#79addc',
       pb_pastelpurple: '#ababef',
       pb_pastelorange: '#f5d491',

@@ -12,7 +12,7 @@
   --blue-light-60: #a7d1f1;
   --blue-light-70: #bdddf4;
   --blue-light-80: #d3e8f8;
-  --blue-light-90: #e9f4fb;
+  /* --blue-light-90: #e9f4fb; */
   
   --blue-dark-10: #1f7ec5;
   --blue-dark-20: #1b70af;
@@ -22,9 +22,9 @@
   --blue-dark-60: #0e3858;
   --blue-dark-70: #0a2a42;
   --blue-dark-80: #071c2c;
-  --blue-dark-90: #030e16;
+  /* --blue-dark-90: #030e16; */
 
-  /* GOLD */
+  /* ORANGE */
   --orange: #ffcd51;
   
   --orange-light-10: #ffd262;
@@ -35,7 +35,7 @@
   --orange-light-60: #ffebb9;
   --orange-light-70: #fff0cb;
   --orange-light-80: #fff5dc;
-  --orange-light-90: #fffaea;
+  /* --orange-light-90: #fffaea; */
   
   --orange-dark-10: #e6b949;
   --orange-dark-20: #cca441;
@@ -45,7 +45,7 @@
   --orange-dark-60: #665220;
   --orange-dark-70: #4c3d18;
   --orange-dark-80: #332910;
-  --orange-dark-90: #191408;
+  /* --orange-dark-90: #191408; */
 
   /* GREEN */
   --green: #59cd90; /* green-500 */
@@ -58,7 +58,7 @@
   --green-light-60: #bdebd3;
   --green-light-70: #cdf0de;
   --green-light-80: #def5e9;
-  --green-light-90: #eefaf4;
+  /* --green-light-90: #eefaf4; */
   
   --green-dark-10: #50b982;
   --green-dark-20: #47a473;
@@ -68,7 +68,7 @@
   --green-dark-60: #24523a;
   --green-dark-70: #1b3d2b;
   --green-dark-80: #12291d;
-  --green-dark-90: #09140e;
+  /* --green-dark-90: #09140e; */
 
   /* RED */
   --red-500: #ee6352;
@@ -81,7 +81,7 @@
   --red-light-60: #f8c1ba;
   --red-light-70: #fad0cb;
   --red-light-80: #fce0dc;
-  --red-light-90: #fdefee;
+  /* --red-light-90: #fdefee; */
   
   --red-dark-10: #d6594a;
   --red-dark-20: #be4f42;
@@ -91,7 +91,7 @@
   --red-dark-60: #5f2821;
   --red-dark-70: #471e19;
   --red-dark-80: #301410;
-  --red-dark-90: #180a08;
+  /* --red-dark-90: #180a08; */
 
   /* GRAY */
   --gray-500: #383838;
@@ -104,7 +104,7 @@
   --gray-light-60: #afafaf;
   --gray-light-70: #c3c3c3;
   --gray-light-80: #d7d7d7;
-  --gray-light-90: #ebebeb;
+  /* --gray-light-90: #ebebeb; */
   
   --gray-dark-10: #323232;
   --gray-dark-20: #2d2d2d;
@@ -114,5 +114,5 @@
   --gray-dark-60: #161616;
   --gray-dark-70: #111111;
   --gray-dark-80: #0b0b0b;
-  --gray-dark-90: #060606;
+  /* --gray-dark-90: #060606; */
 }
