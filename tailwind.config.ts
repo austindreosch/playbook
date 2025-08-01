@@ -371,7 +371,7 @@ const config = {
       pb_pastelpurple: '#ababef',
       pb_pastelorange: '#f5d491',
       pb_pastelred: '#f17e92',
-      pb_pastelgreen: '#b8dca7',
+      pb_pastelgreen: '#98c8a2',
       pb_pastelbrown: '#9b8e82',
       pb_pastelstone: '#d6d3c2',
 
