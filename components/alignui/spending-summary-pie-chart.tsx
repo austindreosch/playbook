@@ -9,27 +9,27 @@ const OUTER_RADIUS = 124;
 export const chartConfig = {
   shopping: {
     label: 'Shopping',
-    color: 'hsl(var(--information-base))',
+    color: 'var(--information-base)',
   },
   utilities: {
     label: 'Utilities',
-    color: 'hsl(var(--verified-base))',
+    color: 'var(--verified-base)',
   },
   others: {
     label: 'Others',
-    color: 'hsl(var(--bg-soft-200))',
+    color: 'var(--bg-soft-200)',
   },
   power: {
     label: 'Power',
-    color: '#F5A623', // Yellow
+    color: 'var(--orange-500)', // Orange
   },
   dynasty: {
     label: 'Dynasty Value',
-    color: '#4A90E2', // Blue
+    color: 'var(--blue-500)', // Blue
   },
   missing: {
     label: 'Remaining',
-    color: '#9CA3AF', // Gray
+    color: 'var(--gray-100)', // Gray
   },
 } satisfies ChartConfig;
 

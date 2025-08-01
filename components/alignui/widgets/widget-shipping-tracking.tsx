@@ -225,8 +225,8 @@ export function WidgetShippingTracking() {
         style={{
           height: 152,
           background: `
-            linear-gradient(90deg, hsl(var(--stroke-soft-200)) 1px, #0000 1px 100%) 38px 0 / calc((100% - 76px) / 6) 152px repeat no-repeat,
-            linear-gradient(360deg, hsl(var(--stroke-soft-200)) 1px, #0000 1px 100%) 0 0 / 100% calc(152px / 4) no-repeat repeat
+            linear-gradient(90deg, var(--stroke-soft-200) 1px, #0000 1px 100%) 38px 0 / calc((100% - 76px) / 6) 152px repeat no-repeat,
+            linear-gradient(360deg, var(--stroke-soft-200) 1px, #0000 1px 100%) 0 0 / 100% calc(152px / 4) no-repeat repeat
           `,
         }}
       >
@@ -252,7 +252,7 @@ export function WidgetShippingTracking() {
               type='step'
               dataKey='value'
               className='stroke-primary-base'
-              stroke='hsl(var(--primary-base))'
+              stroke='var(--primary-base)'
               strokeWidth={2}
               dot={false}
               isAnimationActive

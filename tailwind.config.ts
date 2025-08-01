@@ -379,6 +379,14 @@ const config = {
       // ============↑↑↑↑↑↑ CUSTOM TAILWIND CONFIG ↑↑↑↑↑↑============
       // ============================================================
 
+      pastelblue: '#79addc',
+      pastelpurple: '#ababef',
+      pastelorange: '#f5d491',
+      pastelred: '#f17e92',
+      pastelgreen: '#98c8a2',
+      pastelbrown: '#9b8e82',
+      pastelstone: '#d6d3c2',
+
       gray: {
         '0': 'var(--gray-0)',
         '50': 'var(--gray-50)',

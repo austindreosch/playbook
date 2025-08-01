@@ -133,7 +133,7 @@ function WeeklyVisitorRadarChart() {
       className='recharts-fade-in-axis-tick [&_.recharts-surface]:overflow-visible'
     >
       <RadarChart cx='50%' cy='50%' outerRadius='74%' data={data}>
-        <PolarGrid stroke='hsl(var(--stroke-soft-200))' />
+        <PolarGrid stroke='var(--stroke-soft-200)' />
         <PolarAngleAxis
           dataKey='subject'
           className='[&_.angleAxis]:stroke-stroke-soft-200 [&_.recharts-polar-angle-axis-tick-value]:fill-text-sub-600 [&_.recharts-polar-angle-axis-tick-value]:text-label-xs'
@@ -146,8 +146,8 @@ function WeeklyVisitorRadarChart() {
         <Radar
           name='New visitors'
           dataKey='A'
-          stroke='hsl(var(--warning-base))'
-          fill='hsl(var(--orange-alpha-10))'
+          stroke='var(--warning-base)'
+          fill='var(--orange-alpha-10)'
           fillOpacity={1}
           animationDuration={600}
           animationEasing='ease-out'
@@ -155,7 +155,7 @@ function WeeklyVisitorRadarChart() {
             return (
               <circle
                 {...props}
-                fill='hsl(var(--bg-white-0))'
+                fill='var(--bg-white-0)'
                 fillOpacity={1}
               />
             );
@@ -164,8 +164,8 @@ function WeeklyVisitorRadarChart() {
         <Radar
           name='Returning visitors'
           dataKey='B'
-          stroke='hsl(var(--success-base))'
-          fill='hsl(var(--green-alpha-10))'
+          stroke='var(--success-base)'
+          fill='var(--green-alpha-10)'
           fillOpacity={1}
           animationBegin={150}
           animationDuration={600}
@@ -174,7 +174,7 @@ function WeeklyVisitorRadarChart() {
             return (
               <circle
                 {...props}
-                fill='hsl(var(--bg-white-0))'
+                fill='var(--bg-white-0)'
                 fillOpacity={1}
               />
             );

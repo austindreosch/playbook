@@ -48,8 +48,8 @@ function StackedAreaChartComponent() {
         style={{
           height: 112,
           background: `
-            linear-gradient(90deg, hsl(var(--stroke-soft-200)) 1px, #0000 1px 100%) 0 0 / calc(100% / 6) 112px repeat no-repeat,
-            linear-gradient(180deg, hsl(var(--stroke-soft-200)) 1px, #0000 1px 100%) 0 0 / 100% calc(112px / 4) no-repeat repeat
+            linear-gradient(90deg, var(--stroke-soft-200) 1px, #0000 1px 100%) 0 0 / calc(100% / 6) 112px repeat no-repeat,
+            linear-gradient(180deg, var(--stroke-soft-200) 1px, #0000 1px 100%) 0 0 / 100% calc(112px / 4) no-repeat repeat
           `,
         }}
       />
@@ -57,7 +57,7 @@ function StackedAreaChartComponent() {
         <div
           className='size-4 rounded-bl-lg'
           style={{
-            boxShadow: '-100px 100px 0 100px hsl(var(--bg-white-0))',
+            boxShadow: '-100px 100px 0 100px var(--bg-white-0)',
           }}
         />
       </div>
@@ -65,7 +65,7 @@ function StackedAreaChartComponent() {
         <div
           className='size-4 rounded-br-lg'
           style={{
-            boxShadow: '100px 100px 0 100px hsl(var(--bg-white-0))',
+            boxShadow: '100px 100px 0 100px var(--bg-white-0)',
           }}
         />
       </div>
@@ -99,7 +99,7 @@ function StackedAreaChartComponent() {
             type='linear'
             dataKey='value2'
             stroke='none'
-            fill='hsl(var(--bg-white-0))'
+            fill='var(--bg-white-0)'
             className='fill-bg-white-0'
             fillOpacity={1}
           />
@@ -107,7 +107,7 @@ function StackedAreaChartComponent() {
             type='linear'
             dataKey='value2'
             stroke='none'
-            fill='hsl(var(--primary-alpha-16))'
+            fill='var(--primary-alpha-16)'
             fillOpacity={1}
             className='fill-primary-alpha-16'
           />
@@ -115,7 +115,7 @@ function StackedAreaChartComponent() {
             type='linear'
             dataKey='value1'
             stroke='none'
-            fill='hsl(var(--primary-base))'
+            fill='var(--primary-base)'
             fillOpacity={1}
             className='fill-primary-base'
           />

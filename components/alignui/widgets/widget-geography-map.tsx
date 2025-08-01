@@ -184,7 +184,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={10}
                 pathOptions={{
-                  fillColor: 'hsl(var(--stroke-soft-200))',
+                  fillColor: 'var(--stroke-soft-200)',
                   weight: 0,
                   fillOpacity: 1,
                 }}
@@ -198,7 +198,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={8}
                 pathOptions={{
-                  fillColor: 'hsl(var(--bg-white-0))',
+                  fillColor: 'var(--bg-white-0)',
                   weight: 0,
                   fillOpacity: 1,
                 }}
@@ -208,7 +208,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={4}
                 pathOptions={{
-                  fillColor: 'hsl(var(--text-soft-400))',
+                  fillColor: 'var(--text-soft-400)',
                   weight: 0,
                   fillOpacity: 1,
                 }}
@@ -221,7 +221,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={16}
                 pathOptions={{
-                  fillColor: 'hsl(var(--primary-alpha-24))',
+                  fillColor: 'var(--primary-alpha-24)',
                   weight: 0,
                   fillOpacity: 1,
                 }}
@@ -233,7 +233,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={10}
                 pathOptions={{
-                  fillColor: 'hsl(var(--primary-base))',
+                  fillColor: 'var(--primary-base)',
                   weight: 0,
                   fillOpacity: 1,
                 }}
@@ -243,7 +243,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={8}
                 pathOptions={{
-                  fillColor: 'hsl(var(--bg-white-0))',
+                  fillColor: 'var(--bg-white-0)',
                   weight: 0,
                   fillOpacity: 1,
                 }}
@@ -253,7 +253,7 @@ export default function WidgetGeographyMap({
                 center={[location.lat, location.lng]}
                 radius={4}
                 pathOptions={{
-                  fillColor: 'hsl(var(--primary-base))',
+                  fillColor: 'var(--primary-base)',
                   weight: 0,
                   fillOpacity: 1,
                 }}

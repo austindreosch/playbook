@@ -55,7 +55,7 @@ function WidgetBoxHeaderIcon<T extends React.ElementType>({
   const Component = as || 'div';
   return (
     <Component
-      className={cnExt('hw-icon-sm text-text-strong-900', className)}
+      className={cnExt('hw-icon text-text-strong-900', className)}
       {...rest}
     />
   );

@@ -89,7 +89,7 @@ export function WidgetTotalSales() {
           <YAxis type='number' dataKey='value' domain={['auto', 'auto']} hide />
           <Line
             dataKey='value'
-            stroke='hsl(var(--primary-base))'
+            stroke='var(--primary-base)'
             strokeWidth={2}
             dot={false}
             strokeLinejoin='round'

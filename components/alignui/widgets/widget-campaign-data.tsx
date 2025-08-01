@@ -76,9 +76,9 @@ export function WidgetCampaignData() {
             <Area
               type='linear'
               dataKey='value'
-              stroke='hsl(var(--primary-base))'
+              stroke='var(--primary-base)'
               strokeWidth={2}
-              fill='hsl(var(--primary-alpha-10))'
+              fill='var(--primary-alpha-10)'
               className='fill-bg-white-0 stroke-primary-base'
               fillOpacity={1}
             />

@@ -60,8 +60,8 @@ export default function PlaybookScoreBlock({
     powerRatio: 0.6, // 60% Power
     dynastyRatio: 0.4, // 40% Dynasty Value
     segments: [
-      { category: "primary", value: 45, fill: "#4A90E2" },
-      { category: "secondary", value: 55, fill: "#F5A623" },
+      { category: "primary", value: 45, fill: "var(--blue-500)" },
+      { category: "secondary", value: 55, fill: "var(--orange-500)" },
     ],
     metrics: [
       { 
@@ -178,7 +178,7 @@ export default function PlaybookScoreBlock({
   return (
     <WidgetBox.Root fixedHeight className="h-full" {...rest}>
       <WidgetBox.Header noMargin fixedHeight>
-        <WidgetBox.HeaderIcon as={Compass} className="icon" />
+        <WidgetBox.HeaderIcon as={Compass} className="" />
         Playbook Score
 
         <div className="ml-auto">

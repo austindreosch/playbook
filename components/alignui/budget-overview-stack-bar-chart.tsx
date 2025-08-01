@@ -11,15 +11,15 @@ const GAP = 2;
 export const chartConfig = {
   scheduled: {
     label: 'Scheduled',
-    color: 'hsl(var(--feature-base))',
+    color: 'var(--feature-base)',
   },
   expenses: {
     label: 'Expenses',
-    color: 'hsl(var(--verified-base))',
+    color: 'var(--verified-base)',
   },
   income: {
     label: 'Income',
-    color: 'hsl(var(--information-base))',
+    color: 'var(--information-base)',
   },
 } satisfies ChartConfig;
 
@@ -76,7 +76,7 @@ export function BudgetOverviewChart({ data }: { data: any }) {
                   <>
                     {isLast && (
                       <rect
-                        fill='hsl(var(--bg-weak-50))'
+                        fill='var(--bg-weak-50)'
                         x={x}
                         y={0}
                         width={width}

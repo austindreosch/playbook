@@ -16,9 +16,9 @@ const periods = [
 ];
 
 const chartConfig = {
-  housing: { color: 'hsl(var(--information-base))' },
-  utilities: { color: 'hsl(var(--verified-base))' },
-  food: { color: 'hsl(var(--feature-base))' },
+  housing: { color: 'var(--information-base)' },
+  utilities: { color: 'var(--verified-base)' },
+  food: { color: 'var(--feature-base)' },
 };
 
 const data = [

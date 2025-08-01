@@ -14,20 +14,20 @@ const data: SalesData[] = [
   {
     category: 'Europe',
     percentage: 48,
-    color: 'hsl(var(--orange-alpha-24))',
-    textColor: 'hsl(var(--warning-dark))',
+    color: 'var(--orange-alpha-24)',
+    textColor: 'var(--warning-dark)',
   },
   {
     category: 'Asia',
     percentage: 32,
-    color: 'hsl(var(--yellow-alpha-24))',
-    textColor: 'hsl(var(--away-dark))',
+    color: 'var(--yellow-alpha-24)',
+    textColor: 'var(--away-dark)',
   },
   {
     category: 'Americas',
     percentage: 20,
-    color: 'hsl(var(--green-alpha-24))',
-    textColor: 'hsl(var(--success-dark))',
+    color: 'var(--green-alpha-24)',
+    textColor: 'var(--success-dark)',
   },
 ];
 
