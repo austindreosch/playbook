@@ -65,7 +65,7 @@ export const texts = {
     {
       lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '-0.015em',
-      fontWeight: '500',
+      fontWeight: '600',
     },
   ],
      'label-xl': [
@@ -73,7 +73,7 @@ export const texts = {
      {
        lineHeight: '1.3125rem', // 1.75rem * 0.75
        letterSpacing: '-0.015em',
-       fontWeight: '500',
+       fontWeight: '600',
      },
    ],
   'label-lg': [
@@ -81,7 +81,7 @@ export const texts = {
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '-0.015em',
-      fontWeight: '500',
+      fontWeight: '600',
     },
   ],
   'label-md': [
@@ -89,7 +89,7 @@ export const texts = {
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '-0.011em',
-      fontWeight: '500',
+      fontWeight: '600',
     },
   ],
   'label-sm': [
@@ -97,7 +97,7 @@ export const texts = {
     {
       lineHeight: '0.9375rem', // 1.25rem * 0.75
       letterSpacing: '-0.006em',
-      fontWeight: '500',
+      fontWeight: '600',
     },
   ],
   'label-xs': [
@@ -105,7 +105,7 @@ export const texts = {
     {
       lineHeight: '0.75rem', // 1rem * 0.75
       letterSpacing: '0em',
-      fontWeight: '500',
+      fontWeight: '600',
     },
   ],
   'paragraph-xl': [
@@ -391,9 +391,13 @@ const config = {
         '0': 'var(--gray-0)',
         '50': 'var(--gray-50)',
         '100': 'var(--gray-100)',
+        '150': 'var(--gray-150)',
         '200': 'var(--gray-200)',
+        '250': 'var(--gray-250)',
         '300': 'var(--gray-300)',
+        '350': 'var(--gray-350)',
         '400': 'var(--gray-400)',
+        '450': 'var(--gray-450)',
         '500': 'var(--gray-500)',
         '600': 'var(--gray-600)',
         '700': 'var(--gray-700)',
@@ -1023,21 +1027,30 @@ const config = {
     function({ addUtilities }) {
       addUtilities({
         '.hw-icon': {
-          'width': '1.1rem !important',
-          'height': '1.1rem !important',
+          'width': '1.2rem !important',
+          'height': '1.2rem !important',
         },
         '.hw-icon-sm': {
+          'width': '1.05rem !important',
+          'height': '1.05rem !important',
+        },
+        '.hw-icon-xs': {
           'width': '0.9rem !important',
           'height': '0.9rem !important',
         },
-        '.hw-icon-xs': {
-          'width': '0.8rem !important',
-          'height': '0.8rem !important',
+        // '.hw-icon-2xs': {
+        //   'width': '0.8rem !important',
+        //   'height': '0.8rem !important',
+        // },
+        '.hw-icon-lg': {
+          'width': '1.4rem !important',
+          'height': '1.4rem !important',
         },
-        '.hw-icon-2xs': {
-          'width': '0.7rem !important',
-          'height': '0.7rem !important',
+        '.hw-icon-xl': {
+          'width': '1.6rem !important',
+          'height': '1.6rem !important',
         },
+
         '.scrollbar-hide': {
           /* IE and Edge */
           '-ms-overflow-style': 'none',

@@ -294,7 +294,7 @@ function PlayerProfileWidget({
                 size="small"
                 className="p-1 h-auto"
               >
-                <Info className="icon-sm text-text-soft-400 hover:text-text-soft-600" />
+                <Info className="hw-icon-sm text-text-soft-400 hover:text-text-soft-600" />
               </Button.Root>
             </Popover.Trigger>
             <Popover.Content
@@ -340,7 +340,7 @@ export function PlayerProfileWidgetEmpty({
       {...rest}
     >
       <WidgetBox.Header>
-        <WidgetBox.HeaderIcon as={Compass} className="icon" />
+        <WidgetBox.HeaderIcon as={Compass} className="" />
         Player Profile
       </WidgetBox.Header>
 

@@ -190,7 +190,7 @@ export default function PlaybookScoreBlock({
                 size="small"
                 className="p-1 h-auto"
               >
-                <Info className="icon-sm text-text-soft-400 hover:text-text-soft-600" />
+                <Info className="hw-icon-sm text-text-soft-400 hover:text-text-soft-600" />
               </Button.Root>
             </Popover.Trigger>
             <Popover.Content
@@ -234,7 +234,7 @@ export default function PlaybookScoreBlock({
             </div>
             <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
-                <ClipboardMinus className="icon-sm" />
+                <ClipboardMinus className="hw-icon" />
                 <Badge.Root variant="rank" color="gray" size="medium">
                   3
                 </Badge.Root>
@@ -250,7 +250,7 @@ export default function PlaybookScoreBlock({
             </div>
             <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
-                <Sprout className="icon-sm" />
+                <Sprout className="hw-icon" />
                 <Badge.Root variant="rank" color="gray" size="medium">
                   1
                 </Badge.Root>

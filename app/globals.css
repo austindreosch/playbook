@@ -440,7 +440,7 @@
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    border-color: hsl(var(--border));
+    border-color: var(--stroke-soft-100);
   }
 
   img {
@@ -448,10 +448,6 @@
     image-rendering: crisp-edges;
   }
   
-  * {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
 
   img {
     image-rendering: -webkit-optimize-contrast;

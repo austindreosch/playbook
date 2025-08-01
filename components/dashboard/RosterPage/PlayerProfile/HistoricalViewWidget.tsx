@@ -49,7 +49,7 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
               </Tooltip.Root>
             </div>
           </div>
-          <Button.Root variant='neutral' mode='stroke' size='xxsmall'>
+          <Button.Root variant='neutral' mode='stroke' size='xsmall'>
             Details
           </Button.Root>
         </div>
