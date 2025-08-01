@@ -299,8 +299,8 @@ const config = {
       pb_textgray: '#747474',
       pb_textlightgray: '#888888',
       pb_textlightergray: '#9c9c9c',
-    pb_textlightestgray: '#afafaf',
-    pb_textlighterestgray: '#c3c3c3',
+      pb_textlightestgray: '#afafaf',
+      pb_textlighterestgray: '#c3c3c3',
       pb_lightgray: '#d7d7d7',
       pb_lightergray: '#ebebeb',
       pb_lightestgray: '#efefef',
@@ -378,8 +378,6 @@ const config = {
       // ============================================================
       // ============↑↑↑↑↑↑ CUSTOM TAILWIND CONFIG ↑↑↑↑↑↑============
       // ============================================================
-
-
 
       gray: {
         '0': 'var(--gray-0)',
@@ -583,7 +581,7 @@ const config = {
         'alpha-10': 'var(--white-alpha-10)',
       },
       black: {
-        DEFAULT: '#000',
+        DEFAULT: 'var(--black)',
         'alpha-24': 'var(--black-alpha-24)',
         'alpha-16': 'var(--black-alpha-16)',
         'alpha-10': 'var(--black-alpha-10)',
