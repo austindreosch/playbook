@@ -2,7 +2,7 @@
 
 :root {
   /* BLUE */
-  --blue: #228cdb;
+  --blue: #228cdb; /* blue-500 */
   
   --blue-light-10: #3898df;
   --blue-light-20: #4ea3e2;
@@ -48,7 +48,7 @@
   --orange-dark-90: #191408;
 
   /* GREEN */
-  --green: #228cdb;
+  --green: #59cd90; /* green-500 */
   
   --green-light-10: #6ad29b;
   --green-light-20: #7ad7a6;
