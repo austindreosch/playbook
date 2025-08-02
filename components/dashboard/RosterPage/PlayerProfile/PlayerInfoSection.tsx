@@ -33,15 +33,21 @@ interface PlayerInfoSectionProps {
 function StatItem({
   icon: Icon,
   value,
+  valueClassName,
 }: {
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
   value?: string;
+  valueClassName?: string;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <Icon className="icon-sm text-text-mid-500 flex-shrink-0" />
-      <div className="text-subheading-sm font-medium text-text-sub-600">
-        {value || <EmptyIcon className="icon-sm text-text-soft-400" />}
+    <div className="flex items-center gap-3">
+      <Icon className="hw-icon-sm text-text-soft-400 flex-shrink-0" />
+      <div
+        className={`text-subheading-sm font-medium ${
+          valueClassName || 'text-text-sub-600'
+        }`}
+      >
+        {value || <EmptyIcon className="hw-icon-sm text-text-soft-400" />}
       </div>
     </div>
   );
@@ -50,6 +56,19 @@ function StatItem({
 export default function PlayerInfoSection({
   playerData,
 }: PlayerInfoSectionProps) {
+  const getInjuryStatusClass = (status?: string) => {
+    switch (status) {
+      case 'H':
+        return 'text-success-base';
+      case 'Q':
+        return 'text-warning-base';
+      case 'O':
+        return 'text-error-base';
+      default:
+        return 'text-success-base';
+    }
+  };
+
   return (
     <div className="relative overflow-hidden rounded-10 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-100 before:pointer-events-none before:absolute before:inset-0 before:rounded-10 before:ring-1 before:ring-inset before:ring-stroke-soft-100">
       <div className="flex gap-5 p-3">
@@ -64,7 +83,7 @@ export default function PlayerInfoSection({
               <Badge.Root variant="rank" color="gray" size="small">
                  {playerData.positionRank}
               </Badge.Root>
-              <Badge.Root variant="filled" color="purple" size="small" className="text-subheading-sm font-bold">
+              <Badge.Root variant="position" color="purple" size="small" className="text-subheading-sm font-bold">
                 {playerData.position}
               </Badge.Root>
             </div>
@@ -79,7 +98,11 @@ export default function PlayerInfoSection({
             <StatItem icon={TimerReset} value={playerData.age} />
             <StatItem icon={Users} value={playerData.rosterPercentage} />
             <StatItem icon={Goal} value={playerData.playoffScheduleGrade} />
-            <StatItem icon={Bandage} value={playerData.injuryStatus ?? 'H'} />
+            <StatItem
+              icon={Bandage}
+              value={playerData.injuryStatus ?? 'H'}
+              valueClassName={getInjuryStatusClass(playerData.injuryStatus)}
+            />
           </div>
         </div>
 

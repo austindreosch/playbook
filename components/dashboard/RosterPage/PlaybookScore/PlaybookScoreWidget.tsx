@@ -216,7 +216,7 @@ export default function PlaybookScoreBlock({
             className='[grid-area:1/1] w-full'
             maxWidth={chartMaxWidth}
         />
-        <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-2 text-center [grid-area:1/1]'>
+        <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-0 text-center [grid-area:1/1]'>
             <span className='pointer-events-auto text-title-h1 mdh:text-title-h0 text-text-strong-950 '>
               {scoreData.totalScore}
             </span>

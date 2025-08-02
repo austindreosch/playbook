@@ -51,6 +51,9 @@ export const badgeVariants = tv({
       rank: {
         root: 'w-6.5 rounded-sm ring-1 ring-inset ring-stroke-soft-200',
       },
+      position: {
+        root: 'rounded-sm text-static-white',
+      },
     },
     color: {
       gray: {},
@@ -76,70 +79,70 @@ export const badgeVariants = tv({
   compoundVariants: [
     //#region variant=filled
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'gray',
       class: {
         root: 'bg-faded-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'blue',
       class: {
         root: 'bg-information-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'orange',
       class: {
         root: 'bg-warning-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'red',
       class: {
         root: 'bg-error-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'green',
       class: {
         root: 'bg-success-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'yellow',
       class: {
         root: 'bg-away-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'purple',
       class: {
         root: 'bg-feature-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'sky',
       class: {
         root: 'bg-verified-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'pink',
       class: {
         root: 'bg-highlighted-base',
       },
     },
     {
-      variant: 'filled',
+      variant: ['filled', 'position'],
       color: 'teal',
       class: {
         root: 'bg-stable-base',
@@ -554,7 +557,7 @@ function BadgeIcon<T extends React.ElementType>({
 
   return <Component className={icon({ class: className })} {...rest} />;
 }
-BadgeIcon.displayName = BADGE_ICON_NAME;
+BadgeIcon.displayName = BADGE_ICON_name;
 
 type BadgeDotProps = BadgeSharedProps &
   Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>;
