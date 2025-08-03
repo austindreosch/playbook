@@ -8,60 +8,107 @@ import * as Divider from '@/components/alignui/divider';
 import * as Tooltip from '@/components/alignui/tooltip';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
-// TypeScript Interfaces
-interface TeamRecord {
-  wins: number;
-  losses: number;
-  ties: number;
-}
+// ============================================================
+// ===================== BLUEPRINT DEFINITION ================
+// ============================================================
 
-interface Team {
-  teamId: string;
-  teamName: string;
-  ownerName: string;
-  record: TeamRecord;
-  playoffOdds: number;
-  strengthOfScheduleRank: number;
-}
-
-interface MatchupResult {
-  opponent: Team;
-  result: 'W' | 'L' | 'T';
-  week: number;
-  isCompleted: boolean;
-  winProbability?: number; // For future games
-  score?: {
-    userScore: number;
-    opponentScore: number;
+interface StandingsBlueprint {
+  seasonRecord: {                    // SOURCE: useDashboardContext().getCurrentLeague().seasonStats
+    wins: number;
+    losses: number;
+    ties: number;
   };
-}
 
-interface WinStreak {
-  type: 'W' | 'L';
-  count: number;
-}
-
-interface StandingsData {
-  userTeam: Team;
-  seasonRecord: TeamRecord; // Overall season record (points-based)
-  leagueStandings: Team[];
-  recentMatchups: MatchupResult[]; // Past 5-10 games for context
-  upcomingSchedule: MatchupResult[]; // Future games for strength of schedule
-  winStreak: WinStreak;
-  leagueRankings: {
-    standings: number; // 1st, 2nd, etc.
-    strengthOfSchedule: number; // Rank of remaining schedule difficulty
+  leagueRankings: {                  // SOURCE: useDashboardContext().getCurrentLeague().standings + useScheduleStore().getStrengthRanking()
+    standings: number;
+    strengthOfSchedule: number;
   };
+
+  userTeam: {                        // SOURCE: useDashboardContext().getCurrentTeam()
+    teamId: string;
+    teamName: string;
+    ownerName: string;
+    record: {
+      wins: number;
+      losses: number;
+      ties: number;
+    };
+    playoffOdds: number;
+    strengthOfScheduleRank: number;
+  };
+
+  winStreak: {                       // SOURCE: calculateStreak(recentMatchups) [internal calculation]
+    type: 'W' | 'L';
+    count: number;
+  };
+
+  upcomingSchedule: Array<{          // SOURCE: useScheduleStore().getFutureMatchups()
+    opponent: {
+      teamId: string;
+      teamName: string;
+      ownerName: string;
+      record: {
+        wins: number;
+        losses: number;
+        ties: number;
+      };
+      playoffOdds: number;
+      strengthOfScheduleRank: number;
+    };
+    result: 'W' | 'L' | 'T';
+    week: number;
+    isCompleted: false;
+    winProbability: number;
+    score?: undefined;
+  }>;
+
+  leagueStandings: Array<{           // SOURCE: useDashboardContext().getCurrentLeague().allTeams
+    teamId: string;
+    teamName: string;
+    ownerName: string;
+    record: {
+      wins: number;
+      losses: number;
+      ties: number;
+    };
+    playoffOdds: number;
+    strengthOfScheduleRank: number;
+  }>;
+
+  recentMatchups: Array<{            // SOURCE: useMatchupHistory().getRecentGames()
+    opponent: {
+      teamId: string;
+      teamName: string;
+      ownerName: string;
+      record: { wins: number; losses: number; ties: number; };
+      playoffOdds: number;
+      strengthOfScheduleRank: number;
+    };
+    result: 'W' | 'L' | 'T';
+    week: number;
+    isCompleted: true;
+    winProbability?: undefined;
+    score: {
+      userScore: number;
+      opponentScore: number;
+    };
+  }>;
 }
 
 interface StandingsWidgetProps extends React.ComponentPropsWithoutRef<typeof WidgetBox.Root> {
-  data?: StandingsData;
+  blueprint?: StandingsBlueprint;
 }
 
-// Dummy Data Generator
-const generateDummyStandingsData = (): StandingsData => {
+// ============================================================
+// ===================== DATA COLLECTION ======================
+// ============================================================
+
+const generateDummyStandingsData = (): StandingsBlueprint => {
+  // Helper type for generating team data
+  type TeamData = StandingsBlueprint['userTeam'];
+  
   // Create league teams
-  const teams: Team[] = [
+  const teams: TeamData[] = [
     {
       teamId: 'team_1',
       teamName: 'The Gridiron Gods',
@@ -253,11 +300,11 @@ const getWinProbabilityColor = (winProbability: number): string => {
   return 'bg-error-base'; // Very poor probability - strong red
 };
 
-const formatRecord = (record: TeamRecord): string => {
+const formatRecord = (record: { wins: number; losses: number; ties: number }): string => {
   return `${record.wins} - ${record.losses}${record.ties > 0 ? ` - ${record.ties}` : ''}`;
 };
 
-const getStreakDisplay = (streak: WinStreak): { text: string; color: string } => {
+const getStreakDisplay = (streak: { type: 'W' | 'L'; count: number }): { text: string; color: string } => {
   const count = streak.count;
   const type = streak.type;
   return {
@@ -268,19 +315,22 @@ const getStreakDisplay = (streak: WinStreak): { text: string; color: string } =>
 
 
 
+// ===========================================================
+// =================== COMPONENT DEFINITION ==================
+// ===========================================================
+
 
 export default function StandingsWidget({
-  data,
+  blueprint: providedBlueprint,
   ...rest
 }: StandingsWidgetProps) {
   const { getCurrentLeague } = useDashboardContext();
   const currentLeague = getCurrentLeague();
   
-  // Use provided data or generate dummy data
-  const standingsData = data || generateDummyStandingsData();
+  // Use provided blueprint or generate dummy data
+  const blueprint = providedBlueprint || generateDummyStandingsData();
   
-  const { userTeam, seasonRecord, winStreak, leagueRankings, upcomingSchedule } = standingsData;
-  const streakDisplay = getStreakDisplay(winStreak);
+  const streakDisplay = getStreakDisplay(blueprint.winStreak);
 return (
     <WidgetBox.Root className="h-full" {...rest}>
       <WidgetBox.Header>
@@ -290,21 +340,21 @@ return (
         <div className="ml-auto">
           <div className='flex items-center gap-1.5'>
             <div className="flex items-center justify-center gap-1">
-              <span className="text-label-lg text-text-soft-400">{seasonRecord.wins}</span>
+              <span className="text-label-lg text-text-soft-400">{blueprint.seasonRecord.wins}</span>
               <span className="text-label-lg text-text-disabled-300">-</span>
-              <span className="text-label-lg text-text-soft-400">{seasonRecord.losses}</span>
-              {seasonRecord.ties > 0 && (
+              <span className="text-label-lg text-text-soft-400">{blueprint.seasonRecord.losses}</span>
+              {blueprint.seasonRecord.ties > 0 && (
                 <>
                   <span className="text-label-lg text-text-disabled-300">-</span>
-                  <span className="text-label-lg text-text-soft-400">{seasonRecord.ties}</span>
+                  <span className="text-label-lg text-text-soft-400">{blueprint.seasonRecord.ties}</span>
                 </>
               )}
             </div>
             <Badge.Root variant="rank" color="gray" size="medium">
-              {leagueRankings.standings === 1 ? '1st' : 
-               leagueRankings.standings === 2 ? '2nd' : 
-               leagueRankings.standings === 3 ? '3rd' : 
-               `${leagueRankings.standings}th`}
+              {blueprint.leagueRankings.standings === 1 ? '1st' : 
+               blueprint.leagueRankings.standings === 2 ? '2nd' : 
+               blueprint.leagueRankings.standings === 3 ? '3rd' : 
+               `${blueprint.leagueRankings.standings}th`}
             </Badge.Root>
           </div>
         </div>
@@ -317,13 +367,13 @@ return (
         <div className="flex items-center justify-between mb-2 flex-shrink-0">
           <div className="text-center flex-1">
             <div className="flex items-center justify-center gap-1">
-              <span className="text-title-h5 font-bold text-text-soft-400">{userTeam.record.wins}</span>
+              <span className="text-title-h5 font-bold text-text-soft-400">{blueprint.userTeam.record.wins}</span>
               <span className="text-title-h5 font-bold text-text-disabled-300">-</span>
-              <span className="text-title-h5 font-bold text-text-soft-400">{userTeam.record.losses}</span>
-              {userTeam.record.ties > 0 && (
+              <span className="text-title-h5 font-bold text-text-soft-400">{blueprint.userTeam.record.losses}</span>
+              {blueprint.userTeam.record.ties > 0 && (
                 <>
                   <span className="text-title-h5 font-bold text-text-disabled-300">-</span>
-                  <span className="text-title-h5 font-bold text-text-soft-400">{userTeam.record.ties}</span>
+                  <span className="text-title-h5 font-bold text-text-soft-400">{blueprint.userTeam.record.ties}</span>
                 </>
               )}
             </div>
@@ -332,15 +382,15 @@ return (
           
           <div className="text-center flex-1">
             <div className='flex gap-0.5 text-center justify-center'>
-              <div className={`text-title-h5 font-bold ${streakDisplay.color}`}>{winStreak.count}</div>
-              <div className={`text-title-h5 font-bold ${streakDisplay.color}`}>{winStreak.type}</div>
+              <div className={`text-title-h5 font-bold ${streakDisplay.color}`}>{blueprint.winStreak.count}</div>
+              <div className={`text-title-h5 font-bold ${streakDisplay.color}`}>{blueprint.winStreak.type}</div>
             </div>
             <div className="text-paragraph-sm text-text-disabled-300 mt-1">Streak</div>
           </div>
           
           <div className="text-center flex-1">
             <div className="text-title-h5 w-14 mx-auto font-bold bg-success-lighter text-success-dark px-1 py-0.5 rounded ">
-              {userTeam.playoffOdds}%
+              {blueprint.userTeam.playoffOdds}%
             </div>
             <div className="text-paragraph-sm text-text-disabled-300 mt-1">Playoffs Odds</div>
           </div>
@@ -356,16 +406,16 @@ return (
               <span className="text-label-lg text-text-soft-400">Strength of Schedule</span>
             </div>
             <Badge.Root variant="rank" color="gray" size="medium">
-              {leagueRankings.strengthOfSchedule === 1 ? '1st' : 
-               leagueRankings.strengthOfSchedule === 2 ? '2nd' : 
-               leagueRankings.strengthOfSchedule === 3 ? '3rd' : 
-               `${leagueRankings.strengthOfSchedule}th`}
+              {blueprint.leagueRankings.strengthOfSchedule === 1 ? '1st' : 
+               blueprint.leagueRankings.strengthOfSchedule === 2 ? '2nd' : 
+               blueprint.leagueRankings.strengthOfSchedule === 3 ? '3rd' : 
+               `${blueprint.leagueRankings.strengthOfSchedule}th`}
             </Badge.Root>
           </div>
         
           {/* Schedule Difficulty Bars with Tooltips */}
           <div className="grid grid-flow-col gap-1 h-11">
-            {upcomingSchedule.map((matchup, index) => (
+            {blueprint.upcomingSchedule.map((matchup, index) => (
               <Tooltip.Root key={`matchup-${matchup.week}`}>
                 <Tooltip.Trigger asChild>
                   <div 
