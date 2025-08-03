@@ -26,15 +26,16 @@ export const badgeVariants = tv({
   variants: {
     size: {
       small: {
-        root: 'h-4 gap-1.5 px-2 text-subheading-2xs uppercase has-[>.dot]:gap-2',
+        root: 'h-5 gap-1.5 px-2 text-label-sm tracking-wide uppercase has-[>.dot]:gap-2',
         icon: '-mx-1 size-3',
         dot: '-mx-2 size-4',
       },
       medium: {
-        root: 'h-5 gap-1.5 px-2 text-label-xs',
+        root: 'h-6 gap-1.5 px-2 text-label-md tracking-wide',
         icon: '-mx-1 size-4',
         dot: '-mx-1.5 size-4',
       },
+
     },
     variant: {
       filled: {
@@ -49,10 +50,10 @@ export const badgeVariants = tv({
         root: 'bg-white ring-1 ring-inset ring-stroke-soft-200',
       },
       rank: {
-        root: 'w-6.5 rounded-sm ring-1 ring-inset ring-stroke-soft-200',
+        root: 'w-9 rounded-md ring-1 ring-inset ring-stroke-soft-200',
       },
       position: {
-        root: 'rounded-sm text-static-white',
+        root: 'rounded-md text-static-white',
       },
     },
     color: {
@@ -557,7 +558,7 @@ function BadgeIcon<T extends React.ElementType>({
 
   return <Component className={icon({ class: className })} {...rest} />;
 }
-BadgeIcon.displayName = BADGE_ICON_name;
+BadgeIcon.displayName = BADGE_ICON_NAME;
 
 type BadgeDotProps = BadgeSharedProps &
   Omit<React.HTMLAttributes<HTMLDivElement>, 'color'>;

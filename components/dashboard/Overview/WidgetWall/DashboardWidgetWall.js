@@ -19,12 +19,12 @@ import SortableWidget from './SortableWidget';
 
 // Map widget IDs to their components and styling
 const widgetMap = {
-  standings: { component: StandingsBlock, size: 2 },   
-  matchup: { component: MatchupBlock, size: 4 },         
-  teamArchetype: { component: TeamArchetypeBlock, size: 3 },
-  actionSteps: { component: ActionStepsBlock, size: 3 },  
-  teamProfile: { component: TeamProfileBlock, size: 2 }, 
-  newsFeed: { component: NewsFeedBlock, size: 4 },
+  actionSteps: { component: ActionStepsBlock, size: 4 },  
+  // standings: { component: StandingsBlock, size: 4 },   
+  // matchup: { component: MatchupBlock, size: 4 },         
+  // teamArchetype: { component: TeamArchetypeBlock, size: 4 },
+  // teamProfile: { component: TeamProfileBlock, size: 4 }, 
+  // newsFeed: { component: NewsFeedBlock, size: 4 },
 };
 
 export default function DashboardWidgetWall() {
@@ -140,3 +140,4 @@ export default function DashboardWidgetWall() {
     </DndContext>
   );
 } 
+

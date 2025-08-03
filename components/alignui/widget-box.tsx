@@ -8,6 +8,7 @@ interface WidgetBoxProps extends React.HTMLAttributes<HTMLDivElement> {
 function WidgetBox({
   className,
   fixedHeight = false,
+  
   ...rest
 }: WidgetBoxProps) {
   return (

@@ -616,6 +616,7 @@ const config = {
         'sub-300': 'var(--bg-sub-300)',
         'soft-200': 'var(--bg-soft-200)',
         'weak-50': 'var(--bg-weak-50)',
+        'weak-25': 'var(--bg-weak-25)',
         'white-0': 'var(--bg-white-0)',
       },
       text: {

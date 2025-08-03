@@ -30,7 +30,7 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
         {/* Left section with fixed widths - exactly matching RankingsPlayerRow */}
         <div className={`${ROSTER_COLUMN_CLASSES.playerInfoSectionRow}  `}>
           {/* Playbook Score instead of rank number */}
-          <div className={`${ROSTER_COLUMN_CLASSES.playbookScoreBox} font-mono text-sm font-semibold text-pb_darkgray select-none rounded-sm border border-pb_lightergray`}>
+          <div className={`${ROSTER_COLUMN_CLASSES.playbookScoreBox} font-mono text-label-md font-semibold text-black select-none rounded-sm border border-pb_lightergray`}>
             {playbookScore}
           </div>
 
@@ -40,7 +40,7 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
               src={player.imageUrl || defaultImageSrc}
               key={player.name}
               alt={playerName}
-              className="w-6 h-6 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm lg:block"
+              className="w-6 h-6 object-cover bg-gray-25 border border-pb_lightgray rounded-sm lg:block"
               loading="lazy"
               width="28"
               height="28"
@@ -50,10 +50,10 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
 
           {/* Player name and position */}
           <div className="flex items-baseline gap-2 select-none min-w-0 pl-3">
-            <div className="font-semibold text-button truncate text-pb_darkgray">
+            <div className="font-semibold text-label-md truncate text-black">
               {playerName}
             </div>
-            <div className="text-pb_textgray text-2xs flex-shrink-0">
+            <div className="text-gray-300 text-paragraph-xs flex-shrink-0">
               {playerPosition}
             </div>
           </div>

@@ -17,7 +17,8 @@ import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFull
 // NEW STUFF FROM ALIGN
 import PlaybookScoreWidget from '../RosterPage/PlaybookScore/PlaybookScoreWidget';
 import PlayerProfileWidget from '../RosterPage/PlayerProfile/PlayerProfileWidget';
-import WidgetTotalBalance from '@/components/alignui/widgets/widget-total-balance';
+import PlayerPerformanceWidget from '../RosterPage/PlayerPerformance/PlayerPerformanceWidget'
+// import WidgetTotalBalance from '@/components/alignui/widgets/widget-total-balance';
 
 export default function LeagueRosterPage() {
 
@@ -79,7 +80,8 @@ export default function LeagueRosterPage() {
                 </div>
             </div>
             {/* Bottom Row */}
-            <div className="flex-[2] min-h-0">
+            <div className="flex-[2] min-h-0">  
+                {/* <PlayerPerformanceWidget className="h-full"/> */}
                 <PlayerPerformanceBlock className="h-full"/>
             </div>
         </div>

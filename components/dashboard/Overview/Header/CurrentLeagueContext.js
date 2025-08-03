@@ -37,18 +37,18 @@ export default function CurrentLeagueContext({
     <div className={`hidden lg:flex items-center pl-1 gap-2.5 xl:pl-1.5 ${className}`.trim()}>
       
       {/* Lightning bolt separator */}
-      <Bolt className="w-icon-xs h-icon-xs text-pb_midgray shrink-0" />
+      <Bolt className="hw-icon-xs text-gray-400" />
       
       {/* Context string */}
-      <span className="text-xs font-medium text-pb_textgray truncate">
+      <span className="text-paragraph-md font-medium text-gray-350 truncate">
         {contextString}
       </span>
 
       {/* Team direction */}
       {teamDirection && (
         <div className="items-center gap-2 shrink-0 hidden 2xl:flex">
-          <Route className="w-icon-xs h-icon-xs text-pb_midgray" />
-          <span className="text-xs font-medium text-pb_textgray whitespace-nowrap">{teamDirection}</span>
+          <Route className="hw-icon-xs text-gray-400" />
+          <span className="text-paragraph-md font-medium text-gray-350 whitespace-nowrap">{teamDirection}</span>
         </div>
       )}
     </div>

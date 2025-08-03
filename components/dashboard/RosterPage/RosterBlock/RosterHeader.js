@@ -18,7 +18,7 @@ const RosterHeader = ({ categories, onSort, sortConfig }) => {
               onClick={() => onSort(null)}
               title="Sort by Ranking (Default Order)"
             >
-              <Compass className="w-icon h-icon text-white" />
+              <Compass className="hw-icon-sm text-white" />
               {/* No chevrons for compass - it resets to default ranking order */}
             </div>
           </div>
@@ -29,17 +29,17 @@ const RosterHeader = ({ categories, onSort, sortConfig }) => {
           {/* Z-Score Sum Sort Button */}
           <div
             key="zScoreSum"
-            className={`${ROSTER_COLUMN_CLASSES.headerZScoreColumn} hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1`}
+            className={`${ROSTER_COLUMN_CLASSES.headerZScoreColumn} hover:bg-gray-600 cursor-pointer text-paragraph-md text-white select-none py-1`}
             onClick={() => onSort('zScoreSum')}
             title="Sort by Z-Score Sum"
           >
-            <SigmaSquare className="w-icon h-icon" />
+            <SigmaSquare className="hw-icon-sm" />
             {sortConfig?.key === 'zScoreSum' && (
               <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2">
                 {sortConfig?.direction === 'asc' ? (
-                  <ChevronUp className="w-3 h-3 text-white" />
+                  <ChevronUp className="hw-icon-xs text-white" />
                 ) : (
-                  <ChevronDown className="w-3 h-3 text-white" />
+                  <ChevronDown className="hw-icon-xs text-white" />
                 )}
               </div>
             )}
@@ -50,11 +50,11 @@ const RosterHeader = ({ categories, onSort, sortConfig }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
-                    className={`${ROSTER_COLUMN_CLASSES.headerStatColumn} hover:bg-gray-600 cursor-pointer text-sm text-white select-none py-1`}
+                    className={`${ROSTER_COLUMN_CLASSES.headerStatColumn} hover:bg-gray-600 cursor-pointer text-white select-none py-1`}
                     onClick={() => onSort(abbrev)}
                   >
                     {/* Centered abbreviation */}
-                    <span className="text-xs font-semibold tracking-wide">
+                    <span className="text-paragraph-md font-semibold tracking-wide">
                       {abbrev}
                     </span>
                     
@@ -62,18 +62,18 @@ const RosterHeader = ({ categories, onSort, sortConfig }) => {
                     {sortConfig?.key === abbrev && (
                       <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2">
                         {sortConfig?.direction === 'asc' ? (
-                          <ChevronUp className="w-3 h-3 text-white" />
+                          <ChevronUp className="hw-icon-xs text-white" />
                         ) : (
-                          <ChevronDown className="w-3 h-3 text-white" />
+                          <ChevronDown className="hw-icon-xs text-white" />
                         )}
                       </div>
                     )}
                   </div>
                 </TooltipTrigger>
-                <TooltipContent className="max-w-[300px] bg-pb_darkgray text-white border-pb_lightgray">
+                <TooltipContent className="max-w-[300px] bg-black text-white border-gray-200">
                   <div className="space-y-1 p-2">
                     <p className="font-semibold">{abbrev}</p>
-                    <p className="text-xs text-gray-300">Fantasy basketball statistic</p>
+                    <p className="text-paragraph-sm text-gray-300">Fantasy basketball statistic</p>
                   </div>
                 </TooltipContent>
               </Tooltip>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function FillArrowDown({ className = "w-3 h-3", ...props }) {
+export default function FillArrowDown({ className = "", ...props }) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 

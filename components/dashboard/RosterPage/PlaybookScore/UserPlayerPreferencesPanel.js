@@ -118,7 +118,7 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
         return (
           <div key={`metric-${metric.label}-${index}`} className="flex items-center justify-between w-full">
             <div className="flex items-center gap-1.5">
-              <IconComponent className="icon-xs text-pb_darkgray" />
+              <IconComponent className="hw-icon-sm text-pb_darkgray" />
               <span className="text-2xs text-pb_darkgray font-medium">{metric.label}</span>
             </div>
             <SegmentedControlRoot 
@@ -134,7 +134,7 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
                     value={option}
                     className="text-2xs font-medium flex-1 flex items-center justify-center"
                   >
-                    {option || <GitCommitHorizontal className="icon-xs text-pb_textlightestgray" />}
+                    {option || <GitCommitHorizontal className="hw-icon-xs text-pb_textlightestgray" />}
                   </SegmentedControlTrigger>
                 ))}
               </SegmentedControlList>

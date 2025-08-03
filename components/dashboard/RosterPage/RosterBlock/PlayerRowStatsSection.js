@@ -250,7 +250,7 @@ const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex 
         className={`${ROSTER_COLUMN_CLASSES.zScoreColumn} select-none`}
         title={`Z-Score Sum: ${typeof zScoreSum === 'number' ? zScoreSum.toFixed(2) : '-'}`}
       >
-        <span className="text-button font-mono tracking-tight text-pb_textgray tabular-nums text-right min-w-12">
+        <span className="text-paragraph-md text-gray-400 tracking-tight text-center min-w-12">
           {typeof zScoreSum === 'number' ? zScoreSum.toFixed(2) : '-'}
         </span>
       </div>
@@ -302,7 +302,7 @@ const PlayerRowStatsSection = memo(({ categories, playerStats, player, rowIndex 
             title={title}
           >
             {formattedValue !== '' ? (
-              <span className={`text-nums font-medium text-pb_mddarkgray`}>
+              <span className={`text-paragraph-md font-medium text-gray-450`}>
                 {formattedValue}
               </span>
             ) : (

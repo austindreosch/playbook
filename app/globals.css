@@ -28,6 +28,7 @@
     --gray-150: #c3c3c3;
     --gray-100: #d7d7d7;
     --gray-50: #ebebeb;
+    --gray-25: #efefef;
     --gray-0: #ffffff;
 
     --gray-alpha-24: #3838383d;
@@ -45,6 +46,7 @@
     --neutral-200: var(--gray-200);
     --neutral-100: var(--gray-100);
     --neutral-50: var(--gray-50);
+    --neutral-25: var(--gray-25);
     --neutral-0: var(--gray-0);
 
     --neutral-alpha-24: var(--gray-alpha-24);
@@ -279,6 +281,7 @@
     --bg-sub-300: var(--neutral-300);
     --bg-soft-200: var(--neutral-200);
     --bg-weak-50: var(--neutral-50);
+    --bg-weak-25: var(--neutral-25);
     --bg-white-0: var(--neutral-0);
 
     --text-strong-950: var(--neutral-950);
@@ -351,6 +354,7 @@
     --bg-sub-300: var(--neutral-600);
     --bg-soft-200: var(--neutral-700);
     --bg-weak-50: var(--neutral-900);
+    --bg-weak-25: var(--neutral-950);
     --bg-white-0: var(--neutral-950);
 
     --text-strong-950: var(--neutral-0);

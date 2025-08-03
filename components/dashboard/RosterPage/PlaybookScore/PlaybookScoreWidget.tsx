@@ -234,7 +234,7 @@ export default function PlaybookScoreBlock({
             </div>
             <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
-                <ClipboardMinus className="hw-icon" />
+                <ClipboardMinus className="hw-icon-sm" />
                 <Badge.Root variant="rank" color="gray" size="medium">
                   3
                 </Badge.Root>
@@ -250,7 +250,7 @@ export default function PlaybookScoreBlock({
             </div>
             <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
-                <Sprout className="hw-icon" />
+                <Sprout className="hw-icon-sm" />
                 <Badge.Root variant="rank" color="gray" size="medium">
                   1
                 </Badge.Root>

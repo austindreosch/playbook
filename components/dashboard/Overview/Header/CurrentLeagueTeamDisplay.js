@@ -43,39 +43,39 @@ export default function CurrentLeagueTeamDisplay({ className = '' }) {
       <HoverCardContent className="w-80" align="start" side="bottom">
         <div className="space-y-3">
           <div>
-            <h4 className="text-sm font-semibold">{leagueDetails?.leagueName || 'League'}</h4>
-            <p className="text-xs text-muted-foreground">{teamName}</p>
+            <h4 className="text-label-md font-semibold">{leagueDetails?.leagueName || 'League'}</h4>
+            <p className="text-label-md text-gray-250">{teamName}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <span className="text-muted-foreground">Sport</span>
-              <p className="font-medium">{leagueDetails?.sport || 'N/A'}</p>
+              <span className="text-label-sm text-gray-250">Sport</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails?.sport || 'N/A'}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">Format</span>
-              <p className="font-medium">{leagueDetails?.format || 'N/A'}</p>
+              <span className="text-label-sm text-gray-250">Format</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails?.format || 'N/A'}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">Scoring</span>
-              <p className="font-medium">{leagueDetails?.scoring || 'N/A'}</p>
+              <span className="text-label-sm text-gray-250">Scoring</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails?.scoring || 'N/A'}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">Platform</span>
-              <p className="font-medium">{leagueDetails?.platform || 'N/A'}</p>
+              <span className="text-label-sm text-gray-250">Platform</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails?.platform || 'N/A'}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">Teams</span>
-              <p className="font-medium">{leagueDetails?.teamSize || 'N/A'}</p>
+              <span className="text-label-sm text-gray-250">Teams</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails?.teamSize || 'N/A'}</p>
             </div>
             <div>
-              <span className="text-muted-foreground">Mode</span>
-              <p className="font-medium">{leagueDetails?.mode || 'N/A'}</p>
+              <span className="text-label-sm text-gray-250">Mode</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails?.mode || 'N/A'}</p>
             </div>
           </div>
           {leagueDetails?.teamDirection && (
             <div className="pt-2 border-t">
-              <span className="text-xs text-muted-foreground">Team Direction</span>
-              <p className="text-sm font-medium">{leagueDetails.teamDirection}</p>
+              <span className="text-label-sm text-gray-250">Team Direction</span>
+              <p className="text-paragraph-sm font-medium">{leagueDetails.teamDirection}</p>
             </div>
           )}
         </div>

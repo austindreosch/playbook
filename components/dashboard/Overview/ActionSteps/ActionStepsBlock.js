@@ -41,8 +41,9 @@ export default function ActionStepsBlock() {
   return (
     <div className={`w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col overflow-hidden`}>
       <div className="flex items-center gap-2 mb-2 flex-shrink-0">
-        <ActivitySquare className="w-icon h-icon text-pb_darkgray" />
-        <h3 className="text-sm font-semibold text-pb_darkgray">Action Steps</h3>
+        <ActivitySquare className="hw-icon text-black" />
+        <h3 className="text-label-xl font-semibold text-black">Action Steps</h3>
+     
       </div>
 
       {/* Action Items */}
