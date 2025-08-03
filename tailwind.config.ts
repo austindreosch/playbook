@@ -152,7 +152,7 @@ export const texts = {
     '0.75rem', // 1rem * 0.75
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '0.06em',
+      letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],
@@ -160,7 +160,7 @@ export const texts = {
     '0.65625rem', // 0.875rem * 0.75
     {
       lineHeight: '0.9375rem', // 1.25rem * 0.75
-      letterSpacing: '0.06em',
+      letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],
@@ -168,7 +168,7 @@ export const texts = {
     '0.5625rem', // 0.75rem * 0.75
     {
       lineHeight: '0.75rem', // 1rem * 0.75
-      letterSpacing: '0.04em',
+      letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],
@@ -176,7 +176,7 @@ export const texts = {
     '0.515625rem', // 0.6875rem * 0.75
     {
       lineHeight: '0.5625rem', // 0.75rem * 0.75
-      letterSpacing: '0.02em',
+      letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],

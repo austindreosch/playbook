@@ -31,7 +31,7 @@ import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueB
 
 // Overview Blocks
 import ActionStepsBlock from '@/components/dashboard/Overview/ActionSteps/ActionStepsBlock';
-import MatchupBlock from '@/components/dashboard/Overview/Matchup/MatchupBlock';
+import MatchupsWidget from '@/components/dashboard/Overview/Matchups/MatchupsWidget';
 import NewsFeedBlock from '@/components/dashboard/Overview/NewsFeed/NewsFeedBlock';
 import StandingsWidget from '@/components/dashboard/Overview/Standings/StandingsWidget';
 import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';

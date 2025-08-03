@@ -9,7 +9,7 @@ import {
 import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 import ActionStepsBlock from '../ActionSteps/ActionStepsBlock';
-import MatchupBlock from '../Matchup/MatchupBlock';
+import MatchupsWidget from '../Matchups/MatchupsWidget';
 import NewsFeedBlock from '../NewsFeed/NewsFeedBlock';
 import StandingsWidget from '../Standings/StandingsWidget';
 import TeamArchetypeBlock from '../TeamArchetype/TeamArchetypeBlock';
@@ -19,11 +19,11 @@ import SortableWidget from './SortableWidget';
 // Map widget IDs to their components
 const widgetMap = {
   standings: { component: StandingsWidget },   
-  actionSteps: { component: ActionStepsBlock },  
-  matchup: { component: MatchupBlock },         
-  teamArchetype: { component: TeamArchetypeBlock },
-  teamProfile: { component: TeamProfileBlock }, 
-  newsFeed: { component: NewsFeedBlock },
+  matchup: { component: MatchupsWidget },         
+  // actionSteps: { component: ActionStepsBlock },  
+  // teamArchetype: { component: TeamArchetypeBlock },
+  // teamProfile: { component: TeamProfileBlock }, 
+  // newsFeed: { component: NewsFeedBlock },
 };
 
 export default function DashboardWidgetWall() {
