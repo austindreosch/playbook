@@ -7,52 +7,29 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import { useLayoutEffect, useRef, useState } from 'react';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 import ActionStepsBlock from '../ActionSteps/ActionStepsBlock';
 import MatchupBlock from '../Matchup/MatchupBlock';
 import NewsFeedBlock from '../NewsFeed/NewsFeedBlock';
-import StandingsBlock from '../Standings/StandingsBlock';
+import StandingsWidget from '../Standings/StandingsWidget';
 import TeamArchetypeBlock from '../TeamArchetype/TeamArchetypeBlock';
 import TeamProfileBlock from '../TeamProfile/TeamProfileBlock';
 import SortableWidget from './SortableWidget';
 
-// Map widget IDs to their components and styling
+// Map widget IDs to their components
 const widgetMap = {
-  actionSteps: { component: ActionStepsBlock, size: 4 },  
-  // standings: { component: StandingsBlock, size: 4 },   
-  // matchup: { component: MatchupBlock, size: 4 },         
-  // teamArchetype: { component: TeamArchetypeBlock, size: 4 },
-  // teamProfile: { component: TeamProfileBlock, size: 4 }, 
-  // newsFeed: { component: NewsFeedBlock, size: 4 },
+  standings: { component: StandingsWidget },   
+  actionSteps: { component: ActionStepsBlock },  
+  matchup: { component: MatchupBlock },         
+  teamArchetype: { component: TeamArchetypeBlock },
+  teamProfile: { component: TeamProfileBlock }, 
+  newsFeed: { component: NewsFeedBlock },
 };
 
 export default function DashboardWidgetWall() {
   const widgetLayout = useDashboardContext((state) => state.widgetLayout);
   const setWidgetLayout = useDashboardContext((state) => state.setWidgetLayout);
   const isEditMode = useDashboardContext((state) => state.isEditMode);
-  const containerRef = useRef(null);
-  const [unitHeight, setUnitHeight] = useState(0);
-
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const measureHeight = () => {
-      const containerHeight = container.clientHeight;
-      if (containerHeight > 0) {
-        const totalGapHeight = 5 * 8;
-        const netHeight = containerHeight - totalGapHeight;
-        setUnitHeight(netHeight / 6);
-      }
-    };
-    
-    measureHeight(); // Initial measurement
-    const resizeObserver = new ResizeObserver(measureHeight);
-    resizeObserver.observe(container);
-
-    return () => resizeObserver.disconnect();
-  }, [widgetLayout]); // Re-run when layout changes, which covers most cases
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -108,26 +85,22 @@ export default function DashboardWidgetWall() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
-        <div ref={containerRef} className="flex w-full h-full gap-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent scrollbar-gutter-stable">
+        <div className="grid grid-cols-3 gap-2 w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent scrollbar-gutter-stable">
           {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
             <div
               key={columnId}
-              className="flex-1 flex flex-col gap-1.5 min-h-fit"
+              className="flex flex-col gap-2"
             >
               {widgets.map((widgetId) => {
                 const Widget = widgetMap[widgetId];
                 if (!Widget) return null;
                 const WidgetComponent = Widget.component;
-                const widgetHeight = unitHeight > 0 
-                  ? (unitHeight * Widget.size) + ((Widget.size - 1) * 8)
-                  : undefined;
 
                 return (
                   <SortableWidget 
                     key={widgetId} 
                     id={widgetId} 
                     isEditMode={isEditMode}
-                    style={{ height: widgetHeight ? `${widgetHeight}px` : undefined }}
                   >
                     <WidgetComponent />
                   </SortableWidget>

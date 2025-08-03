@@ -6,4 +6,4 @@ alwaysApply: true
 
 # Your rule content
 
-Please make sure to keep to the current tooling as much as possible unless there's a sigificant and/or meaningful reason to look outside of it. I'm using Javascript, Next.js 15+ (App Router for pages, but still using /pages/api/XYZ for api routes), MongoDB (no Mongoose or schemas), Zustand, auth0, Tailwind, Vercel, Lucide Icons, ShadCN for the base template styling of components, Fuse.js for fuzzy matching.
+Please make sure to keep to the current tooling as much as possible unless there's a sigificant and/or meaningful reason to look outside of it. I'm using TypeScript (in the middle of migrating from Javascript), Next.js 15+ (App Router for pages, but still using /pages/api/XYZ for api routes), MongoDB (no Mongoose), Zustand, auth0, Tailwind, alignUI design system/component library, deployed on Vercel, Lucide Icons, Fuse.js for fuzzy matching.

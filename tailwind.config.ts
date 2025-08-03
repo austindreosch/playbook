@@ -630,6 +630,7 @@ const config = {
         'strong-950': 'var(--stroke-strong-950)',
         'sub-300': 'var(--stroke-sub-300)',
         'soft-200': 'var(--stroke-soft-200)',
+        'soft-150': 'var(--stroke-soft-150)',
         'soft-100': 'var(--stroke-soft-100)',
         'soft-50': 'var(--stroke-soft-50)',
         'white-0': 'var(--stroke-white-0)',

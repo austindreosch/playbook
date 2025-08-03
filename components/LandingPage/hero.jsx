@@ -15,7 +15,7 @@ export default function Hero() {
   const { user, isLoading } = useUser();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : false);
+  const [isDesktop, setIsDesktop] = useState(false);
   
   const slides = [Slide1, Slide2, Slide3];
   const extendedSlides = [...slides, ...slides]; // Duplicate slides for infinite loop

@@ -44,6 +44,7 @@
     --neutral-400: var(--gray-400);
     --neutral-300: var(--gray-300);
     --neutral-200: var(--gray-200);
+    --neutral-150: var(--gray-150);
     --neutral-100: var(--gray-100);
     --neutral-50: var(--gray-50);
     --neutral-25: var(--gray-25);
@@ -293,6 +294,7 @@
     --stroke-strong-950: var(--neutral-950);
     --stroke-sub-300: var(--neutral-300);
     --stroke-soft-200: var(--neutral-200);
+    --stroke-soft-150: var(--neutral-150);
     --stroke-soft-100: var(--neutral-100);
     --stroke-soft-50: var(--neutral-50);
     --stroke-white-0: var(--neutral-0);
@@ -364,10 +366,11 @@
     --text-white-0: var(--neutral-950);
 
     --stroke-strong-950: var(--neutral-0);
-    --stroke-sub-300: var(--neutral-600);
+    --stroke-sub-300: var(--neutral-500);
     --stroke-soft-200: var(--neutral-700);
-    --stroke-soft-100: var(--neutral-800);
-    --stroke-soft-50: var(--neutral-900);
+    --stroke-soft-150: var(--neutral-600);
+    --stroke-soft-100: var(--neutral-500);
+    --stroke-soft-50: var(--neutral-400);
     --stroke-white-0: var(--neutral-950);
 
     --faded-dark: var(--neutral-300);

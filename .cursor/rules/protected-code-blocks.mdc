@@ -1,5 +1,0 @@
----
-alwaysApply: true
----
-
-PROTECTED CODE BLOCKS - Do not edit, modify, delete, or reformat the schema structure of any code sections that are enclosed within decorative comment borders (using characters like ╔ ╗ ╚ ╝ ═ ║) or contain explicit warnings such as "DO NOT TOUCH", "DO NOT MODIFY", "BLUEPRINT", or "TEMPLATE". These sections contain critical data structure definitions that serve as the foundation for the application. You may update the values and external data mappings within these sections, but never alter the property names, data types, or overall schema structure. When working with these blueprints, create the data references within the component itself rather than moving or relocating the blueprint to another file - the blueprint should remain in its original location to maintain system integrity. Do not create additional objects like "populatedBlueprint" or derivative blueprint objects. Modifying the structural elements can break data consistency. If structural changes are needed to these protected sections, they must be reviewed and approved by the lead developer.

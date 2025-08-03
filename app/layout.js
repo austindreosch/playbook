@@ -49,87 +49,82 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={cn("h-full", dmSans.variable, dmMono.variable)} suppressHydrationWarning>
       <head>
-        {GA_MEASUREMENT_ID && (
-          <>
-            <Script
-              strategy="afterInteractive"
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-            />
-            <Script
-              id="gtag-init"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_MEASUREMENT_ID}', {
-                    page_path: window.location.pathname,
-                  });
-                `,
-              }}
-            />
-          </>
-        )}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            if ('scrollRestoration' in history) {
-              history.scrollRestoration = 'manual';
-            }
-            window.addEventListener('beforeunload', function() {
-              window.scrollTo(0, 0);
-            });
-          `
-        }} />
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              var theme = localStorage.getItem('theme');
-              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-              } else {
-                document.documentElement.classList.remove('dark');
-              }
-            })();
-          `
-        }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  var isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  document.documentElement.classList.toggle('dark', isDark);
+                } catch (e) {}
+              })();
+            `
+          }}
+        />
       </head>
-      <UserProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <TooltipProvider>
-            <body className={`${dmSans.className} ${dmMono.variable} bg-bg-white-0 h-full flex flex-col`}>
-          <Suspense fallback={null}>
-            <GoogleAnalytics />
-          </Suspense>
-          <AOSInitializer />
-          <ConditionalNavBar />
-          <main className="flex-1 overflow-y-auto pt-10 md:pt-12 min-h-0">
-            <MasterDatasetInitializer />
-            <ConditionalWrapper>
-              {children}
-            </ConditionalWrapper>
-          </main>
-          <Toaster />
+      <body className={cn(dmSans.className, "bg-bg-white-0 h-full flex flex-col")} suppressHydrationWarning>
+        <UserProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <TooltipProvider>
+              <Suspense fallback={null}>
+                <GoogleAnalytics />
+              </Suspense>
+              <AOSInitializer />
+              <ConditionalNavBar />
+              <main className="flex-1 overflow-y-auto pt-10 md:pt-12 min-h-0">
+                <MasterDatasetInitializer />
+                <ConditionalWrapper>
+                  {children}
+                </ConditionalWrapper>
+              </main>
+              <Toaster />
 
+              {/* Google Analytics Scripts */}
+              {GA_MEASUREMENT_ID && (
+                <>
+                  <Script
+                    strategy="afterInteractive"
+                    src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+                  />
+                  <Script
+                    id="gtag-init"
+                    strategy="afterInteractive"
+                    dangerouslySetInnerHTML={{
+                      __html: `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+                        gtag('config', '${GA_MEASUREMENT_ID}', {
+                          page_path: window.location.pathname,
+                        });
+                      `,
+                    }}
+                  />
+                </>
+              )}
 
-          {process.env.NODE_ENV === 'development' && process.env.PINY_VISUAL_SELECT === 'true' && (
-         <Script
-            src="/_piny/piny.phone.js"
-            strategy="afterInteractive" 
-         />)}
-
-
-
-
-
-            </body>
-          </TooltipProvider>
-        </ThemeProvider>
-      </UserProvider>
+              {/* Scroll Restoration Script */}
+              <Script
+                id="scroll-restoration"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    if ('scrollRestoration' in history) {
+                      history.scrollRestoration = 'manual';
+                    }
+                    window.addEventListener('beforeunload', function() {
+                      window.scrollTo(0, 0);
+                    });
+                  `
+                }}
+              />
+            </TooltipProvider>
+          </ThemeProvider>
+        </UserProvider>
+      </body>
     </html>
   )
 }
-
-
