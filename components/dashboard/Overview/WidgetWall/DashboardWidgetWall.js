@@ -8,11 +8,11 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
-import ActionStepsBlock from '../ActionSteps/ActionStepsBlock';
+import ActionStepsWidget from '../ActionSteps/ActionStepsWidget.tsx';
 import MatchupsWidget from '../Matchups/MatchupsWidget';
-import NewsFeedBlock from '../NewsFeed/NewsFeedBlock';
-import StandingsWidget from '../Standings/StandingsWidget';
-import TeamArchetypeBlock from '../TeamArchetype/TeamArchetypeBlock';
+// import NewsWidget from '../NewsFeed/NewsWidget.tsx'; // Temporarily disabled to debug
+import StandingsWidget from '../Standings/StandingsWidget.tsx';
+import TeamArchetypeWidget from '../TeamArchetype/TeamArchetypeWidget.tsx';
 import TeamProfileWidget from '../TeamProfile/TeamProfileWidget';
 import SortableWidget from './SortableWidget';
 
@@ -20,10 +20,10 @@ import SortableWidget from './SortableWidget';
 const widgetMap = {
   standings: { component: StandingsWidget },   
   matchup: { component: MatchupsWidget },         
-  // actionSteps: { component: ActionStepsBlock },  
-  // teamArchetype: { component: TeamArchetypeBlock },
+  actionSteps: { component: ActionStepsWidget },  
+  teamArchetype: { component: TeamArchetypeWidget },
   teamProfile: { component: TeamProfileWidget }, 
-  // newsFeed: { component: NewsFeedBlock },
+  // newsFeed: { component: NewsWidget }, // Temporarily disabled to debug
 };
 
 export default function DashboardWidgetWall() {
