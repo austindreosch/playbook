@@ -14,7 +14,7 @@ function WidgetBox({
   return (
     <div
       className={cnExt(
-        'w-full min-w-0 rounded-lg bg-bg-white-0 shadow-regular-xs p-3 ring-1 ring-inset ring-stroke-soft-200',
+        'w-full min-w-0 rounded-lg bg-bg-white-0 shadow-regular-xs p-3.5 ring-1 ring-inset ring-stroke-soft-200',
         fixedHeight ? 'flex flex-col justify-between' : '',
         className,
       )}
@@ -37,7 +37,7 @@ function WidgetBoxHeader({
   return (
     <div
       className={cnExt(
-        'flex items-center gap-2 px-[2px]',
+        'flex items-center gap-2',
         'h-6 text-label-lg md:text-label-xl mb-2.5',
         !noMargin && '',
         fixedHeight && '',

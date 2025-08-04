@@ -101,9 +101,9 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }: Te
                 return (
                     <div
                         key={category}
-                        className={`h-10 flex items-center justify-center ${color}`}
+                        className={`h-8 flex items-center justify-center ${color}`}
                     >
-                        <span className="text-label-lg font-semibold text-text-strong-950" style={{ opacity: 0.7 }}>{category}</span>
+                        <span className="text-label-md font-semibold text-text-strong-950" style={{ opacity: 0.7 }}>{category}</span>
                     </div>
                 );
             })}

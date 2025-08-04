@@ -87,7 +87,7 @@ export default function TeamProfileWidget({
           <Divider.Root variant='line-spacing' className="pt-3" />
 
           {/* Category Strength Bar */}
-          <div className="flex-shrink-0 pt-1" >
+          <div className="flex-shrink-0 pt-1 pb-2"  >
             <TeamCategoryStrengthBar team={blueprint.userTeam} />
           </div>
 

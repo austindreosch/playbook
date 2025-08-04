@@ -1,7 +1,9 @@
 'use client';
 
 import useDashboardContext from "@/stores/dashboard/useDashboardContext";
-import * as Divider from '@/components/alignui/divider';
+import { scaleLinear } from 'd3-scale';
+import { cn } from '@/utils/cn';
+import { LegendDot } from '@/components/alignui/legend-dot';
 
 // TODO: This is a placeholder for sport-specific data.
 // In a real implementation, this data would be fetched based on the user's league and selected sport.
@@ -72,7 +74,8 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }: Te
         return null;
     }
     
-    const totalValue = positionStrengths.reduce((acc, pos) => acc + pos.value, 0);
+    const TOTAL_VALUE = positionStrengths.reduce((acc, pos) => acc + pos.value, 0);
+    const getValue = scaleLinear().domain([0, TOTAL_VALUE]).range([0, 100]);
 
     const getRankSuffix = (rank: number): string => {
         if (rank % 100 >= 11 && rank % 100 <= 13) {
@@ -87,27 +90,34 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }: Te
     };
 
     return (
-        <div className="w-full">
-            <div className="flex w-full h-10 rounded-md overflow-hidden">
-                {positionStrengths.map((pos, index) => (
-                    <div
-                        key={pos.position}
-                        className={`${pos.color} flex items-center justify-center`}
-                        style={{ width: `${(pos.value / totalValue) * 100}%` }}
-                    >
-                        <span className="text-label-lg font-semibold text-text-strong-950" style={{ opacity: 0.7 }}>{pos.position}</span>
-                    </div>
-                ))}
-            </div>
-           
-
-            <div className="flex w-full mt-1">
+        <div className="w-full space-y-1.5">
+            <div className="flex gap-[3px] rounded-md overflow-hidden">
                 {positionStrengths.map((pos) => (
                     <div
                         key={pos.position}
-                        className={`flex-grow text-center text-label-md ${isOpponent ? 'text-text-soft-400' : 'text-text-sub-600'}`}
-                        style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
+                        className={cn(
+                            'h-8 origin-left transition-all rounded-sm duration-500 ease-out flex items-center justify-center',
+                            pos.color
+                        )}
+                        style={{
+                            width: `${getValue(pos.value)}%`,
+                        }}
                     >
+                        <span className="text-label-md font-semibold text-text-strong-950" style={{ opacity: 0.7 }}>
+                            {pos.position}
+                        </span>
+                    </div>
+                ))}
+            </div>
+
+            <div className="flex gap-[3px]">
+                {positionStrengths.map((pos) => (
+                    <div
+                        key={pos.position}
+                        className={`flex items-center justify-center gap-1 pr-[7px] text-label-md ${isOpponent ? 'text-text-soft-400' : 'text-text-sub-600'}`}
+                        style={{ width: `${getValue(pos.value)}%` }}
+                    >
+                        <LegendDot size='small' className={pos.color} />
                         {pos.rank}{getRankSuffix(pos.rank)}
                     </div>
                 ))}
