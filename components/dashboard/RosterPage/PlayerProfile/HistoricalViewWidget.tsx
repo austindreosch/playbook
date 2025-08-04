@@ -2,12 +2,19 @@
 
 import * as React from 'react';
 import { format } from 'date-fns';
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
-import * as Badge from '@/components/alignui/badge';
 import * as Button from '@/components/alignui/button';
 import * as Tooltip from '@/components/alignui/tooltip';
-import ChartStepLine from '@/components/alignui/chart-step-line';
-import { Info } from 'lucide-react';
+import { cn } from '@/utils/cn';
 
 interface HistoricalData {
   currentView: string;
@@ -20,7 +27,7 @@ interface HistoricalViewWidgetProps {
   historicalData?: HistoricalData;
 }
 
-// Static data to prevent re-renders and flickering - exactly like total balance widget
+// Static data to prevent re-renders and flickering
 const chartData = [
   { date: new Date('2023-06-01').toISOString(), value: 45 },
   { date: new Date('2023-07-01').toISOString(), value: 32 },
@@ -30,41 +37,116 @@ const chartData = [
   { date: new Date('2023-11-01').toISOString(), value: 44 },
 ];
 
+
+type CustomTooltipProps = React.ComponentProps<typeof RechartsTooltip>;
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-200">
+        <div className='text-xs text-gray-500'>
+          {format(new Date(label), 'MMM d')}
+        </div>
+        <div className='text-sm font-medium text-gray-900'>
+          {payload[0].value}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps) {
-  // Memoize the tickFormatter to prevent recreation on every render
-  const tickFormatter = React.useCallback((value: any) => format(value, 'MMM').toUpperCase(), []);
+  const isFirstLoad = React.useRef(true);
+  const chartRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    isFirstLoad.current = false;
+  }, []);
+
+  const formatXAxis = (dateStr: string) => {
+    return format(new Date(dateStr), 'MMM').toUpperCase();
+  };
 
   return (
-    <div className='relative flex w-full flex-col overflow-hidden rounded-md bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-50'>
-      <div className='flex flex-col gap-5 p-3'>
+    <div className='relative flex w-full flex-col overflow-hidden rounded-md bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-100'>
+      <div className='flex flex-col pt-2 px-2'>
         <div className='flex items-start justify-between'>
           <div className='flex-1'>
             <div className='flex items-center gap-1'>
               <div className='text-label-sm text-text-sub-600'>Historical View</div>
               <Tooltip.Root>
                 <Tooltip.Content className='max-w-80'>
-                  Monitor your campaign&apos;s budget spending. Track remaining
-                  budget and ensure efficient allocation for optimal campaign
-                  performance.
+                  Monitor your player&apos;s performance trends over time.
                 </Tooltip.Content>
               </Tooltip.Root>
             </div>
           </div>
           <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-            Details
+            Value
           </Button.Root>
         </div>
 
-        <ChartStepLine
-          data={chartData}
-          index='date'
-          categories={['value']}
-          xAxisProps={{
-            tickFormatter,
-            tickMargin: 8,
-          }}
-          yAxisProps={{ hide: true }}
-        />
+        <div className='h-[80px] mdh:h-[110px]'>
+          <ResponsiveContainer width='100%' height='100%' ref={chartRef}>
+            <LineChart
+              data={chartData}
+              margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
+              className={cn(
+                '[&_.recharts-cartesian-grid-horizontal>line]:stroke-bg-weak-50 [&_.recharts-cartesian-grid-horizontal>line]:[stroke-dasharray:0] '
+              )}
+            >
+              <RechartsTooltip
+                content={<CustomTooltip />}
+                cursor={false}
+                isAnimationActive={true}
+                animationDuration={100}
+              />
+              <CartesianGrid
+                strokeDasharray='2 2'
+                className='stroke-stroke-soft-200'
+                horizontal={false}
+                vertical={true}
+              />
+              <XAxis
+                dataKey='date'
+                axisLine={false}
+                tickLine={false}
+                tickMargin={4}
+                tickFormatter={formatXAxis}
+                className='[&_.recharts-cartesian-axis-tick_text]:fill-text-soft-400 [&_.recharts-cartesian-axis-tick_text]:text-subheading-2xs'
+              />
+              <YAxis hide />
+              <Line
+                type='monotone'
+                dataKey='value'
+                stroke='#59cd90'
+                strokeWidth={2}
+                dot={{
+                  r: 3,
+                  fill: '#59cd90',
+                  strokeWidth: 0,
+                }}
+                strokeLinejoin='round'
+                isAnimationActive={isFirstLoad.current}
+                activeDot={{
+                  r: 5,
+                  strokeWidth: 2,
+                  stroke: '#ffffff',
+                  fill: '#59cd90',
+                  className: cn(
+                    '[filter:drop-shadow(0_1px_2px_#0a0d1408)]'
+                  ),
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );

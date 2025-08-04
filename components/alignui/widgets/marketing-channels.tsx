@@ -48,8 +48,8 @@ export function MarketingChannels() {
             </div>
           </div>
         </div>
-        <Button.Root variant='neutral' mode='stroke' size='xxsmall'>
-          Details
+        <Button.Root variant='neutral' mode='stroke' size='xsmall'>
+          Value
         </Button.Root>
       </div>
 

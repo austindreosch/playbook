@@ -19,11 +19,11 @@ interface ValueComparisonTableProps {
 export default function ValueComparisonTable({ valueComparisons }: ValueComparisonTableProps) {
   return (
     <div className="flex h-10 w-full shrink-0 mdh:h-12">
-      <div className="flex w-full gap-1 mdh:gap-2">
+      <div className="flex w-full gap-1 mdh:gap-2 py-1">
         <div className="flex w-full justify-between text-center">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="flex items-center gap-0.5 text-title-h6 text-gray-300 leading-tighter font-medium">
-              <FillArrowUp className="hw-icon-2xs mdh:hw-icon-xs" />
+            <div className="flex items-center gap-0.5 text-title-h6 text-success-base leading-tighter font-medium">
+              <FillArrowUp className="hw-icon-2xs mdh:hw-icon-xs" fillColor="var(--success-base)" />
               6%
             </div>
             <div className="text-paragraph-xs leading-none text-text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
@@ -34,8 +34,8 @@ export default function ValueComparisonTable({ valueComparisons }: ValueComparis
           <div className="h-full w-px self-center bg-stroke-soft-200"></div>
 
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="flex items-center gap-0.5 text-title-h6 text-gray-300 leading-tighter font-medium ">
-              <FillArrowDown className="hw-icon-2xs mdh:hw-icon-xs" />
+            <div className="flex items-center gap-0.5 text-title-h6 text-error-base leading-tighter font-medium ">
+              <FillArrowDown className="hw-icon-2xs mdh:hw-icon-xs" fillColor="var(--error-base)" />
               2%
             </div>
             <div className="text-paragraph-xs leading-none text-text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
@@ -46,8 +46,8 @@ export default function ValueComparisonTable({ valueComparisons }: ValueComparis
           <div className="h-full w-px self-center bg-stroke-soft-200"></div>
           
           <div className="flex flex-1 flex-col items-center justify-center px-2 text-center">
-            <div className="flex items-center gap-0.5 text-title-h6 text-gray-300 leading-tighter font-medium">
-              <FillArrowDown className="hw-icon-2xs mdh:hw-icon-xs" />
+            <div className="flex items-center gap-0.5 text-title-h6 text-error-base leading-tighter font-medium">
+              <FillArrowDown className="hw-icon-2xs mdh:hw-icon-xs" fillColor="var(--error-base)" />
               21%
             </div>
             <div className="text-paragraph-xs leading-none text-text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
