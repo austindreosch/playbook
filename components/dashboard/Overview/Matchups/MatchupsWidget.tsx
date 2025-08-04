@@ -17,7 +17,11 @@ import {
   Wrench,
   Sword,
   Scroll,
-  ScrollText
+  ScrollText,
+  Bandage,
+  BookLock,
+  CalendarClock,
+  BicepsFlexed
 } from 'lucide-react';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Badge from '@/components/alignui/badge';
@@ -49,7 +53,7 @@ interface MatchupsBlueprint {
     totalGames: number;
     gamesPlayed: number;
     remainingGames: number;
-    capHit: number;
+    capHit: string;
     currentRank: number;
   };
 
@@ -244,7 +248,7 @@ const generateMatchupsData = (): MatchupsBlueprint => {
       totalGames: 12,
       gamesPlayed: 8,
       remainingGames: 4,
-      capHit: 5,
+      capHit: '< 5',
       currentRank: 4
     },
     lineup,
@@ -351,7 +355,7 @@ export default function MatchupsWidget({
       </WidgetBox.Header>
 
       <WidgetBox.Content>
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden space-y-3">
           {/* Projected Win section */}
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -377,58 +381,68 @@ export default function MatchupsWidget({
 
           {/* Stats row */}
           <div className="flex gap-2">
-            <div className="flex items-center gap-1 bg-bg-weak-25 rounded-lg px-2 py-1.5 flex-1 min-w-0">
-              <Calendar className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-              <span className="text-label-sm text-text-soft-400">Games</span>
-              <span className="text-label-sm font-semibold text-text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
+
+            <div className="flex items-center gap-1 bg-bg-weak-25 rounded-md px-2 py-1.5 flex-1 min-w-0 justify-between">
+              <div className="flex items-center gap-1">
+                <CalendarClock className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <span className="text-label-sm text-text-soft-400">Games Left</span>
+              </div>
+              <span className="text-label-md font-semibold text-text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
             </div>
-            <div className="flex items-center gap-1 bg-bg-weak-25 rounded-lg px-2 py-1.5 flex-1 min-w-0">
-              <Users className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-              <span className="text-label-sm text-text-soft-400">Cap</span>
-              <span className="text-label-sm font-semibold text-text-strong-950">{blueprint.weeklyStats.capHit}</span>
+
+            <div className="flex items-center gap-1 bg-bg-weak-25 rounded-md px-2 py-1.5 flex-1 min-w-0 justify-between">
+              <div className="flex items-center gap-1">
+                <BookLock className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <span className="text-label-sm text-text-soft-400">Cap</span>
+              </div>
+              <span className="text-label-md font-semibold text-text-strong-950">{blueprint.weeklyStats.capHit}</span>
             </div>
-            <div className="flex items-center gap-1 bg-bg-weak-25 rounded-lg px-2 py-1.5 flex-1 min-w-0">
-              <Medal className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-              <span className="text-label-sm text-text-soft-400">Rank</span>
-              <span className="text-label-sm font-semibold text-text-strong-950">{formatRankSuffix(blueprint.weeklyStats.currentRank)}</span>
+
+            <div className="flex items-center gap-1 bg-bg-weak-25 rounded-md px-2 py-1.5 flex-1 min-w-0 justify-between">
+              <div className="flex items-center gap-1">
+                <BicepsFlexed className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <span className="text-label-sm text-text-soft-400">Strength</span>
+              </div>
+              <span className="text-label-md font-semibold text-text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
             </div>
+
           </div>
 
           {/* Lineup and Battleground Stats */}
           <div className="grid grid-cols-2 gap-3">
             {/* Player Lineup */}
-            <div>
+            <div className="min-w-0 border-l border-border-soft pl-3">
               <div className="space-y-1">
                 {blueprint.lineup.slice(0, 4).map((player) => (
-                  <div key={player.playerId} className="flex items-center gap-1">
+                  <div key={player.playerId} className="flex items-center gap-1 min-w-0">
                     {getPlayerStatusIcon(player)}
-                    <span className="text-label-xs text-text-soft-400 truncate">{player.name}</span>
+                    <span className="text-label-sm text-text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Battleground Stats */}
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-1.5 mb-2">
                 <Sword className="hw-icon-sm text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                <h4 className="text-label-sm font-semibold text-text-soft-400">Battleground Stats</h4>
+                <h4 className="text-label-sm font-semibold text-text-soft-400 truncate">Battleground Stats</h4>
               </div>
               
-              <div className="flex gap-1 mb-1">
+              <div className="flex gap-1 mb-1 min-w-0">
                 {blueprint.battlegroundStats.map((stat) => (
                   <div 
                     key={stat.category}
-                    className={`${getBattlegroundColor(stat.isUserFavored, stat.significance)} text-static-white text-label-xs font-medium px-2 py-0.5 rounded flex-1 text-center`}
+                    className={`${getBattlegroundColor(stat.isUserFavored, stat.significance)} text-static-white text-label-sm font-medium px-2 py-0.5 rounded flex-1 text-center min-w-0`}
                   >
                     {stat.categoryShort}
                   </div>
                 ))}
               </div>
               
-              <div className="flex gap-1">
+              <div className="flex gap-1 min-w-0">
                 {blueprint.battlegroundStats.map((stat) => (
-                  <span key={`${stat.category}-value`} className="text-label-xs text-text-soft-400 flex-1 text-center">
+                  <span key={`${stat.category}-value`} className="text-label-sm text-text-soft-400 flex-1 text-center min-w-0">
                     {stat.userAdvantage > 0 ? '+' : ''}{stat.userAdvantage}
                   </span>
                 ))}
@@ -442,8 +456,8 @@ export default function MatchupsWidget({
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5">
-                <h4 className="text-label-lg font-semibold text-text-soft-400">Missing Players</h4>
-                <FileText className="hw-icon-xs text-text-soft-400" strokeWidth={2} />
+                <Bandage className="hw-icon-sm text-black" />
+                <span className="text-label-lg text-black">Injury Report</span>
               </div>
               <button className="flex items-center gap-1 text-label-xs text-text-soft-400 hover:text-text-strong-950 transition-colors">
                 <Wrench className="hw-icon-xs" strokeWidth={2} />
@@ -470,25 +484,25 @@ export default function MatchupsWidget({
             {/* Missing players lists */}
             <div className="grid grid-cols-2 gap-2">
               {/* User team missing players */}
-              <div className="space-y-1">
+              <div className="space-y-1 min-w-0">
                 {blueprint.missingPlayers.userTeam.map((player) => (
-                  <div key={player.playerId} className="flex items-center gap-1">
-                    <div className="hw-icon-sm flex items-center justify-center">
+                  <div key={player.playerId} className="flex items-center gap-1 min-w-0">
+                    <div className="hw-icon-sm flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-xs text-text-soft-400 truncate">{player.name}</span>
+                    <span className="text-label-sm text-text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
 
               {/* Opponent missing players */}
-              <div className="space-y-1">
+              <div className="space-y-1 min-w-0">
                 {blueprint.missingPlayers.opponentTeam.map((player) => (
-                  <div key={player.playerId} className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded ring-1 ring-inset ring-stroke-soft-200 flex items-center justify-center flex-shrink-0">
+                  <div key={player.playerId} className="flex items-center gap-1 min-w-0">
+                    <div className="hw-icon-sm flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-xs text-text-soft-400 truncate">{player.name}</span>
+                    <span className="text-label-sm text-text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
