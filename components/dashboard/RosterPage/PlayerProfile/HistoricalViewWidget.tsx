@@ -28,13 +28,22 @@ interface HistoricalViewWidgetProps {
 }
 
 // Static data to prevent re-renders and flickering
-const chartData = [
+const valueData = [
   { date: new Date('2023-06-01').toISOString(), value: 45 },
   { date: new Date('2023-07-01').toISOString(), value: 32 },
   { date: new Date('2023-08-01').toISOString(), value: 28 },
   { date: new Date('2023-09-01').toISOString(), value: 41 },
   { date: new Date('2023-10-01').toISOString(), value: 37 },
   { date: new Date('2023-11-01').toISOString(), value: 44 },
+];
+
+const powerData = [
+  { date: new Date('2023-06-01').toISOString(), value: 78 },
+  { date: new Date('2023-07-01').toISOString(), value: 82 },
+  { date: new Date('2023-08-01').toISOString(), value: 76 },
+  { date: new Date('2023-09-01').toISOString(), value: 89 },
+  { date: new Date('2023-10-01').toISOString(), value: 85 },
+  { date: new Date('2023-11-01').toISOString(), value: 91 },
 ];
 
 
@@ -62,12 +71,15 @@ const CustomTooltip = ({
 };
 
 export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps) {
+  const [viewMode, setViewMode] = React.useState<'value' | 'power'>('value');
   const isFirstLoad = React.useRef(true);
   const chartRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     isFirstLoad.current = false;
   }, []);
+
+  const currentData = viewMode === 'value' ? valueData : powerData;
 
   const formatXAxis = (dateStr: string) => {
     return format(new Date(dateStr), 'MMM').toUpperCase();
@@ -87,15 +99,20 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
               </Tooltip.Root>
             </div>
           </div>
-          <Button.Root variant='neutral' mode='stroke' size='xsmall'>
-            Value
+          <Button.Root 
+            variant='neutral' 
+            mode='stroke' 
+            size='xsmall'
+            onClick={() => setViewMode(viewMode === 'value' ? 'power' : 'value')}
+          >
+            {viewMode === 'value' ? 'Value' : 'Power'}
           </Button.Root>
         </div>
 
         <div className='h-[80px] mdh:h-[110px]'>
           <ResponsiveContainer width='100%' height='100%' ref={chartRef}>
             <LineChart
-              data={chartData}
+              data={currentData}
               margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
               className={cn(
                 '[&_.recharts-cartesian-grid-horizontal>line]:stroke-bg-weak-50 [&_.recharts-cartesian-grid-horizontal>line]:[stroke-dasharray:0] '
