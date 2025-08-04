@@ -2,6 +2,9 @@ import { Root as SegmentedControlRoot, List as SegmentedControlList, Trigger as 
 import { GitCommitHorizontal, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import * as Button from '@/components/alignui/button';
+import { Root as Checkbox } from "@/components/alignui/ui/checkbox";
+import * as Tooltip from "@/components/alignui/ui/tooltip";
+
 
 function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
   const [isClient, setIsClient] = useState(false);
@@ -10,7 +13,7 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
   const [favorPreference, setFavorPreference] = useState("Prefer");
   const [prospectPreference, setProspectPreference] = useState("Faith");
   const [injuriesPreference, setInjuriesPreference] = useState("Ironman");
-  const [globalFavorPreference, setGlobalFavorPreference] = useState("Prefer");
+  const [isFavorGlobal, setIsFavorGlobal] = useState(false);
 
   // Load preferences from localStorage on mount
   useEffect(() => {
@@ -18,12 +21,12 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
       const savedFavor = localStorage.getItem('userPreference_favor');
       const savedProspect = localStorage.getItem('userPreference_prospect');
       const savedInjuries = localStorage.getItem('userPreference_injuries');
-      const savedGlobalFavor = localStorage.getItem('userPreference_globalFavor');
+      const savedIsFavorGlobal = localStorage.getItem('userPreference_isFavorGlobal');
 
       if (savedFavor) setFavorPreference(savedFavor);
       if (savedProspect) setProspectPreference(savedProspect);
       if (savedInjuries) setInjuriesPreference(savedInjuries);
-      if (savedGlobalFavor) setGlobalFavorPreference(savedGlobalFavor);
+      if (savedIsFavorGlobal) setIsFavorGlobal(JSON.parse(savedIsFavorGlobal));
     }
   }, []);
 
@@ -48,9 +51,9 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('userPreference_globalFavor', globalFavorPreference);
+        localStorage.setItem('userPreference_isFavorGlobal', JSON.stringify(isFavorGlobal));
     }
-  }, [globalFavorPreference]);
+    }, [isFavorGlobal]);
 
   const handlePreferenceChange = (preferenceType, value) => {
     switch (preferenceType) {
@@ -62,9 +65,6 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
         break;
       case 'injuries':
         setInjuriesPreference(value);
-        break;
-      case 'globalFavor':
-        setGlobalFavorPreference(value);
         break;
       default:
         console.warn(`Unknown preference type: ${preferenceType}`);
@@ -80,8 +80,6 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
         return prospectPreference;
       case 'injuries':
         return injuriesPreference;
-      case 'global favor':
-        return globalFavorPreference;
       default:
         return "Prefer"; // fallback
     }
@@ -96,8 +94,6 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
         return 'prospect';
       case 'injuries':
         return 'injuries';
-      case 'global favor':
-        return 'globalFavor';
       default:
         return 'favor'; // fallback
     }
@@ -109,40 +105,52 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
 
   // Pure controls UI using AlignUI SegmentedControl
   const PreferencesControls = () => (
-    <div className={`space-y-1`}>
-      {scoreData.metrics.map((metric, index) => {
-        const IconComponent = metric.icon;
-        const currentValue = getCurrentPreference(metric.label);
-        const preferenceType = getPreferenceType(metric.label);
-        
-        return (
-          <div key={`metric-${metric.label}-${index}`} className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-1.5">
-              <IconComponent className="hw-icon-sm text-pb_darkgray" />
-              <span className="text-2xs text-pb_darkgray font-medium">{metric.label}</span>
-            </div>
-            <SegmentedControlRoot 
-              key={`control-${metric.label}-${index}`}
-              value={currentValue} 
-              onValueChange={(value) => handlePreferenceChange(preferenceType, value)}
-              className="flex-shrink-0"
-            >
-              <SegmentedControlList className="w-48">
-                {metric.options.map((option, buttonIndex) => (
-                  <SegmentedControlTrigger
-                    key={`${metric.label}-${buttonIndex}-${option}`}
-                    value={option}
-                    className="text-2xs font-medium flex-1 flex items-center justify-center"
-                  >
-                    {option || <GitCommitHorizontal className="hw-icon-xs text-pb_textlightestgray" />}
-                  </SegmentedControlTrigger>
-                ))}
-              </SegmentedControlList>
-            </SegmentedControlRoot>
-          </div>
-        );
-      })}
-    </div>
+    <Tooltip.Provider>
+        <div className={`space-y-2`}>
+        {scoreData.metrics
+            .filter(metric => metric.label.toLowerCase() !== 'global favor')
+            .map((metric, index) => {
+            const IconComponent = metric.icon;
+            const currentValue = getCurrentPreference(metric.label);
+            const preferenceType = getPreferenceType(metric.label);
+            const isFavorMetric = metric.label.toLowerCase() === 'favor';
+            
+            return (
+                <div key={`metric-${metric.label}-${index}`} className="flex items-center gap-2 w-full">
+                    {IconComponent && (
+                        <Tooltip.Root delayDuration={150}>
+                            <Tooltip.Trigger>
+                                <IconComponent className="hw-icon-sm text-gray-400" />
+                            </Tooltip.Trigger>
+                            <Tooltip.Content>
+                                <p>{metric.label}</p>
+                            </Tooltip.Content>
+                        </Tooltip.Root>
+                    )}
+
+                    <SegmentedControlRoot 
+                        value={currentValue} 
+                        onValueChange={(value) => handlePreferenceChange(preferenceType, value)}
+                        className="flex-shrink-0 flex-1"
+                    >
+                        <SegmentedControlList className="w-full">
+                        {metric.options.map((option, buttonIndex) => (
+                            <SegmentedControlTrigger
+                                key={`${metric.label}-${buttonIndex}-${option}`}
+                                value={option}
+                                className="text-2xs font-medium flex-1 flex items-center justify-center"
+                            >
+                                {option || <GitCommitHorizontal className="hw-icon-xs text-pb_textlightestgray" />}
+                            </SegmentedControlTrigger>
+                        ))}
+                        </SegmentedControlList>
+                    </SegmentedControlRoot>
+                    
+                </div>
+            );
+            })}
+        </div>
+    </Tooltip.Provider>
   );
 
   // Don't render anything until client-side
@@ -169,4 +177,4 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
   );
 }
 
-export default UserPlayerPreferencesPanel; 
+export default UserPlayerPreferencesPanel;

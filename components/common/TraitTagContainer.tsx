@@ -102,7 +102,7 @@ export default function TraitTagContainer({ traitIds, className = "", variant = 
       </div>
 
       <div className='-mx-[15px] overflow-hidden px-[15px]' ref={emblaRef}>
-        <div className='flex gap-2 overflow-x-auto scrollbar-hide' style={{ scrollBehavior: 'smooth' }}>
+        <div className='flex gap-1.5 overflow-x-auto scrollbar-hide' style={{ scrollBehavior: 'smooth' }}>
           {traitIds.map((traitId, idx) => (
             <TraitTag key={traitId || idx} traitId={traitId} size="normal" className="flex-shrink-0" />
           ))}

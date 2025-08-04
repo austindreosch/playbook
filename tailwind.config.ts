@@ -391,6 +391,8 @@ const config = {
 
       gray: {
         '0': 'var(--gray-0)',
+        '10': 'var(--gray-10)',
+        '25': 'var(--gray-25)',
         '50': 'var(--gray-50)',
         '100': 'var(--gray-100)',
         '150': 'var(--gray-150)',

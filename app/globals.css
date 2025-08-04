@@ -29,6 +29,7 @@
     --gray-100: #d7d7d7;
     --gray-50: #ebebeb;
     --gray-25: #efefef;
+    --gray-10: #f7f7f7;
     --gray-0: #ffffff;
 
     --gray-alpha-24: #3838383d;
@@ -48,6 +49,7 @@
     --neutral-100: var(--gray-100);
     --neutral-50: var(--gray-50);
     --neutral-25: var(--gray-25);
+    --neutral-10: var(--gray-10);
     --neutral-0: var(--gray-0);
 
     --neutral-alpha-24: var(--gray-alpha-24);

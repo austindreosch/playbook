@@ -11,7 +11,7 @@ import * as Badge from '@/components/alignui/badge';
 import * as Divider from '@/components/alignui/divider';
 import * as Select from '@/components/alignui/select';
 import { cnExt } from '@/utils/cn';
-import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe, Info } from 'lucide-react';
+import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe, Info, Binoculars, Bandage } from 'lucide-react';
 import * as Button from '@/components/alignui/button';
 import * as Popover from '@/components/alignui/ui/popover';
 import UserPlayerPreferencesPanel from './UserPlayerPreferencesPanel';
@@ -70,12 +70,12 @@ export default function PlaybookScoreBlock({
         options: ["Prefer", "", "Dislike"] 
       },
       { 
-        icon: Users, 
+        icon: Binoculars, 
         label: "Prospect", 
         options: ["Faith", "", "Doubt"] 
       },
       { 
-        icon: Shield, 
+        icon: Bandage, 
         label: "Injuries", 
         options: ["Prone", "", "Ironman"] 
       },
@@ -209,28 +209,29 @@ export default function PlaybookScoreBlock({
       </WidgetBox.Header>
 
       <WidgetBox.Content>
+        <div>
+          <div className='mx-auto grid w-full justify-center'>
+            <SpendingSummaryPieChart
+              data={chartData}
+              className='[grid-area:1/1] w-full'
+              maxWidth={chartMaxWidth}
+            />
+            <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-0 text-center [grid-area:1/1]'>
+                <span className='pointer-events-auto text-title-h1 mdh:text-title-h0 text-text-strong-950 '>
+                  {scoreData.totalScore}
+                </span>
+            </div>
+          </div>
 
-        <div className='mx-auto grid w-full justify-center'>
-          <SpendingSummaryPieChart
-            data={chartData}
-            className='[grid-area:1/1] w-full'
-            maxWidth={chartMaxWidth}
-        />
-        <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 mdh:pb-0 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-title-h1 mdh:text-title-h0 text-text-strong-950 '>
-              {scoreData.totalScore}
-            </span>
+          <Divider.Root className='mt-4 ' />
         </div>
 
-        </div>
-
-        <Divider.Root className='mt-4' /> 
 
         {/*  CONTEXT FOR PLAYBOOK SCORE*/}
         <div className="flex items-center gap-8 mx-auto">
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <div className="text-label-sm text-text-sub-600">STANDARD</div>
+              <div className="text-subheading-sm tracking-wider text-gray-250">STANDARD</div>
             </div>
             <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">
@@ -246,7 +247,7 @@ export default function PlaybookScoreBlock({
 
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-2">
-              <div className="text-label-sm text-text-sub-600">REDRAFT</div>
+              <div className="text-subheading-sm tracking-wider text-gray-250">REDRAFT</div>
             </div>
             <div className="flex items-center gap-3 mt-1">
               <div className="flex items-center gap-0.5">

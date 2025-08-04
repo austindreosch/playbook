@@ -298,22 +298,22 @@ function PlayerPerformanceWidget({
       {/* Top Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2 flex-shrink-0 justify-between">
         {/* Performance Metrics */}
-        <div className="flex flex-row gap-2 w-full mt-2">
+        <div className="flex flex-row w-full">
           {/* Z-Score */}
-          <div className="w-full space-y-3.5">
-            <div className="flex items-center gap-4 mb-1">
-              <div className="flex items-center gap-2">
+          <div className="border-l border-gray-150 pl-3 w-full space-y-3.5 pt-2">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
                 <Compass className="hw-icon-xs text-black" />
                 <span className="text-label-md font-medium text-black">Playbook</span>
               </div>
-              <span className="text-paragraph-md font-medium text-black">{blueprint.metrics[0]?.value || 0}</span>
+              <span className="text-paragraph-lg text-center font-medium text-black">{blueprint.metrics[0]?.value || 0}</span>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
                 <ClipboardMinus className="hw-icon-xs text-gray-200" />
                 <span className="text-label-md font-medium text-gray-200">Standard</span>
               </div>
-              <span className="text-paragraph-md font-medium text-gray-200">{blueprint.metrics[1]?.value || 0}</span>
+              <span className="text-paragraph-lg text-center font-medium text-gray-200">{blueprint.metrics[1]?.value || 0}</span>
             </div>
           </div>
         </div>
@@ -326,12 +326,12 @@ function PlayerPerformanceWidget({
       </div>
 
       {/* Recent Games Table */}
-      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col">
         <h4 className="text-label-lg font-semibold text-black mb-1 flex-shrink-0">Recent Games</h4>
-        <div className="flex-1 border-y border-gray-150" >
+          <div className="flex-1 rounded-t-md overflow-hidden" >
           <table className="w-full text-label-md table-fixed">
             <thead className="sticky top-0">
-              <tr className="border-b border-gray-200">
+              <tr className="">
                 {blueprint.gameStatsColumns.map((column, index) => {
                   // Handle both icon objects and string columns
                   const columnKey = typeof column === 'object' ? column.key : column;
@@ -360,7 +360,7 @@ function PlayerPerformanceWidget({
                   }
                   
                   const headerClass = cnExt(
-                    'py-1 px-1 w-8 relative border-b border-gray-200 first:border-l last:border-r rounded-tl-md rounded-tr-md ',
+                    'py-1 px-1 w-8 relative bg-gray-25 ',
                     isContextColumn ? 'font-normal text-gray-400' : 'font-bold text-gray-400'
                   );
                   
@@ -397,7 +397,7 @@ function PlayerPerformanceWidget({
 
                           <tbody>
                 {blueprint.recentGames.map((game, gameIndex) => (
-                 <tr key={gameIndex} className={`border-t border-gray-100`}>
+                 <tr key={gameIndex} className={`border-b border-gray-25`}>
 
                   {blueprint.gameStatsColumns.map((column, columnIndex) => {
                     // Handle both icon objects and string columns

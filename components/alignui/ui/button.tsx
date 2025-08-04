@@ -62,6 +62,12 @@ export const buttonVariants = tv({
         icon: '-mx-1',
       },
     },
+    width: {
+      default: {},
+      fixed: {
+        root: 'w-24',
+      },
+    },
   },
   compoundVariants: [
     //#region variant=primary
@@ -245,6 +251,7 @@ export const buttonVariants = tv({
     variant: 'primary',
     mode: 'filled',
     size: 'medium',
+    width: 'default',
   },
 });
 
@@ -257,17 +264,18 @@ type ButtonRootProps = VariantProps<typeof buttonVariants> &
 
 const ButtonRoot = React.forwardRef<HTMLButtonElement, ButtonRootProps>(
   (
-    { children, variant, mode, size, asChild, className, ...rest },
+    { children, variant, mode, size, width, asChild, className, ...rest },
     forwardedRef,
   ) => {
     const uniqueId = React.useId();
     const Component = asChild ? Slot : 'button';
-    const { root } = buttonVariants({ variant, mode, size });
+    const { root } = buttonVariants({ variant, mode, size, width });
 
     const sharedProps: ButtonSharedProps = {
       variant,
       mode,
       size,
+      width,
     };
 
     const extendedChildren = recursiveCloneChildren(
@@ -295,12 +303,13 @@ function ButtonIcon<T extends React.ElementType>({
   variant,
   mode,
   size,
+  width,
   as,
   className,
   ...rest
 }: PolymorphicComponentProps<T, ButtonSharedProps>) {
   const Component = as || 'div';
-  const { icon } = buttonVariants({ mode, variant, size });
+  const { icon } = buttonVariants({ mode, variant, size, width });
 
   return <Component className={icon({ class: className })} {...rest} />;
 }

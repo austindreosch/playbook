@@ -11,9 +11,9 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
   if (!trait) {
     console.warn(`Unknown trait ID: ${traitId}`);
     return (
-      <TagRoot variant="pill" className={`${className}`}>
+      <TagRoot variant="pill" className={` flex items-center gap-2.5 ${className}`}>
         <TagIcon as={Activity} className="hw-icon-xs" />
-        <span className="font-medium">{traitId}</span>
+        <span className="text-paragraph-md ">{traitId}</span>
       </TagRoot>
     );
   }
@@ -21,9 +21,9 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
   const IconComponent = trait.icon;
   
   const tagElement = (
-    <TagRoot variant="pill" className={`${className}`}>
+    <TagRoot variant="pill" className={`flex items-center gap-2.5 ${className}`}>
       <TagIcon as={IconComponent} className="hw-icon-xs" />
-      <span>{trait.label}</span>
+      <span className="text-paragraph-sm">{trait.label}</span>
     </TagRoot>
   );
   
@@ -32,8 +32,8 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
     return (
       <Popover>
         <PopoverTrigger asChild>{tagElement}</PopoverTrigger>
-        <PopoverContent className="w-auto p-2" align="start">
-          <p className="text-xs text-black">{trait.tooltip}</p>
+        <PopoverContent className="w-auto p-3" align="start">
+          <p className="text-paragraph-md text-black">{trait.tooltip}</p>
         </PopoverContent>
       </Popover>
     );

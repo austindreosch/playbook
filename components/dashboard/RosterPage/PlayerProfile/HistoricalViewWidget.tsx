@@ -15,6 +15,7 @@ import {
 import * as Button from '@/components/alignui/button';
 import * as Tooltip from '@/components/alignui/tooltip';
 import { cn } from '@/utils/cn';
+import { LegendDot } from '@/components/alignui/legend-dot';
 
 interface HistoricalData {
   currentView: string;
@@ -47,7 +48,6 @@ const powerData = [
 ];
 
 
-type CustomTooltipProps = React.ComponentProps<typeof RechartsTooltip>;
 
 const CustomTooltip = ({
   active,
@@ -70,14 +70,18 @@ const CustomTooltip = ({
   return null;
 };
 
-export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps) {
+export function WidgetCampaignData({ }: HistoricalViewWidgetProps) {
   const [viewMode, setViewMode] = React.useState<'value' | 'power'>('value');
-  const isFirstLoad = React.useRef(true);
+  const [shouldAnimate, setShouldAnimate] = React.useState(true);
   const chartRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    isFirstLoad.current = false;
-  }, []);
+    setShouldAnimate(true);
+    const timer = setTimeout(() => {
+      setShouldAnimate(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [viewMode]);
 
   const currentData = viewMode === 'value' ? valueData : powerData;
 
@@ -105,6 +109,7 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
             size='xsmall'
             onClick={() => setViewMode(viewMode === 'value' ? 'power' : 'value')}
           >
+            <LegendDot size='medium' className={viewMode === 'value' ? 'bg-blue-500' : 'bg-orange-500'} />
             {viewMode === 'value' ? 'Value' : 'Power'}
           </Button.Root>
         </div>
@@ -112,6 +117,7 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
         <div className='h-[80px] mdh:h-[110px]'>
           <ResponsiveContainer width='100%' height='100%' ref={chartRef}>
             <LineChart
+              key={`chart-${viewMode}`}
               data={currentData}
               margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
               className={cn(
@@ -140,7 +146,6 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
               />
               <YAxis hide />
               <Line
-                type='monotone'
                 dataKey='value'
                 stroke='#59cd90'
                 strokeWidth={2}
@@ -150,7 +155,7 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
                   strokeWidth: 0,
                 }}
                 strokeLinejoin='round'
-                isAnimationActive={isFirstLoad.current}
+                isAnimationActive={shouldAnimate}
                 activeDot={{
                   r: 5,
                   strokeWidth: 2,
