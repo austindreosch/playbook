@@ -31,7 +31,8 @@ const chartData = [
 ];
 
 export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps) {
-
+  // Memoize the tickFormatter to prevent recreation on every render
+  const tickFormatter = React.useCallback((value: any) => format(value, 'MMM').toUpperCase(), []);
 
   return (
     <div className='relative flex w-full flex-col overflow-hidden rounded-md bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-50'>
@@ -59,7 +60,7 @@ export function WidgetCampaignData({ historicalData }: HistoricalViewWidgetProps
           index='date'
           categories={['value']}
           xAxisProps={{
-            tickFormatter: (value) => format(value, 'MMM').toLocaleUpperCase(),
+            tickFormatter,
             tickMargin: 8,
           }}
           yAxisProps={{ hide: true }}

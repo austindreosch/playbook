@@ -308,7 +308,7 @@ export default function PlayerPerformanceBlock() {
           <Separator orientation="vertical" className="h-full" />
 
           {/* Recent Performance Context */}
-          <div className=' w-full flex justify-center'>
+          {/* <div className=' w-full flex justify-center'>
             <div className='flex flex-col text-center w-1/2 gap-1.5'>
               <div className='text-title-h6 text-pb_red font-medium'>
                 ▼21%
@@ -328,7 +328,7 @@ export default function PlayerPerformanceBlock() {
               </div>
             </div>
 
-          </div>
+          </div> */}
         
         </div>
 

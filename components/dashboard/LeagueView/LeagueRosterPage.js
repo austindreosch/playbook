@@ -80,8 +80,7 @@ export default function LeagueRosterPage() {
             </div>
             {/* Bottom Row */}
             <div className="flex-[2] min-h-0">  
-                {/* <PlayerPerformanceWidget className="h-full"/> */}
-                <PlayerPerformanceBlock className="h-full"/>
+                <PlayerPerformanceWidget className="h-full"/>
             </div>
         </div>
       </div>
