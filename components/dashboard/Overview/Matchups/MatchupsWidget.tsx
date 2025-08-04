@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import NumberFlow from '@number-flow/react';
 import { 
   Calendar, 
   Check, 
@@ -14,12 +15,17 @@ import {
   Swords, 
   Users, 
   Wrench,
-  Sword
+  Sword,
+  Scroll,
+  ScrollText
 } from 'lucide-react';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Badge from '@/components/alignui/badge';
 import * as Divider from '@/components/alignui/divider';
+import * as Tooltip from '@/components/alignui/tooltip';
 import * as ProgressBar from '@/components/alignui/ui/progress-bar';
+import { ProgressChart } from '@/components/progress-chart';
+import { useAnimateNumber } from '@/hooks/use-animate-number';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 // ============================================================
@@ -299,6 +305,28 @@ export default function MatchupsWidget({
   // Use provided blueprint or generate dummy data
   const blueprint = providedBlueprint || generateMatchupsData();
 
+  // Animation setup for projected win percentage
+  const initialRenderRef = React.useRef(true);
+  const prevValueRef = React.useRef(0);
+
+  const animateNumber = useAnimateNumber({
+    start: prevValueRef.current,
+    end: blueprint.projectedWin.winProbability,
+    duration: initialRenderRef.current ? 600 : 200,
+    onComplete: () => {
+      prevValueRef.current = blueprint.projectedWin.winProbability;
+      initialRenderRef.current = false;
+    },
+  });
+
+  React.useEffect(() => {
+    if (blueprint.projectedWin.winProbability) {
+      animateNumber.start();
+    } else {
+      animateNumber.reset();
+    }
+  }, [blueprint.projectedWin.winProbability, animateNumber]);
+
   return (
     <WidgetBox.Root className="h-full" {...rest}>
       <WidgetBox.Header>
@@ -307,12 +335,18 @@ export default function MatchupsWidget({
         
         <div className="ml-auto">
           {/* Week selector */}
-          <div className="flex items-center gap-1 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2 py-1">
-            <ChevronLeft className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
-            <span className="text-label-sm font-medium text-text-soft-400">Week {blueprint.currentWeek.week}</span>
-            <span className="text-label-xs text-text-disabled-300 hidden sm:inline">({blueprint.currentWeek.dateRange})</span>
-            <ChevronRight className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
-          </div>
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <div className="flex items-center gap-1 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2 h-6 cursor-pointer hover:bg-bg-weak-50 transition-colors">
+                <ChevronLeft className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
+                <span className="text-label-md font-medium text-text-soft-400">Week {blueprint.currentWeek.week}</span>
+                <ChevronRight className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
+              </div>
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              Week {blueprint.currentWeek.week} ({blueprint.currentWeek.dateRange})
+            </Tooltip.Content>
+          </Tooltip.Root>
         </div>
       </WidgetBox.Header>
 
@@ -320,29 +354,21 @@ export default function MatchupsWidget({
         <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
           {/* Projected Win section */}
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-subheading-md text-text-soft-400">Projected Win</span>
-                <Crown className="hw-icon-xs text-text-soft-400" strokeWidth={2} />
+              <div className="text-title-h5 text-text-strong-950">
+                <NumberFlow value={animateNumber.value} suffix="%" />
+              </div>
+                <span className="text-subheading-md text-text-sub-300">Projected Win</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-subheading-md text-text-soft-400 truncate">vs {blueprint.projectedWin.opponentTeamName}</span>
-                <FileText className="hw-icon-sm text-text-soft-400" strokeWidth={2} />
+                <span className="text-subheading-md text-gray-300 truncate">vs {blueprint.projectedWin.opponentTeamName}</span>
+                {/* <ScrollText className="hw-icon-sm text-text-soft-400" /> */}
               </div>
             </div>
-            
-            {/* Win probability bar */}
-            <div className="flex h-6 rounded-lg overflow-hidden">
-              <div 
-                className="bg-success-base flex items-center justify-center text-static-white font-semibold text-label-sm" 
-                style={{ width: `${blueprint.projectedWin.winProbability}%` }}
-              >
-                {blueprint.projectedWin.userScore}
-              </div>
-              <div className="bg-error-base flex items-center justify-center text-static-white font-semibold flex-1 text-label-sm">
-                {blueprint.projectedWin.opponentScore}
-              </div>
-            </div>
+
+            {/* Win probability bar - animated */}
+            <ProgressChart value={animateNumber.value} />
           </div>
 
           <Divider.Root variant="line-spacing" />

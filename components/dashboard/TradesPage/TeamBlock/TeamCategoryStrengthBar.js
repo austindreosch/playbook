@@ -1,7 +1,5 @@
 'use client';
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Separator } from '@/components/ui/separator';
 import useDashboardContext from "@/stores/dashboard/useDashboardContext";
 
 // TODO: This is a placeholder for sport-specific data.
@@ -99,34 +97,21 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }) {
         : "[&>svg]:text-muted-foreground";
 
     return (
-        <Accordion type="single" collapsible defaultValue="item-1" className="w-full ">
-            <AccordionItem value="item-1" className="border-b-0">
-                <AccordionTrigger className={`px-2 py-0 h-button hover:no-underline ${containerClasses} ${borderClasses} ${chevronClasses}`}>
-                    <div className="flex w-full justify-between items-center">
-                        <h3 className={`text-button ${textClasses}`}>Category Strength</h3>
+        <div className="grid grid-cols-5 overflow-hidden rounded-md w-full">
+            {gridItems.map((item, index) => {
+                if (!item) {
+                    return <div key={`placeholder-${index}`} className={isOpponent ? "bg-pb_lightestgray" : "bg-pb_lightgray"} />;
+                }
+                const { category, color } = item;
+                return (
+                    <div
+                        key={category}
+                        className={`h-button flex items-center justify-center ${color}`}
+                    >
+                        <span className="text-xs font-semibold text-pb_darkgray/80">{category}</span>
                     </div>
-                </AccordionTrigger>
-                <AccordionContent className={`pb-0 ${contentClasses} px-1`}>
-                    <div className="h-18 flex items-center justify-center">
-                        <div className="grid grid-cols-5 overflow-hidden rounded-md w-full">
-                            {gridItems.map((item, index) => {
-                                if (!item) {
-                                    return <div key={`placeholder-${index}`} className={isOpponent ? "bg-pb_lightestgray" : "bg-pb_lightgray"} />;
-                                }
-                                const { category, color } = item;
-                                return (
-                                    <div
-                                        key={category}
-                                        className={`h-button flex items-center justify-center ${color}`}
-                                    >
-                                        <span className="text-xs font-semibold text-pb_darkgray/80">{category}</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </AccordionContent>
-            </AccordionItem>
-        </Accordion>
+                );
+            })}
+        </div>
     );
 }

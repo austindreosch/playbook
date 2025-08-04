@@ -13,7 +13,7 @@ import MatchupsWidget from '../Matchups/MatchupsWidget';
 import NewsFeedBlock from '../NewsFeed/NewsFeedBlock';
 import StandingsWidget from '../Standings/StandingsWidget';
 import TeamArchetypeBlock from '../TeamArchetype/TeamArchetypeBlock';
-import TeamProfileBlock from '../TeamProfile/TeamProfileBlock';
+import TeamProfileWidget from '../TeamProfile/TeamProfileWidget';
 import SortableWidget from './SortableWidget';
 
 // Map widget IDs to their components
@@ -22,7 +22,7 @@ const widgetMap = {
   matchup: { component: MatchupsWidget },         
   // actionSteps: { component: ActionStepsBlock },  
   // teamArchetype: { component: TeamArchetypeBlock },
-  // teamProfile: { component: TeamProfileBlock }, 
+  teamProfile: { component: TeamProfileWidget }, 
   // newsFeed: { component: NewsFeedBlock },
 };
 
