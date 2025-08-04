@@ -22,20 +22,8 @@ import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorBu
 import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 
 // League Header Components 
-import CurrentLeagueContext from '@/components/dashboard/Overview/Header/CurrentLeagueContext';
-import CurrentLeagueTeamDisplay from '@/components/dashboard/Overview/Header/CurrentLeagueTeamDisplay';
-import EditWidgetsButton from '@/components/dashboard/Overview/Header/EditWidgetsButton';
-import LeagueSettingsButton from '@/components/dashboard/Overview/Header/LeagueSettingsButton';
-import RankingsSelectorButton from '@/components/dashboard/Overview/Header/RankingsSelectorButton';
-import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueButton';
 
 // Overview Blocks
-import ActionStepsBlock from '@/components/dashboard/Overview/ActionSteps/ActionStepsBlock';
-import MatchupsWidget from '@/components/dashboard/Overview/Matchups/MatchupsWidget';
-import NewsFeedBlock from '@/components/dashboard/Overview/NewsFeed/NewsFeedBlock';
-import StandingsWidget from '@/components/dashboard/Overview/Standings/StandingsWidget';
-import TeamArchetypeBlock from '@/components/dashboard/Overview/TeamArchetype/TeamArchetypeBlock';
-import TeamProfileBlock from '@/components/dashboard/Overview/TeamProfile/TeamProfileBlock';
 import RosterViewImportLeague from '../../components/dashboard/Overview/RosterView/RosterViewImportLeague';
 
 // All Leagues View Pages

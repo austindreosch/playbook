@@ -17,24 +17,24 @@ interface SportPositionStrengths {
 
 const dummyPositionStrengths: SportPositionStrengths = {
     nba: [
-        { position: 'PG', rank: 4, value: 25, color: 'bg-sky-400' },
-        { position: 'SG', rank: 5, value: 20, color: 'bg-lime-400' },
-        { position: 'SF', rank: 9, value: 15, color: 'bg-orange-300' },
-        { position: 'PF', rank: 4, value: 25, color: 'bg-red-400' },
-        { position: 'C', rank: 1, value: 30, color: 'bg-violet-400' },
+        { position: 'PG', rank: 4, value: 25, color: 'bg-brand-primary-600' },
+        { position: 'SG', rank: 5, value: 20, color: 'bg-brand-secondary-600' },
+        { position: 'SF', rank: 9, value: 15, color: 'bg-utility-warning-600' },
+        { position: 'PF', rank: 4, value: 25, color: 'bg-utility-error-600' },
+        { position: 'C', rank: 1, value: 30, color: 'bg-utility-success-600' },
     ],
     nfl: [
-        { position: 'QB', rank: 3, value: 20, color: 'bg-red-400' },
-        { position: 'RB', rank: 1, value: 30, color: 'bg-lime-400' },
-        { position: 'WR', rank: 2, value: 25, color: 'bg-sky-400' },
-        { position: 'TE', rank: 8, value: 15, color: 'bg-orange-300' },
+        { position: 'QB', rank: 3, value: 20, color: 'bg-utility-error-600' },
+        { position: 'RB', rank: 1, value: 30, color: 'bg-utility-success-600' },
+        { position: 'WR', rank: 2, value: 25, color: 'bg-brand-primary-600' },
+        { position: 'TE', rank: 8, value: 15, color: 'bg-utility-warning-600' },
     ],
     mlb: [
-        { position: 'C',  rank: 8, value: 16, color: 'bg-sky-400' },
-        { position: 'MI', rank: 4, value: 25, color: 'bg-red-400' },
-        { position: 'CI', rank: 3, value: 26, color: 'bg-orange-300' },
-        { position: 'OF', rank: 5, value: 20, color: 'bg-lime-400' },
-        { position: 'P',  rank: 5, value: 36, color: 'bg-violet-400' },
+        { position: 'C',  rank: 8, value: 16, color: 'bg-brand-primary-600' },
+        { position: 'MI', rank: 4, value: 25, color: 'bg-utility-error-600' },
+        { position: 'CI', rank: 3, value: 26, color: 'bg-utility-warning-600' },
+        { position: 'OF', rank: 5, value: 20, color: 'bg-utility-success-600' },
+        { position: 'P',  rank: 5, value: 36, color: 'bg-brand-secondary-600' },
     ],
 };
 
@@ -87,14 +87,14 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }: Te
 
     return (
         <div className="w-full">
-            <div className="flex w-full h-10 rounded-md overflow-hidden shadow-regular-xs">
+            <div className="flex w-full h-10 rounded-radius-md overflow-hidden shadow-shadow-xs">
                 {positionStrengths.map((pos, index) => (
                     <div
                         key={pos.position}
                         className={`${pos.color} flex items-center justify-center`}
                         style={{ width: `${(pos.value / totalValue) * 100}%` }}
                     >
-                        <span className="text-text-strong-950 font-semibold text-label-xs">{pos.position}</span>
+                        <span className="text-text-strong-950 font-semibold text-text-xs">{pos.position}</span>
                     </div>
                 ))}
             </div>
@@ -102,7 +102,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }: Te
                 {positionStrengths.map((pos) => (
                     <div
                         key={pos.position}
-                        className={`flex-grow text-center text-label-xs ${isOpponent ? 'text-text-soft-400' : 'text-text-sub-600'}`}
+                        className={`flex-grow text-center text-text-xs ${isOpponent ? 'text-text-soft-400' : 'text-text-sub-600'}`}
                         style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
                     >
                         {pos.rank}{getRankSuffix(pos.rank)}

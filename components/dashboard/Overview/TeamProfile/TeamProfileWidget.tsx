@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { Users, AlertTriangle, Clock, Heart, Shield, Trophy } from 'lucide-react';
+import { Users } from 'lucide-react';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Divider from '@/components/alignui/divider';
-import TraitTag from '@/components/common/TraitTag';
+import TraitTagContainer from '@/components/common/TraitTagContainer';
 import TeamPositionStrengthBar from '@/components/dashboard/TradesPage/TeamBlock/TeamPositionStrengthBar';
 import TeamCategoryStrengthBar from '@/components/dashboard/TradesPage/TeamBlock/TeamCategoryStrengthBar';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
@@ -13,13 +13,8 @@ import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 // ===================== BLUEPRINT DEFINITION ================
 // ============================================================
 
-interface TeamTag {
-  icon: React.ComponentType<any>; // SOURCE: Lucide icon component for the tag
-  label: string;                 // SOURCE: display text for the tag
-}
-
 interface TeamProfileBlueprint {
-  teamTags: TeamTag[];           // SOURCE: useDashboardContext().getCurrentTeam().traits OR calculated team analysis tags
+  teamTraitIds: string[];        // SOURCE: useDashboardContext().getCurrentTeam().traits OR calculated team analysis trait IDs
   
   userTeam: {                    // SOURCE: useDashboardContext().getCurrentTeam()
     teamId: string;
@@ -39,18 +34,18 @@ interface TeamProfileWidgetProps extends React.ComponentPropsWithoutRef<typeof W
 // ============================================================
 
 const generateDummyTeamProfileData = (): TeamProfileBlueprint => {
-  // Team tags from original design - exact icons and labels
-  const teamTags: TeamTag[] = [
-    { icon: Shield, label: 'Heavy Punt' },
-    { icon: Trophy, label: 'Contending' },
-    { icon: Clock, label: 'Aging' },
-    { icon: AlertTriangle, label: 'Poor Playoff Schedule' },
-    { icon: Heart, label: 'Injured Team' }
+  // Team trait IDs corresponding to the original team tags
+  const teamTraitIds = [
+    'heavy_punt',
+    'contending', 
+    'aging',
+    'poor_playoff_schedule',
+    'injured_team'
   ];
 
   return {
     sport: 'nba',
-    teamTags,
+    teamTraitIds,
     userTeam: {
       teamId: 'team_user_123',
       teamName: 'Dynasty Dreams',
@@ -96,32 +91,9 @@ export default function TeamProfileWidget({
 
           <Divider.Root variant='line-spacing' />
 
-          {/* Team Tags - Simple flex layout */}
+          {/* Team Traits */}
           <div className="flex-shrink-0">
-            <div className="space-y-1.5">
-              <div className="flex gap-1 flex-wrap">
-                {blueprint.teamTags.slice(0, 3).map((tag, index) => {
-                  const Icon = tag.icon;
-                  return (
-                    <div key={index} className="flex items-center gap-1 px-2 py-1 border border-stroke-soft-200 rounded-full bg-bg-white-0 flex-1 min-w-0">
-                      <Icon className="w-3 h-3 text-text-sub-600 flex-shrink-0" strokeWidth={2} />
-                      <span className="text-xs text-text-sub-600 truncate">{tag.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="flex gap-1 flex-wrap">
-                {blueprint.teamTags.slice(3).map((tag, index) => {
-                  const Icon = tag.icon;
-                  return (
-                    <div key={index + 3} className="flex items-center gap-1 px-2 py-1 border border-stroke-soft-200 rounded-full bg-bg-white-0 flex-1 min-w-0">
-                      <Icon className="w-3 h-3 text-text-sub-600 flex-shrink-0" strokeWidth={2} />
-                      <span className="text-xs text-text-sub-600 truncate">{tag.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <TraitTagContainer traitIds={blueprint.teamTraitIds} variant="wrap" />
           </div>
         </div>
       </WidgetBox.Content>

@@ -1,6 +1,6 @@
 'use client';
 
-import TraitTag from '@/components/common/TraitTag';
+import TraitTag from '@/components/common/TraitTag.jsx';
 import * as CompactButton from '@/components/alignui/compact-button';
 import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 import React, { useRef, useState, useEffect } from 'react';
@@ -8,9 +8,10 @@ import React, { useRef, useState, useEffect } from 'react';
 interface TraitTagContainerProps {
   traitIds: string[];
   className?: string;
+  variant?: 'scrollable' | 'wrap';
 }
 
-export default function TraitTagContainer({ traitIds, className = "" }: TraitTagContainerProps) {
+export default function TraitTagContainer({ traitIds, className = "", variant = "scrollable" }: TraitTagContainerProps) {
   const [emblaApi, setEmblaApi] = useState<any>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
@@ -18,6 +19,8 @@ export default function TraitTagContainer({ traitIds, className = "" }: TraitTag
 
   // Embla-like scroll logic (manual, since we don't use embla-carousel-react)
   useEffect(() => {
+    if (variant !== 'scrollable') return;
+    
     const container = emblaRef.current;
     if (!container) return;
 
@@ -36,7 +39,7 @@ export default function TraitTagContainer({ traitIds, className = "" }: TraitTag
       scrollableEl.removeEventListener('scroll', updateButtonStates);
       window.removeEventListener('resize', updateButtonStates);
     };
-  }, [traitIds]);
+  }, [traitIds, variant]);
 
   const scrollPrev = () => {
     const container = emblaRef.current;
@@ -55,6 +58,23 @@ export default function TraitTagContainer({ traitIds, className = "" }: TraitTag
     }
   };
 
+  if (variant === 'wrap') {
+    return (
+      <div className={`flex flex-col gap-2 ${className}`}>
+        <div className='text-subheading-xs uppercase tracking-wide text-text-soft-400'>
+          Traits
+        </div>
+        
+        <div className='flex flex-wrap gap-2'>
+          {traitIds.map((traitId, idx) => (
+            <TraitTag key={traitId || idx} traitId={traitId} size="normal" className="flex-shrink-0" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Default scrollable variant
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
       <div className='flex items-center justify-between gap-2'>

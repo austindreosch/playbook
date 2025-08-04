@@ -15,35 +15,35 @@ interface SportCategoryStrengths {
 
 const dummyCategoryStrengths: SportCategoryStrengths = {
     nba: [
-        { category: 'FG%', color: 'bg-emerald-400' },
-        { category: 'FT%', color: 'bg-red-300' },
-        { category: '3PM', color: 'bg-red-300' },
-        { category: 'PTS', color: 'bg-emerald-400' },
-        { category: 'REB', color: 'bg-teal-500' },
-        { category: 'AST', color: 'bg-red-300' },
-        { category: 'STL', color: 'bg-emerald-400' },
-        { category: 'BLK', color: 'bg-teal-500' },
-        { category: 'TO', color: 'bg-emerald-400' }, // Lower TO is a strength
+        { category: 'FG%', color: 'bg-utility-success-600' },
+        { category: 'FT%', color: 'bg-utility-error-500' },
+        { category: '3PM', color: 'bg-utility-error-500' },
+        { category: 'PTS', color: 'bg-utility-success-600' },
+        { category: 'REB', color: 'bg-brand-primary-600' },
+        { category: 'AST', color: 'bg-utility-error-500' },
+        { category: 'STL', color: 'bg-utility-success-600' },
+        { category: 'BLK', color: 'bg-brand-primary-600' },
+        { category: 'TO', color: 'bg-utility-success-600' }, // Lower TO is a strength
     ],
     nfl: [
-        { category: 'Pass Yds', color: 'bg-emerald-400' },
-        { category: 'Rush Yds', color: 'bg-red-300' },
-        { category: 'Rec Yds', color: 'bg-emerald-400' },
-        { category: 'TDs', color: 'bg-emerald-400' },
-        { category: 'FL', color: 'bg-red-300' },
-        { category: 'Sacks', color: 'bg-emerald-400' },
+        { category: 'Pass Yds', color: 'bg-utility-success-600' },
+        { category: 'Rush Yds', color: 'bg-utility-error-500' },
+        { category: 'Rec Yds', color: 'bg-utility-success-600' },
+        { category: 'TDs', color: 'bg-utility-success-600' },
+        { category: 'FL', color: 'bg-utility-error-500' },
+        { category: 'Sacks', color: 'bg-utility-success-600' },
     ],
     mlb: [
-        { category: 'R', color: 'bg-emerald-400' },
-        { category: 'HR', color: 'bg-emerald-400' },
-        { category: 'RBI', color: 'bg-red-300' },
-        { category: 'SB', color: 'bg-emerald-400' },
-        { category: 'AVG', color: 'bg-red-300' },
-        { category: 'W', color: 'bg-emerald-400' },
-        { category: 'SV', color: 'bg-emerald-400' },
-        { category: 'K', color: 'bg-emerald-400' },
-        { category: 'ERA', color: 'bg-red-300' }, // Lower ERA is a strength
-        { category: 'WHIP', color: 'bg-red-300' }, // Lower WHIP is a strength
+        { category: 'R', color: 'bg-utility-success-600' },
+        { category: 'HR', color: 'bg-utility-success-600' },
+        { category: 'RBI', color: 'bg-utility-error-500' },
+        { category: 'SB', color: 'bg-utility-success-600' },
+        { category: 'AVG', color: 'bg-utility-error-500' },
+        { category: 'W', color: 'bg-utility-success-600' },
+        { category: 'SV', color: 'bg-utility-success-600' },
+        { category: 'K', color: 'bg-utility-success-600' },
+        { category: 'ERA', color: 'bg-utility-error-500' }, // Lower ERA is a strength
+        { category: 'WHIP', color: 'bg-utility-error-500' }, // Lower WHIP is a strength
     ],
 };
 
@@ -92,7 +92,7 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }: Te
     const gridItems = [...categoryStrengths, ...getGridPlaceholders(categoryStrengths.length, 5)];
 
     return (
-        <div className="grid grid-cols-5 overflow-hidden rounded-md w-full">
+        <div className="grid grid-cols-5 overflow-hidden rounded-radius-md w-full">
             {gridItems.map((item, index) => {
                 if (!item) {
                     return <div key={`placeholder-${index}`} className={isOpponent ? "bg-bg-weak-50" : "bg-bg-sub-100"} />;
@@ -103,7 +103,7 @@ export default function TeamCategoryStrengthBar({ team, isOpponent = false }: Te
                         key={category}
                         className={`h-10 flex items-center justify-center ${color}`}
                     >
-                        <span className="text-label-xs font-semibold text-text-strong-950">{category}</span>
+                        <span className="text-text-xs font-semibold text-text-strong-950">{category}</span>
                     </div>
                 );
             })}
