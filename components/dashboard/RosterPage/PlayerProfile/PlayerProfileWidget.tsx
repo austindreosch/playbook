@@ -11,7 +11,6 @@ import { ClipboardMinus, Compass, Sprout, Heart, Users, Shield, Globe, Info, Sca
 import * as Button from '@/components/alignui/button';
 import * as Popover from '@/components/alignui/ui/popover';
 
-import HistoricalViewGraph from './HistoricalViewGraph';
 import PlayerInfoSection from './PlayerInfoSection';
 import TraitTagContainer from '@/components/common/TraitTagContainer';
 import ValueComparisonTable from './ValueComparisonTable';

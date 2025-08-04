@@ -17,6 +17,9 @@ interface HistoricalViewGraphProps {
 }
 
 export default function HistoricalViewGraph({ historicalData }: HistoricalViewGraphProps) {
+  // Static month labels to match the design
+  const monthLabels = ['JUN', 'JUL', 'AUG', 'SEP', 'OCT'];
+  
   const createLineChart = () => {
     const { dataPoints, yAxisMin, yAxisMax } = historicalData;
     const width = 280;
@@ -83,8 +86,18 @@ export default function HistoricalViewGraph({ historicalData }: HistoricalViewGr
       </div>
       
       {/* Chart Container */}
-      <div className="flex-1 w-full mt-3 flex items-end">
-        {createLineChart()}
+      <div className="flex-1 w-full mt-3 flex flex-col">
+        <div className="flex-1 flex items-end">
+          {createLineChart()}
+        </div>
+        {/* Month Labels */}
+        <div className="flex justify-between px-5 pt-1">
+          {monthLabels.map((month, index) => (
+            <span key={index} className="text-3xs text-pb_textlightestgray">
+              {month}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );

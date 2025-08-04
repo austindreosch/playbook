@@ -148,8 +148,8 @@ React.useEffect(() => {
     resizeObserver.observe(currentRef);
     mutationObserver.observe(currentRef, {
       childList: true,
-      subtree: true,
-      attributes: true,
+      subtree: false,
+      attributes: false,
     });
   }
 
@@ -230,8 +230,8 @@ React.useEffect(() => {
     resizeObserver.observe(currentRef);
     mutationObserver.observe(currentRef, {
       childList: true,
-      subtree: true,
-      attributes: true,
+      subtree: false,
+      attributes: false,
     });
   }
 
