@@ -10,7 +10,6 @@ import SyncLeagueButton from '@/components/dashboard/Overview/Header/SyncLeagueB
 
 // Roster Page Components
 import PlayerPerformanceBlock from '@/components/dashboard/RosterPage/PlayerPerformanceBlock';
-import PlayerProfileBlock from '@/components/dashboard/RosterPage/PlayerProfileBlock';
 import RosterFullBlock from '@/components/dashboard/RosterPage/RosterBlock/RosterFullBlock';
 import RosterFullImportLeague from '@/components/dashboard/RosterPage/RosterFullImportLeague';
 

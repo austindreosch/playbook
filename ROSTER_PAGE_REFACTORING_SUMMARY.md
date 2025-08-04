@@ -50,7 +50,7 @@ const categories = useMemo(() => {
 }, [currentLeague?.leagueDetails?.sport, currentLeague?.leagueDetails?.categories]);
 ```
 
-### 3. **UPDATED: `/components/dashboard/RosterPage/PlayerProfileBlock.js`**
+### 3. **UPDATED: `/components/dashboard/RosterPage/PlayerProfileWidget.tsx`**
 **Changes Made:**
 - ✅ **Sport-aware primary stats**: Uses `getSportPrimaryStats()` instead of hardcoded PPG/MPG
 - ✅ **Dynamic trait system**: Uses `getSportTraits()` for sport-specific traits

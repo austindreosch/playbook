@@ -369,7 +369,8 @@ const config = {
       
       pb_pastelblue: '#79addc',
       pb_pastelpurple: '#ababef',
-      pb_pastelorange: '#f5d491',
+      pb_pastelyellow: '#f5d491',
+      // pb_pastelorange: '#f5d491',
       pb_pastelred: '#f17e92',
       pb_pastelgreen: '#98c8a2',
       pb_pastelbrown: '#9b8e82',
@@ -379,13 +380,14 @@ const config = {
       // ============↑↑↑↑↑↑ CUSTOM TAILWIND CONFIG ↑↑↑↑↑↑============
       // ============================================================
 
-      pastelblue: '#79addc',
-      pastelpurple: '#ababef',
-      pastelorange: '#f5d491',
-      pastelred: '#f17e92',
-      pastelgreen: '#98c8a2',
-      pastelbrown: '#9b8e82',
-      pastelstone: '#d6d3c2',
+      pastelblue: 'var(--pastelblue)',
+      pastelpurple: 'var(--pastelpurple)',
+      pastelyellow: 'var(--pastelyellow)',
+      pastelorange: 'var(--pastelorange)',
+      pastelred: 'var(--pastelred)',
+      pastelgreen: 'var(--pastelgreen)',
+      pastelbrown: 'var(--pastelbrown)',
+      pastelstone: 'var(--pastelstone)',
 
       gray: {
         '0': 'var(--gray-0)',

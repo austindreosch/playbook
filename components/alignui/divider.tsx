@@ -8,29 +8,29 @@ export const dividerVariants = tv({
   base: 'relative flex w-full items-center',
   variants: {
     variant: {
-      line: 'h-0 before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:-translate-y-1/2 before:bg-stroke-soft-150',
+      line: 'h-0 before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:-translate-y-1/2 before:bg-stroke-soft-100',
       'line-spacing': [
         // base
         'h-1',
         // before
-        'before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:-translate-y-1/2 before:bg-stroke-soft-150',
+        'before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:-translate-y-1/2 before:bg-stroke-soft-100',
       ],
       'line-text': [
         // base
         'gap-2.5',
         'text-subheading-2xs text-text-soft-400',
         // before
-        'before:h-px before:w-full before:flex-1 before:bg-stroke-soft-150',
+        'before:h-px before:w-full before:flex-1 before:bg-stroke-soft-100',
         // after
-        'after:h-px after:w-full after:flex-1 after:bg-stroke-soft-150',
+        'after:h-px after:w-full after:flex-1 after:bg-stroke-soft-100',
       ],
       content: [
         // base
         'gap-2.5',
         // before
-        'before:h-px before:w-full before:flex-1 before:bg-stroke-soft-150',
+        'before:h-px before:w-full before:flex-1 before:bg-stroke-soft-100',
         // after
-        'after:h-px after:w-full after:flex-1 after:bg-stroke-soft-150',
+        'after:h-px after:w-full after:flex-1 after:bg-stroke-soft-100',
       ],
       text: [
         // base

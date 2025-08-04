@@ -1,34 +1,54 @@
 'use client';
 
 import useDashboardContext from "@/stores/dashboard/useDashboardContext";
+import * as Divider from '@/components/alignui/divider';
 
 // TODO: This is a placeholder for sport-specific data.
 // In a real implementation, this data would be fetched based on the user's league and selected sport.
-const dummyPositionStrengths = {
+interface PositionStrength {
+    position: string;
+    rank: number;
+    value: number;
+    color: string;
+}
+
+interface SportPositionStrengths {
+    [key: string]: PositionStrength[];
+}
+
+const dummyPositionStrengths: SportPositionStrengths = {
     nba: [
-        { position: 'PG', rank: 4, value: 25, color: 'bg-pb_pastelblue' },
-        { position: 'SG', rank: 5, value: 20, color: 'bg-pb_pastelgreen' },
-        { position: 'SF', rank: 9, value: 15, color: 'bg-pb_pastelorange' },
-        { position: 'PF', rank: 4, value: 25, color: 'bg-pb_pastelpurple' },
-        { position: 'C', rank: 1, value: 30, color: 'bg-pb_pastelred' },
+        { position: 'PG', rank: 4, value: 25, color: 'bg-pastelblue' },
+        { position: 'SG', rank: 5, value: 20, color: 'bg-pastelgreen' },
+        { position: 'SF', rank: 9, value: 15, color: 'bg-pastelyellow' },
+        { position: 'PF', rank: 4, value: 25, color: 'bg-pastelred' },
+        { position: 'C', rank: 1, value: 30, color: 'bg-pastelpurple' },
     ],
     nfl: [
-        { position: 'QB', rank: 3, value: 20, color: 'bg-pb_pastelred' },
-        { position: 'RB', rank: 1, value: 30, color: 'bg-pb_pastelgreen' },
-        { position: 'WR', rank: 2, value: 25, color: 'bg-pb_pastelblue' },
-        { position: 'TE', rank: 8, value: 15, color: 'bg-pb_pastelorange' },
+        { position: 'QB', rank: 3, value: 20, color: 'bg-pastelred' },
+        { position: 'RB', rank: 1, value: 30, color: 'bg-pastelgreen' },
+        { position: 'WR', rank: 2, value: 25, color: 'bg-pastelblue' },
+        { position: 'TE', rank: 8, value: 15, color: 'bg-pastelyellow' },
     ],
     mlb: [
-        { position: 'C',  rank: 8, value: 16, color: 'bg-pb_pastelblue'    },
-        { position: 'MI', rank: 4, value: 25, color: 'bg-pb_pastelred' },
-        { position: 'CI', rank: 3, value: 26, color: 'bg-pb_pastelorange'},
-        { position: 'OF', rank: 5, value: 20, color: 'bg-pb_pastelgreen' },
-        { position: 'P',  rank: 5, value: 36, color: 'bg-pb_pastelpurple'  },
+        { position: 'C',  rank: 8, value: 16, color: 'bg-pastelblue' },
+        { position: 'MI', rank: 4, value: 25, color: 'bg-pastelred' },
+        { position: 'CI', rank: 3, value: 26, color: 'bg-pastelyellow' },
+        { position: 'OF', rank: 5, value: 20, color: 'bg-pastelgreen' },
+        { position: 'P',  rank: 5, value: 36, color: 'bg-pastelpurple' },
     ],
 };
 
+interface TeamPositionStrengthBarProps {
+    team: {
+        teamId?: string;
+        teamName?: string;
+        ownerName?: string;
+    };
+    isOpponent?: boolean;
+}
 
-export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
+export default function TeamPositionStrengthBar({ team, isOpponent = false }: TeamPositionStrengthBarProps) {
     // The 'team' prop is available here to fetch team-specific position strength data.
     const { leagues, currentLeagueId } = useDashboardContext();
 
@@ -54,7 +74,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
     
     const totalValue = positionStrengths.reduce((acc, pos) => acc + pos.value, 0);
 
-    const getRankSuffix = (rank) => {
+    const getRankSuffix = (rank: number): string => {
         if (rank % 100 >= 11 && rank % 100 <= 13) {
             return 'th';
         }
@@ -66,43 +86,26 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }) {
         }
     };
 
-    // Dark theme styling for opponent
-    // ? opponent
-    // : user
-    const containerClasses = isOpponent
-        ? "bg-pb_darkgray text-white"
-        : "bg-white text-pb_darkgray";
-
-    const borderClasses = isOpponent 
-        ? "" 
-        : "border border-r-0 border-pb_lightgray";
-
-    const textClasses = isOpponent
-        ? "text-white"
-        : "text-pb_darkgray";
-
-    const chevronClasses = isOpponent
-        ? "[&>svg]:text-white"
-        : "[&>svg]:text-muted-foreground";
-
     return (
         <div className="w-full">
-            <div className="flex w-full h-button rounded-md overflow-hidden shadow">
+            <div className="flex w-full h-10 rounded-md overflow-hidden">
                 {positionStrengths.map((pos, index) => (
                     <div
                         key={pos.position}
                         className={`${pos.color} flex items-center justify-center`}
                         style={{ width: `${(pos.value / totalValue) * 100}%` }}
                     >
-                        <span className="text-pb_darkgray/80 font-semibold text-xs">{pos.position}</span>
+                        <span className="text-label-lg font-semibold text-text-strong-950" style={{ opacity: 0.7 }}>{pos.position}</span>
                     </div>
                 ))}
             </div>
+           
+
             <div className="flex w-full mt-1">
                 {positionStrengths.map((pos) => (
                     <div
                         key={pos.position}
-                        className={`flex-grow text-center text-xs ${isOpponent ? 'text-pb_mddarkgray' : 'text-pb_textgray'}`}
+                        className={`flex-grow text-center text-label-md ${isOpponent ? 'text-text-soft-400' : 'text-text-sub-600'}`}
                         style={{ flexBasis: `${(pos.value / totalValue) * 100}%` }}
                     >
                         {pos.rank}{getRankSuffix(pos.rank)}

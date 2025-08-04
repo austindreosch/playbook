@@ -1,7 +1,7 @@
 'use client';
 
 import TeamOverviewBar from '@/components/dashboard/TradesPage/TeamBlock/TeamOverviewBar';
-import TeamPositionStrengthBar from '@/components/dashboard/TradesPage/TeamBlock/TeamPositionStrengthBar';
+import TeamPositionStrengthBar from '@/components/common/TeamPositionStrengthBar';
 import TradeRosterBlock from '@/components/dashboard/TradesPage/TeamBlock/TradeRosterBlock';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import { resolveDashboardComponent } from '../../dashboardUtils';

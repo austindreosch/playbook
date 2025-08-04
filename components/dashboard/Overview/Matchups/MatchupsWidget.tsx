@@ -355,14 +355,16 @@ export default function MatchupsWidget({
           {/* Projected Win section */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
               <div className="text-title-h5 text-text-strong-950">
                 <NumberFlow value={animateNumber.value} suffix="%" />
               </div>
                 <span className="text-subheading-md text-text-sub-300">Projected Win</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-subheading-md text-gray-300 truncate">vs {blueprint.projectedWin.opponentTeamName}</span>
+                <span className="text-subheading-md text-gray-300 truncate pr-1">
+                  <span className="font-normal">vs</span> {blueprint.projectedWin.opponentTeamName}
+                </span>
                 {/* <ScrollText className="hw-icon-sm text-text-soft-400" /> */}
               </div>
             </div>

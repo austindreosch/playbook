@@ -1,4 +1,4 @@
-import TeamCategoryStrengthBar from "./TradesPage/TeamBlock/TeamCategoryStrengthBar";
+import TeamCategoryStrengthBar from "../common/TeamCategoryStrengthBar";
 
 // TODO: This is a placeholder for sport-specific component configurations.
 // As new dashboard widgets are created, they should be added here and mapped

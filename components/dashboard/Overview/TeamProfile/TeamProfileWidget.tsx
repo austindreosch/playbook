@@ -5,8 +5,8 @@ import { Users } from 'lucide-react';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Divider from '@/components/alignui/divider';
 import TraitTagContainer from '@/components/common/TraitTagContainer';
-import TeamPositionStrengthBar from '@/components/dashboard/TradesPage/TeamBlock/TeamPositionStrengthBar';
-import TeamCategoryStrengthBar from '@/components/dashboard/TradesPage/TeamBlock/TeamCategoryStrengthBar';
+import TeamPositionStrengthBar from '@/components/common/TeamPositionStrengthBar';
+import TeamCategoryStrengthBar from '@/components/common/TeamCategoryStrengthBar';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 // ============================================================
@@ -77,19 +77,21 @@ export default function TeamProfileWidget({
       </WidgetBox.Header>
 
       <WidgetBox.Content>
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
+        <div className="flex-1 min-h-0 space-y-2">
           
           {/* Position Strength Bar */}
           <div className="flex-shrink-0">
             <TeamPositionStrengthBar team={blueprint.userTeam} />
           </div>
 
+          <Divider.Root variant='line-spacing' className="pt-3" />
+
           {/* Category Strength Bar */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 pt-1" >
             <TeamCategoryStrengthBar team={blueprint.userTeam} />
           </div>
 
-          <Divider.Root variant='line-spacing' />
+          {/* <Divider.Root variant='line-spacing' /> */}
 
           {/* Team Traits */}
           <div className="flex-shrink-0">
