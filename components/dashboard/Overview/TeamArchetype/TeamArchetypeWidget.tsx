@@ -214,10 +214,10 @@ export default function TeamArchetypeWidget({
           <div className="flex-1 h-full min-w-0 overflow-hidden flex items-center justify-center">
             <ResponsiveContainer
               width='100%'
-              height={224}
+              height={200}
               className='recharts-fade-in-axis-tick [&_.recharts-surface]:overflow-visible'
             >
-              <RadarChart cx='50%' cy='50%' outerRadius='74%' data={blueprint.radarData}>
+              <RadarChart cx='50%' cy='50%' outerRadius='85%' data={blueprint.radarData}>
                 <PolarGrid stroke='var(--stroke-soft-200)' />
                 <PolarAngleAxis
                   dataKey='metric'
