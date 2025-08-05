@@ -16,7 +16,7 @@ import Newsletter from '@/components/LandingPage/newsletter';
 import Testimonials from '@/components/LandingPage/testimonials';
 
 export default function Home() {
-  console.log('Home component rendering...');
+  console.log('Home component rendering - UPDATED VERSION 2.0');
   
   try {
     return (

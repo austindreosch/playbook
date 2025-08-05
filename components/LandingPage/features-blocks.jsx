@@ -77,8 +77,8 @@ const Feature = ({ svgContent, title, description }) => (
         {svgContent}
       </g>
     </svg>
-    <h4 className="text-lg font-bold leading-snug tracking-tight mb-1 text-pb_darkgray">{title}</h4>
-    <p className="text-sm text-pb_midgray text-center">{description}</p>
+    <h4 className="text-label-xl font-bold leading-snug tracking-tight mb-1 text-pb_darkgray">{title}</h4>
+    <p className="text-paragraph-md text-pb_midgray text-center">{description}</p>
   </div>
 );
 
@@ -95,8 +95,8 @@ export default function FeaturesBlocks() {
 
           {/* Section header */}
           <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20 ">
-            <h2 className="h2 mb-4 font-bold text-2xl text-pb_darkgray">Explore the Features</h2>
-            <p className="text-pb_mddarkgray"> Playbook combines advanced data, automation, and clean interfaces to make winning as simple as possible. Take a look at the first wave of tools.</p>
+            <h2 className="h2 mb-4 font-bold text-title-h2 text-pb_darkgray">Explore the Features</h2>
+            <p className="text-paragraph-lg text-pb_mddarkgray"> Playbook combines advanced data, automation, and clean interfaces to make winning as simple as possible. Take a look at the first wave of tools.</p>
           </div>
 
           {/* Items */}
