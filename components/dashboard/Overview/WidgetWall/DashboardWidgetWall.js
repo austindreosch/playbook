@@ -10,7 +10,7 @@ import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortab
 import useDashboardContext from '../../../../stores/dashboard/useDashboardContext';
 import ActionStepsWidget from '../ActionSteps/ActionStepsWidget.tsx';
 import MatchupsWidget from '../Matchups/MatchupsWidget';
-// import NewsWidget from '../NewsFeed/NewsWidget.tsx'; // Temporarily disabled to debug
+import NewsWidget from '../NewsFeed/NewsFeedWidget';
 import StandingsWidget from '../Standings/StandingsWidget.tsx';
 import TeamArchetypeWidget from '../TeamArchetype/TeamArchetypeWidget.tsx';
 import TeamProfileWidget from '../TeamProfile/TeamProfileWidget';
@@ -23,7 +23,7 @@ const widgetMap = {
   actionSteps: { component: ActionStepsWidget },  
   teamArchetype: { component: TeamArchetypeWidget },
   teamProfile: { component: TeamProfileWidget }, 
-  // newsFeed: { component: NewsWidget }, // Temporarily disabled to debug
+  newsFeed: { component: NewsWidget },
 };
 
 export default function DashboardWidgetWall() {

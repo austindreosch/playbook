@@ -4,7 +4,7 @@ import * as React from 'react';
 import { FileText, MessageSquare, Newspaper, Play, User } from 'lucide-react';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Badge from '@/components/alignui/badge';
-import * as Avatar from '@/components/alignui/avatar';
+import { Root as AvatarRoot, AvatarFallback } from '@/components/alignui/avatar';
 import * as Divider from '@/components/alignui/divider';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
@@ -208,11 +208,11 @@ export default function NewsWidget({
                   {/* Latest News */}
                   {item.type === 'latest-news' && item.player && (
                     <div className="flex items-start gap-2">
-                      <Avatar.Root size="small" className="flex-shrink-0">
-                        <Avatar.Fallback className="text-label-xs">
+                      <AvatarRoot size="32" className="flex-shrink-0">
+                        <AvatarFallback className="text-label-xs">
                           {item.player.name.charAt(0)}
-                        </Avatar.Fallback>
-                      </Avatar.Root>
+                        </AvatarFallback>
+                      </AvatarRoot>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-label-sm font-medium text-text-soft-400 truncate">
@@ -233,11 +233,11 @@ export default function NewsWidget({
                   {item.type === 'new-debate' && (
                     <>
                       <div className="flex items-start gap-2 mb-2">
-                        <Avatar.Root size="small" className="flex-shrink-0">
-                          <Avatar.Fallback className="text-label-xs">
+                        <AvatarRoot size="32" className="flex-shrink-0">
+                          <AvatarFallback className="text-label-xs">
                             {item.author?.name.charAt(0) || 'A'}
-                          </Avatar.Fallback>
-                        </Avatar.Root>
+                          </AvatarFallback>
+                        </AvatarRoot>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <p className="text-label-sm text-text-soft-400 line-clamp-2">

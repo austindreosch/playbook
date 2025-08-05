@@ -2,10 +2,9 @@
 
 import * as React from 'react';
 import { BicepsFlexed, ChartCandlestick, Dna, ShieldUser, TimerReset, Trophy } from 'lucide-react';
-import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from 'recharts';
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Text } from 'recharts';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Badge from '@/components/alignui/badge';
-import { ChartContainer } from '@/components/ui/chart';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 // ============================================================
@@ -94,8 +93,45 @@ const getRankColor = (rank: number): string => {
 // =================== COMPONENT DEFINITION ==================
 // ============================================================
 
-// Custom tick component for radar chart icons
-const CustomTick = ({ payload, x, y, textAnchor, ...props }: any) => {
+function RenderPolarAngleAxis({
+  payload,
+  x,
+  y,
+  cx,
+  cy,
+  textAnchor,
+  ...rest
+}: any) {
+  const gRef = React.useRef(null);
+  const uniqueId = React.useId();
+  const [bbox, setBbox] = React.useState({ width: 0, height: 0 });
+
+  React.useEffect(() => {
+    if (gRef.current) {
+      const textEl = (gRef.current as HTMLElement).querySelector('text');
+      if (textEl) {
+        const box = textEl.getBBox();
+        setBbox({
+          width: box.width,
+          height: box.height,
+        });
+      }
+    }
+  }, [payload.value]);
+
+  const padding = 16;
+  const xOffset = (x - cx) / 5;
+  const yOffset = (y - cy) / 5;
+
+  let rectX;
+  if (textAnchor === 'start') {
+    rectX = x + xOffset - padding / 2;
+  } else if (textAnchor === 'middle') {
+    rectX = x + xOffset - bbox.width / 2 - padding / 2;
+  } else {
+    rectX = x + xOffset - bbox.width - padding / 2;
+  }
+
   const iconMap = {
     'Value': ChartCandlestick,
     'Power': BicepsFlexed,
@@ -105,16 +141,33 @@ const CustomTick = ({ payload, x, y, textAnchor, ...props }: any) => {
   };
   
   const Icon = iconMap[payload.value as keyof typeof iconMap];
-  if (!Icon) return null;
-  
+
   return (
-    <g transform={`translate(${x},${y})`}>
-      <foreignObject x="-8" y="-8" width="16" height="16">
-        <Icon className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
-      </foreignObject>
+    <g ref={gRef}>
+      <rect
+        x={rectX}
+        y={y + yOffset - 12}
+        width={bbox.width + padding}
+        height={24}
+        rx={6}
+        fill='none'
+        className='stroke-stroke-soft-200'
+        strokeWidth={1}
+      />
+      <Text
+        {...rest}
+        id={uniqueId}
+        verticalAnchor='middle'
+        y={y + yOffset}
+        x={x + xOffset}
+        textAnchor={textAnchor}
+        className='recharts-polar-angle-axis-tick-value'
+      >
+        {payload.value}
+      </Text>
     </g>
   );
-};
+}
 
 export default function TeamArchetypeWidget({
   blueprint: providedBlueprint,
@@ -125,13 +178,6 @@ export default function TeamArchetypeWidget({
   // Use provided blueprint or generate dummy data
   const blueprint = providedBlueprint || generateTeamArchetypeData();
 
-  const chartConfig = {
-    value: {
-      label: "Performance",
-      color: "hsl(var(--chart-1))",
-    },
-  };
-
   return (
     <WidgetBox.Root className="h-full" {...rest}>
       <WidgetBox.Header>
@@ -141,24 +187,23 @@ export default function TeamArchetypeWidget({
 
       <WidgetBox.Content>
         <div className="flex items-center flex-1 min-h-0">
-          {/* Metrics List */}
+          {/* Metrics List - Icon + Badge only */}
           <div className="space-y-2 flex flex-col justify-center pl-1 flex-shrink-0">
             {blueprint.metrics.map((metric, index) => {
               const Icon = metric.icon;
               const rank = parseInt(metric.rank);
               return (
-                <div key={index} className="flex flex-col items-start gap-1">
-                  <div className="flex items-center gap-1.5">
-                    <Icon className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                    <span className="text-label-sm text-text-soft-400">{metric.label}</span>
-                  </div>
+                <div key={index} className="flex items-center gap-2">
+                  <Icon className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
                   <Badge.Root 
                     variant="rank" 
-                    color={rank <= 3 ? "green" : rank <= 6 ? "yellow" : "red"} 
-                    size="small"
-                    className="ml-5"
+                    color="gray" 
+                    size="medium"
                   >
-                    {metric.rank}
+                    {rank === 1 ? '1st' : 
+                     rank === 2 ? '2nd' : 
+                     rank === 3 ? '3rd' : 
+                     `${rank}th`}
                   </Badge.Root>
                 </div>
               );
@@ -167,38 +212,69 @@ export default function TeamArchetypeWidget({
 
           {/* Radar Chart Container */}
           <div className="flex-1 h-full min-w-0 overflow-hidden flex items-center justify-center">
-            <ChartContainer config={chartConfig} className="h-full w-full max-w-full">
-              <RadarChart 
-                data={blueprint.radarData} 
-                margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-                width="100%"
-                height="100%"
-              >
-                <PolarGrid 
-                  gridType="polygon" 
-                  radialLines={false}
-                  stroke="#e5e7eb"
-                  strokeWidth={1}
-                />
-                <PolarAngleAxis 
-                  dataKey="metric" 
-                  tick={CustomTick}
+            <ResponsiveContainer
+              width='100%'
+              height={224}
+              className='recharts-fade-in-axis-tick [&_.recharts-surface]:overflow-visible'
+            >
+              <RadarChart cx='50%' cy='50%' outerRadius='74%' data={blueprint.radarData}>
+                <PolarGrid stroke='var(--stroke-soft-200)' />
+                <PolarAngleAxis
+                  dataKey='metric'
+                  className='[&_.angleAxis]:stroke-stroke-soft-200 [&_.recharts-polar-angle-axis-tick-value]:fill-text-sub-600 [&_.recharts-polar-angle-axis-tick-value]:text-label-xs'
+                  tickLine
+                  axisLine
+                  tick={(props: any) => {
+                    const iconMap = {
+                      'Value': ChartCandlestick,
+                      'Power': BicepsFlexed,
+                      'Victory': Trophy,
+                      'Age': TimerReset,
+                      'Futures': ShieldUser
+                    };
+                    
+                    const Icon = iconMap[props.payload.value as keyof typeof iconMap];
+                    if (!Icon) {
+                      return (
+                        <g>
+                          <text x={props.x} y={props.y} textAnchor={props.textAnchor}>
+                            {props.payload.value}
+                          </text>
+                        </g>
+                      );
+                    }
+                    
+                    return (
+                      <g transform={`translate(${props.x},${props.y})`}>
+                        <foreignObject x="-8" y="-8" width="16" height="16">
+                          <Icon className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
+                        </foreignObject>
+                      </g>
+                    );
+                  }}
                   tickSize={12}
-                />
-                <PolarRadiusAxis 
-                  domain={[0, 10]} 
-                  tick={false}
-                  axisLine={false}
+                  axisLineType='polygon'
                 />
                 <Radar
-                  dataKey="value"
-                  stroke="hsl(var(--primary-base))"
-                  strokeWidth={2}
-                  fill="hsl(var(--primary-alpha-50))"
+                  name='Team Performance'
+                  dataKey='value'
+                  stroke='var(--primary-base)'
+                  fill='var(--primary-alpha-50)'
                   fillOpacity={0.5}
+                  animationDuration={600}
+                  animationEasing='ease-out'
+                  dot={({ ...props }) => {
+                    return (
+                      <circle
+                        {...props}
+                        fill='var(--bg-white-0)'
+                        fillOpacity={1}
+                      />
+                    );
+                  }}
                 />
               </RadarChart>
-            </ChartContainer>
+            </ResponsiveContainer>
           </div>
         </div>
       </WidgetBox.Content>
