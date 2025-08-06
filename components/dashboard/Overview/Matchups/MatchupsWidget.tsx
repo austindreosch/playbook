@@ -414,9 +414,9 @@ export default function MatchupsWidget({
             <div className="min-w-0 border-l border-border-soft pl-3">
               <div className="space-y-1">
                 {blueprint.lineup.slice(0, 4).map((player) => (
-                  <div key={player.playerId} className="flex items-center gap-1 min-w-0">
+                  <div key={player.playerId} className="flex items-center gap-2 min-w-0">
                     {getPlayerStatusIcon(player)}
-                    <span className="text-label-lg text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-paragraph-lg text-gray-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
@@ -425,7 +425,7 @@ export default function MatchupsWidget({
             {/* Battleground Stats */}
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 mb-2">
-                <Sword className="hw-icon-sm text-soft-400 flex-shrink-0" strokeWidth={2} />
+                {/* <Sword className="hw-icon-sm text-soft-400 flex-shrink-0" strokeWidth={2} /> */}
                 <h4 className="text-label-md text-soft-400 truncate">Battleground Stats</h4>
               </div>
               
@@ -486,11 +486,11 @@ export default function MatchupsWidget({
               {/* User team missing players */}
               <div className="space-y-1 min-w-0">
                 {blueprint.missingPlayers.userTeam.map((player) => (
-                  <div key={player.playerId} className="flex items-center gap-1 min-w-0">
+                  <div key={player.playerId} className="flex items-center gap-2 min-w-0">
                     <div className="hw-icon-md flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-lg text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-paragraph-lg text-gray-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
@@ -498,11 +498,11 @@ export default function MatchupsWidget({
               {/* Opponent missing players */}
               <div className="space-y-1 min-w-0">
                 {blueprint.missingPlayers.opponentTeam.map((player) => (
-                  <div key={player.playerId} className="flex items-center gap-1 min-w-0">
+                  <div key={player.playerId} className="flex items-center gap-2 min-w-0">
                     <div className="hw-icon-md flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-lg text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-paragraph-lg text-gray-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>

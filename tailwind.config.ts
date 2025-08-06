@@ -451,6 +451,7 @@ const config = {
         'alpha-10': 'var(--neutral-alpha-10)',
       },
       blue: {
+        DEFAULT: 'var(--blue-500)',
         '50': 'var(--blue-50)',
         '100': 'var(--blue-100)',
         '200': 'var(--blue-200)',
@@ -465,8 +466,10 @@ const config = {
         'alpha-24': 'var(--blue-alpha-24)',
         'alpha-16': 'var(--blue-alpha-16)',
         'alpha-10': 'var(--blue-alpha-10)',
+
       },
       orange: {
+        DEFAULT: 'var(--orange-500)',
         '50': 'var(--orange-50)',
         '100': 'var(--orange-100)',
         '200': 'var(--orange-200)',
@@ -483,6 +486,7 @@ const config = {
         'alpha-10': 'var(--orange-alpha-10)',
       },
       red: {
+        DEFAULT: 'var(--red-500)',
         '50': 'var(--red-50)',
         '100': 'var(--red-100)',
         '200': 'var(--red-200)',
@@ -499,6 +503,7 @@ const config = {
         'alpha-10': 'var(--red-alpha-10)',
       },
       green: {
+        DEFAULT: 'var(--green-500)',
         '50': 'var(--green-50)',
         '100': 'var(--green-100)',
         '200': 'var(--green-200)',
@@ -515,6 +520,7 @@ const config = {
         'alpha-10': 'var(--green-alpha-10)',
       },
       yellow: {
+        DEFAULT: 'var(--yellow-500)',
         '50': 'var(--yellow-50)',
         '100': 'var(--yellow-100)',
         '200': 'var(--yellow-200)',
@@ -531,6 +537,7 @@ const config = {
         'alpha-10': 'var(--yellow-alpha-10)',
       },
       purple: {
+        DEFAULT: 'var(--purple-500)',
         '50': 'var(--purple-50)',
         '100': 'var(--purple-100)',
         '200': 'var(--purple-200)',
@@ -547,6 +554,7 @@ const config = {
         'alpha-10': 'var(--purple-alpha-10)',
       },
       sky: {
+        DEFAULT: 'var(--sky-500)',
         '50': 'var(--sky-50)',
         '100': 'var(--sky-100)',
         '200': 'var(--sky-200)',
@@ -563,6 +571,7 @@ const config = {
         'alpha-10': 'var(--sky-alpha-10)',
       },
       pink: {
+        DEFAULT: 'var(--pink-500)',
         '50': 'var(--pink-50)',
         '100': 'var(--pink-100)',
         '200': 'var(--pink-200)',
@@ -579,6 +588,7 @@ const config = {
         'alpha-10': 'var(--pink-alpha-10)',
       },
       teal: {
+        DEFAULT: 'var(--teal-500)',
         '50': 'var(--teal-50)',
         '100': 'var(--teal-100)',
         '200': 'var(--teal-200)',

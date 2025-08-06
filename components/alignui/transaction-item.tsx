@@ -30,12 +30,12 @@ export const TransactionItem = React.forwardRef<
       <button
         type='button'
         ref={forwardedRef}
-        className='flex w-full items-center gap-3 rounded-xl py-2 text-left transition-all duration-200 ease-out hover:bg-bg-weak-50 hover:px-3'
+        className='flex w-full items-center gap-3 rounded-xl  py-2 text-left transition-all duration-200 ease-out hover:bg-bg-weak-50 hover:px-3'
         {...rest}
       >
         <div
           className={cn(
-            'flex size-10 shrink-0 items-center justify-center rounded-full',
+            'flex size-10 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-stroke-soft-200',
             {
               'bg-bg-white-0 text-sub-600 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200':
                 type === 'other',
@@ -57,9 +57,9 @@ export const TransactionItem = React.forwardRef<
           <div className='truncate text-label-sm text-strong-950'>
             {name}
           </div>
-          <div className='truncate text-paragraph-xs text-sub-600'>
+          {/* <div className='truncate text-paragraph-xs text-sub-600'>
             {description}
-          </div>
+          </div> */}
         </div>
         <div className='space-y-1 text-right'>
           <div className='text-label-sm text-strong-950'>
