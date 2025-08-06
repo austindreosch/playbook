@@ -104,12 +104,12 @@ export function WidgetSupportAnalytics() {
         <div className='flex items-start gap-2'>
           <div className='flex-1'>
             <div className='flex items-center gap-1'>
-              <div className='text-label-sm text-text-sub-600'>
+              <div className='text-label-sm text-sub-600'>
                 Support Analytics
               </div>
               <Tooltip.Root>
                 <Tooltip.Trigger>
-                  <IconInfoCustom className='size-5 text-text-disabled-300' />
+                  <IconInfoCustom className='size-5 text-disabled-300' />
                 </Tooltip.Trigger>
                 <Tooltip.Content className='max-w-80'>
                   View and track the sales performance of your products,
@@ -118,8 +118,8 @@ export function WidgetSupportAnalytics() {
               </Tooltip.Root>
             </div>
             <div className='mt-1 flex items-center gap-2'>
-              <div className='text-title-h5 text-text-strong-950'>2450</div>
-              <div className='text-label-sm text-text-sub-600'>
+              <div className='text-title-h5 text-strong-950'>2450</div>
+              <div className='text-label-sm text-sub-600'>
                 <span className='text-success-base'>+5.4%</span> total tickets
               </div>
             </div>
@@ -159,7 +159,7 @@ export function WidgetSupportAnalytics() {
               key={value}
               value={value}
               className={cn(
-                'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+                'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
                 'transition duration-200 ease-out',
                 'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
               )}
@@ -203,7 +203,7 @@ export function WidgetSupportAnalytics() {
             }}
           >
             <div className='flex'>
-              <div className='rounded-l-md bg-faded-dark py-1 pl-2 text-label-xs text-text-white-0'>
+              <div className='rounded-l-md bg-faded-dark py-1 pl-2 text-label-xs text-white-0'>
                 Target : {currentData.target}m
               </div>
               {/* tail */}
@@ -236,7 +236,7 @@ export function WidgetSupportAnalytics() {
           <div
             key={p.date}
             className={cn(
-              'flex h-5 items-center justify-center rounded text-center text-label-xs text-text-soft-400 transition duration-200 ease-out',
+              'flex h-5 items-center justify-center rounded text-center text-label-xs text-soft-400 transition duration-200 ease-out',
               {
                 'text-primary-base bg-primary-alpha-16': p.isActive,
               },
@@ -272,9 +272,9 @@ export function WidgetSupportAnalytics() {
             <table className='w-full' cellPadding={0}>
               <thead className='text-left'>
                 <tr>
-                  <th className='text-label-xs text-text-soft-400'>Channels</th>
-                  <th className='text-label-xs text-text-soft-400'>Actual</th>
-                  <th className='w-0 text-label-xs text-text-soft-400'>Avg.</th>
+                  <th className='text-label-xs text-soft-400'>Channels</th>
+                  <th className='text-label-xs text-soft-400'>Actual</th>
+                  <th className='w-0 text-label-xs text-soft-400'>Avg.</th>
                 </tr>
               </thead>
               {/* to have space between thead and tbody */}
@@ -282,15 +282,15 @@ export function WidgetSupportAnalytics() {
               <tbody>
                 <tr>
                   <td>
-                    <div className='text-label-sm text-text-strong-950'>
+                    <div className='text-label-sm text-strong-950'>
                       First response time
                     </div>
-                    <div className='mt-1 text-label-xs text-text-soft-400'>
+                    <div className='mt-1 text-label-xs text-soft-400'>
                       Below SLA
                     </div>
                   </td>
                   <td>
-                    <div className='text-label-sm text-text-sub-600'>15m</div>
+                    <div className='text-label-sm text-sub-600'>15m</div>
                   </td>
                   <td>
                     <div className='text-label-sm text-success-base'>+22%</div>
@@ -301,15 +301,15 @@ export function WidgetSupportAnalytics() {
                 </tr>
                 <tr>
                   <td>
-                    <div className='text-label-sm text-text-strong-950'>
+                    <div className='text-label-sm text-strong-950'>
                       Avg Resolution Time
                     </div>
-                    <div className='mt-1 text-label-xs text-text-soft-400'>
+                    <div className='mt-1 text-label-xs text-soft-400'>
                       Meeting SLA
                     </div>
                   </td>
                   <td>
-                    <div className='text-label-sm text-text-sub-600'>48m</div>
+                    <div className='text-label-sm text-sub-600'>48m</div>
                   </td>
                   <td>
                     <div className='text-label-sm text-success-base'>+18%</div>
@@ -320,15 +320,15 @@ export function WidgetSupportAnalytics() {
                 </tr>
                 <tr>
                   <td>
-                    <div className='text-label-sm text-text-strong-950'>
+                    <div className='text-label-sm text-strong-950'>
                       CSAT Score
                     </div>
-                    <div className='mt-1 text-label-xs text-text-soft-400'>
+                    <div className='mt-1 text-label-xs text-soft-400'>
                       Above Target
                     </div>
                   </td>
                   <td>
-                    <div className='text-label-sm text-text-sub-600'>4.8/5</div>
+                    <div className='text-label-sm text-sub-600'>4.8/5</div>
                   </td>
                   <td>
                     <div className='text-label-sm text-error-base'>-0.3%</div>
@@ -344,7 +344,7 @@ export function WidgetSupportAnalytics() {
           className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-4'
         >
           <div className='px-5 py-4'>
-            <div className='text-paragraph-sm text-text-sub-600'>
+            <div className='text-paragraph-sm text-sub-600'>
               Open Tickets content
             </div>
           </div>
@@ -354,7 +354,7 @@ export function WidgetSupportAnalytics() {
           className='data-[state=active]:duration-300 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-bottom-4'
         >
           <div className='px-5 py-4'>
-            <div className='text-paragraph-sm text-text-sub-600'>
+            <div className='text-paragraph-sm text-sub-600'>
               Solved Tickets content
             </div>
           </div>
@@ -364,18 +364,18 @@ export function WidgetSupportAnalytics() {
       <Divider.Root />
 
       <div className='p-5 pt-4'>
-        <div className='text-label-xs text-text-soft-400'>Recent Tickets</div>
+        <div className='text-label-xs text-soft-400'>Recent Tickets</div>
 
         <div className='mt-4 flex flex-col gap-4'>
           <div className='flex items-center gap-3'>
             <Avatar.Root size='32'>J</Avatar.Root>
             <div className='flex-1'>
-              <div className='text-label-sm text-text-strong-950'>
+              <div className='text-label-sm text-strong-950'>
                 James Brown
               </div>
               <div className='mt-1 flex flex-wrap items-center gap-1.5'>
-                <div className='text-label-xs text-text-soft-400'>High</div>
-                <span className='text-label-xs text-text-soft-400'>·</span>
+                <div className='text-label-xs text-soft-400'>High</div>
+                <span className='text-label-xs text-soft-400'>·</span>
                 <div className='flex items-center gap-[5px] text-label-xs text-success-base'>
                   <IconStatusSolved className='size-3 shrink-0' />
                   Solved
@@ -383,8 +383,8 @@ export function WidgetSupportAnalytics() {
               </div>
             </div>
             <div className='text-right'>
-              <div className='text-label-sm text-text-strong-950'>48m</div>
-              <div className='mt-1 text-label-xs text-text-soft-400'>
+              <div className='text-label-sm text-strong-950'>48m</div>
+              <div className='mt-1 text-label-xs text-soft-400'>
                 #TKT-98744
               </div>
             </div>
@@ -395,12 +395,12 @@ export function WidgetSupportAnalytics() {
               S
             </Avatar.Root>
             <div className='flex-1'>
-              <div className='text-label-sm text-text-strong-950'>
+              <div className='text-label-sm text-strong-950'>
                 Sophia Williams
               </div>
               <div className='mt-1 flex flex-wrap items-center gap-1.5'>
-                <div className='text-label-xs text-text-soft-400'>Medium</div>
-                <span className='text-label-xs text-text-soft-400'>·</span>
+                <div className='text-label-xs text-soft-400'>Medium</div>
+                <span className='text-label-xs text-soft-400'>·</span>
                 <div className='flex items-center gap-[5px] text-label-xs text-warning-base'>
                   <IconStatusInProgress className='size-3 shrink-0' />
                   In-progress
@@ -408,8 +408,8 @@ export function WidgetSupportAnalytics() {
               </div>
             </div>
             <div className='text-right'>
-              <div className='text-label-sm text-text-strong-950'>19m</div>
-              <div className='mt-1 text-label-xs text-text-soft-400'>
+              <div className='text-label-sm text-strong-950'>19m</div>
+              <div className='mt-1 text-label-xs text-soft-400'>
                 #TKT-98743
               </div>
             </div>
@@ -420,12 +420,12 @@ export function WidgetSupportAnalytics() {
               M
             </Avatar.Root>
             <div className='flex-1'>
-              <div className='text-label-sm text-text-strong-950'>
+              <div className='text-label-sm text-strong-950'>
                 Matthew Johnson
               </div>
               <div className='mt-1 flex flex-wrap items-center gap-1.5'>
-                <div className='text-label-xs text-text-soft-400'>Low</div>
-                <span className='text-label-xs text-text-soft-400'>·</span>
+                <div className='text-label-xs text-soft-400'>Low</div>
+                <span className='text-label-xs text-soft-400'>·</span>
                 <div className='flex items-center gap-[5px] text-label-xs text-away-base'>
                   <IconStatusPending className='size-3 shrink-0' />
                   Pending
@@ -433,8 +433,8 @@ export function WidgetSupportAnalytics() {
               </div>
             </div>
             <div className='text-right'>
-              <div className='text-label-sm text-text-strong-950'>12m</div>
-              <div className='mt-1 text-label-xs text-text-soft-400'>
+              <div className='text-label-sm text-strong-950'>12m</div>
+              <div className='mt-1 text-label-xs text-soft-400'>
                 #TKT-98745
               </div>
             </div>

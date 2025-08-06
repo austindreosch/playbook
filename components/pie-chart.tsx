@@ -16,7 +16,7 @@ const PieChart: React.FC<PieChartProps> = ({ data, width = 300, height = 300 }) 
     >
       <div className="text-center space-y-2">
         <div className="w-12 h-12 bg-primary-base rounded-full mx-auto opacity-20"></div>
-        <div className="text-subheading-sm text-text-soft-400">Pie Chart</div>
+        <div className="text-subheading-sm text-soft-400">Pie Chart</div>
       </div>
     </div>
   );

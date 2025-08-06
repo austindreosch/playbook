@@ -146,7 +146,7 @@ const getActionTypeColor = (type: string) => {
     case 'claim':
       return 'text-success-base';
     default:
-      return 'text-text-soft-400';
+      return 'text-soft-400';
   }
 };
 
@@ -238,7 +238,7 @@ export default function ActionStepsWidget({
                 </div>
 
                 {/* Description */}
-                <p className="text-paragraph-md text-text-soft-400 mb-3 px-2 leading-relaxed line-clamp-2">
+                <p className="text-paragraph-md text-soft-400 mb-3 px-2 leading-relaxed line-clamp-2">
                   {item.description}
                 </p>
 
@@ -259,9 +259,9 @@ export default function ActionStepsWidget({
           {/* Empty state */}
           {blueprint.actionItems.length === 0 && (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <ActivitySquare className="hw-icon-lg text-text-disabled-300 mb-3" strokeWidth={1.5} />
-              <p className="text-label-base text-text-disabled-300 mb-1">No action items</p>
-              <p className="text-paragraph-sm text-text-disabled-300">
+              <ActivitySquare className="hw-icon-lg text-disabled-300 mb-3" strokeWidth={1.5} />
+              <p className="text-label-base text-disabled-300 mb-1">No action items</p>
+              <p className="text-paragraph-sm text-disabled-300">
                 All caught up! Check back later for new recommendations.
               </p>
             </div>

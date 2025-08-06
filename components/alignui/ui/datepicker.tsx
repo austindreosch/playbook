@@ -27,7 +27,7 @@ function Calendar({
         month: 'space-y-2',
         caption:
           'flex justify-center items-center relative rounded-lg bg-bg-weak-50 h-9',
-        caption_label: 'text-label-sm text-text-sub-600 select-none',
+        caption_label: 'text-label-sm text-sub-600 select-none',
         nav: 'flex items-center',
         nav_button: compactButtonVariants({
           variant: 'white',
@@ -38,7 +38,7 @@ function Calendar({
         table: 'w-full border-collapse',
         head_row: 'flex gap-2',
         head_cell:
-          'text-text-soft-400 text-label-sm uppercase size-10 flex items-center justify-center text-center select-none',
+          'text-soft-400 text-label-sm uppercase size-10 flex items-center justify-center text-center select-none',
         row: 'grid grid-flow-col auto-cols-auto w-full mt-2 gap-2',
         cell: cn(
           // base
@@ -64,14 +64,14 @@ function Calendar({
         ),
         day: cn(
           // base
-          'flex size-10 shrink-0 items-center justify-center rounded-lg text-center text-label-sm text-text-sub-600 outline-none',
+          'flex size-10 shrink-0 items-center justify-center rounded-lg text-center text-label-sm text-sub-600 outline-none',
           'transition duration-200 ease-out',
           // hover
-          'hover:bg-bg-weak-50 hover:text-text-strong-950',
+          'hover:bg-bg-weak-50 hover:text-strong-950',
           // selected
           'aria-[selected]:bg-primary-base aria-[selected]:text-static-white',
           // focus visible
-          'focus:outline-none focus-visible:bg-bg-weak-50 focus-visible:text-text-strong-950',
+          'focus:outline-none focus-visible:bg-bg-weak-50 focus-visible:text-strong-950',
         ),
         day_range_start: 'day-range-start',
         day_range_end: 'day-range-end',
@@ -79,8 +79,8 @@ function Calendar({
         day_range_middle: 'day-range-middle !text-primary-base !bg-transparent',
         day_today: 'day-today',
         day_outside:
-          'day-outside !text-text-disabled-300 aria-[selected]:!text-static-white',
-        day_disabled: 'day-disabled !text-text-disabled-300',
+          'day-outside !text-disabled-300 aria-[selected]:!text-static-white',
+        day_disabled: 'day-disabled !text-disabled-300',
         day_hidden: 'invisible',
         ...classNames,
       }}

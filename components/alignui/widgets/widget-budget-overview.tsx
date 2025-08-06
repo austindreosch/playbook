@@ -93,7 +93,7 @@ export default function WidgetBudgetOverview({
               <RiArrowLeftDownFill className='size-5 text-information-base' />
             </div>
             <div className='space-y-1'>
-              <div className='text-subheading-2xs uppercase text-text-soft-400'>
+              <div className='text-subheading-2xs uppercase text-soft-400'>
                 INCOME
               </div>
               <div className='flex items-center gap-1'>
@@ -110,7 +110,7 @@ export default function WidgetBudgetOverview({
               <RiArrowRightUpFill className='size-5 text-verified-base' />
             </div>
             <div className='space-y-1'>
-              <div className='text-subheading-2xs uppercase text-text-soft-400'>
+              <div className='text-subheading-2xs uppercase text-soft-400'>
                 EXPENSES
               </div>
               <div className='flex items-center gap-1'>
@@ -127,7 +127,7 @@ export default function WidgetBudgetOverview({
               <RiCalendarCheckFill className='size-5 text-feature-base' />
             </div>
             <div className='space-y-1'>
-              <div className='text-subheading-2xs uppercase text-text-soft-400'>
+              <div className='text-subheading-2xs uppercase text-soft-400'>
                 scheduled
               </div>
               <div className='flex items-center gap-1'>
@@ -185,7 +185,7 @@ export function WidgetBudgetOverviewEmpty({
         <Divider.Root />
         <div className='flex h-[284px] flex-col items-center justify-center gap-5 p-5'>
           <IllustrationEmptyBudgetOverview className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any cards yet.
             <br />
             Click the button to add one.

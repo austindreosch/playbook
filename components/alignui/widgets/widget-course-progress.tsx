@@ -34,7 +34,7 @@ export default function WidgetCourseProgress({
           </ProgressCircle.Root>
           <div>
             <div className='text-label-sm'>Team Diversity Training</div>
-            <div className='mt-1 text-paragraph-xs text-text-sub-600'>
+            <div className='mt-1 text-paragraph-xs text-sub-600'>
               Designed to foster inclusivity and leverage diverse perspectives.
             </div>
             <LinkButton.Root
@@ -74,10 +74,10 @@ export function WidgetCourseProgressEmpty({
             {formatter.format(0)}
           </ProgressCircle.Root>
           <div>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               No courses in progress
             </div>
-            <div className='mt-1 text-paragraph-xs text-text-soft-400'>
+            <div className='mt-1 text-paragraph-xs text-soft-400'>
               There’s no progress for any courses yet. Consider applying for
               one.
             </div>

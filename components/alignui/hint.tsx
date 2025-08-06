@@ -11,14 +11,14 @@ const HINT_ICON_NAME = 'HintIcon';
 
 export const hintVariants = tv({
   slots: {
-    root: 'group flex items-center gap-1 text-paragraph-xs text-text-sub-600',
-    icon: 'size-4 shrink-0 text-text-soft-400',
+    root: 'group flex items-center gap-1 text-paragraph-xs text-sub-600',
+    icon: 'size-4 shrink-0 text-soft-400',
   },
   variants: {
     disabled: {
       true: {
-        root: 'text-text-disabled-300',
-        icon: 'text-text-disabled-300',
+        root: 'text-disabled-300',
+        icon: 'text-disabled-300',
       },
     },
     hasError: {

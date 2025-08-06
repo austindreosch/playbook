@@ -143,7 +143,7 @@ const columns: ColumnDef<TableData>[] = [
         </Avatar.Root>
         <div className='space-y-0.5'>
           <div className='text-label-sm'>{row.original.instructor.name}</div>
-          <div className='text-paragraph-xs text-text-sub-600'>
+          <div className='text-paragraph-xs text-sub-600'>
             {row.original.instructor.title}
           </div>
         </div>
@@ -156,7 +156,7 @@ const columns: ColumnDef<TableData>[] = [
     cell: ({ row }) => (
       <div className='space-y-0.5 whitespace-nowrap'>
         <div className='text-paragraph-sm'>{row.original.course.name}</div>
-        <div className='text-paragraph-xs text-text-sub-600'>
+        <div className='text-paragraph-xs text-sub-600'>
           {row.original.course.date}
         </div>
       </div>
@@ -173,7 +173,7 @@ const columns: ColumnDef<TableData>[] = [
       return (
         <div className='flex items-center gap-2'>
           <ProgressBar.Root value={row.original.progress.value} color='blue' />
-          <div className='text-paragraph-xs text-text-sub-600'>
+          <div className='text-paragraph-xs text-sub-600'>
             {formatter.format(row.original.progress.value / 100)}
           </div>
         </div>
@@ -322,7 +322,7 @@ export function WidgetCoursesEmpty({
                   <Table.Head
                     key={header.id}
                     className={cnExt(
-                      'whitespace-nowrap text-text-disabled-300',
+                      'whitespace-nowrap text-disabled-300',
                       header.column.columnDef.meta?.className,
                     )}
                   >
@@ -342,7 +342,7 @@ export function WidgetCoursesEmpty({
               <td colSpan={999}>
                 <div className='flex h-[254px] flex-col items-center justify-center gap-5 p-5'>
                   <IllustrationEmptyCourses className='size-[108px]' />
-                  <div className='text-center text-paragraph-sm text-text-soft-400'>
+                  <div className='text-center text-paragraph-sm text-soft-400'>
                     There are no records of courses yet.
                     <br /> Please check back later.
                   </div>

@@ -20,12 +20,12 @@ export function WidgetVisitorChannels() {
         <div className='flex items-start gap-2'>
           <div className='flex-1'>
             <div className='flex items-center gap-1'>
-              <div className='text-label-sm text-text-sub-600'>
+              <div className='text-label-sm text-sub-600'>
                 Visitors Channels
               </div>
             </div>
             <div className='mt-1 flex items-center gap-2'>
-              <div className='text-title-h5 text-text-strong-950'>78%</div>
+              <div className='text-title-h5 text-strong-950'>78%</div>
               <Badge.Root variant='light' color='red' size='medium'>
                 -0.4%
               </Badge.Root>
@@ -47,9 +47,9 @@ export function WidgetVisitorChannels() {
         <table className='w-full' cellPadding={0}>
           <thead className='text-left'>
             <tr>
-              <th className='text-label-xs text-text-soft-400'>Channels</th>
-              <th className='text-label-xs text-text-soft-400'>Percent</th>
-              <th className='w-12 text-label-xs text-text-soft-400'>Total</th>
+              <th className='text-label-xs text-soft-400'>Channels</th>
+              <th className='text-label-xs text-soft-400'>Percent</th>
+              <th className='w-12 text-label-xs text-soft-400'>Total</th>
             </tr>
           </thead>
           {/* to have space between thead and tbody */}
@@ -57,7 +57,7 @@ export function WidgetVisitorChannels() {
           <tbody>
             <tr>
               <td>
-                <div className='flex items-center gap-2 text-label-sm text-text-sub-600'>
+                <div className='flex items-center gap-2 text-label-sm text-sub-600'>
                   <img
                     src='/images/social/facebook.svg'
                     alt=''
@@ -67,10 +67,10 @@ export function WidgetVisitorChannels() {
                 </div>
               </td>
               <td>
-                <div className='text-label-sm text-text-sub-600'>28%</div>
+                <div className='text-label-sm text-sub-600'>28%</div>
               </td>
               <td>
-                <div className='text-label-sm text-text-sub-600'>6,958</div>
+                <div className='text-label-sm text-sub-600'>6,958</div>
               </td>
             </tr>
             <tr aria-hidden='true'>
@@ -78,7 +78,7 @@ export function WidgetVisitorChannels() {
             </tr>
             <tr>
               <td>
-                <div className='flex items-center gap-2 text-label-sm text-text-sub-600'>
+                <div className='flex items-center gap-2 text-label-sm text-sub-600'>
                   <img
                     src='/images/social/instagram.svg'
                     alt=''
@@ -88,10 +88,10 @@ export function WidgetVisitorChannels() {
                 </div>
               </td>
               <td>
-                <div className='text-label-sm text-text-sub-600'>23%</div>
+                <div className='text-label-sm text-sub-600'>23%</div>
               </td>
               <td>
-                <div className='text-label-sm text-text-sub-600'>5,716</div>
+                <div className='text-label-sm text-sub-600'>5,716</div>
               </td>
             </tr>
             <tr aria-hidden='true'>
@@ -99,7 +99,7 @@ export function WidgetVisitorChannels() {
             </tr>
             <tr>
               <td>
-                <div className='flex items-center gap-2 text-label-sm text-text-sub-600'>
+                <div className='flex items-center gap-2 text-label-sm text-sub-600'>
                   <img
                     src='/images/social/google.svg'
                     alt=''
@@ -109,10 +109,10 @@ export function WidgetVisitorChannels() {
                 </div>
               </td>
               <td>
-                <div className='text-label-sm text-text-sub-600'>32%</div>
+                <div className='text-label-sm text-sub-600'>32%</div>
               </td>
               <td>
-                <div className='text-label-sm text-text-sub-600'>7,952</div>
+                <div className='text-label-sm text-sub-600'>7,952</div>
               </td>
             </tr>
           </tbody>

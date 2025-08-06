@@ -44,7 +44,7 @@ function HorizontalStepperSeparatorIcon<T extends React.ElementType>({
 
   return (
     <Component
-      className={cnExt('size-5 shrink-0 text-text-soft-400', className)}
+      className={cnExt('size-5 shrink-0 text-soft-400', className)}
       {...rest}
     />
   );
@@ -65,17 +65,17 @@ const horizontalStepperItemVariants = tv({
   variants: {
     state: {
       completed: {
-        root: 'text-text-strong-950',
+        root: 'text-strong-950',
         indicator: 'bg-success-base text-static-white',
       },
       active: {
-        root: 'text-text-strong-950',
+        root: 'text-strong-950',
         indicator: 'bg-primary-base text-static-white',
       },
       default: {
-        root: 'text-text-sub-600',
+        root: 'text-sub-600',
         indicator:
-          'bg-bg-white-0 text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+          'bg-bg-white-0 text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
       },
     },
   },

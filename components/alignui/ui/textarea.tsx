@@ -21,7 +21,7 @@ const Textarea = React.forwardRef<
       className={cnExt(
         [
           // base
-          'block w-full resize-none text-paragraph-sm text-text-strong-950 outline-none',
+          'block w-full resize-none text-paragraph-sm text-strong-950 outline-none',
           !simple && [
             'pointer-events-auto h-full min-h-[82px] bg-transparent pl-3 pr-2.5 pt-2.5',
           ],
@@ -47,17 +47,17 @@ const Textarea = React.forwardRef<
           ],
           !disabled && [
             // placeholder
-            'placeholder:select-none placeholder:text-text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
+            'placeholder:select-none placeholder:text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
             // hover placeholder
-            'group-hover/textarea:placeholder:text-text-sub-600',
+            'group-hover/textarea:placeholder:text-sub-600',
             // focus
             'focus:outline-none',
             // focus placeholder
-            'focus:placeholder:text-text-sub-600',
+            'focus:placeholder:text-sub-600',
           ],
           disabled && [
             // disabled
-            'text-text-disabled-300 placeholder:text-text-disabled-300',
+            'text-disabled-300 placeholder:text-disabled-300',
           ],
         ],
         className,
@@ -176,9 +176,9 @@ function CharCounter({
   return (
     <span
       className={cnExt(
-        'text-subheading-2xs text-text-soft-400',
+        'text-subheading-2xs text-soft-400',
         // disabled
-        'group-has-[[disabled]]/textarea:text-text-disabled-300',
+        'group-has-[[disabled]]/textarea:text-disabled-300',
         {
           'text-error-base': isError,
         },

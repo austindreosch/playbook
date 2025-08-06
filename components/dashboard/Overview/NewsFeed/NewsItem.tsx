@@ -70,7 +70,7 @@ const getNewsTypeColor = (type: string) => {
     // case 'talking-head':
     //   return 'bg-bg-strong-950';
     default:
-      return 'bg-gray-0';
+      return '';
   }
 };
 
@@ -165,12 +165,12 @@ export default function NewsItem({ item, className = '' }: NewsItemProps) {
       {/* Header */}
       <div className={`${headerColor} h-9 rounded-t-lg px-3 flex items-center justify-between border-b border-stroke-soft-100`}>
         <div className="flex items-center gap-2">
-          <TypeIcon className={`hw-icon-sm ${iconColor}`} strokeWidth={2} />
+          <TypeIcon className={`hw-icon-sm ${iconColor}`} strokeWidth={3} />
           <h4 className={`text-label-lg font-semibold ${textColor}`}>
             {title}
           </h4>
         </div>
-        <span className="text-paragraph-md text-text-disabled-300 flex-shrink-0">
+        <span className="text-paragraph-md text-disabled-300 flex-shrink-0">
           {item.timestamp}
         </span>
       </div>
@@ -189,20 +189,20 @@ export default function NewsItem({ item, className = '' }: NewsItemProps) {
           <div className="flex-1 min-w-0 mb-0.5">
             {/* Primary Name */}
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-label-lg font-medium text-text-strong-950 truncate">
+              <span className="text-label-lg font-medium text-strong-950 truncate">
                 {unifiedData.primaryName}
               </span>
             </div>
             
             {/* Primary Content */}
-            <p className="text-paragraph-md text-text-soft-400 leading-relaxed line-clamp-3">
+            <p className="text-paragraph-md text-soft-400 leading-relaxed line-clamp-3">
               {unifiedData.primaryContent}
             </p>
             
             {/* Secondary Content (for debates) */}
             {unifiedData.secondaryContent && (
               <div className="pl-2 border-l-2 border-stroke-soft-100">
-                <p className="text-paragraph-md text-text-soft-400 italic line-clamp-2">
+                <p className="text-paragraph-md text-soft-400 italic line-clamp-2">
                   {unifiedData.secondaryContent}
                 </p>
               </div>

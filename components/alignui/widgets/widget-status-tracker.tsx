@@ -27,7 +27,7 @@ export default function WidgetStatusTracker({
 
       <div className='space-y-4 pb-1 pt-4'>
         <div className='space-y-2.5'>
-          <p className='text-paragraph-xs text-text-sub-600'>Absent</p>
+          <p className='text-paragraph-xs text-sub-600'>Absent</p>
           <div className='flex items-center gap-3.5'>
             <Avatar.Root size='40'>
               <Avatar.Image src='/images/avatar/illustration/james.png' />
@@ -38,7 +38,7 @@ export default function WidgetStatusTracker({
 
             <div className='grow space-y-1'>
               <div className='text-label-sm'>James Brown 🧠</div>
-              <div className='text-paragraph-xs text-text-sub-600'>
+              <div className='text-paragraph-xs text-sub-600'>
                 Replaced by Arthur T.
               </div>
             </div>
@@ -53,7 +53,7 @@ export default function WidgetStatusTracker({
         <Divider.Root variant='line-spacing' />
 
         <div className='space-y-2.5'>
-          <p className='text-paragraph-xs text-text-sub-600'>Away</p>
+          <p className='text-paragraph-xs text-sub-600'>Away</p>
           <div className='space-y-4'>
             <div className='flex items-center gap-3.5'>
               <Avatar.Root size='40'>
@@ -65,7 +65,7 @@ export default function WidgetStatusTracker({
 
               <div className='grow space-y-1'>
                 <div className='text-label-sm'>Sophia Williams 🧠</div>
-                <div className='text-paragraph-xs text-text-sub-600'>
+                <div className='text-paragraph-xs text-sub-600'>
                   Synergy
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function WidgetStatusTracker({
 
               <div className='grow space-y-1'>
                 <div className='text-label-sm'>Arthur Taylor 🧠</div>
-                <div className='text-paragraph-xs text-text-sub-600'>Apex</div>
+                <div className='text-paragraph-xs text-sub-600'>Apex</div>
               </div>
 
               <Badge.Root color='orange' variant='lighter' size='medium'>
@@ -105,7 +105,7 @@ export default function WidgetStatusTracker({
 
               <div className='grow space-y-1'>
                 <div className='text-label-sm'>Emma Wright 🧠</div>
-                <div className='text-paragraph-xs text-text-sub-600'>Pulse</div>
+                <div className='text-paragraph-xs text-sub-600'>Pulse</div>
               </div>
 
               <Badge.Root color='orange' variant='lighter' size='medium'>
@@ -139,7 +139,7 @@ export function WidgetStatusTrackerEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyStatusTracker className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of statuses yet.
             <br /> Please check back later.
           </div>

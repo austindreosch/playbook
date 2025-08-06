@@ -17,14 +17,14 @@ const CurrencySelectTrigger = React.forwardRef<
     <SelectPrimitives.Trigger
       ref={forwardedRef}
       className={cnExt(
-        'group/trigger flex w-full items-center justify-center gap-2 text-label-sm text-text-strong-950 outline-none focus:outline-none',
+        'group/trigger flex w-full items-center justify-center gap-2 text-label-sm text-strong-950 outline-none focus:outline-none',
         className,
       )}
       {...rest}
     >
       {children}
       <SelectPrimitives.Icon asChild>
-        <div className='flex size-5 shrink-0 items-center justify-center rounded-full bg-bg-white-0 text-text-sub-600 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
+        <div className='flex size-5 shrink-0 items-center justify-center rounded-full bg-bg-white-0 text-sub-600 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
           <RiArrowDownSLine className='transition-default size-[18px] group-data-[state=open]/trigger:-rotate-180' />
         </div>
       </SelectPrimitives.Icon>
@@ -88,10 +88,10 @@ const CurrencySelectItem = React.forwardRef<
       ref={forwardedRef}
       className={cnExt(
         // base
-        'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-text-strong-950',
+        'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-strong-950',
         'transition-default flex items-center gap-2',
         // disabled
-        'data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-300',
+        'data-[disabled]:pointer-events-none data-[disabled]:text-disabled-300',
         // hover, focus
         'data-[highlighted]:bg-bg-weak-50 data-[highlighted]:outline-0',
         className,
@@ -102,7 +102,7 @@ const CurrencySelectItem = React.forwardRef<
         <span className='flex flex-1 items-center gap-2'>{children}</span>
       </SelectPrimitives.ItemText>
       <SelectPrimitives.ItemIndicator asChild>
-        <RiCheckLine className='absolute right-2 top-1/2 size-5 shrink-0 -translate-y-1/2 text-text-sub-600' />
+        <RiCheckLine className='absolute right-2 top-1/2 size-5 shrink-0 -translate-y-1/2 text-sub-600' />
       </SelectPrimitives.ItemIndicator>
     </SelectPrimitives.Item>
   );

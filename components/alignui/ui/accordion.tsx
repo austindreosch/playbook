@@ -52,7 +52,7 @@ const AccordionTrigger = React.forwardRef<
       ref={forwardedRef}
       className={cn(
         // base
-        'w-[calc(100%+theme(space.7))] text-left text-label-sm text-text-strong-950',
+        'w-[calc(100%+theme(space.7))] text-left text-label-sm text-strong-950',
         'grid auto-cols-auto grid-flow-col grid-cols-[auto,minmax(0,1fr)] items-center gap-2.5',
         '-m-3.5 p-3.5 outline-none',
         // focus
@@ -76,7 +76,7 @@ function AccordionIcon<T extends React.ElementType>({
 
   return (
     <Component
-      className={cn('size-5 text-text-sub-600', className)}
+      className={cn('size-5 text-sub-600', className)}
       {...rest}
     />
   );
@@ -99,10 +99,10 @@ function AccordionArrow({
     <>
       <OpenIcon
         className={cn(
-          'size-5 text-text-soft-400',
+          'size-5 text-soft-400',
           'transition duration-200 ease-out',
           // hover
-          'group-hover/accordion:text-text-sub-600',
+          'group-hover/accordion:text-sub-600',
           // open
           'group-data-[state=open]/accordion:hidden',
           className,
@@ -111,7 +111,7 @@ function AccordionArrow({
       />
       <CloseIcon
         className={cn(
-          'size-5 text-text-sub-600',
+          'size-5 text-sub-600',
           // close
           'hidden group-data-[state=open]/accordion:block',
           className,
@@ -134,7 +134,7 @@ const AccordionContent = React.forwardRef<
       {...rest}
     >
       <div
-        className={cn('pt-1.5 text-paragraph-sm text-text-sub-600', className)}
+        className={cn('pt-1.5 text-paragraph-sm text-sub-600', className)}
       >
         {children}
       </div>

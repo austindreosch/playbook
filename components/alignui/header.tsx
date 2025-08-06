@@ -30,7 +30,7 @@ export default function Header({
         {icon}
         <div className='space-y-1'>
           <div className='text-label-md lg:text-label-lg'>{title}</div>
-          <div className='text-paragraph-sm text-text-sub-600'>
+          <div className='text-paragraph-sm text-sub-600'>
             {description}
           </div>
         </div>

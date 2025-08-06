@@ -123,8 +123,8 @@ const ContactPill = React.forwardRef<HTMLButtonElement, ContactPillProps>(
           </Avatar.Root>
         )}
         <div
-          className={cnExt('ml-1.5 text-paragraph-sm text-text-sub-600', {
-            'text-label-sm text-text-strong-950': selected,
+          className={cnExt('ml-1.5 text-paragraph-sm text-sub-600', {
+            'text-label-sm text-strong-950': selected,
           })}
         >
           {person.name}
@@ -231,7 +231,7 @@ const CurrencyInput = ({ value = 0, onChange }: CurrencyInputProps) => {
         <RealtimeValueDisplay uniqueId={uniqueId} placeholder={placeholder} />
         <ReactAriaInput
           className={cn(
-            'absolute left-0 top-0 size-full text-title-h4 tabular-nums text-text-strong-950 outline-none focus:outline-none',
+            'absolute left-0 top-0 size-full text-title-h4 tabular-nums text-strong-950 outline-none focus:outline-none',
             uniqueId,
           )}
           placeholder={placeholder}
@@ -292,7 +292,7 @@ export default function WidgetQuickTransfer({
 
         <div className='flex flex-col gap-3'>
           <div className='flex items-center justify-between gap-2'>
-            <div className='text-subheading-xs uppercase text-text-soft-400'>
+            <div className='text-subheading-xs uppercase text-soft-400'>
               My Contacts (12)
             </div>
             <div className='flex gap-2'>
@@ -337,15 +337,15 @@ export default function WidgetQuickTransfer({
                 alt=''
                 className='size-5 shrink-0'
               />
-              <div className='text-paragraph-sm text-text-sub-600'>
+              <div className='text-paragraph-sm text-sub-600'>
                 My Physical Card
               </div>
             </div>
-            <RiArrowDownSLine className='size-5 shrink-0 text-text-sub-600' />
+            <RiArrowDownSLine className='size-5 shrink-0 text-sub-600' />
           </div>
           <div className='flex flex-col items-center gap-3.5 p-2'>
             <div>
-              <div className='pt-1.5 text-center text-subheading-2xs text-text-soft-400'>
+              <div className='pt-1.5 text-center text-subheading-2xs text-soft-400'>
                 ENTER AMOUNT
               </div>
               <div className='mt-1 flex justify-center'>
@@ -356,9 +356,9 @@ export default function WidgetQuickTransfer({
               </div>
             </div>
             <div className='flex h-7 w-full items-center justify-center rounded-md bg-bg-weak-50'>
-              <div className='text-paragraph-xs text-text-sub-600'>
+              <div className='text-paragraph-xs text-sub-600'>
                 Available:{' '}
-                <span className='font-medium text-text-strong-950'>
+                <span className='font-medium text-strong-950'>
                   $16,058.94
                 </span>
               </div>
@@ -398,7 +398,7 @@ export function WidgetQuickTransferEmpty({
         <Divider.Root />
         <div className='flex h-[284px] flex-col items-center justify-center gap-5 p-5'>
           <IllustrationEmptyQuickTransfer className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any funds to transfer.
             <br />
             Please check back later.

@@ -275,7 +275,7 @@ function MeetingItem({ id, title, date, platform, badges, people }: Meeting) {
       <div className='flex items-start justify-between gap-3'>
         <div className='space-y-1'>
           <div className='text-label-sm'>{title}</div>
-          <div className='text-subheading-xs text-text-sub-600'>{date}</div>
+          <div className='text-subheading-xs text-sub-600'>{date}</div>
         </div>
         <AccordionPrimitive.Trigger asChild>
           <CompactButton.Root
@@ -313,7 +313,7 @@ function MeetingItem({ id, title, date, platform, badges, people }: Meeting) {
 
           <div className='flex items-center justify-between'>
             {platform && (
-              <span className='text-paragraph-xs text-text-sub-600'>
+              <span className='text-paragraph-xs text-sub-600'>
                 {platform}
               </span>
             )}
@@ -368,7 +368,7 @@ function EventItem({
       <div className='flex items-start justify-between gap-3'>
         <div className='space-y-1'>
           <div className='text-label-sm'>{title}</div>
-          <div className='text-subheading-xs text-text-sub-600'>{date}</div>
+          <div className='text-subheading-xs text-sub-600'>{date}</div>
         </div>
         <AccordionPrimitive.Trigger asChild>
           <CompactButton.Root
@@ -395,8 +395,8 @@ function EventItem({
           </div>
 
           <div className='flex items-center justify-between gap-2'>
-            <span className='text-paragraph-xs text-text-sub-600'>{by}</span>
-            <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+            <span className='text-paragraph-xs text-sub-600'>{by}</span>
+            <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
               <RiUser6Fill className='size-4' />
               {quota.current}/{quota.max}
             </div>
@@ -420,7 +420,7 @@ function HolidayItem({
       <div className='flex items-start justify-between gap-3'>
         <div className='space-y-1'>
           <div className='text-label-sm'>{title}</div>
-          <div className='text-subheading-xs text-text-sub-600'>{date}</div>
+          <div className='text-subheading-xs text-sub-600'>{date}</div>
         </div>
         {badge && (
           <Badge.Root variant='light' size='medium' color={badge.color}>
@@ -436,7 +436,7 @@ function HolidayItem({
         <div className='text-paragraph-sm'>{message}</div>
       </div>
 
-      <div className='text-paragraph-xs text-text-sub-600'>{category}</div>
+      <div className='text-paragraph-xs text-sub-600'>{category}</div>
     </div>
   );
 }
@@ -480,7 +480,7 @@ export default function WidgetSchedule({
               <IconCmd className='size-2.5' />1
             </Kbd.Root>
             <button type='button' className=''>
-              <RiFilter3Fill className='size-5 text-text-soft-400' />
+              <RiFilter3Fill className='size-5 text-soft-400' />
             </button>
           </Input.Wrapper>
         </Input.Root>
@@ -509,7 +509,7 @@ export default function WidgetSchedule({
             <div className='pt-4'>
               <div className='flex h-[460px] flex-col items-center justify-center gap-5 p-5'>
                 <IllustrationEmptyScheduleMeetings className='size-[108px]' />
-                <div className='text-center text-paragraph-sm text-text-soft-400'>
+                <div className='text-center text-paragraph-sm text-soft-400'>
                   No records of meetings yet.
                   <br /> Please check back later.
                 </div>
@@ -540,7 +540,7 @@ export default function WidgetSchedule({
             <div className='pt-4'>
               <div className='flex h-[460px] flex-col items-center justify-center gap-5 p-5'>
                 <IllustrationEmptyScheduleEvents className='size-[108px]' />
-                <div className='text-center text-paragraph-sm text-text-soft-400'>
+                <div className='text-center text-paragraph-sm text-soft-400'>
                   No records of events yet.
                   <br /> Please check back later.
                 </div>
@@ -571,7 +571,7 @@ export default function WidgetSchedule({
             <div className='pt-4'>
               <div className='flex h-[460px] flex-col items-center justify-center gap-5 p-5'>
                 <IllustrationEmptyScheduleHoliday className='size-[108px]' />
-                <div className='text-center text-paragraph-sm text-text-soft-400'>
+                <div className='text-center text-paragraph-sm text-soft-400'>
                   No records of holidays yet.
                   <br /> Please check back later.
                 </div>

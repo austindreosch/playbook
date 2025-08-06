@@ -56,13 +56,13 @@ const CommandInput = React.forwardRef<
       ref={forwardedRef}
       className={cnExt(
         // base
-        'w-full bg-transparent text-paragraph-sm text-text-strong-950 outline-none',
+        'w-full bg-transparent text-paragraph-sm text-strong-950 outline-none',
         'transition duration-200 ease-out',
         // placeholder
         'placeholder:[transition:inherit]',
-        'placeholder:text-text-soft-400',
+        'placeholder:text-soft-400',
         // hover
-        'group-hover/cmd-input:placeholder:text-text-sub-600',
+        'group-hover/cmd-input:placeholder:text-sub-600',
         // focus
         'focus:outline-none',
         className,
@@ -102,7 +102,7 @@ const CommandGroup = React.forwardRef<
       className={cnExt(
         'relative px-2 py-3',
         // heading
-        '[&>[cmdk-group-heading]]:text-label-xs [&>[cmdk-group-heading]]:text-text-sub-600',
+        '[&>[cmdk-group-heading]]:text-label-xs [&>[cmdk-group-heading]]:text-sub-600',
         '[&>[cmdk-group-heading]]:mb-2 [&>[cmdk-group-heading]]:px-3 [&>[cmdk-group-heading]]:pt-1',
         className,
       )}
@@ -115,7 +115,7 @@ CommandGroup.displayName = 'CommandGroup';
 const commandItemVariants = tv({
   base: [
     'flex items-center gap-3 rounded-10 bg-bg-white-0',
-    'cursor-pointer text-paragraph-sm text-text-strong-950',
+    'cursor-pointer text-paragraph-sm text-strong-950',
     'transition duration-200 ease-out',
     // hover/selected
     'data-[selected=true]:bg-bg-weak-50',
@@ -157,7 +157,7 @@ function CommandItemIcon<T extends React.ElementType>({
 
   return (
     <Component
-      className={cnExt('size-5 shrink-0 text-text-sub-600', className)}
+      className={cnExt('size-5 shrink-0 text-sub-600', className)}
       {...rest}
     />
   );
@@ -185,7 +185,7 @@ function CommandFooterKeyBox({
   return (
     <div
       className={cnExt(
-        'flex size-5 shrink-0 items-center justify-center rounded bg-bg-weak-50 text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+        'flex size-5 shrink-0 items-center justify-center rounded bg-bg-weak-50 text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
         className,
       )}
       {...rest}

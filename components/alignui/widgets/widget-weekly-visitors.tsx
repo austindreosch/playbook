@@ -190,9 +190,9 @@ export function WidgetWeeklyVisitors() {
     <div className='relative flex w-full flex-col gap-4 rounded-2xl bg-bg-white-0 p-5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
-          <div className='text-label-sm text-text-sub-600'>Weekly Visitors</div>
+          <div className='text-label-sm text-sub-600'>Weekly Visitors</div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>16,008</div>
+            <div className='text-title-h5 text-strong-950'>16,008</div>
             <Badge.Root variant='light' color='green' size='medium'>
               +1.1%
             </Badge.Root>
@@ -208,14 +208,14 @@ export function WidgetWeeklyVisitors() {
           <div className='flex size-4 shrink-0 items-center justify-center'>
             <LegendDot className='bg-warning-base' />
           </div>
-          <span className='text-label-xs text-text-sub-600'>New visitors</span>
+          <span className='text-label-xs text-sub-600'>New visitors</span>
         </div>
         <div className='relative w-0 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-stroke-soft-200' />
         <div className='flex flex-1 items-center justify-center gap-1'>
           <div className='flex size-4 shrink-0 items-center justify-center'>
             <LegendDot className='bg-success-base' />
           </div>
-          <span className='text-label-xs text-text-sub-600'>
+          <span className='text-label-xs text-sub-600'>
             Returning visitors
           </span>
         </div>

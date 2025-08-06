@@ -25,14 +25,14 @@ export default function WidgetCreditScore({
 
         <div className='flex items-center gap-4'>
           <div className='flex-1'>
-            <div className='text-paragraph-lg text-text-sub-600'>
+            <div className='text-paragraph-lg text-sub-600'>
               Your{' '}
-              <span className='font-medium text-text-strong-950'>
+              <span className='font-medium text-strong-950'>
                 credit score
               </span>{' '}
-              is <span className='font-medium text-text-strong-950'>710</span>
+              is <span className='font-medium text-strong-950'>710</span>
             </div>
-            <div className='mt-1 text-paragraph-xs text-text-sub-600'>
+            <div className='mt-1 text-paragraph-xs text-sub-600'>
               This score is considered to be Excellent.
             </div>
           </div>
@@ -66,14 +66,14 @@ export function WidgetCreditScoreEmpty({
 
         <div className='flex items-center gap-4'>
           <div className='flex-1'>
-            <div className='text-paragraph-lg text-text-soft-400'>
+            <div className='text-paragraph-lg text-soft-400'>
               Your{' '}
-              <span className='font-medium text-text-sub-600'>
+              <span className='font-medium text-sub-600'>
                 credit score
               </span>{' '}
-              is <span className='font-medium text-text-sub-600'>0</span>
+              is <span className='font-medium text-sub-600'>0</span>
             </div>
-            <div className='mt-1 text-paragraph-xs text-text-soft-400'>
+            <div className='mt-1 text-paragraph-xs text-soft-400'>
               Feel free to build your credit history to see your score.
             </div>
           </div>

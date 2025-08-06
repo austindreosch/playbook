@@ -45,13 +45,13 @@ export function UserButton({ className }: { className?: string }) {
               Arthur Taylor
               <IconVerifiedFill className='size-5 text-verified-base' />
             </div>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               arthur@alignui.com
             </div>
           </div>
 
           <div className='flex size-6 items-center justify-center rounded-md'>
-            <RiArrowRightSLine className='size-5 text-text-sub-600' />
+            <RiArrowRightSLine className='size-5 text-sub-600' />
           </div>
         </div>
       </Dropdown.Trigger>
@@ -95,7 +95,7 @@ export function UserButton({ className }: { className?: string }) {
             </Link>
           </Dropdown.Item>
         </Dropdown.Group>
-        <div className='p-2 text-paragraph-sm text-text-soft-400'>
+        <div className='p-2 text-paragraph-sm text-soft-400'>
           v.1.5.69 · Terms & Conditions
         </div>
       </Dropdown.Content>
@@ -122,15 +122,15 @@ export function UserButtonMobile({ className }: { className?: string }) {
             Arthur Taylor
             <IconVerifiedFill className='size-5 text-verified-base' />
           </div>
-          <div className='text-paragraph-sm text-text-sub-600'>
+          <div className='text-paragraph-sm text-sub-600'>
             arthur@alignui.com
           </div>
         </div>
         <div
           className={cn(
-            'flex size-6 items-center justify-center rounded-md border border-stroke-soft-200 bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+            'flex size-6 items-center justify-center rounded-md border border-stroke-soft-200 bg-bg-white-0 text-sub-600 shadow-regular-xs',
             // open
-            'group-data-[state=open]:bg-bg-strong-950 group-data-[state=open]:text-text-white-0 group-data-[state=open]:shadow-none',
+            'group-data-[state=open]:bg-bg-strong-950 group-data-[state=open]:text-white-0 group-data-[state=open]:shadow-none',
           )}
         >
           <RiArrowDownSLine className='size-5 group-data-[state=open]:-rotate-180' />
@@ -176,7 +176,7 @@ export function UserButtonMobile({ className }: { className?: string }) {
             </Link>
           </Dropdown.Item>
         </Dropdown.Group>
-        <div className='p-2 text-paragraph-sm text-text-soft-400'>
+        <div className='p-2 text-paragraph-sm text-soft-400'>
           v.1.5.69 · Terms & Conditions
         </div>
       </Dropdown.Content>

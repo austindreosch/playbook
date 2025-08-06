@@ -73,7 +73,7 @@ export default function WidgetMyCards({
       <SegmentedControl.Root defaultValue='virtual'>
         <SegmentedControl.List>
           <SegmentedControl.Trigger value='virtual'>
-            Virtual <span className='text-text-soft-400'>(2)</span>
+            Virtual <span className='text-soft-400'>(2)</span>
           </SegmentedControl.Trigger>
           <SegmentedControl.Trigger value='physical'>
             Physical
@@ -106,7 +106,7 @@ export default function WidgetMyCards({
               </div>
               <div className='flex flex-col gap-3'>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>
+                  <div className='text-paragraph-sm text-sub-600'>
                     Card Number
                   </div>
                   <div className='text-label-sm'>
@@ -114,7 +114,7 @@ export default function WidgetMyCards({
                   </div>
                 </div>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>
+                  <div className='text-paragraph-sm text-sub-600'>
                     Expiry Date
                   </div>
                   <div className='text-label-sm'>
@@ -122,11 +122,11 @@ export default function WidgetMyCards({
                   </div>
                 </div>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>CVC</div>
+                  <div className='text-paragraph-sm text-sub-600'>CVC</div>
                   <div className='text-label-sm'>{activeVCardData.cvc}</div>
                 </div>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>
+                  <div className='text-paragraph-sm text-sub-600'>
                     Spending Limit
                   </div>
                   <div className='text-label-sm'>
@@ -171,7 +171,7 @@ export default function WidgetMyCards({
               <Divider.Root />
 
               <div>
-                <div className='text-subheading-xs uppercase text-text-soft-400'>
+                <div className='text-subheading-xs uppercase text-soft-400'>
                   Recent Transactions
                 </div>
                 <div className='mt-2'>
@@ -232,7 +232,7 @@ export default function WidgetMyCards({
               </div>
               <div className='flex flex-col gap-3'>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>
+                  <div className='text-paragraph-sm text-sub-600'>
                     Card Number
                   </div>
                   <div className='text-label-sm'>
@@ -240,7 +240,7 @@ export default function WidgetMyCards({
                   </div>
                 </div>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>
+                  <div className='text-paragraph-sm text-sub-600'>
                     Expiry Date
                   </div>
                   <div className='text-label-sm'>
@@ -248,11 +248,11 @@ export default function WidgetMyCards({
                   </div>
                 </div>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>CVC</div>
+                  <div className='text-paragraph-sm text-sub-600'>CVC</div>
                   <div className='text-label-sm'>{activePCardData.cvc}</div>
                 </div>
                 <div className='flex items-center justify-between gap-2'>
-                  <div className='text-paragraph-sm text-text-sub-600'>
+                  <div className='text-paragraph-sm text-sub-600'>
                     Spending Limit
                   </div>
                   <div className='text-label-sm'>
@@ -297,7 +297,7 @@ export default function WidgetMyCards({
               <Divider.Root />
 
               <div>
-                <div className='text-subheading-xs uppercase text-text-soft-400'>
+                <div className='text-subheading-xs uppercase text-soft-400'>
                   Recent Transactions
                 </div>
                 <div className='mt-2'>
@@ -371,7 +371,7 @@ export function WidgetMyCardsEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyMyCards className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any cards yet.
             <br />
             Click the button to add one.

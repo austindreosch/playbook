@@ -17,10 +17,10 @@ const LabelRoot = React.forwardRef<
     <LabelPrimitives.Root
       ref={forwardedRef}
       className={cnExt(
-        'group cursor-pointer text-label-sm text-text-strong-950',
+        'group cursor-pointer text-label-sm text-strong-950',
         'flex items-center gap-px',
         // disabled
-        'aria-disabled:text-text-disabled-300',
+        'aria-disabled:text-disabled-300',
         className,
       )}
       aria-disabled={disabled}
@@ -40,7 +40,7 @@ function LabelAsterisk({
       className={cnExt(
         'text-primary-base',
         // disabled
-        'group-aria-disabled:text-text-disabled-300',
+        'group-aria-disabled:text-disabled-300',
         className,
       )}
       {...rest}
@@ -58,9 +58,9 @@ function LabelSub({
   return (
     <span
       className={cnExt(
-        'text-paragraph-sm text-text-sub-600',
+        'text-paragraph-sm text-sub-600',
         // disabled
-        'group-aria-disabled:text-text-disabled-300',
+        'group-aria-disabled:text-disabled-300',
         className,
       )}
       {...rest}

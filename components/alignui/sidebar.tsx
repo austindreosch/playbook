@@ -156,7 +156,7 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
   return (
     <div className='space-y-2'>
       <div
-        className={cn('p-1 text-subheading-xs uppercase text-text-soft-400', {
+        className={cn('p-1 text-subheading-xs uppercase text-soft-400', {
           '-mx-2.5 w-14 px-0 text-center': collapsed,
         })}
       >
@@ -170,7 +170,7 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
             aria-current={pathname === href ? 'page' : undefined}
             aria-disabled={disabled}
             className={cn(
-              'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-text-sub-600 hover:bg-bg-weak-50',
+              'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-sub-600 hover:bg-bg-weak-50',
               'transition-default',
               'aria-[current=page]:bg-bg-weak-50',
               'aria-disabled:pointer-events-none aria-disabled:opacity-50',
@@ -193,7 +193,7 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
             />
             <Icon
               className={cn(
-                'transition-default size-5 shrink-0 text-text-sub-600',
+                'transition-default size-5 shrink-0 text-sub-600',
                 'group-aria-[current=page]:text-primary-base',
               )}
             />
@@ -204,7 +204,7 @@ function NavigationMenu({ collapsed }: { collapsed: boolean }) {
             >
               <div className='flex-1 text-label-sm'>{label}</div>
               {pathname === href && (
-                <RiArrowRightSLine className='size-5 text-text-sub-600' />
+                <RiArrowRightSLine className='size-5 text-sub-600' />
               )}
             </div>
           </Link>
@@ -234,7 +234,7 @@ function SettingsAndSupport({ collapsed }: { collapsed: boolean }) {
   return (
     <div className='space-y-2'>
       <div
-        className={cn('p-1 text-subheading-xs uppercase text-text-soft-400', {
+        className={cn('p-1 text-subheading-xs uppercase text-soft-400', {
           '-mx-2.5 w-14 px-0 text-center': collapsed,
         })}
       >
@@ -251,7 +251,7 @@ function SettingsAndSupport({ collapsed }: { collapsed: boolean }) {
               aria-current={isActivePage ? 'page' : undefined}
               aria-disabled={disabled}
               className={cn(
-                'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-text-sub-600 hover:bg-bg-weak-50',
+                'group relative flex items-center gap-2 whitespace-nowrap rounded-lg py-2 text-sub-600 hover:bg-bg-weak-50',
                 'transition-default',
                 'aria-[current=page]:bg-bg-weak-50',
                 'aria-disabled:pointer-events-none aria-disabled:opacity-50',
@@ -274,7 +274,7 @@ function SettingsAndSupport({ collapsed }: { collapsed: boolean }) {
               />
               <Icon
                 className={cn(
-                  'transition-default size-5 shrink-0 text-text-sub-600',
+                  'transition-default size-5 shrink-0 text-sub-600',
                   'group-aria-[current=page]:text-primary-base',
                 )}
               />
@@ -285,7 +285,7 @@ function SettingsAndSupport({ collapsed }: { collapsed: boolean }) {
               >
                 <div className='flex-1 text-label-sm'>{label}</div>
                 {isActivePage && (
-                  <RiArrowRightSLine className='size-5 text-text-sub-600' />
+                  <RiArrowRightSLine className='size-5 text-sub-600' />
                 )}
               </div>
             </Link>

@@ -55,12 +55,12 @@ export function CustomerSegments() {
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               Customer Segments
             </div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Overview of customer types based on their purchasing behavior
@@ -70,7 +70,7 @@ export function CustomerSegments() {
           </div>
         </div>
 
-        <div className='text-label-sm text-text-sub-600'>
+        <div className='text-label-sm text-sub-600'>
           <span className='text-success-base'>+5.8%</span> vs last week
         </div>
       </div>
@@ -86,23 +86,23 @@ export function CustomerSegments() {
                 key={s.id}
                 className='flex items-center justify-between gap-1'
               >
-                <div className='flex items-center gap-2 text-label-sm text-text-sub-600'>
+                <div className='flex items-center gap-2 text-label-sm text-sub-600'>
                   <LegendDot className={s.bg} />
                   {s.name}
                 </div>
 
                 <div className='flex items-center gap-1.5 tabular-nums'>
-                  <div className='text-label-sm text-text-sub-600'>
+                  <div className='text-label-sm text-sub-600'>
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
                       currency: 'USD',
                       maximumFractionDigits: 0,
                     }).format(s.value)}
                   </div>
-                  <div className='text-paragraph-sm text-text-disabled-300'>
+                  <div className='text-paragraph-sm text-disabled-300'>
                     ·
                   </div>
-                  <div className='text-paragraph-sm text-text-soft-400'>
+                  <div className='text-paragraph-sm text-soft-400'>
                     {s.percentage}%
                   </div>
                 </div>
@@ -131,12 +131,12 @@ export function WidgetCustomerSegments() {
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               Customer Segments
             </div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Overview of customer types based on their purchasing behavior
@@ -146,7 +146,7 @@ export function WidgetCustomerSegments() {
           </div>
         </div>
 
-        <div className='text-label-sm text-text-sub-600'>
+        <div className='text-label-sm text-sub-600'>
           <span className='text-success-base'>+5.8%</span> vs last week
         </div>
       </div>
@@ -162,23 +162,23 @@ export function WidgetCustomerSegments() {
                 key={s.id}
                 className='flex items-center justify-between gap-1'
               >
-                <div className='flex items-center gap-2 text-label-sm text-text-sub-600'>
+                <div className='flex items-center gap-2 text-label-sm text-sub-600'>
                   <LegendDot className={s.bg} />
                   {s.name}
                 </div>
 
                 <div className='flex items-center gap-1.5 tabular-nums'>
-                  <div className='text-label-sm text-text-sub-600'>
+                  <div className='text-label-sm text-sub-600'>
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
                       currency: 'USD',
                       maximumFractionDigits: 0,
                     }).format(s.value)}
                   </div>
-                  <div className='text-paragraph-sm text-text-disabled-300'>
+                  <div className='text-paragraph-sm text-disabled-300'>
                     ·
                   </div>
-                  <div className='text-paragraph-sm text-text-soft-400'>
+                  <div className='text-paragraph-sm text-soft-400'>
                     {s.percentage}%
                   </div>
                 </div>

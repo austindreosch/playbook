@@ -66,14 +66,14 @@ export default function WidgetMyCardsCompact({
       <div className='mt-5 flex items-center gap-4'>
         <ProgressCircle.Root size='48' value={50} />
         <div className='flex-1'>
-          <div className='text-paragraph-sm text-text-sub-600'>
+          <div className='text-paragraph-sm text-sub-600'>
             Spending Limit
           </div>
           <div className='mt-1 flex items-baseline gap-1'>
-            <span className='text-label-lg text-text-strong-950'>
+            <span className='text-label-lg text-strong-950'>
               $1,500.00
             </span>
-            <span className='text-label-xs text-text-soft-400'>/ week</span>
+            <span className='text-label-xs text-soft-400'>/ week</span>
           </div>
         </div>
         <CompactButton.Root variant='stroke' size='large'>
@@ -104,7 +104,7 @@ export function WidgetMyCardsCompactEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyMyCards className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any cards yet.
             <br />
             Click the button to add one.

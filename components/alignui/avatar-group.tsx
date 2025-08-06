@@ -14,7 +14,7 @@ export const avatarGroupVariants = tv({
   slots: {
     root: 'flex *:ring-2 *:ring-stroke-white-0',
     overflow:
-      'relative flex shrink-0 items-center justify-center rounded-full bg-bg-weak-50 text-center text-text-sub-600',
+      'relative flex shrink-0 items-center justify-center rounded-full bg-bg-weak-50 text-center text-sub-600',
   },
   variants: {
     size: {

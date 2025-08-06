@@ -89,10 +89,10 @@ const TRANSFER_METHOD_ENUMS: Record<
 
 const getSortingIcon = (state: 'asc' | 'desc' | false) => {
   if (state === 'asc')
-    return <RiArrowUpSFill className='size-5 text-text-sub-600' />;
+    return <RiArrowUpSFill className='size-5 text-sub-600' />;
   if (state === 'desc')
-    return <RiArrowDownSFill className='size-5 text-text-sub-600' />;
-  return <RiExpandUpDownFill className='size-5 text-text-sub-600' />;
+    return <RiArrowDownSFill className='size-5 text-sub-600' />;
+  return <RiExpandUpDownFill className='size-5 text-sub-600' />;
 };
 
 function ActionCell({ row }: { row: any }) {
@@ -163,7 +163,7 @@ const columns: ColumnDef<TransactionTableData>[] = [
           )}
           {Icon && (
             <div className='flex size-8 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-              <Icon className='size-5 text-text-sub-600' />
+              <Icon className='size-5 text-sub-600' />
             </div>
           )}
           {!avatar && !Icon && (
@@ -171,7 +171,7 @@ const columns: ColumnDef<TransactionTableData>[] = [
               {row.original.toFrom.label.slice(0, 1)}
             </Avatar.Root>
           )}
-          <div className='text-paragraph-sm text-text-strong-950'>
+          <div className='text-paragraph-sm text-strong-950'>
             {row.original.toFrom.label}
           </div>
         </div>
@@ -193,7 +193,7 @@ const columns: ColumnDef<TransactionTableData>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className='text-paragraph-sm text-text-sub-600'>
+      <div className='text-paragraph-sm text-sub-600'>
         {row.original.amount.type === 'exit' ? '-' : ''}
         {currencyFormatter.format(row.original.amount.value)}
       </div>
@@ -214,7 +214,7 @@ const columns: ColumnDef<TransactionTableData>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className='text-paragraph-sm text-text-sub-600'>
+      <div className='text-paragraph-sm text-sub-600'>
         {row.original.account.label}
       </div>
     ),
@@ -234,7 +234,7 @@ const columns: ColumnDef<TransactionTableData>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className='text-paragraph-sm text-text-sub-600'>
+      <div className='text-paragraph-sm text-sub-600'>
         {formatDate(row.original.date.label)}
       </div>
     ),
@@ -260,9 +260,9 @@ const columns: ColumnDef<TransactionTableData>[] = [
       return (
         <div className='flex items-center gap-3'>
           <div className='flex size-8 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-            <Icon className='size-5 text-text-sub-600' />
+            <Icon className='size-5 text-sub-600' />
           </div>
-          <div className='text-paragraph-sm text-text-sub-600'>{label}</div>
+          <div className='text-paragraph-sm text-sub-600'>{label}</div>
         </div>
       );
     },
@@ -370,7 +370,7 @@ export function TransactionTablePagination() {
         >
           Previous
         </Button.Root>
-        <span className='whitespace-nowrap text-center text-paragraph-sm text-text-sub-600'>
+        <span className='whitespace-nowrap text-center text-paragraph-sm text-sub-600'>
           Page 2 of 16
         </span>
         <Button.Root
@@ -383,7 +383,7 @@ export function TransactionTablePagination() {
         </Button.Root>
       </div>
       <div className='mt-10 hidden items-center gap-3 lg:flex'>
-        <span className='flex-1 whitespace-nowrap text-paragraph-sm text-text-sub-600'>
+        <span className='flex-1 whitespace-nowrap text-paragraph-sm text-sub-600'>
           Page 2 of 16
         </span>
 

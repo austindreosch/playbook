@@ -28,12 +28,12 @@ export function MarketingChannels() {
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               Marketing Channels
             </div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Overview of your marketing channel performance metrics,
@@ -42,8 +42,8 @@ export function MarketingChannels() {
             </Tooltip.Root>
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>82%</div>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-title-h5 text-strong-950'>82%</div>
+            <div className='text-label-sm text-sub-600'>
               <span className='text-success-base'>+2.1%</span> vs last week
             </div>
           </div>
@@ -60,9 +60,9 @@ export function MarketingChannels() {
       <table className='w-full' cellPadding={0}>
         <thead className='text-left'>
           <tr>
-            <th className='text-label-xs text-text-soft-400'>Channels</th>
-            <th className='text-label-xs text-text-soft-400'>Metric</th>
-            <th className='text-label-xs text-text-soft-400'>Total</th>
+            <th className='text-label-xs text-soft-400'>Channels</th>
+            <th className='text-label-xs text-soft-400'>Metric</th>
+            <th className='text-label-xs text-soft-400'>Total</th>
           </tr>
         </thead>
         {/* to have space between thead and tbody */}
@@ -70,16 +70,16 @@ export function MarketingChannels() {
         <tbody>
           <tr>
             <td>
-              <div className='flex items-center gap-1.5 text-label-sm text-text-sub-600'>
-                <RiUser6Line className='size-5 shrink-0 text-text-soft-400' />
+              <div className='flex items-center gap-1.5 text-label-sm text-sub-600'>
+                <RiUser6Line className='size-5 shrink-0 text-soft-400' />
                 Acquisition
               </div>
             </td>
             <td>
-              <div className='text-paragraph-sm text-text-sub-600'>$38.25</div>
+              <div className='text-paragraph-sm text-sub-600'>$38.25</div>
             </td>
             <td>
-              <div className='flex items-center gap-0.5 text-paragraph-sm text-text-sub-600'>
+              <div className='flex items-center gap-0.5 text-paragraph-sm text-sub-600'>
                 <RiArrowUpLine className='size-5 shrink-0 text-success-base' />
                 +5.2%
               </div>
@@ -90,18 +90,18 @@ export function MarketingChannels() {
           </tr>
           <tr>
             <td>
-              <div className='flex items-center gap-1.5 text-label-sm text-text-sub-600'>
-                <RiTimeLine className='size-5 shrink-0 text-text-soft-400' />
+              <div className='flex items-center gap-1.5 text-label-sm text-sub-600'>
+                <RiTimeLine className='size-5 shrink-0 text-soft-400' />
                 Conversion
               </div>
             </td>
             <td>
-              <div className='text-paragraph-sm text-text-sub-600'>
+              <div className='text-paragraph-sm text-sub-600'>
                 4.2 days
               </div>
             </td>
             <td>
-              <div className='flex items-center gap-0.5 text-paragraph-sm text-text-sub-600'>
+              <div className='flex items-center gap-0.5 text-paragraph-sm text-sub-600'>
                 <RiArrowDownLine className='size-5 shrink-0 text-error-base' />
                 +3.8%
               </div>
@@ -112,16 +112,16 @@ export function MarketingChannels() {
           </tr>
           <tr>
             <td>
-              <div className='flex items-center gap-1.5 text-label-sm text-text-sub-600'>
-                <RiFocus2Line className='size-5 shrink-0 text-text-soft-400' />
+              <div className='flex items-center gap-1.5 text-label-sm text-sub-600'>
+                <RiFocus2Line className='size-5 shrink-0 text-soft-400' />
                 ROI
               </div>
             </td>
             <td>
-              <div className='text-paragraph-sm text-text-sub-600'>324%</div>
+              <div className='text-paragraph-sm text-sub-600'>324%</div>
             </td>
             <td>
-              <div className='flex items-center gap-0.5 text-paragraph-sm text-text-sub-600'>
+              <div className='flex items-center gap-0.5 text-paragraph-sm text-sub-600'>
                 <RiArrowUpLine className='size-5 shrink-0 text-success-base' />
                 +4.5%
               </div>
@@ -145,12 +145,12 @@ export function WidgetMarketingChannels() {
         <div className='flex items-start gap-2'>
           <div className='flex-1'>
             <div className='flex items-center gap-1'>
-              <div className='text-label-sm text-text-sub-600'>
+              <div className='text-label-sm text-sub-600'>
                 Marketing Channels
               </div>
               <Tooltip.Root>
                 <Tooltip.Trigger>
-                  <IconInfoCustom className='size-5 text-text-disabled-300' />
+                  <IconInfoCustom className='size-5 text-disabled-300' />
                 </Tooltip.Trigger>
                 <Tooltip.Content className='max-w-80'>
                   Overview of your marketing channel performance metrics,
@@ -159,8 +159,8 @@ export function WidgetMarketingChannels() {
               </Tooltip.Root>
             </div>
             <div className='mt-1 flex items-center gap-2'>
-              <div className='text-title-h5 text-text-strong-950'>82%</div>
-              <div className='text-label-sm text-text-sub-600'>
+              <div className='text-title-h5 text-strong-950'>82%</div>
+              <div className='text-label-sm text-sub-600'>
                 <span className='text-success-base'>+2.1%</span> vs last week
               </div>
             </div>
@@ -177,9 +177,9 @@ export function WidgetMarketingChannels() {
         <table className='w-full' cellPadding={0}>
           <thead className='text-left'>
             <tr>
-              <th className='text-label-xs text-text-soft-400'>Channels</th>
-              <th className='text-label-xs text-text-soft-400'>Metric</th>
-              <th className='text-label-xs text-text-soft-400'>Total</th>
+              <th className='text-label-xs text-soft-400'>Channels</th>
+              <th className='text-label-xs text-soft-400'>Metric</th>
+              <th className='text-label-xs text-soft-400'>Total</th>
             </tr>
           </thead>
           {/* to have space between thead and tbody */}
@@ -187,18 +187,18 @@ export function WidgetMarketingChannels() {
           <tbody>
             <tr>
               <td>
-                <div className='flex items-center gap-1.5 text-label-sm text-text-sub-600'>
-                  <RiUser6Line className='size-5 shrink-0 text-text-soft-400' />
+                <div className='flex items-center gap-1.5 text-label-sm text-sub-600'>
+                  <RiUser6Line className='size-5 shrink-0 text-soft-400' />
                   Acquisition
                 </div>
               </td>
               <td>
-                <div className='text-paragraph-sm text-text-sub-600'>
+                <div className='text-paragraph-sm text-sub-600'>
                   $38.25
                 </div>
               </td>
               <td>
-                <div className='flex items-center gap-0.5 text-paragraph-sm text-text-sub-600'>
+                <div className='flex items-center gap-0.5 text-paragraph-sm text-sub-600'>
                   <RiArrowUpLine className='size-5 shrink-0 text-success-base' />
                   +5.2%
                 </div>
@@ -209,18 +209,18 @@ export function WidgetMarketingChannels() {
             </tr>
             <tr>
               <td>
-                <div className='flex items-center gap-1.5 text-label-sm text-text-sub-600'>
-                  <RiTimeLine className='size-5 shrink-0 text-text-soft-400' />
+                <div className='flex items-center gap-1.5 text-label-sm text-sub-600'>
+                  <RiTimeLine className='size-5 shrink-0 text-soft-400' />
                   Conversion
                 </div>
               </td>
               <td>
-                <div className='text-paragraph-sm text-text-sub-600'>
+                <div className='text-paragraph-sm text-sub-600'>
                   4.2 days
                 </div>
               </td>
               <td>
-                <div className='flex items-center gap-0.5 text-paragraph-sm text-text-sub-600'>
+                <div className='flex items-center gap-0.5 text-paragraph-sm text-sub-600'>
                   <RiArrowDownLine className='size-5 shrink-0 text-error-base' />
                   +3.8%
                 </div>
@@ -231,16 +231,16 @@ export function WidgetMarketingChannels() {
             </tr>
             <tr>
               <td>
-                <div className='flex items-center gap-1.5 text-label-sm text-text-sub-600'>
-                  <RiFocus2Line className='size-5 shrink-0 text-text-soft-400' />
+                <div className='flex items-center gap-1.5 text-label-sm text-sub-600'>
+                  <RiFocus2Line className='size-5 shrink-0 text-soft-400' />
                   ROI
                 </div>
               </td>
               <td>
-                <div className='text-paragraph-sm text-text-sub-600'>324%</div>
+                <div className='text-paragraph-sm text-sub-600'>324%</div>
               </td>
               <td>
-                <div className='flex items-center gap-0.5 text-paragraph-sm text-text-sub-600'>
+                <div className='flex items-center gap-0.5 text-paragraph-sm text-sub-600'>
                   <RiArrowUpLine className='size-5 shrink-0 text-success-base' />
                   +4.5%
                 </div>

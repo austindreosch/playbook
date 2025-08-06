@@ -147,9 +147,9 @@ export default function WidgetExchange({
             <div className='text-title-h4'>
               {formatCurrency(AMOUNT, exchangeComparedFrom)}
             </div>
-            <div className='text-paragraph-sm text-text-sub-600'>
+            <div className='text-paragraph-sm text-sub-600'>
               Available :{' '}
-              <span className='text-label-sm text-text-strong-950'>
+              <span className='text-label-sm text-strong-950'>
                 <MotionNumber
                   value={convertedAvailableBalance || 0}
                   format={{
@@ -162,7 +162,7 @@ export default function WidgetExchange({
             </div>
           </div>
           <div className='rounded-b-xl bg-bg-weak-50 py-1.5 ring-1 ring-inset ring-stroke-soft-200'>
-            <div className='text-center text-paragraph-xs text-text-sub-600'>
+            <div className='text-center text-paragraph-xs text-sub-600'>
               <MotionNumber
                 value={1}
                 format={{
@@ -173,7 +173,7 @@ export default function WidgetExchange({
                 }}
               />{' '}
               ={' '}
-              <span className='text-label-xs text-text-strong-950'>
+              <span className='text-label-xs text-strong-950'>
                 <MotionNumber
                   value={exchangeRate || 0}
                   format={{
@@ -190,7 +190,7 @@ export default function WidgetExchange({
 
         <div className='flex flex-col gap-2.5'>
           <div className='flex items-center justify-between gap-4'>
-            <span className='text-paragraph-xs text-text-sub-600'>
+            <span className='text-paragraph-xs text-sub-600'>
               Tax (2%)
             </span>
             <span className='text-label-xs'>
@@ -198,7 +198,7 @@ export default function WidgetExchange({
             </span>
           </div>
           <div className='flex items-center justify-between gap-4'>
-            <span className='text-paragraph-xs text-text-sub-600'>
+            <span className='text-paragraph-xs text-sub-600'>
               Exchange fee (1%)
             </span>
             <span className='text-label-xs'>
@@ -206,7 +206,7 @@ export default function WidgetExchange({
             </span>
           </div>
           <div className='flex items-center justify-between gap-4'>
-            <span className='text-paragraph-xs text-text-sub-600'>
+            <span className='text-paragraph-xs text-sub-600'>
               Total amount
             </span>
             <span className='text-label-xs'>
@@ -257,7 +257,7 @@ export function WidgetExchangeEmpty({
         <Divider.Root />
         <div className='flex h-[284px] flex-col items-center justify-center gap-5 p-5'>
           <IllustrationEmptyExchange className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             Exchange feature is unavailable now. Please check back later.
           </div>
           <Button.Root variant='neutral' mode='stroke' size='xsmall'>

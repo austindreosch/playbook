@@ -34,7 +34,7 @@ export default function WidgetTotalExpenses({
       {...rest}
     >
       <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-        <RiArrowLeftDownLine className='size-5 text-text-sub-600' />
+        <RiArrowLeftDownLine className='size-5 text-sub-600' />
       </div>
 
       <div className='absolute right-6 top-8 h-10 w-[120px]'>
@@ -42,11 +42,11 @@ export default function WidgetTotalExpenses({
       </div>
 
       <div className='mt-auto'>
-        <div className='text-paragraph-sm text-text-sub-600'>
+        <div className='text-paragraph-sm text-sub-600'>
           Total Expenses
         </div>
         <div className='mt-1 flex items-center gap-2'>
-          <div className='text-title-h4 text-text-strong-950'>$6,240.28</div>
+          <div className='text-title-h4 text-strong-950'>$6,240.28</div>
           <Badge.Root variant='light' color='red' size='medium'>
             -2%
           </Badge.Root>
@@ -69,7 +69,7 @@ export function WidgetTotalExpensesEmpty({
       {...rest}
     >
       <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-        <RiArrowLeftDownLine className='size-5 text-text-sub-600' />
+        <RiArrowLeftDownLine className='size-5 text-sub-600' />
       </div>
 
       <div className='absolute right-6 top-8 h-10 w-[120px]'>
@@ -77,11 +77,11 @@ export function WidgetTotalExpensesEmpty({
       </div>
 
       <div className='mt-auto'>
-        <div className='text-paragraph-sm text-text-sub-600'>
+        <div className='text-paragraph-sm text-sub-600'>
           Total Expenses
         </div>
         <div className='mt-1 flex items-center gap-2'>
-          <div className='text-title-h4 text-text-strong-950'>$0.00</div>
+          <div className='text-title-h4 text-strong-950'>$0.00</div>
         </div>
       </div>
     </div>

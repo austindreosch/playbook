@@ -52,7 +52,7 @@ export function PhysicalCard({
         <div className='flex items-center gap-4'>
           <div className='flex items-center gap-2'>
             <IconChip className='size-8 h-6 shrink-0 text-warning-light' />
-            <RiWifiLine className='size-6 rotate-90 text-text-soft-400' />
+            <RiWifiLine className='size-6 rotate-90 text-soft-400' />
           </div>
         </div>
         <img
@@ -63,10 +63,10 @@ export function PhysicalCard({
       </div>
 
       <div className='mt-auto flex flex-col gap-1'>
-        <div className='text-paragraph-sm text-text-soft-400'>
+        <div className='text-paragraph-sm text-soft-400'>
           Cardholder Name
         </div>
-        <div className='text-title-h5 text-text-white-0'>{name}</div>
+        <div className='text-title-h5 text-white-0'>{name}</div>
       </div>
 
       <SVGCardBg className='absolute right-0 top-0' />

@@ -16,7 +16,7 @@ export const buttonGroupVariants = tv({
     root: 'flex -space-x-[1.5px]',
     item: [
       // base
-      'group relative flex items-center justify-center whitespace-nowrap bg-bg-white-0 text-center text-text-sub-600 outline-none',
+      'group relative flex items-center justify-center whitespace-nowrap bg-bg-white-0 text-center text-sub-600 outline-none',
       'border border-stroke-soft-200',
       'transition duration-200 ease-out',
       // hover
@@ -25,10 +25,10 @@ export const buttonGroupVariants = tv({
       'focus:bg-bg-weak-50 focus:outline-none',
       // active
       'data-[state=on]:bg-bg-weak-50',
-      'data-[state=on]:text-text-strong-950',
+      'data-[state=on]:text-strong-950',
       // disabled
       'disabled:pointer-events-none disabled:bg-bg-weak-50',
-      'disabled:text-text-disabled-300',
+      'disabled:text-disabled-300',
     ],
     icon: 'shrink-0',
   },

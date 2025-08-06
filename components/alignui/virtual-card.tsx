@@ -61,7 +61,7 @@ export function VirtualCard({
               alt=''
               className='size-8 shrink-0'
             />
-            <RiWifiLine className='size-6 rotate-90 text-text-soft-400' />
+            <RiWifiLine className='size-6 rotate-90 text-soft-400' />
           </div>
           {status === 'active' ? (
             <StatusBadge.Root variant='stroke' status='completed'>
@@ -83,7 +83,7 @@ export function VirtualCard({
       </div>
 
       <div className='mt-auto flex flex-col gap-1'>
-        <div className='text-paragraph-sm text-text-sub-600'>{name}</div>
+        <div className='text-paragraph-sm text-sub-600'>{name}</div>
         <div className='text-title-h4'>{currencyFormatter.format(balance)}</div>
       </div>
 

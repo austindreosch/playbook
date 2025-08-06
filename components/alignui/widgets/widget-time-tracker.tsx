@@ -38,14 +38,14 @@ function TimeTrackItem() {
           alt=''
           className='size-5 shrink-0'
         />
-        <div className='flex-1 text-paragraph-sm text-text-sub-600'>
+        <div className='flex-1 text-paragraph-sm text-sub-600'>
           Monday.com Redesign
         </div>
-        <RiArrowDownSLine className='size-5 shrink-0 text-text-sub-600 transition duration-200 ease-out group-data-[state=open]:rotate-180' />
+        <RiArrowDownSLine className='size-5 shrink-0 text-sub-600 transition duration-200 ease-out group-data-[state=open]:rotate-180' />
       </button>
       <div className='rounded-b-10 border border-t-0 border-stroke-soft-200'>
         <div className='flex flex-col p-4'>
-          <div className='mb-1 text-center text-subheading-2xs uppercase text-text-soft-400'>
+          <div className='mb-1 text-center text-subheading-2xs uppercase text-soft-400'>
             <div className='grid'>
               <div
                 className={cn(
@@ -108,7 +108,7 @@ export default function WidgetTimeTracker({
       <div className='space-y-4 pb-0.5'>
         <TimeTrackItem />
 
-        <div className='text-subheading-2xs uppercase text-text-soft-400'>
+        <div className='text-subheading-2xs uppercase text-soft-400'>
           Previous Tasks
         </div>
 
@@ -122,7 +122,7 @@ export default function WidgetTimeTracker({
           </div>
           <div className='flex-1 space-y-1'>
             <div className='text-paragraph-sm'>Loom Rebranding</div>
-            <div className='text-paragraph-xs text-text-sub-600'>1:23:05</div>
+            <div className='text-paragraph-xs text-sub-600'>1:23:05</div>
           </div>
           <Button.Root variant='neutral' mode='ghost' size='xsmall'>
             <Button.Icon as={RiMore2Line} />
@@ -139,7 +139,7 @@ export default function WidgetTimeTracker({
           </div>
           <div className='flex-1 space-y-1'>
             <div className='text-paragraph-sm'>Evernote App Redesign</div>
-            <div className='text-paragraph-xs text-text-sub-600'>3:14:26</div>
+            <div className='text-paragraph-xs text-sub-600'>3:14:26</div>
           </div>
           <Button.Root variant='neutral' mode='ghost' size='xsmall'>
             <Button.Icon as={RiMore2Line} />
@@ -165,7 +165,7 @@ export function WidgetTimeTrackerEmpty({
 
         <div className='flex min-h-[124px] flex-col items-center justify-center gap-3 p-2'>
           <IllustrationEmptyTimeTracker className='size-[72px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of tracked time yet.
           </div>
         </div>

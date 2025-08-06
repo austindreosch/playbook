@@ -18,7 +18,7 @@ export const inputVariants = tv({
   slots: {
     root: [
       // base
-      'group relative flex w-full overflow-hidden bg-bg-white-0 text-text-strong-950 shadow-regular-xs',
+      'group relative flex w-full overflow-hidden bg-bg-white-0 text-strong-950 shadow-regular-xs',
       'transition duration-200 ease-out',
       'divide-x divide-stroke-soft-200',
       // before
@@ -43,51 +43,51 @@ export const inputVariants = tv({
     ],
     input: [
       // base
-      'w-full bg-transparent bg-none text-paragraph-sm text-text-strong-950 outline-none',
+      'w-full bg-transparent bg-none text-paragraph-sm text-strong-950 outline-none',
       'transition duration-200 ease-out',
       // placeholder
-      'placeholder:select-none placeholder:text-text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
+      'placeholder:select-none placeholder:text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
       // hover placeholder
-      'group-hover/input-wrapper:placeholder:text-text-sub-600',
+      'group-hover/input-wrapper:placeholder:text-sub-600',
       // focus
       'focus:outline-none',
       // focus placeholder
-      'group-has-[input:focus]:placeholder:text-text-sub-600',
+      'group-has-[input:focus]:placeholder:text-sub-600',
       // disabled
-      'disabled:text-text-disabled-300 disabled:placeholder:text-text-disabled-300',
+      'disabled:text-disabled-300 disabled:placeholder:text-disabled-300',
     ],
     icon: [
       // base
       'flex size-5 shrink-0 select-none items-center justify-center',
       'transition duration-200 ease-out',
       // placeholder state
-      'group-has-[:placeholder-shown]:text-text-soft-400',
+      'group-has-[:placeholder-shown]:text-soft-400',
       // filled state
-      'text-text-sub-600',
+      'text-sub-600',
       // hover
-      'group-has-[:placeholder-shown]:group-hover/input-wrapper:text-text-sub-600',
+      'group-has-[:placeholder-shown]:group-hover/input-wrapper:text-sub-600',
       // focus
-      'group-has-[:placeholder-shown]:group-has-[input:focus]/input-wrapper:text-text-sub-600',
+      'group-has-[:placeholder-shown]:group-has-[input:focus]/input-wrapper:text-sub-600',
       // disabled
-      'group-has-[input:disabled]/input-wrapper:text-text-disabled-300',
+      'group-has-[input:disabled]/input-wrapper:text-disabled-300',
     ],
     affix: [
       // base
-      'shrink-0 bg-bg-white-0 text-paragraph-sm text-text-sub-600',
+      'shrink-0 bg-bg-white-0 text-paragraph-sm text-sub-600',
       'flex items-center justify-center truncate',
       'transition duration-200 ease-out',
       // placeholder state
-      'group-has-[:placeholder-shown]:text-text-soft-400',
+      'group-has-[:placeholder-shown]:text-soft-400',
       // focus state
-      'group-has-[:placeholder-shown]:group-has-[input:focus]:text-text-sub-600',
+      'group-has-[:placeholder-shown]:group-has-[input:focus]:text-sub-600',
     ],
     inlineAffix: [
       // base
-      'text-paragraph-sm text-text-sub-600',
+      'text-paragraph-sm text-sub-600',
       // placeholder state
-      'group-has-[:placeholder-shown]:text-text-soft-400',
+      'group-has-[:placeholder-shown]:text-soft-400',
       // focus state
-      'group-has-[:placeholder-shown]:group-has-[input:focus]:text-text-sub-600',
+      'group-has-[:placeholder-shown]:group-has-[input:focus]:text-sub-600',
     ],
   },
   variants: {

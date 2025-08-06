@@ -28,16 +28,16 @@ export const alertVariants = tv({
         closeIcon: 'text-static-white opacity-[.72]',
       },
       light: {
-        root: 'text-text-strong-950',
-        closeIcon: 'text-text-strong-950 opacity-40',
+        root: 'text-strong-950',
+        closeIcon: 'text-strong-950 opacity-40',
       },
       lighter: {
-        root: 'text-text-strong-950',
-        closeIcon: 'text-text-strong-950 opacity-40',
+        root: 'text-strong-950',
+        closeIcon: 'text-strong-950 opacity-40',
       },
       stroke: {
-        root: 'bg-bg-white-0 text-text-strong-950 shadow-regular-md ring-1 ring-inset ring-stroke-soft-200',
-        closeIcon: 'text-text-strong-950 opacity-40',
+        root: 'bg-bg-white-0 text-strong-950 shadow-regular-md ring-1 ring-inset ring-stroke-soft-200',
+        closeIcon: 'text-strong-950 opacity-40',
       },
     },
     status: {

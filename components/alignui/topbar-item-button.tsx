@@ -24,7 +24,7 @@ const TopbarItemButton = React.forwardRef<
         ref={forwardedRef}
         className={cnExt(
           // base
-          'transition-default relative flex size-10 shrink-0 items-center justify-center rounded-10 text-text-sub-600',
+          'transition-default relative flex size-10 shrink-0 items-center justify-center rounded-10 text-sub-600',
           // hover
           'hover:bg-bg-weak-50',
           // open

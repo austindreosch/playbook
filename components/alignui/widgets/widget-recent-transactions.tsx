@@ -129,7 +129,7 @@ export function WidgetRecentTransactionsEmpty({
 
       <div className='flex flex-1 flex-col items-center justify-center gap-5 p-5'>
         <IllustrationEmptyRecentTransactions className='size-[108px]' />
-        <div className='text-center text-paragraph-sm text-text-soft-400'>
+        <div className='text-center text-paragraph-sm text-soft-400'>
           No records of transactions yet.
           <br />
           Please check back later.

@@ -16,9 +16,9 @@ const PAGINATION_NAV_ICON_NAME = 'PaginationNavIcon';
 const paginationVariants = tv({
   slots: {
     root: 'flex flex-wrap items-center justify-center',
-    item: 'flex items-center justify-center text-center text-label-sm text-text-sub-600 transition duration-200 ease-out',
+    item: 'flex items-center justify-center text-center text-label-sm text-sub-600 transition duration-200 ease-out',
     navButton:
-      'flex items-center justify-center text-text-sub-600 transition duration-200 ease-out',
+      'flex items-center justify-center text-sub-600 transition duration-200 ease-out',
     navIcon: 'size-5',
   },
   variants: {
@@ -135,7 +135,7 @@ const PaginationItem = React.forwardRef<HTMLButtonElement, PaginationItemProps>(
       <Component
         ref={forwardedRef}
         className={cnExt(item({ class: className }), {
-          'text-text-strong-950': current,
+          'text-strong-950': current,
         })}
         {...rest}
       >

@@ -81,12 +81,12 @@ export function ProductCategories() {
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               Product Categories
             </div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Distribution of your store&apos;s product inventory across
@@ -96,10 +96,10 @@ export function ProductCategories() {
             </Tooltip.Root>
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>
+            <div className='text-title-h5 text-strong-950'>
               <NumberFlow value={activeCategory.value} suffix='%' />
             </div>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               <span className='text-success-base'>
                 +{activeCategory.weeklyGrowth}%
               </span>{' '}
@@ -118,7 +118,7 @@ export function ProductCategories() {
 
       <div className='mt-3 flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          <div className='whitespace-nowrap text-label-sm text-text-sub-600'>
+          <div className='whitespace-nowrap text-label-sm text-sub-600'>
             {activeCategory.label}
           </div>
 
@@ -133,7 +133,7 @@ export function ProductCategories() {
                 'focus:outline-none focus-visible:bg-bg-weak-50',
               )}
             >
-              <RiArrowLeftSLine className='size-[18px] text-text-sub-600' />
+              <RiArrowLeftSLine className='size-[18px] text-sub-600' />
             </button>
             <button
               type='button'
@@ -145,16 +145,16 @@ export function ProductCategories() {
                 'focus:outline-none focus-visible:bg-bg-weak-50',
               )}
             >
-              <RiArrowRightSLine className='size-[18px] text-text-sub-600' />
+              <RiArrowRightSLine className='size-[18px] text-sub-600' />
             </button>
           </div>
         </div>
 
         <div className='flex items-center gap-2'>
-          <div className='text-label-sm text-text-sub-600'>
+          <div className='text-label-sm text-sub-600'>
             {activeCategory.products} products
           </div>
-          <div className='text-label-xs text-text-soft-400'>·</div>
+          <div className='text-label-xs text-soft-400'>·</div>
           <div className='text-label-sm text-success-base'>
             +{activeCategory.growth}%
           </div>
@@ -207,12 +207,12 @@ export function WidgetProductCategories() {
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               Product Categories
             </div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Distribution of your store&apos;s product inventory across
@@ -222,10 +222,10 @@ export function WidgetProductCategories() {
             </Tooltip.Root>
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>
+            <div className='text-title-h5 text-strong-950'>
               <NumberFlow value={activeCategory.value} suffix='%' />
             </div>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               <span className='text-success-base'>
                 +{activeCategory.weeklyGrowth}%
               </span>{' '}
@@ -244,7 +244,7 @@ export function WidgetProductCategories() {
 
       <div className='mt-3 flex items-center justify-between'>
         <div className='flex items-center gap-2'>
-          <div className='whitespace-nowrap text-label-sm text-text-sub-600'>
+          <div className='whitespace-nowrap text-label-sm text-sub-600'>
             {activeCategory.label}
           </div>
 
@@ -259,7 +259,7 @@ export function WidgetProductCategories() {
                 'focus:outline-none focus-visible:bg-bg-weak-50',
               )}
             >
-              <RiArrowLeftSLine className='size-[18px] text-text-sub-600' />
+              <RiArrowLeftSLine className='size-[18px] text-sub-600' />
             </button>
             <button
               type='button'
@@ -271,16 +271,16 @@ export function WidgetProductCategories() {
                 'focus:outline-none focus-visible:bg-bg-weak-50',
               )}
             >
-              <RiArrowRightSLine className='size-[18px] text-text-sub-600' />
+              <RiArrowRightSLine className='size-[18px] text-sub-600' />
             </button>
           </div>
         </div>
 
         <div className='flex items-center gap-2'>
-          <div className='text-label-sm text-text-sub-600'>
+          <div className='text-label-sm text-sub-600'>
             {activeCategory.products} products
           </div>
-          <div className='text-label-xs text-text-soft-400'>·</div>
+          <div className='text-label-xs text-soft-400'>·</div>
           <div className='text-label-sm text-success-base'>
             +{activeCategory.growth}%
           </div>

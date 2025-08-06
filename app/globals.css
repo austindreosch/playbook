@@ -42,8 +42,11 @@
     --neutral-700: var(--gray-700);
     --neutral-600: var(--gray-600);
     --neutral-500: var(--gray-500);
+    --neutral-450: var(--gray-450);
     --neutral-400: var(--gray-400);
+    --neutral-350: var(--gray-350);
     --neutral-300: var(--gray-300);
+    --neutral-250: var(--gray-250);
     --neutral-200: var(--gray-200);
     --neutral-150: var(--gray-150);
     --neutral-100: var(--gray-100);
@@ -291,6 +294,7 @@
 
     --text-strong-950: var(--neutral-950);
     --text-sub-600: var(--neutral-600);
+    --text-mid-500: var(--neutral-500);
     --text-soft-400: var(--neutral-400);
     --text-disabled-300: var(--neutral-300);
     --text-white-0: var(--neutral-0);
@@ -355,28 +359,33 @@
   }
     
   .dark {
+    --black: var(--neutral-0);
+    --gray-450: var(--neutral-0);
+    --gray-400: var(--neutral-300);
+    
     --bg-strong-950: var(--neutral-0);
-    --bg-surface-800: var(--neutral-200);
-    --bg-sub-300: var(--neutral-600);
-    --bg-soft-200: var(--neutral-700);
-    --bg-weak-50: var(--neutral-900);
-    --bg-weak-25: var(--neutral-950);
+    --bg-surface-800: var(--neutral-150);
+    --bg-sub-300: var(--neutral-450);
+    --bg-soft-200: var(--neutral-600);
+    --bg-weak-50: var(--neutral-800);
+    --bg-weak-25: var(--neutral-900);
     --bg-weak-10: var(--neutral-950);
     --bg-weak-5: var(--neutral-950);
     --bg-white-0: var(--neutral-950);
 
     --text-strong-950: var(--neutral-0);
-    --text-sub-600: var(--neutral-400);
-    --text-soft-400: var(--neutral-500);
-    --text-disabled-300: var(--neutral-600);
+    --text-sub-600: var(--neutral-350);
+    --text-mid-500: var(--neutral-400);
+    --text-soft-400: var(--neutral-300);
+    --text-disabled-300: var(--neutral-400);
     --text-white-0: var(--neutral-950);
 
     --stroke-strong-950: var(--neutral-0);
-    --stroke-sub-300: var(--neutral-500);
-    --stroke-soft-200: var(--neutral-700);
-    --stroke-soft-150: var(--neutral-600);
-    --stroke-soft-100: var(--neutral-500);
-    --stroke-soft-50: var(--neutral-400);
+    --stroke-sub-300: var(--neutral-450);
+    --stroke-soft-200: var(--neutral-400);
+    --stroke-soft-150: var(--neutral-350);
+    --stroke-soft-100: var(--neutral-300);
+    --stroke-soft-50: var(--neutral-350);
     --stroke-white-0: var(--neutral-950);
 
     --faded-dark: var(--neutral-300);

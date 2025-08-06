@@ -137,10 +137,10 @@ export function PhoneNumberInput() {
                       }}
                       className={cn(
                         // base
-                        'group cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-text-strong-950',
+                        'group cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-strong-950',
                         'flex items-center gap-2',
                         // disabled
-                        'data-[disabled=true]:pointer-events-none data-[disabled=true]:text-text-disabled-300',
+                        'data-[disabled=true]:pointer-events-none data-[disabled=true]:text-disabled-300',
                         // hover, focus
                         'data-[selected=true]:bg-bg-weak-50 data-[selected]:outline-0',
                       )}

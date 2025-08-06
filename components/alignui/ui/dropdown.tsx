@@ -55,7 +55,7 @@ const DropdownMenuItem = React.forwardRef<
     ref={forwardedRef}
     className={cnExt(
       // base
-      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-text-strong-950 outline-none',
+      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-strong-950 outline-none',
       'flex items-center gap-2',
       'transition duration-200 ease-out',
       // hover
@@ -63,7 +63,7 @@ const DropdownMenuItem = React.forwardRef<
       // focus
       'focus:outline-none',
       // disabled
-      'data-[disabled]:text-text-disabled-300',
+      'data-[disabled]:text-disabled-300',
       inset && 'pl-9',
       className,
     )}
@@ -83,9 +83,9 @@ function DropdownItemIcon<T extends React.ElementType>({
     <Component
       className={cnExt(
         // base
-        'size-5 text-text-sub-600',
+        'size-5 text-sub-600',
         // disabled
-        'group-has-[[data-disabled]]:text-text-disabled-300',
+        'group-has-[[data-disabled]]:text-disabled-300',
         className,
       )}
       {...rest}
@@ -113,7 +113,7 @@ const DropdownMenuLabel = React.forwardRef<
   <DropdownMenuPrimitive.Label
     ref={forwardedRef}
     className={cnExt(
-      'px-2 py-1 text-subheading-xs uppercase text-text-soft-400',
+      'px-2 py-1 text-subheading-xs uppercase text-soft-400',
       className,
     )}
     {...rest}
@@ -131,13 +131,13 @@ const DropdownMenuSubTrigger = React.forwardRef<
     ref={forwardedRef}
     className={cnExt(
       // base
-      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-text-strong-950 outline-0',
+      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-strong-950 outline-0',
       'flex items-center gap-2',
       'transition duration-200 ease-out',
       // hover
       'data-[highlighted]:bg-bg-weak-50',
       // disabled
-      'data-[disabled]:text-text-disabled-300',
+      'data-[disabled]:text-disabled-300',
       inset && 'pl-9',
       className,
     )}

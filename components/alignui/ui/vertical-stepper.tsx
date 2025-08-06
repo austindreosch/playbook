@@ -40,7 +40,7 @@ function VerticalStepperArrow<T extends React.ElementType>({
 
   return (
     <Component
-      className={cnExt('size-5 shrink-0 text-text-sub-600', className)}
+      className={cnExt('size-5 shrink-0 text-sub-600', className)}
       {...rest}
     />
   );
@@ -61,16 +61,16 @@ const verticalStepperItemVariants = tv({
   variants: {
     state: {
       completed: {
-        root: 'bg-bg-weak-50 text-text-sub-600',
+        root: 'bg-bg-weak-50 text-sub-600',
         indicator: 'bg-success-base text-static-white',
       },
       active: {
-        root: 'bg-bg-white-0 text-text-strong-950 shadow-regular-xs',
+        root: 'bg-bg-white-0 text-strong-950 shadow-regular-xs',
         indicator: 'bg-primary-base text-static-white',
       },
       default: {
-        root: 'bg-bg-weak-50 text-text-sub-600',
-        indicator: 'bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+        root: 'bg-bg-weak-50 text-sub-600',
+        indicator: 'bg-bg-white-0 text-sub-600 shadow-regular-xs',
       },
     },
   },

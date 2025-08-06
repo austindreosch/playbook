@@ -70,13 +70,13 @@ const SegmentedControlTrigger = React.forwardRef<
       className={cnExt(
         // base
         'peer',
-        'relative z-10 h-7 whitespace-nowrap rounded-md px-1 text-label-sm text-text-soft-400 outline-none',
+        'relative z-10 h-7 whitespace-nowrap rounded-md px-1 text-label-sm text-soft-400 outline-none',
         'flex items-center justify-center gap-1.5',
         'transition duration-300 ease-out',
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:text-text-strong-950',
+        'data-[state=active]:text-strong-950',
         className,
       )}
       {...rest}

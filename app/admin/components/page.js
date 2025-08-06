@@ -55,7 +55,7 @@ class WidgetErrorBoundary extends React.Component {
         <div className="h-48 bg-bg-weak-50 rounded-lg border border-stroke-soft-200 flex items-center justify-center">
           <div className="text-center space-y-2">
             <div className="w-8 h-8 bg-red-300 rounded mx-auto opacity-60"></div>
-            <div className="text-subheading-sm text-text-soft-400">Missing Dependencies</div>
+            <div className="text-subheading-sm text-soft-400">Missing Dependencies</div>
           </div>
         </div>
       );
@@ -79,8 +79,8 @@ const SampleWidget = ({ title, description, color = 'blue' }) => {
     <div className="bg-bg-white-0 border border-stroke-soft-200 rounded-lg p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-label-md text-text-strong-950 font-medium">{title}</h3>
-          <p className="text-paragraph-sm text-text-sub-600">{description}</p>
+          <h3 className="text-label-md text-strong-950 font-medium">{title}</h3>
+          <p className="text-paragraph-sm text-sub-600">{description}</p>
         </div>
         <Badge variant="filled" color={color}>{color}</Badge>
       </div>
@@ -89,8 +89,8 @@ const SampleWidget = ({ title, description, color = 'blue' }) => {
         <div className="flex items-center space-x-4">
           <div className={`w-8 h-8 ${colorClasses[color] || 'bg-blue-200'} rounded opacity-60`}></div>
           <div className="text-center">
-            <div className="text-title-h5 text-text-strong-950">$12,847</div>
-            <div className="text-paragraph-sm text-text-sub-600">Sample Data</div>
+            <div className="text-title-h5 text-strong-950">$12,847</div>
+            <div className="text-paragraph-sm text-sub-600">Sample Data</div>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ const SampleWidget = ({ title, description, color = 'blue' }) => {
       <div className="flex items-center justify-between pt-2 border-t border-stroke-soft-200">
         <div className="flex items-center space-x-2">
           <Badge variant="light" color="green">+5.2%</Badge>
-          <span className="text-paragraph-sm text-text-sub-600">vs last month</span>
+          <span className="text-paragraph-sm text-sub-600">vs last month</span>
         </div>
         <Button size="small" mode="ghost">View Details</Button>
       </div>
@@ -138,8 +138,8 @@ const WidgetShowcase = () => {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-title-h2 text-text-strong-950">Widget Templates</h2>
-        <p className="text-paragraph-lg text-text-sub-600">
+        <h2 className="text-title-h2 text-strong-950">Widget Templates</h2>
+        <p className="text-paragraph-lg text-sub-600">
           Pre-built widget components for dashboards and analytics ({allWidgets.length} total)
         </p>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -152,7 +152,7 @@ const WidgetShowcase = () => {
 
       {/* Working Sample Widgets */}
       <div className="space-y-6">
-        <h3 className="text-title-h3 text-text-strong-950">Sample Widget Previews</h3>
+        <h3 className="text-title-h3 text-strong-950">Sample Widget Previews</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {sampleWidgets.map((widget, index) => (
             <SampleWidget
@@ -167,21 +167,21 @@ const WidgetShowcase = () => {
 
       {/* All Available Widgets List */}
       <div className="space-y-6">
-        <h3 className="text-title-h3 text-text-strong-950">Complete Widget Library</h3>
+        <h3 className="text-title-h3 text-strong-950">Complete Widget Library</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {allWidgets.map((widget) => (
             <div key={widget} className="bg-bg-white-0 border border-stroke-soft-200 rounded-lg p-4 space-y-3">
               <div className="h-20 bg-bg-weak-50 rounded border border-stroke-soft-200 flex items-center justify-center">
                 <div className="text-center space-y-1">
                   <div className="w-6 h-6 bg-primary-base rounded mx-auto opacity-20"></div>
-                  <div className="text-subheading-2xs text-text-soft-400">Widget</div>
+                  <div className="text-subheading-2xs text-soft-400">Widget</div>
                 </div>
               </div>
               <div className="space-y-1">
-                <h3 className="text-label-sm text-text-strong-950 font-medium">
+                <h3 className="text-label-sm text-strong-950 font-medium">
                   {widget.replace('widget-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                 </h3>
-                <p className="text-paragraph-xs text-text-sub-600 font-mono">{widget}.tsx</p>
+                <p className="text-paragraph-xs text-sub-600 font-mono">{widget}.tsx</p>
               </div>
             </div>
           ))}
@@ -219,8 +219,8 @@ const EmptyStateShowcase = () => {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-title-h2 text-text-strong-950">Empty State Illustrations</h2>
-        <p className="text-paragraph-lg text-text-sub-600">
+        <h2 className="text-title-h2 text-strong-950">Empty State Illustrations</h2>
+        <p className="text-paragraph-lg text-sub-600">
           SVG illustrations for empty states and placeholders ({illustrations.length} total)
         </p>
       </div>
@@ -232,10 +232,10 @@ const EmptyStateShowcase = () => {
               {illustration.component}
             </div>
             <div className="space-y-1">
-              <h3 className="text-label-sm text-text-strong-950 font-medium">
+              <h3 className="text-label-sm text-strong-950 font-medium">
                 {illustration.name}
               </h3>
-              <p className="text-paragraph-xs text-text-sub-600 font-mono">{illustration.file}</p>
+              <p className="text-paragraph-xs text-sub-600 font-mono">{illustration.file}</p>
             </div>
           </div>
         ))}
@@ -273,8 +273,8 @@ const BlockComponentsShowcase = () => {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-title-h2 text-text-strong-950">Block Components</h2>
-        <p className="text-paragraph-lg text-text-sub-600">
+        <h2 className="text-title-h2 text-strong-950">Block Components</h2>
+        <p className="text-paragraph-lg text-sub-600">
           Individual UI components (90+ total - showing working examples)
         </p>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -286,7 +286,7 @@ const BlockComponentsShowcase = () => {
       
       {Object.entries(groupedComponents).map(([type, components]) => (
         <div key={type} className="space-y-4">
-          <h3 className="text-title-h4 text-text-sub-600 capitalize border-b border-stroke-soft-200 pb-2">
+          <h3 className="text-title-h4 text-sub-600 capitalize border-b border-stroke-soft-200 pb-2">
             {type} Components (showing {components.length} working examples)
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -301,10 +301,10 @@ const BlockComponentsShowcase = () => {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-label-sm text-text-strong-950 font-medium">
+                  <h4 className="text-label-sm text-strong-950 font-medium">
                     {component.name}
                   </h4>
-                  <p className="text-paragraph-xs text-text-sub-600 font-mono">{component.file}</p>
+                  <p className="text-paragraph-xs text-sub-600 font-mono">{component.file}</p>
                   <span className="inline-block px-2 py-1 text-subheading-2xs bg-white rounded border border-stroke-soft-200 capitalize">
                     {component.type}
                   </span>
@@ -316,30 +316,30 @@ const BlockComponentsShowcase = () => {
       ))}
       
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h4 className="text-title-h5 text-text-strong-950 mb-3">Complete Component Library</h4>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-paragraph-sm text-text-sub-600">
+        <h4 className="text-title-h5 text-strong-950 mb-3">Complete Component Library</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-paragraph-sm text-sub-600">
           <div className="space-y-1">
-            <div className="font-medium text-text-strong-950">UI Components</div>
+            <div className="font-medium text-strong-950">UI Components</div>
             <div>Avatar, Avatar Group, Badge, Button, Button Group, Compact Button, Fancy Button, Link Button, Social Button</div>
           </div>
           <div className="space-y-1">
-            <div className="font-medium text-text-strong-950">Form Components</div>
+            <div className="font-medium text-strong-950">Form Components</div>
             <div>Input, Textarea, Select, Checkbox, Radio, Switch, Digit Input, Phone Input, Currency Select, Language Select</div>
           </div>
           <div className="space-y-1">
-            <div className="font-medium text-text-strong-950">Layout Components</div>
+            <div className="font-medium text-strong-950">Layout Components</div>
             <div>Card Chip, Widget Box, Divider, Table, Modal, Drawer, Popover, Tooltip, Header, Sidebar</div>
           </div>
           <div className="space-y-1">
-            <div className="font-medium text-text-strong-950">Navigation</div>
+            <div className="font-medium text-strong-950">Navigation</div>
             <div>Tab Menus, Segmented Control, Pagination, Steppers, Search, Command Menu</div>
           </div>
           <div className="space-y-1">
-            <div className="font-medium text-text-strong-950">Charts & Data</div>
+            <div className="font-medium text-strong-950">Charts & Data</div>
             <div>Spark Charts, Gauge, Category Bar, Step Line, Score Track, Pie Chart, Bar Chart</div>
           </div>
           <div className="space-y-1">
-            <div className="font-medium text-text-strong-950">Progress & Status</div>
+            <div className="font-medium text-strong-950">Progress & Status</div>
             <div>Progress Bar, Progress Circle, Level Bar, Status Badge, Rating Bar</div>
           </div>
         </div>
@@ -353,8 +353,8 @@ export default function ComponentsPage() {
     <div className="min-h-screen bg-bg-white-0 p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-title-h1 text-text-strong-950">Component Library</h1>
-          <p className="text-paragraph-lg text-text-sub-600">
+          <h1 className="text-title-h1 text-strong-950">Component Library</h1>
+          <p className="text-paragraph-lg text-sub-600">
             Complete showcase of widgets, illustrations, and UI components from AlignUI
           </p>
         </div>

@@ -33,7 +33,7 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
       <Popover>
         <PopoverTrigger asChild>{tagElement}</PopoverTrigger>
         <PopoverContent className="w-auto p-3" align="start">
-          <p className="text-paragraph-md text-black">{trait.tooltip}</p>
+          <p className="text-paragraph-md text-strong-950">{trait.tooltip}</p>
         </PopoverContent>
       </Popover>
     );

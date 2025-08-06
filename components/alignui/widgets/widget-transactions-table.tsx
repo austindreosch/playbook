@@ -127,13 +127,13 @@ export default function WidgetTransactionsTable({
       <div className='flex flex-col gap-3 lg:flex-row lg:items-center'>
         <div className='flex flex-1 items-center gap-3'>
           <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-            <RiHistoryLine className='size-5 text-text-sub-600' />
+            <RiHistoryLine className='size-5 text-sub-600' />
           </div>
           <div>
-            <div className='text-label-sm text-text-strong-950'>
+            <div className='text-label-sm text-strong-950'>
               Recent Transactions
             </div>
-            <div className='mt-1 text-paragraph-xs text-text-sub-600'>
+            <div className='mt-1 text-paragraph-xs text-sub-600'>
               Display the recent transactions in the table below.
             </div>
           </div>

@@ -147,11 +147,11 @@ export function WidgetProductPerformance() {
     <div className='relative flex w-full flex-col gap-5 rounded-2xl bg-bg-white-0 p-5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
-          <div className='text-label-sm text-text-sub-600'>
+          <div className='text-label-sm text-sub-600'>
             Product Performance
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>22.8%</div>
+            <div className='text-title-h5 text-strong-950'>22.8%</div>
             <Badge.Root variant='light' color='green' size='medium'>
               +8.4%
             </Badge.Root>
@@ -211,8 +211,8 @@ export function WidgetProductPerformance() {
 
       <div className='flex gap-3'>
         <div className='flex flex-1 flex-col items-center text-center'>
-          <div className='text-label-md text-text-sub-600'>4.7</div>
-          <div className='mt-0.5 text-paragraph-xs text-text-soft-400'>
+          <div className='text-label-md text-sub-600'>4.7</div>
+          <div className='mt-0.5 text-paragraph-xs text-soft-400'>
             Avg. Rating
           </div>
         </div>
@@ -220,8 +220,8 @@ export function WidgetProductPerformance() {
         <div className='relative w-0 before:absolute before:left-1/2 before:top-0 before:h-full before:w-px before:-translate-x-1/2 before:bg-stroke-soft-200' />
 
         <div className='flex flex-1 flex-col items-center text-center'>
-          <div className='text-label-md text-text-sub-600'>92%</div>
-          <div className='mt-0.5 text-paragraph-xs text-text-soft-400'>
+          <div className='text-label-md text-sub-600'>92%</div>
+          <div className='mt-0.5 text-paragraph-xs text-soft-400'>
             Satisfaction
           </div>
         </div>
@@ -229,8 +229,8 @@ export function WidgetProductPerformance() {
         <div className='relative w-0 before:absolute before:left-1/2 before:top-0 before:h-full before:w-px before:-translate-x-1/2 before:bg-stroke-soft-200' />
 
         <div className='flex flex-1 flex-col items-center text-center'>
-          <div className='text-label-md text-text-sub-600'>4.2%</div>
-          <div className='mt-0.5 text-paragraph-xs text-text-soft-400'>
+          <div className='text-label-md text-sub-600'>4.2%</div>
+          <div className='mt-0.5 text-paragraph-xs text-soft-400'>
             Return Rate
           </div>
         </div>

@@ -16,14 +16,14 @@ export function DarkModeTest() {
         </WidgetBox.Header>
         
         <div className="space-y-3 pt-4">
-          <p className="text-text-sub-600 text-sm">
+          <p className="text-sub-600 text-sm">
             This widget tests the dark mode implementation. Toggle between themes using the button above.
           </p>
           
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-bg-weak-50 p-3 rounded border border-stroke-soft-200">
-              <div className="text-text-strong-950 font-medium text-sm">Background</div>
-              <div className="text-text-sub-600 text-xs">bg-bg-weak-50</div>
+              <div className="text-strong-950 font-medium text-sm">Background</div>
+              <div className="text-sub-600 text-xs">bg-bg-weak-50</div>
             </div>
             
             <div className="bg-information-lighter p-3 rounded">

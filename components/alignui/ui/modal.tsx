@@ -106,7 +106,7 @@ function ModalHeader({
         <>
           {Icon && (
             <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200'>
-              <Icon className='size-5 text-text-sub-600' />
+              <Icon className='size-5 text-sub-600' />
             </div>
           )}
           {(title || description) && (
@@ -131,7 +131,7 @@ const ModalTitle = React.forwardRef<
   return (
     <DialogPrimitive.Title
       ref={forwardedRef}
-      className={cnExt('text-label-sm text-text-strong-950', className)}
+      className={cnExt('text-label-sm text-strong-950', className)}
       {...rest}
     />
   );
@@ -145,7 +145,7 @@ const ModalDescription = React.forwardRef<
   return (
     <DialogPrimitive.Description
       ref={forwardedRef}
-      className={cnExt('text-paragraph-xs text-text-sub-600', className)}
+      className={cnExt('text-paragraph-xs text-sub-600', className)}
       {...rest}
     />
   );

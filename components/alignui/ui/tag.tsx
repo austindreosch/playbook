@@ -16,15 +16,15 @@ const TAG_DISMISS_ICON_NAME = 'TagDismissIcon';
 export const tagVariants = tv({
   slots: {
     root: [
-      'group/tag inline-flex h-6 items-center gap-2 rounded-md px-2 text-label-xs text-text-sub-600',
+      'group/tag inline-flex h-6 items-center gap-2 rounded-md px-2 text-label-xs text-sub-600',
       'transition duration-200 ease-out',
       'ring-1 ring-inset',
     ],
     icon: [
       // base
-      '-mx-1 size-4 shrink-0 text-text-soft-400 transition duration-200 ease-out',
+      '-mx-1 size-4 shrink-0 text-soft-400 transition duration-200 ease-out',
       // hover
-      'group-hover/tag:text-text-sub-600',
+      'group-hover/tag:text-sub-600',
     ],
     dismissButton: [
       // base
@@ -32,7 +32,7 @@ export const tagVariants = tv({
       // focus
       'focus:outline-none',
     ],
-    dismissIcon: 'size-4 text-text-soft-400 transition duration-200 ease-out',
+    dismissIcon: 'size-4 text-soft-400 transition duration-200 ease-out',
   },
   variants: {
     variant: {
@@ -47,9 +47,9 @@ export const tagVariants = tv({
         ],
         dismissIcon: [
           // hover
-          'group-hover/dismiss-button:text-text-sub-600',
+          'group-hover/dismiss-button:text-sub-600',
           // focus
-          'group-focus/dismiss-button:text-text-sub-600',
+          'group-focus/dismiss-button:text-sub-600',
         ],
       },
       gray: {
@@ -63,9 +63,9 @@ export const tagVariants = tv({
     },
     disabled: {
       true: {
-        root: 'pointer-events-none bg-bg-weak-50 text-text-disabled-300 ring-transparent',
-        icon: 'text-text-disabled-300 [&:not(.remixicon)]:opacity-[.48]',
-        dismissIcon: 'text-text-disabled-300',
+        root: 'pointer-events-none bg-bg-weak-50 text-disabled-300 ring-transparent',
+        icon: 'text-disabled-300 [&:not(.remixicon)]:opacity-[.48]',
+        dismissIcon: 'text-disabled-300',
       },
     },
   },

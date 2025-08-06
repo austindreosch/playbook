@@ -34,10 +34,10 @@ export default function WidgetMySubscriptions({
         <div className='flex flex-col gap-4'>
           <img src='/images/apple-music.svg' alt='' width={32} height={32} />
           <div>
-            <div className='text-label-sm text-text-strong-950'>
+            <div className='text-label-sm text-strong-950'>
               50% discount on Apple Music
             </div>
-            <div className='mt-1 text-paragraph-xs text-text-sub-600'>
+            <div className='mt-1 text-paragraph-xs text-sub-600'>
               For only $4.99 per month!
               <LinkButton.Root
                 variant='gray'
@@ -62,12 +62,12 @@ export default function WidgetMySubscriptions({
             />
           </div>
           <div className='flex-1'>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               Salary Deposit
             </div>
             <div className='mt-1 flex items-baseline'>
-              <span className='text-label-sm text-text-strong-950'>$7.99</span>
-              <span className='ml-1 text-paragraph-xs text-text-soft-400'>
+              <span className='text-label-sm text-strong-950'>$7.99</span>
+              <span className='ml-1 text-paragraph-xs text-soft-400'>
                 /month
               </span>
             </div>
@@ -91,12 +91,12 @@ export default function WidgetMySubscriptions({
             />
           </div>
           <div className='flex-1'>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               Youtube Music
             </div>
             <div className='mt-1 flex items-baseline'>
-              <span className='text-label-sm text-text-strong-950'>$79.99</span>
-              <span className='ml-1 text-paragraph-xs text-text-soft-400'>
+              <span className='text-label-sm text-strong-950'>$79.99</span>
+              <span className='ml-1 text-paragraph-xs text-soft-400'>
                 /year
               </span>
             </div>
@@ -120,12 +120,12 @@ export default function WidgetMySubscriptions({
             />
           </div>
           <div className='flex-1'>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               Prime Video
             </div>
             <div className='mt-1 flex items-baseline'>
-              <span className='text-label-sm text-text-strong-950'>$9.99</span>
-              <span className='ml-1 text-paragraph-xs text-text-soft-400'>
+              <span className='text-label-sm text-strong-950'>$9.99</span>
+              <span className='ml-1 text-paragraph-xs text-soft-400'>
                 /month
               </span>
             </div>
@@ -160,7 +160,7 @@ export function WidgetMySubscriptionsEmpty({
         <Divider.Root />
         <div className='flex flex-1 flex-col items-center justify-center gap-5 p-5'>
           <IllustrationEmptyMySubscriptions className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any subscriptions yet. <br />
             Feel free to explore.
           </div>

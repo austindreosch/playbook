@@ -62,7 +62,7 @@ export default function WidgetDailyFeedback({
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={RiDiscussLine} />
         Daily Feedback
-        <div className='text-paragraph-sm text-text-soft-400'>Question 1/4</div>
+        <div className='text-paragraph-sm text-soft-400'>Question 1/4</div>
       </WidgetBox.Header>
 
       <Divider.Root />
@@ -76,7 +76,7 @@ export default function WidgetDailyFeedback({
             <div className='text-label-md'>
               How would you rate your mood today?
             </div>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               Share your mood to help us understand.
             </div>
           </div>
@@ -116,7 +116,7 @@ export function WidgetDailyFeedbackEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyDailyFeedback className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of feedback yet.
             <br /> Please check back later.
           </div>

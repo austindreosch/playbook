@@ -38,7 +38,7 @@ export default function WidgetTrainingAnalysis({
       <div className='flex gap-1 pt-4'>
         <div className='flex-1'>
           <div className='text-label-md'>12 courses</div>
-          <div className='text-paragraph-xs text-text-sub-600'>
+          <div className='text-paragraph-xs text-sub-600'>
             Completed in this quarter
           </div>
 
@@ -63,7 +63,7 @@ export default function WidgetTrainingAnalysis({
                 />
               </Avatar.Root>
             </AvatarGroup.Root>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               26 Attended
             </div>
           </div>
@@ -95,14 +95,14 @@ export function WidgetTrainingAnalysisEmpty({
 
       <div className='flex gap-1 pt-4'>
         <div className='flex-1'>
-          <div className='text-label-md text-text-sub-600'>0 courses</div>
-          <div className='text-paragraph-xs text-text-soft-400'>
+          <div className='text-label-md text-sub-600'>0 courses</div>
+          <div className='text-paragraph-xs text-soft-400'>
             Completed in this quarter
           </div>
 
           <div className='mt-[18px] flex items-center gap-2'>
             <Avatar.Root size='24' />
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               No attendance
             </div>
           </div>

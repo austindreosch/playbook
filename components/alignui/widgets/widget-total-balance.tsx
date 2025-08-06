@@ -56,11 +56,11 @@ export default function WidgetTotalBalance({
       <div className='flex flex-col gap-5'>
         <div className='flex items-start justify-between'>
           <div>
-            <div className='text-paragraph-sm text-text-sub-600'>
+            <div className='text-paragraph-sm text-sub-600'>
               Total Balance
             </div>
             <div className='mt-1 flex items-center gap-2'>
-              <div className='text-title-h5 text-text-strong-950'>
+              <div className='text-title-h5 text-strong-950'>
                 $14,480.24
               </div>
               <Badge.Root variant='light' color='green' size='medium'>
@@ -119,11 +119,11 @@ export function WidgetTotalBalanceEmpty({
       <div className='flex flex-1 flex-col gap-5'>
         <div className='flex items-start justify-between'>
           <div>
-            <div className='text-paragraph-sm text-text-sub-600'>
+            <div className='text-paragraph-sm text-sub-600'>
               Total Balance
             </div>
             <div className='mt-1 flex items-center gap-2'>
-              <div className='text-title-h5 text-text-strong-950'>$0.00</div>
+              <div className='text-title-h5 text-strong-950'>$0.00</div>
             </div>
           </div>
           <Select.Root
@@ -153,7 +153,7 @@ export function WidgetTotalBalanceEmpty({
         </div>
 
         <div className='flex flex-1 flex-col items-center justify-center'>
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any data.
           </div>
         </div>

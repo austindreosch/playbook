@@ -340,13 +340,13 @@ return (
         <div className="ml-auto">
           <div className='flex items-center gap-1.5'>
             <div className="flex items-center justify-center gap-1">
-              <span className="text-label-lg text-text-soft-400">{blueprint.seasonRecord.wins}</span>
-              <span className="text-label-lg text-text-disabled-300">-</span>
-              <span className="text-label-lg text-text-soft-400">{blueprint.seasonRecord.losses}</span>
+              <span className="text-label-lg text-soft-400">{blueprint.seasonRecord.wins}</span>
+              <span className="text-label-lg text-disabled-300">-</span>
+              <span className="text-label-lg text-soft-400">{blueprint.seasonRecord.losses}</span>
               {blueprint.seasonRecord.ties > 0 && (
                 <>
-                  <span className="text-label-lg text-text-disabled-300">-</span>
-                  <span className="text-label-lg text-text-soft-400">{blueprint.seasonRecord.ties}</span>
+                  <span className="text-label-lg text-disabled-300">-</span>
+                  <span className="text-label-lg text-soft-400">{blueprint.seasonRecord.ties}</span>
                 </>
               )}
             </div>
@@ -366,17 +366,17 @@ return (
           <div className="flex items-center justify-between p-3">
             <div className="text-center flex-1">
               <div className="flex items-center justify-center gap-1">
-                <span className="text-title-h5 font-bold text-text-soft-400">{blueprint.userTeam.record.wins}</span>
-                <span className="text-title-h5 font-bold text-text-disabled-300">-</span>
-                <span className="text-title-h5 font-bold text-text-soft-400">{blueprint.userTeam.record.losses}</span>
+                <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.wins}</span>
+                <span className="text-title-h5 font-bold text-disabled-300">-</span>
+                <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.losses}</span>
                 {blueprint.userTeam.record.ties > 0 && (
                   <>
-                    <span className="text-title-h5 font-bold text-text-disabled-300">-</span>
-                    <span className="text-title-h5 font-bold text-text-soft-400">{blueprint.userTeam.record.ties}</span>
+                    <span className="text-title-h5 font-bold text-disabled-300">-</span>
+                    <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.ties}</span>
                   </>
                 )}
               </div>
-              <div className="text-paragraph-sm text-text-disabled-300 mt-1">Matchups</div>
+              <div className="text-paragraph-sm text-disabled-300 mt-1">Matchups</div>
             </div>
             
             <div className="text-center flex-1">
@@ -384,14 +384,14 @@ return (
                 <div className={`text-title-h5 font-bold ${streakDisplay.color}`}>{blueprint.winStreak.count}</div>
                 <div className={`text-title-h5 font-bold ${streakDisplay.color}`}>{blueprint.winStreak.type}</div>
               </div>
-              <div className="text-paragraph-sm text-text-disabled-300 mt-1">Streak</div>
+              <div className="text-paragraph-sm text-disabled-300 mt-1">Streak</div>
             </div>
             
             <div className="text-center flex-1">
               <div className="text-title-h5 w-14 mx-auto font-bold bg-success-lighter text-success-dark px-1 py-0.5 rounded ">
                 {blueprint.userTeam.playoffOdds}%
               </div>
-              <div className="text-paragraph-sm text-text-disabled-300 mt-1">Playoffs Odds</div>
+              <div className="text-paragraph-sm text-disabled-300 mt-1">Playoffs Odds</div>
             </div>
           </div>
         </div>
@@ -426,7 +426,7 @@ return (
                   <div className="text-center space-y-1">
                     <div className="font-semibold text-label-sm">Week {matchup.week}</div>
                     <div className="text-paragraph-xs pr-1">vs {matchup.opponent.teamName}</div>
-                    <div className="text-paragraph-xs text-text-soft-400">
+                    <div className="text-paragraph-xs text-soft-400">
                       {formatRecord(matchup.opponent.record)}
                     </div>
                     <div className="text-paragraph-xs">

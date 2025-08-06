@@ -267,7 +267,7 @@ const generateMatchupsData = (): MatchupsBlueprint => {
 
 const getPlayerStatusIcon = (player: MatchupsBlueprint['lineup'][0]) => {
   if (player.isInjured || player.isOut) {
-    return <Wrench className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />;
+    return <Wrench className="hw-icon-xs text-soft-400 flex-shrink-0" strokeWidth={2} />;
   }
   return <Check className="hw-icon-xs text-success-base flex-shrink-0" strokeWidth={2} />;
 };
@@ -281,12 +281,12 @@ const getBattlegroundColor = (isUserFavored: boolean, significance: string) => {
 
 const getMissingPlayerIcon = (player: MatchupsBlueprint['missingPlayers']['userTeam'][0]) => {
   if (player.isOut) {
-    return <ShieldAlert className="hw-icon-xs text-text-soft-400" strokeWidth={2} />;
+    return <ShieldAlert className="hw-icon-xs text-soft-400" strokeWidth={2} />;
   }
   if (player.isInjured) {
-    return <Wrench className="hw-icon-xs text-text-soft-400" strokeWidth={2} />;
+    return <Wrench className="hw-icon-xs text-soft-400" strokeWidth={2} />;
   }
-  return <Shield className="hw-icon-xs text-text-soft-400" strokeWidth={2} />;
+  return <Shield className="hw-icon-xs text-soft-400" strokeWidth={2} />;
 };
 
 const formatRankSuffix = (rank: number): string => {
@@ -342,9 +342,9 @@ export default function MatchupsWidget({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <div className="flex items-center gap-1 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2 h-6 cursor-pointer hover:bg-bg-weak-50 transition-colors">
-                <ChevronLeft className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
-                <span className="text-label-md font-medium text-text-soft-400">Week {blueprint.currentWeek.week}</span>
-                <ChevronRight className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
+                <ChevronLeft className="w-4 h-4 text-soft-400" strokeWidth={2} />
+                <span className="text-label-md font-medium text-soft-400">Week {blueprint.currentWeek.week}</span>
+                <ChevronRight className="w-4 h-4 text-soft-400" strokeWidth={2} />
               </div>
             </Tooltip.Trigger>
             <Tooltip.Content>
@@ -360,16 +360,16 @@ export default function MatchupsWidget({
           <div>
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-              <div className="text-title-h5 text-text-strong-950">
+              <div className="text-title-h5 text-strong-950">
                 <NumberFlow value={animateNumber.value} suffix="%" />
               </div>
-                <span className="text-subheading-md text-text-sub-300">Projected Win</span>
+                <span className="text-subheading-md text-sub-300">Projected Win</span>
               </div>
               <div className="flex items-center gap-1">
                 <span className="text-subheading-md text-gray-300 truncate pr-1">
                   <span className="font-normal">vs</span> {blueprint.projectedWin.opponentTeamName}
                 </span>
-                {/* <ScrollText className="hw-icon-sm text-text-soft-400" /> */}
+                {/* <ScrollText className="hw-icon-sm text-soft-400" /> */}
               </div>
             </div>
 
@@ -384,26 +384,26 @@ export default function MatchupsWidget({
 
             <div className="flex items-center gap-1 bg-bg-weak-25 rounded-md px-2 py-1.5 flex-1 min-w-0 justify-between">
               <div className="flex items-center gap-1">
-                <CalendarClock className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                <span className="text-label-sm text-text-soft-400">Games Left</span>
+                <CalendarClock className="hw-icon-xs text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <span className="text-label-sm text-soft-400">Games Left</span>
               </div>
-              <span className="text-label-md font-semibold text-text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
+              <span className="text-label-md font-semibold text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
             </div>
 
             <div className="flex items-center gap-1 bg-bg-weak-25 rounded-md px-2 py-1.5 flex-1 min-w-0 justify-between">
               <div className="flex items-center gap-1">
-                <BookLock className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                <span className="text-label-sm text-text-soft-400">Cap</span>
+                <BookLock className="hw-icon-xs text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <span className="text-label-sm text-soft-400">Cap</span>
               </div>
-              <span className="text-label-md font-semibold text-text-strong-950">{blueprint.weeklyStats.capHit}</span>
+              <span className="text-label-md font-semibold text-strong-950">{blueprint.weeklyStats.capHit}</span>
             </div>
 
             <div className="flex items-center gap-1 bg-bg-weak-25 rounded-md px-2 py-1.5 flex-1 min-w-0 justify-between">
               <div className="flex items-center gap-1">
-                <BicepsFlexed className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                <span className="text-label-sm text-text-soft-400">Strength</span>
+                <BicepsFlexed className="hw-icon-xs text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <span className="text-label-sm text-soft-400">Strength</span>
               </div>
-              <span className="text-label-md font-semibold text-text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
+              <span className="text-label-md font-semibold text-strong-950">{blueprint.weeklyStats.gamesPlayed}</span>
             </div>
 
           </div>
@@ -416,7 +416,7 @@ export default function MatchupsWidget({
                 {blueprint.lineup.slice(0, 4).map((player) => (
                   <div key={player.playerId} className="flex items-center gap-1 min-w-0">
                     {getPlayerStatusIcon(player)}
-                    <span className="text-label-sm text-text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-label-sm text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
@@ -425,8 +425,8 @@ export default function MatchupsWidget({
             {/* Battleground Stats */}
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 mb-2">
-                <Sword className="hw-icon-sm text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                <h4 className="text-label-sm font-semibold text-text-soft-400 truncate">Battleground Stats</h4>
+                <Sword className="hw-icon-sm text-soft-400 flex-shrink-0" strokeWidth={2} />
+                <h4 className="text-label-sm font-semibold text-soft-400 truncate">Battleground Stats</h4>
               </div>
               
               <div className="flex gap-1 mb-1 min-w-0">
@@ -442,7 +442,7 @@ export default function MatchupsWidget({
               
               <div className="flex gap-1 min-w-0">
                 {blueprint.battlegroundStats.map((stat) => (
-                  <span key={`${stat.category}-value`} className="text-label-sm text-text-soft-400 flex-1 text-center min-w-0">
+                  <span key={`${stat.category}-value`} className="text-label-sm text-soft-400 flex-1 text-center min-w-0">
                     {stat.userAdvantage > 0 ? '+' : ''}{stat.userAdvantage}
                   </span>
                 ))}
@@ -459,7 +459,7 @@ export default function MatchupsWidget({
                 <Bandage className="hw-icon-sm text-black" />
                 <span className="text-label-lg text-black">Injury Report</span>
               </div>
-              <button className="flex items-center gap-1 text-label-xs text-text-soft-400 hover:text-text-strong-950 transition-colors">
+              <button className="flex items-center gap-1 text-label-xs text-soft-400 hover:text-strong-950 transition-colors">
                 <Wrench className="hw-icon-xs" strokeWidth={2} />
                 <span className="hidden sm:inline">Fix Lineup</span>
               </button>
@@ -490,7 +490,7 @@ export default function MatchupsWidget({
                     <div className="hw-icon-sm flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-sm text-text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-label-sm text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
@@ -502,7 +502,7 @@ export default function MatchupsWidget({
                     <div className="hw-icon-sm flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-sm text-text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-label-sm text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>

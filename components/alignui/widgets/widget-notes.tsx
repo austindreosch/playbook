@@ -40,15 +40,15 @@ function NoteItem({ title, description, date, badges }: NoteItemProps) {
       className='group flex w-full items-start gap-2.5 text-left'
     >
       <div className='grid shrink-0'>
-        <RiCheckboxBlankCircleLine className='size-6 text-text-soft-400 transition duration-200 ease-out [grid-area:1/1] group-data-[state=checked]:scale-75 group-data-[state=checked]:opacity-0' />
+        <RiCheckboxBlankCircleLine className='size-6 text-soft-400 transition duration-200 ease-out [grid-area:1/1] group-data-[state=checked]:scale-75 group-data-[state=checked]:opacity-0' />
         <RiCheckboxCircleFill className='size-6 text-success-base transition duration-200 ease-out [grid-area:1/1] group-data-[state=unchecked]:scale-75 group-data-[state=unchecked]:opacity-0' />
       </div>
       <div className='w-full min-w-0 space-y-3'>
         <div className='space-y-1'>
-          <div className='text-label-sm transition duration-200 ease-out group-data-[state=checked]:text-text-soft-400'>
+          <div className='text-label-sm transition duration-200 ease-out group-data-[state=checked]:text-soft-400'>
             {title}
           </div>
-          <div className='truncate text-paragraph-sm text-text-sub-600 transition duration-200 ease-out group-data-[state=checked]:text-text-soft-400'>
+          <div className='truncate text-paragraph-sm text-sub-600 transition duration-200 ease-out group-data-[state=checked]:text-soft-400'>
             {description}
           </div>
         </div>
@@ -67,8 +67,8 @@ function NoteItem({ title, description, date, badges }: NoteItemProps) {
               </Badge.Root>
             ))}
           </div>
-          <div className='flex items-center gap-1 text-paragraph-xs text-text-soft-400'>
-            <RiCalendarLine className='size-4 text-text-soft-400' />
+          <div className='flex items-center gap-1 text-paragraph-xs text-soft-400'>
+            <RiCalendarLine className='size-4 text-soft-400' />
             {format(date, 'MMM dd')}
           </div>
         </div>
@@ -151,7 +151,7 @@ export function WidgetNotesEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyNotes className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             There are no records of notes yet. <br /> Please check back later.
           </div>
           <Button.Root variant='neutral' mode='stroke' size='xsmall'>

@@ -53,7 +53,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 Your existing components using semantic tokens automatically work:
 ```jsx
 // These automatically adapt to dark mode:
-<div className="bg-bg-white-0 text-text-strong-950">
+<div className="bg-bg-white-0 text-strong-950">
 <div className="bg-bg-weak-50 border-stroke-soft-200">
 <Button variant="primary" mode="stroke">
 ```
@@ -69,7 +69,7 @@ Your existing components using semantic tokens automatically work:
 ### Legacy Playbook Colors (Update These)
 Replace these with semantic tokens for dark mode support:
 - `bg-pb_backgroundgray` → `bg-bg-weak-50`
-- `text-pb_darkgray` → `text-text-sub-600`
+- `text-pb_darkgray` → `text-sub-600`
 - `border-pb_lightgray` → `border-stroke-soft-200`
 
 ## Key Benefits

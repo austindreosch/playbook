@@ -59,7 +59,7 @@ function CommentItem({
         <Avatar.Image src={person.image} />
       </Avatar.Root>
       <div className='flex-1 space-y-1'>
-        <div className='text-paragraph-xs text-text-sub-600'>{person.name}</div>
+        <div className='text-paragraph-xs text-sub-600'>{person.name}</div>
         <div className='text-paragraph-sm'>{message}</div>
       </div>
       <button
@@ -116,7 +116,7 @@ export default function WidgetEmployeeSpotlight({
             <div className='space-y-4 pt-4'>
               <div className='space-y-1 text-center'>
                 <div className='text-label-lg'>Matthew Johnson</div>
-                <div className='text-paragraph-xs text-text-sub-600'>
+                <div className='text-paragraph-xs text-sub-600'>
                   Software Engineer
                 </div>
               </div>
@@ -130,7 +130,7 @@ export default function WidgetEmployeeSpotlight({
                 </Avatar.Root>
               </StickerFrame>
 
-              <div className='text-center text-paragraph-xs text-text-sub-600'>
+              <div className='text-center text-paragraph-xs text-sub-600'>
                 Top-performing employee of January!
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function WidgetEmployeeSpotlight({
             <div className='space-y-4 pt-4'>
               <div className='space-y-1 text-center'>
                 <div className='text-label-lg'>$50 Gift Card for Nike</div>
-                <div className='text-paragraph-xs text-text-sub-600'>
+                <div className='text-paragraph-xs text-sub-600'>
                   Enjoy spending, Matthew!
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function WidgetEmployeeSpotlight({
                 </div>
               </StickerFrame>
 
-              <div className='text-center text-paragraph-xs text-text-sub-600'>
+              <div className='text-center text-paragraph-xs text-sub-600'>
                 Employees of the month receive rewards
               </div>
             </div>
@@ -245,7 +245,7 @@ export function WidgetEmployeeSpotlightEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyEmployeeSpotlight className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of employee spotlight yet.
             <br /> Please check back later.
           </div>

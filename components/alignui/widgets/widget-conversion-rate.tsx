@@ -130,9 +130,9 @@ export function WidgetConversionRate() {
     <div className='relative flex w-full flex-col gap-5 rounded-2xl bg-bg-white-0 p-5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
-          <div className='text-label-sm text-text-sub-600'>Conversion Rate</div>
+          <div className='text-label-sm text-sub-600'>Conversion Rate</div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>16.9%</div>
+            <div className='text-title-h5 text-strong-950'>16.9%</div>
             <Badge.Root variant='light' color='green' size='medium'>
               +2.1%
             </Badge.Root>
@@ -147,49 +147,49 @@ export function WidgetConversionRate() {
 
       <div className='flex w-full flex-col gap-3'>
         <div className='flex items-center gap-1.5'>
-          <div className='flex-1 text-label-sm text-text-sub-600'>
+          <div className='flex-1 text-label-sm text-sub-600'>
             Added to Cart
           </div>
 
           <div className='flex items-center gap-1.5'>
-            <div className='min-w-16 text-label-sm tabular-nums text-text-sub-600'>
+            <div className='min-w-16 text-label-sm tabular-nums text-sub-600'>
               3,842
             </div>
             <div className='flex min-w-16 items-center justify-end gap-0.5 pl-1 text-right tabular-nums'>
               <RiArrowUpLine className='size-5 shrink-0 text-success-base' />
-              <div className='text-paragraph-sm text-text-sub-600'>+1.8%</div>
+              <div className='text-paragraph-sm text-sub-600'>+1.8%</div>
             </div>
           </div>
         </div>
 
         <div className='flex items-center gap-1.5'>
-          <div className='flex-1 text-label-sm text-text-sub-600'>
+          <div className='flex-1 text-label-sm text-sub-600'>
             Reached Checkout
           </div>
 
           <div className='flex items-center gap-1.5'>
-            <div className='min-w-16 text-label-sm tabular-nums text-text-sub-600'>
+            <div className='min-w-16 text-label-sm tabular-nums text-sub-600'>
               1,256
             </div>
             <div className='flex min-w-16 items-center justify-end gap-0.5 pl-1 text-right tabular-nums'>
               <RiArrowDownLine className='size-5 shrink-0 text-error-base' />
-              <div className='text-paragraph-sm text-text-sub-600'>-1.2%</div>
+              <div className='text-paragraph-sm text-sub-600'>-1.2%</div>
             </div>
           </div>
         </div>
 
         <div className='flex items-center gap-1.5'>
-          <div className='flex-1 text-label-sm text-text-sub-600'>
+          <div className='flex-1 text-label-sm text-sub-600'>
             Purchased
           </div>
 
           <div className='flex items-center gap-1.5'>
-            <div className='min-w-16 text-label-sm tabular-nums text-text-sub-600'>
+            <div className='min-w-16 text-label-sm tabular-nums text-sub-600'>
               649
             </div>
             <div className='flex min-w-16 items-center justify-end gap-0.5 pl-1 text-right tabular-nums'>
               <RiArrowUpLine className='size-5 text-success-base' />
-              <div className='text-paragraph-sm text-text-sub-600'>+2.4%</div>
+              <div className='text-paragraph-sm text-sub-600'>+2.4%</div>
             </div>
           </div>
         </div>

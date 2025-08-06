@@ -108,7 +108,7 @@ const DrawerTitle = React.forwardRef<
   return (
     <DialogPrimitive.Title
       ref={forwardedRef}
-      className={cnExt('flex-1 text-label-lg text-text-strong-950', className)}
+      className={cnExt('flex-1 text-label-lg text-strong-950', className)}
       {...rest}
     />
   );

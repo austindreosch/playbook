@@ -193,12 +193,12 @@
 #### **Text Colors**
 | Class | Use Case | Description |
 |-------|----------|-------------|
-| `text-text-strong-950` | Primary text | Strongest text color |
-| `text-text-sub-600` | Secondary text | Medium text color |
-| `text-text-mid-500` | Mid text | Medium-light text |
-| `text-text-soft-400` | Soft text | Light text color |
-| `text-text-disabled-300` | Disabled text | Muted text color |
-| `text-text-white-0` | White text | Pure white text |
+| `text-strong-950` | Primary text | Strongest text color |
+| `text-sub-600` | Secondary text | Medium text color |
+| `text-mid-500` | Mid text | Medium-light text |
+| `text-soft-400` | Soft text | Light text color |
+| `text-disabled-300` | Disabled text | Muted text color |
+| `text-white-0` | White text | Pure white text |
 
 #### **Stroke/Border Colors**
 | Class | Use Case | Description |
@@ -324,7 +324,7 @@
 <!-- Container with align UI styling -->
 <div class="relative overflow-hidden rounded-10 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200">
   <div class="p-4">
-    <h3 class="text-title-h5 text-text-strong-950">Content</h3>
+    <h3 class="text-title-h5 text-strong-950">Content</h3>
   </div>
 </div>
 

@@ -31,9 +31,9 @@ export function WidgetTotalSales() {
     <div className='relative flex w-full flex-col gap-5 rounded-2xl bg-bg-white-0 p-5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
-          <div className='text-label-sm text-text-sub-600'>Total Sales</div>
+          <div className='text-label-sm text-sub-600'>Total Sales</div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>$128.32</div>
+            <div className='text-title-h5 text-strong-950'>$128.32</div>
             <Badge.Root variant='light' color='green' size='medium'>
               +2%
             </Badge.Root>
@@ -100,51 +100,51 @@ export function WidgetTotalSales() {
       <div className='flex w-full flex-col gap-4'>
         <div className='flex items-center gap-1.5'>
           <div className='flex flex-1 items-center gap-1.5'>
-            <RiStore2Line className='size-5 shrink-0 text-text-soft-400' />
-            <div className='text-label-sm text-text-sub-600'>Online Store</div>
+            <RiStore2Line className='size-5 shrink-0 text-soft-400' />
+            <div className='text-label-sm text-sub-600'>Online Store</div>
           </div>
 
           <div className='flex items-center gap-1.5'>
-            <div className='min-w-16 text-paragraph-sm tabular-nums text-text-sub-600'>
+            <div className='min-w-16 text-paragraph-sm tabular-nums text-sub-600'>
               $52.12
             </div>
             <div className='flex min-w-16 items-center justify-end gap-0.5 pl-1 text-right tabular-nums'>
               <RiArrowUpLine className='size-5 shrink-0 text-success-base' />
-              <div className='text-paragraph-sm text-text-sub-600'>+4.5%</div>
+              <div className='text-paragraph-sm text-sub-600'>+4.5%</div>
             </div>
           </div>
         </div>
 
         <div className='flex items-center gap-1.5'>
           <div className='flex flex-1 items-center gap-1.5'>
-            <RiFacebookCircleLine className='size-5 shrink-0 text-text-soft-400' />
-            <div className='text-label-sm text-text-sub-600'>Facebook</div>
+            <RiFacebookCircleLine className='size-5 shrink-0 text-soft-400' />
+            <div className='text-label-sm text-sub-600'>Facebook</div>
           </div>
 
           <div className='flex items-center gap-1.5'>
-            <div className='min-w-16 text-paragraph-sm tabular-nums text-text-sub-600'>
+            <div className='min-w-16 text-paragraph-sm tabular-nums text-sub-600'>
               $38.45
             </div>
             <div className='flex min-w-16 items-center justify-end gap-0.5 pl-1 text-right tabular-nums'>
               <RiArrowDownLine className='size-5 shrink-0 text-error-base' />
-              <div className='text-paragraph-sm text-text-sub-600'>-2.8%</div>
+              <div className='text-paragraph-sm text-sub-600'>-2.8%</div>
             </div>
           </div>
         </div>
 
         <div className='flex items-center gap-1.5'>
           <div className='flex flex-1 items-center gap-1.5'>
-            <RiInstagramLine className='size-5 shrink-0 text-text-soft-400' />
-            <div className='text-label-sm text-text-sub-600'>Instagram</div>
+            <RiInstagramLine className='size-5 shrink-0 text-soft-400' />
+            <div className='text-label-sm text-sub-600'>Instagram</div>
           </div>
 
           <div className='flex items-center gap-1.5'>
-            <div className='min-w-16 text-paragraph-sm tabular-nums text-text-sub-600'>
+            <div className='min-w-16 text-paragraph-sm tabular-nums text-sub-600'>
               $37.75
             </div>
             <div className='flex min-w-16 items-center justify-end gap-0.5 pl-1 text-right tabular-nums'>
               <RiArrowUpLine className='size-5 text-success-base' />
-              <div className='text-paragraph-sm text-text-sub-600'>+3.2%</div>
+              <div className='text-paragraph-sm text-sub-600'>+3.2%</div>
             </div>
           </div>
         </div>

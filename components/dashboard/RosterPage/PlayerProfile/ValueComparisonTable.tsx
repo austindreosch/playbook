@@ -26,7 +26,7 @@ export default function ValueComparisonTable({ valueComparisons }: ValueComparis
               <FillArrowUp className="hw-icon-2xs mdh:hw-icon-xs" fillColor="var(--success-base)" />
               6%
             </div>
-            <div className="text-paragraph-xs leading-none text-text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
+            <div className="text-paragraph-xs leading-none text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
               Playbook<br />Differential
             </div>
           </div>
@@ -38,7 +38,7 @@ export default function ValueComparisonTable({ valueComparisons }: ValueComparis
               <FillArrowDown className="hw-icon-2xs mdh:hw-icon-xs" fillColor="var(--error-base)" />
               2%
             </div>
-            <div className="text-paragraph-xs leading-none text-text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
+            <div className="text-paragraph-xs leading-none text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
               Value Over<br />Last 30
             </div>
           </div>
@@ -50,7 +50,7 @@ export default function ValueComparisonTable({ valueComparisons }: ValueComparis
               <FillArrowDown className="hw-icon-2xs mdh:hw-icon-xs" fillColor="var(--error-base)" />
               21%
             </div>
-            <div className="text-paragraph-xs leading-none text-text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
+            <div className="text-paragraph-xs leading-none text-soft-400 mdh:pt-0.5 mdh:text-subheading-2xs mdh:leading-tight">
               Performance vs.<br />Offseason Proj.
             </div>
           </div>

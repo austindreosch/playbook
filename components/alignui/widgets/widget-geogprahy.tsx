@@ -119,9 +119,9 @@ export function WidgetGeography() {
     <div className='relative flex w-full flex-col gap-4 rounded-2xl bg-bg-white-0 p-5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
-          <div className='text-label-sm text-text-sub-600'>Geography</div>
+          <div className='text-label-sm text-sub-600'>Geography</div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>
+            <div className='text-title-h5 text-strong-950'>
               {highlightedLocation.count.toLocaleString()}
             </div>
             <div className='flex h-6 items-center gap-1 rounded-md bg-bg-white-0 pl-1 pr-2 ring-1 ring-inset ring-stroke-soft-200'>
@@ -132,7 +132,7 @@ export function WidgetGeography() {
                 width={16}
                 height={16}
               />
-              <span className='text-label-xs text-text-sub-600'>
+              <span className='text-label-xs text-sub-600'>
                 {highlightedLocation.country.name}
               </span>
             </div>
@@ -144,23 +144,23 @@ export function WidgetGeography() {
       </div>
 
       <div className='flex h-7 w-full items-center gap-[3px] rounded-lg bg-bg-white-0 px-1.5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
-        <div className='flex-1 text-center text-label-xs text-text-soft-400'>
+        <div className='flex-1 text-center text-label-xs text-soft-400'>
           Men{' '}
-          <span className='text-text-sub-600'>
+          <span className='text-sub-600'>
             {highlightedLocation.demographics.men}%
           </span>
         </div>
-        <div className='text-label-xs text-text-disabled-300'>·</div>
-        <div className='flex-1 text-center text-label-xs text-text-soft-400'>
+        <div className='text-label-xs text-disabled-300'>·</div>
+        <div className='flex-1 text-center text-label-xs text-soft-400'>
           Women{' '}
-          <span className='text-text-sub-600'>
+          <span className='text-sub-600'>
             {highlightedLocation.demographics.women}%
           </span>
         </div>
-        <div className='text-label-xs text-text-disabled-300'>·</div>
-        <div className='flex-1 text-center text-label-xs text-text-soft-400'>
+        <div className='text-label-xs text-disabled-300'>·</div>
+        <div className='flex-1 text-center text-label-xs text-soft-400'>
           Other{' '}
-          <span className='text-text-sub-600'>
+          <span className='text-sub-600'>
             {highlightedLocation.demographics.other}%
           </span>
         </div>

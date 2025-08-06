@@ -47,7 +47,7 @@ export const socialButtonVariants = tv({
       stroke: {
         root: [
           // base
-          'bg-bg-white-0 text-text-strong-950 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
+          'bg-bg-white-0 text-strong-950 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
           // hover
           'hover:bg-bg-weak-50 hover:shadow-none hover:ring-transparent',
           // focus

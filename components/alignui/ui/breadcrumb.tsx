@@ -45,14 +45,14 @@ const BreadcrumbItem = React.forwardRef<HTMLDivElement, BreadcrumbItemProps>(
         className={cn(
           // base
           'flex items-center gap-1.5 transition-colors duration-200 ease-out',
-          'text-label-sm text-text-sub-600',
+          'text-label-sm text-sub-600',
           {
             // not active
             'underline decoration-transparent': !active,
             // hover
-            'hover:text-text-strong-950 hover:decoration-current': !active,
+            'hover:text-strong-950 hover:decoration-current': !active,
             // active
-            'text-text-strong-950': active,
+            'text-strong-950': active,
           },
           className,
         )}
@@ -86,7 +86,7 @@ function BreadcrumbItemArrowIcon<T extends React.ElementType>({
   return (
     <Component
       className={cn(
-        'flex size-5 select-none items-center justify-center text-text-disabled-300',
+        'flex size-5 select-none items-center justify-center text-disabled-300',
         className,
       )}
       {...rest}

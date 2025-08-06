@@ -41,13 +41,13 @@ function StatItem({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <Icon className="hw-icon-sm text-text-soft-400 flex-shrink-0" />
+      <Icon className="hw-icon-sm text-soft-400 flex-shrink-0" />
       <div
         className={`text-subheading-sm font-medium ${
-          valueClassName || 'text-text-sub-600'
+          valueClassName || 'text-sub-600'
         }`}
       >
-        {value || <EmptyIcon className="hw-icon-sm text-text-soft-400" />}
+        {value || <EmptyIcon className="hw-icon-sm text-soft-400" />}
       </div>
     </div>
   );
@@ -76,7 +76,7 @@ export default function PlayerInfoSection({
         <div className="flex-1 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h4 className="text-title-h6 font-semibold text-text-strong-950">
+            <h4 className="text-title-h6 font-semibold text-strong-950">
               {playerData.name}
             </h4>
             <div className="flex items-center gap-1">

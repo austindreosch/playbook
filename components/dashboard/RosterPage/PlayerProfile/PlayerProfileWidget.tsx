@@ -293,7 +293,7 @@ function PlayerProfileWidget({
                 size="small"
                 className="p-1 h-auto"
               >
-                <Info className="hw-icon-sm text-text-soft-400 hover:text-text-soft-600" />
+                <Info className="hw-icon-sm text-soft-400 hover:text-soft-600" />
               </Button.Root>
             </Popover.Trigger>
             <Popover.Content
@@ -346,8 +346,8 @@ export function PlayerProfileWidgetEmpty({
       <div className='flex flex-1 flex-col gap-4'>
         <Divider.Root />
         <div className='flex flex-1 flex-col items-center justify-center gap-5 p-5'>
-          <div className='size-[108px] bg-bg-weak-50 rounded-lg flex items-center justify-center text-text-sub-600'>Empty</div>
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='size-[108px] bg-bg-weak-50 rounded-lg flex items-center justify-center text-sub-600'>Empty</div>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No Playbook Score data yet.
             <br />
             Please check back later.

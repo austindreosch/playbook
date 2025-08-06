@@ -17,7 +17,7 @@ export const compactButtonVariants = tv({
       'relative flex shrink-0 items-center justify-center outline-none',
       'transition duration-200 ease-out',
       // disabled
-      'disabled:pointer-events-none disabled:border-transparent disabled:bg-transparent disabled:text-text-disabled-300 disabled:shadow-none',
+      'disabled:pointer-events-none disabled:border-transparent disabled:bg-transparent disabled:text-disabled-300 disabled:shadow-none',
       // focus
       'focus:outline-none',
     ],
@@ -28,31 +28,31 @@ export const compactButtonVariants = tv({
       stroke: {
         root: [
           // base
-          'border border-stroke-soft-200 bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+          'border border-stroke-soft-200 bg-bg-white-0 text-sub-600 shadow-regular-xs',
           // hover
-          'hover:border-transparent hover:bg-bg-weak-50 hover:text-text-strong-950 hover:shadow-none',
+          'hover:border-transparent hover:bg-bg-weak-50 hover:text-strong-950 hover:shadow-none',
           // focus
-          'focus-visible:border-transparent focus-visible:bg-bg-strong-950 focus-visible:text-text-white-0 focus-visible:shadow-none',
+          'focus-visible:border-transparent focus-visible:bg-bg-strong-950 focus-visible:text-white-0 focus-visible:shadow-none',
         ],
       },
       ghost: {
         root: [
           // base
-          'bg-transparent text-text-sub-600',
+          'bg-transparent text-sub-600',
           // hover
-          'hover:bg-bg-weak-50 hover:text-text-strong-950',
+          'hover:bg-bg-weak-50 hover:text-strong-950',
           // focus
-          'focus-visible:bg-bg-strong-950 focus-visible:text-text-white-0',
+          'focus-visible:bg-bg-strong-950 focus-visible:text-white-0',
         ],
       },
       white: {
         root: [
           // base
-          'bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+          'bg-bg-white-0 text-sub-600 shadow-regular-xs',
           // hover
-          'hover:bg-bg-weak-50 hover:text-text-strong-950',
+          'hover:bg-bg-weak-50 hover:text-strong-950',
           // focus
-          'focus-visible:bg-bg-strong-950 focus-visible:text-text-white-0',
+          'focus-visible:bg-bg-strong-950 focus-visible:text-white-0',
         ],
       },
       modifiable: {},

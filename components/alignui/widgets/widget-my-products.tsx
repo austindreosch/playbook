@@ -96,10 +96,10 @@ export function WidgetMyProducts() {
       <div className='flex items-start gap-2 p-5 pb-4'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>My Products</div>
+            <div className='text-label-sm text-sub-600'>My Products</div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 View and track the sales performance of your products, including
@@ -108,8 +108,8 @@ export function WidgetMyProducts() {
             </Tooltip.Root>
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>468</div>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-title-h5 text-strong-950'>468</div>
+            <div className='text-label-sm text-sub-600'>
               <span className='text-success-base'>+2.1%</span> vs last week
             </div>
           </div>
@@ -121,15 +121,15 @@ export function WidgetMyProducts() {
 
       <div className='h-11 w-full  border-y border-stroke-soft-200 px-5'>
         <div className='group relative flex h-full w-full items-center'>
-          <RiSearch2Line className='pointer-events-none absolute left-0 top-1/2 size-5 -translate-y-1/2 text-text-soft-400 transition group-focus-within:text-text-sub-600' />
+          <RiSearch2Line className='pointer-events-none absolute left-0 top-1/2 size-5 -translate-y-1/2 text-soft-400 transition group-focus-within:text-sub-600' />
           <input
             type='text'
             placeholder='Search products...'
             value={searchTerm}
             onChange={handleSearch}
             className={cn(
-              'w-full bg-transparent bg-none pl-[30px] text-paragraph-sm text-text-strong-950 caret-primary-base focus:outline-none',
-              'placeholder:text-text-soft-400',
+              'w-full bg-transparent bg-none pl-[30px] text-paragraph-sm text-strong-950 caret-primary-base focus:outline-none',
+              'placeholder:text-soft-400',
             )}
           />
         </div>
@@ -152,10 +152,10 @@ export function WidgetMyProducts() {
                   className='size-10 shrink-0 object-contain'
                 />
                 <div className='flex-1'>
-                  <div className='text-label-sm text-text-strong-950'>
+                  <div className='text-label-sm text-strong-950'>
                     {name}
                   </div>
-                  <div className='mt-1 text-paragraph-sm text-text-sub-600'>
+                  <div className='mt-1 text-paragraph-sm text-sub-600'>
                     {description}
                   </div>
                 </div>

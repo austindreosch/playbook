@@ -17,53 +17,53 @@ export const selectVariants = tv({
     triggerRoot: [
       // base
       'group/trigger min-w-0 shrink-0 bg-bg-white-0 shadow-regular-xs outline-none ring-1 ring-inset ring-stroke-soft-200',
-      'text-paragraph-sm text-text-strong-950',
+      'text-paragraph-sm text-strong-950',
       'flex items-center text-left',
       'transition duration-200 ease-out',
       // hover
       'hover:bg-bg-weak-50 hover:ring-transparent',
       // focus
       'focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950',
-      'focus:text-text-strong-950 data-[placeholder]:focus:text-text-strong-950',
+      'focus:text-strong-950 data-[placeholder]:focus:text-strong-950',
       // disabled
-      'disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-text-disabled-300 disabled:shadow-none disabled:ring-transparent data-[placeholder]:disabled:text-text-disabled-300',
+      'disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-disabled-300 disabled:shadow-none disabled:ring-transparent data-[placeholder]:disabled:text-disabled-300',
       // placeholder state
-      'data-[placeholder]:text-text-sub-600',
+      'data-[placeholder]:text-sub-600',
     ],
     triggerArrow: [
       // base
       'ml-auto size-5 shrink-0',
       'transition duration-200 ease-out',
       // placeholder state
-      'group-data-[placeholder]/trigger:text-text-soft-400',
+      'group-data-[placeholder]/trigger:text-soft-400',
       // filled state
-      'text-text-sub-600',
+      'text-sub-600',
       // hover
-      'group-hover/trigger:text-text-sub-600 group-data-[placeholder]/trigger:group-hover:text-text-sub-600',
+      'group-hover/trigger:text-sub-600 group-data-[placeholder]/trigger:group-hover:text-sub-600',
       // focus
-      'group-focus/trigger:text-text-strong-950 group-data-[placeholder]/trigger:group-focus/trigger:text-text-strong-950',
+      'group-focus/trigger:text-strong-950 group-data-[placeholder]/trigger:group-focus/trigger:text-strong-950',
       // disabled
-      'group-disabled/trigger:text-text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-text-disabled-300',
+      'group-disabled/trigger:text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-disabled-300',
       // open
       'group-data-[state=open]/trigger:rotate-180',
     ],
     triggerIcon: [
       // base
-      'h-5 w-auto min-w-0 shrink-0 object-contain text-text-sub-600',
+      'h-5 w-auto min-w-0 shrink-0 object-contain text-sub-600',
       'transition duration-200 ease-out',
       // placeholder state
-      'group-data-[placeholder]/trigger:text-text-soft-400',
+      'group-data-[placeholder]/trigger:text-soft-400',
       // hover
-      'group-hover/trigger:text-text-sub-600 group-data-[placeholder]/trigger:group-hover:text-text-sub-600',
+      'group-hover/trigger:text-sub-600 group-data-[placeholder]/trigger:group-hover:text-sub-600',
       // disabled
-      'group-disabled/trigger:text-text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-text-disabled-300',
+      'group-disabled/trigger:text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-disabled-300',
       'group-disabled/trigger:[&:not(.remixicon)]:opacity-[.48]',
     ],
     selectItemIcon: [
-      'size-5 shrink-0 bg-[length:1.25rem] text-text-sub-600',
+      'size-5 shrink-0 bg-[length:1.25rem] text-sub-600',
       // 'group-has-[&]-ml-0.5',
       // disabled
-      '[[data-disabled]_&:not(.remixicon)]:opacity-[.48] [[data-disabled]_&]:text-text-disabled-300',
+      '[[data-disabled]_&:not(.remixicon)]:opacity-[.48] [[data-disabled]_&]:text-disabled-300',
     ],
   },
   variants: {
@@ -90,32 +90,32 @@ export const selectVariants = tv({
       inline: {
         triggerRoot: [
           // base
-          'h-5 min-h-5 w-auto gap-0 rounded-none bg-transparent p-0 text-text-sub-600 shadow-none ring-0',
+          'h-5 min-h-5 w-auto gap-0 rounded-none bg-transparent p-0 text-sub-600 shadow-none ring-0',
           // hover
-          'hover:bg-transparent hover:text-text-strong-950',
+          'hover:bg-transparent hover:text-strong-950',
           // focus
           'focus:shadow-none',
           // open
-          'data-[state=open]:text-text-strong-950',
+          'data-[state=open]:text-strong-950',
         ],
         triggerIcon: [
           // base
-          'mr-1.5 text-text-soft-400',
+          'mr-1.5 text-soft-400',
           // hover
-          'group-hover/trigger:text-text-sub-600',
+          'group-hover/trigger:text-sub-600',
           // open
-          'group-data-[state=open]/trigger:text-text-sub-600',
+          'group-data-[state=open]/trigger:text-sub-600',
         ],
         triggerArrow: [
           // base
           'ml-0.5',
           // hover
-          'group-hover/trigger:text-text-strong-950',
+          'group-hover/trigger:text-strong-950',
           // open
-          'group-data-[state=open]/trigger:text-text-strong-950',
+          'group-data-[state=open]/trigger:text-strong-950',
         ],
         selectItemIcon:
-          'text-text-soft-400 group-hover/trigger:text-text-sub-600',
+          'text-soft-400 group-hover/trigger:text-sub-600',
       },
     },
     hasError: {
@@ -373,10 +373,10 @@ const SelectItem = React.forwardRef<
       ref={forwardedRef}
       className={cnExt(
         // base
-        'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-text-strong-950',
+        'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-strong-950',
         'flex items-center gap-2 transition duration-200 ease-out',
         // disabled
-        'data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-300',
+        'data-[disabled]:pointer-events-none data-[disabled]:text-disabled-300',
         // hover, focus
         'data-[highlighted]:bg-bg-weak-50 data-[highlighted]:outline-0',
         {
@@ -392,7 +392,7 @@ const SelectItem = React.forwardRef<
             // base
             'flex flex-1 items-center gap-2',
             // disabled
-            'group-disabled:text-text-disabled-300',
+            'group-disabled:text-disabled-300',
             {
               'gap-1.5': size === 'xsmall',
             },
@@ -406,7 +406,7 @@ const SelectItem = React.forwardRef<
         </span>
       </SelectPrimitives.ItemText>
       <SelectPrimitives.ItemIndicator asChild>
-        <RiCheckLine className='absolute right-2 top-1/2 size-5 shrink-0 -translate-y-1/2 text-text-sub-600' />
+        <RiCheckLine className='absolute right-2 top-1/2 size-5 shrink-0 -translate-y-1/2 text-sub-600' />
       </SelectPrimitives.ItemIndicator>
     </SelectPrimitives.Item>
   );

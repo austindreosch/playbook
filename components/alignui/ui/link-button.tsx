@@ -22,7 +22,7 @@ export const linkButtonVariants = tv({
       // focus
       'focus:outline-none focus-visible:underline',
       // disabled
-      'disabled:pointer-events-none disabled:text-text-disabled-300 disabled:no-underline',
+      'disabled:pointer-events-none disabled:text-disabled-300 disabled:no-underline',
     ],
     icon: 'shrink-0',
   },
@@ -31,13 +31,13 @@ export const linkButtonVariants = tv({
       gray: {
         root: [
           // base
-          'text-text-sub-600',
+          'text-sub-600',
           // focus
-          'focus-visible:text-text-strong-950',
+          'focus-visible:text-strong-950',
         ],
       },
       black: {
-        root: 'text-text-strong-950',
+        root: 'text-strong-950',
       },
       primary: {
         root: [

@@ -94,7 +94,7 @@ export function CategoryBarChartEmpty({
         {labels.map((label, i) => (
           <Legend
             key={label}
-            className='text-text-disabled-300'
+            className='text-disabled-300'
             color='bg-text-disabled-300'
           >
             {label}

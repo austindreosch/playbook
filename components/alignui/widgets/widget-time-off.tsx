@@ -41,10 +41,10 @@ export default function WidgetTimeOff({
             className='[grid-area:1/1]'
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-title-h4 text-text-strong-950'>
+            <span className='pointer-events-auto text-title-h4 text-strong-950'>
               {VALUE}
             </span>
-            <span className='pointer-events-auto text-subheading-xs text-text-sub-600'>
+            <span className='pointer-events-auto text-subheading-xs text-sub-600'>
               OUT OF {MAX}
             </span>
           </div>
@@ -57,7 +57,7 @@ export default function WidgetTimeOff({
           <RiTimeFill className='size-5 shrink-0 text-warning-base' />
           <div className='flex flex-1 items-center gap-0.5 text-paragraph-sm'>
             Jan 15, 2024
-            <span className='text-paragraph-xs text-text-soft-400'>
+            <span className='text-paragraph-xs text-soft-400'>
               (Casual)
             </span>
           </div>
@@ -70,7 +70,7 @@ export default function WidgetTimeOff({
           <RiCheckboxCircleFill className='size-5 shrink-0 text-success-base' />
           <div className='flex flex-1 items-center gap-0.5 text-paragraph-sm'>
             Jan 15, 2024
-            <span className='text-paragraph-xs text-text-soft-400'>
+            <span className='text-paragraph-xs text-soft-400'>
               (Casual)
             </span>
           </div>
@@ -83,7 +83,7 @@ export default function WidgetTimeOff({
           <RiCloseCircleFill className='size-5 shrink-0 text-error-base' />
           <div className='flex flex-1 items-center gap-0.5 text-paragraph-sm'>
             Jan 15, 2024
-            <span className='text-paragraph-xs text-text-soft-400'>
+            <span className='text-paragraph-xs text-soft-400'>
               (Casual)
             </span>
           </div>
@@ -116,10 +116,10 @@ export function WidgetTimeOffEmpty({
         <div className='mx-auto grid w-[208px]'>
           <GaugeChart className='[grid-area:1/1]' />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-title-h4 text-text-soft-400'>
+            <span className='pointer-events-auto text-title-h4 text-soft-400'>
               0
             </span>
-            <span className='pointer-events-auto text-subheading-xs text-text-disabled-300'>
+            <span className='pointer-events-auto text-subheading-xs text-disabled-300'>
               OUT OF 20
             </span>
           </div>
@@ -131,7 +131,7 @@ export function WidgetTimeOffEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-3 p-2.5'>
           <IllustrationEmptyTimeOff className='size-[72px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of tracked time yet.
           </div>
         </div>

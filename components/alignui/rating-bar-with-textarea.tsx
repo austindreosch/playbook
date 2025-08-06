@@ -44,7 +44,7 @@ export const RatingBarWithTextarea = React.forwardRef<
             key={i}
             value={item.value}
             className={cn(
-              'group grid h-9 w-full items-center justify-center text-label-sm text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+              'group grid h-9 w-full items-center justify-center text-label-sm text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
               'transition duration-200 ease-out',
               'first:rounded-tl-xl last:rounded-tr-xl',
               // hover
@@ -53,7 +53,7 @@ export const RatingBarWithTextarea = React.forwardRef<
               'outline-none focus:outline-none',
               'focus-visible:z-10 focus-visible:!border-transparent focus-visible:ring-1 focus-visible:ring-stroke-strong-950',
               // selected
-              'data-[state=on]:bg-bg-weak-50 data-[state=on]:text-text-strong-950',
+              'data-[state=on]:bg-bg-weak-50 data-[state=on]:text-strong-950',
             )}
           >
             {item.label}

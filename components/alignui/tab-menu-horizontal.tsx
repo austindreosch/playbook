@@ -104,13 +104,13 @@ const TabMenuHorizontalTrigger = React.forwardRef<
       ref={forwardedRef}
       className={cnExt(
         // base
-        'group/tab-item h-12 py-3.5 text-label-sm text-text-sub-600 outline-none',
+        'group/tab-item h-12 py-3.5 text-label-sm text-sub-600 outline-none',
         'flex items-center justify-center gap-1.5',
         'transition duration-200 ease-out',
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:text-text-strong-950',
+        'data-[state=active]:text-strong-950',
         className,
       )}
       {...rest}
@@ -130,7 +130,7 @@ function TabMenuHorizontalIcon<T extends React.ElementType>({
     <Component
       className={cnExt(
         // base
-        'size-5 text-text-sub-600',
+        'size-5 text-sub-600',
         'transition duration-200 ease-out',
         // active
         'group-data-[state=active]/tab-item:text-primary-base',
@@ -151,7 +151,7 @@ function TabMenuHorizontalArrowIcon<T extends React.ElementType>({
 
   return (
     <Component
-      className={cnExt('size-5 text-text-sub-600', className)}
+      className={cnExt('size-5 text-sub-600', className)}
       {...rest}
     />
   );

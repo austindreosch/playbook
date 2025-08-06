@@ -37,12 +37,12 @@ export const tooltipVariants = tv({
     },
     variant: {
       dark: {
-        content: 'bg-bg-strong-950 text-text-white-0',
+        content: 'bg-bg-strong-950 text-white-0',
         arrow: 'border-stroke-strong-950 bg-bg-strong-950',
       },
       light: {
         content:
-          'bg-bg-white-0 text-text-strong-950 ring-1 ring-stroke-soft-200',
+          'bg-bg-white-0 text-strong-950 ring-1 ring-stroke-soft-200',
         arrow: 'border-stroke-soft-200 bg-bg-white-0',
       },
     },

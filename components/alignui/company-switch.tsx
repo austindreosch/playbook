@@ -50,11 +50,11 @@ function CompanyItem({ company, selected, onSelect }: CompanyItemProps) {
       </div>
       <div className='flex-1 space-y-1'>
         <div className='text-label-sm'>{company.name}</div>
-        <div className='text-paragraph-xs text-text-sub-600'>
+        <div className='text-paragraph-xs text-sub-600'>
           {company.description}
         </div>
       </div>
-      {selected && <RiCheckLine className='size-5 text-text-sub-600' />}
+      {selected && <RiCheckLine className='size-5 text-sub-600' />}
     </button>
   );
 }
@@ -88,7 +88,7 @@ export function CompanySwitch({ className }: { className?: string }) {
                   ?.name
               }
             </div>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               {
                 companies.find((company) => company.value === selectedItem)
                   ?.description
@@ -96,7 +96,7 @@ export function CompanySwitch({ className }: { className?: string }) {
             </div>
           </div>
           <div className='flex size-6 items-center justify-center rounded-md border border-stroke-soft-200 bg-bg-white-0 shadow-regular-xs'>
-            <RiExpandUpDownLine className='size-5 text-text-sub-600' />
+            <RiExpandUpDownLine className='size-5 text-sub-600' />
           </div>
         </div>
       </Dropdown.Trigger>
@@ -136,7 +136,7 @@ export function CompanySwitchMobile({ className }: { className?: string }) {
           <div className='text-label-md'>
             {companies.find((company) => company.value === selectedItem)?.name}
           </div>
-          <div className='text-paragraph-sm text-text-sub-600'>
+          <div className='text-paragraph-sm text-sub-600'>
             {
               companies.find((company) => company.value === selectedItem)
                 ?.description
@@ -145,9 +145,9 @@ export function CompanySwitchMobile({ className }: { className?: string }) {
         </div>
         <div
           className={cn(
-            'transition-default flex size-6 items-center justify-center rounded-md border border-stroke-soft-200 bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+            'transition-default flex size-6 items-center justify-center rounded-md border border-stroke-soft-200 bg-bg-white-0 text-sub-600 shadow-regular-xs',
             // open
-            'group-data-[state=open]:border-bg-strong-950 group-data-[state=open]:bg-bg-strong-950 group-data-[state=open]:text-text-white-0',
+            'group-data-[state=open]:border-bg-strong-950 group-data-[state=open]:bg-bg-strong-950 group-data-[state=open]:text-white-0',
           )}
         >
           <RiExpandUpDownLine className='size-5' />

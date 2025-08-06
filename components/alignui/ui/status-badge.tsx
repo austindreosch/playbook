@@ -28,7 +28,7 @@ export const statusBadgeVariants = tv({
   variants: {
     variant: {
       stroke: {
-        root: 'bg-bg-white-0 text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+        root: 'bg-bg-white-0 text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
       },
       light: {},
     },
@@ -77,7 +77,7 @@ export const statusBadgeVariants = tv({
       variant: 'light',
       status: 'disabled',
       class: {
-        root: 'bg-faded-lighter text-text-sub-600',
+        root: 'bg-faded-lighter text-sub-600',
       },
     },
   ],

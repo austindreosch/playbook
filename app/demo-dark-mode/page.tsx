@@ -13,7 +13,7 @@ function DarkModeDemo() {
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header with theme toggle */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-text-strong-950">
+          <h1 className="text-3xl font-bold text-strong-950">
             Dark Mode Demo
           </h1>
           <ThemeToggle />
@@ -23,7 +23,7 @@ function DarkModeDemo() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Roster component demo */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-text-strong-950">
+            <h2 className="text-xl font-semibold text-strong-950">
               Roster Import Component
             </h2>
             <div className="h-64">
@@ -33,7 +33,7 @@ function DarkModeDemo() {
 
           {/* Widget demo */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-text-strong-950">
+            <h2 className="text-xl font-semibold text-strong-950">
               Widget Box Demo
             </h2>
             <WidgetBox.Root>
@@ -45,15 +45,15 @@ function DarkModeDemo() {
                 </Button.Root>
               </WidgetBox.Header>
               <div className="space-y-4 pt-4">
-                <p className="text-text-sub-600">
+                <p className="text-sub-600">
                   This widget box demonstrates the dark mode color system working
                   with semantic tokens.
                 </p>
                 <div className="bg-bg-weak-50 p-4 rounded-lg">
-                  <div className="text-text-strong-950 font-medium mb-2">
+                  <div className="text-strong-950 font-medium mb-2">
                     Nested Content
                   </div>
-                  <div className="text-text-sub-600">
+                  <div className="text-sub-600">
                     Background and text colors automatically adapt to the theme.
                   </div>
                 </div>
@@ -63,7 +63,7 @@ function DarkModeDemo() {
 
           {/* Button demos */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-text-strong-950">
+            <h2 className="text-xl font-semibold text-strong-950">
               Button Variants
             </h2>
             <div className="space-y-3">
@@ -85,7 +85,7 @@ function DarkModeDemo() {
 
           {/* Custom widget box demo */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-text-strong-950">
+            <h2 className="text-xl font-semibold text-strong-950">
               Custom Widget Box
             </h2>
             <WidgetBox.Root>
@@ -97,7 +97,7 @@ function DarkModeDemo() {
                 </Button.Root>
               </WidgetBox.Header>
               <div className="space-y-3 pt-4">
-                <p className="text-text-sub-600">
+                <p className="text-sub-600">
                   This is a demo widget showing how semantic colors automatically
                   adapt to dark mode without any component changes.
                 </p>
@@ -116,13 +116,13 @@ function DarkModeDemo() {
 
         {/* Color palette demo */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-text-strong-950">
+          <h2 className="text-xl font-semibold text-strong-950">
             Semantic Color System
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             <div className="bg-bg-weak-50 p-4 rounded-lg border border-stroke-soft-200">
-              <div className="text-text-strong-950 font-medium">bg-weak-50</div>
-              <div className="text-text-sub-600 text-sm">Background</div>
+              <div className="text-strong-950 font-medium">bg-weak-50</div>
+              <div className="text-sub-600 text-sm">Background</div>
             </div>
             <div className="bg-information-lighter p-4 rounded-lg">
               <div className="text-information-dark font-medium">info-lighter</div>

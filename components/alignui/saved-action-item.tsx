@@ -59,7 +59,7 @@ export const SavedActionItem = React.forwardRef<
             className={cn(
               'flex size-10 shrink-0 items-center justify-center rounded-full',
               {
-                'bg-bg-white-0 text-text-sub-600 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200':
+                'bg-bg-white-0 text-sub-600 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200':
                   type === 'other',
                 'bg-success-lighter text-success-base': type === 'rent',
                 'bg-feature-lighter text-feature-base': type === 'tax',
@@ -78,10 +78,10 @@ export const SavedActionItem = React.forwardRef<
           </div>
         )}
         <div className='min-w-0 flex-1 space-y-1'>
-          <div className='truncate text-label-sm text-text-strong-950'>
+          <div className='truncate text-label-sm text-strong-950'>
             {name}
           </div>
-          <div className='truncate text-paragraph-xs text-text-sub-600'>
+          <div className='truncate text-paragraph-xs text-sub-600'>
             {description}
           </div>
         </div>

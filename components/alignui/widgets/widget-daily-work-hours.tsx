@@ -38,12 +38,12 @@ export default function WidgetDailyWorkHours({
       <Divider.Root />
 
       <div className='space-y-4 pt-4'>
-        <div className='text-paragraph-md text-text-sub-600'>
-          <span className='text-label-md text-text-strong-950'>
+        <div className='text-paragraph-md text-sub-600'>
+          <span className='text-label-md text-strong-950'>
             {duration.hours || 0}
           </span>{' '}
           hours{' '}
-          <span className='text-label-md text-text-strong-950'>
+          <span className='text-label-md text-strong-950'>
             {duration.minutes || 0}
           </span>{' '}
           minutes in total ⏳
@@ -67,9 +67,9 @@ export function WidgetDailyWorkHoursEmpty({
       <Divider.Root />
 
       <div className='space-y-4 pt-4'>
-        <div className='text-paragraph-md text-text-soft-400'>
-          <span className='text-label-md text-text-sub-600'>0</span> hours{' '}
-          <span className='text-label-md text-text-sub-600'>0</span> minutes in
+        <div className='text-paragraph-md text-soft-400'>
+          <span className='text-label-md text-sub-600'>0</span> hours{' '}
+          <span className='text-label-md text-sub-600'>0</span> minutes in
           total ⏳
         </div>
         <CategoryBarChartEmpty

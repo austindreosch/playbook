@@ -66,7 +66,7 @@ export function TimeTracker({
 
   return (
     <div className='flex flex-col items-center'>
-      <div className='text-center text-title-h3 tabular-nums text-text-strong-950'>
+      <div className='text-center text-title-h3 tabular-nums text-strong-950'>
         <TimerRenderer
           timer={stopwatch}
           renderRate={500}
@@ -78,7 +78,7 @@ export function TimeTracker({
               <>
                 <DigitScroll size='2.5rem' value={hours} />:
                 <DigitScroll size='2.5rem' value={minutes} />:
-                <span className='text-text-soft-400'>
+                <span className='text-soft-400'>
                   <DigitScroll size='2.5rem' value={seconds} />
                 </span>
               </>

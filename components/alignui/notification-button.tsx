@@ -34,7 +34,7 @@ export default function NotificationButton({
       >
         <TabMenuHorizontal.Root defaultValue='all'>
           <div className='flex h-14 items-center justify-between px-5'>
-            <span className='text-label-md text-text-strong-950'>
+            <span className='text-label-md text-strong-950'>
               Notifications
             </span>
             <LinkButton.Root variant='primary' size='medium'>
@@ -83,7 +83,7 @@ export default function NotificationButton({
               value='all'
             >
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/wei.png' />
                   <Avatar.Indicator position='top'>
@@ -91,11 +91,11 @@ export default function NotificationButton({
                   </Avatar.Indicator>
                 </Avatar.Root>
                 <div className='space-y-1'>
-                  <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                  <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                     <strong>Wei Chen</strong> joined to{' '}
                     <strong>Final Presentation</strong>
                   </div>
-                  <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                  <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                     <span>8 min ago</span>
                     <span className='px-0.5'>∙</span>
                     <div className='flex items-center gap-1'>
@@ -113,7 +113,7 @@ export default function NotificationButton({
               <Divider.Root variant='line-spacing' />
 
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/sophia.png' />
                   <Avatar.Indicator position='top'>
@@ -122,11 +122,11 @@ export default function NotificationButton({
                 </Avatar.Root>
                 <div className='space-y-4'>
                   <div className='space-y-1'>
-                    <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                    <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                       <strong>Sophia Williams</strong> invites you{' '}
                       <strong>synergy.fig</strong> file with you
                     </div>
-                    <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                    <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                       <span>2 hours ago</span>
                       <span className='px-0.5'>∙</span>
                       <div className='flex items-center gap-1'>
@@ -165,17 +165,17 @@ export default function NotificationButton({
               <Divider.Root variant='line-spacing' />
 
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/arthur.png' />
                 </Avatar.Root>
                 <div className='space-y-3'>
                   <div className='space-y-1'>
-                    <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                    <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                       <strong>Arthur Taylor</strong> uploaded an{' '}
                       <strong>arthur.csv</strong> file
                     </div>
-                    <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                    <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                       <span>3 hours ago</span>
                       <span className='px-0.5'>∙</span>
                       <div className='flex items-center gap-1'>
@@ -199,7 +199,7 @@ export default function NotificationButton({
                       <Button.Icon as={RiAttachment2} />
                       <div className='flex gap-0.5'>
                         arthur.csv
-                        <span className='text-paragraph-sm text-text-soft-400'>
+                        <span className='text-paragraph-sm text-soft-400'>
                           (4mb)
                         </span>
                       </div>
@@ -211,16 +211,16 @@ export default function NotificationButton({
               <Divider.Root variant='line-spacing' />
 
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/laura.png' />
                 </Avatar.Root>
                 <div className='space-y-3'>
                   <div className='space-y-1'>
-                    <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                    <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                       <strong>Laura Perez</strong> commented on your post
                     </div>
-                    <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                    <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                       <span>2 days ago</span>
                       <span className='px-0.5'>∙</span>
                       <div className='flex items-center gap-1'>
@@ -252,7 +252,7 @@ export default function NotificationButton({
               value='inbox'
             >
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/wei.png' />
                   <Avatar.Indicator position='top'>
@@ -260,11 +260,11 @@ export default function NotificationButton({
                   </Avatar.Indicator>
                 </Avatar.Root>
                 <div className='space-y-1'>
-                  <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                  <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                     <strong>Wei Chen</strong> joined to{' '}
                     <strong>Final Presentation</strong>
                   </div>
-                  <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                  <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                     <span>8 min ago</span>
                     <span className='px-0.5'>∙</span>
                     <div className='flex items-center gap-1'>
@@ -282,7 +282,7 @@ export default function NotificationButton({
               <Divider.Root variant='line-spacing' />
 
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/sophia.png' />
                   <Avatar.Indicator position='top'>
@@ -291,11 +291,11 @@ export default function NotificationButton({
                 </Avatar.Root>
                 <div className='space-y-4'>
                   <div className='space-y-1'>
-                    <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                    <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                       <strong>Sophia Williams</strong> invites you{' '}
                       <strong>synergy.fig</strong> file with you
                     </div>
-                    <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                    <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                       <span>2 hours ago</span>
                       <span className='px-0.5'>∙</span>
                       <div className='flex items-center gap-1'>
@@ -336,17 +336,17 @@ export default function NotificationButton({
               value='following'
             >
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/arthur.png' />
                 </Avatar.Root>
                 <div className='space-y-3'>
                   <div className='space-y-1'>
-                    <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                    <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                       <strong>Arthur Taylor</strong> uploaded an{' '}
                       <strong>arthur.csv</strong> file
                     </div>
-                    <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                    <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                       <span>3 hours ago</span>
                       <span className='px-0.5'>∙</span>
                       <div className='flex items-center gap-1'>
@@ -370,7 +370,7 @@ export default function NotificationButton({
                       <Button.Icon as={RiAttachment2} />
                       <div className='flex gap-0.5'>
                         arthur.csv
-                        <span className='text-paragraph-sm text-text-soft-400'>
+                        <span className='text-paragraph-sm text-soft-400'>
                           (4mb)
                         </span>
                       </div>
@@ -384,16 +384,16 @@ export default function NotificationButton({
               value='archived'
             >
               {/* notifiaction item */}
-              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-text-strong-950'>
+              <div className='flex items-start gap-[15px] rounded-lg p-3 text-paragraph-sm text-strong-950'>
                 <Avatar.Root size='40'>
                   <Avatar.Image src='/images/avatar/illustration/laura.png' />
                 </Avatar.Root>
                 <div className='space-y-3'>
                   <div className='space-y-1'>
-                    <div className='text-label-sm font-normal text-text-sub-600 [&>strong]:font-medium [&>strong]:text-text-strong-950'>
+                    <div className='text-label-sm font-normal text-sub-600 [&>strong]:font-medium [&>strong]:text-strong-950'>
                       <strong>Laura Perez</strong> commented on your post
                     </div>
-                    <div className='flex items-center gap-1 text-paragraph-xs text-text-sub-600'>
+                    <div className='flex items-center gap-1 text-paragraph-xs text-sub-600'>
                       <span>2 days ago</span>
                       <span className='px-0.5'>∙</span>
                       <div className='flex items-center gap-1'>
@@ -423,9 +423,9 @@ export default function NotificationButton({
           </div>
 
           <div className='flex h-12 items-center justify-between border-t border-stroke-soft-200 px-5'>
-            <div className='flex items-center gap-2 text-paragraph-xs text-text-sub-600'>
+            <div className='flex items-center gap-2 text-paragraph-xs text-sub-600'>
               Use
-              <div className='ring-inside flex size-5 shrink-0 items-center justify-center rounded bg-bg-weak-50 text-text-sub-600 ring-1 ring-stroke-soft-200'>
+              <div className='ring-inside flex size-5 shrink-0 items-center justify-center rounded bg-bg-weak-50 text-sub-600 ring-1 ring-stroke-soft-200'>
                 <RiContractRightLine className='size-4' />
               </div>
               to navigate

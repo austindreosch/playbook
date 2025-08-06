@@ -396,7 +396,7 @@ export const badgeVariants = tv({
       class: {
         root: [
           'ring-1 ring-inset ring-stroke-soft-200',
-          'bg-transparent text-text-disabled-300',
+          'bg-transparent text-disabled-300',
         ],
       },
     },

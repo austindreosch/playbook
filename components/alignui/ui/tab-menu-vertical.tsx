@@ -47,7 +47,7 @@ const TabMenuVerticalTrigger = React.forwardRef<
       ref={forwardedRef}
       className={cnExt(
         // base
-        'group/tab-item w-full rounded-lg p-2 text-left text-label-sm text-text-sub-600 outline-none',
+        'group/tab-item w-full rounded-lg p-2 text-left text-label-sm text-sub-600 outline-none',
         'grid auto-cols-auto grid-flow-col grid-cols-[auto,minmax(0,1fr)] items-center gap-1.5',
         'transition duration-200 ease-out',
         // hover
@@ -55,7 +55,7 @@ const TabMenuVerticalTrigger = React.forwardRef<
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:bg-bg-weak-50 data-[state=active]:text-text-strong-950',
+        'data-[state=active]:bg-bg-weak-50 data-[state=active]:text-strong-950',
         className,
       )}
       {...rest}
@@ -75,7 +75,7 @@ function TabMenuVerticalIcon<T extends React.ElementType>({
     <Component
       className={cnExt(
         // base
-        'size-5 text-text-sub-600',
+        'size-5 text-sub-600',
         'transition duration-200 ease-out',
         // active
         'group-data-[state=active]/tab-item:text-primary-base',
@@ -98,7 +98,7 @@ function TabMenuVerticalArrowIcon<T extends React.ElementType>({
     <Component
       className={cnExt(
         // base
-        'size-5 p-px text-text-sub-600',
+        'size-5 p-px text-sub-600',
         'rounded-full bg-bg-white-0 opacity-0 shadow-regular-xs',
         'scale-75 transition ease-out',
         // active

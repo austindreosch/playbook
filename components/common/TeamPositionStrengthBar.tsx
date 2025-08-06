@@ -103,7 +103,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }: Te
                             width: `${getValue(pos.value)}%`,
                         }}
                     >
-                        <span className="text-label-md font-semibold text-text-strong-950" style={{ opacity: 0.7 }}>
+                        <span className="text-label-md font-semibold" style={{ color: '#383838', opacity: 0.7 }}>
                             {pos.position}
                         </span>
                     </div>
@@ -114,7 +114,7 @@ export default function TeamPositionStrengthBar({ team, isOpponent = false }: Te
                 {positionStrengths.map((pos) => (
                     <div
                         key={pos.position}
-                        className={`flex items-center justify-center gap-1 pr-[7px] text-label-md ${isOpponent ? 'text-text-soft-400' : 'text-text-sub-600'}`}
+                        className={`flex items-center justify-center gap-1 pr-[7px] text-label-md ${isOpponent ? 'text-soft-400' : 'text-sub-600'}`}
                         style={{ width: `${getValue(pos.value)}%` }}
                     >
                         <LegendDot size='small' className={pos.color} />

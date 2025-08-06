@@ -83,7 +83,7 @@ export default function WidgetWorkHourAnalysis({
             <RiTimeFill className='size-5 text-primary-base' />
           </div>
           <div className='space-y-1'>
-            <div className='text-subheading-2xs uppercase text-text-soft-400'>
+            <div className='text-subheading-2xs uppercase text-soft-400'>
               Total Work
             </div>
             <div className='text-label-lg'>38 hours ∙ 12 mins</div>
@@ -140,8 +140,8 @@ export default function WidgetWorkHourAnalysis({
         </div>
 
         <div className='flex items-center gap-0.5'>
-          <IconInfoCustomFill className='size-4 shrink-0 text-text-disabled-300' />
-          <span className='text-paragraph-xs text-text-soft-400'>
+          <IconInfoCustomFill className='size-4 shrink-0 text-disabled-300' />
+          <span className='text-paragraph-xs text-soft-400'>
             Total work hours include extra hours.
           </span>
         </div>
@@ -170,10 +170,10 @@ export function WidgetWorkHourAnalysisEmpty({
       <div className='space-y-5 pt-5'>
         <div className='flex items-center gap-2.5'>
           <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200'>
-            <RiTimeFill className='size-5 text-text-sub-600' />
+            <RiTimeFill className='size-5 text-sub-600' />
           </div>
           <div className='space-y-1'>
-            <div className='text-subheading-2xs uppercase text-text-soft-400'>
+            <div className='text-subheading-2xs uppercase text-soft-400'>
               Total Work
             </div>
             <div className='text-label-lg'>0 hours ∙ 0 mins</div>
@@ -221,7 +221,7 @@ export function WidgetWorkHourAnalysisEmpty({
 
           <div className='flex h-[178px] flex-col items-center gap-5 p-5'>
             <IllustrationEmptyWorkHourAnalysis className='size-20' />
-            <div className='text-center text-paragraph-sm text-text-soft-400'>
+            <div className='text-center text-paragraph-sm text-soft-400'>
               No records of work hours yet.
               <br /> Please check back later.
             </div>

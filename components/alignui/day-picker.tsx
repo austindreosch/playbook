@@ -126,7 +126,7 @@ function DayPicker({ defaultDate, onDayChange }: DayPickerProps) {
       >
         <span
           className={cnExt(
-            'text-paragraph-xs text-text-sub-600 transition duration-200 ease-out',
+            'text-paragraph-xs text-sub-600 transition duration-200 ease-out',
             {
               'text-static-white': isSameDay(day, selectedDayTemp),
             },
@@ -136,7 +136,7 @@ function DayPicker({ defaultDate, onDayChange }: DayPickerProps) {
         </span>
         <span
           className={cnExt(
-            'text-label-md text-text-strong-950 transition duration-200 ease-out',
+            'text-label-md text-strong-950 transition duration-200 ease-out',
             {
               'text-static-white': isSameDay(day, selectedDayTemp),
             },
@@ -158,7 +158,7 @@ function DayPicker({ defaultDate, onDayChange }: DayPickerProps) {
         >
           <CompactButton.Icon as={RiArrowLeftSLine} />
         </CompactButton.Root>
-        <span className='text-label-sm text-text-sub-600'>
+        <span className='text-label-sm text-sub-600'>
           {format(selectedDay, 'MMMM yyyy')}
         </span>
         <CompactButton.Root

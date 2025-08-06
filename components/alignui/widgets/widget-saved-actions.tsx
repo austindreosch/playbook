@@ -105,7 +105,7 @@ export function WidgetSavedActionsEmpty({
         <Divider.Root />
         <div className='flex flex-1 flex-col items-center justify-center gap-5 p-5'>
           <IllustrationEmptySavedActions className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             You do not have any saved actions.
             <br />
             Feel free to save one.

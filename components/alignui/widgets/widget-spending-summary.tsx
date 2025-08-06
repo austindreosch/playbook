@@ -74,10 +74,10 @@ export default function WidgetSpendingSummary({
             maxWidth={248}
           />
           <div className='pointer-events-none relative z-10 flex flex-col items-center justify-end gap-1 pb-2 text-center [grid-area:1/1]'>
-            <span className='pointer-events-auto text-subheading-xs text-text-sub-600'>
+            <span className='pointer-events-auto text-subheading-xs text-sub-600'>
               SPEND
             </span>
-            <span className='pointer-events-auto text-title-h5 text-text-strong-950'>
+            <span className='pointer-events-auto text-title-h5 text-strong-950'>
               $1,800.00
             </span>
           </div>
@@ -91,7 +91,7 @@ export default function WidgetSpendingSummary({
               <RiShoppingBag3Line className='size-5 text-information-base' />
             </div>
             <div className='space-y-1'>
-              <div className='text-paragraph-xs text-text-sub-600'>
+              <div className='text-paragraph-xs text-sub-600'>
                 Shopping
               </div>
               <div className='text-label-sm'>$900.00</div>
@@ -102,7 +102,7 @@ export default function WidgetSpendingSummary({
               <RiFileListLine className='size-5 text-verified-base' />
             </div>
             <div className='space-y-1'>
-              <div className='text-paragraph-xs text-text-sub-600'>
+              <div className='text-paragraph-xs text-sub-600'>
                 Utilities
               </div>
               <div className='text-label-sm'>$600.00</div>
@@ -113,18 +113,18 @@ export default function WidgetSpendingSummary({
               <RiMoneyDollarCircleLine className='size-5 text-faded-base' />
             </div>
             <div className='space-y-1'>
-              <div className='text-paragraph-xs text-text-sub-600'>Others</div>
+              <div className='text-paragraph-xs text-sub-600'>Others</div>
               <div className='text-label-sm'>$900.00</div>
             </div>
           </div>
         </div>
 
         <div className='flex items-center gap-1 rounded-md bg-bg-white-0 py-1.5 pl-2.5 pr-1.5 ring-1 ring-inset ring-stroke-soft-200'>
-          <div className='flex-1 text-paragraph-xs text-text-sub-600'>
+          <div className='flex-1 text-paragraph-xs text-sub-600'>
             Your weekly spending limit is{' '}
             <span className='text-label-xs'>$2000</span>.
           </div>
-          <IconInfoCustomFill className='size-4 text-text-disabled-300' />
+          <IconInfoCustomFill className='size-4 text-disabled-300' />
         </div>
       </div>
     </WidgetBox.Root>
@@ -149,7 +149,7 @@ export function WidgetSpendingSummaryEmpty({
         <Divider.Root />
         <div className='flex flex-1 flex-col items-center justify-center gap-5 p-5'>
           <IllustrationEmptySpendingSummary className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of spendings yet.
             <br />
             Please check back later.

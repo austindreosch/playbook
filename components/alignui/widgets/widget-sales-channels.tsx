@@ -91,12 +91,12 @@ export function WidgetSalesChannels() {
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               Sales Channels
             </div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Compare {period} performance across your sales channels.
@@ -106,10 +106,10 @@ export function WidgetSalesChannels() {
             </Tooltip.Root>
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>
+            <div className='text-title-h5 text-strong-950'>
               {currentData.reduce((acc, item) => acc + item.value, 0)}
             </div>
-            <div className='text-label-sm text-text-sub-600'>
+            <div className='text-label-sm text-sub-600'>
               <span className='text-success-base'>+2.1%</span> vs last week
             </div>
           </div>
@@ -140,8 +140,8 @@ export function WidgetSalesChannels() {
 
       <div className='flex flex-col gap-2'>
         <div className='flex items-baseline justify-between'>
-          <div className='text-label-xs text-text-soft-400'>{start}</div>
-          <div className='text-right text-label-xs text-text-soft-400'>
+          <div className='text-label-xs text-soft-400'>{start}</div>
+          <div className='text-right text-label-xs text-soft-400'>
             {end}
           </div>
         </div>

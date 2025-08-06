@@ -33,7 +33,7 @@ const TableHead = React.forwardRef<
     <th
       ref={forwardedRef}
       className={cnExt(
-        'bg-bg-weak-50 px-3 py-2 text-left text-paragraph-sm text-text-sub-600 first:rounded-l-lg last:rounded-r-lg',
+        'bg-bg-weak-50 px-3 py-2 text-left text-paragraph-sm text-sub-600 first:rounded-l-lg last:rounded-r-lg',
         className,
       )}
       {...rest}
@@ -119,7 +119,7 @@ const TableCaption = React.forwardRef<
 >(({ className, ...rest }, forwardedRef) => (
   <caption
     ref={forwardedRef}
-    className={cnExt('mt-4 text-paragraph-sm text-text-sub-600', className)}
+    className={cnExt('mt-4 text-paragraph-sm text-sub-600', className)}
     {...rest}
   />
 ));

@@ -25,8 +25,8 @@ export function TransactionDetailDrawer() {
           <Divider.Root variant='solid-text'>Amount & Account</Divider.Root>
 
           <div className='p-5'>
-            <div className='text-title-h4 text-text-strong-950'>-$45.00</div>
-            <div className='mt-1 text-paragraph-sm text-text-sub-600'>
+            <div className='text-title-h4 text-strong-950'>-$45.00</div>
+            <div className='mt-1 text-paragraph-sm text-sub-600'>
               Mercury Checking •• 1038
             </div>
           </div>
@@ -38,10 +38,10 @@ export function TransactionDetailDrawer() {
               <Avatar.Image src='/images/avatar/illustration/matthew.png' />
             </Avatar.Root>
             <div>
-              <div className='text-label-lg text-text-strong-950'>
+              <div className='text-label-lg text-strong-950'>
                 Matthew Johnson
               </div>
-              <div className='mt-1 text-paragraph-sm text-text-sub-600'>
+              <div className='mt-1 text-paragraph-sm text-sub-600'>
                 A-8486214
               </div>
             </div>
@@ -51,10 +51,10 @@ export function TransactionDetailDrawer() {
 
           <div className='flex flex-col gap-3 p-5'>
             <div>
-              <div className='text-subheading-xs uppercase text-text-soft-400'>
+              <div className='text-subheading-xs uppercase text-soft-400'>
                 Payment Method
               </div>
-              <div className='mt-1 text-label-sm text-text-strong-950'>
+              <div className='mt-1 text-label-sm text-strong-950'>
                 Money Transfer
               </div>
             </div>
@@ -62,10 +62,10 @@ export function TransactionDetailDrawer() {
             <Divider.Root variant='line-spacing' />
 
             <div>
-              <div className='text-subheading-xs uppercase text-text-soft-400'>
+              <div className='text-subheading-xs uppercase text-soft-400'>
                 Transaction ID
               </div>
-              <div className='mt-1 text-label-sm text-text-strong-950'>
+              <div className='mt-1 text-label-sm text-strong-950'>
                 APX1242352
               </div>
             </div>
@@ -73,10 +73,10 @@ export function TransactionDetailDrawer() {
             <Divider.Root variant='line-spacing' />
 
             <div>
-              <div className='text-subheading-xs uppercase text-text-soft-400'>
+              <div className='text-subheading-xs uppercase text-soft-400'>
                 Date & Time
               </div>
-              <div className='mt-1 text-label-sm text-text-strong-950'>
+              <div className='mt-1 text-label-sm text-strong-950'>
                 Sep 28, 2023 at 18:23
               </div>
             </div>
@@ -84,10 +84,10 @@ export function TransactionDetailDrawer() {
             <Divider.Root variant='line-spacing' />
 
             <div>
-              <div className='text-subheading-xs uppercase text-text-soft-400'>
+              <div className='text-subheading-xs uppercase text-soft-400'>
                 FEE
               </div>
-              <div className='mt-1 text-label-sm text-text-strong-950'>
+              <div className='mt-1 text-label-sm text-strong-950'>
                 $0.48
               </div>
             </div>
@@ -95,10 +95,10 @@ export function TransactionDetailDrawer() {
             <Divider.Root variant='line-spacing' />
 
             <div>
-              <div className='text-subheading-xs uppercase text-text-soft-400'>
+              <div className='text-subheading-xs uppercase text-soft-400'>
                 Bank Description
               </div>
-              <div className='mt-1 text-label-sm text-text-strong-950'>
+              <div className='mt-1 text-label-sm text-strong-950'>
                 APEXLLC_V84G2H16D ・ REF #84664
               </div>
             </div>

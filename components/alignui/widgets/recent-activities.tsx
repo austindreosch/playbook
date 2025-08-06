@@ -121,10 +121,10 @@ export function RecentActivities() {
     <div className='w-full'>
       <div className='flex items-start gap-3'>
         <div className='flex-1'>
-          <div className='text-label-md text-text-strong-950'>
+          <div className='text-label-md text-strong-950'>
             Recent Activities
           </div>
-          <div className='mt-1 text-paragraph-sm text-text-sub-600'>
+          <div className='mt-1 text-paragraph-sm text-sub-600'>
             7 new activities today
           </div>
         </div>
@@ -142,7 +142,7 @@ export function RecentActivities() {
         >
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -152,7 +152,7 @@ export function RecentActivities() {
           </ToggleGroup.Item>
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -162,7 +162,7 @@ export function RecentActivities() {
           </ToggleGroup.Item>
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -200,18 +200,18 @@ export function RecentActivities() {
               </div>
               <div className='flex-1'>
                 <div className='flex items-center justify-between gap-1.5'>
-                  <div className='text-label-sm text-text-strong-950'>
+                  <div className='text-label-sm text-strong-950'>
                     {item.title}
                   </div>
-                  <div className='text-right text-subheading-2xs uppercase text-text-soft-400'>
+                  <div className='text-right text-subheading-2xs uppercase text-soft-400'>
                     {item.date}
                   </div>
                 </div>
-                <div className='mt-1 text-paragraph-xs text-text-sub-600'>
+                <div className='mt-1 text-paragraph-xs text-sub-600'>
                   {item.description}
                 </div>
                 {item?.action && (
-                  <div className='mt-1 text-label-xs text-text-sub-600'>
+                  <div className='mt-1 text-label-xs text-sub-600'>
                     {item.action}
                   </div>
                 )}
@@ -235,10 +235,10 @@ export function WidgetRecentActivities() {
       <div className='p-5'>
         <div className='flex items-start gap-3'>
           <div className='flex-1'>
-            <div className='text-label-md text-text-strong-950'>
+            <div className='text-label-md text-strong-950'>
               Recent Activities
             </div>
-            <div className='mt-1 text-paragraph-sm text-text-sub-600'>
+            <div className='mt-1 text-paragraph-sm text-sub-600'>
               7 new activities today
             </div>
           </div>
@@ -255,7 +255,7 @@ export function WidgetRecentActivities() {
         >
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -265,7 +265,7 @@ export function WidgetRecentActivities() {
           </ToggleGroup.Item>
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -275,7 +275,7 @@ export function WidgetRecentActivities() {
           </ToggleGroup.Item>
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -287,11 +287,11 @@ export function WidgetRecentActivities() {
       </div>
 
       <div className='relative'>
-        <RiSearch2Line className='pointer-events-none absolute left-5 top-1/2 size-5 -translate-y-1/2 text-text-soft-400' />
+        <RiSearch2Line className='pointer-events-none absolute left-5 top-1/2 size-5 -translate-y-1/2 text-soft-400' />
         <input
           type='text'
           placeholder='Search for activities...'
-          className='h-12 w-full border-y border-stroke-soft-200 bg-transparent bg-none pl-[50px] pr-5 text-paragraph-sm text-text-strong-950 caret-primary-base placeholder:text-text-soft-400 focus:outline-none'
+          className='h-12 w-full border-y border-stroke-soft-200 bg-transparent bg-none pl-[50px] pr-5 text-paragraph-sm text-strong-950 caret-primary-base placeholder:text-soft-400 focus:outline-none'
         />
       </div>
 
@@ -312,18 +312,18 @@ export function WidgetRecentActivities() {
               </div>
               <div className='flex-1'>
                 <div className='flex items-center justify-between gap-1.5'>
-                  <div className='text-label-sm text-text-strong-950'>
+                  <div className='text-label-sm text-strong-950'>
                     {item.title}
                   </div>
-                  <div className='text-right text-subheading-2xs uppercase text-text-soft-400'>
+                  <div className='text-right text-subheading-2xs uppercase text-soft-400'>
                     {item.date}
                   </div>
                 </div>
-                <div className='mt-1 text-paragraph-xs text-text-sub-600'>
+                <div className='mt-1 text-paragraph-xs text-sub-600'>
                   {item.description}
                 </div>
                 {item?.action && (
-                  <div className='mt-1 text-label-xs text-text-sub-600'>
+                  <div className='mt-1 text-label-xs text-sub-600'>
                     {item.action}
                   </div>
                 )}

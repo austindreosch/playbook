@@ -58,9 +58,9 @@ export function WidgetUserRetention() {
     <div className='relative flex w-full flex-col gap-5 rounded-2xl bg-bg-white-0 p-5 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200'>
       <div className='flex items-start gap-2'>
         <div className='flex-1'>
-          <div className='text-label-sm text-text-sub-600'>User Retention</div>
+          <div className='text-label-sm text-sub-600'>User Retention</div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>24%</div>
+            <div className='text-title-h5 text-strong-950'>24%</div>
             <Badge.Root variant='light' color='green' size='medium'>
               +2.0%
             </Badge.Root>
@@ -105,7 +105,7 @@ export function WidgetUserRetention() {
             ))}
           </tbody>
         </table>
-        <div className='flex w-full gap-0.5 text-center text-subheading-2xs text-text-soft-400'>
+        <div className='flex w-full gap-0.5 text-center text-subheading-2xs text-soft-400'>
           {[...Array(12)].map((_, i) => (
             <div key={i} className='flex-1 pt-3'>
               {++i}
@@ -115,8 +115,8 @@ export function WidgetUserRetention() {
       </div>
 
       <div className='flex items-center gap-1.5 rounded-lg bg-bg-white-0 p-1.5 ring-1 ring-inset ring-stroke-soft-200'>
-        <IconInfoCustom className='size-4 shrink-0 text-text-disabled-300' />
-        <div className='text-paragraph-xs text-text-sub-600'>
+        <IconInfoCustom className='size-4 shrink-0 text-disabled-300' />
+        <div className='text-paragraph-xs text-sub-600'>
           Last 12 months data updated at 1:51 PM.
         </div>
       </div>

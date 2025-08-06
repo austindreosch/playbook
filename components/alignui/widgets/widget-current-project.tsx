@@ -34,7 +34,7 @@ export default function WidgetCurrentProject({
       <div className='space-y-3.5 pb-1.5 pt-4'>
         {/* row 1 */}
         <div className='space-y-1.5'>
-          <div className='text-paragraph-xs text-text-sub-600'>
+          <div className='text-paragraph-xs text-sub-600'>
             Project Name
           </div>
           <div className='flex items-center gap-2 text-paragraph-sm'>
@@ -54,7 +54,7 @@ export default function WidgetCurrentProject({
         {/* row 2 */}
         <div className='flex gap-4'>
           <div className='flex-1 space-y-1.5'>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               Project Manager
             </div>
             <div className='flex items-center gap-2 text-paragraph-sm'>
@@ -68,7 +68,7 @@ export default function WidgetCurrentProject({
             </div>
           </div>
           <div className='flex-1 space-y-1.5'>
-            <div className='text-paragraph-xs text-text-sub-600'>
+            <div className='text-paragraph-xs text-sub-600'>
               Design Lead
             </div>
             <div className='flex items-center gap-2 text-paragraph-sm'>
@@ -85,7 +85,7 @@ export default function WidgetCurrentProject({
 
         {/* row 3 */}
         <div className='space-y-1.5'>
-          <div className='text-paragraph-xs text-text-sub-600'>Team</div>
+          <div className='text-paragraph-xs text-sub-600'>Team</div>
           <div className='flex items-center gap-2'>
             <AvatarGroup.Root size='24'>
               <Avatar.Root>
@@ -113,24 +113,24 @@ export default function WidgetCurrentProject({
                 />
               </Avatar.Root>
             </AvatarGroup.Root>
-            <div className='text-paragraph-xs text-text-sub-600'>+8 people</div>
+            <div className='text-paragraph-xs text-sub-600'>+8 people</div>
           </div>
         </div>
 
         {/* row 4 */}
         <div className='space-y-1.5'>
-          <div className='text-paragraph-xs text-text-sub-600'>Timeline</div>
+          <div className='text-paragraph-xs text-sub-600'>Timeline</div>
           <div className='flex items-center gap-2 text-paragraph-sm'>
-            <RiCalendarLine className='size-5 shrink-0 text-text-sub-600' />
+            <RiCalendarLine className='size-5 shrink-0 text-sub-600' />
             <span className='truncate'>12/10/2022 ∙ 01/04/2023</span>
           </div>
         </div>
 
         {/* row 5 */}
         <div className='space-y-1.5'>
-          <div className='text-paragraph-xs text-text-sub-600'>Description</div>
+          <div className='text-paragraph-xs text-sub-600'>Description</div>
           <div className='flex items-center gap-2 text-paragraph-sm'>
-            <RiPencilLine className='size-5 shrink-0 text-text-sub-600' />
+            <RiPencilLine className='size-5 shrink-0 text-sub-600' />
             <span className='truncate'>
               Mobile and desktop app design for the new look of the brand.
             </span>
@@ -160,7 +160,7 @@ export function WidgetCurrentProjectEmpty({
       <div className='flex flex-1 flex-col justify-center pt-4'>
         <div className='flex flex-col items-center gap-5 p-5'>
           <IllustrationEmptyCurrentProject className='size-[108px]' />
-          <div className='text-center text-paragraph-sm text-text-soft-400'>
+          <div className='text-center text-paragraph-sm text-soft-400'>
             No records of projects yet.
             <br /> Please check back later.
           </div>

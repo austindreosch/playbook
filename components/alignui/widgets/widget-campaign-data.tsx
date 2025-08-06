@@ -36,10 +36,10 @@ export function WidgetCampaignData() {
       <div className='flex items-start gap-2 p-5 pb-4'>
         <div className='flex-1'>
           <div className='flex items-center gap-1'>
-            <div className='text-label-sm text-text-sub-600'>Campaign Data</div>
+            <div className='text-label-sm text-sub-600'>Campaign Data</div>
             <Tooltip.Root>
               <Tooltip.Trigger>
-                <IconInfoCustom className='size-5 text-text-disabled-300' />
+                <IconInfoCustom className='size-5 text-disabled-300' />
               </Tooltip.Trigger>
               <Tooltip.Content className='max-w-80'>
                 Monitor your campaign&apos;s budget spending. Track remaining
@@ -49,7 +49,7 @@ export function WidgetCampaignData() {
             </Tooltip.Root>
           </div>
           <div className='mt-1 flex items-center gap-2'>
-            <div className='text-title-h5 text-text-strong-950'>$1,750</div>
+            <div className='text-title-h5 text-strong-950'>$1,750</div>
             <Badge.Root variant='light' color='green' size='medium'>
               Last 15 days
             </Badge.Root>
@@ -85,8 +85,8 @@ export function WidgetCampaignData() {
           </AreaChart>
         </ResponsiveContainer>
         <div className='flex flex-col items-start justify-end border-l-2 border-primary-base px-4 pb-4'>
-          <div className='text-label-md text-text-strong-950'>45%</div>
-          <div className='text-label-xs text-text-soft-400'>$32.9K used</div>
+          <div className='text-label-md text-strong-950'>45%</div>
+          <div className='text-label-xs text-soft-400'>$32.9K used</div>
         </div>
       </div>
     </div>

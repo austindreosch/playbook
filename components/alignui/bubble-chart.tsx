@@ -22,7 +22,7 @@ const BubbleChart: React.FC<BubbleChartProps> = ({ data, width = 400, height = 3
     >
       <div className="text-center space-y-2">
         <div className="w-12 h-12 bg-primary-base rounded-lg mx-auto opacity-20"></div>
-        <div className="text-subheading-sm text-text-soft-400">Bubble Chart</div>
+        <div className="text-subheading-sm text-soft-400">Bubble Chart</div>
       </div>
     </div>
   );

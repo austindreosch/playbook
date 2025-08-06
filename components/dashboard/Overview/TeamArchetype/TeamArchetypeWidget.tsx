@@ -194,7 +194,7 @@ export default function TeamArchetypeWidget({
               const rank = parseInt(metric.rank);
               return (
                 <div key={index} className="flex items-center gap-2">
-                  <Icon className="hw-icon-sm text-text-soft-400 flex-shrink-0" strokeWidth={2} />
+                  <Icon className="hw-icon-sm text-soft-400 flex-shrink-0" strokeWidth={2} />
                   <Badge.Root
                     variant="rank"
                     size="medium"
@@ -226,10 +226,10 @@ export default function TeamArchetypeWidget({
                       
                       return (
                         <div className="bg-white border border-stroke-soft-200 rounded-lg px-3 py-2 shadow-lg">
-                          <div className="text-label-sm font-medium text-text-base-950">
+                          <div className="text-label-sm font-medium text-base-950">
                             {metric}
                           </div>
-                          <div className="text-label-xs text-text-sub-600">
+                          <div className="text-label-xs text-sub-600">
                             Rank: {rank === 1 ? '1st' : rank === 2 ? '2nd' : rank === 3 ? '3rd' : `${rank}th`}
                           </div>
                         </div>
@@ -266,7 +266,7 @@ export default function TeamArchetypeWidget({
                     return (
                       <g transform={`translate(${props.x},${props.y})`}>
                         <foreignObject x="-8" y="-8" width="16" height="16">
-                          <Icon className="w-4 h-4 text-text-soft-400" strokeWidth={2} />
+                          <Icon className="w-4 h-4 text-soft-400" strokeWidth={2} />
                         </foreignObject>
                       </g>
                     );

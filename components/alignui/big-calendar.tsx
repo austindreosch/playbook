@@ -180,13 +180,13 @@ function CalendarEventItem({
         <div
           className={cn('text-label-xs', {
             truncate: isTiny,
-            'text-text-strong-950': !completed,
-            'text-text-sub-600': completed,
+            'text-strong-950': !completed,
+            'text-sub-600': completed,
           })}
         >
           {title}
         </div>
-        <div className='text-subheading-2xs text-text-sub-600'>
+        <div className='text-subheading-2xs text-sub-600'>
           {`${format(startDate, 'h:mm')} - ${format(endDate, 'h:mm aa')}`}
         </div>
       </div>
@@ -216,14 +216,14 @@ function CalendarEventItem({
                     ))}
                   </AvatarGroup.Root>
                   {people.length > 3 && (
-                    <div className='text-paragraph-xs text-text-sub-600'>
+                    <div className='text-paragraph-xs text-sub-600'>
                       +{people.length - 3}
                     </div>
                   )}
                 </div>
               )}
               {platform && (
-                <div className='text-paragraph-xs text-text-sub-600'>
+                <div className='text-paragraph-xs text-sub-600'>
                   {platform}
                 </div>
               )}
@@ -309,27 +309,27 @@ export function BigCalendar({
                 onClick={() => handlePrevDay()}
                 className='flex items-center justify-center bg-bg-white-0'
               >
-                <RiArrowLeftSLine className='size-5 text-text-sub-600' />
+                <RiArrowLeftSLine className='size-5 text-sub-600' />
               </button>
               <button
                 type='button'
                 onClick={() => handleNextDay()}
                 className='flex items-center justify-center bg-bg-white-0'
               >
-                <RiArrowRightSLine className='size-5 text-text-sub-600' />
+                <RiArrowRightSLine className='size-5 text-sub-600' />
               </button>
             </div>
             {showingHours.map((hour, i, arr) => (
               <React.Fragment key={i}>
                 {i === 0 && <div className='h-10' />}
                 <div className='row-span-4 flex h-[120px] items-start justify-center'>
-                  <div className='-translate-y-1/2 text-center text-label-sm text-text-sub-600'>
+                  <div className='-translate-y-1/2 text-center text-label-sm text-sub-600'>
                     {format(hour, 'h aa')}
                   </div>
                 </div>
                 {i === arr.length - 1 && (
                   <div className='flex h-10 items-start justify-center'>
-                    <div className='-translate-y-1/2 text-center text-label-sm text-text-sub-600'>
+                    <div className='-translate-y-1/2 text-center text-label-sm text-sub-600'>
                       {format(
                         addHours(showingHours[showingHours.length - 1], 1),
                         'h aa',
@@ -347,7 +347,7 @@ export function BigCalendar({
                   {showingDays.map((day, index) => (
                     <div
                       key={index}
-                      className='flex h-8 items-center justify-center border-b border-stroke-soft-200 bg-bg-weak-50 text-center text-label-xs text-text-soft-400'
+                      className='flex h-8 items-center justify-center border-b border-stroke-soft-200 bg-bg-weak-50 text-center text-label-xs text-soft-400'
                     >
                       {format(day, 'dd EEE').toUpperCase()}
                     </div>

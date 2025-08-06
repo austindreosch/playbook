@@ -93,12 +93,12 @@ export function WidgetShippingTracking() {
         <div className='flex items-start gap-2'>
           <div className='flex-1'>
             <div className='flex items-center gap-1'>
-              <div className='text-label-sm text-text-sub-600'>
+              <div className='text-label-sm text-sub-600'>
                 Shipping Tracking
               </div>
               <Tooltip.Root>
                 <Tooltip.Trigger>
-                  <IconInfoCustom className='size-5 text-text-disabled-300' />
+                  <IconInfoCustom className='size-5 text-disabled-300' />
                 </Tooltip.Trigger>
                 <Tooltip.Content className='max-w-80'>
                   Track shipment performance at a glance. Analyze delivery,
@@ -109,8 +109,8 @@ export function WidgetShippingTracking() {
             </div>
 
             <div className='mt-1 flex items-center gap-2'>
-              <ClipboardMinus className='size-5 text-text-disabled-300' />
-              <div className='text-title-h5 text-text-strong-950'>3,844</div>
+              <ClipboardMinus className='size-5 text-disabled-300' />
+              <div className='text-title-h5 text-strong-950'>3,844</div>
               <Badge.Root variant='light' color='green' size='medium'>
                 +1.8%
               </Badge.Root>
@@ -149,7 +149,7 @@ export function WidgetShippingTracking() {
         >
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -159,7 +159,7 @@ export function WidgetShippingTracking() {
           </ToggleGroup.Item>
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -169,7 +169,7 @@ export function WidgetShippingTracking() {
           </ToggleGroup.Item>
           <ToggleGroup.Item
             className={cn(
-              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-text-sub-600',
+              'flex h-7 items-center justify-center rounded-lg bg-bg-weak-50 px-2.5 text-label-sm text-sub-600',
               'transition duration-200 ease-out',
               'data-[state=on]:bg-primary-alpha-10 data-[state=on]:text-primary-base',
             )}
@@ -187,7 +187,7 @@ export function WidgetShippingTracking() {
             alt=''
             className='size-6 shrink-0 object-contain'
           />
-          <div className='text-label-sm text-text-sub-600'>
+          <div className='text-label-sm text-sub-600'>
             {activeProduct.name}
           </div>
         </div>
@@ -203,7 +203,7 @@ export function WidgetShippingTracking() {
               'focus:outline-none focus-visible:bg-bg-weak-50',
             )}
           >
-            <RiArrowLeftSLine className='size-[18px] text-text-sub-600' />
+            <RiArrowLeftSLine className='size-[18px] text-sub-600' />
           </button>
           <button
             type='button'
@@ -215,7 +215,7 @@ export function WidgetShippingTracking() {
               'focus:outline-none focus-visible:bg-bg-weak-50',
             )}
           >
-            <RiArrowRightSLine className='size-[18px] text-text-sub-600' />
+            <RiArrowRightSLine className='size-[18px] text-sub-600' />
           </button>
         </div>
       </div>
@@ -263,13 +263,13 @@ export function WidgetShippingTracking() {
       </div>
 
       <div className='grid auto-cols-fr grid-flow-col gap-0.5 px-4 py-3 text-center'>
-        <div className='text-label-xs text-text-soft-400'>Mon</div>
-        <div className='text-label-xs text-text-soft-400'>Tue</div>
-        <div className='text-label-xs text-text-soft-400'>Wed</div>
-        <div className='text-label-xs text-text-soft-400'>Thu</div>
-        <div className='text-label-xs text-text-soft-400'>Fri</div>
-        <div className='text-label-xs text-text-soft-400'>Sat</div>
-        <div className='text-label-xs text-text-soft-400'>Sun</div>
+        <div className='text-label-xs text-soft-400'>Mon</div>
+        <div className='text-label-xs text-soft-400'>Tue</div>
+        <div className='text-label-xs text-soft-400'>Wed</div>
+        <div className='text-label-xs text-soft-400'>Thu</div>
+        <div className='text-label-xs text-soft-400'>Fri</div>
+        <div className='text-label-xs text-soft-400'>Sat</div>
+        <div className='text-label-xs text-soft-400'>Sun</div>
       </div>
     </div>
   );

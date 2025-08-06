@@ -1131,7 +1131,7 @@ root: [
 // focus
 'focus:outline-none',
 // disabled
-'disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-text-disabled-300 disabled:ring-transparent',
+'disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-disabled-300 disabled:ring-transparent',
 ],
 icon: [
 // base
@@ -1242,7 +1242,7 @@ root: [
       class: {
         root: [
           // base
-          'bg-bg-strong-950 text-text-white-0',
+          'bg-bg-strong-950 text-white-0',
           // hover
           'hover:bg-bg-surface-800',
           // focus
@@ -1256,11 +1256,11 @@ root: [
       class: {
         root: [
           // base
-          'bg-bg-white-0 text-text-sub-600 shadow-regular-xs ring-stroke-soft-200',
+          'bg-bg-white-0 text-sub-600 shadow-regular-xs ring-stroke-soft-200',
           // hover
-          'hover:bg-bg-weak-50 hover:text-text-strong-950 hover:shadow-none hover:ring-transparent',
+          'hover:bg-bg-weak-50 hover:text-strong-950 hover:shadow-none hover:ring-transparent',
           // focus
-          'focus-visible:text-text-strong-950 focus-visible:shadow-button-important-focus focus-visible:ring-stroke-strong-950',
+          'focus-visible:text-strong-950 focus-visible:shadow-button-important-focus focus-visible:ring-stroke-strong-950',
         ],
       },
     },
@@ -1270,11 +1270,11 @@ root: [
       class: {
         root: [
           // base
-          'bg-bg-weak-50 text-text-sub-600 ring-transparent',
+          'bg-bg-weak-50 text-sub-600 ring-transparent',
           // hover
-          'hover:bg-bg-white-0 hover:text-text-strong-950 hover:shadow-regular-xs hover:ring-stroke-soft-200',
+          'hover:bg-bg-white-0 hover:text-strong-950 hover:shadow-regular-xs hover:ring-stroke-soft-200',
           // focus
-          'focus-visible:bg-bg-white-0 focus-visible:text-text-strong-950 focus-visible:shadow-button-important-focus focus-visible:ring-stroke-strong-950',
+          'focus-visible:bg-bg-white-0 focus-visible:text-strong-950 focus-visible:shadow-button-important-focus focus-visible:ring-stroke-strong-950',
         ],
       },
     },
@@ -1284,11 +1284,11 @@ root: [
       class: {
         root: [
           // base
-          'bg-transparent text-text-sub-600 ring-transparent',
+          'bg-transparent text-sub-600 ring-transparent',
           // hover
-          'hover:bg-bg-weak-50 hover:text-text-strong-950',
+          'hover:bg-bg-weak-50 hover:text-strong-950',
           // focus
-          'focus-visible:bg-bg-white-0 focus-visible:text-text-strong-950 focus-visible:shadow-button-important-focus focus-visible:ring-stroke-strong-950',
+          'focus-visible:bg-bg-white-0 focus-visible:text-strong-950 focus-visible:shadow-button-important-focus focus-visible:ring-stroke-strong-950',
         ],
       },
     },
@@ -1584,7 +1584,7 @@ slots: {
 root: 'flex -space-x-[1.5px]',
 item: [
 // base
-'group relative flex items-center justify-center whitespace-nowrap bg-bg-white-0 text-center text-text-sub-600 outline-none',
+'group relative flex items-center justify-center whitespace-nowrap bg-bg-white-0 text-center text-sub-600 outline-none',
 'border border-stroke-soft-200',
 'transition duration-200 ease-out',
 // hover
@@ -1593,10 +1593,10 @@ item: [
 'focus:bg-bg-weak-50 focus:outline-none',
 // active
 'data-[state=on]:bg-bg-weak-50',
-'data-[state=on]:text-text-strong-950',
+'data-[state=on]:text-strong-950',
 // disabled
 'disabled:pointer-events-none disabled:bg-bg-weak-50',
-'disabled:text-text-disabled-300',
+'disabled:text-disabled-300',
 ],
 icon: 'shrink-0',
 },
@@ -1819,7 +1819,7 @@ root: [
 'relative flex shrink-0 items-center justify-center outline-none',
 'transition duration-200 ease-out',
 // disabled
-'disabled:pointer-events-none disabled:border-transparent disabled:bg-transparent disabled:text-text-disabled-300 disabled:shadow-none',
+'disabled:pointer-events-none disabled:border-transparent disabled:bg-transparent disabled:text-disabled-300 disabled:shadow-none',
 // focus
 'focus:outline-none',
 ],
@@ -1830,31 +1830,31 @@ variant: {
 stroke: {
 root: [
 // base
-'border border-stroke-soft-200 bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+'border border-stroke-soft-200 bg-bg-white-0 text-sub-600 shadow-regular-xs',
 // hover
-'hover:border-transparent hover:bg-bg-weak-50 hover:text-text-strong-950 hover:shadow-none',
+'hover:border-transparent hover:bg-bg-weak-50 hover:text-strong-950 hover:shadow-none',
 // focus
-'focus-visible:border-transparent focus-visible:bg-bg-strong-950 focus-visible:text-text-white-0 focus-visible:shadow-none',
+'focus-visible:border-transparent focus-visible:bg-bg-strong-950 focus-visible:text-white-0 focus-visible:shadow-none',
 ],
 },
 ghost: {
 root: [
 // base
-'bg-transparent text-text-sub-600',
+'bg-transparent text-sub-600',
 // hover
-'hover:bg-bg-weak-50 hover:text-text-strong-950',
+'hover:bg-bg-weak-50 hover:text-strong-950',
 // focus
-'focus-visible:bg-bg-strong-950 focus-visible:text-text-white-0',
+'focus-visible:bg-bg-strong-950 focus-visible:text-white-0',
 ],
 },
 white: {
 root: [
 // base
-'bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+'bg-bg-white-0 text-sub-600 shadow-regular-xs',
 // hover
-'hover:bg-bg-weak-50 hover:text-text-strong-950',
+'hover:bg-bg-weak-50 hover:text-strong-950',
 // focus
-'focus-visible:bg-bg-strong-950 focus-visible:text-text-white-0',
+'focus-visible:bg-bg-strong-950 focus-visible:text-white-0',
 ],
 },
 modifiable: {},
@@ -2084,7 +2084,7 @@ root: [
 // focus
 'focus:outline-none',
 // disabled
-'disabled:pointer-events-none disabled:text-text-disabled-300',
+'disabled:pointer-events-none disabled:text-disabled-300',
 'disabled:bg-bg-weak-50 disabled:bg-none disabled:shadow-none disabled:before:hidden disabled:after:hidden',
 ],
 icon: 'relative z-10 size-5 shrink-0',
@@ -2092,7 +2092,7 @@ icon: 'relative z-10 size-5 shrink-0',
 variants: {
 variant: {
 neutral: {
-root: 'bg-bg-strong-950 text-text-white-0 shadow-fancy-buttons-neutral',
+root: 'bg-bg-strong-950 text-white-0 shadow-fancy-buttons-neutral',
 },
 primary: {
 root: 'bg-primary-base text-static-white shadow-fancy-buttons-primary',
@@ -2103,9 +2103,9 @@ root: 'bg-error-base text-static-white shadow-fancy-buttons-error',
 basic: {
 root: [
 // base
-'bg-bg-white-0 text-text-sub-600 shadow-fancy-buttons-stroke',
+'bg-bg-white-0 text-sub-600 shadow-fancy-buttons-stroke',
 // hover
-'hover:bg-bg-weak-50 hover:text-text-strong-950 hover:shadow-none',
+'hover:bg-bg-weak-50 hover:text-strong-950 hover:shadow-none',
 ],
 },
 },
@@ -2337,7 +2337,7 @@ root: [
 // focus
 'focus:outline-none focus-visible:underline',
 // disabled
-'disabled:pointer-events-none disabled:text-text-disabled-300 disabled:no-underline',
+'disabled:pointer-events-none disabled:text-disabled-300 disabled:no-underline',
 ],
 icon: 'shrink-0',
 },
@@ -2346,13 +2346,13 @@ variant: {
 gray: {
 root: [
 // base
-'text-text-sub-600',
+'text-sub-600',
 // focus
-'focus-visible:text-text-strong-950',
+'focus-visible:text-strong-950',
 ],
 },
 black: {
-root: 'text-text-strong-950',
+root: 'text-strong-950',
 },
 primary: {
 root: [
@@ -2630,7 +2630,7 @@ root: [
 stroke: {
 root: [
 // base
-'bg-bg-white-0 text-text-strong-950 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
+'bg-bg-white-0 text-strong-950 shadow-regular-xs ring-1 ring-inset ring-stroke-soft-200',
 // hover
 'hover:bg-bg-weak-50 hover:shadow-none hover:ring-transparent',
 // focus
@@ -3266,7 +3266,7 @@ hasError?: boolean;
     <input
       ref={forwardedRef}
       className={cn(
-        'h-16 w-full min-w-0 rounded-10 bg-bg-white-0 text-center text-title-h5 text-text-strong-950 shadow-regular-xs outline-none ring-1 ring-inset ring-stroke-soft-200',
+        'h-16 w-full min-w-0 rounded-10 bg-bg-white-0 text-center text-title-h5 text-strong-950 shadow-regular-xs outline-none ring-1 ring-inset ring-stroke-soft-200',
         'transition duration-200 ease-out',
         // hover
         'hover:bg-bg-weak-50 hover:shadow-none hover:ring-transparent',
@@ -3275,7 +3275,7 @@ hasError?: boolean;
         // selection
         'selection:bg-none',
         // disabled
-        'disabled:bg-bg-weak-50 disabled:text-text-disabled-300 disabled:shadow-none disabled:ring-transparent',
+        'disabled:bg-bg-weak-50 disabled:text-disabled-300 disabled:shadow-none disabled:ring-transparent',
         {
           'ring-error-base hover:ring-error-base focus:ring-error-base focus:shadow-button-error-focus':
             hasError,
@@ -3384,7 +3384,7 @@ return (
 <Component
 ref={forwardedRef}
 className={cn(
-'inline-flex h-8 items-center justify-center gap-2.5 whitespace-nowrap rounded-lg bg-bg-white-0 px-2.5 text-label-sm text-text-sub-600',
+'inline-flex h-8 items-center justify-center gap-2.5 whitespace-nowrap rounded-lg bg-bg-white-0 px-2.5 text-label-sm text-sub-600',
 'pointer-events-none ring-1 ring-inset ring-stroke-soft-200',
 className,
 )}
@@ -3403,7 +3403,7 @@ const Component = as || 'div';
 
 return (
 <Component
-className={cn('size-6 text-text-sub-600', className)}
+className={cn('size-6 text-sub-600', className)}
 {...rest}
 />
 );
@@ -3566,14 +3566,14 @@ const HINT_ICON_NAME = 'HintIcon';
 
 export const hintVariants = tv({
 slots: {
-root: 'group flex items-center gap-1 text-paragraph-xs text-text-sub-600',
-icon: 'size-4 shrink-0 text-text-soft-400',
+root: 'group flex items-center gap-1 text-paragraph-xs text-sub-600',
+icon: 'size-4 shrink-0 text-soft-400',
 },
 variants: {
 disabled: {
 true: {
-root: 'text-text-disabled-300',
-icon: 'text-text-disabled-300',
+root: 'text-disabled-300',
+icon: 'text-disabled-300',
 },
 },
 hasError: {
@@ -3701,7 +3701,7 @@ export const inputVariants = tv({
 slots: {
 root: [
 // base
-'group relative flex w-full overflow-hidden bg-bg-white-0 text-text-strong-950 shadow-regular-xs',
+'group relative flex w-full overflow-hidden bg-bg-white-0 text-strong-950 shadow-regular-xs',
 'transition duration-200 ease-out',
 'divide-x divide-stroke-soft-200',
 // before
@@ -3726,51 +3726,51 @@ wrapper: [
 ],
 input: [
 // base
-'w-full bg-transparent bg-none text-paragraph-sm text-text-strong-950 outline-none',
+'w-full bg-transparent bg-none text-paragraph-sm text-strong-950 outline-none',
 'transition duration-200 ease-out',
 // placeholder
-'placeholder:select-none placeholder:text-text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
+'placeholder:select-none placeholder:text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
 // hover placeholder
-'group-hover/input-wrapper:placeholder:text-text-sub-600',
+'group-hover/input-wrapper:placeholder:text-sub-600',
 // focus
 'focus:outline-none',
 // focus placeholder
-'group-has-[input:focus]:placeholder:text-text-sub-600',
+'group-has-[input:focus]:placeholder:text-sub-600',
 // disabled
-'disabled:text-text-disabled-300 disabled:placeholder:text-text-disabled-300',
+'disabled:text-disabled-300 disabled:placeholder:text-disabled-300',
 ],
 icon: [
 // base
 'flex size-5 shrink-0 select-none items-center justify-center',
 'transition duration-200 ease-out',
 // placeholder state
-'group-has-[:placeholder-shown]:text-text-soft-400',
+'group-has-[:placeholder-shown]:text-soft-400',
 // filled state
-'text-text-sub-600',
+'text-sub-600',
 // hover
-'group-has-[:placeholder-shown]:group-hover/input-wrapper:text-text-sub-600',
+'group-has-[:placeholder-shown]:group-hover/input-wrapper:text-sub-600',
 // focus
-'group-has-[:placeholder-shown]:group-has-[input:focus]/input-wrapper:text-text-sub-600',
+'group-has-[:placeholder-shown]:group-has-[input:focus]/input-wrapper:text-sub-600',
 // disabled
-'group-has-[input:disabled]/input-wrapper:text-text-disabled-300',
+'group-has-[input:disabled]/input-wrapper:text-disabled-300',
 ],
 affix: [
 // base
-'shrink-0 bg-bg-white-0 text-paragraph-sm text-text-sub-600',
+'shrink-0 bg-bg-white-0 text-paragraph-sm text-sub-600',
 'flex items-center justify-center truncate',
 'transition duration-200 ease-out',
 // placeholder state
-'group-has-[:placeholder-shown]:text-text-soft-400',
+'group-has-[:placeholder-shown]:text-soft-400',
 // focus state
-'group-has-[:placeholder-shown]:group-has-[input:focus]:text-text-sub-600',
+'group-has-[:placeholder-shown]:group-has-[input:focus]:text-sub-600',
 ],
 inlineAffix: [
 // base
-'text-paragraph-sm text-text-sub-600',
+'text-paragraph-sm text-sub-600',
 // placeholder state
-'group-has-[:placeholder-shown]:text-text-soft-400',
+'group-has-[:placeholder-shown]:text-soft-400',
 // focus state
-'group-has-[:placeholder-shown]:group-has-[input:focus]:text-text-sub-600',
+'group-has-[:placeholder-shown]:group-has-[input:focus]:text-sub-600',
 ],
 },
 variants: {
@@ -4217,10 +4217,10 @@ disabled?: boolean;
     <LabelPrimitives.Root
       ref={forwardedRef}
       className={cn(
-        'group cursor-pointer text-label-sm text-text-strong-950',
+        'group cursor-pointer text-label-sm text-strong-950',
         'flex items-center gap-px',
         // disabled
-        'aria-disabled:text-text-disabled-300',
+        'aria-disabled:text-disabled-300',
         className,
       )}
       aria-disabled={disabled}
@@ -4241,7 +4241,7 @@ return (
 className={cn(
 'text-primary-base',
 // disabled
-'group-aria-disabled:text-text-disabled-300',
+'group-aria-disabled:text-disabled-300',
 className,
 )}
 {...rest} >
@@ -4258,9 +4258,9 @@ className,
 return (
 <span
 className={cn(
-'text-paragraph-sm text-text-sub-600',
+'text-paragraph-sm text-sub-600',
 // disabled
-'group-aria-disabled:text-text-disabled-300',
+'group-aria-disabled:text-disabled-300',
 className,
 )}
 {...rest} >
@@ -4740,53 +4740,53 @@ slots: {
 triggerRoot: [
 // base
 'group/trigger min-w-0 shrink-0 bg-bg-white-0 shadow-regular-xs outline-none ring-1 ring-inset ring-stroke-soft-200',
-'text-paragraph-sm text-text-strong-950',
+'text-paragraph-sm text-strong-950',
 'flex items-center text-left',
 'transition duration-200 ease-out',
 // hover
 'hover:bg-bg-weak-50 hover:ring-transparent',
 // focus
 'focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950',
-'focus:text-text-strong-950 data-[placeholder]:focus:text-text-strong-950',
+'focus:text-strong-950 data-[placeholder]:focus:text-strong-950',
 // disabled
-'disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-text-disabled-300 disabled:shadow-none disabled:ring-transparent data-[placeholder]:disabled:text-text-disabled-300',
+'disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-disabled-300 disabled:shadow-none disabled:ring-transparent data-[placeholder]:disabled:text-disabled-300',
 // placeholder state
-'data-[placeholder]:text-text-sub-600',
+'data-[placeholder]:text-sub-600',
 ],
 triggerArrow: [
 // base
 'ml-auto size-5 shrink-0',
 'transition duration-200 ease-out',
 // placeholder state
-'group-data-[placeholder]/trigger:text-text-soft-400',
+'group-data-[placeholder]/trigger:text-soft-400',
 // filled state
-'text-text-sub-600',
+'text-sub-600',
 // hover
-'group-hover/trigger:text-text-sub-600 group-data-[placeholder]/trigger:group-hover:text-text-sub-600',
+'group-hover/trigger:text-sub-600 group-data-[placeholder]/trigger:group-hover:text-sub-600',
 // focus
-'group-focus/trigger:text-text-strong-950 group-data-[placeholder]/trigger:group-focus/trigger:text-text-strong-950',
+'group-focus/trigger:text-strong-950 group-data-[placeholder]/trigger:group-focus/trigger:text-strong-950',
 // disabled
-'group-disabled/trigger:text-text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-text-disabled-300',
+'group-disabled/trigger:text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-disabled-300',
 // open
 'group-data-[state=open]/trigger:rotate-180',
 ],
 triggerIcon: [
 // base
-'h-5 w-auto min-w-0 shrink-0 object-contain text-text-sub-600',
+'h-5 w-auto min-w-0 shrink-0 object-contain text-sub-600',
 'transition duration-200 ease-out',
 // placeholder state
-'group-data-[placeholder]/trigger:text-text-soft-400',
+'group-data-[placeholder]/trigger:text-soft-400',
 // hover
-'group-hover/trigger:text-text-sub-600 group-data-[placeholder]/trigger:group-hover:text-text-sub-600',
+'group-hover/trigger:text-sub-600 group-data-[placeholder]/trigger:group-hover:text-sub-600',
 // disabled
-'group-disabled/trigger:text-text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-text-disabled-300',
+'group-disabled/trigger:text-disabled-300 group-data-[placeholder]/trigger:group-disabled/trigger:text-disabled-300',
 'group-disabled/trigger:[&:not(.remixicon)]:opacity-[.48]',
 ],
 selectItemIcon: [
-'size-5 shrink-0 bg-[length:1.25rem] text-text-sub-600',
+'size-5 shrink-0 bg-[length:1.25rem] text-sub-600',
 // 'group-has-[&]-ml-0.5',
 // disabled
-'[[data-disabled]_&:not(.remixicon)]:opacity-[.48] [[data-disabled]_&]:text-text-disabled-300',
+'[[data-disabled]_&:not(.remixicon)]:opacity-[.48] [[data-disabled]_&]:text-disabled-300',
 ],
 },
 variants: {
@@ -4813,32 +4813,32 @@ triggerRoot: [
 inline: {
 triggerRoot: [
 // base
-'h-5 min-h-5 w-auto gap-0 rounded-none bg-transparent p-0 text-text-sub-600 shadow-none ring-0',
+'h-5 min-h-5 w-auto gap-0 rounded-none bg-transparent p-0 text-sub-600 shadow-none ring-0',
 // hover
-'hover:bg-transparent hover:text-text-strong-950',
+'hover:bg-transparent hover:text-strong-950',
 // focus
 'focus:shadow-none',
 // open
-'data-[state=open]:text-text-strong-950',
+'data-[state=open]:text-strong-950',
 ],
 triggerIcon: [
 // base
-'mr-1.5 text-text-soft-400',
+'mr-1.5 text-soft-400',
 // hover
-'group-hover/trigger:text-text-sub-600',
+'group-hover/trigger:text-sub-600',
 // open
-'group-data-[state=open]/trigger:text-text-sub-600',
+'group-data-[state=open]/trigger:text-sub-600',
 ],
 triggerArrow: [
 // base
 'ml-0.5',
 // hover
-'group-hover/trigger:text-text-strong-950',
+'group-hover/trigger:text-strong-950',
 // open
-'group-data-[state=open]/trigger:text-text-strong-950',
+'group-data-[state=open]/trigger:text-strong-950',
 ],
 selectItemIcon:
-'text-text-soft-400 group-hover/trigger:text-text-sub-600',
+'text-soft-400 group-hover/trigger:text-sub-600',
 },
 },
 hasError: {
@@ -5099,10 +5099,10 @@ return (
 ref={forwardedRef}
 className={cn(
 // base
-'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-text-strong-950',
+'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-strong-950',
 'flex items-center gap-2 transition duration-200 ease-out',
 // disabled
-'data-[disabled]:pointer-events-none data-[disabled]:text-text-disabled-300',
+'data-[disabled]:pointer-events-none data-[disabled]:text-disabled-300',
 // hover, focus
 'data-[highlighted]:bg-bg-weak-50 data-[highlighted]:outline-0',
 {
@@ -5117,7 +5117,7 @@ className={cn(
 // base
 'flex flex-1 items-center gap-2',
 // disabled
-'group-disabled:text-text-disabled-300',
+'group-disabled:text-disabled-300',
 {
 'gap-1.5': size === 'xsmall',
 },
@@ -5130,7 +5130,7 @@ children
 </span>
 </SelectPrimitives.ItemText>
 <SelectPrimitives.ItemIndicator asChild>
-<RiCheckLine className='absolute right-2 top-1/2 size-5 shrink-0 -translate-y-1/2 text-text-sub-600' />
+<RiCheckLine className='absolute right-2 top-1/2 size-5 shrink-0 -translate-y-1/2 text-sub-600' />
 </SelectPrimitives.ItemIndicator>
 </SelectPrimitives.Item>
 );
@@ -5954,7 +5954,7 @@ simple?: boolean;
       className={cn(
         [
           // base
-          'block w-full resize-none text-paragraph-sm text-text-strong-950 outline-none',
+          'block w-full resize-none text-paragraph-sm text-strong-950 outline-none',
           !simple && [
             'pointer-events-auto h-full min-h-[82px] bg-transparent pl-3 pr-2.5 pt-2.5',
           ],
@@ -5980,17 +5980,17 @@ simple?: boolean;
           ],
           !disabled && [
             // placeholder
-            'placeholder:select-none placeholder:text-text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
+            'placeholder:select-none placeholder:text-soft-400 placeholder:transition placeholder:duration-200 placeholder:ease-out',
             // hover placeholder
-            'group-hover/textarea:placeholder:text-text-sub-600',
+            'group-hover/textarea:placeholder:text-sub-600',
             // focus
             'focus:outline-none',
             // focus placeholder
-            'focus:placeholder:text-text-sub-600',
+            'focus:placeholder:text-sub-600',
           ],
           disabled && [
             // disabled
-            'text-text-disabled-300 placeholder:text-text-disabled-300',
+            'text-disabled-300 placeholder:text-disabled-300',
           ],
         ],
         className,
@@ -6112,9 +6112,9 @@ const isError = current > max;
 return (
 <span
 className={cn(
-'text-subheading-2xs text-text-soft-400',
+'text-subheading-2xs text-soft-400',
 // disabled
-'group-has-[[disabled]]/textarea:text-text-disabled-300',
+'group-has-[[disabled]]/textarea:text-disabled-300',
 {
 'text-error-base': isError,
 },
@@ -6752,7 +6752,7 @@ root: 'bg-stable-base',
       class: {
         root: [
           'ring-1 ring-inset ring-stroke-soft-200',
-          'bg-transparent text-text-disabled-300',
+          'bg-transparent text-disabled-300',
         ],
       },
     },
@@ -7179,7 +7179,7 @@ dot: [
 variants: {
 variant: {
 stroke: {
-root: 'bg-bg-white-0 text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+root: 'bg-bg-white-0 text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
 },
 light: {},
 },
@@ -7228,7 +7228,7 @@ root: 'bg-error-lighter text-error-base',
 variant: 'light',
 status: 'disabled',
 class: {
-root: 'bg-faded-lighter text-text-sub-600',
+root: 'bg-faded-lighter text-sub-600',
 },
 },
 ],
@@ -7878,7 +7878,7 @@ classNames={{
         month: 'space-y-2',
         caption:
           'flex justify-center items-center relative rounded-lg bg-bg-weak-50 h-9',
-        caption_label: 'text-label-sm text-text-sub-600 select-none',
+        caption_label: 'text-label-sm text-sub-600 select-none',
         nav: 'flex items-center',
         nav_button: compactButtonVariants({
           variant: 'white',
@@ -7889,7 +7889,7 @@ classNames={{
         table: 'w-full border-collapse',
         head_row: 'flex gap-2',
         head_cell:
-          'text-text-soft-400 text-label-sm uppercase size-10 flex items-center justify-center text-center select-none',
+          'text-soft-400 text-label-sm uppercase size-10 flex items-center justify-center text-center select-none',
         row: 'grid grid-flow-col auto-cols-auto w-full mt-2 gap-2',
         cell: cn(
           // base
@@ -7915,14 +7915,14 @@ classNames={{
         ),
         day: cn(
           // base
-          'flex size-10 shrink-0 items-center justify-center rounded-lg text-center text-label-sm text-text-sub-600 outline-none',
+          'flex size-10 shrink-0 items-center justify-center rounded-lg text-center text-label-sm text-sub-600 outline-none',
           'transition duration-200 ease-out',
           // hover
-          'hover:bg-bg-weak-50 hover:text-text-strong-950',
+          'hover:bg-bg-weak-50 hover:text-strong-950',
           // selected
           'aria-[selected]:bg-primary-base aria-[selected]:text-static-white',
           // focus visible
-          'focus:outline-none focus-visible:bg-bg-weak-50 focus-visible:text-text-strong-950',
+          'focus:outline-none focus-visible:bg-bg-weak-50 focus-visible:text-strong-950',
         ),
         day_range_start: 'day-range-start',
         day_range_end: 'day-range-end',
@@ -7930,8 +7930,8 @@ classNames={{
         day_range_middle: 'day-range-middle !text-primary-base !bg-transparent',
         day_today: 'day-today',
         day_outside:
-          'day-outside !text-text-disabled-300 aria-[selected]:!text-static-white',
-        day_disabled: 'day-disabled !text-text-disabled-300',
+          'day-outside !text-disabled-300 aria-[selected]:!text-static-white',
+        day_disabled: 'day-disabled !text-disabled-300',
         day_hidden: 'invisible',
         ...classNames,
       }}
@@ -8159,13 +8159,13 @@ React.ComponentPropsWithoutRef<typeof Command.Input>
       ref={forwardedRef}
       className={cn(
         // base
-        'w-full bg-transparent text-paragraph-sm text-text-strong-950 outline-none',
+        'w-full bg-transparent text-paragraph-sm text-strong-950 outline-none',
         'transition duration-200 ease-out',
         // placeholder
         'placeholder:[transition:inherit]',
-        'placeholder:text-text-soft-400',
+        'placeholder:text-soft-400',
         // hover
-        'group-hover/cmd-input:placeholder:text-text-sub-600',
+        'group-hover/cmd-input:placeholder:text-sub-600',
         // focus
         'focus:outline-none',
         className,
@@ -8211,7 +8211,7 @@ React.ComponentPropsWithoutRef<typeof Command.Group>
       className={cn(
         'relative px-2 py-3',
         // heading
-        '[&>[cmdk-group-heading]]:text-label-xs [&>[cmdk-group-heading]]:text-text-sub-600',
+        '[&>[cmdk-group-heading]]:text-label-xs [&>[cmdk-group-heading]]:text-sub-600',
         '[&>[cmdk-group-heading]]:mb-2 [&>[cmdk-group-heading]]:px-3 [&>[cmdk-group-heading]]:pt-1',
         className,
       )}
@@ -8225,7 +8225,7 @@ CommandGroup.displayName = 'CommandGroup';
 const commandItemVariants = tv({
 base: [
 'flex items-center gap-3 rounded-10 bg-bg-white-0',
-'cursor-pointer text-paragraph-sm text-text-strong-950',
+'cursor-pointer text-paragraph-sm text-strong-950',
 'transition duration-200 ease-out',
 // hover/selected
 'data-[selected=true]:bg-bg-weak-50',
@@ -8270,7 +8270,7 @@ const Component = as || 'div';
 
 return (
 <Component
-className={cn('size-5 shrink-0 text-text-sub-600', className)}
+className={cn('size-5 shrink-0 text-sub-600', className)}
 {...rest}
 />
 );
@@ -8300,7 +8300,7 @@ return (
 
 <div
 className={cn(
-'flex size-5 shrink-0 items-center justify-center rounded bg-bg-weak-50 text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+'flex size-5 shrink-0 items-center justify-center rounded bg-bg-weak-50 text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
 className,
 )}
 {...rest}
@@ -8616,7 +8616,7 @@ React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 
     <DialogPrimitive.Title
       ref={forwardedRef}
-      className={cn('flex-1 text-label-lg text-text-strong-950', className)}
+      className={cn('flex-1 text-label-lg text-strong-950', className)}
       {...rest}
     />
 
@@ -8905,7 +8905,7 @@ inset?: boolean;
     ref={forwardedRef}
     className={cn(
       // base
-      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-text-strong-950 outline-none',
+      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-strong-950 outline-none',
       'flex items-center gap-2',
       'transition duration-200 ease-out',
       // hover
@@ -8913,7 +8913,7 @@ inset?: boolean;
       // focus
       'focus:outline-none',
       // disabled
-      'data-[disabled]:text-text-disabled-300',
+      'data-[disabled]:text-disabled-300',
       inset && 'pl-9',
       className,
     )}
@@ -8934,9 +8934,9 @@ return (
 <Component
 className={cn(
 // base
-'size-5 text-text-sub-600',
+'size-5 text-sub-600',
 // disabled
-'group-has-[[data-disabled]]:text-text-disabled-300',
+'group-has-[[data-disabled]]:text-disabled-300',
 className,
 )}
 {...rest}
@@ -8969,7 +8969,7 @@ React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label>
 
     ref={forwardedRef}
     className={cn(
-      'px-2 py-1 text-subheading-xs uppercase text-text-soft-400',
+      'px-2 py-1 text-subheading-xs uppercase text-soft-400',
       className,
     )}
     {...rest}
@@ -8990,13 +8990,13 @@ inset?: boolean;
     ref={forwardedRef}
     className={cn(
       // base
-      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-text-strong-950 outline-0',
+      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-strong-950 outline-0',
       'flex items-center gap-2',
       'transition duration-200 ease-out',
       // hover
       'data-[highlighted]:bg-bg-weak-50',
       // disabled
-      'data-[disabled]:text-text-disabled-300',
+      'data-[disabled]:text-disabled-300',
       inset && 'pl-9',
       className,
     )}
@@ -9324,7 +9324,7 @@ className,
 <>
 {Icon && (
 <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200'>
-<Icon className='size-5 text-text-sub-600' />
+<Icon className='size-5 text-sub-600' />
 </div>
 )}
 {(title || description) && (
@@ -9351,7 +9351,7 @@ React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 
     <DialogPrimitive.Title
       ref={forwardedRef}
-      className={cn('text-label-sm text-text-strong-950', className)}
+      className={cn('text-label-sm text-strong-950', className)}
       {...rest}
     />
 
@@ -9368,7 +9368,7 @@ React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 
     <DialogPrimitive.Description
       ref={forwardedRef}
-      className={cn('text-paragraph-xs text-text-sub-600', className)}
+      className={cn('text-paragraph-xs text-sub-600', className)}
       {...rest}
     />
 
@@ -10607,7 +10607,7 @@ export const avatarGroupVariants = tv({
 slots: {
 root: 'flex _:ring-2 _:ring-stroke-white-0',
 overflow:
-'relative flex shrink-0 items-center justify-center rounded-full bg-bg-weak-50 text-center text-text-sub-600',
+'relative flex shrink-0 items-center justify-center rounded-full bg-bg-weak-50 text-center text-sub-600',
 },
 variants: {
 size: {
@@ -10891,7 +10891,7 @@ export const avatarGroupCompactVariants = tv({
 slots: {
 root: 'flex w-max items-center rounded-full bg-bg-white-0 p-0.5 shadow-regular-xs',
 stack: 'flex -space-x-0.5 _:ring-2 _:ring-stroke-white-0',
-overflow: 'text-text-sub-600',
+overflow: 'text-sub-600',
 },
 variants: {
 variant: {
@@ -11200,7 +11200,7 @@ React.ThHTMLAttributes<HTMLTableCellElement>
     <th
       ref={forwardedRef}
       className={cn(
-        'bg-bg-weak-50 px-3 py-2 text-left text-paragraph-sm text-text-sub-600 first:rounded-l-lg last:rounded-r-lg',
+        'bg-bg-weak-50 px-3 py-2 text-left text-paragraph-sm text-sub-600 first:rounded-l-lg last:rounded-r-lg',
         className,
       )}
       {...rest}
@@ -11299,7 +11299,7 @@ React.HTMLAttributes<HTMLTableCaptionElement>
 
   <caption
     ref={forwardedRef}
-    className={cn('mt-4 text-paragraph-sm text-text-sub-600', className)}
+    className={cn('mt-4 text-paragraph-sm text-sub-600', className)}
     {...rest}
   />
 ));
@@ -11556,7 +11556,7 @@ line: 'h-0 before:absolute before:left-0 before:top-1/2 before:h-px before:w-ful
 'line-text': [
 // base
 'gap-2.5',
-'text-subheading-2xs text-text-soft-400',
+'text-subheading-2xs text-soft-400',
 // before
 'before:h-px before:w-full before:flex-1 before:bg-stroke-soft-200',
 // after
@@ -11573,12 +11573,12 @@ content: [
 text: [
 // base
 'px-2 py-1',
-'text-subheading-xs text-text-soft-400',
+'text-subheading-xs text-soft-400',
 ],
 'solid-text': [
 // base
 'bg-bg-weak-50 px-5 py-1.5 uppercase',
-'text-subheading-xs text-text-soft-400',
+'text-subheading-xs text-soft-400',
 ],
 },
 },
@@ -11820,15 +11820,15 @@ const TAG_DISMISS_ICON_NAME = 'TagDismissIcon';
 export const tagVariants = tv({
 slots: {
 root: [
-'group/tag inline-flex h-6 items-center gap-2 rounded-md px-2 text-label-xs text-text-sub-600',
+'group/tag inline-flex h-6 items-center gap-2 rounded-md px-2 text-label-xs text-sub-600',
 'transition duration-200 ease-out',
 'ring-1 ring-inset',
 ],
 icon: [
 // base
-'-mx-1 size-4 shrink-0 text-text-soft-400 transition duration-200 ease-out',
+'-mx-1 size-4 shrink-0 text-soft-400 transition duration-200 ease-out',
 // hover
-'group-hover/tag:text-text-sub-600',
+'group-hover/tag:text-sub-600',
 ],
 dismissButton: [
 // base
@@ -11836,7 +11836,7 @@ dismissButton: [
 // focus
 'focus:outline-none',
 ],
-dismissIcon: 'size-4 text-text-soft-400 transition duration-200 ease-out',
+dismissIcon: 'size-4 text-soft-400 transition duration-200 ease-out',
 },
 variants: {
 variant: {
@@ -11851,9 +11851,9 @@ root: [
 ],
 dismissIcon: [
 // hover
-'group-hover/dismiss-button:text-text-sub-600',
+'group-hover/dismiss-button:text-sub-600',
 // focus
-'group-focus/dismiss-button:text-text-sub-600',
+'group-focus/dismiss-button:text-sub-600',
 ],
 },
 gray: {
@@ -11867,9 +11867,9 @@ root: [
 },
 disabled: {
 true: {
-root: 'pointer-events-none bg-bg-weak-50 text-text-disabled-300 ring-transparent',
-icon: 'text-text-disabled-300 [&:not(.remixicon)]:opacity-[.48]',
-dismissIcon: 'text-text-disabled-300',
+root: 'pointer-events-none bg-bg-weak-50 text-disabled-300 ring-transparent',
+icon: 'text-disabled-300 [&:not(.remixicon)]:opacity-[.48]',
+dismissIcon: 'text-disabled-300',
 },
 },
 },
@@ -12254,12 +12254,12 @@ arrow: 'rounded-bl-sm',
 },
 variant: {
 dark: {
-content: 'bg-bg-strong-950 text-text-white-0',
+content: 'bg-bg-strong-950 text-white-0',
 arrow: 'border-stroke-strong-950 bg-bg-strong-950',
 },
 light: {
 content:
-'bg-bg-white-0 text-text-strong-950 ring-1 ring-stroke-soft-200',
+'bg-bg-white-0 text-strong-950 ring-1 ring-stroke-soft-200',
 arrow: 'border-stroke-soft-200 bg-bg-white-0',
 },
 },
@@ -12574,14 +12574,14 @@ const Component = asChild ? Slot : 'div';
         className={cn(
           // base
           'flex items-center gap-1.5 transition-colors duration-200 ease-out',
-          'text-label-sm text-text-sub-600',
+          'text-label-sm text-sub-600',
           {
             // not active
             'underline decoration-transparent': !active,
             // hover
-            'hover:text-text-strong-950 hover:decoration-current': !active,
+            'hover:text-strong-950 hover:decoration-current': !active,
             // active
-            'text-text-strong-950': active,
+            'text-strong-950': active,
           },
           className,
         )}
@@ -12616,7 +12616,7 @@ const Component = as || 'div';
 return (
 <Component
 className={cn(
-'flex size-5 select-none items-center justify-center text-text-disabled-300',
+'flex size-5 select-none items-center justify-center text-disabled-300',
 className,
 )}
 {...rest}
@@ -12843,9 +12843,9 @@ const PAGINATION_NAV_ICON_NAME = 'PaginationNavIcon';
 const paginationVariants = tv({
 slots: {
 root: 'flex flex-wrap items-center justify-center',
-item: 'flex items-center justify-center text-center text-label-sm text-text-sub-600 transition duration-200 ease-out',
+item: 'flex items-center justify-center text-center text-label-sm text-sub-600 transition duration-200 ease-out',
 navButton:
-'flex items-center justify-center text-text-sub-600 transition duration-200 ease-out',
+'flex items-center justify-center text-sub-600 transition duration-200 ease-out',
 navIcon: 'size-5',
 },
 variants: {
@@ -12962,7 +12962,7 @@ const { item } = paginationVariants({ variant });
       <Component
         ref={forwardedRef}
         className={cn(item({ class: className }), {
-          'text-text-strong-950': current,
+          'text-strong-950': current,
         })}
         {...rest}
       >
@@ -13260,16 +13260,16 @@ root: 'text-static-white',
 closeIcon: 'text-static-white opacity-[.72]',
 },
 light: {
-root: 'text-text-strong-950',
-closeIcon: 'text-text-strong-950 opacity-40',
+root: 'text-strong-950',
+closeIcon: 'text-strong-950 opacity-40',
 },
 lighter: {
-root: 'text-text-strong-950',
-closeIcon: 'text-text-strong-950 opacity-40',
+root: 'text-strong-950',
+closeIcon: 'text-strong-950 opacity-40',
 },
 stroke: {
-root: 'bg-bg-white-0 text-text-strong-950 shadow-regular-md ring-1 ring-inset ring-stroke-soft-200',
-closeIcon: 'text-text-strong-950 opacity-40',
+root: 'bg-bg-white-0 text-strong-950 shadow-regular-md ring-1 ring-inset ring-stroke-soft-200',
+closeIcon: 'text-strong-950 opacity-40',
 },
 },
 status: {
@@ -13835,7 +13835,7 @@ return (
 
 <div
 className={cn(
-'flex h-5 items-center gap-0.5 whitespace-nowrap rounded bg-bg-white-0 px-1.5 text-subheading-xs text-text-soft-400 ring-1 ring-inset ring-stroke-soft-200',
+'flex h-5 items-center gap-0.5 whitespace-nowrap rounded bg-bg-white-0 px-1.5 text-subheading-xs text-soft-400 ring-1 ring-inset ring-stroke-soft-200',
 className,
 )}
 {...rest}
@@ -15723,7 +15723,7 @@ React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
       ref={forwardedRef}
       className={cn(
         // base
-        'w-[calc(100%+theme(space.7))] text-left text-label-sm text-text-strong-950',
+        'w-[calc(100%+theme(space.7))] text-left text-label-sm text-strong-950',
         'grid auto-cols-auto grid-flow-col grid-cols-[auto,minmax(0,1fr)] items-center gap-2.5',
         '-m-3.5 p-3.5 outline-none',
         // focus
@@ -15748,7 +15748,7 @@ const Component = as || 'div';
 
 return (
 <Component
-className={cn('size-5 text-text-sub-600', className)}
+className={cn('size-5 text-sub-600', className)}
 {...rest}
 />
 );
@@ -15771,10 +15771,10 @@ return (
 <>
 <OpenIcon
 className={cn(
-'size-5 text-text-soft-400',
+'size-5 text-soft-400',
 'transition duration-200 ease-out',
 // hover
-'group-hover/accordion:text-text-sub-600',
+'group-hover/accordion:text-sub-600',
 // open
 'group-data-[state=open]/accordion:hidden',
 className,
@@ -15783,7 +15783,7 @@ className,
 />
 <CloseIcon
 className={cn(
-'size-5 text-text-sub-600',
+'size-5 text-sub-600',
 // close
 'hidden group-data-[state=open]/accordion:block',
 className,
@@ -15808,7 +15808,7 @@ React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
       {...rest}
     >
       <div
-        className={cn('pt-1.5 text-paragraph-sm text-text-sub-600', className)}
+        className={cn('pt-1.5 text-paragraph-sm text-sub-600', className)}
       >
         {children}
       </div>
@@ -16183,13 +16183,13 @@ React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
       ref={forwardedRef}
       className={cn(
         // base
-        'group/tab-item h-12 py-3.5 text-label-sm text-text-sub-600 outline-none',
+        'group/tab-item h-12 py-3.5 text-label-sm text-sub-600 outline-none',
         'flex items-center justify-center gap-1.5',
         'transition duration-200 ease-out',
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:text-text-strong-950',
+        'data-[state=active]:text-strong-950',
         className,
       )}
       {...rest}
@@ -16210,7 +16210,7 @@ return (
 <Component
 className={cn(
 // base
-'size-5 text-text-sub-600',
+'size-5 text-sub-600',
 'transition duration-200 ease-out',
 // active
 'group-data-[state=active]/tab-item:text-primary-base',
@@ -16231,7 +16231,7 @@ const Component = as || 'div';
 
 return (
 <Component
-className={cn('size-5 text-text-sub-600', className)}
+className={cn('size-5 text-sub-600', className)}
 {...rest}
 />
 );
@@ -16454,7 +16454,7 @@ React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
       ref={forwardedRef}
       className={cn(
         // base
-        'group/tab-item w-full rounded-lg p-2 text-left text-label-sm text-text-sub-600 outline-none',
+        'group/tab-item w-full rounded-lg p-2 text-left text-label-sm text-sub-600 outline-none',
         'grid auto-cols-auto grid-flow-col grid-cols-[auto,minmax(0,1fr)] items-center gap-1.5',
         'transition duration-200 ease-out',
         // hover
@@ -16462,7 +16462,7 @@ React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:bg-bg-weak-50 data-[state=active]:text-text-strong-950',
+        'data-[state=active]:bg-bg-weak-50 data-[state=active]:text-strong-950',
         className,
       )}
       {...rest}
@@ -16483,7 +16483,7 @@ return (
 <Component
 className={cn(
 // base
-'size-5 text-text-sub-600',
+'size-5 text-sub-600',
 'transition duration-200 ease-out',
 // active
 'group-data-[state=active]/tab-item:text-primary-base',
@@ -16506,7 +16506,7 @@ return (
 <Component
 className={cn(
 // base
-'size-5 p-px text-text-sub-600',
+'size-5 p-px text-sub-600',
 'rounded-full bg-bg-white-0 opacity-0 shadow-regular-xs',
 'scale-75 transition ease-out',
 // active
@@ -16816,13 +16816,13 @@ React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
       className={cn(
         // base
         'peer',
-        'relative z-10 h-7 whitespace-nowrap rounded-md px-1 text-label-sm text-text-soft-400 outline-none',
+        'relative z-10 h-7 whitespace-nowrap rounded-md px-1 text-label-sm text-soft-400 outline-none',
         'flex items-center justify-center gap-1.5',
         'transition duration-300 ease-out',
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:text-text-strong-950',
+        'data-[state=active]:text-strong-950',
         className,
       )}
       {...rest}
@@ -17316,7 +17316,7 @@ const Component = as || RiArrowRightSLine;
 
 return (
 <Component
-className={cn('size-5 shrink-0 text-text-soft-400', className)}
+className={cn('size-5 shrink-0 text-soft-400', className)}
 {...rest}
 />
 );
@@ -17337,17 +17337,17 @@ indicator: [
 variants: {
 state: {
 completed: {
-root: 'text-text-strong-950',
+root: 'text-strong-950',
 indicator: 'bg-success-base text-static-white',
 },
 active: {
-root: 'text-text-strong-950',
+root: 'text-strong-950',
 indicator: 'bg-primary-base text-static-white',
 },
 default: {
-root: 'text-text-sub-600',
+root: 'text-sub-600',
 indicator:
-'bg-bg-white-0 text-text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
+'bg-bg-white-0 text-sub-600 ring-1 ring-inset ring-stroke-soft-200',
 },
 },
 },
@@ -17677,7 +17677,7 @@ const Component = as || RiArrowRightSLine;
 
 return (
 <Component
-className={cn('size-5 shrink-0 text-text-sub-600', className)}
+className={cn('size-5 shrink-0 text-sub-600', className)}
 {...rest}
 />
 );
@@ -17698,16 +17698,16 @@ indicator: [
 variants: {
 state: {
 completed: {
-root: 'bg-bg-weak-50 text-text-sub-600',
+root: 'bg-bg-weak-50 text-sub-600',
 indicator: 'bg-success-base text-static-white',
 },
 active: {
-root: 'bg-bg-white-0 text-text-strong-950 shadow-regular-xs',
+root: 'bg-bg-white-0 text-strong-950 shadow-regular-xs',
 indicator: 'bg-primary-base text-static-white',
 },
 default: {
-root: 'bg-bg-weak-50 text-text-sub-600',
-indicator: 'bg-bg-white-0 text-text-sub-600 shadow-regular-xs',
+root: 'bg-bg-weak-50 text-sub-600',
+indicator: 'bg-bg-white-0 text-sub-600 shadow-regular-xs',
 },
 },
 },
@@ -18056,9 +18056,9 @@ return (
 
 <div
 className={cn(
-'text-text-strong-950 bg-bg-white-0 size-3',
+'text-strong-950 bg-bg-white-0 size-3',
 {
-'text-text-white-0 bg-bg-strong-950': isActive,
+'text-white-0 bg-bg-strong-950': isActive,
 },
 className,
 )}

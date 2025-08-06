@@ -69,7 +69,7 @@ export function SearchMenu() {
       <div className='group/cmd-input flex h-12 w-full items-center gap-2 bg-bg-white-0 px-5'>
         <RiSearch2Line
           className={cn(
-            'size-5 shrink-0 text-text-soft-400',
+            'size-5 shrink-0 text-soft-400',
             'transition duration-200 ease-out',
             // focus within
             'group-focus-within/cmd-input:text-primary-base',
@@ -90,7 +90,7 @@ export function SearchMenu() {
 
       {/* Searching for */}
       <div className='px-5 py-4'>
-        <div className='mb-3 text-label-xs text-text-sub-600'>
+        <div className='mb-3 text-label-xs text-sub-600'>
           Searching for
         </div>
         <div className='flex flex-wrap gap-2'>
@@ -174,7 +174,7 @@ export function SearchMenu() {
             <CommandMenu.FooterKeyBox>
               <RiArrowDownLine className='size-4' />
             </CommandMenu.FooterKeyBox>
-            <span className='text-paragraph-xs text-text-sub-600'>
+            <span className='text-paragraph-xs text-sub-600'>
               Navigate
             </span>
           </div>
@@ -182,11 +182,11 @@ export function SearchMenu() {
             <CommandMenu.FooterKeyBox>
               <RiCornerDownLeftLine className='size-4' />
             </CommandMenu.FooterKeyBox>
-            <span className='text-paragraph-xs text-text-sub-600'>Select</span>
+            <span className='text-paragraph-xs text-sub-600'>Select</span>
           </div>
         </div>
 
-        <div className='text-right text-paragraph-xs text-text-sub-600'>
+        <div className='text-right text-paragraph-xs text-sub-600'>
           Not what you’re looking for? Try the{' '}
           <LinkButton.Root size='small' variant='primary' underline>
             Help Center

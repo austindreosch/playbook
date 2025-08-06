@@ -95,7 +95,7 @@ export function WidgetCampaignData({ }: HistoricalViewWidgetProps) {
         <div className='flex items-start justify-between'>
           <div className='flex-1'>
             <div className='flex items-center gap-1'>
-              <div className='text-label-sm text-text-sub-600'>Historical View</div>
+              <div className='text-label-sm text-sub-600'>Historical View</div>
               <Tooltip.Root>
                 <Tooltip.Content className='max-w-80'>
                   Monitor your player&apos;s performance trends over time.
