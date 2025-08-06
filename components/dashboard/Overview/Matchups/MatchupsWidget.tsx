@@ -416,7 +416,7 @@ export default function MatchupsWidget({
                 {blueprint.lineup.slice(0, 4).map((player) => (
                   <div key={player.playerId} className="flex items-center gap-1 min-w-0">
                     {getPlayerStatusIcon(player)}
-                    <span className="text-label-sm text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-label-lg text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
@@ -426,7 +426,7 @@ export default function MatchupsWidget({
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 mb-2">
                 <Sword className="hw-icon-sm text-soft-400 flex-shrink-0" strokeWidth={2} />
-                <h4 className="text-label-sm font-semibold text-soft-400 truncate">Battleground Stats</h4>
+                <h4 className="text-label-md text-soft-400 truncate">Battleground Stats</h4>
               </div>
               
               <div className="flex gap-1 mb-1 min-w-0">
@@ -456,12 +456,12 @@ export default function MatchupsWidget({
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-1.5">
-                <Bandage className="hw-icon-sm text-black" />
-                <span className="text-label-lg text-black">Injury Report</span>
+              <Bandage className="hw-icon-sm text-black" />
+              <span className="text-label-lg text-black">Injury Report</span>
               </div>
-              <button className="flex items-center gap-1 text-label-xs text-soft-400 hover:text-strong-950 transition-colors">
-                <Wrench className="hw-icon-xs" strokeWidth={2} />
-                <span className="hidden sm:inline">Fix Lineup</span>
+              <button className="flex items-center gap-1 text-label-md text-soft-400 hover:text-strong-950 transition-colors">
+                <Wrench className="hw-icon-sm" strokeWidth={2} />
+                <span className="hidden sm:inline text-label-md">Fix Lineup</span>
               </button>
             </div>
 
@@ -487,10 +487,10 @@ export default function MatchupsWidget({
               <div className="space-y-1 min-w-0">
                 {blueprint.missingPlayers.userTeam.map((player) => (
                   <div key={player.playerId} className="flex items-center gap-1 min-w-0">
-                    <div className="hw-icon-sm flex items-center justify-center flex-shrink-0">
+                    <div className="hw-icon-md flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-sm text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-label-lg text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
@@ -499,10 +499,10 @@ export default function MatchupsWidget({
               <div className="space-y-1 min-w-0">
                 {blueprint.missingPlayers.opponentTeam.map((player) => (
                   <div key={player.playerId} className="flex items-center gap-1 min-w-0">
-                    <div className="hw-icon-sm flex items-center justify-center flex-shrink-0">
+                    <div className="hw-icon-md flex items-center justify-center flex-shrink-0">
                       {getMissingPlayerIcon(player)}
                     </div>
-                    <span className="text-label-sm text-soft-400 truncate min-w-0">{player.name}</span>
+                    <span className="text-label-lg text-soft-400 truncate min-w-0">{player.name}</span>
                   </div>
                 ))}
               </div>
