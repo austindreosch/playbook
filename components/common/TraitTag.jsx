@@ -11,7 +11,7 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
   if (!trait) {
     console.warn(`Unknown trait ID: ${traitId}`);
     return (
-      <TagRoot variant="pill" className={` flex items-center gap-2.5 ${className}`}>
+      <TagRoot variant="trait" className={`flex items-center gap-3 ${className}`}>
         <TagIcon as={Activity} className="hw-icon-xs" />
         <span className="text-paragraph-md ">{traitId}</span>
       </TagRoot>
@@ -21,9 +21,9 @@ export default function TraitTag({ traitId, className = "", showTooltip = true, 
   const IconComponent = trait.icon;
   
   const tagElement = (
-    <TagRoot variant="pill" className={`flex items-center gap-2.5 ${className}`}>
+    <TagRoot variant="trait" className={`flex items-center gap-3 ${className}`}>
       <TagIcon as={IconComponent} className="hw-icon-xs" />
-      <span className="text-paragraph-sm">{trait.label}</span>
+      <span className="text-paragraph-md">{trait.label}</span>
     </TagRoot>
   );
   

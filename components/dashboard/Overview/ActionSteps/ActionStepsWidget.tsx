@@ -193,21 +193,10 @@ export default function ActionStepsWidget({
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={ActivitySquare} />
         Action Steps
-        
-        <div className="ml-auto flex items-center gap-2">
-          {blueprint.highPriorityCount > 0 && (
-            <Badge.Root variant="status" color="red" size="small">
-              {blueprint.highPriorityCount} High
-            </Badge.Root>
-          )}
-          <Badge.Root variant="count" color="gray" size="small">
-            {blueprint.totalActions}
-          </Badge.Root>
-        </div>
       </WidgetBox.Header>
 
       <WidgetBox.Content>
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-2">
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5">
           {blueprint.actionItems.map((item) => {
             const Icon = item.icon;
             const ButtonIcon = item.buttonIcon;
@@ -217,36 +206,44 @@ export default function ActionStepsWidget({
             return (
               <div 
                 key={item.id} 
-                className={`${priorityColor} rounded-lg p-3 flex-shrink-0 border-l-2`}
+                className={`rounded-md flex-shrink-0 border border-stroke-soft-100`}
               >
                 {/* Action header */}
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center justify-between h-9 mb-2 bg-bg-weak-10 rounded-t-md p-1 pr-1.5 pl-3 border-b border-stroke-soft-100">
                   <div className="flex items-center gap-2 min-w-0">
-                    <Icon className={`hw-icon-xs ${actionColor} flex-shrink-0`} strokeWidth={2} />
-                    <h4 className="text-label-sm font-medium text-text-strong-950 truncate">
+                    <Icon className={`hw-icon-sm flex-shrink-0 text-gray-450`} strokeWidth={2} />
+                    <h4 className="text-label-lg font-semibold text-gray-450 truncate">
                       {item.title}
                     </h4>
-                    {item.player?.position && (
-                      <Badge.Root variant="secondary" color="gray" size="small">
-                        {item.player.position}
-                      </Badge.Root>
-                    )}
                   </div>
-                  <button 
-                    onClick={() => handleDismissAction(item.id)}
-                    className="text-text-disabled-300 hover:text-text-soft-400 flex-shrink-0 transition-colors"
-                  >
-                    <X className="hw-icon-xs" strokeWidth={2} />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <Button.Root
+                        variant="primary"
+                        size="small"
+                        className="w-32 h-6 border border-blue-600"
+                        onClick={() => handleActionClick(item.actionUrl)}
+                      >
+                      <ButtonIcon className="hw-icon-xs flex-shrink-0" strokeWidth={2} />
+                      <span className="truncate text-label-md">{item.buttonText}</span>
+                    </Button.Root>
+                    <Button.Root
+                      variant="secondary"
+                      size="small"
+                      onClick={() => handleDismissAction(item.id)}
+                      className="flex-shrink-0 border border-stroke-soft-150 hover:bg-gray-100 rounded-lg h-6 w-6 p-0"
+                    >
+                      <X className="hw-icon-xs text-gray-400" strokeWidth={2} />
+                    </Button.Root>
+                  </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-paragraph-xs text-text-soft-400 mb-3 leading-relaxed line-clamp-2">
+                <p className="text-paragraph-md text-text-soft-400 mb-3 px-2 leading-relaxed line-clamp-2">
                   {item.description}
                 </p>
 
                 {/* Action button */}
-                <Button.Root
+                {/* <Button.Root
                   variant="primary"
                   size="small"
                   className="w-full"
@@ -254,7 +251,7 @@ export default function ActionStepsWidget({
                 >
                   <ButtonIcon className="hw-icon-xs flex-shrink-0" strokeWidth={2} />
                   <span className="truncate">{item.buttonText}</span>
-                </Button.Root>
+                </Button.Root> */}
               </div>
             );
           })}
@@ -263,8 +260,8 @@ export default function ActionStepsWidget({
           {blueprint.actionItems.length === 0 && (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <ActivitySquare className="hw-icon-lg text-text-disabled-300 mb-3" strokeWidth={1.5} />
-              <p className="text-label-sm text-text-disabled-300 mb-1">No action items</p>
-              <p className="text-paragraph-xs text-text-disabled-300">
+              <p className="text-label-base text-text-disabled-300 mb-1">No action items</p>
+              <p className="text-paragraph-sm text-text-disabled-300">
                 All caught up! Check back later for new recommendations.
               </p>
             </div>

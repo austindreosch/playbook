@@ -76,6 +76,22 @@ export const tagVariants = tv({
           'group-focus/dismiss-button:text-text-sub-600',
         ],
       },
+      trait: {
+        root: [
+          // base
+          'rounded-full text-paragraph-sm bg-bg-white-0 ring-stroke-soft-200 pr-2.5',
+          // hover
+          'hover:bg-bg-weak-50 hover:ring-transparent',
+          // focus-within
+          'focus-within:bg-bg-weak-50 focus-within:ring-transparent',
+        ],
+        dismissIcon: [
+          // hover
+          'group-hover/dismiss-button:text-text-sub-600',
+          // focus
+          'group-focus/dismiss-button:text-text-sub-600',
+        ],
+      },
     },
     disabled: {
       true: {

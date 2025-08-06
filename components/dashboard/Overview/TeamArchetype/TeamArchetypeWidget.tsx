@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { BicepsFlexed, ChartCandlestick, Dna, ShieldUser, TimerReset, Trophy } from 'lucide-react';
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Text } from 'recharts';
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Text, Tooltip } from 'recharts';
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Badge from '@/components/alignui/badge';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
@@ -188,22 +188,19 @@ export default function TeamArchetypeWidget({
       <WidgetBox.Content>
         <div className="flex items-center flex-1 min-h-0">
           {/* Metrics List - Icon + Badge only */}
-          <div className="space-y-2 flex flex-col justify-center pl-1 flex-shrink-0">
+          <div className="space-y-3 flex flex-col justify-center pl-1 flex-shrink-0">
             {blueprint.metrics.map((metric, index) => {
               const Icon = metric.icon;
               const rank = parseInt(metric.rank);
               return (
                 <div key={index} className="flex items-center gap-2">
-                  <Icon className="hw-icon-xs text-text-soft-400 flex-shrink-0" strokeWidth={2} />
-                  <Badge.Root 
-                    variant="rank" 
-                    color="gray" 
+                  <Icon className="hw-icon-sm text-text-soft-400 flex-shrink-0" strokeWidth={2} />
+                  <Badge.Root
+                    variant="rank"
                     size="medium"
+                    className={`flex items-center justify-center`}
                   >
-                    {rank === 1 ? '1st' : 
-                     rank === 2 ? '2nd' : 
-                     rank === 3 ? '3rd' : 
-                     `${rank}th`}
+                    {metric.rank}
                   </Badge.Root>
                 </div>
               );
@@ -219,6 +216,28 @@ export default function TeamArchetypeWidget({
             >
               <RadarChart cx='50%' cy='50%' outerRadius='85%' data={blueprint.radarData}>
                 <PolarGrid stroke='var(--stroke-soft-200)' />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0];
+                      const metric = data.payload.metric;
+                      const value = data.value;
+                      const rank = 11 - value; // Convert back to rank (1-10)
+                      
+                      return (
+                        <div className="bg-white border border-stroke-soft-200 rounded-lg px-3 py-2 shadow-lg">
+                          <div className="text-label-sm font-medium text-text-base-950">
+                            {metric}
+                          </div>
+                          <div className="text-label-xs text-text-sub-600">
+                            Rank: {rank === 1 ? '1st' : rank === 2 ? '2nd' : rank === 3 ? '3rd' : `${rank}th`}
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
                 <PolarAngleAxis
                   dataKey='metric'
                   className='[&_.angleAxis]:stroke-stroke-soft-200 [&_.recharts-polar-angle-axis-tick-value]:fill-text-sub-600 [&_.recharts-polar-angle-axis-tick-value]:text-label-xs'
@@ -258,16 +277,19 @@ export default function TeamArchetypeWidget({
                 <Radar
                   name='Team Performance'
                   dataKey='value'
-                  stroke='var(--primary-base)'
-                  fill='var(--primary-alpha-50)'
-                  fillOpacity={0.5}
+                  stroke='#3b82f6'
+                  strokeWidth={3}
+                  fill='#3b82f6'
+                  fillOpacity={0.3}
                   animationDuration={600}
                   animationEasing='ease-out'
                   dot={({ ...props }) => {
                     return (
                       <circle
                         {...props}
-                        fill='var(--bg-white-0)'
+                        fill='#3b82f6'
+                        stroke='#3b82f6'
+                        strokeWidth={0}
                         fillOpacity={1}
                       />
                     );

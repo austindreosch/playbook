@@ -621,6 +621,8 @@ const config = {
         'soft-200': 'var(--bg-soft-200)',
         'weak-50': 'var(--bg-weak-50)',
         'weak-25': 'var(--bg-weak-25)',
+        'weak-10': 'var(--bg-weak-10)',
+        'weak-5': 'var(--bg-weak-5)',
         'white-0': 'var(--bg-white-0)',
       },
       text: {

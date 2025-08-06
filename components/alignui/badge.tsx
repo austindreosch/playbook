@@ -67,6 +67,7 @@ export const badgeVariants = tv({
       sky: {},
       pink: {},
       teal: {},
+      black: {},
     },
     disabled: {
       true: {
@@ -149,6 +150,13 @@ export const badgeVariants = tv({
         root: 'bg-stable-base',
       },
     },
+    {
+      variant: ['filled', 'position'],
+      color: 'black',
+      class: {
+        root: 'bg-neutral-950',
+      },
+    },
     // #endregion
 
     //#region variant=light
@@ -220,6 +228,13 @@ export const badgeVariants = tv({
       color: 'teal',
       class: {
         root: 'bg-stable-light text-stable-dark',
+      },
+    },
+    {
+      variant: 'light',
+      color: 'black',
+      class: {
+        root: 'bg-neutral-800 text-static-white',
       },
     },
     //#endregion
@@ -295,6 +310,13 @@ export const badgeVariants = tv({
         root: 'bg-stable-lighter text-stable-base',
       },
     },
+    {
+      variant: 'lighter',
+      color: 'black',
+      class: {
+        root: 'bg-neutral-600 text-static-white',
+      },
+    },
     //#endregion
 
     //#region variant=stroke
@@ -366,6 +388,13 @@ export const badgeVariants = tv({
       color: 'teal',
       class: {
         root: 'text-stable-base',
+      },
+    },
+    {
+      variant: 'stroke',
+      color: 'black',
+      class: {
+        root: 'text-neutral-950',
       },
     },
     //#endregion
@@ -441,6 +470,13 @@ export const badgeVariants = tv({
         root: 'text-stable-dark',
       },
     },
+    {
+      variant: 'outline',
+      color: 'black',
+      class: {
+        root: 'text-neutral-950',
+      },
+    },
     //#endregion
 
     //#region square
@@ -475,6 +511,7 @@ export const badgeVariants = tv({
         'sky',
         'pink',
         'teal',
+        'black',
       ],
       class: {
         root: [
