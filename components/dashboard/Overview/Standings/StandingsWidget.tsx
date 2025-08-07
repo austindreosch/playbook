@@ -367,14 +367,10 @@ return (
             <div className="text-center flex-1">
               <div className="flex items-center justify-center gap-1">
                 <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.wins}</span>
-                <span className="text-title-h5 font-bold text-disabled-300">-</span>
+                <span className="text-title-h5 font-bold text-gray-200">-</span>
                 <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.losses}</span>
-                {blueprint.userTeam.record.ties > 0 && (
-                  <>
-                    <span className="text-title-h5 font-bold text-disabled-300">-</span>
-                    <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.ties}</span>
-                  </>
-                )}
+                <span className="text-title-h5 font-bold text-gray-200">-</span>
+                <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.ties}</span>
               </div>
               <div className="text-paragraph-sm text-disabled-300 mt-1">Matchups</div>
             </div>

@@ -196,6 +196,61 @@ export const texts = {
       fontWeight: '400',
     },
   ],
+  // Numbers font variants for aligned numerical data
+  'numbers-2xl': [
+    '1.125rem', // 1.5rem * 0.75
+    {
+      lineHeight: '1.5rem', // 2rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '600',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  ],
+  'numbers-xl': [
+    '0.984375rem', // 1.3125rem * 0.75
+    {
+      lineHeight: '1.3125rem', // 1.75rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '600',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  ],
+  'numbers-lg': [
+    '0.84375rem', // 1.125rem * 0.75
+    {
+      lineHeight: '1.125rem', // 1.5rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '500',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  ],
+  'numbers-md': [
+    '0.75rem', // 1rem * 0.75
+    {
+      lineHeight: '1.125rem', // 1.5rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '500',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  ],
+  'numbers-sm': [
+    '0.65625rem', // 0.875rem * 0.75
+    {
+      lineHeight: '0.9375rem', // 1.25rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '600',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  ],
+  'numbers-xs': [
+    '0.5625rem', // 0.75rem * 0.75
+    {
+      lineHeight: '0.75rem', // 1rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '600',
+      fontVariantNumeric: 'tabular-nums',
+    },
+  ],
 } as unknown as Record<string, string>;
 
 export const shadows = {

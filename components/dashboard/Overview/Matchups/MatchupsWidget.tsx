@@ -409,9 +409,11 @@ export default function MatchupsWidget({
           </div>
 
           {/* Lineup and Battleground Stats */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {/* Player Lineup */}
-            <div className="min-w-0 border-l border-border-soft pl-3">
+            <div className="min-w-0">
+              <span className="text-label-md text-soft-400 truncate">Lineup</span>
+              <Divider.Root variant="line-spacing" />
               <div className="space-y-1">
                 {blueprint.lineup.slice(0, 4).map((player) => (
                   <div key={player.playerId} className="flex items-center gap-2 min-w-0">
@@ -473,7 +475,7 @@ export default function MatchupsWidget({
                 color="green" 
                 className="flex-1"
               />
-              <ProgressBar.Root 
+              <ProgressBar.Root
                 value={100 - blueprint.missingPlayers.healthAdvantage} 
                 max={100} 
                 color="red" 

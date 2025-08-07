@@ -530,6 +530,53 @@
 var(--gray-100) 3%, var(--gray-100) 100%);
   }
 
+  /* Number alignment utilities */
+  .numbers-tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  .numbers-proportional {
+    font-variant-numeric: proportional-nums;
+    font-feature-settings: "pnum";
+  }
+
+  .numbers-lining {
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum";
+  }
+
+  .numbers-oldstyle {
+    font-variant-numeric: oldstyle-nums;
+    font-feature-settings: "onum";
+  }
+
+  /* Combined number utility classes */
+  .numbers-aligned {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum", "lnum";
+    text-align: right;
+  }
+
+  .numbers-monospace {
+    font-family: var(--font-dm-mono), monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Force true monospace alignment for numbers only */
+  .numbers-force-mono {
+    font-family: var(--font-dm-mono), monospace;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Keep current font but with tabular spacing */
+  .numbers-current-font {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum", "lnum";
+  }
+
 
 }
   

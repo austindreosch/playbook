@@ -21,14 +21,24 @@ const AVATAR_NOTIFICATION_NAME = 'AvatarNotification';
 export const avatarVariants = tv({
   slots: {
     root: [
-      'relative flex shrink-0 items-center justify-center rounded-full',
+      'relative flex shrink-0 items-center justify-center',
       'select-none text-center uppercase',
     ],
-    image: 'size-full rounded-full object-cover',
+    image: 'size-full object-cover',
     indicator:
       'absolute flex size-8 items-center justify-center drop-shadow-[0_2px_4px_#1b1c1d0a]',
   },
   variants: {
+    shape: {
+      circle: {
+        root: 'rounded-full',
+        image: 'rounded-full',
+      },
+      square: {
+        root: 'rounded-md',
+        image: 'rounded-md',
+      },
+    },
     size: {
       '80': {
         root: 'size-20 text-title-h5',
@@ -130,6 +140,7 @@ export const avatarVariants = tv({
     },
   ],
   defaultVariants: {
+    shape: 'circle',
     size: '80',
     color: 'gray',
   },
@@ -148,6 +159,7 @@ const AvatarRoot = React.forwardRef<HTMLDivElement, AvatarRootProps>(
     {
       asChild,
       children,
+      shape,
       size,
       color,
       className,
@@ -158,9 +170,10 @@ const AvatarRoot = React.forwardRef<HTMLDivElement, AvatarRootProps>(
   ) => {
     const uniqueId = React.useId();
     const Component = asChild ? Slot : 'div';
-    const { root } = avatarVariants({ size, color });
+    const { root } = avatarVariants({ shape, size, color });
 
     const sharedProps: AvatarSharedProps = {
+      shape,
       size,
       color,
     };
@@ -207,9 +220,9 @@ type AvatarImageProps = AvatarSharedProps &
   };
 
 const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(
-  ({ asChild, className, size, color, ...rest }, forwardedRef) => {
+  ({ asChild, className, shape, size, color, ...rest }, forwardedRef) => {
     const Component = asChild ? Slot : 'img';
-    const { image } = avatarVariants({ size, color });
+    const { image } = avatarVariants({ shape, size, color });
 
     return (
       <Component
@@ -223,6 +236,7 @@ const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(
 AvatarImage.displayName = AVATAR_IMAGE_NAME;
 
 function AvatarIndicator({
+  shape,
   size,
   color,
   className,
@@ -232,7 +246,7 @@ function AvatarIndicator({
   React.HTMLAttributes<HTMLDivElement> & {
     position?: 'top' | 'bottom';
   }) {
-  const { indicator } = avatarVariants({ size, color });
+  const { indicator } = avatarVariants({ shape, size, color });
 
   return (
     <div
@@ -327,12 +341,13 @@ export {
 };
 
 // Create AvatarFallback component for compatibility
-const AvatarFallback = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { placeholderType?: 'user' | 'company' }>(
-  ({ children, className, placeholderType = 'user', ...rest }, forwardedRef) => {
+const AvatarFallback = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { placeholderType?: 'user' | 'company', shape?: 'circle' | 'square' }>(
+  ({ children, className, placeholderType = 'user', shape = 'circle', ...rest }, forwardedRef) => {
+    const roundedClass = shape === 'square' ? 'rounded-lg' : 'rounded-full';
     return (
       <div
         ref={forwardedRef}
-        className={cn('flex items-center justify-center size-full rounded-full bg-bg-soft-200 text-static-black', className)}
+        className={cn(`flex items-center justify-center size-full ${roundedClass} bg-bg-soft-200 text-static-black`, className)}
         {...rest}
       >
         {children || (placeholderType === 'company' ? <IconEmptyCompany /> : <IconEmptyUser />)}

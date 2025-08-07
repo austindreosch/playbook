@@ -50,7 +50,9 @@ const PlayerRow = React.forwardRef<
         
         {/* Headshot */}
         <div className='shrink-0'>
-          <Avatar size="24"></Avatar>
+          <Avatar size="24" shape='square'>
+
+          </Avatar>
         </div>
         
         {/* Name and Position */}
@@ -74,9 +76,11 @@ const PlayerRow = React.forwardRef<
         )}
         
         {/* Z-Score */}
-        <div className='flex items-center justify-center min-w-[3rem] h-8 pl-1.5'>
-          <div className='text-paragraph-lg text-strong-950'>
-            {value}
+        <div className='flex items-center justify-end min-w-[3rem] h-8 pl-3'>
+          <div className='text-numbers-md font-mono text-strong-950 text-right'>
+            {typeof value === 'number'
+              ? value.toFixed(2).padStart(5, '0')
+              : value}
           </div>
         </div>
       </button>
