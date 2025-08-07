@@ -282,6 +282,8 @@
     --static-black: var(--black);
     --static-white: var(--gray-0);
 
+    --paperwhite: #fcfcfc;
+
     --bg-strong-950: var(--neutral-500);
     --bg-surface-800: var(--neutral-400);
     --bg-sub-300: var(--neutral-300);

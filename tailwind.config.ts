@@ -728,6 +728,7 @@ const config = {
       overlay: {
         DEFAULT: 'var(--overlay)',
       },
+      paperwhite: 'var(--paperwhite)',
       transparent: 'transparent',
       current: 'currentColor',
     },

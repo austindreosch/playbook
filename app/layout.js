@@ -65,7 +65,7 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={cn(dmSans.className, "bg-bg-white-0 h-full flex flex-col")} suppressHydrationWarning>
+      <body className={cn(dmSans.className, "bg-paperwhite h-full flex flex-col")} suppressHydrationWarning>
         <UserProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <TooltipProvider>

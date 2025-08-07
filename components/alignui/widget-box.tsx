@@ -14,7 +14,7 @@ function WidgetBox({
   return (
     <div
       className={cnExt(
-        'w-full min-w-0 rounded-lg bg-bg-white-0 shadow-regular-xs p-3.5 ring-1 ring-inset ring-stroke-soft-200',
+        'w-full min-w-0 rounded-lg bg-bg-white-0 shadow-regular-sm p-3.5 ring-1 ring-inset ring-stroke-soft-200',
         fixedHeight ? 'flex flex-col justify-between' : '',
         className,
       )}
