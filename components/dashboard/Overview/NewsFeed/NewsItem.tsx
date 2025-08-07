@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { FileText, MessagesSquare, Newspaper, Play, Rss, ScrollText, ScrollTextIcon } from 'lucide-react';
+import { FileText, MessagesSquare, Newspaper, Play, ScrollText, ScrollTextIcon } from 'lucide-react';
 import { Root as AvatarRoot, AvatarFallback } from '@/components/alignui/avatar';
 
 // ============================================================
@@ -45,72 +45,51 @@ interface NewsItemProps {
 }
 
 // ============================================================
+// ==================== CONFIGURATION =======================
+// ============================================================
+
+const NEWS_TYPE_CONFIG = {
+  'latest-news': {
+    icon: ScrollText,
+    title: 'Latest News',
+    iconColor: 'text-blue-500',
+    headerTextColor: 'text-gray-450',
+    headerBgColor: '',
+    strokeWidth: 2,
+  },
+  'new-debate': {
+    icon: MessagesSquare,
+    title: 'New Debate',
+    iconColor: 'text-yellow-500',
+    headerTextColor: 'text-gray-450',
+    headerBgColor: '',
+    strokeWidth: 2,
+  },
+  'talking-head': {
+    icon: Play,
+    title: 'Talking Head',
+    iconColor: 'text-red-500',
+    headerTextColor: 'text-gray-450',
+    headerBgColor: '',
+    strokeWidth: 2,
+  },
+} as const;
+
+const DEFAULT_CONFIG = {
+  icon: FileText,
+  title: 'News',
+  iconColor: 'text-gray-400',
+  headerTextColor: 'text-gray-450',
+  headerBgColor: '',
+  strokeWidth: 2,
+};
+
+// ============================================================
 // ===================== HELPER FUNCTIONS ====================
 // ============================================================
 
-const getNewsTypeIcon = (type: string) => {
-  switch (type) {
-    case 'latest-news':
-      return Rss;
-    case 'new-debate':
-      return MessagesSquare;
-    case 'talking-head':
-      return Play;
-    default:
-      return FileText;
-  }
-};
-
-const getNewsTypeColor = (type: string) => {
-  switch (type) {
-    // case 'latest-news':
-    //   return 'bg-gray-50';
-    // case 'new-debate':
-    //   return 'bg-warning-lighter';
-    // case 'talking-head':
-    //   return 'bg-bg-strong-950';
-    default:
-      return '';
-  }
-};
-
-const getNewsIconColor = (type: string) => {
-  switch (type) {
-    case 'latest-news':
-      return 'text-blue-500';
-    case 'new-debate':
-      return 'text-yellow-600';
-    case 'talking-head':
-      return 'text-red-500';
-    default:
-      return 'text-gray-400';
-  }
-};
-
-const getNewsHeaderTextColor = (type: string) => {
-  switch (type) {
-    case 'latest-news':
-      return 'text-gray-450';
-    case 'new-debate':
-      return 'text-gray-450';
-    case 'talking-head':
-      return 'text-gray-450';
-    default:
-      return 'text-gray-450';
-  }
-};
-
-const getNewsTypeTitle = (type: string) => {
-  switch (type) {
-    case 'latest-news':
-      return 'Latest News';
-    case 'new-debate':
-      return 'New Debate';
-    case 'talking-head':
-      return 'Talking Head';
-    default:
-      return 'News';
-  }
+const getNewsConfig = (type: string) => {
+  return NEWS_TYPE_CONFIG[type as keyof typeof NEWS_TYPE_CONFIG] || DEFAULT_CONFIG;
 };
 
 // ============================================================
@@ -118,11 +97,8 @@ const getNewsTypeTitle = (type: string) => {
 // ============================================================
 
 export default function NewsItem({ item, className = '' }: NewsItemProps) {
-  const TypeIcon = getNewsTypeIcon(item.type);
-  const headerColor = getNewsTypeColor(item.type);
-  const textColor = getNewsHeaderTextColor(item.type);
-  const iconColor = getNewsIconColor(item.type);
-  const title = getNewsTypeTitle(item.type);
+  const config = getNewsConfig(item.type);
+  const TypeIcon = config.icon;
 
   // Unified data extraction - normalize all news types to common structure
   const getUnifiedData = () => {
@@ -163,11 +139,11 @@ export default function NewsItem({ item, className = '' }: NewsItemProps) {
   return (
     <div className={`flex-shrink-0 border border-stroke-soft-100 rounded-lg ${className}`}>
       {/* Header */}
-      <div className={`${headerColor} h-9 rounded-t-lg px-3 flex items-center justify-between border-b border-stroke-soft-100`}>
+      <div className={`${config.headerBgColor} h-9 rounded-t-lg px-3 flex items-center justify-between border-b border-stroke-soft-100`}>
         <div className="flex items-center gap-2">
-          <TypeIcon className={`hw-icon-sm ${iconColor}`} strokeWidth={3} />
-          <h4 className={`text-label-lg font-semibold ${textColor}`}>
-            {title}
+          <TypeIcon className={`hw-icon-sm ${config.iconColor}`} strokeWidth={config.strokeWidth} />
+          <h4 className={`text-label-lg font-semibold ${config.headerTextColor}`}>
+            {config.title}
           </h4>
         </div>
         <span className="text-paragraph-md text-disabled-300 flex-shrink-0">

@@ -25,12 +25,11 @@ const PlayerRow = React.forwardRef<
       const colorClass = iconColor || 'text-sub-600';
       const getColorClasses = () => {
         switch (iconColor) {
-          case 'text-green-500': return 'bg-green-10 hover:bg-green-25 border-green-50 hover:border-green-25';
-          case 'text-red-600': return 'bg-red-10 hover:bg-red-25 border-red-50 hover:border-red-25';
-          case 'text-red-400': return 'bg-red-10 hover:bg-red-25 border-red-50 hover:border-red-25';
-          case 'text-red-500': return 'bg-red-10 hover:bg-red-25 border-red-50 hover:border-red-25';
-          case 'text-blue-400': return 'bg-blue-10 hover:bg-blue-25 border-blue-50 hover:border-blue-25';
-          default: return 'bg-gray-10 hover:bg-gray-50 border-gray-50 hover:border-gray-100';
+          case 'success': return 'bg-green-10 hover:bg-green-25 border-green-100 hover:border-green-25 [&_svg]:text-green-600';
+          case 'danger': return 'bg-red-10 hover:bg-red-25 border-red-100 hover:border-red-25 [&_svg]:text-red-600';
+          case 'cold': return 'bg-blue-10 hover:bg-blue-25 border-blue-100 hover:border-blue-25 [&_svg]:text-blue-600';
+          case 'warning': return 'bg-orange-10 hover:bg-orange-25 border-orange-200 hover:border-orange-25 [&_svg]:text-orange-600';
+          default: return 'bg-gray-10 hover:bg-gray-50 border-gray-150 hover:border-gray-100';
         }
       };
       
@@ -64,12 +63,12 @@ const PlayerRow = React.forwardRef<
       <button
         type='button'
         ref={forwardedRef}
-        className='flex w-full items-center gap-2 rounded-lg ring-1 ring-inset ring-stroke-soft-100 shadow-regular-xs h-10 px-2 bg-white text-left transition-all duration-200 ease-out hover:bg-gray-10 hover:px-3'
+        className='flex w-full items-center gap-2 rounded-lg ring-1 ring-inset ring-stroke-soft-100 shadow-regular-xs h-10 px-1.5 bg-white text-left transition-all duration-200 ease-out hover:bg-gray-10 hover:px-3'
         {...rest}
       >
         {/* Rank */}
         {playbookScore && (
-          <div className="w-7 flex items-center justify-center gap-1 text-label-lg font-bold text-sub-600">
+          <div className="w-8 flex items-center justify-center gap-1 text-label-lg font-bold text-black text-stroke-sm text-stroke-black">
             {/* <Compass className="hw-icon-xs text-blue" /> */}
             <span className='mt-[1px]'>{playbookScore}</span>
           </div>
@@ -104,7 +103,7 @@ const PlayerRow = React.forwardRef<
         
         {/* Z-Score */}
         <div className='flex items-center justify-start min-w-[2.5rem] h-8'>
-          <div className='text-numbers-lg text-gray-450 text-left'>
+          <div className='text-numbers-lg text-gray-400 text-left'>
             {typeof value === 'number' ? value.toFixed(2) : value}
           </div>
         </div>

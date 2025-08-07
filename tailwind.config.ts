@@ -529,6 +529,9 @@ const config = {
       },
       orange: {
         DEFAULT: 'var(--orange-500)',
+        '5': 'var(--orange-5)',
+        '10': 'var(--orange-10)',
+        '25': 'var(--orange-25)',
         '50': 'var(--orange-50)',
         '100': 'var(--orange-100)',
         '200': 'var(--orange-200)',
@@ -586,6 +589,9 @@ const config = {
       },
       yellow: {
         DEFAULT: 'var(--yellow-500)',
+        '5': 'var(--yellow-5)',
+        '10': 'var(--yellow-10)',
+        '25': 'var(--yellow-25)',
         '50': 'var(--yellow-50)',
         '100': 'var(--yellow-100)',
         '200': 'var(--yellow-200)',
@@ -1123,6 +1129,7 @@ const config = {
     tailwindcssAnimate,
     'prettier-plugin-tailwindcss',
     require('tailwind-scrollbar'),
+    require('@designbycode/tailwindcss-text-shadow'),
     function({ addUtilities }) {
       addUtilities({
         '.hw-icon': {
