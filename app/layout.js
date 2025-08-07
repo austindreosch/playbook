@@ -2,7 +2,7 @@ import AOSInitializer from '@/components/LandingPage/internal/AOSInitializer';
 import { Toaster } from "@/components/ui/sonner";
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { DM_Mono, DM_Sans } from 'next/font/google';
+import { Azeret_Mono, DM_Sans } from 'next/font/google';
 import Script from 'next/script';
 import { Suspense } from 'react';
 import ConditionalNavBar from '../components/ConditionalNavBar';
@@ -29,10 +29,10 @@ const dmSans = DM_Sans({
   display: 'swap'
 })
 
-const dmMono = DM_Mono({
+const azeretMono = Azeret_Mono({
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-dm-mono',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-azeret-mono',
   display: 'swap'
 })
 
@@ -49,7 +49,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={cn("h-full", dmSans.variable, dmMono.variable)} suppressHydrationWarning>
+    <html lang="en" className={cn("h-full", dmSans.variable, azeretMono.variable)} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

@@ -8,6 +8,7 @@ const PlayerRow = React.forwardRef<
   HTMLButtonElement,
   Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> & {
     icon?: string | React.ElementType;
+    iconColor?: string;
     name: string;
     position?: string;
     value: number;
@@ -17,18 +18,44 @@ const PlayerRow = React.forwardRef<
   }
 >(
   (
-    { icon, name, position = '', value, playbookScore, type, hasNotification = false, ...rest },
+    { icon, iconColor, name, position = '', value, playbookScore, type, hasNotification = false, ...rest },
     forwardedRef,
   ) => {
     const renderNotificationIcon = () => {
+      const colorClass = iconColor || 'text-sub-600';
+      const getColorClasses = () => {
+        switch (iconColor) {
+          case 'text-green-500': return 'bg-green-10 hover:bg-green-25 border-green-50 hover:border-green-25';
+          case 'text-red-600': return 'bg-red-10 hover:bg-red-25 border-red-50 hover:border-red-25';
+          case 'text-red-400': return 'bg-red-10 hover:bg-red-25 border-red-50 hover:border-red-25';
+          case 'text-red-500': return 'bg-red-10 hover:bg-red-25 border-red-50 hover:border-red-25';
+          case 'text-blue-400': return 'bg-blue-10 hover:bg-blue-25 border-blue-50 hover:border-blue-25';
+          default: return 'bg-gray-10 hover:bg-gray-50 border-gray-50 hover:border-gray-100';
+        }
+      };
+      
+      const buttonClasses = `w-7 h-7 rounded border flex items-center justify-center transition-colors ${getColorClasses()}`;
+      
       if (typeof icon === 'string') {
-        return <img src={icon} alt='' className='w-4 h-4' />;
+        return (
+          <button className={buttonClasses}>
+            <img src={icon} alt='' className={`hw-icon-sm ${colorClass}`} />
+          </button>
+        );
       }
       if (icon) {
         const IconComponent = icon as React.ElementType;
-        return <IconComponent className='w-4 h-4' />;
+        return (
+          <button className={buttonClasses}>
+            <IconComponent className={`hw-icon-sm ${colorClass}`} />
+          </button>
+        );
       }
-      return <ChevronRight className='w-4 h-4 text-sub-600' />;
+      return (
+        <button className={buttonClasses}>
+          <ChevronRight className='hw-icon-sm text-sub-600' />
+        </button>
+      );
     };
 
     const initials = name.split(' ').map(word => word[0]).join('').slice(0,2).toUpperCase();
@@ -37,7 +64,7 @@ const PlayerRow = React.forwardRef<
       <button
         type='button'
         ref={forwardedRef}
-        className='flex w-full items-center gap-2 rounded-lg ring-1 ring-inset ring-stroke-soft-100 h-10 px-2 bg-white text-left transition-all duration-200 ease-out hover:bg-bg-weak-50 hover:px-3'
+        className='flex w-full items-center gap-2 rounded-lg ring-1 ring-inset ring-stroke-soft-200 h-10 px-2 bg-white text-left transition-all duration-200 ease-out hover:bg-gray-10 hover:px-3'
         {...rest}
       >
         {/* Rank */}
@@ -70,17 +97,15 @@ const PlayerRow = React.forwardRef<
         
         {/* Notification Icon */}
         {(hasNotification || icon) && (
-          <div className='shrink-0'>
+          <div className='shrink-0 pr-5'>
             {renderNotificationIcon()}
           </div>
         )}
         
         {/* Z-Score */}
-        <div className='flex items-center justify-end min-w-[3rem] h-8 pl-3'>
-          <div className='text-numbers-md font-mono text-strong-950 text-right'>
-            {typeof value === 'number'
-              ? value.toFixed(2).padStart(5, '0')
-              : value}
+        <div className='flex items-center justify-start min-w-[2.5rem] h-8'>
+          <div className='text-numbers-lg text-gray-450 text-left'>
+            {typeof value === 'number' ? value.toFixed(2) : value}
           </div>
         </div>
       </button>

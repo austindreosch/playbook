@@ -220,7 +220,7 @@ export const texts = {
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '0em',
-      fontWeight: '500',
+      fontWeight: '600',
       fontVariantNumeric: 'tabular-nums',
     },
   ],
@@ -229,7 +229,7 @@ export const texts = {
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
       letterSpacing: '0em',
-      fontWeight: '500',
+      fontWeight: '600',
       fontVariantNumeric: 'tabular-nums',
     },
   ],
@@ -446,6 +446,7 @@ const config = {
 
       gray: {
         '0': 'var(--gray-0)',
+        '5': 'var(--gray-5)',
         '10': 'var(--gray-10)',
         '25': 'var(--gray-25)',
         '50': 'var(--gray-50)',
@@ -507,6 +508,9 @@ const config = {
       },
       blue: {
         DEFAULT: 'var(--blue-500)',
+        '5': 'var(--blue-5)',
+        '10': 'var(--blue-10)',
+        '25': 'var(--blue-25)',
         '50': 'var(--blue-50)',
         '100': 'var(--blue-100)',
         '200': 'var(--blue-200)',
@@ -542,6 +546,9 @@ const config = {
       },
       red: {
         DEFAULT: 'var(--red-500)',
+        '5': 'var(--red-5)',
+        '10': 'var(--red-10)',
+        '25': 'var(--red-25)',
         '50': 'var(--red-50)',
         '100': 'var(--red-100)',
         '200': 'var(--red-200)',
@@ -559,6 +566,9 @@ const config = {
       },
       green: {
         DEFAULT: 'var(--green-500)',
+        '5': 'var(--green-5)',
+        '10': 'var(--green-10)',
+        '25': 'var(--green-25)',
         '50': 'var(--green-50)',
         '100': 'var(--green-100)',
         '200': 'var(--green-200)',
@@ -800,6 +810,16 @@ const config = {
       // ============↓↓↓↓↓↓ CUSTOM TAILWIND CONFIG ↓↓↓↓↓↓============
       // ============================================================
 
+      opacity: {
+        '1': '0.01',
+        '2': '0.02',
+        '3': '0.03',
+        '4': '0.04',
+        '7': '0.07',
+        '8': '0.08',
+        '9': '0.09',
+        '15': '0.15',
+      },
       spacing: {
         'icon':   '1.1rem',
         'icon-sm':'0.9rem',
@@ -985,7 +1005,7 @@ const config = {
       fontFamily: {
         sans: ['var(--font-sans)'],
         mono: [
-          'var(--font-dm-mono)',
+          'var(--font-azeret-mono)',
           'monospace'
         ]
       },
