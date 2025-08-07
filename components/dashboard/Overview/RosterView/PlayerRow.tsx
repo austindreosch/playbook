@@ -38,23 +38,23 @@ const PlayerRow = React.forwardRef<
       
       if (typeof icon === 'string') {
         return (
-          <button className={buttonClasses}>
+          <div className={buttonClasses}>
             <img src={icon} alt='' className={`hw-icon-sm ${colorClass}`} />
-          </button>
+          </div>
         );
       }
       if (icon) {
         const IconComponent = icon as React.ElementType;
         return (
-          <button className={buttonClasses}>
+          <div className={buttonClasses}>
             <IconComponent className={`hw-icon-sm ${colorClass}`} />
-          </button>
+          </div>
         );
       }
       return (
-        <button className={buttonClasses}>
+        <div className={buttonClasses}>
           <ChevronRight className='hw-icon-sm text-sub-600' />
-        </button>
+        </div>
       );
     };
 
@@ -64,7 +64,7 @@ const PlayerRow = React.forwardRef<
       <button
         type='button'
         ref={forwardedRef}
-        className='flex w-full items-center gap-2 rounded-lg ring-1 ring-inset ring-stroke-soft-200 h-10 px-2 bg-white text-left transition-all duration-200 ease-out hover:bg-gray-10 hover:px-3'
+        className='flex w-full items-center gap-2 rounded-lg ring-1 ring-inset ring-stroke-soft-100 shadow-regular-xs h-10 px-2 bg-white text-left transition-all duration-200 ease-out hover:bg-gray-10 hover:px-3'
         {...rest}
       >
         {/* Rank */}
@@ -97,7 +97,7 @@ const PlayerRow = React.forwardRef<
         
         {/* Notification Icon */}
         {(hasNotification || icon) && (
-          <div className='shrink-0 pr-5'>
+          <div className='shrink-0 pr-4'>
             {renderNotificationIcon()}
           </div>
         )}

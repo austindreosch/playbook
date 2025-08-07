@@ -43,32 +43,28 @@ export default function RosterViewImportLeague() {
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="bg-black text-white px-2 py-2 flex items-center gap-2 rounded-lg flex-shrink-0">
+      <div className="bg-black text-white px-3.5 py-2 flex items-center gap-2 rounded-t-lg flex-shrink-0">
         <div className="flex items-center justify-center w-7">
-          <Compass className="hw-icon-sm" />
+          <Compass className="hw-icon" />
         </div>
 
         <div className="shrink-0">
           <div className="w-6 h-6"></div>
         </div>
 
-        {/* <div className="min-w-0 flex items-center gap-2">
-          <span className="text-sm font-semibold">Player</span>
-        </div> */}
-
         <div className="flex-1" />
 
         <div className="shrink-0 pr-5">
-          <Newspaper className="hw-icon-sm" />
+          <Newspaper className="hw-icon" />
         </div>
 
         <div className="flex items-center justify-start min-w-[2.5rem] pl-2">
-          <SigmaSquare className="hw-icon-sm" />
+          <SigmaSquare className="hw-icon" />
         </div>
       </div>
 
       {/* Player List */}
-      <div className="pt-1 space-y-1 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent">
+      <div className="pt-1.5 space-y-1 flex-1 min-h-0 overflow-y-auto scrollbar-thin ring-1 ring-inset ring-stroke-soft-200 bg-gray-25 px-1.5 scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent">
         {players.map((player) => (
           <PlayerRow
             key={player.playbookScore}

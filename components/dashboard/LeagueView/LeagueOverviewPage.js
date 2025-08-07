@@ -39,7 +39,7 @@ export default function LeagueOverviewPage() {
 
       {/* Main Content */}
       <div className="grid grid-cols-11 w-full flex-1 min-h-0 gap-1.5 overflow-hidden">
-        <div className="col-span-3 flex-shrink-0 overflow-hidden">
+        <div className="col-span-3 flex-shrink-0 min-h-0 overflow-hidden">
           {/* <RosterViewImportLeague /> */}
           <RosterViewBlock />
         </div>
