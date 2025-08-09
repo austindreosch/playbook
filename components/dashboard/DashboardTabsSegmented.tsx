@@ -42,11 +42,19 @@ export default function DashboardTabsSegmented() {
   return (
     <div className="w-full">
       <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange}>
-        <SegmentedControl.List activeValue={currentTab}>
+        <SegmentedControl.List
+          activeValue={currentTab}
+          className="bg-black"
+        >
           {availableTabs.map(({ id, label, enabled }) => {
             const IconComponent = tabIcons[id as keyof typeof tabIcons];
             return (
-              <SegmentedControl.Trigger key={id} value={id} disabled={!enabled}>
+              <SegmentedControl.Trigger
+                key={id}
+                value={id}
+                disabled={!enabled}
+                className="text-white disabled:opacity-50 transition-colors data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:hover:bg-gray-25"
+              >
                 {IconComponent && <IconComponent className="size-4 shrink-0" />}
                 {label}
               </SegmentedControl.Trigger>
