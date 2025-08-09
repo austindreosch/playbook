@@ -2,6 +2,7 @@ import { Button } from '@/components/alignui/button';
 import { AlertTriangle, Compass, FileText, FileUp, Heart, Maximize2, Newspaper, Plus, ScrollText, Snowflake, SigmaSquare, TrendingDown, TrendingUp, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { PlayerRow } from './PlayerRow';
+import ScrollContainer from '@/components/common/ScrollContainer';
 
 /**
  * Dashboard block prompting the user to import a league so we can display
@@ -64,19 +65,24 @@ export default function RosterViewImportLeague() {
       </div>
 
       {/* Player List */}
-      <div className="pt-1.5 space-y-1 flex-1 min-h-0 overflow-y-auto scrollbar-thin ring-1 ring-inset ring-stroke-soft-200 bg-gray-25 px-1.5 scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent">
-        {players.map((player) => (
-          <PlayerRow
-            key={player.playbookScore}
-            icon={player.icon}
-            iconType={player.iconType}
-            name={player.name}
-            position={player.position}
-            value={player.value}
-            playbookScore={player.playbookScore}
-            type="other"
-          />
-        ))}
+      <div className="flex-1 min-h-0 ring-1 ring-inset ring-stroke-soft-200 bg-gray-25 h-full">
+        <ScrollContainer 
+          className="px-1.5 pt-1.5"
+          scrollClassName="space-y-1"
+        >
+          {players.map((player) => (
+            <PlayerRow
+              key={player.playbookScore}
+              icon={player.icon}
+              iconType={player.iconType}
+              name={player.name}
+              position={player.position}
+              value={player.value}
+              playbookScore={player.playbookScore}
+              type="other"
+            />
+          ))}
+        </ScrollContainer>
       </div>
 
 

@@ -15,6 +15,7 @@ import StandingsWidget from '../Standings/StandingsWidget.tsx';
 import TeamArchetypeWidget from '../TeamArchetype/TeamArchetypeWidget.tsx';
 import TeamProfileWidget from '../TeamProfile/TeamProfileWidget';
 import SortableWidget from './SortableWidget';
+import ScrollContainer from '@/components/common/ScrollContainer';
 
 // Map widget IDs to their components and sizes
 const widgetMap = {
@@ -85,31 +86,33 @@ export default function DashboardWidgetWall() {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={allWidgets} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-3 gap-2 w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-pb_lightgray hover:scrollbar-thumb-pb_midgray scrollbar-track-transparent scrollbar-gutter-stable">
-          {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
-            <div
-              key={columnId}
-              className="flex flex-col gap-2"
-            >
-              {widgets.map((widgetId) => {
-                const Widget = widgetMap[widgetId];
-                if (!Widget) return null;
-                const WidgetComponent = Widget.component;
-                const widgetSize = Widget.size;
+        <ScrollContainer className="w-full h-full">
+          <div className="grid grid-cols-3 gap-2 w-full">
+            {widgetLayout && Object.entries(widgetLayout).map(([columnId, widgets]) => (
+              <div
+                key={columnId}
+                className="flex flex-col gap-2"
+              >
+                {widgets.map((widgetId) => {
+                  const Widget = widgetMap[widgetId];
+                  if (!Widget) return null;
+                  const WidgetComponent = Widget.component;
+                  const widgetSize = Widget.size;
 
-                return (
-                  <SortableWidget 
-                    key={widgetId} 
-                    id={widgetId} 
-                    isEditMode={isEditMode}
-                  >
-                    <WidgetComponent snapHeight size={widgetSize} />
-                  </SortableWidget>
-                );
-              })}
-            </div>
-          ))}
-        </div>
+                  return (
+                    <SortableWidget 
+                      key={widgetId} 
+                      id={widgetId} 
+                      isEditMode={isEditMode}
+                    >
+                      <WidgetComponent snapHeight size={widgetSize} />
+                    </SortableWidget>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </ScrollContainer>
       </SortableContext>
     </DndContext>
   );
