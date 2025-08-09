@@ -19,7 +19,9 @@ import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
 import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
 import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
-import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
+// import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
+import { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
+import DashboardTabsSegmented from '@/components/dashboard/DashboardTabsSegmented';
 
 // League Header Components 
 
@@ -497,7 +499,8 @@ export default function DashboardPage() {
         <div className="relative flex items-center pt-1.5">
           {/* Dashboard Tab Selector */}
           <div className="w-[65%] lg:w-[55%]">
-            <DashboardTabs />
+            {/* <DashboardTabs /> */}
+            <DashboardTabsSegmented />
           </div>
 
           {/* Imported League Selector */}

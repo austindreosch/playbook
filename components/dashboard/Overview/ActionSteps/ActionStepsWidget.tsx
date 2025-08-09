@@ -5,6 +5,7 @@ import { Activity, ActivitySquare, Shuffle, UserPlus, Wrench, X } from 'lucide-r
 import * as WidgetBox from '@/components/alignui/widget-box';
 import * as Button from '@/components/alignui/button';
 import * as Badge from '@/components/alignui/badge';
+import ScrollContainer from '@/components/common/ScrollContainer';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 // ============================================================
@@ -33,9 +34,9 @@ interface ActionStepsBlueprint {
   highPriorityCount: number;           // SOURCE: actionItems.filter(priority === 'high').length [internal calculation]
 }
 
-interface ActionStepsWidgetProps extends React.ComponentPropsWithoutRef<typeof WidgetBox.Root> {
+type ActionStepsWidgetProps = React.ComponentPropsWithoutRef<typeof WidgetBox.Root> & {
   blueprint?: ActionStepsBlueprint;
-}
+};
 
 // ============================================================
 // ===================== DATA COLLECTION ======================
@@ -102,6 +103,36 @@ const generateActionStepsData = (): ActionStepsBlueprint => {
       buttonIcon: Shuffle,
       priority: 'low' as const,
       actionUrl: '/waivers'
+    },
+    {
+      id: 'action-5',
+      type: 'trade' as const,
+      icon: Shuffle,
+      title: 'Trade Offer',
+      description: 'You can acquire J. Murray at fair value based on recent trends.',
+      player: {
+        name: 'J. Murray',
+        position: 'PG'
+      },
+      buttonText: 'Open Trade',
+      buttonIcon: Shuffle,
+      priority: 'medium' as const,
+      actionUrl: '/trades'
+    },
+    {
+      id: 'action-6',
+      type: 'drop' as const,
+      icon: X,
+      title: 'Consider Dropping',
+      description: 'B. Sims minutes have decreased over the last 7 games.',
+      player: {
+        name: 'B. Sims',
+        position: 'C'
+      },
+      buttonText: 'Manage Roster',
+      buttonIcon: Shuffle,
+      priority: 'low' as const,
+      actionUrl: '/roster'
     }
   ];
 
@@ -196,17 +227,15 @@ export default function ActionStepsWidget({
       </WidgetBox.Header>
 
       <WidgetBox.Content>
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5">
+        <ScrollContainer scrollClassName="space-y-1.5">
           {blueprint.actionItems.map((item) => {
             const Icon = item.icon;
             const ButtonIcon = item.buttonIcon;
-            const priorityColor = getPriorityColor(item.priority);
-            const actionColor = getActionTypeColor(item.type);
 
             return (
               <div 
                 key={item.id} 
-                className={`rounded-md flex-shrink-0 border border-stroke-soft-100`}
+                className={`rounded-md flex-shrink-0 border border-stroke-soft-100 overflow-hidden`}
               >
                 {/* Action header */}
                 <div className="flex items-center justify-between h-9 mb-2 bg-bg-weak-10 rounded-t-md p-1 pr-1.5 pl-3 border-b border-stroke-soft-100">
@@ -227,10 +256,10 @@ export default function ActionStepsWidget({
                       <span className="truncate text-label-md">{item.buttonText}</span>
                     </Button.Root>
                     <Button.Root
-                      variant="secondary"
+                      variant="neutral"
                       size="small"
                       onClick={() => handleDismissAction(item.id)}
-                      className="flex-shrink-0 border border-stroke-soft-150 hover:bg-gray-100 rounded-lg h-6 w-6 p-0"
+                      className="flex-shrink-0 bg-bg-white-0 border border-stroke-soft-150 hover:bg-gray-100 rounded-lg h-6 w-6 p-0"
                     >
                       <X className="hw-icon-xs text-gray-400" strokeWidth={2} />
                     </Button.Root>
@@ -238,20 +267,9 @@ export default function ActionStepsWidget({
                 </div>
 
                 {/* Description */}
-                <p className="text-paragraph-md text-soft-400 mb-3 px-2 leading-relaxed line-clamp-2">
+                <p className="text-paragraph-md text-soft-400 px-2 pb-3 leading-relaxed line-clamp-2">
                   {item.description}
                 </p>
-
-                {/* Action button */}
-                {/* <Button.Root
-                  variant="primary"
-                  size="small"
-                  className="w-full"
-                  onClick={() => handleActionClick(item.actionUrl)}
-                >
-                  <ButtonIcon className="hw-icon-xs flex-shrink-0" strokeWidth={2} />
-                  <span className="truncate">{item.buttonText}</span>
-                </Button.Root> */}
               </div>
             );
           })}
@@ -266,7 +284,7 @@ export default function ActionStepsWidget({
               </p>
             </div>
           )}
-        </div>
+        </ScrollContainer>
       </WidgetBox.Content>
     </WidgetBox.Root>
   );

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Newspaper } from 'lucide-react';
 import * as WidgetBox from '@/components/alignui/widget-box';
+import ScrollContainer from '@/components/common/ScrollContainer';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 import NewsItem, { type NewsItemData } from './NewsItem';
 
@@ -14,9 +15,9 @@ interface NewsBlueprint {
   newsItems: NewsItemData[];           // SOURCE: useDashboardContext().getCurrentTeam().newsFeed
 }
 
-interface NewsWidgetProps extends React.ComponentPropsWithoutRef<typeof WidgetBox.Root> {
+type NewsWidgetProps = React.ComponentPropsWithoutRef<typeof WidgetBox.Root> & {
   blueprint?: NewsBlueprint;
-}
+};
 
 // ============================================================
 // ===================== DATA COLLECTION ======================
@@ -95,11 +96,11 @@ export default function NewsWidget({
       </WidgetBox.Header>
 
       <WidgetBox.Content>
-        <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5">
+        <ScrollContainer scrollClassName="space-y-1.5">
           {blueprint.newsItems.map((item) => (
             <NewsItem key={item.id} item={item} />
           ))}
-        </div>
+        </ScrollContainer>
       </WidgetBox.Content>
     </WidgetBox.Root>
   );

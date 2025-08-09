@@ -137,7 +137,7 @@ export default function NewsItem({ item, className = '' }: NewsItemProps) {
   const unifiedData = getUnifiedData();
 
   return (
-    <div className={`flex-shrink-0 border border-stroke-soft-100 rounded-lg ${className}`}>
+    <div className={`flex-shrink-0 border border-stroke-soft-100 rounded-lg overflow-hidden ${className}`}>
       {/* Header */}
       <div className={`${config.headerBgColor} h-9 rounded-t-lg px-3 flex items-center justify-between border-b border-stroke-soft-100`}>
         <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export default function NewsItem({ item, className = '' }: NewsItemProps) {
           </AvatarRoot>
           
           {/* Content */}
-          <div className="flex-1 min-w-0 mb-0.5">
+          <div className="flex-1 min-w-0">
             {/* Primary Name */}
             <div className="flex items-center gap-2 mb-1">
               <span className="text-label-lg font-medium text-strong-950 truncate">

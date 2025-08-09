@@ -50,5 +50,6 @@ export function useTabObserver({ onActiveTabChange } = {}) {
   return {
     mounted,
     listRef,
+    updateActiveTab,
   };
 } 

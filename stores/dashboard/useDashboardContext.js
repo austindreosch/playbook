@@ -20,8 +20,8 @@ const DUMMY_LEAGUE_TEAMS = leagueTeams;
 const DUMMY_RANKINGS = dummyData.userRankings;
 const initialWidgetLayout = {
   column1: ['standings', 'matchup'],
-  column2: ['teamArchetype', 'actionSteps'],
-  column3: ['teamProfile', 'newsFeed'],
+  column2: ['teamArchetype', 'newsFeed'],
+  column3: ['teamProfile', 'actionSteps'],
 };
 
 const initialTradeValueMode = 'compass';

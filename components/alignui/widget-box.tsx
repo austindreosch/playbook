@@ -113,7 +113,7 @@ function WidgetBoxContent({
   return (
     <div 
       className={cnExt(
-        'flex-1 flex flex-col',
+        'flex-1 min-h-0 flex flex-col',
         className
       )} 
       {...rest}
@@ -121,7 +121,7 @@ function WidgetBoxContent({
       {hasMultipleChildren ? (
         <>
           {/* Top sections with gap spacing - allow flex children to grow */}
-          <div className="flex flex-col gap-3 flex-1">
+          <div className="flex flex-col gap-3 flex-1 min-h-0">
             {childrenArray.slice(0, -1)}
           </div>
           {/* Fixed minimum gap - no competition */}
@@ -132,7 +132,9 @@ function WidgetBoxContent({
           </div>
         </>
       ) : (
-        children
+        <div className="flex-1 min-h-0 flex flex-col">
+          {children}
+        </div>
       )}
     </div>
   );

@@ -20,10 +20,10 @@ import SortableWidget from './SortableWidget';
 const widgetMap = {
   standings: { component: StandingsWidget, size: 3 },   
   matchup: { component: MatchupsWidget, size: 7 },         
-  actionSteps: { component: ActionStepsWidget, size: 7 },  
+  newsFeed: { component: NewsWidget, size: 7 },
   teamArchetype: { component: TeamArchetypeWidget, size: 3 },
   teamProfile: { component: TeamProfileWidget, size: 4 }, 
-  newsFeed: { component: NewsWidget, size: 6 },
+  actionSteps: { component: ActionStepsWidget, size: 6 },  
 };
 
 export default function DashboardWidgetWall() {
