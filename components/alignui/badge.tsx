@@ -569,13 +569,38 @@ const BadgeRoot = React.forwardRef<HTMLDivElement, BadgeRootProps>(
       asChild,
     );
 
+    // When variant is "rank", allow passing a single number and auto-format with ordinal suffix
+    function toOrdinal(value: number): string {
+      const n = Math.trunc(value);
+      const mod100 = n % 100;
+      if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+      const mod10 = n % 10;
+      if (mod10 === 1) return `${n}st`;
+      if (mod10 === 2) return `${n}nd`;
+      if (mod10 === 3) return `${n}rd`;
+      return `${n}th`;
+    }
+
+    let content: React.ReactNode = extendedChildren;
+    if (variant === 'rank') {
+      const childCount = React.Children.count(children);
+      if (childCount === 1) {
+        const onlyChild = children as unknown;
+        if (typeof onlyChild === 'number' && Number.isFinite(onlyChild)) {
+          content = toOrdinal(onlyChild);
+        } else if (typeof onlyChild === 'string' && /^\d+$/.test(onlyChild)) {
+          content = toOrdinal(parseInt(onlyChild, 10));
+        }
+      }
+    }
+
     return (
       <Component
         ref={forwardedRef}
         className={root({ class: className })}
         {...rest}
       >
-        {extendedChildren}
+        {content}
       </Component>
     );
   },

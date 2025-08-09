@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { cnExt } from '@/utils/cn';
 import type { PolymorphicComponentProps } from '@/utils/polymorphic';
 
@@ -26,10 +27,22 @@ function WidgetBox({
 }: WidgetBoxProps) {
   const getSnapHeightClass = () => {
     if (!snapHeight || !size) return '';
-    const baseHeight = size * 8; // 8rem per size unit (128px each)
-    const gapHeight = (size - 1) * 0.5; // 0.5rem per gap between units
-    const totalHeight = baseHeight + gapHeight;
-    return `h-[${totalHeight}rem]`;
+    
+    // Standard Tailwind height classes
+    const heightMap = {
+      1: 'h-32',     // 8rem (128px)
+      2: 'h-48',     // 12rem (192px)
+      3: 'h-64',     // 16rem (256px)
+      4: 'h-80',     // 20rem (320px)
+      5: 'h-96',     // 24rem (384px)
+      6: 'h-screen', // Full viewport height for very large widgets
+      7: 'h-screen',
+      8: 'h-screen',
+      9: 'h-screen',
+      10: 'h-screen',
+    } as const;
+    
+    return heightMap[size] || '';
   };
   return (
     <div
@@ -83,17 +96,44 @@ function WidgetBoxHeaderIcon<T extends React.ElementType>({
   );
 }
 
+interface WidgetBoxContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  autoSpace?: boolean; // For snapHeight widgets - auto-distributes children
+}
+
 function WidgetBoxContent({
   className,
   children,
+  autoSpace = false,
   ...rest
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: WidgetBoxContentProps) {
+  // Convert children to array and count them
+  const childrenArray = React.Children.toArray(children);
+  const hasMultipleChildren = childrenArray.length > 1;
+  
   return (
     <div 
-      className={cnExt('flex-1 flex flex-col justify-between', className)} 
+      className={cnExt(
+        'flex-1 flex flex-col',
+        className
+      )} 
       {...rest}
     >
-      {children}
+      {hasMultipleChildren ? (
+        <>
+          {/* Top sections with gap spacing - allow flex children to grow */}
+          <div className="flex flex-col gap-3 flex-1">
+            {childrenArray.slice(0, -1)}
+          </div>
+          {/* Fixed minimum gap - no competition */}
+          <div className="min-h-6" />
+          {/* Bottom section - flush to bottom */}
+          <div>
+            {childrenArray[childrenArray.length - 1]}
+          </div>
+        </>
+      ) : (
+        children
+      )}
     </div>
   );
 }

@@ -332,7 +332,7 @@ export default function StandingsWidget({
   
   const streakDisplay = getStreakDisplay(blueprint.winStreak);
 return (
-    <WidgetBox.Root className="h-full" {...rest}>
+    <WidgetBox.Root snapHeight size={3} {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Layers} />
         Standings
@@ -351,10 +351,7 @@ return (
               )}
             </div>
             <Badge.Root variant="rank" color="gray" size="medium">
-              {blueprint.leagueRankings.standings === 1 ? '1st' : 
-               blueprint.leagueRankings.standings === 2 ? '2nd' : 
-               blueprint.leagueRankings.standings === 3 ? '3rd' : 
-               `${blueprint.leagueRankings.standings}th`}
+              {blueprint.leagueRankings.standings}
             </Badge.Root>
           </div>
         </div>
@@ -362,8 +359,8 @@ return (
 
       <WidgetBox.Content>
         {/* Stats Box */}
-        <div className="relative overflow-hidden rounded-10 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-100 before:pointer-events-none before:absolute before:inset-0 before:rounded-10 before:ring-1 before:ring-inset before:ring-stroke-soft-100 mb-3">
-          <div className="flex items-center justify-between p-3">
+        <div className="relative overflow-hidden rounded-10 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-100 before:pointer-events-none before:absolute before:inset-0 before:rounded-10 before:ring-1 before:ring-inset before:ring-stroke-soft-100 flex-1 flex flex-col justify-center">
+          <div className="flex items-center justify-between p-3 w-full">
             <div className="text-center flex-1">
               <div className="flex items-center justify-center gap-1">
                 <span className="text-title-h5 font-bold text-soft-400">{blueprint.userTeam.record.wins}</span>
@@ -393,17 +390,14 @@ return (
         </div>
 
         {/* Strength of Schedule */}
-        <div className="flex-1 min-h-0">
+        <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1.5">
               <Telescope className="hw-icon-sm text-black" />
               <span className="text-label-lg text-black">Strength of Schedule</span>
             </div>
             <Badge.Root variant="rank" color="gray" size="medium">
-              {blueprint.leagueRankings.strengthOfSchedule === 1 ? '1st' : 
-               blueprint.leagueRankings.strengthOfSchedule === 2 ? '2nd' : 
-               blueprint.leagueRankings.strengthOfSchedule === 3 ? '3rd' : 
-               `${blueprint.leagueRankings.strengthOfSchedule}th`}
+              {blueprint.leagueRankings.strengthOfSchedule}
             </Badge.Root>
           </div>
         
