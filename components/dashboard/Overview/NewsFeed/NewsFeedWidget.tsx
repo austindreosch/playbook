@@ -88,7 +88,7 @@ export default function NewsWidget({
   const blueprint = providedBlueprint || generateNewsData();
 
   return (
-    <WidgetBox.Root className="h-full" {...rest}>
+    <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Newspaper} />
         News Feed

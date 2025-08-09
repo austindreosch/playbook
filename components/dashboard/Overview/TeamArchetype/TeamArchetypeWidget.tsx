@@ -179,7 +179,7 @@ export default function TeamArchetypeWidget({
   const blueprint = providedBlueprint || generateTeamArchetypeData();
 
   return (
-    <WidgetBox.Root className="h-full" {...rest}>
+    <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Dna} />
         Team Archetype

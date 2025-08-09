@@ -16,14 +16,14 @@ import TeamArchetypeWidget from '../TeamArchetype/TeamArchetypeWidget.tsx';
 import TeamProfileWidget from '../TeamProfile/TeamProfileWidget';
 import SortableWidget from './SortableWidget';
 
-// Map widget IDs to their components
+// Map widget IDs to their components and sizes
 const widgetMap = {
-  standings: { component: StandingsWidget },   
-  matchup: { component: MatchupsWidget },         
-  actionSteps: { component: ActionStepsWidget },  
-  teamArchetype: { component: TeamArchetypeWidget },
-  teamProfile: { component: TeamProfileWidget }, 
-  newsFeed: { component: NewsWidget },
+  standings: { component: StandingsWidget, size: 3 },   
+  matchup: { component: MatchupsWidget, size: 7 },         
+  actionSteps: { component: ActionStepsWidget, size: 7 },  
+  teamArchetype: { component: TeamArchetypeWidget, size: 3 },
+  teamProfile: { component: TeamProfileWidget, size: 4 }, 
+  newsFeed: { component: NewsWidget, size: 6 },
 };
 
 export default function DashboardWidgetWall() {
@@ -95,6 +95,7 @@ export default function DashboardWidgetWall() {
                 const Widget = widgetMap[widgetId];
                 if (!Widget) return null;
                 const WidgetComponent = Widget.component;
+                const widgetSize = Widget.size;
 
                 return (
                   <SortableWidget 
@@ -102,7 +103,7 @@ export default function DashboardWidgetWall() {
                     id={widgetId} 
                     isEditMode={isEditMode}
                   >
-                    <WidgetComponent />
+                    <WidgetComponent snapHeight size={widgetSize} />
                   </SortableWidget>
                 );
               })}

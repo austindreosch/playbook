@@ -332,7 +332,7 @@ export default function StandingsWidget({
   
   const streakDisplay = getStreakDisplay(blueprint.winStreak);
 return (
-    <WidgetBox.Root snapHeight size={3} {...rest}>
+    <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Layers} />
         Standings

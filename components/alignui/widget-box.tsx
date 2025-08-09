@@ -28,18 +28,18 @@ function WidgetBox({
   const getSnapHeightClass = () => {
     if (!snapHeight || !size) return '';
     
-    // Standard Tailwind height classes
+    // Standard Tailwind height classes - 4rem increments
     const heightMap = {
       1: 'h-32',     // 8rem (128px)
-      2: 'h-48',     // 12rem (192px)
+      2: 'h-48',     // 12rem (192px)  
       3: 'h-64',     // 16rem (256px)
       4: 'h-80',     // 20rem (320px)
       5: 'h-96',     // 24rem (384px)
-      6: 'h-screen', // Full viewport height for very large widgets
-      7: 'h-screen',
-      8: 'h-screen',
-      9: 'h-screen',
-      10: 'h-screen',
+      6: 'h-112',    // 28rem (448px)
+      7: 'h-128',    // 32rem (512px)
+      8: 'h-144',    // 36rem (576px)
+      9: 'h-160',    // 40rem (640px)
+      10: 'h-176',   // 44rem (704px)
     } as const;
     
     return heightMap[size] || '';

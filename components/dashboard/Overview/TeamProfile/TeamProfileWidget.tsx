@@ -70,7 +70,7 @@ export default function TeamProfileWidget({
   const blueprint = providedBlueprint || generateDummyTeamProfileData();
 
   return (
-    <WidgetBox.Root className="h-full" {...rest}>
+    <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Users} />
         Team Profile

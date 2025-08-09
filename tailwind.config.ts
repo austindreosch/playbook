@@ -894,6 +894,13 @@ const config = {
   			'12.5': '3.125rem',
 
         'button': '1.875rem',
+        
+        // SnapHeight widget sizes
+        '112': '28rem',    // 28rem (448px)
+        '128': '32rem',    // 32rem (512px)
+        '144': '36rem',    // 36rem (576px)
+        '160': '40rem',    // 40rem (640px)
+        '176': '44rem',    // 44rem (704px)
 
   		},
   		maxHeight: {

@@ -332,7 +332,7 @@ export default function MatchupsWidget({
   }, [blueprint.projectedWin.winProbability, animateNumber]);
 
   return (
-    <WidgetBox.Root className="h-full" {...rest}>
+    <WidgetBox.Root {...rest}>
       <WidgetBox.Header>
         <WidgetBox.HeaderIcon as={Swords} />
         Matchup
