@@ -3,12 +3,13 @@
 import * as React from 'react';
 import { ChevronRight, Compass } from 'lucide-react';
 import { Avatar } from '@/components/alignui/avatar';
+import { NewsNotificationIconButton } from '@/components/common/NewsNotificationIconButton';
 
 const PlayerRow = React.forwardRef<
   HTMLButtonElement,
   Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> & {
     icon?: string | React.ElementType;
-    iconColor?: string;
+    iconType?: 'success' | 'danger' | 'warning' | 'cold' | 'default';
     name: string;
     position?: string;
     value: number;
@@ -17,45 +18,13 @@ const PlayerRow = React.forwardRef<
     hasNotification?: boolean;
   }
 >(
-  (
-    { icon, iconColor, name, position = '', value, playbookScore, type, hasNotification = false, ...rest },
-    forwardedRef,
-  ) => {
-    const renderNotificationIcon = () => {
-      const colorClass = iconColor || 'text-sub-600';
-      const getColorClasses = () => {
-        switch (iconColor) {
-          case 'success': return 'bg-green-10 hover:bg-green-25 border-green-100 hover:border-green-25 [&_svg]:text-green-600';
-          case 'danger': return 'bg-red-10 hover:bg-red-25 border-red-100 hover:border-red-25 [&_svg]:text-red-600';
-          case 'cold': return 'bg-blue-10 hover:bg-blue-25 border-blue-100 hover:border-blue-25 [&_svg]:text-blue-600';
-          case 'warning': return 'bg-orange-10 hover:bg-orange-25 border-orange-200 hover:border-orange-25 [&_svg]:text-orange-600';
-          default: return 'bg-gray-10 hover:bg-gray-50 border-gray-150 hover:border-gray-100';
-        }
-      };
-      
-      const buttonClasses = `w-7 h-7 rounded border flex items-center justify-center transition-colors ${getColorClasses()}`;
-      
-      if (typeof icon === 'string') {
-        return (
-          <div className={buttonClasses}>
-            <img src={icon} alt='' className={`hw-icon-sm ${colorClass}`} />
-          </div>
-        );
-      }
-      if (icon) {
-        const IconComponent = icon as React.ElementType;
-        return (
-          <div className={buttonClasses}>
-            <IconComponent className={`hw-icon-sm ${colorClass}`} />
-          </div>
-        );
-      }
-      return (
-        <div className={buttonClasses}>
-          <ChevronRight className='hw-icon-sm text-sub-600' />
-        </div>
-      );
-    };
+(
+  { icon, iconType, name, position = '', value, playbookScore, type, hasNotification = false, ...rest },
+  forwardedRef,
+) => {
+    const renderNotificationIcon = () => (
+      <NewsNotificationIconButton icon={icon} iconType={iconType} />
+    );
 
     const initials = name.split(' ').map(word => word[0]).join('').slice(0,2).toUpperCase();
 

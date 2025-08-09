@@ -14,20 +14,20 @@ export default function RosterViewImportLeague() {
 
 
   const players = [
-    { playbookScore: 987, name: 'Victor Wembanyama', position: 'C', value: 10.30, icon: Snowflake, iconColor: 'cold' },
+    { playbookScore: 987, name: 'Victor Wembanyama', position: 'C', value: 10.30, icon: Snowflake, iconType: 'cold' },
     { playbookScore: 965, name: 'Shai Gilgeous-Alexander', position: 'PG', value: 8.04 },
-    { playbookScore: 950, name: 'Nikola Jokic', position: 'C', value: 10.47, icon: TrendingUp, iconColor: 'success' },
+    { playbookScore: 950, name: 'Nikola Jokic', position: 'C', value: 10.47, icon: TrendingUp, iconType: 'success' },
     { playbookScore: 930, name: 'Luka Doncic', position: 'SG', value: 5.14 },
-    { playbookScore: 910, name: 'Jayson Tatum', position: 'PF', value: 4.60, icon: AlertTriangle, iconColor: 'danger' },
+    { playbookScore: 910, name: 'Jayson Tatum', position: 'PF', value: 4.60, icon: AlertTriangle, iconType: 'danger' },
     { playbookScore: 890, name: 'Cade Cunningham', position: 'PG', value: 2.80 },
-    { playbookScore: 870, name: 'LaMelo Ball', position: 'PG', value: 2.24, icon: AlertTriangle, iconColor: 'warning' },
+    { playbookScore: 870, name: 'LaMelo Ball', position: 'PG', value: 2.24, icon: AlertTriangle, iconType: 'warning' },
     { playbookScore: 860, name: 'Tyrese Haliburton', position: 'PG', value: 5.69, icon: ScrollText,},
-    { playbookScore: 845, name: 'Anthony Edwards', position: 'SG', value: 3.70, icon: Snowflake, iconColor: 'cold' },
+    { playbookScore: 845, name: 'Anthony Edwards', position: 'SG', value: 3.70, icon: Snowflake, iconType: 'cold' },
     { playbookScore: 830, name: 'Chet Holmgren', position: 'C', value: 1.72 },
     { playbookScore: 820, name: 'Jalen Williams', position: 'SG', value: 2.95 },
-    { playbookScore: 810, name: 'Giannis Antetokounmpo', position: 'SF', value: 3.97, icon: TrendingDown, iconColor: 'danger' },
+    { playbookScore: 810, name: 'Giannis Antetokounmpo', position: 'SF', value: 3.97, icon: TrendingDown, iconType: 'danger' },
     { playbookScore: 800, name: 'Trae Young', position: 'PG', value: 1.78 },
-    { playbookScore: 790, name: 'Scottie Barnes', position: 'SF', value: 1.67, icon: Wrench, iconColor: 'warning' },
+    { playbookScore: 790, name: 'Scottie Barnes', position: 'SF', value: 1.67, icon: Wrench, iconType: 'warning' },
     { playbookScore: 780, name: 'Tyrese Maxey', position: 'PG', value: 4.79 },
     { playbookScore: 770, name: 'Evan Mobley', position: 'C', value: 2.98 },
     { playbookScore: 760, name: 'Amen Thompson', position: 'PG', value: 1.54 },
@@ -69,7 +69,7 @@ export default function RosterViewImportLeague() {
           <PlayerRow
             key={player.playbookScore}
             icon={player.icon}
-            iconColor={player.iconColor}
+            iconType={player.iconType}
             name={player.name}
             position={player.position}
             value={player.value}
