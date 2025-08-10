@@ -715,6 +715,8 @@ const config = {
         'sub-600': 'var(--text-sub-600)',
         'mid-500': 'var(--text-mid-500)',
         'soft-400': 'var(--text-soft-400)',
+        'soft-300': 'var(--text-soft-300)',
+        'soft-200': 'var(--text-soft-200)',
         'disabled-300': 'var(--text-disabled-300)',
         'white-0': 'var(--text-white-0)',
       },

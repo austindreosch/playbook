@@ -21,7 +21,7 @@ function NavBar() {
     return (
         <nav className="bg-pb_orange shadow-sm fixed top-0 left-0 right-0 z-50">
             <div className="container mx-auto px-1.5 2xl:px-0">
-                <div className="flex items-center justify-between h-10 md:h-12 align-content my-auto">
+                <div className="flex items-center justify-between h-12 md:h-14 align-content my-auto">
                     <div className="flex items-center group font-bold">
                         <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-5.5 w-5.5 md:h-6.5 md:w-6.5" />
                         <a href="/landing" className="px-2 md:px-3 py-2 flex items-center">
@@ -49,7 +49,7 @@ function NavBar() {
                         <ThemeToggle />
                         
                         {user ? (
-                            <div className="">
+                            <div className="flex items-center">
                                 <UserProfileDropdown user={user} />
                             </div>
                         ) : (

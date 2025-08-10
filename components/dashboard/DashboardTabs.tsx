@@ -42,7 +42,7 @@ export default function DashboardTabs({ maxWidth }: { maxWidth?: number | string
   return (
     <div className="w-fit" style={maxWidth !== undefined ? { maxWidth } : undefined}>
       <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange}>
-        <SegmentedControl.List className="w-auto inline-grid gap-0.5 p-1">
+        <SegmentedControl.List className="w-auto inline-grid gap-0.5 p-1 rounded-lg">
           {availableTabs.map(({ id, label, enabled }) => {
             const IconComponent = tabIcons[id as keyof typeof tabIcons];
             return (

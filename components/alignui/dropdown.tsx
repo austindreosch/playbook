@@ -55,8 +55,8 @@ const DropdownMenuItem = React.forwardRef<
     ref={forwardedRef}
     className={cnExt(
       // base
-      'group/item relative cursor-pointer select-none rounded-lg p-2 text-paragraph-sm text-strong-950 outline-none',
-      'flex items-center gap-2',
+      'group/item relative cursor-pointer select-none rounded-lg p-2 text-label-md text-strong-950 outline-none',
+      'flex items-center gap-3',
       'transition duration-200 ease-out',
       // hover
       'data-[highlighted]:bg-bg-weak-50',
@@ -83,7 +83,7 @@ function DropdownItemIcon<T extends React.ElementType>({
     <Component
       className={cnExt(
         // base
-        'size-5 text-sub-600',
+        'hw-icon-sm text-sub-600',
         // disabled
         'group-has-[[data-disabled]]:text-disabled-300',
         className,

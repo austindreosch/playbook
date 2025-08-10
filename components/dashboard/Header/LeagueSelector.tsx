@@ -3,6 +3,7 @@ import { baseball, basketball, football } from "@lucide/lab";
 import { BookCopy, createLucideIcon, Notebook, Users } from 'lucide-react';
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, TriggerIcon } from '@/components/alignui/select';
+import * as Divider from '@/components/alignui/divider';
 
 const Basketball = createLucideIcon('basketball', basketball);
 const Football = createLucideIcon('football', football);
@@ -80,7 +81,7 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
   return (
     <div className={className}>
       <Select value={currentValue} onValueChange={handleValueChange} size="small">
-        <SelectTrigger className="w-auto gap-2 bg-bg-white-0">
+        <SelectTrigger className="w-auto gap-2 bg-bg-white-0 ">
           <div className="flex items-center gap-2">
             <TriggerIcon className="hidden xl:flex">
               {isAllLeaguesView ? (
@@ -98,17 +99,22 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
         
         <SelectContent className="w-72 max-h-[32rem]">
           {/* All Leagues Option */}
-          <SelectItem value="all-leagues" className="p-3">
+          <SelectItem 
+            value="all-leagues" 
+            className={`p-3 ${isAllLeaguesView ? 'bg-bg-weak-50' : ''}`}
+          >
             <div className="flex items-center gap-3 w-full">
               <div className="flex items-center justify-center size-8 rounded-full bg-bg-weak-10 border border-stroke-soft-200">
                 <Notebook className="hw-icon text-sub-600" />
               </div>
               <div className="flex flex-col flex-1">
-                <span className="font-semibold text-strong-950">All Leagues</span>
-                <span className="text-subheading-sm text-sub-600">View all leagues together</span>
+                <span className="text-label-md font-semibold text-strong-950">All Leagues View</span>
+                <span className="text-subheading-sm text-gray-300">Integrated overview of all leagues</span>
               </div>
             </div>
           </SelectItem>
+          
+          <Divider.Root variant="line-spacing" className="my-1" />
           
           {/* League Items */}
           {sortedLeagues.map((league: any, index: number) => {
@@ -119,14 +125,18 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
               const teamSize = league.leagueDetails?.teamSize;
               
               return (
-                <SelectItem key={index} value={leagueName} className="p-3">
+                <SelectItem 
+                  key={index} 
+                  value={leagueName} 
+                  className={`p-3 ${leagueName === currentLeagueId ? 'bg-bg-weak-50' : ''}`}
+                >
                   <div className="flex items-center gap-3 w-full">
                     <div className="flex items-center justify-center size-8 rounded-full bg-bg-weak-10 border border-stroke-soft-200">
                       {getSportIcon(sport, "hw-icon text-sub-600")}
                     </div>
                     <div className="flex flex-col flex-1">
                       <span className="text-label-md font-semibold text-strong-950">{leagueName}</span>
-                      <span className="text-subheading-sm text-sub-600">
+                      <span className="text-subheading-sm text-gray-300">
                         {format} • {platform}{teamSize ? ` • ${teamSize} Team` : ''}
                       </span>
                     </div>
