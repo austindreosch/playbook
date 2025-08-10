@@ -15,10 +15,11 @@ import DashboardSkeleton from '../../components/dashboard/DashboardSkeleton.jsx'
 import DashboardWidgetWall from '../../components/dashboard/Overview/WidgetWall/DashboardWidgetWall';
 
 // Global Header Components
-import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
+// import AllLeaguesButton from '@/components/dashboard/Header/AllLeaguesButton';
+// import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
+import LeagueSelector from '@/components/dashboard/Header/LeagueSelector';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
 import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
-import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorButton';
 // import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 import { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 import DashboardTabsSegmented from '@/components/dashboard/DashboardTabsSegmented';
@@ -497,26 +498,16 @@ export default function DashboardPage() {
 
       <div className="h-[calc(100vh-6rem)]">
         {/* Navigation Section */}
-        <nav className="flex items-center h-14 gap-2">
-          <PlaybookLogo />
+        <nav className="flex items-center h-14 space-between gap-3 bg-orange ">
+          <PlaybookLogo className="h-button" />
           <DashboardTabsSegmented maxWidth="42rem" />
           <div className="flex gap-1.5 w-full ">
-            <AllLeaguesButton className="h-9" /> {/* New Page View*/}
-            <LeagueSelectorButton className="h-9" /> {/* New Page View*/}
-            <ImportLeagueButton className="h-9" />  {/* New Page View*/}
-            <DashboardSettingsButton className="h-9" />
+            <LeagueSelector className="" />
+            <ImportLeagueButton className="" />  {/* New Page View*/}
+            <DashboardSettingsButton className="" />
           </div>
         </nav>
-        <div className="h-px bg-gray-150" style={{marginLeft: '-100vw', marginRight: '-100vw', paddingLeft: '100vw', paddingRight: '100vw'}}></div>
-
-        {/* Dashboard UI Bar */}
-        <div className="relative flex items-center pt-1.5">
-
-          {/* Selectors Divider */}
-          <div className="absolute bottom-0 right-0 w-full">
-            <div className="h-[1px] w-full bg-pb_lightergray"></div>
-          </div>
-        </div>
+      <div className="h-px bg-gray-150" ></div>
 
         {/* Main Content */}
         <div className="h-full min-h-0">

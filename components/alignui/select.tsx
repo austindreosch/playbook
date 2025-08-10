@@ -346,7 +346,7 @@ const SelectContent = React.forwardRef<
           <SelectPrimitives.Viewport asChild>
             <ScrollAreaPrimitives.Viewport
               style={{ overflowY: undefined }}
-              className='max-h-[196px] w-full scroll-py-2 overflow-auto p-2'
+              className='max-h-[32rem] w-full scroll-py-2 overflow-auto p-2'
             >
               {children}
             </ScrollAreaPrimitives.Viewport>

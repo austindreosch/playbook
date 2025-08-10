@@ -893,7 +893,7 @@ const config = {
   			'11.5': '2.875rem',
   			'12.5': '3.125rem',
 
-        'button': '1.875rem',
+        'button': '2.1rem',
         
         // SnapHeight widget sizes
         '112': '28rem',    // 28rem (448px)

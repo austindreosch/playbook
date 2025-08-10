@@ -38,7 +38,7 @@ const SegmentedControlList = React.forwardRef<
     <TabsPrimitive.List
       ref={mergeRefs(forwardedRef, listRef)}
       className={cnExt(
-        'relative isolate grid auto-cols-auto grid-flow-col gap-1 rounded-10 bg-bg-weak-50 p-1',
+        'relative isolate grid auto-cols-auto grid-flow-col gap-1 rounded-md bg-bg-weak-50 p-1',
         className,
       )}
       {...rest}

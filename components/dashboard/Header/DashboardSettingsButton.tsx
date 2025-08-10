@@ -3,7 +3,11 @@ import { Settings } from 'lucide-react';
 import React from 'react';
 import useDashboardContext from '../../../stores/dashboard/useDashboardContext';
 
-export default function DashboardSettingsButton({ className = "" }) {
+interface DashboardSettingsButtonProps {
+  className?: string;
+}
+
+export default function DashboardSettingsButton({ className = "" }: DashboardSettingsButtonProps) {
   const { dashboardSettings } = useDashboardContext();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -12,9 +16,9 @@ export default function DashboardSettingsButton({ className = "" }) {
       <DialogTrigger asChild>
         <button
           onClick={() => setIsOpen(true)}
-          className={`flex items-center px-2.5 justify-center rounded-md border border-pb_lightgray bg-white hover:bg-pb_lightestgray shadow-sm select-none ${className}`.trim()}
+          className={`flex items-center justify-center h-9 min-h-9 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200 rounded-md px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-bg-weak-50 hover:ring-transparent focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none ${className}`.trim()}
         >
-          <Settings className="w-icon h-icon text-pb_darkgray" />
+          <Settings className="size-5 text-sub-600" />
         </button>
       </DialogTrigger>
 
@@ -25,17 +29,17 @@ export default function DashboardSettingsButton({ className = "" }) {
         <div className="space-y-4 py-4 pb-5">
           {/* Auto Sync */}
           <div className="space-y-2">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <label className="text-paragraph-sm font-medium text-strong-950">
               Auto Sync
             </label>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={dashboardSettings.autoSync}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                className="size-4 rounded border-stroke-soft-200 text-primary-base focus:ring-primary-base"
                 disabled
               />
-              <span className="text-sm text-gray-500">
+              <span className="text-paragraph-sm text-sub-600">
                 Automatically sync your rankings with the latest data
               </span>
             </div>
@@ -43,13 +47,13 @@ export default function DashboardSettingsButton({ className = "" }) {
 
           {/* Default Tab */}
           <div className="space-y-2">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <label className="text-paragraph-sm font-medium text-strong-950">
               Default Tab
             </label>
             <div className="flex items-center gap-2">
               <select
                 value={dashboardSettings.defaultTab}
-                className="h-8 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-8 rounded-md ring-1 ring-inset ring-stroke-soft-200 bg-bg-white-0 px-3 py-2 text-paragraph-sm shadow-regular-xs placeholder:text-soft-400 focus:ring-stroke-strong-950 focus:outline-none focus:shadow-button-important-focus disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-disabled-300"
                 disabled
               >
                 <option value="overview">Overview</option>
@@ -61,7 +65,7 @@ export default function DashboardSettingsButton({ className = "" }) {
 
           {/* Notifications */}
           <div className="space-y-2">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <label className="text-paragraph-sm font-medium text-strong-950">
               Notifications
             </label>
             <div className="space-y-2">
@@ -69,28 +73,28 @@ export default function DashboardSettingsButton({ className = "" }) {
                 <input
                   type="checkbox"
                   checked={dashboardSettings.notifications.trades}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  className="size-4 rounded border-stroke-soft-200 text-primary-base focus:ring-primary-base"
                   disabled
                 />
-                <span className="text-sm text-gray-500">Trades</span>
+                <span className="text-paragraph-sm text-sub-600">Trades</span>
               </div>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={dashboardSettings.notifications.waivers}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  className="size-4 rounded border-stroke-soft-200 text-primary-base focus:ring-primary-base"
                   disabled
                 />
-                <span className="text-sm text-gray-500">Waivers</span>
+                <span className="text-paragraph-sm text-sub-600">Waivers</span>
               </div>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={dashboardSettings.notifications.news}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  className="size-4 rounded border-stroke-soft-200 text-primary-base focus:ring-primary-base"
                   disabled
                 />
-                <span className="text-sm text-gray-500">News</span>
+                <span className="text-paragraph-sm text-sub-600">News</span>
               </div>
             </div>
           </div>
@@ -98,7 +102,7 @@ export default function DashboardSettingsButton({ className = "" }) {
         <DialogFooter>
           <button
             onClick={() => setIsOpen(false)}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-9 px-4 py-2"
+            className="inline-flex items-center justify-center rounded-md text-paragraph-sm font-medium bg-primary-base text-static-white hover:bg-primary-darker h-9 px-4 py-2 transition duration-200 ease-out focus-visible:shadow-button-primary-focus focus-visible:outline-none"
           >
             Close
           </button>
