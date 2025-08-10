@@ -25,7 +25,7 @@ const tabIcons = {
   matchups: Swords,
 } as const;
 
-export default function DashboardTabsSegmented() {
+export default function DashboardTabsSegmented({ maxWidth }: { maxWidth?: number | string }) {
   const currentTab = useDashboardContext((state) => state.currentTab);
   const availableTabs = useDashboardContext((state) => state.availableTabs);
   const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
@@ -40,8 +40,8 @@ export default function DashboardTabsSegmented() {
   );
 
   return (
-    <div className="w-full">
-      <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange}>
+    <div className="w-full" style={maxWidth !== undefined ? { maxWidth } : undefined}>
+      <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange} className="w-full">
         <SegmentedControl.List
           activeValue={currentTab}
           className="bg-black"

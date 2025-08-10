@@ -22,6 +22,7 @@ import LeagueSelectorButton from '@/components/dashboard/Header/LeagueSelectorBu
 // import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 import { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 import DashboardTabsSegmented from '@/components/dashboard/DashboardTabsSegmented';
+import PlaybookLogo from '@/components/dashboard/PlaybookLogo';
 
 // League Header Components 
 
@@ -495,25 +496,24 @@ export default function DashboardPage() {
       )}
 
       <div className="h-[calc(100vh-6rem)]">
-        {/* Dashboard Tab Selectors Bar */}
+        {/* Navigation Section */}
+        <nav className="flex items-center h-14 gap-2">
+          <PlaybookLogo />
+          <DashboardTabsSegmented maxWidth="42rem" />
+          <div className="flex gap-1.5 w-full ">
+            <AllLeaguesButton className="h-9" /> {/* New Page View*/}
+            <LeagueSelectorButton className="h-9" /> {/* New Page View*/}
+            <ImportLeagueButton className="h-9" />  {/* New Page View*/}
+            <DashboardSettingsButton className="h-9" />
+          </div>
+        </nav>
+        <div className="h-px bg-gray-150" style={{marginLeft: '-100vw', marginRight: '-100vw', paddingLeft: '100vw', paddingRight: '100vw'}}></div>
+
+        {/* Dashboard UI Bar */}
         <div className="relative flex items-center pt-1.5">
-          {/* Dashboard Tab Selector */}
-          <div className="w-[65%] lg:w-[55%]">
-            {/* <DashboardTabs /> */}
-            <DashboardTabsSegmented />
-          </div>
-
-          {/* Imported League Selector */}
-          <div className="flex gap-1.5 w-[35%] lg:w-[45%] justify-end items-start self-start">
-
-            <AllLeaguesButton className="h-button" /> {/* New Page View*/}
-            <LeagueSelectorButton className="h-button" /> {/* New Page View*/}
-            <ImportLeagueButton className="h-button" />  {/* New Page View*/}
-            <DashboardSettingsButton className="h-button" />
-          </div>
 
           {/* Selectors Divider */}
-          <div className="absolute bottom-0 right-0 w-[35%] lg:w-[45%]">
+          <div className="absolute bottom-0 right-0 w-full">
             <div className="h-[1px] w-full bg-pb_lightergray"></div>
           </div>
         </div>

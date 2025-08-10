@@ -5,7 +5,6 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { Azeret_Mono, DM_Sans } from 'next/font/google';
 import Script from 'next/script';
 import { Suspense } from 'react';
-import ConditionalNavBar from '../components/ConditionalNavBar';
 import ConditionalWrapper from '../components/ConditionalWrapper';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import GoogleAnalytics from '../components/GoogleAnalytics';
@@ -73,8 +72,7 @@ export default function RootLayout({ children }) {
                 <GoogleAnalytics />
               </Suspense>
               <AOSInitializer />
-              <ConditionalNavBar />
-              <main className="flex-1 overflow-y-auto pt-10 md:pt-12 min-h-0">
+              <main className="flex-1 overflow-y-auto min-h-0">
                 <MasterDatasetInitializer />
                 <ConditionalWrapper>
                   {children}

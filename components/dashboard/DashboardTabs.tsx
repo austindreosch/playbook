@@ -25,7 +25,7 @@ const tabIcons = {
   matchups: Swords,
 } as const;
 
-export default function DashboardTabs() {
+export default function DashboardTabs({ maxWidth }: { maxWidth?: number | string }) {
   const currentTab = useDashboardContext((state) => state.currentTab);
   const availableTabs = useDashboardContext((state) => state.availableTabs);
   const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
@@ -40,15 +40,15 @@ export default function DashboardTabs() {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-fit" style={maxWidth !== undefined ? { maxWidth } : undefined}>
       <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange}>
-        <SegmentedControl.List>
+        <SegmentedControl.List className="w-auto inline-grid gap-0.5 p-1">
           {availableTabs.map(({ id, label, enabled }) => {
             const IconComponent = tabIcons[id as keyof typeof tabIcons];
             return (
               <SegmentedControl.Trigger key={id} value={id} disabled={!enabled}>
-                {IconComponent && <IconComponent className="size-4 shrink-0" />}
-                {label}
+                {IconComponent && <IconComponent className="hw-icon-xs shrink-0" />}
+                <span className="text-label-lg">{label}</span>
               </SegmentedControl.Trigger>
             );
           })}
