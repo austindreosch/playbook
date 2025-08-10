@@ -65,10 +65,12 @@ export default function RosterViewImportLeague() {
       </div>
 
       {/* Player List */}
-      <div className="flex-1 min-h-0 ring-1 ring-inset ring-stroke-soft-200 bg-gray-25 h-full">
+      <div className="flex-1 min-h-0 ring-1 ring-inset ring-stroke-soft-200 bg-gray-25 rounded-b-md">
         <ScrollContainer 
-          className="px-1.5 pt-1.5"
+          className="p-1.5 h-full rounded-b-md"
           scrollClassName="space-y-1"
+          fadeColor="#f9fafb"
+          fadeInset={2}
         >
           {players.map((player) => (
             <PlayerRow

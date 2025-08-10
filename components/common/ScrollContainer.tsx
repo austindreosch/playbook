@@ -16,12 +16,23 @@ interface ScrollContainerProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   fadeHeight?: number;
   
-  
   /**
    * Scroll threshold in pixels before showing fades
    * @default 5
    */
   threshold?: number;
+  
+  /**
+   * Background color for fade gradients (CSS color value)
+   * @default '#ffffff' (white fade)
+   */
+  fadeColor?: string;
+  
+  /**
+   * Inset for fade positioning - use 2px to avoid covering borders, 0 for full coverage
+   * @default 0
+   */
+  fadeInset?: number;
   
   /**
    * Additional classes for the scroll area
@@ -35,6 +46,8 @@ const ScrollContainer = React.forwardRef<HTMLDivElement, ScrollContainerProps>((
   showFades = true,
   fadeHeight = 12,
   threshold = 5,
+  fadeColor = '#ffffff',
+  fadeInset = 0,
   scrollClassName,
   ...rest
 }, forwardedRef) => {
@@ -96,15 +109,27 @@ const ScrollContainer = React.forwardRef<HTMLDivElement, ScrollContainerProps>((
       {/* Fade indicators */}
       {showFades && showTopFade && (
         <div 
-          className="absolute top-0 left-0 right-0 bg-gradient-to-b from-bg-white-0 to-transparent pointer-events-none z-10"
-          style={{ height: fadeHeight }}
+          className="absolute pointer-events-none z-10"
+          style={{ 
+            top: `${fadeInset}px`,
+            left: `${fadeInset}px`,
+            right: `${fadeInset}px`,
+            height: fadeHeight,
+            background: `linear-gradient(to bottom, ${fadeColor}, transparent)`
+          }}
         />
       )}
       
       {showFades && showBottomFade && (
         <div 
-          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-bg-white-0 to-transparent pointer-events-none z-10"
-          style={{ height: fadeHeight }}
+          className="absolute pointer-events-none z-10"
+          style={{ 
+            bottom: `${fadeInset}px`,
+            left: `${fadeInset}px`,
+            right: `${fadeInset}px`,
+            height: fadeHeight,
+            background: `linear-gradient(to top, ${fadeColor}, transparent)`
+          }}
         />
       )}
     </div>
