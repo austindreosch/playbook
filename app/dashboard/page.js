@@ -211,7 +211,7 @@ export default function DashboardPage() {
             <DebugDrawer isOpen={isDebugDrawerOpen} onToggle={toggleDebugDrawer} />
           </>
         )}
-        <InDevelopmentDashboard />
+        {/* <InDevelopmentDashboard /> */}
       </>
     );
   }
@@ -230,8 +230,9 @@ export default function DashboardPage() {
 
       <div className="h-[calc(100vh-6rem)]">
         {/* Navigation Section */}
-        <nav className="flex items-center h-14 justify-between bg-orange border border-orange-600 rounded-2xl mt-0.5 -mx-3 px-4">
-          <div className="flex items-center gap-2 flex-1">
+        <nav className="flex items-center h-14 justify-between bg-orange border border-orange-600 rounded-xl mt-0.5 -mx-3 px-4">
+          <div className="flex items-center gap-4 flex-1">
+            {/* <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-7 w-7" /> */}
             <LogoNav className="h-button" />
             <DashboardTabsSegmented maxWidth="45rem" />
           </div>
@@ -239,7 +240,7 @@ export default function DashboardPage() {
             <LeagueSelector className="" />
             <ImportLeagueButton className="" />  {/* New Page View*/}
             <DashboardSettingsButton className="" />
-            <UserProfileDropdown user={user} className="ml-2" />
+            <UserProfileDropdown user={user} className="ml-1" />
           </div>
         </nav>
       {/* <div className="h-px bg-gray-150" ></div> */}

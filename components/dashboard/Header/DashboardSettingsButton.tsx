@@ -16,9 +16,9 @@ export default function DashboardSettingsButton({ className = "" }: DashboardSet
       <DialogTrigger asChild>
         <button
           onClick={() => setIsOpen(true)}
-          className={`flex items-center justify-center h-9 min-h-9 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-bg-weak-50 hover:ring-transparent focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none ${className}`.trim()}
+          className={`flex items-center justify-center h-9 min-h-9 bg-orange-200 ring-1 ring-inset ring-orange-700 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-orange-550  focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none ${className}`.trim()}
         >
-          <Settings className="size-5 text-sub-600" />
+          <Settings className="hw-icon text-black " />
         </button>
       </DialogTrigger>
 

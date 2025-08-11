@@ -44,7 +44,7 @@ export default function DashboardTabsSegmented({ maxWidth }: { maxWidth?: number
       <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange} className="w-full">
         <SegmentedControl.List
           activeValue={currentTab}
-          className="bg-orange-900"
+          className="bg-orange-750"
         >
           {availableTabs.map(({ id, label, enabled }) => {
             const IconComponent = tabIcons[id as keyof typeof tabIcons];

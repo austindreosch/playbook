@@ -9,7 +9,10 @@
       "Bash(grep:*)",
       "Bash(curl:*)",
       "Bash(npm install:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

@@ -81,7 +81,7 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
   return (
     <div className={className}>
       <Select value={currentValue} onValueChange={handleValueChange} size="small">
-        <SelectTrigger className="w-auto gap-2 bg-bg-white-0 ">
+        <SelectTrigger className="w-auto gap-2 bg-orange-200 ring-1 ring-inset ring-orange-700 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-orange-550 hover:ring-orange-800 focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none ">
           <div className="flex items-center gap-2">
             <TriggerIcon className="hidden xl:flex">
               {isAllLeaguesView ? (

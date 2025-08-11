@@ -86,7 +86,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
     return (
         <Dropdown.Root>
             <Dropdown.Trigger className={`flex items-center gap-2 outline-none rounded-full hover:opacity-80 transition-opacity ${className}`}>
-                <Avatar.Root size="40" color="blue" className="shadow border border-white">
+                <Avatar.Root size="40" color="blue" className="shadow border border-orange-700">
                     {user.picture ? (
                         <Avatar.Image 
                             src={user.picture} 

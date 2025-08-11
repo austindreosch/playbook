@@ -1,19 +1,19 @@
 //  /import page
 
-// 'use client'
+'use client'
 
 // import ImportLeagueForm from '@/components/deprecated/ImportLeagueForm';
 // import { useUser } from '@auth0/nextjs-auth0/client';
 
-// export default function LeaguePage() {
-//   const { user } = useUser();
+export default function LeaguePage() {
+  // const { user } = useUser();
 
-//   return (
-//     <div className="flex items-center justify-center p-10">
-//       <ImportLeagueForm userId={user?.sub} />
-//     </div>
-//   );
-// }
+  return (
+    <div className="flex items-center justify-center p-10">
+      <p>Import page (deprecated)</p>
+    </div>
+  );
+}
 
 
 // export default function Home() {

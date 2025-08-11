@@ -82,11 +82,15 @@
     --blue-alpha-10: #228cdb1a;
     
     --orange: #ffcd51;
-    --orange-950: #332910;
-    --orange-900: #665220;
-    --orange-800: #997b31;
-    --orange-700: #cca441;
-    --orange-600: #e6b949;
+    --orange-950: #191408;
+    --orange-900: #332910;
+    --orange-850: #4c3d18;
+    --orange-800: #665220;
+    --orange-750: #806729;
+    --orange-700: #997b31;
+    --orange-650: #b39039;
+    --orange-600: #cca441;
+    --orange-550: #e6b949;
     --orange-500: #ffcd51;
     --orange-400: #ffd262;
     --orange-300: #ffd774;

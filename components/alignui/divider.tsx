@@ -15,6 +15,12 @@ export const dividerVariants = tv({
         // before
         'before:absolute before:left-0 before:top-1/2 before:h-px before:w-full before:-translate-y-1/2 before:bg-stroke-soft-100',
       ],
+      'line-vertical': [
+        // override base width and set full height
+        'w-auto h-full',
+        // before pseudo to draw vertical line centered
+        'before:absolute before:top-0 before:left-1/2 before:w-px before:h-full before:-translate-x-1/2 before:bg-stroke-soft-100',
+      ],
       'line-text': [
         // base
         'gap-2.5',

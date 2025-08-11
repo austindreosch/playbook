@@ -546,9 +546,13 @@ const config = {
         '300': 'var(--orange-300)',
         '400': 'var(--orange-400)',
         '500': 'var(--orange-500)',
+        '550': 'var(--orange-550)',
         '600': 'var(--orange-600)',
+        '650': 'var(--orange-650)',
         '700': 'var(--orange-700)',
+        '750': 'var(--orange-750)',
         '800': 'var(--orange-800)',
+        '850': 'var(--orange-850)',
         '900': 'var(--orange-900)',
         '950': 'var(--orange-950)',
         'alpha-24': 'var(--orange-alpha-24)',
@@ -1049,6 +1053,7 @@ const config = {
   			'fade-in': 'fade-in 0.5s ease-in-out',
   			'fade-out': 'fade-out 0.5s ease-in-out',
   			'background-pan': 'background-pan 3s linear infinite',
+  			'background-pan-slow': 'background-pan 12s linear infinite',
   			'spin-and-pulse': 'spin-and-pulse 0.8s ease-in-out infinite'
       },
       keyframes: {

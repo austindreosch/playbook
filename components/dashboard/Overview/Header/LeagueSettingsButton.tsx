@@ -3,8 +3,11 @@ import useDashboardContext from "@/stores/dashboard/useDashboardContext";
 import { Settings2 } from 'lucide-react';
 import { useState } from 'react';
 
-// Button that opens settings for the current league.
-export default function LeagueSettingsButton({ className = '' }) {
+interface LeagueSettingsButtonProps {
+  className?: string;
+}
+
+export default function LeagueSettingsButton({ className = '' }: LeagueSettingsButtonProps) {
   const { dashboardSettings } = useDashboardContext();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -13,9 +16,9 @@ export default function LeagueSettingsButton({ className = '' }) {
       <DialogTrigger asChild>
         <button
           onClick={() => setIsOpen(true)}
-          className={`flex items-center justify-center rounded-md border border-pb_lightgray bg-white hover:bg-pb_lightestgray shadow-sm select-none px-2.5 ${className}`.trim()}
+          className={`flex items-center justify-center h-9 min-h-9 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-bg-weak-50 hover:ring-transparent focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none ${className}`.trim()}
         >
-          <Settings2 className="w-icon h-icon text-pb_darkgray" />
+          <Settings2 className="size-5 text-sub-600" />
         </button>
       </DialogTrigger>
       <DialogContent>
@@ -23,7 +26,6 @@ export default function LeagueSettingsButton({ className = '' }) {
           <DialogTitle>League Settings</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4 pb-5">
-          {/* Scoring System */}
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Scoring System
@@ -41,7 +43,6 @@ export default function LeagueSettingsButton({ className = '' }) {
             </div>
           </div>
 
-          {/* Roster Settings */}
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Roster Settings
@@ -56,7 +57,6 @@ export default function LeagueSettingsButton({ className = '' }) {
             </div>
           </div>
 
-          {/* League Rules */}
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               League Rules
