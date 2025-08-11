@@ -53,6 +53,14 @@ export const texts = {
     },
   ],
   'title-h6': [
+    '1.375rem', // 1.5rem * 0.75
+    {
+      lineHeight: '1.375rem', // 1.6666666666666667rem * 0.75
+      letterSpacing: '0em',
+      fontWeight: '500',
+    },
+  ],
+  'title-h7': [
     '0.9375rem', // 1.25rem * 0.75
     {
       lineHeight: '1.3125rem', // 1.75rem * 0.75

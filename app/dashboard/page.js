@@ -230,10 +230,10 @@ export default function DashboardPage() {
 
       <div className="h-[calc(100vh-6rem)]">
         {/* Navigation Section */}
-        <nav className="flex items-center h-14 justify-between bg-orange rounded-b-xl -mx-4 px-5">
-          <div className="flex items-center gap-2">
+        <nav className="flex items-center h-14 justify-between bg-orange border border-orange-600 rounded-2xl mt-0.5 -mx-3 px-4">
+          <div className="flex items-center gap-2 flex-1">
             <LogoNav className="h-button" />
-            <DashboardTabsSegmented maxWidth="50rem" />
+            <DashboardTabsSegmented maxWidth="45rem" />
           </div>
           <div className="flex gap-2 items-center">
             <LeagueSelector className="" />

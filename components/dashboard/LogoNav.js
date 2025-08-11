@@ -1,53 +1,81 @@
 'use client'
 
-import { useState } from 'react';
-import { ChevronDown, LayoutDashboard, TrendingUp, Info } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { ChevronDown, LayoutDashboard, TrendingUp, Info, Check } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/alignui/select';
+import * as Divider from '@/components/alignui/divider';
+
 
 const navigationOptions = [
-  { label: 'Dashboard', value: '/dashboard', icon: LayoutDashboard },
-  { label: 'Rankings', value: '/rankings', icon: TrendingUp },
-  { label: 'About', value: '/about', icon: Info },
+  { 
+    label: 'Dashboard', 
+    value: '/dashboard', 
+    icon: LayoutDashboard,
+    description: 'League overview, trades, and player analysis'
+  },
+  { 
+    label: 'Rankings', 
+    value: '/rankings', 
+    icon: TrendingUp,
+    description: 'Create and manage custom player rankings'
+  },
+  { 
+    label: 'About', 
+    value: '/about', 
+    icon: Info,
+    description: 'Learn about Playbook features and tools'
+  },
 ];
 
 export default function LogoNav({ className = "" }) {
-  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
-  const handleNavigate = (path) => {
-    router.push(path);
-    setIsOpen(false);
+  const currentOption = navigationOptions.find(option => pathname === option.value);
+  const currentPageName = currentOption?.label || 'Playbook';
+
+  const handleValueChange = (value) => {
+    router.push(value);
   };
 
   return (
-    <div className={`relative flex items-center group font-bold rounded-lg gap-2.5 shrink-0 ${className}`.trim()}>
-      <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-7 w-7" />
-      
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-title-h5 font-bold text-black group-hover:text-white transition-colors"
-      >
-        Playbook
-        <ChevronDown className="h-4 w-4" />
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-white border border-stroke-soft-200 rounded-md shadow-md z-[10001] min-w-32 animate-in fade-in-0 zoom-in-95 slide-in-from-top-2">
+    <Select value={pathname} onValueChange={handleValueChange} variant="inline">
+      <div className={`relative flex items-center group font-bold rounded-lg gap-1.5 shrink-0 ${className}`.trim()}>
+        <SelectTrigger className="flex items-center gap-1.5 text-button font-semibold text-black group-hover:text-white transition-colors h-auto min-h-0 p-0">
+          <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-7 w-7" />
+          <div className="flex flex-col">
+            <span className="hidden mdlg:inline truncate text-left text-title-h5 font-black">
+              {currentPageName}
+            </span>
+          </div>
+        </SelectTrigger>
+          
+        <SelectContent className="w-72 max-h-[32rem]" align="start" side="bottom" sideOffset={5}>
           {navigationOptions.map((option) => {
             const IconComponent = option.icon;
+            const isActive = pathname === option.value;
             return (
-              <button
-                key={option.value}
-                onClick={() => handleNavigate(option.value)}
-                className="w-full flex items-center gap-2 text-left px-3 py-2 text-sm hover:bg-gray-50 first:rounded-t-md last:rounded-b-md transition-colors"
+              <SelectItem 
+                key={option.value} 
+                value={option.value} 
+                className={`p-3 my-1 ${isActive ? 'bg-bg-weak-50' : ''}`}
               >
-                <IconComponent className="h-4 w-4" />
-                {option.label}
-              </button>
+                <div className="flex items-center gap-3 w-full">
+                  <div className="flex items-center justify-center size-8 rounded-full bg-bg-weak-10 border border-stroke-soft-200">
+                    <IconComponent className="hw-icon text-sub-600" />
+                  </div>
+                  <div className="flex flex-col flex-1">
+                    <span className="text-label-md font-semibold text-strong-950">{option.label}</span>
+                    <span className="text-subheading-sm text-gray-300">
+                      {option.description}
+                    </span>
+                  </div>
+                </div>
+              </SelectItem>
             );
           })}
-        </div>
-      )}
-    </div>
+        </SelectContent>
+      </div>
+    </Select>
   );
 }

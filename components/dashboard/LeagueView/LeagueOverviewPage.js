@@ -34,7 +34,7 @@ export default function LeagueOverviewPage() {
 
       {/* Divider */}
       <div className="w-full py-1.5 flex-shrink-0">
-        <div className="h-[1px] w-full bg-pb_lightestgray"></div>
+        <div className="h-[1px] w-full bg-gray-200"></div>
       </div>
 
       {/* Main Content */}

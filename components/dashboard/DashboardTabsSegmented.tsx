@@ -53,10 +53,10 @@ export default function DashboardTabsSegmented({ maxWidth }: { maxWidth?: number
                 key={id}
                 value={id}
                 disabled={!enabled}
-                className="text-white disabled:opacity-50 transition-colors data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:hover:bg-gray-25"
+                className="text-white disabled:opacity-50 transition-colors data-[state=active]:text-black data-[state=active]:font-bold data-[state=active]:hover:bg-gray-25"
               >
-                {/* {IconComponent && <IconComponent className="hw-icon-xs shrink- mr-0.5 mb-[1px]" />} */}
-                <span className="text-label-md tracking-wide">{label}</span>
+                {IconComponent && <IconComponent className="hw-icon-xs shrink- mr-0.5 mb-[1px]" />}
+                <span className="text-label-md tracking-wide font-black">{label}</span>
               </SegmentedControl.Trigger>
             );
           })}

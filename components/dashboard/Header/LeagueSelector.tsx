@@ -128,7 +128,7 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
                 <SelectItem 
                   key={index} 
                   value={leagueName} 
-                  className={`p-3 ${leagueName === currentLeagueId ? 'bg-bg-weak-50' : ''}`}
+                  className={`p-3 my-1 ${leagueName === currentLeagueId ? 'bg-bg-weak-50' : ''}`}
                 >
                   <div className="flex items-center gap-3 w-full">
                     <div className="flex items-center justify-center size-8 rounded-full bg-bg-weak-10 border border-stroke-soft-200">

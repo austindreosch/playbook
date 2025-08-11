@@ -40,9 +40,9 @@ export default function DashboardTabs({ maxWidth }: { maxWidth?: number | string
   );
 
   return (
-    <div className="w-fit" style={maxWidth !== undefined ? { maxWidth } : undefined}>
+    <div className="flex-1" style={{ maxWidth: maxWidth ?? 'none' }}>
       <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange}>
-        <SegmentedControl.List className="w-auto inline-grid gap-0.5 p-1 rounded-lg">
+        <SegmentedControl.List className="w-full grid gap-0.5 p-1 rounded-lg" style={{ gridTemplateColumns: `repeat(${availableTabs.length}, 1fr)` }}>
           {availableTabs.map(({ id, label, enabled }) => {
             const IconComponent = tabIcons[id as keyof typeof tabIcons];
             return (

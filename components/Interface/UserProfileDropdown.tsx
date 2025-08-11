@@ -24,6 +24,37 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
     const [themeMode, setThemeMode] = React.useState('system');
     const [isOnline, setIsOnline] = React.useState(true);
 
+    // Theme handling
+    React.useEffect(() => {
+        // Get stored theme or default to system
+        const storedTheme = localStorage.getItem('theme') || 'system';
+        setThemeMode(storedTheme);
+        applyTheme(storedTheme);
+    }, []);
+
+    const applyTheme = (theme: string) => {
+        const root = document.documentElement;
+        
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else if (theme === 'light') {
+            root.classList.remove('dark');
+        } else { // system
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (prefersDark) {
+                root.classList.add('dark');
+            } else {
+                root.classList.remove('dark');
+            }
+        }
+    };
+
+    const handleThemeChange = (newTheme: string) => {
+        setThemeMode(newTheme);
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    };
+
     // Simple online status based on page visibility and activity
     React.useEffect(() => {
         const handleVisibilityChange = () => {
@@ -107,7 +138,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
                     <Monitor className="size-4 text-text-sub-600" />
                     <span className="text-label-md text-text-strong-950">Theme</span>
                     <span className="flex-1" />
-                    <SegmentedControl.Root value={themeMode} onValueChange={setThemeMode}>
+                    <SegmentedControl.Root value={themeMode} onValueChange={handleThemeChange}>
                         <SegmentedControl.List
                             className="w-fit gap-1 rounded-full"
                             floatingBgClassName="rounded-full"
