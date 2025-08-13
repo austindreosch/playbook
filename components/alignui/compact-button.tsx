@@ -59,12 +59,16 @@ export const compactButtonVariants = tv({
     },
     size: {
       large: {
-        root: 'size-6',
-        icon: 'icon',
+        root: 'size-7',
+        icon: 'size-5',
       },
       medium: {
-        root: 'size-5',
-        icon: 'icon-sm',
+        root: 'size-6',
+        icon: 'size-4',
+      },
+      small: {
+        root: 'size-6',
+        icon: 'size-4',
       },
     },
     fullRadius: {
@@ -136,12 +140,19 @@ function CompactButtonIcon<T extends React.ElementType>({
   size,
   as,
   className,
+  stroke,
   ...rest
-}: PolymorphicComponentProps<T, CompactButtonSharedProps>) {
+}: PolymorphicComponentProps<T, CompactButtonSharedProps> & { stroke?: number }) {
   const Component = as || 'div';
   const { icon } = compactButtonVariants({ variant, size });
 
-  return <Component className={icon({ class: className })} {...rest} />;
+  return (
+    <Component
+      className={icon({ class: className })}
+      {...(stroke !== undefined ? { strokeWidth: stroke } : {})}
+      {...rest}
+    />
+  );
 }
 CompactButtonIcon.displayName = COMPACT_BUTTON_ICON_NAME;
 

@@ -341,25 +341,27 @@ export default function MatchupsWidget({
         <WidgetBox.HeaderIcon as={Swords} />
         Matchup
         
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center">
           {/* Week selector (AlignUI DayPicker header style) */}
-          <div className="flex h-7 items-center justify-between gap-1.5 rounded-lg bg-bg-weak-25 px-1.5 ring-1 ring-inset ring-stroke-soft-75">
             <CompactButton.Root
-              size="medium"
-              variant="white"
+              size="small"
+              variant="stroke"
+              className="rounded-r-none"
               onClick={() => setCurrentWeek((w) => Math.max(1, w - 1))}
             >
               <CompactButton.Icon as={ChevronLeft} />
             </CompactButton.Root>
+          <div className="flex h-6 items-center justify-between gap-1 bg-bg-weak-10 px-1.5 border-y border-stroke-soft-100">
             <span className="text-label-sm text-sub-600 w-12 text-center">Week {currentWeek}</span>
+          </div>
             <CompactButton.Root
-              size="medium"
-              variant="white"
+              size="small"
+              variant="stroke"
+              className="rounded-l-none"
               onClick={() => setCurrentWeek((w) => w + 1)}
             >
               <CompactButton.Icon as={ChevronRight} />
             </CompactButton.Root>
-          </div>
         </div>
       </WidgetBox.Header>
 
