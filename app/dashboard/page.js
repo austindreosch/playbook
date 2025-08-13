@@ -1,6 +1,6 @@
 //  /dashboard page
 
-'use client'
+'use client';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Button } from '@/components/alignui/button';
 import { useRouter } from 'next/navigation';
@@ -20,11 +20,9 @@ import DashboardWidgetWall from '../../components/dashboard/Overview/WidgetWall/
 import LeagueSelector from '@/components/dashboard/Header/LeagueSelector';
 import DashboardSettingsButton from '@/components/dashboard/Header/DashboardSettingsButton';
 import ImportLeagueButton from '@/components/dashboard/Header/ImportLeagueButton';
-import UserProfileDropdown from '@/components/Interface/UserProfileDropdown';
 // import DashboardTabs, { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
-import { DummyDashboardTabs } from '../../components/dashboard/DashboardTabs';
 import DashboardTabsSegmented from '@/components/dashboard/DashboardTabsSegmented';
-import LogoNav from '@/components/dashboard/LogoNav';
+import DynamicNavbar from '@/components/Interface/DynamicNavbar';
 
 // League Header Components 
 
@@ -66,7 +64,7 @@ export default function DashboardPage() {
 
   // Check if user is admin
   const adminSub = process.env.NEXT_PUBLIC_AUTH0_ADMIN_ID;
-  const isAdmin = user && user.sub === adminSub;
+  const isAdmin = process.env.NODE_ENV !== 'production' || (user && user.sub === adminSub);
 
   useEffect(() => {
     // Rehydrate the store on mount to ensure we have the latest persisted dummy data
@@ -230,19 +228,16 @@ export default function DashboardPage() {
 
       <div className="h-[calc(100vh-6rem)]">
         {/* Navigation Section */}
-        <nav className="flex items-center h-14 justify-between bg-orange border border-orange-600 rounded-xl mt-0.5 -mx-3 px-4">
-          <div className="flex items-center gap-4 flex-1">
-            {/* <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-7 w-7" /> */}
-            <LogoNav className="h-button" />
-            <DashboardTabsSegmented maxWidth="45rem" />
-          </div>
-          <div className="flex gap-2 items-center">
-            <LeagueSelector className="" />
-            <ImportLeagueButton className="" />  {/* New Page View*/}
-            <DashboardSettingsButton className="" />
-            <UserProfileDropdown user={user} className="ml-1" />
-          </div>
-        </nav>
+        <DynamicNavbar 
+          leftContent={<DashboardTabsSegmented maxWidth="45rem" />}
+          rightContent={
+            <>
+              <LeagueSelector className="" />
+              <ImportLeagueButton className="" />  {/* New Page View*/}
+              <DashboardSettingsButton className="" />
+            </>
+          }
+        />
       {/* <div className="h-px bg-gray-150" ></div> */}
 
         {/* Main Content */}

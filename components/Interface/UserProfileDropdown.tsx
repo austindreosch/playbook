@@ -8,13 +8,10 @@ import * as Badge from '@/components/alignui/badge';
 import * as Divider from '@/components/alignui/divider';
 import * as Dropdown from '@/components/alignui/dropdown';
 import * as SegmentedControl from '@/components/alignui/segmented-control';
+import type { UserProfile } from '@auth0/nextjs-auth0/client';
 
 interface UserProfileDropdownProps {
-    user?: {
-        name?: string;
-        picture?: string;
-        sub?: string;
-    } | null;
+    user?: UserProfile | null;
     className?: string;
 }
 
