@@ -724,11 +724,11 @@ const config = {
       },
       text: {
         'strong-950': 'var(--text-strong-950)',
-        'sub-600': 'var(--text-sub-600)',
-        'mid-500': 'var(--text-mid-500)',
-        'soft-400': 'var(--text-soft-400)',
-        'soft-300': 'var(--text-soft-300)',
-        'soft-200': 'var(--text-soft-200)',
+        'sub-600': 'var(--gray-400)',
+        'mid-500': 'var(--gray-300)',
+        'soft-400': 'var(--gray-200)',
+        'soft-300': 'var(--gray-100)',
+        'soft-200': 'var(--gray-50)',
         'disabled-300': 'var(--text-disabled-300)',
         'white-0': 'var(--text-white-0)',
       },
@@ -810,6 +810,17 @@ const config = {
         amazon: 'var(--social-amazon)',
         zendesk: 'var(--social-zendesk)',
       },
+      // Shorthand text color aliases to allow `text-sub-600`, `text-strong-950`, etc.
+      // These mirror the values in the `text` color group below to avoid the `text-text-*` pattern
+      'strong-950': 'var(--text-strong-950)',
+      'sub-600': 'var(--text-sub-600)',
+      'mid-500': 'var(--text-mid-500)',
+      'soft-400': 'var(--text-soft-400)',
+      'soft-300': 'var(--text-soft-300)',
+      'soft-200': 'var(--text-soft-200)',
+      'disabled-300': 'var(--text-disabled-300)',
+      'white-0': 'var(--text-white-0)',
+
       overlay: {
         DEFAULT: 'var(--overlay)',
       },

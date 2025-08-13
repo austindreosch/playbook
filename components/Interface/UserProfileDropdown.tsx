@@ -118,8 +118,8 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
                         </Avatar.Indicator>
                     </Avatar.Root>
                     <div className="flex-1">
-                        <div className="text-label-lg text-text-strong-950">{user.name}</div>
-                        <div className="mt-1 text-subheading-sm text-text-sub-600">{getDisplayEmail(user)}</div>
+                        <div className="text-label-lg text-strong-950">{user.name}</div>
+                        <div className="mt-1 text-subheading-sm text-sub-600">{getDisplayEmail(user)}</div>
                     </div>
                     {isAdmin && (
                         <Badge.Root variant="light" color="green" size="small">
@@ -132,8 +132,8 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
                 
                 {/* Theme Selection */}
                 <div className="flex items-center gap-3 p-2 max-h-[34px]">
-                    <Monitor className="size-4 text-text-sub-600" />
-                    <span className="text-label-md text-text-strong-950">Theme</span>
+                    <Monitor className="size-4 text-sub-600" />
+                    <span className="text-label-md text-strong-950">Theme</span>
                     <span className="flex-1" />
                     <SegmentedControl.Root value={themeMode} onValueChange={handleThemeChange}>
                         <SegmentedControl.List
@@ -181,7 +181,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
                     </Dropdown.Item>
                 </Dropdown.Group>
                 
-                <div className="p-2 text-paragraph-sm text-text-soft-400">
+                <div className="p-2 text-paragraph-sm text-soft-400">
                     v.1.5.69 · Terms & Conditions
                 </div>
             </Dropdown.Content>

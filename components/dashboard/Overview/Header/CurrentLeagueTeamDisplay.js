@@ -1,10 +1,11 @@
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/alignui/hover-card";
-import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+'use client';
+
+import * as React from 'react';
 import { BookUser } from 'lucide-react';
+
+import * as Button from '@/components/alignui/button';
+import * as Modal from '@/components/alignui/modal';
+import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
 // Displays the user team name for the currently selected league
 // Props:
@@ -15,6 +16,7 @@ export default function CurrentLeagueTeamDisplay({ className = '' }) {
   // =================================================================
   const currentLeagueId = useDashboardContext((state) => state.currentLeagueId);
   const leagues = useDashboardContext((state) => state.leagues);
+  const [open, setOpen] = React.useState(false);
 
   // =================================================================
   // COMPUTED VALUES
@@ -26,9 +28,10 @@ export default function CurrentLeagueTeamDisplay({ className = '' }) {
   const leagueDetails = currentLeague?.leagueDetails;
 
   return (
-    <HoverCard openDelay={200} closeDelay={100}>
-      <HoverCardTrigger asChild>
+    <Modal.Root open={open} onOpenChange={setOpen}>
+      <Modal.Trigger asChild>
         <button
+          onClick={() => setOpen(true)}
           className={`flex items-center gap-2 h-9 min-h-9 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-bg-weak-50 hover:ring-transparent focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none w-auto md:w-66 lg:w-54 xl:w-62 ${className}`.trim()}
         >
           {/* Team name - progressively hidden on smaller screens */}
@@ -39,47 +42,90 @@ export default function CurrentLeagueTeamDisplay({ className = '' }) {
           {/* Icon - always visible, serves as fallback for smallest screens */}
           <BookUser className="size-5 text-sub-600 shrink-0" />
         </button>
-      </HoverCardTrigger>
-      <HoverCardContent className="w-80" align="start" side="bottom">
-        <div className="space-y-3">
-          <div>
-            <h4 className="text-label-md font-semibold">{leagueDetails?.leagueName || 'League'}</h4>
-            <p className="text-label-md text-gray-250">{teamName}</p>
+      </Modal.Trigger>
+      <Modal.Content>
+        <Modal.Header
+          icon={BookUser}
+          title={leagueDetails?.leagueName || 'League'}
+          description='Your current league and team information.'
+        />
+        <Modal.Body>
+          <div className='space-y-5'>
+            <div className='flex items-center gap-3.5'>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Team Name</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {teamName}
+                </div>
+              </div>
+            </div>
+            <div className='flex items-center gap-3.5'>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Sport</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {leagueDetails?.sport || 'N/A'}
+                </div>
+              </div>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Format</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {leagueDetails?.format || 'N/A'}
+                </div>
+              </div>
+            </div>
+            <div className='flex items-center gap-3.5'>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Scoring</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {leagueDetails?.scoring || 'N/A'}
+                </div>
+              </div>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Platform</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {leagueDetails?.platform || 'N/A'}
+                </div>
+              </div>
+            </div>
+            <div className='flex items-center gap-3.5'>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Teams</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {leagueDetails?.teamSize || 'N/A'}
+                </div>
+              </div>
+              <div className='flex-1 space-y-1'>
+                <div className='text-label-md text-strong-950'>Mode</div>
+                <div className='text-paragraph-sm text-sub-600'>
+                  {leagueDetails?.mode || 'N/A'}
+                </div>
+              </div>
+            </div>
+            {leagueDetails?.teamDirection && (
+              <div className='flex items-center gap-3.5'>
+                <div className='flex-1 space-y-1'>
+                  <div className='text-label-md text-strong-950'>Team Direction</div>
+                  <div className='text-paragraph-sm text-sub-600'>
+                    {leagueDetails.teamDirection}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <span className="text-label-sm text-gray-250">Sport</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails?.sport || 'N/A'}</p>
-            </div>
-            <div>
-              <span className="text-label-sm text-gray-250">Format</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails?.format || 'N/A'}</p>
-            </div>
-            <div>
-              <span className="text-label-sm text-gray-250">Scoring</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails?.scoring || 'N/A'}</p>
-            </div>
-            <div>
-              <span className="text-label-sm text-gray-250">Platform</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails?.platform || 'N/A'}</p>
-            </div>
-            <div>
-              <span className="text-label-sm text-gray-250">Teams</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails?.teamSize || 'N/A'}</p>
-            </div>
-            <div>
-              <span className="text-label-sm text-gray-250">Mode</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails?.mode || 'N/A'}</p>
-            </div>
-          </div>
-          {leagueDetails?.teamDirection && (
-            <div className="pt-2 border-t">
-              <span className="text-label-sm text-gray-250">Team Direction</span>
-              <p className="text-paragraph-sm font-medium">{leagueDetails.teamDirection}</p>
-            </div>
-          )}
-        </div>
-      </HoverCardContent>
-    </HoverCard>
+        </Modal.Body>
+        <Modal.Footer>
+          <Modal.Close asChild>
+            <Button.Root
+              variant='neutral'
+              mode='stroke'
+              size='small'
+              className='w-full'
+            >
+              Close
+            </Button.Root>
+          </Modal.Close>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal.Root>
   );
-} 
+}
