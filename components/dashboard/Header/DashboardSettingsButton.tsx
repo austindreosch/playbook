@@ -30,71 +30,23 @@ export default function DashboardSettingsButton({ className = "" }: DashboardSet
         <Modal.Header
           icon={Settings}
           title='Dashboard Settings'
-          description='Configure your dashboard preferences and notifications.'
+          description='Configure your dashboard preferences.'
         />
         <Modal.Body>
           <div className='space-y-5'>
+
+            {/* Setting #1 */}
             <div className='flex items-center gap-3.5'>
               <div className='flex-1 space-y-1'>
-                <div className='text-label-md text-strong-950'>Auto Sync</div>
-                <div className='text-paragraph-sm text-sub-600'>
-                  Automatically sync your rankings with the latest data.
+                <div className='text-label-lg text-strong-950'>Placeholder</div>
+                <div className='text-paragraph-md text-sub-600'>
+                  Set option description here.
                 </div>
               </div>
               <Switch.Root defaultChecked={dashboardSettings.autoSync} disabled />
             </div>
-            <div className='flex items-center gap-3.5'>
-              <div className='flex-1 space-y-1'>
-                <div className='text-label-md text-strong-950'>
-                  Default Tab
-                </div>
-                <div className='text-paragraph-sm text-sub-600'>
-                  Choose which tab opens by default.
-                </div>
-              </div>
-              <select
-                value={dashboardSettings.defaultTab}
-                className="h-10 rounded-md ring-1 ring-inset ring-stroke-soft-200 bg-bg-white-0 px-3 py-2 text-paragraph-md shadow-regular-xs placeholder:text-text-soft-400 focus:ring-stroke-strong-950 focus:outline-none focus:shadow-button-important-focus disabled:pointer-events-none disabled:bg-bg-weak-50 disabled:text-disabled-300"
-                disabled
-              >
-                <option value="overview">Overview</option>
-                <option value="rankings">Rankings</option>
-                <option value="stats">Stats</option>
-              </select>
-            </div>
-            <div className='flex items-center gap-3.5'>
-              <div className='flex-1 space-y-1'>
-                <div className='text-label-md text-strong-950'>
-                  Trade Notifications
-                </div>
-                <div className='text-paragraph-sm text-sub-600'>
-                  Get notified about trade opportunities.
-                </div>
-              </div>
-              <Switch.Root defaultChecked={dashboardSettings.notifications.trades} disabled />
-            </div>
-            <div className='flex items-center gap-3.5'>
-              <div className='flex-1 space-y-1'>
-                <div className='text-label-md text-strong-950'>
-                  Waiver Notifications
-                </div>
-                <div className='text-paragraph-sm text-sub-600'>
-                  Get alerts for waiver wire activity.
-                </div>
-              </div>
-              <Switch.Root defaultChecked={dashboardSettings.notifications.waivers} disabled />
-            </div>
-            <div className='flex items-center gap-3.5'>
-              <div className='flex-1 space-y-1'>
-                <div className='text-label-md text-strong-950'>
-                  News Alerts
-                </div>
-                <div className='text-paragraph-sm text-sub-600'>
-                  Receive breaking news notifications.
-                </div>
-              </div>
-              <Switch.Root defaultChecked={dashboardSettings.notifications.news} disabled />
-            </div>
+
+
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -102,13 +54,13 @@ export default function DashboardSettingsButton({ className = "" }: DashboardSet
             <Button.Root
               variant='neutral'
               mode='stroke'
-              size='small'
+              size='large'
               className='w-full'
             >
               Cancel
             </Button.Root>
           </Modal.Close>
-          <Button.Root size='small' className='w-full'>
+          <Button.Root size='large' className='w-full'>
             Update Changes
           </Button.Root>
         </Modal.Footer>

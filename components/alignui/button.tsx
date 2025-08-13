@@ -46,19 +46,19 @@ export const buttonVariants = tv({
     },
     size: {
       large: {
-        root: 'h-9 gap-3 rounded-10 px-3.5 text-label-sm',
+        root: 'h-9 gap-3 rounded-10 px-3.5 text-label-lg',
         icon: '-mx-1',
       },
       medium: {
-        root: 'h-8 gap-3 rounded-lg px-3 text-label-sm',
+        root: 'h-8 gap-3 rounded-lg px-3 text-label-lg',
         icon: '-mx-1',
       },
       small: {
-        root: 'h-7 gap-2.5 rounded-lg px-2.5 text-label-sm',
+        root: 'h-7 gap-2.5 rounded-lg px-2.5 text-label-md',
         icon: '-mx-1',
       },
       xsmall: {
-        root: 'h-6 gap-2.5 rounded-lg px-2 text-label-sm',
+        root: 'h-6 gap-2.5 rounded-lg px-2 text-label-md',
         icon: '-mx-1',
       },
     },
@@ -144,7 +144,7 @@ export const buttonVariants = tv({
       class: {
         root: [
           // base
-          'bg-bg-white-0 text-sub-600 shadow-regular-xs ring-stroke-soft-200',
+          'bg-bg-white-0 text-sub-600 shadow-regular-xs ring-stroke-soft-100',
           // hover
           'hover:bg-bg-weak-50 hover:text-strong-950 hover:shadow-none hover:ring-transparent',
           // focus

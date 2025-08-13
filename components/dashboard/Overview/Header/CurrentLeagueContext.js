@@ -34,21 +34,21 @@ export default function CurrentLeagueContext({
   const contextString = [sport, format, mode, scoring, platform].filter(Boolean).join(' • ');
 
   return (
-    <div className={`hidden lg:flex items-center pl-1 gap-2.5 xl:pl-1.5 ${className}`.trim()}>
+    <div className={`hidden lg:flex items-center pl-1.5 gap-2.5 xl:pl-3 pt-0.5 ${className}`.trim()}>
       
       {/* Lightning bolt separator */}
-      <Bolt className="hw-icon-xs text-gray-400" />
+      <Bolt className="hw-icon-xs text-sub-600" />
       
       {/* Context string */}
-      <span className="text-paragraph-md font-medium text-gray-350 truncate">
+      <span className="text-paragraph-md font-medium text-sub-600 truncate">
         {contextString}
       </span>
 
       {/* Team direction */}
       {teamDirection && (
         <div className="items-center gap-2 shrink-0 hidden 2xl:flex">
-          <Route className="hw-icon-xs text-gray-400" />
-          <span className="text-paragraph-md font-medium text-gray-350 whitespace-nowrap">{teamDirection}</span>
+          <Route className="hw-icon-xs text-sub-600" />
+          <span className="text-paragraph-md font-medium text-sub-600 whitespace-nowrap">{teamDirection}</span>
         </div>
       )}
     </div>

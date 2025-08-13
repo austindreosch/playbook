@@ -73,7 +73,7 @@ export const texts = {
     {
       lineHeight: '1.5rem', // 2rem * 0.75
       letterSpacing: '-0.015em',
-      fontWeight: '600',
+      fontWeight: '550',
     },
   ],
      'label-xl': [
@@ -81,23 +81,23 @@ export const texts = {
      {
        lineHeight: '1.3125rem', // 1.75rem * 0.75
        letterSpacing: '-0.015em',
-       fontWeight: '600',
+       fontWeight: '550',
      },
    ],
   'label-lg': [
     '0.84375rem', // 1.125rem * 0.75
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.015em',
-      fontWeight: '600',
+      letterSpacing: '-0.01em',
+      fontWeight: '550',
     },
   ],
   'label-md': [
     '0.75rem', // 1rem * 0.75
     {
       lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.011em',
-      fontWeight: '600',
+      letterSpacing: '-0.0085em',
+      fontWeight: '550',
     },
   ],
   'label-sm': [
@@ -105,7 +105,7 @@ export const texts = {
     {
       lineHeight: '0.9375rem', // 1.25rem * 0.75
       letterSpacing: '-0.006em',
-      fontWeight: '600',
+      fontWeight: '550',
     },
   ],
   'label-xs': [
@@ -113,46 +113,46 @@ export const texts = {
     {
       lineHeight: '0.75rem', // 1rem * 0.75
       letterSpacing: '0em',
-      fontWeight: '600',
+      fontWeight: '550',
     },
   ],
   'paragraph-xl': [
-    '1.125rem', // 1.5rem * 0.75
+    '1.25rem', // 1.5rem * 0.825 (+10%)
     {
-      lineHeight: '1.5rem', // 2rem * 0.75
-      letterSpacing: '-0.015em',
+      lineHeight: '1.65rem', // 2rem * 0.825 (+10%)
+      letterSpacing: '-0.005em',
       fontWeight: '400',
     },
   ],
   'paragraph-lg': [
-    '0.84375rem', // 1.125rem * 0.75
+    '0.8625rem', // 1.125rem * 0.825 (+10%)
     {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.015em',
+      lineHeight: '1.2375rem', // 1.5rem * 0.825 (+10%)
+      letterSpacing: '-0.005em',
       fontWeight: '400',
     },
   ],
   'paragraph-md': [
-    '0.75rem', // 1rem * 0.75
+    '0.7875rem', // 1rem * 0.825 (+10%)
     {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.011em',
+      lineHeight: '1.125rem', // 1.5rem * 0.825 (+10%)
+      letterSpacing: '-0.005em',
       fontWeight: '400',
     },
   ],
   'paragraph-sm': [
-    '0.65625rem', // 0.875rem * 0.75
+    '0.6875rem', // 0.875rem * 0.825 (+10%)
     {
-      lineHeight: '0.9375rem', // 1.25rem * 0.75
-      letterSpacing: '-0.006em',
+      lineHeight: '1.03125rem', // 1.25rem * 0.825 (+10%)
+      letterSpacing: '-0.005em',
       fontWeight: '400',
     },
   ],
   'paragraph-xs': [
-    '0.5625rem', // 0.75rem * 0.75
+    '0.59375rem', // 0.75rem * 0.825 (+10%)
     {
-      lineHeight: '0.75rem', // 1rem * 0.75
-      letterSpacing: '0em',
+      lineHeight: '0.825rem', // 1rem * 0.825 (+10%)
+      letterSpacing: '-0.005em',
       fontWeight: '400',
     },
   ],
@@ -724,11 +724,11 @@ const config = {
       },
       text: {
         'strong-950': 'var(--text-strong-950)',
-        'sub-600': 'var(--gray-400)',
-        'mid-500': 'var(--gray-300)',
-        'soft-400': 'var(--gray-200)',
-        'soft-300': 'var(--gray-100)',
-        'soft-200': 'var(--gray-50)',
+        'sub-600': 'var(--gray-500)',
+        'mid-500': 'var(--gray-450)',
+        'soft-400': 'var(--gray-300)',
+        'soft-300': 'var(--gray-200)',
+        'soft-200': 'var(--gray-100)',
         'disabled-300': 'var(--text-disabled-300)',
         'white-0': 'var(--text-white-0)',
       },
@@ -738,7 +738,11 @@ const config = {
         'soft-200': 'var(--stroke-soft-200)',
         'soft-150': 'var(--stroke-soft-150)',
         'soft-100': 'var(--stroke-soft-100)',
+        'soft-75': 'var(--stroke-soft-75)',
         'soft-50': 'var(--stroke-soft-50)',
+        'soft-25': 'var(--stroke-soft-25)',
+        'soft-10': 'var(--stroke-soft-10)',
+        'soft-5': 'var(--stroke-soft-5)',
         'white-0': 'var(--stroke-white-0)',
       },
       faded: {
@@ -812,14 +816,14 @@ const config = {
       },
       // Shorthand text color aliases to allow `text-sub-600`, `text-strong-950`, etc.
       // These mirror the values in the `text` color group below to avoid the `text-text-*` pattern
-      'strong-950': 'var(--text-strong-950)',
-      'sub-600': 'var(--text-sub-600)',
-      'mid-500': 'var(--text-mid-500)',
-      'soft-400': 'var(--text-soft-400)',
-      'soft-300': 'var(--text-soft-300)',
-      'soft-200': 'var(--text-soft-200)',
-      'disabled-300': 'var(--text-disabled-300)',
-      'white-0': 'var(--text-white-0)',
+      'strong-950': 'var(--text-black)',
+      'sub-600': 'var(--gray-500)',
+      'mid-500': 'var(--gray-450)',
+      'soft-400': 'var(--gray-300)',
+      'soft-300': 'var(--gray-200)',
+      'soft-200': 'var(--gray-100)',
+      'disabled-300': 'var(--gray-100)',
+      'white-0': 'var(--gray-0)',
 
       overlay: {
         DEFAULT: 'var(--overlay)',

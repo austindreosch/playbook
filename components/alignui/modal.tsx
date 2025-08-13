@@ -97,7 +97,7 @@ function ModalHeader({
   return (
     <div
       className={cnExt(
-        'relative flex items-start gap-3.5 py-4 pl-5 pr-14 before:absolute before:inset-x-0 before:bottom-0 before:border-b before:border-stroke-soft-200',
+        'relative flex items-start gap-3.5 py-4 pl-5 pr-14 before:absolute before:inset-x-0 before:bottom-0 before:border-b before:border-stroke-soft-75',
         className,
       )}
       {...rest}
@@ -105,8 +105,8 @@ function ModalHeader({
       {children || (
         <>
           {Icon && (
-            <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200'>
-              <Icon className='hw-icon text-sub-600' />
+            <div className='flex size-10 shrink-0 items-center justify-center rounded-full bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-75'>
+              <Icon className='hw-icon text-mid-500' />
             </div>
           )}
           {(title || description) && (
@@ -167,7 +167,7 @@ function ModalFooter({
   return (
     <div
       className={cnExt(
-        'flex items-center justify-between gap-3 border-t border-stroke-soft-200 px-5 py-4',
+        'flex items-center justify-between gap-3 border-t border-stroke-soft-75 px-5 py-4',
         className,
       )}
       {...rest}

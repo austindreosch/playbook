@@ -81,8 +81,8 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
   return (
     <div className={className}>
       <Select value={currentValue} onValueChange={handleValueChange} size="small">
-        <SelectTrigger className="w-auto gap-2 bg-orange-200 ring-1 ring-inset ring-orange-700 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-orange-550 hover:ring-orange-800 focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none ">
-          <div className="flex items-center gap-2">
+        <SelectTrigger className="w-auto gap-2 bg-orange-200 ring-1 ring-inset ring-orange-700 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-orange-550 hover:ring-orange-800 focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none justify-start text-left">
+          <div className="flex items-center justify-start gap-2">
             <TriggerIcon className="hidden xl:flex">
               {isAllLeaguesView ? (
                 <Notebook className="hw-icon text-sub-600" />
@@ -108,8 +108,8 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
                 <Notebook className="hw-icon text-sub-600" />
               </div>
               <div className="flex flex-col flex-1">
-                <span className="text-label-md font-semibold text-strong-950">All Leagues View</span>
-                <span className="text-subheading-sm text-gray-300">Integrated overview of all leagues</span>
+                <span className="text-label-lg text-strong-950">All Leagues View</span>
+                <span className="text-paragraph-md text-sub-600">Integrated overview of all leagues</span>
               </div>
             </div>
           </SelectItem>
@@ -135,8 +135,8 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
                       {getSportIcon(sport, "hw-icon text-sub-600")}
                     </div>
                     <div className="flex flex-col flex-1">
-                      <span className="text-label-md font-semibold text-strong-950">{leagueName}</span>
-                      <span className="text-subheading-sm text-gray-300">
+                      <span className="text-label-lg text-strong-950">{leagueName}</span>
+                      <span className="text-paragraph-md text-sub-600">
                         {format} • {platform}{teamSize ? ` • ${teamSize} Team` : ''}
                       </span>
                     </div>

@@ -31,6 +31,7 @@ import * as ProgressBar from '@/components/alignui/ui/progress-bar';
 import { ProgressChart } from '@/components/progress-chart';
 import { useAnimateNumber } from '@/hooks/use-animate-number';
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
+import * as CompactButton from '@/components/alignui/compact-button';
 
 // ============================================================
 // ===================== BLUEPRINT DEFINITION ================
@@ -309,6 +310,9 @@ export default function MatchupsWidget({
   // Use provided blueprint or generate dummy data
   const blueprint = providedBlueprint || generateMatchupsData();
 
+  // Local week state for header navigation UI only
+  const [currentWeek, setCurrentWeek] = React.useState(blueprint.currentWeek.week);
+
   // Animation setup for projected win percentage
   const initialRenderRef = React.useRef(true);
   const prevValueRef = React.useRef(0);
@@ -338,19 +342,24 @@ export default function MatchupsWidget({
         Matchup
         
         <div className="ml-auto">
-          {/* Week selector */}
-          <Tooltip.Root>
-            <Tooltip.Trigger asChild>
-              <div className="flex items-center gap-1 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2 h-6 cursor-pointer hover:bg-bg-weak-50 transition-colors">
-                <ChevronLeft className="w-4 h-4 text-soft-400" strokeWidth={2} />
-                <span className="text-label-md font-medium text-soft-400">Week {blueprint.currentWeek.week}</span>
-                <ChevronRight className="w-4 h-4 text-soft-400" strokeWidth={2} />
-              </div>
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              Week {blueprint.currentWeek.week} ({blueprint.currentWeek.dateRange})
-            </Tooltip.Content>
-          </Tooltip.Root>
+          {/* Week selector (AlignUI DayPicker header style) */}
+          <div className="flex h-7 items-center justify-between gap-1.5 rounded-lg bg-bg-weak-25 px-1.5 ring-1 ring-inset ring-stroke-soft-75">
+            <CompactButton.Root
+              size="medium"
+              variant="white"
+              onClick={() => setCurrentWeek((w) => Math.max(1, w - 1))}
+            >
+              <CompactButton.Icon as={ChevronLeft} />
+            </CompactButton.Root>
+            <span className="text-label-sm text-sub-600 w-12 text-center">Week {currentWeek}</span>
+            <CompactButton.Root
+              size="medium"
+              variant="white"
+              onClick={() => setCurrentWeek((w) => w + 1)}
+            >
+              <CompactButton.Icon as={ChevronRight} />
+            </CompactButton.Root>
+          </div>
         </div>
       </WidgetBox.Header>
 

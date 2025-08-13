@@ -116,7 +116,7 @@ export default function RankingsSelectorButton({ className = '' }: RankingsSelec
             </div>
           ) : (
             <>
-              {/* <Divider.Root variant="line-spacing" className="my-1" /> */}
+              <Divider.Root variant="line-spacing" className="my-1" />
               {allRankings.map((ranking, index) => {
                 const isSelected = currentValue === String(index);
                 const isUserType = ranking.type === 'user';
