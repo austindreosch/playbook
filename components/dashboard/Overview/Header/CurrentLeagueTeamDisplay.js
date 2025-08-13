@@ -28,17 +28,17 @@ export default function CurrentLeagueTeamDisplay({ className = '' }) {
   return (
     <HoverCard openDelay={200} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <div
-          className={`flex items-center gap-2 rounded-md border border-pb_lightgray bg-white shadow-sm px-2 sm:px-3 select-none cursor-pointer hover:bg-pb_lightestgray transition-colors w-auto md:w-66 lg:w-54 xl:w-62 ${className}`.trim()}
+        <button
+          className={`flex items-center gap-2 h-9 min-h-9 bg-bg-white-0 ring-1 ring-inset ring-stroke-soft-200 rounded-lg px-2.5 shadow-regular-xs transition duration-200 ease-out hover:bg-bg-weak-50 hover:ring-transparent focus:shadow-button-important-focus focus:outline-none focus:ring-stroke-strong-950 select-none w-auto md:w-66 lg:w-54 xl:w-62 ${className}`.trim()}
         >
-                      {/* Team name - progressively hidden on smaller screens */}
-            <span className="text-button font-semibold text-pb_darkgray truncate flex-1 hidden sm:block">
-              {teamName}
-            </span>
+          {/* Team name - progressively hidden on smaller screens */}
+          <span className="text-button font-semibold text-sub-600 truncate flex-1 hidden sm:block">
+            {teamName}
+          </span>
           
           {/* Icon - always visible, serves as fallback for smallest screens */}
-          <BookUser className="w-icon h-icon text-pb_darkgray shrink-0" />
-        </div>
+          <BookUser className="size-5 text-sub-600 shrink-0" />
+        </button>
       </HoverCardTrigger>
       <HoverCardContent className="w-80" align="start" side="bottom">
         <div className="space-y-3">

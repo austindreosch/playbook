@@ -52,7 +52,7 @@ export default function LogoNav({ className = "" }) {
           </div>
         </SelectTrigger>
           
-        <Divider.Root variant="line-vertical" className="mx-3 mr-1.5 my-0 h-8 before:bg-orange-600" />
+        <Divider.Root variant="line-vertical" className="mx-2 mr-0.5 my-0 h-8 before:bg-orange-600" />
         <SelectContent className="w-72 max-h-[32rem]" align="start" side="bottom" sideOffset={5}>
           {navigationOptions.map((option) => {
             const IconComponent = option.icon;
