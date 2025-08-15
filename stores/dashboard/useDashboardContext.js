@@ -292,6 +292,7 @@ const useDashboardContext = create(
       // STATE
       // =================================================================
       isEditMode: false,
+      isLoading: false,
       leagues: [],
       currentLeagueId: null,
       leagueTeams: {},
@@ -382,6 +383,11 @@ const useDashboardContext = create(
         set({ selectedPlayerId: playerId });
       },
 
+      // Sets import mode on/off
+      setImportMode: (isImportMode) => {
+        set({ isImportMode });
+      },
+
       // ============================================================================
       // STORE STATE (ONLY the fields from DASHBOARD_CONTEXT_SCHEMA)
       // ============================================================================
@@ -401,6 +407,8 @@ const useDashboardContext = create(
       tradeValueMode: processedLeagueData.tradeValueMode,
       leagueTeams: processedLeagueData.leagueTeams,
       selectedPlayerId: null, // NEW: State to hold the ID of the currently selected player
+      isImportMode: false, // NEW: State to control import form view
+      
       // ============================================================================
       // INPUT ACTIONS (Data Entry Points)
       // ============================================================================
@@ -475,13 +483,17 @@ const useDashboardContext = create(
       },
 
       /**
-       * LEAGUE SELECTION: Set current league by ID
-       * @param {string} leagueId - League identifier
+       * LEAGUE SELECTION: Set current league by ID (enhanced for new schema)
+       * @param {string} leagueId - League identifier (ObjectId or leagueName)
        */
       setCurrentLeague: (leagueId) => {
         const { leagues, currentTab } = get();
+        
+        // Support both ObjectId and leagueName for league identification
         const leagueExists = leagues.some(league => 
-          league.leagueDetails?.leagueName === leagueId
+          league.leagueDetails?.leagueName === leagueId || 
+          league._id === leagueId ||
+          league.id === leagueId
         );
         
         if (leagueExists) {
@@ -504,6 +516,63 @@ const useDashboardContext = create(
           
         } else {
           console.warn('⚠️  INPUT ACTION: League not found:', leagueId);
+        }
+      },
+
+      /**
+       * NEW: Set current league by ID (direct alias)
+       * @param {string} leagueId - League identifier
+       */
+      setCurrentLeagueId: (leagueId) => {
+        get().setCurrentLeague(leagueId);
+      },
+
+      /**
+       * NEW: Refresh leagues from API
+       */
+      refreshLeagues: async () => {
+        try {
+          set({ isLoading: true });
+          
+          const response = await fetch('/api/importleague');
+          if (!response.ok) throw new Error('Failed to fetch leagues');
+          
+          const leagues = await response.json();
+          
+          // Process leagues for the new schema
+          const processedLeagues = leagues.map(league => ({
+            _id: league._id,
+            id: league._id, // Alias for compatibility
+            leagueDetails: {
+              leagueName: league.leagueName || 'Unnamed League',
+              platform: league.platform || 'unknown',
+              sport: league.sport || 'NBA',
+              leagueType: league.leagueType || 'Redraft',
+              scoring: league.scoring || 'Points',
+              matchup: league.matchup || 'H2H',
+              draftType: league.draftType || 'Snake',
+              teamCount: league.teamCount || 0,
+              dynasty: league.dynasty || league.leagueType === 'Dynasty',
+              lastSync: league.updatedAt || league.createdAt
+            },
+            settings: league.settings || {},
+            teams: league.teams || [],
+            rosters: league.rosters || [],
+            players: [], // Will be populated by data fetching
+            standings: {}, // Will be populated by data fetching
+            matchup: {} // Will be populated by data fetching
+          }));
+          
+          set({ 
+            leagues: processedLeagues,
+            isLoading: false 
+          });
+          
+          return processedLeagues;
+        } catch (error) {
+          console.error('Failed to refresh leagues:', error);
+          set({ isLoading: false });
+          throw error;
         }
       },
 

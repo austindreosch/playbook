@@ -36,6 +36,9 @@ import LeagueOverviewPage from '@/components/dashboard/LeagueView/LeagueOverview
 import LeagueRosterPage from '@/components/dashboard/LeagueView/LeagueRosterPage';
 import LeagueTradesPage from '@/components/dashboard/LeagueView/LeagueTradesPage';
 
+// Import Form
+import DynamicLeagueImportForm from '@/components/dashboard/LeagueImport/DynamicLeagueImportForm';
+
 // Store
 import useDashboardContext from '@/stores/dashboard/useDashboardContext';
 
@@ -56,6 +59,10 @@ export default function DashboardPage() {
   const setCurrentTab = useDashboardContext((state) => state.setCurrentTab);
   const rehydrate = useDashboardContext((state) => state.rehydrate);
   const isAllLeaguesView = useDashboardContext((state) => state.isAllLeaguesView);
+  const isImportMode = useDashboardContext((state) => state.isImportMode);
+  const setImportMode = useDashboardContext((state) => state.setImportMode);
+  const setCurrentLeagueId = useDashboardContext((state) => state.setCurrentLeagueId);
+  const refreshLeagues = useDashboardContext((state) => state.refreshLeagues);
 
   const router = useRouter();
   const { user, error, isLoading: isUserLoading } = useUser();
@@ -242,7 +249,28 @@ export default function DashboardPage() {
 
         {/* Main Content */}
         <div className="h-full min-h-0">
-          {isAllLeaguesView ? (
+          {isImportMode ? (
+            <DynamicLeagueImportForm
+              onComplete={async (savedLeague) => {
+                try {
+                  // Update dashboard context with new league
+                  setCurrentLeagueId(savedLeague._id);
+                  
+                  // Refresh leagues list
+                  await refreshLeagues();
+                  
+                  // Exit import mode
+                  setImportMode(false);
+                  
+                  toast.success(`${savedLeague.leagueName} imported successfully!`);
+                } catch (error) {
+                  console.error('Error handling import completion:', error);
+                  toast.error('League imported but failed to update dashboard');
+                }
+              }}
+              onCancel={() => setImportMode(false)}
+            />
+          ) : isAllLeaguesView ? (
             <div className="flex items-center justify-center w-full h-full"><p>All Leagues View (Coming Soon)</p></div>
           ) : !currentLeagueId ? (
             <div className="flex items-center justify-center w-full h-full"><RosterViewImportLeague /></div>
