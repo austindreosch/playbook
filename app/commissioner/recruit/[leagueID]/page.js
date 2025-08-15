@@ -167,7 +167,7 @@ export default function CommissionerRecruitPage() {
     const yearsRunning = '8+'; // TODO: dynamic if available later
     const rosterStructure = leagueData?.settings?.roster?.structure || '';
     const commissionerDiscord = leagueData?.commissioner?.discord || '';
-    const listingUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const listingUrl = `https://www.playbookfantasy.com/commissioner/recruit/${leagueID}`;
     const discordRequired = 'Must have Discord to join the league group chat server.';
     const premiumNote = `${entryFee} buy-in via LeagueSafe + $10~ for Fantrax Premium`;
     const rosterPretty = `Roster Structure (${rosterStructure.split(',').length}) - ${rosterStructure.replace(/,/g, ', ')}`;
