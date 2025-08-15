@@ -89,7 +89,7 @@ export default async function handler(req, res) {
         allTeams.push({
           teamId: teamName.toLowerCase().replace(/\s+/g, '-'),
           teamName: teamName,
-          ownerName: teamName === 'Team A' || teamName === 'Team B' || teamName === 'Team C' ? 'Available' : 'Owned',
+          ownerName: availableTeamNames.includes(teamName) ? 'Available' : 'Owned',
           currentRoster: teamPlayers[teamName],
           teamStrengths: teamStrengths,
           draftPicks: draftPicks,
@@ -120,6 +120,7 @@ export default async function handler(req, res) {
           advancedPayments: settings['Advanced Payments'],
           discordLink: settings.DiscordLink,
           leagueSafeLink: settings.LeagueSafeLink,
+          matchup: settings.Matchup,
           roster: {
             structure: settings['Roster Structure']
           },

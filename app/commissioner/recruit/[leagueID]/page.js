@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { AlertCircle, AlertTriangle, AlignHorizontalDistributeCenter, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, BookOpenText, Boxes, Calendar, ChartBarStacked, ChartCandlestick, ClipboardList, Clock, ContactRound, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, LucideClipboardSignature, Mail, Mailbox, MailPlus, Medal, Megaphone, MessageSquare, NotebookTabs, Pyramid, Scale, Settings, Settings2, Shield, ShieldHalf, ShieldUser, SquareArrowOutUpRight, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users, Wrench } from 'lucide-react';
+import { AlertCircle, AlertTriangle, AlignHorizontalDistributeCenter, AlignLeft, ArrowRight, ArrowRightLeft, AtSign, Binoculars, Book, BookMarked, BookOpenText, Boxes, Calendar, ChartBarStacked, ChartCandlestick, ClipboardList, Clock, ContactRound, createLucideIcon, ExternalLink, Eye, FileText, Flag, FlagTriangleRight, FormData, Goal, Grid2X2X, Handshake, LandPlot, LucideClipboardSignature, Mail, Mailbox, MailPlus, Medal, Megaphone, MessageSquare, NotebookTabs, Pyramid, Scale, Settings, Settings2, Shield, ShieldHalf, ShieldUser, SquareArrowOutUpRight, Star, Swords, Target, Ticket, TrendingUp, Trophy, UserCheck, Users, Wrench, Copy } from 'lucide-react';
 
 
 
@@ -45,6 +45,7 @@ export default function CommissionerRecruitPage() {
   const [leagueData, setLeagueData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   // Function to get position pill styling  
   const getPositionPill = (position) => {
@@ -153,6 +154,66 @@ export default function CommissionerRecruitPage() {
       document.title = 'Playbook Recruit | League';
     }
   }, [leagueData?.leagueName]);
+
+  const buildRedditPost = () => {
+    const entryFee = leagueData?.settings?.entryFee || '';
+    const sport = leagueData?.sport || '';
+    const format = leagueData?.format || '';
+    const totalTeams = leagueData?.totalTeams || '';
+    const scoring = leagueData?.scoring || '';
+    const matchup = leagueData?.settings?.matchup || 'H2H';
+    const platform = leagueData?.settings?.platform || '';
+    const availableSpots = leagueData?.availableTeams?.length || leagueData?.availableSpots || 0;
+    const yearsRunning = '8+'; // TODO: dynamic if available later
+    const rosterStructure = leagueData?.settings?.roster?.structure || '';
+    const commissionerDiscord = leagueData?.commissioner?.discord || '';
+    const listingUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const discordRequired = 'Must have Discord to join the league group chat server.';
+    const premiumNote = `${entryFee} buy-in via LeagueSafe + $10~ for Fantrax Premium`;
+    const rosterPretty = `Roster Structure (${rosterStructure.split(',').length}) - ${rosterStructure.replace(/,/g, ', ')}`;
+    const header = `${entryFee} - ${sport} ${format} ${totalTeams}-Team ${matchup} ${scoring}, ${platform} - ${availableSpots} Spot${availableSpots === 1 ? '' : 's'} Available`;
+    const line2 = `Looking for ${availableSpots} active, committed owners to take over existing teams in an established dynasty basketball league running for ${yearsRunning} years. ${discordRequired}`;
+    const line3 = `${matchup} - ${totalTeams}-Team - True ${format}`;
+    const line4 = `Standard 9-cat - FG%, FT%`;
+    const line5 = premiumNote;
+    const line6 = `${rosterPretty}`;
+    const line7 = `View full details for all available teams, league settings, and our comprehensive league rulebook here:`;
+    const line8 = listingUrl;
+    const line9 = `If you're interested, please reach out to me by Discord (Link in Playbook page), Reddit DMs, or email to talk about invites. (All links inside Playbook page.)`;
+    return [
+      '-----',
+      '',
+      header,
+      '',
+      line2,
+      '',
+      line3,
+      '',
+      line4,
+      '',
+      line5,
+      '',
+      line6,
+      '',
+      line7,
+      line8,
+      '',
+      line9,
+      '',
+      '',
+    ].join('\n');
+  };
+
+  const handleCopyReddit = async () => {
+    try {
+      const text = buildRedditPost();
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (e) {
+      console.error('Copy failed', e);
+    }
+  };
 
   if (loading) {
     return (
@@ -360,6 +421,13 @@ export default function CommissionerRecruitPage() {
                 <span className="text-white font-medium text-sm">{leagueData?.availableTeams.length} Spots Available</span>
               </div>
             </Card>
+            <Button
+              onClick={handleCopyReddit}
+              className="h-10 px-3 bg-pb_blue hover:bg-pb_bluehover text-white border border-pb_blue"
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              {copied ? 'Copied!' : 'Copy Reddit Post'}
+            </Button>
           </div>
         </div>
           
@@ -407,7 +475,7 @@ export default function CommissionerRecruitPage() {
                      <Swords className="w-4 h-4 text-pb_darkgray" />
                      <div className="flex flex-col">
                        <span className="text-pb_textlightestgray text-xs">Matchup</span>
-                       <span className="font-bold text-pb_darkgray text-xs">H2H</span>
+                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.settings?.matchup || 'H2H'}</span>
                      </div>
                    </div>
                  </div>
@@ -518,7 +586,7 @@ export default function CommissionerRecruitPage() {
                  </CardTitle>
                </CardHeader>
                <CardContent className="p-4 pt-0">
-                 
+                  
                  {/* Contact Methods */}
                  <div className="space-y-2">
                    <div className="flex items-center gap-3 py-2 px-3 bg-gray-50 border border-gray-200 rounded-lg">
@@ -561,7 +629,7 @@ export default function CommissionerRecruitPage() {
                      </button>
                    </div>
                  </div>
-                 
+                  
                </CardContent>
              </Card>
                      </div>
