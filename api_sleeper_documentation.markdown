@@ -287,51 +287,57 @@ For interactive examples, code snippets and embed widgets (such as trending play
 
 
 
-
-Sleeper API Documentation (v1) — with Response Structures
+## Sleeper API Documentation (v1) — with Response Structures
 
 Read-only JSON REST API. No auth token. Keep calls under ~1,000/min to avoid IP blocks.
 
-⸻
+---
 
-Base
-	•	REST host: https://api.sleeper.app/v1
-	•	CDN for avatars: https://sleepercdn.com/avatars/... (full) and .../thumbs/... (thumb).
+### Base
+*	**REST host**: `https://api.sleeper.app/v1`
+*	**CDN for avatars**: `https://sleepercdn.com/avatars/...` (full) and `.../thumbs/...` (thumb).
 
-⸻
+---
 
-User
+### User
 
-Get User
+#### Get User
 
+```
 GET /user/<username>
 GET /user/<user_id>
+```
 
-Response
+**Response**
 
+```json
 {
   "username": "sleeperuser",
   "user_id": "12345678",
   "display_name": "SleeperUser",
   "avatar": "cc12ec49965eb7856f84d71cf85306af"
 }
+```
 
-Notes: username can change; persist user_id.
+*Notes: username can change; persist user_id.*
 
-Avatars
-	•	Full: https://sleepercdn.com/avatars/<avatar_id>
-	•	Thumb: https://sleepercdn.com/avatars/thumbs/<avatar_id>
+#### Avatars
+*	**Full**: `https://sleepercdn.com/avatars/<avatar_id>`
+*	**Thumb**: `https://sleepercdn.com/avatars/thumbs/<avatar_id>`
 
-⸻
+---
 
-Leagues
+### Leagues
 
-Get All Leagues for a User (by sport/season)
+#### Get All Leagues for a User (by sport/season)
 
+```
 GET /user/<user_id>/leagues/<sport>/<season>
+```
 
-Response (array of leagues)
+**Response (array of leagues)**
 
+```json
 [{
   "total_rosters": 12,
   "status": "pre_draft",         // "pre_draft" | "drafting" | "in_season" | "complete"
@@ -347,24 +353,30 @@ Response (array of leagues)
   "draft_id": "289646328508579840",
   "avatar": "efaefa889ae24046a53265a3c71b8b64"
 }]
+```
 
-Key nested structures
-	•	settings: per-league knobs (teams, rounds, pick_timer, etc.; see “Drafts → settings” for common fields).
-	•	scoring_settings: dict of category→weight (e.g., pass_yd, rec_td).
-	•	roster_positions: ordered list of slot types.
+**Key nested structures**
+*	`settings`: per-league knobs (teams, rounds, pick_timer, etc.; see “Drafts → settings” for common fields).
+*	`scoring_settings`: dict of category→weight (e.g., pass_yd, rec_td).
+*	`roster_positions`: ordered list of slot types.
 
-Get League
+#### Get League
 
+```
 GET /league/<league_id>
+```
 
-Response – same shape as one element from list above, with full settings, scoring_settings, and roster_positions.
+Response – same shape as one element from list above, with full `settings`, `scoring_settings`, and `roster_positions`.
 
-Get Rosters
+#### Get Rosters
 
+```
 GET /league/<league_id>/rosters
+```
 
-Response (array of rosters)
+**Response (array of rosters)**
 
+```json
 [{
   "starters": ["2307","2257","4034","147","642","4039","515","4149","DET"], // player_ids & team DST
   "settings": {
@@ -379,17 +391,21 @@ Response (array of rosters)
   "owner_id": "188815879448829952", // user_id
   "league_id": "206827432160788480"
 }]
+```
 
-Interpretation
-	•	Bench = players minus starters.
-	•	settings.fpts* reflect cumulative scoring per roster.
+**Interpretation**
+*	Bench = `players` minus `starters`.
+*	`settings.fpts*` reflect cumulative scoring per roster.
 
-Get Users in a League
+#### Get Users in a League
 
+```
 GET /league/<league_id>/users
+```
 
-Response
+**Response**
 
+```json
 [{
   "user_id": "188815879448829952",
   "username": "name",
@@ -398,14 +414,18 @@ Response
   "metadata": { "team_name": "Dezpacito" },
   "is_owner": true                 // commissioner flag; multiple possible
 }]
+```
 
-Get Matchups (by week)
+#### Get Matchups (by week)
 
+```
 GET /league/<league_id>/matchups/<week>
+```
 
-Response (array of team entries)
-Each entry = one team in a pairing; teams that share matchup_id face each other.
+**Response (array of team entries)**
+Each entry = one team in a pairing; teams that share `matchup_id` face each other.
 
+```json
 [{
   "starters": ["421","4035","3242","2133","2449","4531","2257","788","PHI"],
   "roster_id": 1,
@@ -414,31 +434,39 @@ Each entry = one team in a pairing; teams that share matchup_id face each other.
   "points": 20.0,          // computed by league scoring
   "custom_points": null    // commissioner override if present
 }]
+```
 
-Bench derivation: players - starters.
+Bench derivation: `players` - `starters`.
 
-Get Playoff Brackets
+#### Get Playoff Brackets
 
+```
 GET /league/<league_id>/winners_bracket
 GET /league/<league_id>/losers_bracket
+```
 
-Response (array)
+**Response (array)**
 Fields per row:
 
+```json
 { "r":1, "m":1, "t1":3, "t2":6, "w":null, "l":null,
   "t1_from": {"w":1}, "t2_from": {"l":2}, "p":5 }
+```
 
-	•	r: round; m: match id;
-	•	t1/t2: roster_id or {w:<m>} / {l:<m>} meaning winner/loser from match m;
-	•	w/l: winning/losing roster_id when complete;
-	•	p: placement (e.g., 1 for championship).
+*	`r`: round; `m`: match id;
+*	`t1`/`t2`: `roster_id` or `{w:<m>}` / `{l:<m>}` meaning winner/loser from match `m`;
+*	`w`/`l`: winning/losing `roster_id` when complete;
+*	`p`: placement (e.g., 1 for championship).
 
-Get Transactions (by round = week)
+#### Get Transactions (by round = week)
 
+```
 GET /league/<league_id>/transactions/<round>
+```
 
-Response (array of transactions)
+**Response (array of transactions)**
 
+```json
 [{
   "type": "trade" | "free_agent" | "waiver",
   "transaction_id": "434852362033561600",
@@ -461,13 +489,17 @@ Response (array of transactions)
   "created": 1558039391576,
   "consenter_ids": [2,1]                 // roster_ids who accepted
 }]
+```
 
-Get Traded Picks (league-wide)
+#### Get Traded Picks (league-wide)
 
+```
 GET /league/<league_id>/traded_picks
+```
 
-Response
+**Response**
 
+```json
 [{
   "season": "2019",
   "round": 5,
@@ -475,13 +507,17 @@ Response
   "previous_owner_id": 1,    // prior owner
   "owner_id": 2              // current owner
 }]
+```
 
-Get Sport State
+#### Get Sport State
 
+```
 GET /state/<sport>   // e.g. /state/nfl
+```
 
-Response
+**Response**
 
+```json
 {
   "week": 2,
   "season_type": "regular",           // "pre" | "regular" | "post"
@@ -493,18 +529,22 @@ Response
   "league_create_season": "2021",     // flips in December
   "display_week": 3                   // UI display week
 }
+```
 
 
-⸻
+---
 
-Drafts
+### Drafts
 
-Get All Drafts for a User
+#### Get All Drafts for a User
 
+```
 GET /user/<user_id>/drafts/<sport>/<season>
+```
 
-Response (array of drafts)
+**Response (array of drafts)**
 
+```json
 [{
   "type": "snake" | "auction",
   "status": "pre_draft" | "drafting" | "complete",
@@ -527,19 +567,25 @@ Response (array of drafts)
   "creators": null,
   "created": 1515700610526
 }]
+```
 
-Get Drafts for a League
+#### Get Drafts for a League
 
+```
 GET /league/<league_id>/drafts
+```
 
 Response – same shape as above; sorted newest→oldest.
 
-Get Draft
+#### Get Draft
 
+```
 GET /draft/<draft_id>
+```
 
-Response
+**Response**
 
+```json
 {
   "type": "snake",
   "status": "complete",
@@ -561,13 +607,17 @@ Response
   "creators": null,
   "created": 1515700610526
 }
+```
 
-Get Draft Picks
+#### Get Draft Picks
 
+```
 GET /draft/<draft_id>/picks
+```
 
-Response (array)
+**Response (array)**
 
+```json
 [{
   "player_id": "2391",
   "picked_by": "234343434",   // user_id (can be "")
@@ -584,23 +634,29 @@ Response (array)
   "is_keeper": null,
   "draft_id": "257270643320426496"
 }]
+```
 
-Get Traded Picks in a Draft
+#### Get Traded Picks in a Draft
 
+```
 GET /draft/<draft_id>/traded_picks
+```
 
 Response – same traded-pick shape as league endpoint.
 
-⸻
+---
 
-Players
+### Players
 
-Fetch All Players (NFL)
+#### Fetch All Players (NFL)
 
+```
 GET /players/nfl
+```
 
-Response (map of player_id → player object)
+**Response (map of player_id → player object)**
 
+```json
 {
   "3086": {
     "player_id":"3086",
@@ -618,37 +674,42 @@ Response (map of player_id → player object)
     "stats_id":"","sportradar_id":"","fantasy_data_id":17836
   }
 }
+```
 
-Usage guidance: Call ≤1/day; ~5MB payload. Persist locally to resolve player_id in rosters/matchups.
+Usage guidance: Call ≤1/day; ~5MB payload. Persist locally to resolve `player_id` in rosters/matchups.
 
-Trending Players
+#### Trending Players
 
+```
 GET /players/<sport>/trending/<type>?lookback_hours=<int>&limit=<int>
 // type: add | drop, default lookback 24h, default limit 25
+```
 
-Response
+**Response**
 
+```json
 [{ "player_id": "1111", "count": 45 }]
+```
 
 (Embeddable iframe also available in docs.)
 
-⸻
+---
 
-Errors
+### Errors
 
 HTTP status codes used include: 400, 404, 429, 500, 503. (Docs show playful copy but semantics are standard.)
 
-⸻
+---
 
-Quick sanity checks with your league
+### Quick sanity checks with your league
 
 You provided league_id = 1180086763643736064. Useful test calls (no auth):
-	•	League: GET https://api.sleeper.app/v1/league/1180086763643736064
-	•	Rosters: GET https://api.sleeper.app/v1/league/1180086763643736064/rosters
-	•	Users: GET https://api.sleeper.app/v1/league/1180086763643736064/users
-	•	Matchups (week N): GET https://api.sleeper.app/v1/league/1180086763643736064/matchups/<week>
-	•	Transactions (week N): GET https://api.sleeper.app/v1/league/1180086763643736064/transactions/<round>
-	•	Traded picks: GET https://api.sleeper.app/v1/league/1180086763643736064/traded_picks
+*	**League**: `GET https://api.sleeper.app/v1/league/1180086763643736064`
+*	**Rosters**: `GET https://api.sleeper.app/v1/league/1180086763643736064/rosters`
+*	**Users**: `GET https://api.sleeper.app/v1/league/1180086763643736064/users`
+*	**Matchups (week N)**: `GET https://api.sleeper.app/v1/league/1180086763643736064/matchups/<week>`
+*	**Transactions (week N)**: `GET https://api.sleeper.app/v1/league/1180086763643736064/transactions/<round>`
+*	**Traded picks**: `GET https://api.sleeper.app/v1/league/1180086763643736064/traded_picks`
 
 These will return in the exact shapes shown above.
 
