@@ -1,4 +1,4 @@
-import { fetchLeagueDetails } from '@/lib/leagueImport/platformIntegrations';
+import { fetchLeagueDetails, createPlatformIntegration } from '@/lib/leagueImport/platformIntegrations';
 
 /**
  * API endpoint to fetch specific league details from various platforms
@@ -10,118 +10,45 @@ export default async function handler(req, res) {
   }
 
   const { platform, leagueId } = req.query;
+  const { accessToken, seasonId, sport, cookies } = req.query;
   
   try {
     let leagueDetails = {};
 
     switch (platform) {
       case 'fantrax':
-        if (leagueId.startsWith('demo-')) {
-          // Demo data for testing
-          leagueDetails = {
-            id: leagueId,
-            name: 'Demo Fantrax League',
-            sport: 'NBA',
-            teamCount: 12,
-            teams: Array.from({ length: 12 }, (_, i) => ({
-              id: `team-${i + 1}`,
-              name: `Team ${i + 1}`,
-              ownerId: `owner-${i + 1}`,
-              players: []
-            })),
-            rosters: [],
-            settings: {
-              scoringType: 'Categories',
-              matchupType: 'H2H',
-              rosterPositions: ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL', 'BE', 'BE', 'BE', 'BE', 'IL']
-            }
-          };
-        } else {
-          // Use real Fantrax API
-          leagueDetails = await fetchLeagueDetails('fantrax', leagueId);
-        }
+        // Use real Fantrax API integration
+        const fantraxIntegration = createPlatformIntegration('fantrax');
+        leagueDetails = await fantraxIntegration.getLeagueDetails(leagueId);
         break;
 
       case 'sleeper':
-        if (leagueId.startsWith('demo-')) {
-          // Demo data
-          leagueDetails = {
-            id: leagueId,
-            name: leagueId.includes('dynasty') ? 'Demo Sleeper Dynasty League' : 'Demo Sleeper Redraft League',
-            sport: 'NFL',
-            teamCount: 10,
-            teams: Array.from({ length: 10 }, (_, i) => ({
-              id: `team-${i + 1}`,
-              name: `Team ${i + 1}`,
-              ownerId: `owner-${i + 1}`,
-              players: []
-            })),
-            rosters: [],
-            settings: {
-              scoringType: 'Points',
-              matchupType: 'H2H',
-              rosterPositions: ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF', 'BE', 'BE', 'BE', 'BE', 'BE', 'BE']
-            }
-          };
-        } else {
-          // Use real Sleeper API
-          leagueDetails = await fetchLeagueDetails('sleeper', leagueId);
-        }
+        // Use real Sleeper API integration
+        const sleeperIntegration = createPlatformIntegration('sleeper');
+        leagueDetails = await sleeperIntegration.getLeagueDetails(leagueId);
         break;
 
       case 'yahoo':
-        if (leagueId.startsWith('demo-')) {
-          // Demo data
-          leagueDetails = {
-            id: leagueId,
-            name: 'Demo Yahoo League',
-            sport: 'NFL',
-            teamCount: 10,
-            teams: Array.from({ length: 10 }, (_, i) => ({
-              id: `team-${i + 1}`,
-              name: `Team ${i + 1}`,
-              ownerId: `owner-${i + 1}`,
-              players: []
-            })),
-            rosters: [],
-            settings: {
-              scoringType: 'Points',
-              matchupType: 'H2H',
-              rosterPositions: ['QB', 'WR', 'WR', 'RB', 'RB', 'TE', 'W/R/T', 'K', 'DEF', 'BN', 'BN', 'BN', 'BN', 'BN', 'BN']
-            }
-          };
-        } else {
-          // Would use real Yahoo API with OAuth
-          throw new Error('Yahoo API requires OAuth authentication');
+        // Yahoo requires OAuth access token
+        if (!accessToken) {
+          return res.status(400).json({ 
+            error: 'accessToken required for Yahoo league details.' 
+          });
         }
-        break;
+        return res.status(501).json({ 
+          error: 'Yahoo integration coming soon. OAuth authentication required.' 
+        });
 
       case 'espn':
-        if (leagueId.startsWith('demo-')) {
-          // Demo data
-          leagueDetails = {
-            id: leagueId,
-            name: 'Demo ESPN League',
-            sport: 'NFL',
-            teamCount: 12,
-            teams: Array.from({ length: 12 }, (_, i) => ({
-              id: `team-${i + 1}`,
-              name: `Team ${i + 1}`,
-              ownerId: `owner-${i + 1}`,
-              players: []
-            })),
-            rosters: [],
-            settings: {
-              scoringType: 'Points',
-              matchupType: 'H2H',
-              rosterPositions: ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'D/ST', 'K', 'BE', 'BE', 'BE', 'BE', 'BE', 'BE', 'BE']
-            }
-          };
-        } else {
-          // Use real ESPN API
-          leagueDetails = await fetchLeagueDetails('espn', leagueId);
+        // ESPN requires league ID, season, sport, and potentially cookies
+        if (!seasonId || !sport) {
+          return res.status(400).json({ 
+            error: 'seasonId and sport required for ESPN league details.' 
+          });
         }
-        break;
+        return res.status(501).json({ 
+          error: 'ESPN integration coming soon. Authentication cookies required.' 
+        });
 
       default:
         return res.status(400).json({ error: 'Unsupported platform' });

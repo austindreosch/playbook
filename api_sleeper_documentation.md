@@ -569,7 +569,7 @@ GET /user/<user_id>/drafts/<sport>/<season>
 }]
 ```
 
-#### Get Drafts for a League
+#### Get Drafts for a League  
 
 ```
 GET /league/<league_id>/drafts

@@ -14,7 +14,8 @@
       "Bash(npm run lint)",
       "Bash(npm run build:*)",
       "Bash(npm run lint:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

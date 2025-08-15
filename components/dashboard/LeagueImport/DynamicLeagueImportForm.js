@@ -18,10 +18,10 @@ import {
 } from '@/lib/leagueImport/promptEngine';
 
 const PLATFORMS = [
-  { id: 'fantrax', name: 'Fantrax', available: true },
-  { id: 'sleeper', name: 'Sleeper', available: true },
-  { id: 'yahoo', name: 'Yahoo', available: true },
-  { id: 'espn', name: 'ESPN', available: true }
+  { id: 'fantrax', name: 'Fantrax', available: true, sports: ['NFL', 'NBA', 'MLB', 'NHL'], supportedScoring: ['Points', 'Categories'], supportedMatchups: ['H2H', 'Roto', 'Points'] },
+  { id: 'sleeper', name: 'Sleeper', available: true, sports: ['NFL'], supportedScoring: ['Points'], supportedMatchups: ['H2H'] },
+  { id: 'yahoo', name: 'Yahoo', available: false, sports: ['NFL', 'NBA', 'MLB'], supportedScoring: ['Points', 'Categories'], supportedMatchups: ['H2H', 'Roto', 'Points'] },
+  { id: 'espn', name: 'ESPN', available: false, sports: ['NFL', 'NBA', 'MLB'], supportedScoring: ['Points', 'Categories'], supportedMatchups: ['H2H', 'Roto', 'Points'] }
 ];
 
 export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
@@ -48,10 +48,29 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
     return getActivePrompts(formData);
   }, [formData]);
 
-  // Get valid matchup types based on scoring selection
+  // Get selected platform info
+  const selectedPlatform = useMemo(() => {
+    return PLATFORMS.find(platform => platform.id === formData.platform);
+  }, [formData.platform]);
+
+  // Get valid sports based on platform selection
+  const validSports = useMemo(() => {
+    if (!selectedPlatform) return SPORTS;
+    return SPORTS.filter(sport => selectedPlatform.sports.includes(sport));
+  }, [selectedPlatform]);
+
+  // Get valid scoring types based on platform selection
+  const validScoringTypes = useMemo(() => {
+    if (!selectedPlatform) return SCORING_TYPES;
+    return SCORING_TYPES.filter(scoring => selectedPlatform.supportedScoring.includes(scoring));
+  }, [selectedPlatform]);
+
+  // Get valid matchup types based on platform and scoring selection
   const validMatchupTypes = useMemo(() => {
-    return validationRules.getValidMatchupTypes(formData.scoring);
-  }, [formData.scoring]);
+    const baseMatchups = validationRules.getValidMatchupTypes(formData.scoring);
+    if (!selectedPlatform) return baseMatchups;
+    return baseMatchups.filter(matchup => selectedPlatform.supportedMatchups.includes(matchup));
+  }, [formData.scoring, selectedPlatform]);
 
   // Initialize default settings when sport changes
   useEffect(() => {
@@ -87,8 +106,35 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
       return;
     }
 
+    const platformInfo = PLATFORMS.find(p => p.id === platform);
+    
+    // Clear invalid selections when platform changes
+    if (platformInfo) {
+      // Clear sport if not supported by platform
+      if (formData.sport && !platformInfo.sports.includes(formData.sport)) {
+        updateFormField('sport', '');
+      }
+      
+      // Clear scoring if not supported by platform
+      if (formData.scoring && !platformInfo.supportedScoring.includes(formData.scoring)) {
+        updateFormField('scoring', '');
+      }
+      
+      // Clear matchup if not supported by platform
+      if (formData.matchup && !platformInfo.supportedMatchups.includes(formData.matchup)) {
+        updateFormField('matchup', '');
+      }
+    }
+
     // Fantrax requires manual league ID entry, so skip fetching leagues list
     if (platform === 'fantrax') {
+      setAvailableLeagues([]);
+      updateFormField('leagueId', '');
+      return;
+    }
+
+    // Sleeper requires user ID, so skip fetching leagues list for now
+    if (platform === 'sleeper') {
       setAvailableLeagues([]);
       updateFormField('leagueId', '');
       return;
@@ -255,6 +301,24 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
                       Find this in your league URL: fantrax.com/fantasy/league/<strong>your-league-id</strong>/team/roster
                     </div>
                   </div>
+                ) : formData.platform === 'sleeper' ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={formData.leagueId}
+                      onChange={(e) => updateFormField('leagueId', e.target.value)}
+                      onBlur={() => {
+                        if (formData.leagueId && formData.platform) {
+                          handleLeagueSelect(formData.leagueId);
+                        }
+                      }}
+                      placeholder="e.g. 1180086763643736064 (from your Sleeper league URL)"
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <div className="text-xs text-gray-500 mt-1">
+                      Find this in your league URL: sleeper.com/leagues/<strong>your-league-id</strong>
+                    </div>
+                  </div>
                 ) : formData.platform && availableLeagues.length > 0 ? (
                   <select 
                     value={formData.leagueId} 
@@ -294,12 +358,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
                   value={formData.sport} 
                   onChange={(e) => updateFormField('sport', e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  disabled={!formData.platform}
                 >
                   <option value="">Select sport...</option>
-                  {SPORTS.map(sport => (
+                  {validSports.map(sport => (
                     <option key={sport} value={sport}>{sport}</option>
                   ))}
                 </select>
+                {!formData.platform && <div className="text-xs text-gray-500">Select a platform first</div>}
+                {formData.platform && validSports.length === 0 && <div className="text-xs text-red-500">No sports supported by selected platform</div>}
                 {errors.sport && <div className="text-sm text-red-500">{errors.sport}</div>}
               </div>
 
@@ -326,14 +393,17 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
                   value={formData.scoring} 
                   onChange={(e) => updateFormField('scoring', e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  disabled={!formData.platform}
                 >
                   <option value="">Select scoring...</option>
-                  {SCORING_TYPES.map(type => (
+                  {validScoringTypes.map(type => (
                     <option key={type} value={type}>
                       {type} {type === 'Points' ? '- Stats converted to points' : '- Individual stat categories'}
                     </option>
                   ))}
                 </select>
+                {!formData.platform && <div className="text-xs text-gray-500">Select a platform first</div>}
+                {formData.platform && validScoringTypes.length === 0 && <div className="text-xs text-red-500">No scoring types supported by selected platform</div>}
                 {errors.scoring && <div className="text-sm text-red-500">{errors.scoring}</div>}
               </div>
 
@@ -343,7 +413,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
                 <select 
                   value={formData.matchup} 
                   onChange={(e) => updateFormField('matchup', e.target.value)}
-                  disabled={!formData.scoring}
+                  disabled={!formData.scoring || !formData.platform}
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
                 >
                   <option value="">Select format...</option>
@@ -355,6 +425,9 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
                     </option>
                   ))}
                 </select>
+                {!formData.platform && <div className="text-xs text-gray-500">Select a platform first</div>}
+                {!formData.scoring && formData.platform && <div className="text-xs text-gray-500">Select scoring type first</div>}
+                {formData.platform && formData.scoring && validMatchupTypes.length === 0 && <div className="text-xs text-red-500">No matchup formats supported by selected platform and scoring combination</div>}
                 {errors.matchup && <div className="text-sm text-red-500">{errors.matchup}</div>}
               </div>
 

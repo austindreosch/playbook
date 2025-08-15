@@ -1,4 +1,4 @@
-import { fetchUserLeagues } from '@/lib/leagueImport/platformIntegrations';
+import { fetchUserLeagues, createPlatformIntegration } from '@/lib/leagueImport/platformIntegrations';
 
 /**
  * API endpoint to fetch user leagues from various platforms
@@ -10,66 +10,50 @@ export default async function handler(req, res) {
   }
 
   const { platform } = req.query;
+  const { userSecretId, userId, season } = req.query;
   
   try {
     let leagues = [];
 
     switch (platform) {
       case 'fantrax':
-        // Fantrax doesn't support user league listing without auth
-        // Return mock data for demo purposes
-        leagues = [
-          {
-            id: 'demo-fantrax-1',
-            name: 'My Fantrax League',
-            sport: 'NBA',
-            teamCount: 12
-          }
-        ];
+        if (userSecretId) {
+          // Real Fantrax API integration
+          const integration = createPlatformIntegration('fantrax');
+          leagues = await integration.getUserLeagues(userSecretId);
+        } else {
+          // Return error - userSecretId required for Fantrax
+          return res.status(400).json({ 
+            error: 'userSecretId required for Fantrax leagues. Find this in your Fantrax User Profile.' 
+          });
+        }
         break;
 
       case 'sleeper':
-        // For demo, return mock data
-        // In production, would require user authentication
-        leagues = [
-          {
-            id: 'demo-sleeper-1',
-            name: 'Sleeper Dynasty League',
-            sport: 'NFL',
-            teamCount: 10
-          },
-          {
-            id: 'demo-sleeper-2', 
-            name: 'Sleeper Redraft League',
-            sport: 'NFL',
-            teamCount: 12
-          }
-        ];
+        if (userId) {
+          // Real Sleeper API integration
+          const integration = createPlatformIntegration('sleeper');
+          const currentSeason = season || await integration.getCurrentSeason();
+          leagues = await integration.getUserLeagues(userId, currentSeason);
+        } else {
+          // Return error - userId required for Sleeper
+          return res.status(400).json({ 
+            error: 'userId required for Sleeper leagues. This is your numeric Sleeper user ID.' 
+          });
+        }
         break;
 
       case 'yahoo':
-        // Yahoo requires OAuth authentication
-        leagues = [
-          {
-            id: 'demo-yahoo-1',
-            name: 'Yahoo Fantasy League',
-            sport: 'NFL',
-            teamCount: 10
-          }
-        ];
-        break;
+        // Yahoo requires OAuth authentication - not implemented yet
+        return res.status(501).json({ 
+          error: 'Yahoo integration coming soon. OAuth authentication required.' 
+        });
 
       case 'espn':
-        // ESPN requires cookies/authentication
-        leagues = [
-          {
-            id: 'demo-espn-1',
-            name: 'ESPN Fantasy League',
-            sport: 'NFL',
-            teamCount: 12
-          }
-        ];
-        break;
+        // ESPN requires cookies/authentication - not implemented yet
+        return res.status(501).json({ 
+          error: 'ESPN integration coming soon. Authentication cookies required.' 
+        });
 
       default:
         return res.status(400).json({ error: 'Unsupported platform' });
