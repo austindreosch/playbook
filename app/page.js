@@ -7,6 +7,7 @@ import React, { useEffect } from 'react';
 // import DetailBlock from "../components/DetailBlock";
 import { ThreeCircles } from 'react-loader-spinner';
 
+import DynamicNavbar from '@/components/Interface/DynamicNavbar';
 import FeatureRoadmap from '@/components/LandingPage/feature-roadmap';
 import Features from '@/components/LandingPage/features';
 import FeaturesBlocks from '@/components/LandingPage/features-blocks';
@@ -21,6 +22,9 @@ export default function Home() {
   try {
     return (
       <>
+        <div className="container mx-auto px-3 2xl:px-0 py-2">
+          <DynamicNavbar />
+        </div>
         <Hero />
         <Features />
         <FeaturesBlocks />

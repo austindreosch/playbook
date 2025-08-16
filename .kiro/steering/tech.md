@@ -5,7 +5,7 @@
 - **Runtime**: React 18, TypeScript/JavaScript
 - **Database**: MongoDB (direct driver, no Mongoose)
 - **Authentication**: Auth0
-- **State Management**: Zustand (3 main stores)
+- **State Management**: Zustand
 - **Styling**: Tailwind CSS with custom design system
 
 ## UI Component Libraries

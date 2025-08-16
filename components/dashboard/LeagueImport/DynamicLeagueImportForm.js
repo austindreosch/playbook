@@ -25,11 +25,12 @@ import {
   RiGameLine,
   RiFlag3Line
 } from '@remixicon/react';
-import * as Badge from '@/components/ui/badge';
-import * as Button from '@/components/ui/button';
-import * as CompactButton from '@/components/ui/compact-button';
-import * as Input from '@/components/ui/input';
-import * as Label from '@/components/ui/label';
+import { Badge } from '@/components/alignui/badge';
+import { Button } from '@/components/alignui/button';
+import { CompactButton } from '@/components/alignui/compact-button';
+import { compactButtonVariants } from '@/components/alignui/compact-button';
+import { Input, inputVariants } from '@/components/alignui/input';
+import { Label } from '@/components/alignui/label';
 import { Loader2, AlertCircle, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -80,9 +81,9 @@ const InputWithIcons = ({
   ...props
 }) => {
   const [isFocused, setIsFocused] = React.useState(false);
-  const { input } = Input.inputVariants();
+  const { input } = inputVariants();
   const { root: compactButtonRoot, icon: compactButtonIcon } =
-    CompactButton.compactButtonVariants({ variant: 'ghost' });
+    compactButtonVariants({ variant: 'ghost' });
 
   const handleClear = () => {
     const event = {
@@ -115,14 +116,14 @@ const InputWithIcons = ({
               onClick={handleClear}
               className={compactButtonRoot()}
             >
-              <RiCloseLine className={compactButtonIcon()} />
+              <CompactButton.Icon as={RiCloseLine} className={compactButtonIcon()} />
             </CompactButton.Root>
             <CompactButton.Root
               variant='ghost'
               onClick={handleComplete}
               className={compactButtonRoot()}
             >
-              <RiCheckLine className={compactButtonIcon()} />
+              <CompactButton.Icon as={RiCheckLine} className={compactButtonIcon()} />
             </CompactButton.Root>
           </>
         )}
@@ -769,15 +770,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
 
         {/* Action buttons */}
         <div className="flex w-full items-center justify-end gap-3 mt-6 pt-6 border-t border-stroke-soft-200">
-          <Button.Root
+          <Button
             variant='neutral'
             mode='stroke'
             onClick={onCancel}
             className='flex-1'
           >
             Cancel
-          </Button.Root>
-          <Button.Root
+          </Button>
+          <Button
             variant='primary'
             onClick={handleSubmit}
             disabled={loading}
@@ -785,7 +786,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }) {
           >
             {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
             Import League
-          </Button.Root>
+          </Button>
         </div>
       </div>
     </div>
