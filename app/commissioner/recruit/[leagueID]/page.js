@@ -174,7 +174,7 @@ export default function CommissionerRecruitPage() {
     const header = `${entryFee} - ${sport} ${format} ${totalTeams}-Team ${matchup} ${scoring}, ${platform} - ${availableSpots} Spot${availableSpots === 1 ? '' : 's'} Available`;
     const line2 = `Looking for ${availableSpots} active, committed owners to take over existing teams in an established dynasty basketball league running for ${yearsRunning} years. ${discordRequired}`;
     const line3 = `${matchup} - ${totalTeams}-Team - True ${format}`;
-    const line4 = `Standard 9-cat - FG%, FT%`;
+    const line4 = `Standard 9-cat - FG%, FT%, 3PM, REB, AST, STL, BLK, TO, PTS`;
     const line5 = premiumNote;
     const line6 = `${rosterPretty}`;
     const line7 = `View full details for all available teams, league settings, and our comprehensive league rulebook here:`;
