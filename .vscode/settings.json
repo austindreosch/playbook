@@ -90,5 +90,6 @@
             "a",
             "g"
         ]
-    }
+    },
+    "kiroAgent.configureMCP": "Enabled"
 }
