@@ -3,6 +3,78 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
 export const texts = {
+
+// here
+
+  // Custom text size aliases for easier migration
+  // 'big': ['1.125rem', { lineHeight: '1.5rem', letterSpacing: '0em', fontWeight: '700' }], // text-title-h5 + font-bold
+  // 'header': ['0.984375rem', { lineHeight: '1.3125rem', letterSpacing: '-0.015em', fontWeight: '550' }], // text-label-xl
+  // 'label': ['0.84375rem', { lineHeight: '1.125rem', letterSpacing: '-0.01em', fontWeight: '550' }], // text-label-lg
+  // 'number': ['0.84375rem', { lineHeight: '1.125rem', letterSpacing: '0em', fontWeight: '600', fontVariantNumeric: 'tabular-nums' }], // text-numbers-lg
+  // 'badge': ['0.75rem', { lineHeight: '1.125rem', letterSpacing: '-0.0085em', fontWeight: '550' }], // text-label-md
+  // 'paragraph': ['0.7875rem', { lineHeight: '1.125rem', letterSpacing: '-0.005em', fontWeight: '400' }], // text-paragraph-md
+  // 'sublabel': ['0.6875rem', { lineHeight: '1.03125rem', letterSpacing: '-0.005em', fontWeight: '400' }], // text-paragraph-sm
+  // 'tight': ['0.5625rem', { lineHeight: '0.75rem', letterSpacing: '-0.006em', fontWeight: '400' }], // text-subheading-xs
+
+
+  'big': ['1.125rem', { 
+    lineHeight: '1.5rem', 
+    letterSpacing: '0em', 
+    fontWeight: '700',
+    color: 'var(--black)' // Darkest for main headings
+  }],
+
+  'header': ['0.984375rem', { 
+    lineHeight: '1.3125rem', 
+    letterSpacing: '-0.015em', 
+    fontWeight: '550',
+    color: 'var(--black)' // Also dark for section headers
+  }],
+
+  'label': ['0.84375rem', { 
+    lineHeight: '1.125rem', 
+    letterSpacing: '-0.01em', 
+    fontWeight: '550',
+    color: 'var(--black)' // Medium gray for labels (text-sub-600)
+  }],
+
+  'number': ['0.84375rem', { 
+    lineHeight: '1.125rem', 
+    letterSpacing: '0em', 
+    fontWeight: '600', 
+    fontVariantNumeric: 'tabular-nums',
+    color: 'var(--black)' // Dark for data emphasis
+  }],
+
+  'paragraph': ['0.7875rem', { 
+    lineHeight: '1.125rem', 
+    letterSpacing: '-0.005em', 
+    fontWeight: '400',
+    color: 'var(--gray-400)'
+  }],
+
+  'badge': ['0.75rem', { 
+    lineHeight: '1.125rem', 
+    letterSpacing: '-0.0085em', 
+    fontWeight: '550',
+    color: 'var(--black)' // Lighter for secondary info 
+  }],
+
+  'sublabel': ['0.6875rem', { 
+    lineHeight: '1.03125rem', 
+    letterSpacing: '-0.005em', 
+    fontWeight: '400',
+    color: 'var(--gray-300)' // Lighter still for tertiary text 
+  }],
+
+  'tight': ['0.5625rem', { 
+    lineHeight: '0.75rem', 
+    letterSpacing: '-0.006em', 
+    fontWeight: '400',
+    color: 'var(--gray-300)' // Lightest for fine print
+  }],
+
+
   'title-h0': [
     '3.5rem', // 4.666666666666667rem * 0.75
     {

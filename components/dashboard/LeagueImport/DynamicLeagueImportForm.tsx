@@ -5,7 +5,6 @@ import {
   RiGlobalLine,
   RiHashtag,
   RiFootballLine,
-  RiBasketballLine,
   RiTrophyLine,
   RiBarChartLine,
   RiGameLine,
@@ -15,25 +14,16 @@ import {
   RiCoinLine,
   RiExchangeLine,
   RiListCheck,
-  RiAtLine,
-  RiArrowLeftSLine,
-  RiArrowRightSLine,
-  RiCalendarCheckLine,
-  RiCloseLine,
-  RiForbidLine,
-  RiSunLine
+  RiAtLine
 } from '@remixicon/react';
 import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
 import * as Popover from '@/components/alignui/popover';
 import * as DatepickerPrimivites from '@/components/alignui/ui/datepicker';
-import * as CompactButton from '@/components/alignui/compact-button';
 import { InfoIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format, isSameDay } from 'date-fns';
-import type { DateRange } from 'react-day-picker';
-import { cn } from '@/utils/cn';
+import { format } from 'date-fns';
 
 interface Platform {
   id: string;
@@ -64,6 +54,7 @@ interface FormData {
   contracts: boolean;
   puntCategories: boolean;
   gamesLimit: number | null;
+  hasGamesLimit: boolean;
   scoringMethod: string;
   playoffSchedule: string;
   tradeDeadline: Date | undefined;
@@ -86,11 +77,17 @@ const PLATFORMS: Platform[] = [
 const SPORTS = ['NBA', 'MLB', 'NFL'];
 const LEAGUE_TYPES = ['Redraft', 'Dynasty', 'Keeper'];
 const MATCHUP_TYPES = ['H2H', 'Roto', 'Total Points'];
-const SCORING_TYPES = ['Points', 'Categories'];
+const SCORING_TYPES = ['Categories', 'Points'];
 const SCORING_METHODS = ['Each Category', 'Most Categories'];
 
 const TEAM_STATUSES = ['Rebuilding', 'Flexible', 'Contending'];
-const PLAYOFF_SCHEDULES = ['Standard', 'Custom'];
+
+// Sport-specific playoff schedules
+const PLAYOFF_SCHEDULES = {
+  NFL: ['Week 15', 'Week 16', 'Week 17', 'Week 18'],
+  NBA: ['Week 18', 'Week 19', 'Week 20', 'Week 21'],
+  MLB: ['Week 18', 'Week 19', 'Week 20', 'Week 21']
+};
 
 // Helper function to extract league ID from URL
 const extractLeagueId = (input: string, platform: string): string => {
@@ -161,6 +158,31 @@ const getPlatformHelperText = (platform: string): string => {
   }
 };
 
+// Unified setting card component with reasonable height
+function SettingCard({ 
+  icon: Icon, 
+  label, 
+  children,
+  disabled = false 
+}: { 
+  icon: React.ElementType; 
+  label: string; 
+  children: React.ReactNode;
+  disabled?: boolean;
+}) {
+  return (
+    <div className={`h-32 p-4 rounded-lg border bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-50'} flex flex-col`}>
+      <div className="flex flex-col items-center text-center flex-1">
+        <Icon className="size-5 text-gray-600 mb-2" />
+        <label className="text-label-sm text-strong-950 mb-3">{label}</label>
+        <div className="flex-1 flex items-center justify-center w-full">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Checkbox card component for settings
 function CheckboxCard({ 
   icon: Icon, 
@@ -201,9 +223,8 @@ function TradeDatepicker({ value, onChange }: { value: Date | undefined; onChang
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <Button.Root variant="neutral" mode="stroke" className="w-full justify-start text-left">
-          <RiCalendarLine className="size-4 mr-2" />
-          {value ? format(value, 'PPP') : 'Select trade deadline date'}
+        <Button.Root variant="neutral" mode="stroke" className="w-full justify-center text-center text-xs px-2 py-1">
+          {value ? format(value, 'MMM d') : 'Select Date'}
         </Button.Root>
       </Popover.Trigger>
       <Popover.Content className="w-auto p-0">
@@ -214,7 +235,6 @@ function TradeDatepicker({ value, onChange }: { value: Date | undefined; onChang
             onChange(date);
             setOpen(false);
           }}
-          initialFocus
         />
       </Popover.Content>
     </Popover.Root>
@@ -238,9 +258,10 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     decay: false,
     contracts: false,
     puntCategories: false,
-    gamesLimit: null,
-    scoringMethod: '',
-    playoffSchedule: '',
+    gamesLimit: 40,
+    hasGamesLimit: false,
+    scoringMethod: SCORING_METHODS[0],
+    playoffSchedule: PLAYOFF_SCHEDULES.NFL[0],
     tradeDeadline: undefined,
     salary: false,
     faab: false
@@ -252,6 +273,19 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     const platform = PLATFORMS.find(p => p.id === formData.platform);
     return platform ? platform.sports : SPORTS;
   }, [formData.platform]);
+
+  // Get playoff schedules based on sport
+  const availablePlayoffSchedules = React.useMemo(() => {
+    if (!formData.sport) return PLAYOFF_SCHEDULES.NFL;
+    return PLAYOFF_SCHEDULES[formData.sport as keyof typeof PLAYOFF_SCHEDULES] || PLAYOFF_SCHEDULES.NFL;
+  }, [formData.sport]);
+
+  // Update playoff schedule when sport changes
+  React.useEffect(() => {
+    if (formData.sport && availablePlayoffSchedules.length > 0) {
+      setFormData(prev => ({ ...prev, playoffSchedule: availablePlayoffSchedules[0] }));
+    }
+  }, [formData.sport, availablePlayoffSchedules]);
 
   // Handle platform change
   const handlePlatformChange = (platform: string) => {
@@ -358,7 +392,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
             {/* LEFT COLUMN - Main Questions */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-gray-900">League Information</h2>
+              <h2 className="text-label-xl font-semibold text-gray-900">League Information</h2>
 
               {/* Step 1: Platform */}
               <div className="space-y-2">
@@ -368,7 +402,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
                 <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
                   <SegmentedControl.List
-                    className="inline-flex w-128 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
+                    className="inline-flex w-128 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
                     activeValue={formData.platform}
                     floatingBgClassName="!bg-blue !text-white"
                   >
@@ -387,180 +421,221 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               </div>
 
               {/* Step 2: League ID */}
-              {formData.platform && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <RiHashtag className="size-5 text-gray-600" />
-                    <label className="text-label-lg text-strong-950">League ID *</label>
-                  </div>
-                  <Input.Root>
-                    <Input.Wrapper>
-                      <Input.Input
-                        type="text"
-                        value={formData.leagueId}
-                        onChange={(e) => handleLeagueIdChange(e.target.value)}
-                        placeholder="Paste league URL or ID..."
-                        className="text-sm"
-                      />
-                    </Input.Wrapper>
-                  </Input.Root>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <RiHashtag className="size-5 text-gray-600" />
+                  <label className="text-label-lg text-strong-950">League ID *</label>
+                </div>
+                <Input.Root>
+                  <Input.Wrapper>
+                    <Input.Input
+                      type="text"
+                      value={formData.leagueId}
+                      onChange={(e) => handleLeagueIdChange(e.target.value)}
+                      placeholder="Paste league URL or ID..."
+                      className="text-sm"
+                      disabled={!formData.platform}
+                    />
+                  </Input.Wrapper>
+                </Input.Root>
+                {formData.platform && (
                   <p className="text-paragraph-md text-sub-600 flex items-center gap-2">
                     <InfoIcon className="hw-icon-xs" />
                     {getPlatformHelperText(formData.platform)}
                   </p>
-                  {detectedPlatform && (
-                    <div className="text-xs text-blue-600">
-                      Detected Platform: {PLATFORMS.find(p => p.id === detectedPlatform)?.name} • League ID: {formData.leagueId}
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+                {detectedPlatform && (
+                  <div className="text-xs text-blue-600">
+                    Detected Platform: {PLATFORMS.find(p => p.id === detectedPlatform)?.name} • League ID: {formData.leagueId}
+                  </div>
+                )}
+              </div>
 
               {/* Step 3: Sport */}
-              {formData.leagueId && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <RiFootballLine className="size-5 text-gray-600" />
-                    <label className="text-label-lg text-strong-950">Sport *</label>
-                  </div>
-                  <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
-                    <SegmentedControl.List
-                      className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
-                      activeValue={formData.sport}
-                      floatingBgClassName="!bg-blue !text-white"
-                    >
-                      {SPORTS.map(sport => {
-                        const isAvailable = availableSports.includes(sport);
-                        return (
-                          <SegmentedControl.Trigger
-                            key={sport}
-                            value={sport}
-                            disabled={!isAvailable}
-                            className={`w-32 data-[state=active]:text-white ${!isAvailable ? 'cursor-not-allowed opacity-50 text-gray-400 relative group' : 'relative group'}`}
-                            title={!isAvailable ? `${sport} support coming soon!` : ''}
-                          >
-                            {sport === 'NBA' && <RiBasketballLine className="hw-icon-xs shrink-0" />}
-                            {sport === 'MLB' && <RiBasketballLine className="hw-icon-xs shrink-0" />}
-                            {sport === 'NFL' && <RiFootballLine className="hw-icon-xs shrink-0" />}
-                            <span className="text-label-lg">{sport}</span>
-                          </SegmentedControl.Trigger>
-                        );
-                      })}
-                    </SegmentedControl.List>
-                  </SegmentedControl.Root>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <RiFootballLine className="size-5 text-gray-600" />
+                  <label className="text-label-lg text-strong-950">Sport *</label>
                 </div>
-              )}
+                <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
+                  <SegmentedControl.List
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    activeValue={formData.sport}
+                    floatingBgClassName="!bg-blue !text-white"
+                  >
+                    {SPORTS.map(sport => {
+                      const isAvailable = availableSports.includes(sport);
+                      return (
+                        <SegmentedControl.Trigger
+                          key={sport}
+                          value={sport}
+                          disabled={!isAvailable || !formData.platform}
+                          className={`w-32 data-[state=active]:text-white ${!isAvailable ? 'cursor-not-allowed opacity-50 text-gray-400 relative group' : 'relative group'}`}
+                          title={!isAvailable ? `${sport} support coming soon!` : ''}
+                        >
+                    
+                          <span className="text-label-lg">{sport}</span>
+                        </SegmentedControl.Trigger>
+                      );
+                    })}
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              </div>
 
               {/* Step 4: League Type */}
-              {formData.sport && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <RiTrophyLine className="size-5 text-gray-600" />
-                    <label className="text-label-lg text-strong-950">League Type *</label>
-                  </div>
-                  <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
-                    <SegmentedControl.List
-                      className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
-                      activeValue={formData.leagueType}
-                      floatingBgClassName="!bg-blue !text-white"
-                    >
-                      {LEAGUE_TYPES.map(type => (
-                        <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white">
-                          <span className="text-label-lg">{type}</span>
-                        </SegmentedControl.Trigger>
-                      ))}
-                    </SegmentedControl.List>
-                  </SegmentedControl.Root>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <RiTrophyLine className="size-5 text-gray-600" />
+                  <label className="text-label-lg text-strong-950">League Type *</label>
                 </div>
-              )}
+                <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
+                  <SegmentedControl.List
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    activeValue={formData.leagueType}
+                    floatingBgClassName="!bg-blue !text-white"
+                  >
+                    {LEAGUE_TYPES.map(type => (
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white" disabled={!formData.sport}>
+                        <span className="text-label-lg">{type}</span>
+                      </SegmentedControl.Trigger>
+                    ))}
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              </div>
 
               {/* Step 5: Scoring Type */}
-              {formData.leagueType && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <RiBarChartLine className="size-5 text-gray-600" />
-                    <label className="text-label-lg text-strong-950">Scoring Type *</label>
-                  </div>
-                  <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
-                    <SegmentedControl.List
-                      className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
-                      activeValue={formData.scoring}
-                      floatingBgClassName="!bg-blue !text-white"
-                    >
-                      {SCORING_TYPES.map(type => (
-                        <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white">
-                          <span className="text-label-lg">{type}</span>
-                        </SegmentedControl.Trigger>
-                      ))}
-                    </SegmentedControl.List>
-                  </SegmentedControl.Root>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <RiBarChartLine className="size-5 text-gray-600" />
+                  <label className="text-label-lg text-strong-950">Scoring Type *</label>
                 </div>
-              )}
+                <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
+                  <SegmentedControl.List
+                    className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    activeValue={formData.scoring}
+                    floatingBgClassName="!bg-blue !text-white"
+                  >
+                    {SCORING_TYPES.map(type => (
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white" disabled={!formData.leagueType}>
+                        <span className="text-label-lg">{type}</span>
+                      </SegmentedControl.Trigger>
+                    ))}
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              </div>
 
               {/* Step 6: Matchup Type */}
-              {formData.scoring && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <RiGameLine className="size-5 text-gray-600" />
-                    <label className="text-label-lg text-strong-950">Matchup Type *</label>
-                  </div>
-                  <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
-                    <SegmentedControl.List
-                      className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
-                      activeValue={formData.matchup}
-                      floatingBgClassName="!bg-blue !text-white"
-                    >
-                      {MATCHUP_TYPES.map(type => (
-                        <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white">
-                          <span className="text-label-lg">{type}</span>
-                        </SegmentedControl.Trigger>
-                      ))}
-                    </SegmentedControl.List>
-                  </SegmentedControl.Root>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <RiGameLine className="size-5 text-gray-600" />
+                  <label className="text-label-lg text-strong-950">Matchup Type *</label>
                 </div>
-              )}
+                <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
+                  <SegmentedControl.List
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    activeValue={formData.matchup}
+                    floatingBgClassName="!bg-blue !text-white"
+                  >
+                    {MATCHUP_TYPES.map(type => (
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white" disabled={!formData.scoring}>
+                        <span className="text-label-lg">{type}</span>
+                      </SegmentedControl.Trigger>
+                    ))}
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              </div>
 
-              {/* Step 7: Additional Options (Always Visible) */}
-              {formData.matchup && (
-                <div className="space-y-6">
-
-                  {/* Trade Deadline */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <RiExchangeLine className="size-5 text-gray-600" />
-                      <label className="text-label-lg text-strong-950">Trade Deadline</label>
-                    </div>
-                    <TradeDatepicker 
-                      value={formData.tradeDeadline}
-                      onChange={(date) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
-                    />
-                  </div>
-
-                  {/* Settings Cards */}
-                  <div className="space-y-3">
-                    <h3 className="text-label-lg text-strong-950">Additional Options</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <CheckboxCard 
-                        icon={RiCoinLine}
-                        label="Salary Cap"
-                        checked={formData.salary}
-                        onChange={(checked) => setFormData(prev => ({ ...prev, salary: checked }))}
-                      />
-                      <CheckboxCard 
-                        icon={RiCoinLine}
-                        label="FAAB"
-                        checked={formData.faab}
-                        onChange={(checked) => setFormData(prev => ({ ...prev, faab: checked }))}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* RIGHT COLUMN - Conditional Questions */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-gray-900">Additional Settings</h2>
+              <h2 className="text-label-xl font-semibold text-gray-900">Additional Settings</h2>
+
+              {/* Settings Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Trade Deadline */}
+                <SettingCard icon={RiExchangeLine} label="Trade Deadline">
+                  <TradeDatepicker 
+                    value={formData.tradeDeadline}
+                    onChange={(date) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
+                  />
+                </SettingCard>
+
+                {/* Salary Cap */}
+                <SettingCard icon={RiCoinLine} label="Salary Cap">
+                  <input
+                    type="checkbox"
+                    checked={formData.salary}
+                    onChange={(e) => setFormData(prev => ({ ...prev, salary: e.target.checked }))}
+                    className="h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                </SettingCard>
+
+                {/* FAAB */}
+                <SettingCard icon={RiCoinLine} label="FAAB">
+                  <input
+                    type="checkbox"
+                    checked={formData.faab}
+                    onChange={(e) => setFormData(prev => ({ ...prev, faab: e.target.checked }))}
+                    className="h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                </SettingCard>
+
+                {/* Categories Scoring (conditional) */}
+                {formData.scoring === 'Categories' && (
+                  <SettingCard icon={RiBarChartLine} label="Categories Scoring">
+                    <select
+                      value={formData.scoringMethod}
+                      onChange={(e) => setFormData(prev => ({ ...prev, scoringMethod: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {SCORING_METHODS.map(method => (
+                        <option key={method} value={method}>{method}</option>
+                      ))}
+                    </select>
+                  </SettingCard>
+                )}
+
+                {/* Playoff Schedule (conditional) */}
+                {formData.matchup === 'H2H' && (
+                  <SettingCard icon={RiCalendarLine} label="Playoff Schedule">
+                    <select
+                      value={formData.playoffSchedule}
+                      onChange={(e) => setFormData(prev => ({ ...prev, playoffSchedule: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {availablePlayoffSchedules.map(schedule => (
+                        <option key={schedule} value={schedule}>{schedule}</option>
+                      ))}
+                    </select>
+                  </SettingCard>
+                )}
+
+                {/* Games Limit (conditional) */}
+                {formData.scoring === 'Categories' && (
+                  <SettingCard icon={RiGameLine} label="Games Limit">
+                    <div className="w-full space-y-2">
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.hasGamesLimit}
+                          onChange={(e) => setFormData(prev => ({ ...prev, hasGamesLimit: e.target.checked }))}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                      </div>
+                      {formData.hasGamesLimit && (
+                        <input
+                          type="number"
+                          value={formData.gamesLimit || 40}
+                          onChange={(e) => setFormData(prev => ({ ...prev, gamesLimit: e.target.value ? parseInt(e.target.value) : 40 }))}
+                          placeholder="40"
+                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+                        />
+                      )}
+                    </div>
+                  </SettingCard>
+                )}
+              </div>
 
               {/* Dynasty/Keeper Conditional Fields */}
               {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
@@ -573,7 +648,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     </div>
                     <SegmentedControl.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))}>
                       <SegmentedControl.List
-                        className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
+                        className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
                         activeValue={formData.teamStatus}
                         floatingBgClassName="!bg-blue !text-white"
                       >
@@ -612,7 +687,6 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-6">
                   {/* Categories Settings Cards */}
                   <div className="space-y-3">
-                    <h3 className="text-label-lg text-strong-950">Categories Options</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <CheckboxCard 
                         icon={RiListCheck}
@@ -623,75 +697,13 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     </div>
                   </div>
 
-                  {/* Games Limit */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <RiCalendarLine className="size-5 text-gray-600" />
-                      <label className="text-label-lg text-strong-950">Games Limit</label>
-                    </div>
-                    <Input.Root>
-                      <Input.Wrapper>
-                        <Input.Input
-                          type="number"
-                          value={formData.gamesLimit || ''}
-                          onChange={(e) => setFormData(prev => ({ ...prev, gamesLimit: e.target.value ? parseInt(e.target.value) : null }))}
-                          placeholder="e.g., 82"
-                          className="text-sm"
-                        />
-                      </Input.Wrapper>
-                    </Input.Root>
-                  </div>
 
-                  {/* Scoring Method */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <RiBarChartLine className="size-5 text-gray-600" />
-                      <label className="text-label-lg text-strong-950">Scoring Method</label>
-                    </div>
-                    <SegmentedControl.Root value={formData.scoringMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, scoringMethod: value }))}>
-                      <SegmentedControl.List
-                        className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
-                        activeValue={formData.scoringMethod}
-                        floatingBgClassName="!bg-blue !text-white"
-                      >
-                        {SCORING_METHODS.map(method => (
-                          <SegmentedControl.Trigger key={method} value={method} className="w-32 data-[state=active]:text-white">
-                            <span className="text-label-lg">{method}</span>
-                          </SegmentedControl.Trigger>
-                        ))}
-                      </SegmentedControl.List>
-                    </SegmentedControl.Root>
-                  </div>
                 </div>
               )}
 
-              {/* H2H Conditional Fields */}
-              {formData.matchup === 'Head-to-Head (H2H)' && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <RiCalendarLine className="size-5 text-gray-600" />
-                    <label className="text-label-lg text-strong-950">Playoff Schedule</label>
-                  </div>
-                  <SegmentedControl.Root value={formData.playoffSchedule} onValueChange={(value) => setFormData(prev => ({ ...prev, playoffSchedule: value }))}>
-                    <SegmentedControl.List
-                      className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-white ring-1 ring-inset ring-gray-300"
-                      activeValue={formData.playoffSchedule}
-                      floatingBgClassName="!bg-blue !text-white"
-                    >
-                      {PLAYOFF_SCHEDULES.map(schedule => (
-                        <SegmentedControl.Trigger key={schedule} value={schedule} className="w-32 data-[state=active]:text-white">
-                          <span className="text-label-lg">{schedule}</span>
-                        </SegmentedControl.Trigger>
-                      ))}
-                    </SegmentedControl.List>
-                  </SegmentedControl.Root>
-                </div>
-              )}
 
               {/* Empty state when no conditional fields */}
-              {!((formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') ||
-                formData.scoring === 'Categories' ||
-                formData.matchup === 'Head-to-Head (H2H)') && (
+              {!(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
                   <div className="text-center py-12 text-gray-500">
                     <RiSettings3Line className="size-12 mx-auto mb-4 opacity-30" />
                     <p className="text-paragraph-md text-sub-600">Additional settings will appear based on your selections</p>
