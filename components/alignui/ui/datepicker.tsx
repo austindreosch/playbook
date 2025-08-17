@@ -6,7 +6,7 @@ import * as React from 'react';
 import { RiArrowLeftSLine, RiArrowRightSLine } from '@remixicon/react';
 import { DayPicker } from 'react-day-picker';
 
-import { compactButtonVariants } from '@/components/ui/compact-button';
+import { compactButtonVariants } from '@/components/alignui/compact-button';
 import { cn } from '@/utils/cn';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
