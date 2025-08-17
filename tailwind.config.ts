@@ -75,262 +75,205 @@ export const texts = {
   }],
 
 
-  'title-h0': [
-    '3.5rem', // 4.666666666666667rem * 0.75
-    {
-      lineHeight: '3.75rem', // 5.333333333333333rem * 0.75
-      letterSpacing: '-0.015em',
-      fontWeight: '600',
-    },
-  ],
-
   'title-h1': [
-    '2.625rem', // 3.5rem * 0.75
+    '3.5rem',
     {
-      lineHeight: '3rem', // 4rem * 0.75
+      lineHeight: '4rem',
       letterSpacing: '-0.01em',
-      fontWeight: '700',
+      fontWeight: '500',
+
     },
   ],
   'title-h2': [
-    '2.25rem', // 3rem * 0.75
+    '3rem',
     {
-      lineHeight: '2.625rem', // 3.5rem * 0.75
+      lineHeight: '3.5rem',
       letterSpacing: '-0.01em',
-      fontWeight: '700',
+      fontWeight: '500',
+
     },
   ],
   'title-h3': [
-    '1.875rem', // 2.5rem * 0.75
+    '2.5rem',
     {
-      lineHeight: '2.25rem', // 3rem * 0.75
+      lineHeight: '3rem',
       letterSpacing: '-0.01em',
-      fontWeight: '700',
+      fontWeight: '500',
+
     },
   ],
   'title-h4': [
-    '1.5rem', // 2rem * 0.75
+    '2rem',
     {
-      lineHeight: '1.875rem', // 2.5rem * 0.75
+      lineHeight: '2.5rem',
       letterSpacing: '-0.005em',
       fontWeight: '500',
+
     },
   ],
   'title-h5': [
-    '1.125rem', // 1.5rem * 0.75
+    '1.5rem',
     {
-      lineHeight: '1.5rem', // 2rem * 0.75
+      lineHeight: '2rem',
       letterSpacing: '0em',
       fontWeight: '500',
+
     },
   ],
   'title-h6': [
-    '1.375rem', // 1.5rem * 0.75
+    '1.25rem',
     {
-      lineHeight: '1.375rem', // 1.6666666666666667rem * 0.75
+      lineHeight: '1.75rem',
       letterSpacing: '0em',
       fontWeight: '500',
+
     },
   ],
-  'title-h7': [
-    '0.9375rem', // 1.25rem * 0.75
+  'label-xl': [
+    '1.5rem',
     {
-      lineHeight: '1.3125rem', // 1.75rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '500',
-    },
-  ],
-  'label-2xl': [
-    '1.125rem', // 1.5rem * 0.75
-    {
-      lineHeight: '1.5rem', // 2rem * 0.75
+      lineHeight: '2rem',
       letterSpacing: '-0.015em',
-      fontWeight: '550',
+      fontWeight: '500',
+
     },
   ],
-     'label-xl': [
-     '0.984375rem', // 1.3125rem * 0.75 (between lg 0.84375rem and 2xl 1.125rem)
-     {
-       lineHeight: '1.3125rem', // 1.75rem * 0.75
-       letterSpacing: '-0.015em',
-       fontWeight: '550',
-     },
-   ],
   'label-lg': [
-    '0.84375rem', // 1.125rem * 0.75
+    '1.125rem',
     {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.01em',
-      fontWeight: '550',
+      lineHeight: '1.5rem',
+      letterSpacing: '-0.015em',
+      fontWeight: '500',
+
     },
   ],
   'label-md': [
-    '0.75rem', // 1rem * 0.75
+    '1rem',
     {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.0085em',
-      fontWeight: '550',
+      lineHeight: '1.5rem',
+      letterSpacing: '-0.011em',
+      fontWeight: '500',
+
     },
   ],
   'label-sm': [
-    '0.65625rem', // 0.875rem * 0.75
+    '.875rem',
     {
-      lineHeight: '0.9375rem', // 1.25rem * 0.75
+      lineHeight: '1.25rem',
       letterSpacing: '-0.006em',
-      fontWeight: '550',
+      fontWeight: '500',
+
     },
   ],
   'label-xs': [
-    '0.5625rem', // 0.75rem * 0.75
+    '.75rem',
     {
-      lineHeight: '0.75rem', // 1rem * 0.75
+      lineHeight: '1rem',
       letterSpacing: '0em',
-      fontWeight: '550',
+      fontWeight: '500',
+
     },
   ],
   'paragraph-xl': [
-    '1.25rem', // 1.5rem * 0.825 (+10%)
+    '1.5rem',
     {
-      lineHeight: '1.65rem', // 2rem * 0.825 (+10%)
-      letterSpacing: '-0.005em',
+      lineHeight: '2rem',
+      letterSpacing: '-0.015em',
       fontWeight: '400',
+
     },
   ],
   'paragraph-lg': [
-    '0.8625rem', // 1.125rem * 0.825 (+10%)
+    '1.125rem',
     {
-      lineHeight: '1.2375rem', // 1.5rem * 0.825 (+10%)
-      letterSpacing: '-0.005em',
+      lineHeight: '1.5rem',
+      letterSpacing: '-0.015em',
       fontWeight: '400',
+
     },
   ],
   'paragraph-md': [
-    '0.7875rem', // 1rem * 0.825 (+10%)
+    '1rem',
     {
-      lineHeight: '1.125rem', // 1.5rem * 0.825 (+10%)
-      letterSpacing: '-0.005em',
+      lineHeight: '1.5rem',
+      letterSpacing: '-0.011em',
       fontWeight: '400',
+
     },
   ],
   'paragraph-sm': [
-    '0.6875rem', // 0.875rem * 0.825 (+10%)
+    '.875rem',
     {
-      lineHeight: '1.03125rem', // 1.25rem * 0.825 (+10%)
-      letterSpacing: '-0.005em',
+      lineHeight: '1.25rem',
+      letterSpacing: '-0.006em',
       fontWeight: '400',
+
     },
   ],
   'paragraph-xs': [
-    '0.59375rem', // 0.75rem * 0.825 (+10%)
+    '.75rem',
     {
-      lineHeight: '0.825rem', // 1rem * 0.825 (+10%)
-      letterSpacing: '-0.005em',
+      lineHeight: '1rem',
+      letterSpacing: '0em',
       fontWeight: '400',
+
     },
   ],
   'subheading-md': [
-    '0.75rem', // 1rem * 0.75
+    '1rem',
     {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '-0.006em',
+      lineHeight: '1.5rem',
+      letterSpacing: '0.06em',
       fontWeight: '500',
+
     },
   ],
   'subheading-sm': [
-    '0.65625rem', // 0.875rem * 0.75
+    '.875rem',
     {
-      lineHeight: '0.9375rem', // 1.25rem * 0.75
-      letterSpacing: '-0.006em',
+      lineHeight: '1.25rem',
+      letterSpacing: '0.06em',
       fontWeight: '500',
+
     },
   ],
   'subheading-xs': [
-    '0.5625rem', // 0.75rem * 0.75
+    '.75rem',
     {
-      lineHeight: '0.75rem', // 1rem * 0.75
-      letterSpacing: '-0.006em',
+      lineHeight: '1rem',
+      letterSpacing: '0.04em',
       fontWeight: '500',
+
     },
   ],
   'subheading-2xs': [
-    '0.515625rem', // 0.6875rem * 0.75
+    '.6875rem',
     {
-      lineHeight: '0.5625rem', // 0.75rem * 0.75
-      letterSpacing: '-0.006em',
+      lineHeight: '.75rem',
+      letterSpacing: '0.02em',
       fontWeight: '500',
+
     },
   ],
   'doc-label': [
-    '0.84375rem', // 1.125rem * 0.75
+    '1.125rem',
     {
-      lineHeight: '1.5rem', // 2rem * 0.75
+      lineHeight: '2rem',
       letterSpacing: '-0.015em',
       fontWeight: '500',
+
     },
   ],
   'doc-paragraph': [
-    '0.84375rem', // 1.125rem * 0.75
+    '1.125rem',
     {
-      lineHeight: '1.5rem', // 2rem * 0.75
+      lineHeight: '2rem',
       letterSpacing: '-0.015em',
       fontWeight: '400',
+
     },
   ],
-  // Numbers font variants for aligned numerical data
-  'numbers-2xl': [
-    '1.125rem', // 1.5rem * 0.75
-    {
-      lineHeight: '1.5rem', // 2rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '600',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  ],
-  'numbers-xl': [
-    '0.984375rem', // 1.3125rem * 0.75
-    {
-      lineHeight: '1.3125rem', // 1.75rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '600',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  ],
-  'numbers-lg': [
-    '0.84375rem', // 1.125rem * 0.75
-    {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '600',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  ],
-  'numbers-md': [
-    '0.75rem', // 1rem * 0.75
-    {
-      lineHeight: '1.125rem', // 1.5rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '600',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  ],
-  'numbers-sm': [
-    '0.65625rem', // 0.875rem * 0.75
-    {
-      lineHeight: '0.9375rem', // 1.25rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '600',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  ],
-  'numbers-xs': [
-    '0.5625rem', // 0.75rem * 0.75
-    {
-      lineHeight: '0.75rem', // 1rem * 0.75
-      letterSpacing: '0em',
-      fontWeight: '600',
-      fontVariantNumeric: 'tabular-nums',
-    },
-  ],
+
 } as unknown as Record<string, string>;
 
 export const shadows = {
@@ -1241,6 +1184,22 @@ const config = {
     require('@designbycode/tailwindcss-text-shadow'),
     function({ addUtilities }) {
       addUtilities({
+        // Temporary strikethrough for text size migration
+        '.text-title-h1, .text-title-h2, .text-title-h3, .text-title-h4, .text-title-h5, .text-title-h6': {
+          'text-decoration': 'line-through !important',
+        },
+        '.text-label-xl, .text-label-lg, .text-label-md, .text-label-sm, .text-label-xs': {
+          'text-decoration': 'line-through !important',
+        },
+        '.text-paragraph-xl, .text-paragraph-lg, .text-paragraph-md, .text-paragraph-sm, .text-paragraph-xs': {
+          'text-decoration': 'line-through !important',
+        },
+        '.text-subheading-md, .text-subheading-sm, .text-subheading-xs, .text-subheading-2xs': {
+          'text-decoration': 'line-through !important',
+        },
+        '.text-doc-label, .text-doc-paragraph': {
+          'text-decoration': 'line-through !important',
+        },
         '.hw-icon': {
           'width': '1.2rem !important',
           'height': '1.2rem !important',
