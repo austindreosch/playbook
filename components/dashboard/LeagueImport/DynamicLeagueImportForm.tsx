@@ -20,7 +20,7 @@ import {
 import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
-import { Loader2 } from 'lucide-react';
+import { InfoIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Platform {
@@ -155,12 +155,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   const [detectedPlatform, setDetectedPlatform] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
-    platform: 'fantrax', // Default to test active state
+    platform: PLATFORMS[0].id,
     leagueId: '',
-    sport: 'NFL', // Default to test active state
-    leagueType: 'Redraft', // Default to test active state
-    scoring: 'Points', // Default to test active state
-    matchup: 'Head-to-Head (H2H)', // Default to test active state
+    sport: SPORTS[0],
+    leagueType: LEAGUE_TYPES[0],
+    scoring: SCORING_TYPES[0],
+    matchup: MATCHUP_TYPES[0],
     // Conditional fields
     teamStatus: '',
     decay: false,
@@ -292,11 +292,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <RiGlobalLine className="size-5 text-gray-600" />
-                  <label className="text-sm font-medium text-gray-900">Platform *</label>
+                  <label className="text-label-lg text-strong-950">Platform *</label>
                 </div>
                 <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
                   <SegmentedControl.List
                     className="inline-flex w-128 gap-0.5 p-1 rounded-lg"
+                    activeValue={formData.platform}
                   >
                     {PLATFORMS.map(platform => (
                       <SegmentedControl.Trigger
@@ -306,7 +307,6 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         className="w-32"
                       >
                         <span className="text-label-lg">{platform.name}</span>
-                        {!platform.available && <span className="text-xs opacity-60">(Soon)</span>}
                       </SegmentedControl.Trigger>
                     ))}
                   </SegmentedControl.List>
@@ -318,11 +318,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <RiFootballLine className="size-5 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-900">Sport *</label>
+                    <label className="text-label-lg text-strong-950">Sport *</label>
                   </div>
                   <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
                     <SegmentedControl.List
                       className="inline-flex w-96 gap-0.5 p-1 rounded-lg"
+                      activeValue={formData.sport}
                     >
                       {SPORTS.map(sport => {
                         const isAvailable = availableSports.includes(sport);
@@ -351,20 +352,21 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <RiHashtag className="size-5 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-900">League ID *</label>
+                    <label className="text-label-lg text-strong-950">League ID *</label>
                   </div>
                   <Input.Root>
                     <Input.Wrapper>
-                      <input
+                      <Input.Input
                         type="text"
                         value={formData.leagueId}
                         onChange={(e) => handleLeagueIdChange(e.target.value)}
                         placeholder="Paste league URL or ID..."
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="text-sm"
                       />
                     </Input.Wrapper>
                   </Input.Root>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-paragraph-md text-sub-600 flex items-center gap-2">
+                    <InfoIcon className="hw-icon-xs" />
                     {getPlatformHelperText(formData.platform)}
                   </p>
                   {detectedPlatform && (
@@ -380,11 +382,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <RiTrophyLine className="size-5 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-900">League Type *</label>
+                    <label className="text-label-lg text-strong-950">League Type *</label>
                   </div>
                   <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
                     <SegmentedControl.List
                       className="inline-flex w-96 gap-0.5 p-1 rounded-lg"
+                      activeValue={formData.leagueType}
                     >
                       {LEAGUE_TYPES.map(type => (
                         <SegmentedControl.Trigger key={type} value={type} className="w-32">
@@ -401,11 +404,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <RiBarChartLine className="size-5 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-900">Scoring Type *</label>
+                    <label className="text-label-lg text-strong-950">Scoring Type *</label>
                   </div>
                   <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                     <SegmentedControl.List
                       className="inline-flex w-64 gap-0.5 p-1 rounded-lg"
+                      activeValue={formData.scoring}
                     >
                       {SCORING_TYPES.map(type => (
                         <SegmentedControl.Trigger key={type} value={type} className="w-32">
@@ -422,11 +426,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <RiGameLine className="size-5 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-900">Matchup Type *</label>
+                    <label className="text-label-lg text-strong-950">Matchup Type *</label>
                   </div>
                   <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
                     <SegmentedControl.List
                       className="inline-flex w-96 gap-0.5 p-1 rounded-lg"
+                      activeValue={formData.matchup}
                     >
                       {MATCHUP_TYPES.map(type => (
                         <SegmentedControl.Trigger key={type} value={type} className="w-32">
@@ -447,16 +452,16 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <RiExchangeLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Trade Deadline</label>
+                      <label className="text-label-lg text-strong-950">Trade Deadline</label>
                     </div>
                     <Input.Root>
                       <Input.Wrapper>
-                        <input
+                        <Input.Input
                           type="text"
                           value={formData.tradeDeadline}
                           onChange={(e) => setFormData(prev => ({ ...prev, tradeDeadline: e.target.value }))}
                           placeholder="e.g., Week 10, December 1st..."
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="text-sm"
                         />
                       </Input.Wrapper>
                     </Input.Root>
@@ -466,7 +471,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <RiCoinLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Salary Cap?</label>
+                      <label className="text-label-lg text-strong-950">Salary Cap?</label>
                     </div>
                     <input
                       type="checkbox"
@@ -480,7 +485,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <RiCoinLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">FAAB?</label>
+                      <label className="text-label-lg text-strong-950">FAAB?</label>
                     </div>
                     <input
                       type="checkbox"
@@ -504,11 +509,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <RiAtLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Team Status</label>
+                      <label className="text-label-lg text-strong-950">Team Status</label>
                     </div>
                     <SegmentedControl.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))}>
                       <SegmentedControl.List
                         className="inline-flex w-96 gap-0.5 p-1 rounded-lg"
+                        activeValue={formData.teamStatus}
                       >
                         {TEAM_STATUSES.map(status => (
                           <SegmentedControl.Trigger key={status} value={status} className="w-32">
@@ -523,7 +529,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <RiTimeLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Decay?</label>
+                      <label className="text-label-lg text-strong-950">Decay?</label>
                     </div>
                     <input
                       type="checkbox"
@@ -537,7 +543,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <RiSettings3Line className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Contracts?</label>
+                      <label className="text-label-lg text-strong-950">Contracts?</label>
                     </div>
                     <input
                       type="checkbox"
@@ -556,7 +562,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <RiListCheck className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Punt Categories?</label>
+                      <label className="text-label-lg text-strong-950">Punt Categories?</label>
                     </div>
                     <input
                       type="checkbox"
@@ -570,16 +576,16 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <RiCalendarLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Games Limit</label>
+                      <label className="text-label-lg text-strong-950">Games Limit</label>
                     </div>
                     <Input.Root>
                       <Input.Wrapper>
-                        <input
+                        <Input.Input
                           type="number"
                           value={formData.gamesLimit || ''}
                           onChange={(e) => setFormData(prev => ({ ...prev, gamesLimit: e.target.value ? parseInt(e.target.value) : null }))}
                           placeholder="e.g., 82"
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="text-sm"
                         />
                       </Input.Wrapper>
                     </Input.Root>
@@ -589,11 +595,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <RiBarChartLine className="size-5 text-gray-600" />
-                      <label className="text-sm font-medium text-gray-900">Scoring Method</label>
+                      <label className="text-label-lg text-strong-950">Scoring Method</label>
                     </div>
                     <SegmentedControl.Root value={formData.scoringMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, scoringMethod: value }))}>
                       <SegmentedControl.List
                         className="inline-flex w-64 gap-0.5 p-1 rounded-lg"
+                        activeValue={formData.scoringMethod}
                       >
                         {SCORING_METHODS.map(method => (
                           <SegmentedControl.Trigger key={method} value={method} className="w-32">
@@ -611,11 +618,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <RiCalendarLine className="size-5 text-gray-600" />
-                    <label className="text-sm font-medium text-gray-900">Playoff Schedule</label>
+                    <label className="text-label-lg text-strong-950">Playoff Schedule</label>
                   </div>
                   <SegmentedControl.Root value={formData.playoffSchedule} onValueChange={(value) => setFormData(prev => ({ ...prev, playoffSchedule: value }))}>
                     <SegmentedControl.List
                       className="inline-flex w-64 gap-0.5 p-1 rounded-lg"
+                      activeValue={formData.playoffSchedule}
                     >
                       {PLAYOFF_SCHEDULES.map(schedule => (
                         <SegmentedControl.Trigger key={schedule} value={schedule} className="w-32">
@@ -633,7 +641,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 formData.matchup === 'Head-to-Head (H2H)') && (
                   <div className="text-center py-12 text-gray-500">
                     <RiSettings3Line className="size-12 mx-auto mb-4 opacity-30" />
-                    <p className="text-sm">Additional settings will appear based on your selections</p>
+                    <p className="text-paragraph-md text-sub-600">Additional settings will appear based on your selections</p>
                   </div>
                 )}
             </div>
