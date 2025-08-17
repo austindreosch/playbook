@@ -32,7 +32,7 @@
     - Implement detailed progress tracking for league import process
     - _Requirements: 1.2, 1.3, 6.1, 6.2_
 
-- [ ] 4. Create placeholder implementations for Yahoo and ESPN
+- [x] 4. Create placeholder implementations for Yahoo and ESPN
   - Add placeholder Yahoo integration class with "coming soon" error messages
   - Add placeholder ESPN integration class with "coming soon" error messages
   - Update platform selector UI to show Yahoo and ESPN as "coming soon"

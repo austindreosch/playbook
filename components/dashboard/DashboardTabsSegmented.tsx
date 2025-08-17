@@ -44,7 +44,8 @@ export default function DashboardTabsSegmented({ maxWidth }: { maxWidth?: number
       <SegmentedControl.Root value={currentTab} onValueChange={handleValueChange} className="w-full">
         <SegmentedControl.List
           activeValue={currentTab}
-          className="bg-orange-750"
+          className="bg-orange-600 ring-1 ring-inset ring-orange-700"
+          floatingBgClassName="!bg-black !text-white "
         >
           {availableTabs.map(({ id, label, enabled }) => {
             const IconComponent = tabIcons[id as keyof typeof tabIcons];
@@ -53,7 +54,7 @@ export default function DashboardTabsSegmented({ maxWidth }: { maxWidth?: number
                 key={id}
                 value={id}
                 disabled={!enabled}
-                className="text-white disabled:opacity-50 transition-colors data-[state=active]:text-black data-[state=active]:font-bold data-[state=active]:hover:bg-gray-25"
+                className="text-black disabled:text-orange-700 transition-colors data-[state=active]:!text-white data-[state=active]:font-bold data-[state=active]:hover:!bg-orange-850"
               >
                 {IconComponent && <IconComponent className="hw-icon-xs shrink- mr-0.5 mb-[1px]" />}
                 <span className="text-label-md tracking-wide font-black">{label}</span>

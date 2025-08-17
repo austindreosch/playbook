@@ -283,9 +283,10 @@ export default function TeamArchetypeWidget({
                   fillOpacity={0.3}
                   animationDuration={600}
                   animationEasing='ease-out'
-                  dot={({ ...props }) => {
+                  dot={({ key, dataKey, ...props }) => {
                     return (
                       <circle
+                        key={key}
                         {...props}
                         fill='#3b82f6'
                         stroke='#3b82f6'

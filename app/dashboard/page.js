@@ -82,21 +82,21 @@ export default function DashboardPage() {
   useEffect(() => {
     const titleMap = {
       overview: 'Overview',
-      roster: 'Roster', 
+      roster: 'Roster',
       trades: 'Trades',
       scouting: 'Scouting',
       waiver: 'Waiver',
       trends: 'Trends'
     };
-    
+
     let title = 'Dashboard';
-    
+
     if (isAllLeaguesView) {
       title = 'All Leagues';
     } else if (currentTab && titleMap[currentTab]) {
       title = titleMap[currentTab];
     }
-    
+
     document.title = `Playbook Dashboard | ${title}`;
   }, [currentTab, isAllLeaguesView]);
 
@@ -200,7 +200,7 @@ export default function DashboardPage() {
 
   // Override real loading state with debug loading state
   const effectiveIsLoading = debugLoading || isLoading || isUserLoading;
-  
+
   if (effectiveIsLoading) return <DashboardSkeleton />;
   if (error) return <div>{error.message}</div>;
 
@@ -235,7 +235,7 @@ export default function DashboardPage() {
 
       <div className="h-[calc(100vh-6rem)]">
         {/* Navigation Section */}
-        <DynamicNavbar 
+        <DynamicNavbar
           leftContent={<DashboardTabsSegmented maxWidth="45rem" />}
           rightContent={
             <>
@@ -245,7 +245,7 @@ export default function DashboardPage() {
             </>
           }
         />
-      {/* <div className="h-px bg-gray-150" ></div> */}
+        {/* <div className="h-px bg-gray-150" ></div> */}
 
         {/* Main Content */}
         <div className="h-full min-h-0">
@@ -255,13 +255,13 @@ export default function DashboardPage() {
                 try {
                   // Update dashboard context with new league
                   setCurrentLeagueId(savedLeague._id);
-                  
+
                   // Refresh leagues list
                   await refreshLeagues();
-                  
+
                   // Exit import mode
                   setImportMode(false);
-                  
+
                   toast.success(`${savedLeague.leagueName} imported successfully!`);
                 } catch (error) {
                   console.error('Error handling import completion:', error);

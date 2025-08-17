@@ -22,9 +22,9 @@ const handler = async (req, res) => {
         .find({ userId: session.user.sub })
         .sort({ createdAt: -1 })
         .toArray();
-      
+
       res.status(200).json(leagues);
-    } 
+    }
     else if (req.method === 'POST') {
       // Save new league import
       const session = await getSession(req, res);
@@ -33,7 +33,7 @@ const handler = async (req, res) => {
       }
 
       const leagueData = req.body;
-      
+
       // Validate required fields
       const requiredFields = ['sport', 'leagueType', 'scoring', 'matchup', 'draftType'];
       for (const field of requiredFields) {
@@ -48,21 +48,21 @@ const handler = async (req, res) => {
         userId: session.user.sub,
         platform: leagueData.platform || 'fantrax',
         platformLeagueId: leagueData.platformLeagueId || leagueData.leagueId,
-        
+
         // Basic league info
         leagueName: leagueData.leagueName || 'Imported League',
         teamCount: leagueData.teamCount || 0,
-        
+
         // Core classifications (new schema)
         sport: leagueData.sport,
         leagueType: leagueData.leagueType, // 'Redraft', 'Dynasty', 'Keeper'
         scoring: leagueData.scoring, // 'Points', 'Categories'
         matchup: leagueData.matchup, // 'H2H', 'Roto', 'Total Points'
         draftType: leagueData.draftType, // 'Snake', 'Auction'
-        
+
         // Legacy fields for backward compatibility
         dynasty: leagueData.leagueType === 'Dynasty',
-        
+
         // Advanced settings from conditional prompts
         settings: {
           decay: leagueData.settings?.decay || false,
@@ -73,17 +73,17 @@ const handler = async (req, res) => {
           categories: leagueData.settings?.categories || [],
           mostCategories: leagueData.settings?.mostCategories || false,
           puntCategories: leagueData.settings?.puntCategories || [],
-          
+
           // Platform-specific settings
           rosterPositions: leagueData.settings?.rosterPositions || [],
           tradingEnabled: leagueData.settings?.tradingEnabled || true,
           waiverType: leagueData.settings?.waiverType || 'FAAB'
         },
-        
+
         // Team and roster data
         teams: leagueData.teams || [],
         rosters: leagueData.rosters || [],
-        
+
         // Metadata
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -98,7 +98,7 @@ const handler = async (req, res) => {
       } else {
         res.status(500).json({ error: 'Failed to save league' });
       }
-    } 
+    }
     else if (req.method === 'PUT') {
       // Update existing league
       const session = await getSession(req, res);
@@ -107,14 +107,14 @@ const handler = async (req, res) => {
       }
 
       const { leagueId, ...updateData } = req.body;
-      
+
       const result = await leaguesCollection.updateOne(
         { _id: leagueId, userId: session.user.sub },
-        { 
-          $set: { 
-            ...updateData, 
-            updatedAt: new Date() 
-          } 
+        {
+          $set: {
+            ...updateData,
+            updatedAt: new Date()
+          }
         }
       );
 
@@ -133,7 +133,7 @@ const handler = async (req, res) => {
       }
 
       const { leagueId } = req.query;
-      
+
       const result = await leaguesCollection.deleteOne({
         _id: leagueId,
         userId: session.user.sub
@@ -144,7 +144,7 @@ const handler = async (req, res) => {
       } else {
         res.status(200).json({ success: true });
       }
-    } 
+    }
     else {
       res.status(405).json({ error: 'Method not allowed' });
     }
