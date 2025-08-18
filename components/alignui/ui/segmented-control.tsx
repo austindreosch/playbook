@@ -146,7 +146,7 @@ const SegmentedControlTrigger = React.forwardRef<
         // Gradient separator - only show if there's another trigger after this one
         '[&:not(:last-of-type)]:after:content-[\'\']',
         '[&:not(:last-of-type)]:after:absolute',
-        '[&:not(:last-of-type)]:after:right-0',
+        '[&:not(:last-of-type)]:after:-right-[2.5px]',
         '[&:not(:last-of-type)]:after:top-1',
         '[&:not(:last-of-type)]:after:bottom-1',
         '[&:not(:last-of-type)]:after:w-px',
