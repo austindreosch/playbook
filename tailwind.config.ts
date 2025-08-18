@@ -96,6 +96,10 @@ export const custom = {
     color: 'var(--gray-300)', // Soft text color
   }],
 
+  'disabled': ['inherit', { 
+    color: 'var(--gray-200)', // Disabled text color
+  }],
+
 
 
 

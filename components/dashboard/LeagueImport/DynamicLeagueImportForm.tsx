@@ -75,8 +75,8 @@ const PLATFORMS: Platform[] = [
   { id: 'espn', name: 'ESPN', available: false, sports: ['NFL', 'NBA', 'MLB'] }
 ];
 
-const SPORTS = ['NBA', 'MLB', 'NFL'];
-const LEAGUE_TYPES = ['Redraft', 'Dynasty', 'Keeper'];
+const SPORTS = ['NBA', 'NFL', 'MLB'];
+const LEAGUE_TYPES = ['Dynasty', 'Keeper', 'Redraft'];
 const MATCHUP_TYPES = ['H2H', 'Roto', 'Total Points'];
 const SCORING_TYPES = ['Categories', 'Points'];
 const SCORING_METHODS = ['Each Category', 'Most Categories'];
@@ -339,7 +339,7 @@ const leagueImportColors: Partial<SegmentedControlColorConfig> = {
   text: {
     inactive: 'text-gray-700',
     active: 'text-white',
-    disabled: 'text-gray-100'
+    disabled: 'text-gray-200'
   },
   background: {
     hover: 'hover:bg-gray-200/50',
@@ -530,7 +530,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         key={platform.id}
                         value={platform.id}
                         disabled={!platform.available}
-                        className="w-32 data-[state=active]:text-white"
+                        className="w-32"
                       >
                         <span className="text-label-lg">{platform.name}</span>
                       </SegmentedControl.Trigger>
@@ -590,7 +590,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                           key={sport}
                           value={sport}
                           disabled={!isAvailable || !formData.platform}
-                          className={`w-32 data-[state=active]:text-white ${!isAvailable ? 'cursor-not-allowed opacity-50 text-gray-400 relative group' : 'relative group'}`}
+                          className="w-32 relative group"
                           title={!isAvailable ? `${sport} support coming soon!` : ''}
                         >
                     
@@ -774,9 +774,10 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
                         activeValue={formData.teamStatus}
                         floatingBgClassName="!bg-blue !text-white"
+                        colorConfig={leagueImportColors}
                       >
                         {TEAM_STATUSES.map(status => (
-                          <SegmentedControl.Trigger key={status} value={status} className="w-32 data-[state=active]:text-white">
+                          <SegmentedControl.Trigger key={status} value={status} className="w-32">
                             <span className="text-label-lg">{status}</span>
                           </SegmentedControl.Trigger>
                         ))}

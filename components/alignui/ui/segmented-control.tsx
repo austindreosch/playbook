@@ -47,7 +47,23 @@ const SegmentedControlList = React.forwardRef<
     colorConfig?: Partial<SegmentedControlColorConfig>;
   }
 >(({ children, className, floatingBgClassName, activeValue, colorConfig, ...rest }, forwardedRef) => {
-  const colors = { ...DEFAULT_SEGMENTED_CONTROL_COLORS, ...colorConfig };
+  // Deep merge the color configuration to ensure all nested properties are merged
+  const colors = {
+    ...DEFAULT_SEGMENTED_CONTROL_COLORS,
+    text: {
+      ...DEFAULT_SEGMENTED_CONTROL_COLORS.text,
+      ...(colorConfig?.text || {})
+    },
+    background: {
+      ...DEFAULT_SEGMENTED_CONTROL_COLORS.background,
+      ...(colorConfig?.background || {})
+    },
+    container: {
+      ...DEFAULT_SEGMENTED_CONTROL_COLORS.container,
+      ...(colorConfig?.container || {})
+    }
+  };
+  
   const [lineStyle, setLineStyle] = React.useState({ width: 0, left: 0 });
 
   const { mounted, listRef, updateActiveTab } = useTabObserver({
@@ -101,6 +117,7 @@ const SegmentedControlTrigger = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...rest }, forwardedRef) => {
   const colors = React.useContext(SegmentedControlContext);
+  
   return (
     <TabsPrimitive.Trigger
       ref={forwardedRef}
@@ -116,9 +133,15 @@ const SegmentedControlTrigger = React.forwardRef<
         'focus:outline-none',
         // active
         `data-[state=active]:${colors.text.active} ${colors.background.activeHover}`,
-        // disabled
-        `disabled:${colors.text.disabled} disabled:cursor-not-allowed ${colors.background.disabledHover} disabled:opacity-100`,
         className,
+        // disabled styles using colorConfig - applied after className for highest priority
+        `disabled:cursor-not-allowed disabled:opacity-100 ${colors.background.disabledHover}`,
+        // Map specific disabled colors to ensure Tailwind generates them
+        colors.text.disabled === 'text-gray-50' && 'disabled:!text-gray-50',
+        colors.text.disabled === 'text-gray-100' && 'disabled:!text-gray-100', 
+        colors.text.disabled === 'text-gray-200' && 'disabled:!text-gray-200',
+        colors.text.disabled === 'text-gray-300' && 'disabled:!text-gray-300',
+        colors.text.disabled === 'text-gray-400' && 'disabled:!text-gray-400',
       )}
       {...rest}
     />

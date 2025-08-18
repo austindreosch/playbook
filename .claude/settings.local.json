@@ -16,7 +16,9 @@
       "Bash(npm run lint:*)",
       "Bash(node:*)",
       "Bash(mkdir:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "WebSearch",
+      "WebFetch(domain:www.radix-ui.com)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
