@@ -551,7 +551,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       className="w-8"
                       isControlDisabled={formData.platform === 'none'}
                     >
-                      <ScanLine className="hw-icon-2xs " />
+                      <ScanLine className={`hw-icon-2xs ${formData.platform === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
                     {PLATFORMS.map(platform => (
                       <SegmentedControl.Trigger
@@ -617,7 +617,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       disabled={formData.platform === 'none'}
                       isControlDisabled={isFieldDisabled.sport(formData.platform) || formData.sport === 'none'}
                     >
-                      <ScanLine className="hw-icon-2xs" />
+                      <ScanLine className={`hw-icon-2xs ${formData.sport === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
                     {SPORTS.map(sport => {
                       const isAvailable = availableSports.includes(sport);
@@ -658,7 +658,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       disabled={formData.sport === 'none'}
                       isControlDisabled={isFieldDisabled.leagueType(formData.sport) || formData.leagueType === 'none'}
                     >
-                      <ScanLine className="hw-icon-2xs" />
+                      <ScanLine className={`hw-icon-2xs ${formData.leagueType === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
                     {LEAGUE_TYPES.map(type => (
                       <SegmentedControl.Trigger 
@@ -694,7 +694,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       disabled={formData.leagueType === 'none'}
                       isControlDisabled={isFieldDisabled.scoring(formData.leagueType) || formData.scoring === 'none'}
                     >
-                      <ScanLine className="hw-icon-2xs" />
+                      <ScanLine className={`hw-icon-2xs ${formData.scoring === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
                     {SCORING_TYPES.map(type => (
                       <SegmentedControl.Trigger 
@@ -730,7 +730,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       disabled={formData.scoring === 'none'}
                       isControlDisabled={isFieldDisabled.matchup(formData.scoring) || formData.matchup === 'none'}
                     >
-                      <ScanLine className="hw-icon-2xs" />
+                      <ScanLine className={`hw-icon-2xs ${formData.matchup === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
                     {MATCHUP_TYPES.map(type => (
                       <SegmentedControl.Trigger 

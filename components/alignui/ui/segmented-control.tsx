@@ -156,6 +156,8 @@ const SegmentedControlTrigger = React.forwardRef<
         colors.text.disabledActive === 'text-blue-900' && 'data-[state=active]:!text-blue-900',
         colors.text.disabledActive === 'text-gray-700' && 'data-[state=active]:!text-gray-700',
         colors.text.disabledActive === 'text-white' && 'data-[state=active]:!text-white',
+        // Force white color for all children (including SVGs) in disabled active state
+        isControlDisabled && colors.text.disabledActive === 'text-white' && 'data-[state=active]:[&_*]:!text-white',
       )}
       {...rest}
     />
