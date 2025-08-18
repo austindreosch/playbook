@@ -27,7 +27,7 @@ function Calendar({
         month: 'space-y-2',
         caption:
           'flex justify-center items-center relative rounded-lg bg-bg-weak-50 h-9',
-        caption_label: 'text-label-sm text-sub-600 select-none',
+        caption_label: 'text-label text-sub-600 select-none',
         nav: 'flex items-center',
         nav_button: compactButtonVariants({
           variant: 'white',
@@ -38,7 +38,7 @@ function Calendar({
         table: 'w-full border-collapse',
         head_row: 'flex gap-2',
         head_cell:
-          'text-soft-400 text-label-sm uppercase size-10 flex items-center justify-center text-center select-none',
+          'text-soft-400 text-badge uppercase size-10 flex items-center justify-center text-center select-none',
         row: 'grid grid-flow-col auto-cols-auto w-full mt-2 gap-2',
         cell: cn(
           // base
@@ -64,7 +64,7 @@ function Calendar({
         ),
         day: cn(
           // base
-          'flex size-10 shrink-0 items-center justify-center rounded-lg text-center text-label-sm text-sub-600 outline-none',
+          'flex size-10 shrink-0 items-center justify-center rounded-lg text-center text-badge text-sub-600 outline-none',
           'transition duration-200 ease-out',
           // hover
           'hover:bg-bg-weak-50 hover:text-strong-950',

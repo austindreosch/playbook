@@ -15,7 +15,8 @@
       "Bash(npm run build:*)",
       "Bash(npm run lint:*)",
       "Bash(node:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(touch:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -19,11 +19,9 @@ import {
 import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
-import * as Popover from '@/components/alignui/popover';
-import * as DatepickerPrimivites from '@/components/alignui/ui/datepicker';
+import { Datepicker } from '@/components/ui/PBDatePicker';
 import { InfoIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
 
 interface Platform {
   id: string;
@@ -39,6 +37,7 @@ interface League {
   teamCount: number;
   teams?: any[];
   rosters?: any[];
+  categories?: string[];
 }
 
 interface FormData {
@@ -53,6 +52,7 @@ interface FormData {
   decay: boolean;
   contracts: boolean;
   puntCategories: boolean;
+  puntedCategories: string[];
   gamesLimit: number | null;
   hasGamesLimit: boolean;
   scoringMethod: string;
@@ -81,6 +81,13 @@ const SCORING_TYPES = ['Categories', 'Points'];
 const SCORING_METHODS = ['Each Category', 'Most Categories'];
 
 const TEAM_STATUSES = ['Rebuilding', 'Flexible', 'Contending'];
+
+// Default categories by sport
+const DEFAULT_CATEGORIES = {
+  NBA: ['FG%', 'FT%', '3PM', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO'],
+  MLB: ['R', 'HR', 'RBI', 'SB', 'AVG', 'W', 'SV', 'K', 'ERA', 'WHIP'],
+  NFL: []  // NFL typically uses points, not categories
+};
 
 // Sport-specific playoff schedules
 const PLAYOFF_SCHEDULES = {
@@ -171,11 +178,14 @@ function SettingCard({
   disabled?: boolean;
 }) {
   return (
-    <div className={`h-32 p-4 rounded-lg border bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-50'} flex flex-col`}>
-      <div className="flex flex-col items-center text-center flex-1">
-        <Icon className="size-5 text-gray-600 mb-2" />
-        <label className="text-label-sm text-strong-950 mb-3">{label}</label>
-        <div className="flex-1 flex items-center justify-center w-full">
+    <div className={`h-28 rounded-lg border bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-50'} flex flex-col`}>
+      <div className="flex flex-col items-center text-center flex-1 gap-1.5">
+        <div className="w-full flex items-center gap-2 border-b border-gray-100 py-3 justify-center">
+          <Icon className="hw-icon " />
+          <label className="text-label">{label}</label>
+        </div>
+        
+        <div className="flex-1 flex items-center justify-center text-paragraph">
           {children}
         </div>
       </div>
@@ -216,28 +226,64 @@ function CheckboxCard({
   );
 }
 
-// Simplified datepicker component for trade deadline
-function TradeDatepicker({ value, onChange }: { value: Date | undefined; onChange: (date: Date | undefined) => void }) {
-  const [open, setOpen] = React.useState(false);
+
+// Component for selecting punt categories
+function PuntCategoriesSelector({ 
+  sport, 
+  leagueCategories, 
+  puntedCategories, 
+  onPuntedCategoriesChange 
+}: { 
+  sport: string; 
+  leagueCategories?: string[]; 
+  puntedCategories: string[]; 
+  onPuntedCategoriesChange: (categories: string[]) => void; 
+}) {
+  // Use league categories if available, otherwise fall back to defaults
+  const availableCategories = leagueCategories && leagueCategories.length > 0 
+    ? leagueCategories 
+    : DEFAULT_CATEGORIES[sport as keyof typeof DEFAULT_CATEGORIES] || [];
+
+  const toggleCategory = (category: string) => {
+    const newPuntedCategories = puntedCategories.includes(category)
+      ? puntedCategories.filter(cat => cat !== category)
+      : [...puntedCategories, category];
+    onPuntedCategoriesChange(newPuntedCategories);
+  };
+
+  if (availableCategories.length === 0) {
+    return null;
+  }
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>
-        <Button.Root variant="neutral" mode="stroke" className="w-full justify-center text-center text-xs px-2 py-1">
-          {value ? format(value, 'MMM d') : 'Select Date'}
-        </Button.Root>
-      </Popover.Trigger>
-      <Popover.Content className="w-auto p-0">
-        <DatepickerPrimivites.Calendar
-          mode="single"
-          selected={value}
-          onSelect={(date) => {
-            onChange(date);
-            setOpen(false);
-          }}
-        />
-      </Popover.Content>
-    </Popover.Root>
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <RiListCheck className="size-4 text-gray-600" />
+        <h4 className="text-sm font-medium text-gray-900">Categories to Punt</h4>
+      </div>
+      <p className="text-xs text-gray-500 mb-3">
+        Select categories you plan to punt (ignore). Green = compete, Red = punt.
+      </p>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        {availableCategories.map((category) => {
+          const isPunted = puntedCategories.includes(category);
+          return (
+            <button
+              key={category}
+              type="button"
+              onClick={() => toggleCategory(category)}
+              className={`px-3 py-2 text-xs font-medium rounded-md border transition-colors ${
+                isPunted 
+                  ? 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100' 
+                  : 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+              }`}
+            >
+              {category}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -254,10 +300,11 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     scoring: SCORING_TYPES[0],
     matchup: MATCHUP_TYPES[0],
     // Conditional fields
-    teamStatus: '',
+    teamStatus: TEAM_STATUSES[1], // Default to 'Flexible'
     decay: false,
     contracts: false,
     puntCategories: false,
+    puntedCategories: [],
     gamesLimit: 40,
     hasGamesLimit: false,
     scoringMethod: SCORING_METHODS[0],
@@ -352,6 +399,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
           decay: formData.decay,
           contracts: formData.contracts,
           puntCategories: formData.puntCategories,
+          puntedCategories: formData.puntedCategories,
           gamesLimit: formData.gamesLimit,
           scoringMethod: formData.scoringMethod,
           playoffSchedule: formData.playoffSchedule,
@@ -382,17 +430,21 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   };
 
   return (
-    <div className="h-full flex flex-col">
-
+    <div className="h-full flex flex-col bg-gray-50 rounded-xl border border-gray-200 shadow-lg">
+      {/* Header */}
+      <div className="px-6 py-4 border-b bg-white rounded-t-xl">
+        <h1 className="text-header text-gray-900">Import League</h1>
+        <p className="text-paragraph-md text-gray-600 mt-1">Connect your fantasy league to get started with Playbook</p>
+      </div>
 
       {/* Main Form - Two Column Layout */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             {/* LEFT COLUMN - Main Questions */}
-            <div className="space-y-6">
-              <h2 className="text-label-xl font-semibold text-gray-900">League Information</h2>
+            <div className="space-y-4">
+              {/* <h2 className="text-label-xl font-semibold text-gray-900">League Information</h2> */}
 
               {/* Step 1: Platform */}
               <div className="space-y-2">
@@ -548,16 +600,16 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
             </div>
 
             {/* RIGHT COLUMN - Conditional Questions */}
-            <div className="space-y-6">
-              <h2 className="text-label-xl font-semibold text-gray-900">Additional Settings</h2>
+            <div className="space-y-2">
+              <h2 className="text-label text-gray-900">Additional Settings</h2>
 
               {/* Settings Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                 {/* Trade Deadline */}
                 <SettingCard icon={RiExchangeLine} label="Trade Deadline">
-                  <TradeDatepicker 
+                  <Datepicker 
                     value={formData.tradeDeadline}
-                    onChange={(date) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
+                    onChange={(date: Date | undefined) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
                   />
                 </SettingCard>
 
@@ -587,7 +639,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     <select
                       value={formData.scoringMethod}
                       onChange={(e) => setFormData(prev => ({ ...prev, scoringMethod: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stroke-100"
                     >
                       {SCORING_METHODS.map(method => (
                         <option key={method} value={method}>{method}</option>
@@ -602,7 +654,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     <select
                       value={formData.playoffSchedule}
                       onChange={(e) => setFormData(prev => ({ ...prev, playoffSchedule: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stroke-100"
                     >
                       {availablePlayoffSchedules.map(schedule => (
                         <option key={schedule} value={schedule}>{schedule}</option>
@@ -620,7 +672,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                           type="checkbox"
                           checked={formData.hasGamesLimit}
                           onChange={(e) => setFormData(prev => ({ ...prev, hasGamesLimit: e.target.checked }))}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
                       </div>
                       {formData.hasGamesLimit && (
@@ -639,7 +691,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
               {/* Dynasty/Keeper Conditional Fields */}
               {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {/* Team Status */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -682,40 +734,59 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
               )}
 
+              {/* Team Strategy Section */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  {/* <h3 className="text-label-lg text-strong-950">Team Strategy</h3> */}
+                  
+                  {/* Team Status Selector */}
+                  <SettingCard icon={RiTrophyLine} label="Team Status">
+                    <select
+                      value={formData.teamStatus}
+                      onChange={(e) => setFormData(prev => ({ ...prev, teamStatus: e.target.value }))}
+                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stroke-100"
+                    >
+                      {TEAM_STATUSES.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                  </SettingCard>
+                </div>
+              </div>
+
               {/* Categories Conditional Fields */}
               {formData.scoring === 'Categories' && (
-                <div className="space-y-6">
-                  {/* Categories Settings Cards */}
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <CheckboxCard 
-                        icon={RiListCheck}
-                        label="Punt Categories"
-                        checked={formData.puntCategories}
-                        onChange={(checked) => setFormData(prev => ({ ...prev, puntCategories: checked }))}
+                <div className="space-y-4">
+                  {/* Punt Categories Section */}
+                  <div className="space-y-2">
+                    <h3 className="text-label-lg text-strong-950">Category Strategy</h3>
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <PuntCategoriesSelector
+                        sport={formData.sport}
+                        leagueCategories={leaguePreview?.categories}
+                        puntedCategories={formData.puntedCategories}
+                        onPuntedCategoriesChange={(categories) => 
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            puntedCategories: categories,
+                            puntCategories: categories.length > 0 
+                          }))
+                        }
                       />
                     </div>
                   </div>
-
-
                 </div>
               )}
 
 
-              {/* Empty state when no conditional fields */}
-              {!(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <div className="text-center py-12 text-gray-500">
-                    <RiSettings3Line className="size-12 mx-auto mb-4 opacity-30" />
-                    <p className="text-paragraph-md text-sub-600">Additional settings will appear based on your selections</p>
-                  </div>
-                )}
+              {/*  */}
             </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="p-6 border-t bg-gray-50">
+      <div className="p-6 border-t bg-gray-50 rounded-b-xl">
         <div className="max-w-6xl mx-auto flex justify-between">
           <Button.Root variant="neutral" mode="stroke" onClick={onCancel}>
             Cancel

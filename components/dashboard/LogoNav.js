@@ -40,20 +40,20 @@ export default function LogoNav({ className = "" }) {
 
   return (
     <Select value={pathname} onValueChange={handleValueChange} variant="inline">
-      <div className={`relative flex items-center group font-bold rounded-lg gap-1.5 shrink-0 ${className}`.trim()}>
-        <SelectTrigger className="flex items-center text-button font-semibold text-black group-hover:text-white transition-colors h-auto min-h-0 p-0">
+      <div className={`relative flex items-center group text-big rounded-lg gap-1.5 shrink-0 ${className}`.trim()}>
+        <SelectTrigger className="flex items-center text-header group-hover:text-white transition-colors h-auto min-h-0 p-0">
           <img src="/logo-tpfull-big.png" alt="Playbook Icon" className="h-7 w-7" />
           <Divider.Root variant="line-vertical" className="mx-4 my-0 h-8 before:bg-orange-600" />
           <div className="flex gap-2.5 items-center justify-center mr-1.5">
-            <PanelsTopLeft className="hw-icon-sm text-black" />
-            <span className="hidden mdlg:inline truncate text-left text-title-h5 font-black">
+            <PanelsTopLeft className="hw-icon-sm" />
+            <span className="hidden mdlg:inline truncate text-left text-title">
               {currentPageName}
             </span>
           </div>
         </SelectTrigger>
           
         <Divider.Root variant="line-vertical" className="mx-2 mr-0.5 my-0 h-8 before:bg-orange-600" />
-        <SelectContent className="w-72 max-h-[32rem]" align="start" side="bottom" sideOffset={5}>
+        <SelectContent className="w-72 max-h-[32rem] " align="start" side="bottom" sideOffset={5} >
           {navigationOptions.map((option) => {
             const IconComponent = option.icon;
             const isActive = pathname === option.value;
@@ -68,8 +68,8 @@ export default function LogoNav({ className = "" }) {
                     <IconComponent className="hw-icon text-sub-600" />
                   </div>
                   <div className="flex flex-col flex-1">
-                    <span className="text-label-md font-semibold text-strong-950">{option.label}</span>
-                    <span className="text-subheading-sm text-gray-300">
+                    <span className="text-badge">{option.label}</span>
+                    <span className="text-sublabel">
                       {option.description}
                     </span>
                   </div>
