@@ -21,7 +21,7 @@ import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
 import type { SegmentedControlColorConfig } from '@/components/alignui/ui/segmented-control';
 import { Datepicker } from '@/components/ui/PBDatePicker';
-import { InfoIcon, Loader2 } from 'lucide-react';
+import { InfoIcon, Loader2, Circle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Platform {
@@ -354,12 +354,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   const [detectedPlatform, setDetectedPlatform] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
-    platform: PLATFORMS[0].id,
+    platform: 'none',
     leagueId: '',
-    sport: SPORTS[0],
-    leagueType: LEAGUE_TYPES[0],
-    scoring: SCORING_TYPES[0],
-    matchup: MATCHUP_TYPES[0],
+    sport: 'none',
+    leagueType: 'none',
+    scoring: 'none',
+    matchup: 'none',
     // Conditional fields
     teamStatus: TEAM_STATUSES[1], // Default to 'Flexible'
     decay: false,
@@ -417,11 +417,11 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     setFormData(prev => ({
       ...prev,
       platform,
-      sport: autoSelectedSport, // Auto-select if only one sport available
+      sport: autoSelectedSport || 'none', // Auto-select if only one sport available, otherwise none
       leagueId: '', // Reset league ID when platform changes
-      leagueType: '', // Reset subsequent fields
-      scoring: '',
-      matchup: ''
+      leagueType: 'none', // Reset subsequent fields to none
+      scoring: 'none',
+      matchup: 'none'
     }));
     setDetectedPlatform(null);
     setLeaguePreview(null);
@@ -443,7 +443,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   // Handle form submission
   const handleSubmit = async () => {
     // Basic validation
-    if (!formData.platform || !formData.leagueId || !formData.sport || !formData.leagueType || !formData.scoring || !formData.matchup) {
+    if (!formData.platform || formData.platform === 'none' || !formData.leagueId || !formData.sport || formData.sport === 'none' || !formData.leagueType || formData.leagueType === 'none' || !formData.scoring || formData.scoring === 'none' || !formData.matchup || formData.matchup === 'none') {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -525,6 +525,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     floatingBgClassName="!bg-blue !text-white"
                     colorConfig={leagueImportColors}
                   >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                    >
+                      <Circle className="size-2" />
+                    </SegmentedControl.Trigger>
                     {PLATFORMS.map(platform => (
                       <SegmentedControl.Trigger
                         key={platform.id}
@@ -558,8 +564,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   </Input.Wrapper>
                 </Input.Root>
                 {formData.platform && (
-                  <p className="text-paragraph-md text-sub-600 flex items-center gap-2">
-                    <InfoIcon className="hw-icon-xs" />
+                  <p className="text-sublabel text-sub flex items-center gap-2">
+                    <InfoIcon className="hw-icon-2xs" />
                     {getPlatformHelperText(formData.platform)}
                   </p>
                 )}
@@ -573,8 +579,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 3: Sport */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiFootballLine className="size-5 text-gray-600" />
-                  <label className="text-label-lg text-strong-950">Sport *</label>
+                  <RiFootballLine className="hw-icon" />
+                  <label className="text-label text-strong">Sport *</label>
                 </div>
                 <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
                   <SegmentedControl.List
@@ -583,13 +589,20 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     floatingBgClassName="!bg-blue !text-white"
                     colorConfig={leagueImportColors}
                   >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                      disabled={formData.platform === 'none'}
+                    >
+                      <Circle className="size-2" />
+                    </SegmentedControl.Trigger>
                     {SPORTS.map(sport => {
                       const isAvailable = availableSports.includes(sport);
                       return (
                         <SegmentedControl.Trigger
                           key={sport}
                           value={sport}
-                          disabled={!isAvailable || !formData.platform}
+                          disabled={!isAvailable || formData.platform === 'none'}
                           className="w-32 relative group"
                           title={!isAvailable ? `${sport} support coming soon!` : ''}
                         >
@@ -615,8 +628,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     floatingBgClassName="!bg-blue !text-white"
                     colorConfig={leagueImportColors}
                   >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                      disabled={formData.sport === 'none'}
+                    >
+                      <Circle className="size-2" />
+                    </SegmentedControl.Trigger>
                     {LEAGUE_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={!formData.sport}>
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={formData.sport === 'none'}>
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -637,8 +657,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     floatingBgClassName="!bg-blue !text-white"
                     colorConfig={leagueImportColors}
                   >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                      disabled={formData.leagueType === 'none'}
+                    >
+                      <Circle className="size-2" />
+                    </SegmentedControl.Trigger>
                     {SCORING_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={!formData.leagueType}>
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={formData.leagueType === 'none'}>
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -659,8 +686,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     floatingBgClassName="!bg-blue !text-white"
                     colorConfig={leagueImportColors}
                   >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                      disabled={formData.scoring === 'none'}
+                    >
+                      <Circle className="size-2" />
+                    </SegmentedControl.Trigger>
                     {MATCHUP_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={!formData.scoring}>
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={formData.scoring === 'none'}>
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -866,7 +900,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
           <Button.Root
             variant="primary"
             onClick={handleSubmit}
-            disabled={loading || !formData.platform || !formData.leagueId || !formData.sport || !formData.leagueType || !formData.scoring || !formData.matchup}
+            disabled={loading || !formData.platform || formData.platform === 'none' || !formData.leagueId || !formData.sport || formData.sport === 'none' || !formData.leagueType || formData.leagueType === 'none' || !formData.scoring || formData.scoring === 'none' || !formData.matchup || formData.matchup === 'none'}
           >
             {loading && <Loader2 className="size-4 animate-spin mr-2" />}
             Import League

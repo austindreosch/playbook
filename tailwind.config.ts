@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
-export const custom = {
+export const customTextSizes = {
 
   // Custom text size aliases for easier migration
   // 'title': ['1.32rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em', fontWeight: '700', color: 'var(--black)' }],
@@ -74,40 +74,23 @@ export const custom = {
     color: 'var(--gray-300)', // Lighter still for tertiary text 
   }],
 
-  'tight': ['0.5625rem', { 
-    lineHeight: '0.75rem', 
+  'tight': ['0.6469rem', { 
+    lineHeight: '0.8625rem', 
     letterSpacing: '-0.006em', 
     fontWeight: '400',
     color: 'var(--gray-300)', // Lightest for fine print  
   }],
 
-
-
-
-  'strong': ['inherit', { 
-    color: 'var(--black)', // Strongest text color
-  }],
-
-  'sub': ['inherit', { 
-    color: 'var(--gray-400)', // Subdued text color
-  }],
-
-  'soft': ['inherit', { 
-    color: 'var(--gray-300)', // Soft text color
-  }],
-
-  'disabled': ['inherit', { 
-    color: 'var(--gray-200)', // Disabled text color
-  }],
-
-
-
-
-
-  
-
-
 } as unknown as Record<string, string>;
+
+// Color-only definitions for text utilities
+export const customTextColors = {
+  strong: 'var(--black)',
+  sub: 'var(--gray-400)', 
+  soft: 'var(--gray-300)',
+  disabled: 'var(--gray-200)'
+};
+
 
 
 
@@ -1137,7 +1120,7 @@ const config = {
       current: 'currentColor',
     },
     fontSize: {
-      ...custom,
+      ...customTextSizes,
       ...texts,
       inherit: 'inherit',
     },
@@ -1501,6 +1484,20 @@ const config = {
         },
         '.text-tight': {
           'color': 'var(--gray-300)',
+        },
+
+        // Color-only text utilities
+        '.text-strong': {
+          'color': customTextColors.strong,
+        },
+        '.text-sub': {
+          'color': customTextColors.sub,
+        },
+        '.text-soft': {
+          'color': customTextColors.soft,
+        },
+        '.text-disabled': {
+          'color': customTextColors.disabled,
         },
 
         // Force purple color for AlignUI text styles
