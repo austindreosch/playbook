@@ -21,67 +21,70 @@ export const customTextSizes = {
       lineHeight: '1.75rem',
       letterSpacing: '-0.01em',
       fontWeight: '700',
-      color: 'var(--black)',
     },
   ],
   'big': ['1.125rem', { 
     lineHeight: '1.5rem', 
     letterSpacing: '0em', 
     fontWeight: '700',
-    color: 'var(--black)', // Darkest for main headings
   }],
 
-  'header': ['0.984375rem', { 
+  'header': ['0.9375rem', { 
     lineHeight: '1.3125rem', 
     letterSpacing: '-0.015em', 
     fontWeight: '550',
-    color: 'var(--black)', // Also dark for section headers
   }],
 
-  'label': ['0.84375rem', { 
+  'label': ['0.82375rem', { 
     lineHeight: '1.125rem', 
-    letterSpacing: '-0.01em', 
+    letterSpacing: '-0.005em', 
     fontWeight: '550',
-    color: 'var(--black)', // Medium gray for labels (text-sub-600)
   }],
 
-  'number': ['0.84375rem', { 
+  'type': ['0.83rem', { 
+    lineHeight: '1.125rem', 
+    letterSpacing: '-0em', 
+    fontWeight: '400',
+  }],
+
+  // 'tag': ['0.80625rem', { 
+  //   lineHeight: '1.06875rem', 
+  //   letterSpacing: '-0.01em', 
+  //   fontWeight: '550',
+  // }],
+
+  'number': ['0.83rem', { 
     lineHeight: '1.125rem', 
     letterSpacing: '0em', 
     fontWeight: '600', 
     fontVariantNumeric: 'tabular-nums',
-    color: 'var(--black)', // Dark for data emphasis
   }],
 
   'paragraph': ['0.7875rem', { 
     lineHeight: '1.125rem', 
     letterSpacing: '-0.005em', 
     fontWeight: '400',
-    color: 'var(--gray-400)',
   }],
 
   'badge': ['0.75rem', { 
     lineHeight: '1.125rem', 
     letterSpacing: '-0.0085em', 
     fontWeight: '550',
-    color: 'var(--black)', // Lighter for secondary info 
   }],
 
   'sublabel': ['0.6875rem', { 
     lineHeight: '1.03125rem', 
     letterSpacing: '-0.005em', 
     fontWeight: '400',
-    color: 'var(--gray-300)', // Lighter still for tertiary text 
   }],
 
   'tight': ['0.6469rem', { 
     lineHeight: '0.8625rem', 
     letterSpacing: '-0.006em', 
     fontWeight: '400',
-    color: 'var(--gray-300)', // Lightest for fine print  
   }],
 
-} as unknown as Record<string, string>;
+};
 
 // Color-only definitions for text utilities
 export const customTextColors = {
@@ -1458,33 +1461,8 @@ const config = {
     function({ addUtilities }) {
       addUtilities({
         // Custom color utilities only
-        '.text-title': {
-          'color': 'var(--black)',
-        },
-        '.text-big': {
-          'color': 'var(--black)',
-        },
-        '.text-header': {
-          'color': 'var(--black)',
-        },
-        '.text-label': {
-          'color': 'var(--black)',
-        },
-        '.text-number': {
-          'color': 'var(--black)',
-        },
-        '.text-paragraph': {
-          'color': 'var(--gray-400)',
-        },
-        '.text-badge': {
-          'color': 'var(--black)',
-        },
-        '.text-sublabel': {
-          'color': 'var(--gray-300)',
-        },
-        '.text-tight': {
-          'color': 'var(--gray-300)',
-        },
+        // Removed conflicting color utilities that override font size classes
+        // The font size classes (text-title, text-paragraph, etc.) are now defined in customTextSizes
 
         // Color-only text utilities
         '.text-strong': {

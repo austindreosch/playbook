@@ -1,4 +1,4 @@
-import { borderRadii, shadows, texts } from '@/tailwind.config';
+import { borderRadii, shadows, texts, customTextSizes } from '@/tailwind.config';
 import clsx, { type ClassValue } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 
@@ -9,7 +9,10 @@ export const twMergeConfig = {
     classGroups: {
       'font-size': [
         {
-          text: Object.keys(texts),
+          text: [
+            ...Object.keys(texts),
+            ...Object.keys(customTextSizes),
+          ],
         },
       ],
       shadow: [

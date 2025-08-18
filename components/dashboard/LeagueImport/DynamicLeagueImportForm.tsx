@@ -258,7 +258,7 @@ function CheckboxCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Icon className="size-5 text-gray-600" />
-          <label className="text-label-lg text-strong-950 cursor-pointer">{label}</label>
+          <label className="text-label text-strong-950 cursor-pointer">{label}</label>
         </div>
         <input
           type="checkbox"
@@ -535,13 +535,13 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
             {/* LEFT COLUMN - Main Questions */}
             <div className="space-y-4">
-              {/* <h2 className="text-label-xl font-semibold text-gray-900">League Information</h2> */}
+              {/* <h2 className="text-header font-semibold text-gray-900">League Information</h2> */}
 
               {/* Step 1: Platform */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiGlobalLine className="size-5 text-gray-600" />
-                  <label className="text-label-lg text-strong-950">Platform *</label>
+                  <RiGlobalLine className="hw-icon text-gray-600" />
+                  <label className="text-label text-strong-950">Platform *</label>
                 </div>
                 <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
                   <SegmentedControl.List
@@ -565,7 +565,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         disabled={!platform.available}
                         className="w-32"
                       >
-                        <span className="text-label-lg">{platform.name}</span>
+                        <span className="text-label">{platform.name}</span>
                       </SegmentedControl.Trigger>
                     ))}
                   </SegmentedControl.List>
@@ -576,7 +576,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <RiHashtag className="size-5 text-gray-600" />
-                  <label className="text-label-lg text-strong-950">League ID *</label>
+                  <label className="text-label text-strong-950">League ID *</label>
                 </div>
                 <Input.Root>
                   <Input.Wrapper>
@@ -591,7 +591,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   </Input.Wrapper>
                 </Input.Root>
                 {formData.platform && (
-                  <p className="text-sublabel text-sub flex items-center gap-2">
+                  <p className="text-sublabel text-soft flex items-center gap-2">
                     <InfoIcon className="hw-icon-2xs" />
                     {getPlatformHelperText(formData.platform)}
                   </p>
@@ -636,7 +636,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                           isControlDisabled={isFieldDisabled.sport(formData.platform)}
                         >
                     
-                          <span className="text-label-lg">{sport}</span>
+                          <span className="text-label">{sport}</span>
                         </SegmentedControl.Trigger>
                       );
                     })}
@@ -648,7 +648,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <RiTrophyLine className={`size-5 ${isFieldDisabled.leagueType(formData.sport) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label-lg ${isFieldDisabled.leagueType(formData.sport) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>League Type *</label>
+                  <label className={`text-label ${isFieldDisabled.leagueType(formData.sport) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>League Type *</label>
                 </div>
                 <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
                   <SegmentedControl.List
@@ -673,7 +673,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         disabled={formData.sport === 'none'}
                         isControlDisabled={isFieldDisabled.leagueType(formData.sport)}
                       >
-                        <span className="text-label-lg">{type}</span>
+                          <span className="text-label">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
                   </SegmentedControl.List>
@@ -684,7 +684,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <RiBarChartLine className={`size-5 ${isFieldDisabled.scoring(formData.leagueType) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label-lg ${isFieldDisabled.scoring(formData.leagueType) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Scoring Type *</label>
+                  <label className={`text-label ${isFieldDisabled.scoring(formData.leagueType) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Scoring Type *</label>
                 </div>
                 <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                   <SegmentedControl.List
@@ -709,7 +709,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         disabled={formData.leagueType === 'none'}
                         isControlDisabled={isFieldDisabled.scoring(formData.leagueType)}
                       >
-                        <span className="text-label-lg">{type}</span>
+                        <span className="text-label">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
                   </SegmentedControl.List>
@@ -720,7 +720,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <RiGameLine className={`size-5 ${isFieldDisabled.matchup(formData.scoring) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label-lg ${isFieldDisabled.matchup(formData.scoring) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Matchup Type *</label>
+                  <label className={`text-label ${isFieldDisabled.matchup(formData.scoring) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Matchup Type *</label>
                 </div>
                 <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
                   <SegmentedControl.List
@@ -745,7 +745,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         disabled={formData.scoring === 'none'}
                         isControlDisabled={isFieldDisabled.matchup(formData.scoring)}
                       >
-                        <span className="text-label-lg">{type}</span>
+                          <span className="text-label">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
                   </SegmentedControl.List>
@@ -851,7 +851,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <RiAtLine className="size-5 text-gray-600" />
-                      <label className="text-label-lg text-strong-950">Team Status</label>
+                      <label className="text-label text-strong-950">Team Status</label>
                     </div>
                     <SegmentedControl.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))}>
                       <SegmentedControl.List
@@ -862,7 +862,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       >
                         {TEAM_STATUSES.map(status => (
                           <SegmentedControl.Trigger key={status} value={status} className="w-32">
-                            <span className="text-label-lg">{status}</span>
+                            <span className="text-label">{status}</span>
                           </SegmentedControl.Trigger>
                         ))}
                       </SegmentedControl.List>
@@ -871,7 +871,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                   {/* Dynasty/Keeper Settings Cards */}
                   <div className="space-y-3">
-                    <h3 className="text-label-lg text-strong-950">Dynasty/Keeper Options</h3>
+                    <h3 className="text-label text-strong-950">Dynasty/Keeper Options</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <CheckboxCard 
                         icon={RiTimeLine}
@@ -893,7 +893,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Team Strategy Section */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  {/* <h3 className="text-label-lg text-strong-950">Team Strategy</h3> */}
+                  {/* <h3 className="text-label text-strong-950">Team Strategy</h3> */}
                   
                   {/* Team Status Selector */}
                   <SettingCard icon={RiTrophyLine} label="Team Status">
@@ -915,7 +915,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <div className="space-y-4">
                   {/* Punt Categories Section */}
                   <div className="space-y-2">
-                    <h3 className="text-label-lg text-strong-950">Category Strategy</h3>
+                      <h3 className="text-label text-strong-950">Category Strategy</h3>
                     <div className="p-4 bg-gray-50 rounded-lg">
                       <PuntCategoriesSelector
                         sport={formData.sport}
