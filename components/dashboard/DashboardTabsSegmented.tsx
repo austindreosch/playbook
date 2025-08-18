@@ -24,10 +24,10 @@ const dashboardTabsColors = {
     disabledActive: 'text-black'               // Disabled but active tab text color
   },
   background: {
-    hover: 'hover:bg-orange-25',               // Tab hover background
+    hover: 'hover:bg-orange-650',               // Tab hover background
     active: 'bg-orange-500',                   // Active tab background (floating background)
     activeHover: 'data-[state=active]:hover:bg-orange-550', // Active tab hover background
-    disabledHover: 'disabled:hover:bg-orange-25', // Disabled tab hover background
+    disabledHover: 'disabled:hover:bg-orange-650', // Disabled tab hover background
     disabledActive: 'bg-orange-400'            // Disabled but active tab background (floating background)
   },
   container: {
