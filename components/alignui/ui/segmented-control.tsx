@@ -31,6 +31,12 @@ const DEFAULT_SEGMENTED_CONTROL_COLORS = {
   container: {
     background: 'bg-bg-weak-25',
     floatingBg: 'bg-bg-white-0'
+  },
+  // Separator colors
+  separator: {
+    from: 'after:from-transparent',
+    via: 'after:via-gray-300', 
+    to: 'after:to-transparent'
   }
 };
 
@@ -65,6 +71,10 @@ const SegmentedControlList = React.forwardRef<
     container: {
       ...DEFAULT_SEGMENTED_CONTROL_COLORS.container,
       ...(colorConfig?.container || {})
+    },
+    separator: {
+      ...DEFAULT_SEGMENTED_CONTROL_COLORS.separator,
+      ...(colorConfig?.separator || {})
     }
   };
   
@@ -137,14 +147,14 @@ const SegmentedControlTrigger = React.forwardRef<
         '[&:not(:last-of-type)]:after:content-[\'\']',
         '[&:not(:last-of-type)]:after:absolute',
         '[&:not(:last-of-type)]:after:right-0',
-        '[&:not(:last-of-type)]:after:top-1.5',
-        '[&:not(:last-of-type)]:after:bottom-1.5',
+        '[&:not(:last-of-type)]:after:top-1',
+        '[&:not(:last-of-type)]:after:bottom-1',
         '[&:not(:last-of-type)]:after:w-px',
-        // gradient style
+        // gradient style - using configurable colors
         '[&:not(:last-of-type)]:after:bg-gradient-to-b',
-        '[&:not(:last-of-type)]:after:from-transparent',
-        '[&:not(:last-of-type)]:after:via-gray-300',
-        '[&:not(:last-of-type)]:after:to-transparent',
+        colors.separator.from,
+        colors.separator.via,
+        colors.separator.to,
         // hide around active
         'data-[state=active]:after:hidden', // no separator AFTER active
         '[&:has(+[data-state=active])]:after:hidden', // no separator BEFORE active (next is active)
@@ -166,6 +176,8 @@ const SegmentedControlTrigger = React.forwardRef<
         colors.text.disabled === 'text-gray-200' && 'disabled:!text-gray-200',
         colors.text.disabled === 'text-gray-300' && 'disabled:!text-gray-300',
         colors.text.disabled === 'text-gray-400' && 'disabled:!text-gray-400',
+        colors.text.disabled === 'text-orange-700' && 'disabled:!text-orange-700',
+        colors.text.disabled === 'text-disabled' && 'disabled:!text-disabled',
         // Map specific disabledActive colors to ensure Tailwind generates them
         colors.text.disabledActive === 'text-blue-800' && 'data-[state=active]:!text-blue-800',
         colors.text.disabledActive === 'text-blue-900' && 'data-[state=active]:!text-blue-900',

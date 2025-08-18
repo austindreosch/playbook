@@ -20,7 +20,7 @@ import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
 import { Datepicker } from '@/components/ui/PBDatePicker';
-import { InfoIcon, Loader2, ScanLine } from 'lucide-react';
+import { InfoIcon, Loader2, Minus, ScanLine } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Platform {
@@ -365,6 +365,11 @@ const leagueImportColors = {
   icon: {
     normal: 'text-strong',                      // Form field icons when enabled
     disabled: 'text-disabled'                   // Form field icons when disabled
+  },
+  separator: {
+    from: 'after:from-transparent',
+    via: 'after:via-gray-150', 
+    to: 'after:to-transparent'
   }
 } as const;
 
@@ -551,7 +556,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       className="w-8"
                       isControlDisabled={formData.platform === 'none'}
                     >
-                      <ScanLine className={`hw-icon-2xs ${formData.platform === 'none' ? 'text-white' : 'text-current'}`} />
+                      <Minus className={`hw-icon-2xs ${formData.platform === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
                     {PLATFORMS.map(platform => (
                       <SegmentedControl.Trigger
