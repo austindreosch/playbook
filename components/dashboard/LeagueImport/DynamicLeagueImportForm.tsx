@@ -580,7 +580,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                       value={formData.leagueId}
                       onChange={(e) => handleLeagueIdChange(e.target.value)}
                       placeholder="Paste league URL or ID..."
-                      className="text-sm"
+                      className=""
                       disabled={!formData.platform}
                     />
                   </Input.Wrapper>

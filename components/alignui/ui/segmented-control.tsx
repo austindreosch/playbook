@@ -133,6 +133,21 @@ const SegmentedControlTrigger = React.forwardRef<
         'peer',
         `relative z-10 h-7 whitespace-nowrap rounded-md px-2 text-label-sm ${colors.text.inactive} outline-none`,
         'flex items-center justify-center gap-1.5',
+        // Gradient separator - only show if there's another trigger after this one
+        '[&:not(:last-of-type)]:after:content-[\'\']',
+        '[&:not(:last-of-type)]:after:absolute',
+        '[&:not(:last-of-type)]:after:right-0',
+        '[&:not(:last-of-type)]:after:top-1.5',
+        '[&:not(:last-of-type)]:after:bottom-1.5',
+        '[&:not(:last-of-type)]:after:w-px',
+        // gradient style
+        '[&:not(:last-of-type)]:after:bg-gradient-to-b',
+        '[&:not(:last-of-type)]:after:from-transparent',
+        '[&:not(:last-of-type)]:after:via-gray-300',
+        '[&:not(:last-of-type)]:after:to-transparent',
+        // hide around active
+        'data-[state=active]:after:hidden', // no separator AFTER active
+        '[&:has(+[data-state=active])]:after:hidden', // no separator BEFORE active (next is active)
         'transition duration-300 ease-out',
         // global hover for all segmented controls
         colors.background.hover,
