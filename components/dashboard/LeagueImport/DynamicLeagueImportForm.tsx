@@ -19,9 +19,8 @@ import {
 import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
-import type { SegmentedControlColorConfig } from '@/components/alignui/ui/segmented-control';
 import { Datepicker } from '@/components/ui/PBDatePicker';
-import { InfoIcon, Loader2, Circle } from 'lucide-react';
+import { InfoIcon, Loader2, ScanLine } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Platform {
@@ -334,19 +333,40 @@ function PuntCategoriesSelector({
   );
 }
 
+// Helper functions to determine disabled states
+const isFieldDisabled = {
+  sport: (platform: string) => platform === 'none',
+  leagueType: (sport: string) => sport === 'none',
+  scoring: (leagueType: string) => leagueType === 'none',
+  matchup: (scoring: string) => scoring === 'none'
+};
+
+
 // Custom color configuration for league import form
-const leagueImportColors: Partial<SegmentedControlColorConfig> = {
+const leagueImportColors = {
   text: {
-    inactive: 'text-gray-700',
-    active: 'text-white',
-    disabled: 'text-gray-200'
+    inactive: 'text-black',                     // Inactive tab text color
+    active: 'text-white',                       // Active tab text color
+    disabled: 'text-gray-200',                  // Disabled tab text color
+    disabledActive: 'text-white'                // Disabled but active tab text color
   },
   background: {
-    hover: 'hover:bg-gray-200/50',
-    activeHover: 'data-[state=active]:hover:bg-blue-600/90',
-    disabledHover: 'disabled:hover:bg-transparent'
+    hover: 'hover:bg-gray-25',                  // Tab hover background
+    active: 'bg-blue',                          // Active tab background (floating background)
+    activeHover: 'data-[state=active]:hover:bg-blue-600', // Active tab hover background
+    disabledHover: 'disabled:hover:bg-gray-25', // Disabled tab hover background
+    disabledActive: 'bg-blue-200'               // Disabled but active tab background (floating background)
+  },
+  // Custom colors for form labels and icons
+  label: {
+    normal: 'text-strong',                      // Form field labels when enabled
+    disabled: 'text-disabled'                   // Form field labels when disabled
+  },
+  icon: {
+    normal: 'text-strong',                      // Form field icons when enabled
+    disabled: 'text-disabled'                   // Form field icons when disabled
   }
-};
+} as const;
 
 export default function DynamicLeagueImportForm({ onComplete, onCancel }: DynamicLeagueImportFormProps) {
   const [loading, setLoading] = useState(false);
@@ -524,12 +544,14 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     activeValue={formData.platform}
                     floatingBgClassName="!bg-blue !text-white"
                     colorConfig={leagueImportColors}
+                    isDisabled={formData.platform === 'none'}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
+                      isControlDisabled={formData.platform === 'none'}
                     >
-                      <Circle className="size-2" />
+                      <ScanLine className="hw-icon-2xs " />
                     </SegmentedControl.Trigger>
                     {PLATFORMS.map(platform => (
                       <SegmentedControl.Trigger
@@ -579,22 +601,23 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 3: Sport */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiFootballLine className="hw-icon" />
-                  <label className="text-label text-strong">Sport *</label>
+                  <RiFootballLine className={`hw-icon ${isFieldDisabled.sport(formData.platform) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label ${isFieldDisabled.sport(formData.platform) ? leagueImportColors.label.disabled : 'text-strong'}`}>Sport *</label>
                 </div>
                 <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
                   <SegmentedControl.List
                     className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.sport}
-                    floatingBgClassName="!bg-blue !text-white"
+                    isDisabled={isFieldDisabled.sport(formData.platform)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
                       disabled={formData.platform === 'none'}
+                      isControlDisabled={isFieldDisabled.sport(formData.platform) || formData.sport === 'none'}
                     >
-                      <Circle className="size-2" />
+                      <ScanLine className="hw-icon-2xs" />
                     </SegmentedControl.Trigger>
                     {SPORTS.map(sport => {
                       const isAvailable = availableSports.includes(sport);
@@ -605,6 +628,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                           disabled={!isAvailable || formData.platform === 'none'}
                           className="w-32 relative group"
                           title={!isAvailable ? `${sport} support coming soon!` : ''}
+                          isControlDisabled={isFieldDisabled.sport(formData.platform)}
                         >
                     
                           <span className="text-label-lg">{sport}</span>
@@ -618,25 +642,32 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 4: League Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiTrophyLine className="size-5 text-gray-600" />
-                  <label className="text-label-lg text-strong-950">League Type *</label>
+                  <RiTrophyLine className={`size-5 ${isFieldDisabled.leagueType(formData.sport) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label-lg ${isFieldDisabled.leagueType(formData.sport) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>League Type *</label>
                 </div>
                 <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
                   <SegmentedControl.List
                     className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.leagueType}
-                    floatingBgClassName="!bg-blue !text-white"
+                    isDisabled={isFieldDisabled.leagueType(formData.sport)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
                       disabled={formData.sport === 'none'}
+                      isControlDisabled={isFieldDisabled.leagueType(formData.sport) || formData.leagueType === 'none'}
                     >
-                      <Circle className="size-2" />
+                      <ScanLine className="hw-icon-2xs" />
                     </SegmentedControl.Trigger>
                     {LEAGUE_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={formData.sport === 'none'}>
+                      <SegmentedControl.Trigger 
+                        key={type} 
+                        value={type} 
+                        className="w-32" 
+                        disabled={formData.sport === 'none'}
+                        isControlDisabled={isFieldDisabled.leagueType(formData.sport)}
+                      >
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -647,25 +678,32 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 5: Scoring Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiBarChartLine className="size-5 text-gray-600" />
-                  <label className="text-label-lg text-strong-950">Scoring Type *</label>
+                  <RiBarChartLine className={`size-5 ${isFieldDisabled.scoring(formData.leagueType) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label-lg ${isFieldDisabled.scoring(formData.leagueType) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Scoring Type *</label>
                 </div>
                 <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                   <SegmentedControl.List
                     className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.scoring}
-                    floatingBgClassName="!bg-blue !text-white"
+                    isDisabled={isFieldDisabled.scoring(formData.leagueType)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
                       disabled={formData.leagueType === 'none'}
+                      isControlDisabled={isFieldDisabled.scoring(formData.leagueType) || formData.scoring === 'none'}
                     >
-                      <Circle className="size-2" />
+                      <ScanLine className="hw-icon-2xs" />
                     </SegmentedControl.Trigger>
                     {SCORING_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={formData.leagueType === 'none'}>
+                      <SegmentedControl.Trigger 
+                        key={type} 
+                        value={type} 
+                        className="w-32" 
+                        disabled={formData.leagueType === 'none'}
+                        isControlDisabled={isFieldDisabled.scoring(formData.leagueType)}
+                      >
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -676,25 +714,32 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 6: Matchup Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiGameLine className="size-5 text-gray-600" />
-                  <label className="text-label-lg text-strong-950">Matchup Type *</label>
+                  <RiGameLine className={`size-5 ${isFieldDisabled.matchup(formData.scoring) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label-lg ${isFieldDisabled.matchup(formData.scoring) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Matchup Type *</label>
                 </div>
                 <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
                   <SegmentedControl.List
                     className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.matchup}
-                    floatingBgClassName="!bg-blue !text-white"
+                    isDisabled={isFieldDisabled.matchup(formData.scoring)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
                       disabled={formData.scoring === 'none'}
+                      isControlDisabled={isFieldDisabled.matchup(formData.scoring) || formData.matchup === 'none'}
                     >
-                      <Circle className="size-2" />
+                      <ScanLine className="hw-icon-2xs" />
                     </SegmentedControl.Trigger>
                     {MATCHUP_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={formData.scoring === 'none'}>
+                      <SegmentedControl.Trigger 
+                        key={type} 
+                        value={type} 
+                        className="w-32" 
+                        disabled={formData.scoring === 'none'}
+                        isControlDisabled={isFieldDisabled.matchup(formData.scoring)}
+                      >
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}

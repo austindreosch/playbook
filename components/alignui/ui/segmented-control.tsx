@@ -14,19 +14,22 @@ import { useTabObserver } from '@/hooks/use-tab-observer';
 const DEFAULT_SEGMENTED_CONTROL_COLORS = {
   // Base colors
   text: {
-    inactive: 'text-white',
-    active: 'text-white',
-    disabled: 'text-gray-400'
+    inactive: 'text-sub',
+    active: 'text-strong',
+    disabled: 'text-disabled',
+    disabledActive: 'text-strong'
   },
   // Background colors
   background: {
-    hover: 'hover:bg-blue-600/20',
-    activeHover: 'data-[state=active]:hover:bg-blue-700/20',
-    disabledHover: 'disabled:hover:bg-transparent'
+    hover: 'hover:bg-gray-25',
+    active: 'bg-white',
+    activeHover: 'data-[state=active]:hover:bg-gray-25',
+    disabledHover: 'disabled:hover:bg-transparent',
+    disabledActive: 'bg-gray-100'
   },
   // Container colors
   container: {
-    background: 'bg-bg-weak-50',
+    background: 'bg-bg-weak-25',
     floatingBg: 'bg-bg-white-0'
   }
 };
@@ -45,8 +48,9 @@ const SegmentedControlList = React.forwardRef<
     floatingBgClassName?: string;
     activeValue?: string;
     colorConfig?: Partial<SegmentedControlColorConfig>;
+    isDisabled?: boolean;
   }
->(({ children, className, floatingBgClassName, activeValue, colorConfig, ...rest }, forwardedRef) => {
+>(({ children, className, floatingBgClassName, activeValue, colorConfig, isDisabled = false, ...rest }, forwardedRef) => {
   // Deep merge the color configuration to ensure all nested properties are merged
   const colors = {
     ...DEFAULT_SEGMENTED_CONTROL_COLORS,
@@ -93,7 +97,8 @@ const SegmentedControlList = React.forwardRef<
       {/* floating bg */}
       <div
         className={cnExt(
-          `absolute inset-y-1 left-0 -z-10 rounded-md ${colors.container.floatingBg} shadow-toggle-switch transition-transform duration-300`,
+          `absolute inset-y-1 left-0 -z-10 rounded-md shadow-toggle-switch transition-transform duration-300`,
+          isDisabled ? colors.background.disabledActive : colors.background.active,
           {
             hidden: !mounted,
           },
@@ -114,8 +119,10 @@ SegmentedControlList.displayName = 'SegmentedControlList';
 
 const SegmentedControlTrigger = React.forwardRef<
   React.ComponentRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...rest }, forwardedRef) => {
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
+    isControlDisabled?: boolean;
+  }
+>(({ className, isControlDisabled = false, ...rest }, forwardedRef) => {
   const colors = React.useContext(SegmentedControlContext);
   
   return (
@@ -131,8 +138,10 @@ const SegmentedControlTrigger = React.forwardRef<
         colors.background.hover,
         // focus
         'focus:outline-none',
-        // active
-        `data-[state=active]:${colors.text.active} ${colors.background.activeHover}`,
+        // active - use disabledActive text if control is disabled
+        isControlDisabled 
+          ? `data-[state=active]:${colors.text.disabledActive} ${colors.background.activeHover}`
+          : `data-[state=active]:${colors.text.active} ${colors.background.activeHover}`,
         className,
         // disabled styles using colorConfig - applied after className for highest priority
         `disabled:cursor-not-allowed disabled:opacity-100 ${colors.background.disabledHover}`,
@@ -142,6 +151,11 @@ const SegmentedControlTrigger = React.forwardRef<
         colors.text.disabled === 'text-gray-200' && 'disabled:!text-gray-200',
         colors.text.disabled === 'text-gray-300' && 'disabled:!text-gray-300',
         colors.text.disabled === 'text-gray-400' && 'disabled:!text-gray-400',
+        // Map specific disabledActive colors to ensure Tailwind generates them
+        colors.text.disabledActive === 'text-blue-800' && 'data-[state=active]:!text-blue-800',
+        colors.text.disabledActive === 'text-blue-900' && 'data-[state=active]:!text-blue-900',
+        colors.text.disabledActive === 'text-gray-700' && 'data-[state=active]:!text-gray-700',
+        colors.text.disabledActive === 'text-white' && 'data-[state=active]:!text-white',
       )}
       {...rest}
     />
