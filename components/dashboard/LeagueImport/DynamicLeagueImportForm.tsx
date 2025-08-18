@@ -19,6 +19,7 @@ import {
 import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
+import type { SegmentedControlColorConfig } from '@/components/alignui/ui/segmented-control';
 import { Datepicker } from '@/components/ui/PBDatePicker';
 import { InfoIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -94,6 +95,52 @@ const PLAYOFF_SCHEDULES = {
   NFL: ['Week 15', 'Week 16', 'Week 17', 'Week 18'],
   NBA: ['Week 18', 'Week 19', 'Week 20', 'Week 21'],
   MLB: ['Week 18', 'Week 19', 'Week 20', 'Week 21']
+};
+
+// Default trade deadlines by sport and year
+const TRADE_DEADLINES = {
+  NFL: {
+    2025: new Date(2025, 10, 16), // Nov 16, 2025
+    2026: new Date(2026, 10, 15), // Nov 15, 2026
+    2027: new Date(2027, 10, 14), // Nov 14, 2027
+    2028: new Date(2028, 10, 19), // Nov 19, 2028
+    2029: new Date(2029, 10, 18), // Nov 18, 2029
+  },
+  NBA: {
+    2025: new Date(2025, 1, 16), // Feb 16, 2025
+    2026: new Date(2026, 1, 15), // Feb 15, 2026
+    2027: new Date(2027, 1, 21), // Feb 21, 2027
+    2028: new Date(2028, 1, 20), // Feb 20, 2028
+    2029: new Date(2029, 1, 18), // Feb 18, 2029
+  },
+  MLB: {
+    2025: new Date(2025, 7, 10), // Aug 10, 2025
+    2026: new Date(2026, 7, 9),  // Aug 9, 2026
+    2027: new Date(2027, 7, 8),  // Aug 8, 2027
+    2028: new Date(2028, 7, 13), // Aug 13, 2028
+    2029: new Date(2029, 7, 12), // Aug 12, 2029
+  }
+};
+
+// Helper function to get default trade deadline for a sport
+const getDefaultTradeDeadline = (sport: string): Date | undefined => {
+  const currentYear = new Date().getFullYear();
+  const sportDeadlines = TRADE_DEADLINES[sport as keyof typeof TRADE_DEADLINES];
+  
+  if (!sportDeadlines) return undefined;
+  
+  // Find the next available deadline (current year or later)
+  for (let year = currentYear; year <= currentYear + 5; year++) {
+    if (sportDeadlines[year as keyof typeof sportDeadlines]) {
+      const deadline = sportDeadlines[year as keyof typeof sportDeadlines];
+      // Only return if the deadline is in the future
+      if (deadline > new Date()) {
+        return deadline;
+      }
+    }
+  }
+  
+  return undefined;
 };
 
 // Helper function to extract league ID from URL
@@ -178,8 +225,8 @@ function SettingCard({
   disabled?: boolean;
 }) {
   return (
-    <div className={`h-28 rounded-lg border bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-50'} flex flex-col`}>
-      <div className="flex flex-col items-center text-center flex-1 gap-1.5">
+    <div className={`h-28 rounded-lg ring-1 ring-inset ring-stroke-soft-100 bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-5'} flex flex-col`}>
+      <div className="flex flex-col items-center text-center flex-1">
         <div className="w-full flex items-center gap-2 border-b border-gray-100 py-3 justify-center">
           <Icon className="hw-icon " />
           <label className="text-label">{label}</label>
@@ -287,6 +334,20 @@ function PuntCategoriesSelector({
   );
 }
 
+// Custom color configuration for league import form
+const leagueImportColors: Partial<SegmentedControlColorConfig> = {
+  text: {
+    inactive: 'text-gray-700',
+    active: 'text-white',
+    disabled: 'text-gray-100'
+  },
+  background: {
+    hover: 'hover:bg-gray-200/50',
+    activeHover: 'data-[state=active]:hover:bg-blue-600/90',
+    disabledHover: 'disabled:hover:bg-transparent'
+  }
+};
+
 export default function DynamicLeagueImportForm({ onComplete, onCancel }: DynamicLeagueImportFormProps) {
   const [loading, setLoading] = useState(false);
   const [leaguePreview, setLeaguePreview] = useState<League | null>(null);
@@ -327,10 +388,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     return PLAYOFF_SCHEDULES[formData.sport as keyof typeof PLAYOFF_SCHEDULES] || PLAYOFF_SCHEDULES.NFL;
   }, [formData.sport]);
 
-  // Update playoff schedule when sport changes
+  // Update playoff schedule and trade deadline when sport changes
   React.useEffect(() => {
     if (formData.sport && availablePlayoffSchedules.length > 0) {
-      setFormData(prev => ({ ...prev, playoffSchedule: availablePlayoffSchedules[0] }));
+      const defaultTradeDeadline = getDefaultTradeDeadline(formData.sport);
+      setFormData(prev => ({ 
+        ...prev, 
+        playoffSchedule: availablePlayoffSchedules[0],
+        tradeDeadline: defaultTradeDeadline
+      }));
     }
   }, [formData.sport, availablePlayoffSchedules]);
 
@@ -454,9 +520,10 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
                 <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
                   <SegmentedControl.List
-                    className="inline-flex w-128 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    className="inline-flex w-128 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.platform}
                     floatingBgClassName="!bg-blue !text-white"
+                    colorConfig={leagueImportColors}
                   >
                     {PLATFORMS.map(platform => (
                       <SegmentedControl.Trigger
@@ -511,9 +578,10 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
                 <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
                   <SegmentedControl.List
-                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.sport}
                     floatingBgClassName="!bg-blue !text-white"
+                    colorConfig={leagueImportColors}
                   >
                     {SPORTS.map(sport => {
                       const isAvailable = availableSports.includes(sport);
@@ -542,12 +610,13 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
                 <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
                   <SegmentedControl.List
-                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.leagueType}
                     floatingBgClassName="!bg-blue !text-white"
+                    colorConfig={leagueImportColors}
                   >
                     {LEAGUE_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white" disabled={!formData.sport}>
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={!formData.sport}>
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -563,12 +632,13 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
                 <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                   <SegmentedControl.List
-                    className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.scoring}
                     floatingBgClassName="!bg-blue !text-white"
+                    colorConfig={leagueImportColors}
                   >
                     {SCORING_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white" disabled={!formData.leagueType}>
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={!formData.leagueType}>
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -584,12 +654,13 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </div>
                 <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
                   <SegmentedControl.List
-                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.matchup}
                     floatingBgClassName="!bg-blue !text-white"
+                    colorConfig={leagueImportColors}
                   >
                     {MATCHUP_TYPES.map(type => (
-                      <SegmentedControl.Trigger key={type} value={type} className="w-32 data-[state=active]:text-white" disabled={!formData.scoring}>
+                      <SegmentedControl.Trigger key={type} value={type} className="w-32" disabled={!formData.scoring}>
                         <span className="text-label-lg">{type}</span>
                       </SegmentedControl.Trigger>
                     ))}
@@ -613,8 +684,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   />
                 </SettingCard>
 
-                {/* Salary Cap */}
-                <SettingCard icon={RiCoinLine} label="Salary Cap">
+                {/* Salary League */}
+                <SettingCard icon={RiCoinLine} label="Salary League">
                   <input
                     type="checkbox"
                     checked={formData.salary}
@@ -623,8 +694,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   />
                 </SettingCard>
 
-                {/* FAAB */}
-                <SettingCard icon={RiCoinLine} label="FAAB">
+                {/* FAAB Waivers */}
+                <SettingCard icon={RiCoinLine} label="FAAB Waivers">
                   <input
                     type="checkbox"
                     checked={formData.faab}

@@ -28,7 +28,7 @@ function Datepicker({ value, defaultValue, onChange }: SingleDatepickerProps) {
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <Button.Root variant='neutral' mode='stroke'>
+        <Button.Root variant='neutral' mode='stroke' className='text-badge'>
           {date ? format(date, 'LLL dd, y') : 'Select a date'}
         </Button.Root>
       </Popover.Trigger>

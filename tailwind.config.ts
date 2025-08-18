@@ -2,9 +2,7 @@ import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
-export const texts = {
-
-// here
+export const custom = {
 
   // Custom text size aliases for easier migration
   // 'title': ['1.32rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em', fontWeight: '700', color: 'var(--black)' }],
@@ -82,6 +80,35 @@ export const texts = {
     fontWeight: '400',
     color: 'var(--gray-300)', // Lightest for fine print  
   }],
+
+
+
+
+  'strong': ['inherit', { 
+    color: 'var(--black)', // Strongest text color
+  }],
+
+  'sub': ['inherit', { 
+    color: 'var(--gray-400)', // Subdued text color
+  }],
+
+  'soft': ['inherit', { 
+    color: 'var(--gray-300)', // Soft text color
+  }],
+
+
+
+
+
+  
+
+
+} as unknown as Record<string, string>;
+
+
+
+export const texts = {
+
 
 
   // ============================================================
@@ -1106,6 +1133,7 @@ const config = {
       current: 'currentColor',
     },
     fontSize: {
+      ...custom,
       ...texts,
       inherit: 'inherit',
     },
@@ -1442,6 +1470,35 @@ const config = {
     require('@designbycode/tailwindcss-text-shadow'),
     function({ addUtilities }) {
       addUtilities({
+        // Custom color utilities only
+        '.text-title': {
+          'color': 'var(--black)',
+        },
+        '.text-big': {
+          'color': 'var(--black)',
+        },
+        '.text-header': {
+          'color': 'var(--black)',
+        },
+        '.text-label': {
+          'color': 'var(--black)',
+        },
+        '.text-number': {
+          'color': 'var(--black)',
+        },
+        '.text-paragraph': {
+          'color': 'var(--gray-400)',
+        },
+        '.text-badge': {
+          'color': 'var(--black)',
+        },
+        '.text-sublabel': {
+          'color': 'var(--gray-300)',
+        },
+        '.text-tight': {
+          'color': 'var(--gray-300)',
+        },
+
         // Force purple color for AlignUI text styles
         // '.text-title-h1, .text-title-h2, .text-title-h3, .text-title-h4, .text-title-h5, .text-title-h6': {
         //   'color': 'purple !important',
@@ -1460,6 +1517,8 @@ const config = {
         // },
 
 
+
+
         '.hw-icon': {
           'width': '1.2rem !important',
           'height': '1.2rem !important',
@@ -1472,10 +1531,10 @@ const config = {
           'width': '0.9rem !important',
           'height': '0.9rem !important',
         },
-        // '.hw-icon-2xs': {
-        //   'width': '0.8rem !important',
-        //   'height': '0.8rem !important',
-        // },
+        '.hw-icon-2xs': {
+          'width': '0.8rem !important',
+          'height': '0.8rem !important',
+        },
         '.hw-icon-lg': {
           'width': '1.4rem !important',
           'height': '1.4rem !important',

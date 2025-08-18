@@ -42,7 +42,7 @@ const PopoverContent = React.forwardRef<
           // base
           [
             !unstyled &&
-              'w-max rounded-2xl bg-bg-white-0 p-5 shadow-regular-md ring-1 ring-inset ring-stroke-soft-200',
+              'w-max rounded-2xl bg-bg-white-0 p-5 shadow-regular-md ring-1 ring-inset ring-stroke-soft-100',
           ],
           'z-50',
           // animation

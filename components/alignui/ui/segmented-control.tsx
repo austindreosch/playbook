@@ -10,6 +10,32 @@ import mergeRefs from 'merge-refs';
 import { cnExt } from '@/utils/cn';
 import { useTabObserver } from '@/hooks/use-tab-observer';
 
+// Default color configuration for SegmentedControl
+const DEFAULT_SEGMENTED_CONTROL_COLORS = {
+  // Base colors
+  text: {
+    inactive: 'text-white',
+    active: 'text-white',
+    disabled: 'text-gray-400'
+  },
+  // Background colors
+  background: {
+    hover: 'hover:bg-blue-600/20',
+    activeHover: 'data-[state=active]:hover:bg-blue-700/20',
+    disabledHover: 'disabled:hover:bg-transparent'
+  },
+  // Container colors
+  container: {
+    background: 'bg-bg-weak-50',
+    floatingBg: 'bg-bg-white-0'
+  }
+};
+
+export type SegmentedControlColorConfig = typeof DEFAULT_SEGMENTED_CONTROL_COLORS;
+
+// Context to pass color configuration to child components
+const SegmentedControlContext = React.createContext<SegmentedControlColorConfig>(DEFAULT_SEGMENTED_CONTROL_COLORS);
+
 const SegmentedControlRoot = TabsPrimitive.Root;
 SegmentedControlRoot.displayName = 'SegmentedControlRoot';
 
@@ -18,8 +44,10 @@ const SegmentedControlList = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & {
     floatingBgClassName?: string;
     activeValue?: string;
+    colorConfig?: Partial<SegmentedControlColorConfig>;
   }
->(({ children, className, floatingBgClassName, activeValue, ...rest }, forwardedRef) => {
+>(({ children, className, floatingBgClassName, activeValue, colorConfig, ...rest }, forwardedRef) => {
+  const colors = { ...DEFAULT_SEGMENTED_CONTROL_COLORS, ...colorConfig };
   const [lineStyle, setLineStyle] = React.useState({ width: 0, left: 0 });
 
   const { mounted, listRef, updateActiveTab } = useTabObserver({
@@ -35,20 +63,21 @@ const SegmentedControlList = React.forwardRef<
   }, [activeValue, updateActiveTab]);
 
   return (
-    <TabsPrimitive.List
-      ref={mergeRefs(forwardedRef, listRef)}
-      className={cnExt(
-        'relative isolate grid auto-cols-auto grid-flow-col gap-1 rounded-lg bg-bg-weak-50 p-1',
-        className,
-      )}
-      {...rest}
-    >
-      <Slottable>{children}</Slottable>
+    <SegmentedControlContext.Provider value={colors}>
+      <TabsPrimitive.List
+        ref={mergeRefs(forwardedRef, listRef)}
+        className={cnExt(
+          `relative isolate grid auto-cols-auto grid-flow-col gap-1 rounded-lg ${colors.container.background} p-1`,
+          className,
+        )}
+        {...rest}
+      >
+        <Slottable>{children}</Slottable>
 
       {/* floating bg */}
       <div
         className={cnExt(
-          'absolute inset-y-1 left-0 -z-10 rounded-md bg-bg-white-0 shadow-toggle-switch transition-transform duration-300',
+          `absolute inset-y-1 left-0 -z-10 rounded-md ${colors.container.floatingBg} shadow-toggle-switch transition-transform duration-300`,
           {
             hidden: !mounted,
           },
@@ -61,7 +90,8 @@ const SegmentedControlList = React.forwardRef<
         }}
         aria-hidden='true'
       />
-    </TabsPrimitive.List>
+      </TabsPrimitive.List>
+    </SegmentedControlContext.Provider>
   );
 });
 SegmentedControlList.displayName = 'SegmentedControlList';
@@ -70,21 +100,24 @@ const SegmentedControlTrigger = React.forwardRef<
   React.ComponentRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...rest }, forwardedRef) => {
+  const colors = React.useContext(SegmentedControlContext);
   return (
     <TabsPrimitive.Trigger
       ref={forwardedRef}
       className={cnExt(
         // base
         'peer',
-        'relative z-10 h-7 whitespace-nowrap rounded-md px-2 text-label-sm text-soft-400 outline-none',
+        `relative z-10 h-7 whitespace-nowrap rounded-md px-2 text-label-sm ${colors.text.inactive} outline-none`,
         'flex items-center justify-center gap-1.5',
         'transition duration-300 ease-out',
-        // global hover for all segmented controls (visible on dark and light backgrounds)
-        'hover:bg-white/10',
+        // global hover for all segmented controls
+        colors.background.hover,
         // focus
         'focus:outline-none',
         // active
-        'data-[state=active]:text-strong-950 data-[state=active]:hover:bg-bg-white-0',
+        `data-[state=active]:${colors.text.active} ${colors.background.activeHover}`,
+        // disabled
+        `disabled:${colors.text.disabled} disabled:cursor-not-allowed ${colors.background.disabledHover} disabled:opacity-100`,
         className,
       )}
       {...rest}
