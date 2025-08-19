@@ -22,7 +22,7 @@ export const inputVariants = tv({
       'transition duration-200 ease-out',
       'divide-x divide-stroke-soft-200',
       // before
-      'before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-stroke-soft-200',
+      'before:absolute before:inset-0 before:ring-1 before:ring-inset before:ring-stroke-soft-100',
       'before:pointer-events-none before:rounded-[inherit]',
       'before:transition before:duration-200 before:ease-out',
       // hover

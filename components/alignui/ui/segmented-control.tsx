@@ -35,7 +35,8 @@ const DEFAULT_SEGMENTED_CONTROL_COLORS = {
   // Separator colors
   separator: {
     from: 'after:from-transparent',
-    via: 'after:via-gray-300', 
+    via: 'after:via-gray-300',
+    viaDisabled: 'after:via-gray-100',
     to: 'after:to-transparent'
   }
 };
@@ -153,7 +154,7 @@ const SegmentedControlTrigger = React.forwardRef<
         // gradient style - using configurable colors
         '[&:not(:last-of-type)]:after:bg-gradient-to-b',
         colors.separator.from,
-        colors.separator.via,
+        isControlDisabled ? colors.separator.viaDisabled : colors.separator.via,
         colors.separator.to,
         // hide around active
         'data-[state=active]:after:hidden', // no separator AFTER active

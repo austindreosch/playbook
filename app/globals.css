@@ -84,13 +84,13 @@
     --blue-alpha-10: #228cdb1a;
     
     --orange: #ffcd51;
-    --orange-950: #191408;
-    --orange-900: #332910;
-    --orange-850: #4c3d18;
-    --orange-800: #665220;
-    --orange-750: #806729;
-    --orange-700: #997b31;
-    --orange-650: #b39039;
+    --orange-950: #332910;
+    --orange-900: #4c3d18;
+    --orange-850: #665220;
+    --orange-800: #806729;
+    --orange-750: #997b31;
+    --orange-700: #b39039;
+    --orange-650: #cfa742;
     --orange-600: #cca441;
     --orange-550: #e6b949;
     --orange-500: #ffcd51;
@@ -389,6 +389,9 @@
     --black: var(--neutral-0);
     --gray-450: var(--neutral-0);
     --gray-400: var(--neutral-300);
+    --gray-75: var(--neutral-700);
+    --gray-100: var(--neutral-600);
+    --gray-150: var(--neutral-500);
     
     --bg-strong-950: var(--neutral-0);
     --bg-surface-800: var(--neutral-150);

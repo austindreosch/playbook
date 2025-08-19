@@ -748,6 +748,7 @@ const config = {
         '10': 'var(--gray-10)',
         '25': 'var(--gray-25)',
         '50': 'var(--gray-50)',
+        '75': 'var(--gray-75)',
         '100': 'var(--gray-100)',
         '150': 'var(--gray-150)',
         '200': 'var(--gray-200)',
