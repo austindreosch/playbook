@@ -1,26 +1,39 @@
 'use client';
 import { useState } from 'react';
 import * as React from 'react';
-import {
-  RiGlobalLine,
-  RiHashtag,
-  RiFootballLine,
-  RiTrophyLine,
-  RiBarChartLine,
-  RiGameLine,
-  RiCalendarLine,
-  RiSettings3Line,
-  RiTimeLine,
-  RiCoinLine,
-  RiExchangeLine,
-  RiListCheck,
-  RiAtLine
-} from '@remixicon/react';
 import * as Button from '@/components/alignui/button';
 import * as Input from '@/components/alignui/input';
+import * as Select from '@/components/alignui/select';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
 import { Datepicker } from '@/components/ui/PBDatePicker';
-import { InfoIcon, Loader2, Minus, ScanLine } from 'lucide-react';
+import { 
+  InfoIcon, 
+  Loader2, 
+  Minus, 
+  ScanLine,
+  Globe,
+  Hash,
+  Swords,
+  Trophy,
+  BarChart2,
+  Calendar,
+  Settings,
+  Clock,
+  CircleDollarSign,
+  ArrowRightLeft,
+  ListChecks,
+  Plus,
+  MinusIcon,
+  Gamepad2,
+} from 'lucide-react';
+import {
+  Button as ReactAriaButton,
+  Group as ReactAriaGroup,
+  Input as ReactAriaInput,
+  NumberField as ReactAriaNumberField,
+} from 'react-aria-components';
+import { compactButtonVariants } from '@/components/alignui/compact-button';
+import { inputVariants } from '@/components/alignui/input';
 import { toast } from 'sonner';
 
 interface Platform {
@@ -54,7 +67,7 @@ interface FormData {
   puntCategories: boolean;
   puntedCategories: string[];
   gamesLimit: number | null;
-  hasGamesLimit: boolean;
+  gamesLimitType: string;
   scoringMethod: string;
   playoffSchedule: string;
   tradeDeadline: Date | undefined;
@@ -211,6 +224,48 @@ const getPlatformHelperText = (platform: string): string => {
   }
 };
 
+// Counter Input component
+function CounterInput({ 
+  value, 
+  onChange, 
+  disabled = false,
+  minValue = 0,
+  maxValue = 200 
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  disabled?: boolean;
+  minValue?: number;
+  maxValue?: number;
+}) {
+  const { root: inputRoot, wrapper: inputWrapper, input } = inputVariants();
+  const { root: compactButtonRoot, icon: compactButtonIcon } =
+    compactButtonVariants({ variant: 'ghost' });
+
+  return (
+    <ReactAriaNumberField
+      value={value}
+      onChange={onChange}
+      minValue={minValue}
+      maxValue={maxValue}
+      isDisabled={disabled}
+      className="w-full"
+    >
+      <div className={inputRoot()}>
+        <ReactAriaGroup className={inputWrapper()}>
+          <ReactAriaButton slot="decrement" className={compactButtonRoot()}>
+            <MinusIcon className={compactButtonIcon()} />
+          </ReactAriaButton>
+          <ReactAriaInput className={input({ class: 'text-center text-sm' })} />
+          <ReactAriaButton slot="increment" className={compactButtonRoot()}>
+            <Plus className={compactButtonIcon()} />
+          </ReactAriaButton>
+        </ReactAriaGroup>
+      </div>
+    </ReactAriaNumberField>
+  );
+}
+
 // Unified setting card component with reasonable height
 function SettingCard({ 
   icon: Icon, 
@@ -224,9 +279,9 @@ function SettingCard({
   disabled?: boolean;
 }) {
   return (
-    <div className={`h-28 rounded-lg ring-1 ring-inset ring-stroke-soft-100 bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-5'} flex flex-col`}>
+    <div className={`h-24 rounded-lg ring-1 ring-inset ring-stroke-soft-100 bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-5'} flex flex-col`}>
       <div className="flex flex-col items-center text-center flex-1">
-        <div className="w-full flex items-center gap-2 border-b border-gray-100 py-3 justify-center">
+        <div className="w-full flex items-center gap-2 border-b border-gray-100 py-2 justify-center">
           <Icon className="hw-icon " />
           <label className="text-label">{label}</label>
         </div>
@@ -239,99 +294,8 @@ function SettingCard({
   );
 }
 
-// Checkbox card component for settings
-function CheckboxCard({ 
-  icon: Icon, 
-  label, 
-  checked, 
-  onChange, 
-  disabled = false 
-}: { 
-  icon: React.ElementType; 
-  label: string; 
-  checked: boolean; 
-  onChange: (checked: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <div className={`p-4 rounded-lg border bg-white ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Icon className="size-5 text-gray-600" />
-          <label className="text-label text-strong-950 cursor-pointer">{label}</label>
-        </div>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          disabled={disabled}
-          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-        />
-      </div>
-    </div>
-  );
-}
 
 
-// Component for selecting punt categories
-function PuntCategoriesSelector({ 
-  sport, 
-  leagueCategories, 
-  puntedCategories, 
-  onPuntedCategoriesChange 
-}: { 
-  sport: string; 
-  leagueCategories?: string[]; 
-  puntedCategories: string[]; 
-  onPuntedCategoriesChange: (categories: string[]) => void; 
-}) {
-  // Use league categories if available, otherwise fall back to defaults
-  const availableCategories = leagueCategories && leagueCategories.length > 0 
-    ? leagueCategories 
-    : DEFAULT_CATEGORIES[sport as keyof typeof DEFAULT_CATEGORIES] || [];
-
-  const toggleCategory = (category: string) => {
-    const newPuntedCategories = puntedCategories.includes(category)
-      ? puntedCategories.filter(cat => cat !== category)
-      : [...puntedCategories, category];
-    onPuntedCategoriesChange(newPuntedCategories);
-  };
-
-  if (availableCategories.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <RiListCheck className="size-4 text-gray-600" />
-        <h4 className="text-sm font-medium text-gray-900">Categories to Punt</h4>
-      </div>
-      <p className="text-xs text-gray-500 mb-3">
-        Select categories you plan to punt (ignore). Green = compete, Red = punt.
-      </p>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {availableCategories.map((category) => {
-          const isPunted = puntedCategories.includes(category);
-          return (
-            <button
-              key={category}
-              type="button"
-              onClick={() => toggleCategory(category)}
-              className={`px-3 py-2 text-xs font-medium rounded-md border transition-colors ${
-                isPunted 
-                  ? 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100' 
-                  : 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
-              }`}
-            >
-              {category}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 // Helper functions to determine disabled states
 const isFieldDisabled = {
@@ -393,7 +357,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     puntCategories: false,
     puntedCategories: [],
     gamesLimit: 40,
-    hasGamesLimit: false,
+    gamesLimitType: 'none',
     scoringMethod: SCORING_METHODS[0],
     playoffSchedule: PLAYOFF_SCHEDULES.NFL[0],
     tradeDeadline: undefined,
@@ -418,10 +382,22 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   React.useEffect(() => {
     if (formData.sport && availablePlayoffSchedules.length > 0) {
       const defaultTradeDeadline = getDefaultTradeDeadline(formData.sport);
+      
+      // Set sport-specific defaults for games limit
+      let defaultGamesLimit = 40; // Default for most sports
+      if (formData.sport === 'NBA') {
+        defaultGamesLimit = 40; // NBA default
+      } else if (formData.sport === 'MLB') {
+        defaultGamesLimit = 162; // MLB default (full season)
+      } else if (formData.sport === 'NFL') {
+        defaultGamesLimit = 17; // NFL default
+      }
+      
       setFormData(prev => ({ 
         ...prev, 
         playoffSchedule: availablePlayoffSchedules[0],
-        tradeDeadline: defaultTradeDeadline
+        tradeDeadline: defaultTradeDeadline,
+        gamesLimit: defaultGamesLimit
       }));
     }
   }, [formData.sport, availablePlayoffSchedules]);
@@ -456,13 +432,18 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   // Handle league ID input with auto-detection
   const handleLeagueIdChange = (value: string) => {
     const detected = detectPlatformFromUrl(value);
+    let platformToUse = formData.platform;
+    
     if (detected && detected !== formData.platform) {
       setDetectedPlatform(detected);
+      platformToUse = detected;
+      // Auto-select the detected platform
+      handlePlatformChange(detected);
     } else {
       setDetectedPlatform(null);
     }
 
-    const extractedId = formData.platform ? extractLeagueId(value, formData.platform) : value;
+    const extractedId = platformToUse ? extractLeagueId(value, platformToUse) : value;
     setFormData(prev => ({ ...prev, leagueId: extractedId }));
   };
 
@@ -493,6 +474,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
           puntCategories: formData.puntCategories,
           puntedCategories: formData.puntedCategories,
           gamesLimit: formData.gamesLimit,
+          gamesLimitType: formData.gamesLimitType,
           scoringMethod: formData.scoringMethod,
           playoffSchedule: formData.playoffSchedule,
           tradeDeadline: formData.tradeDeadline ? formData.tradeDeadline.toISOString() : null,
@@ -522,15 +504,9 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 rounded-xl border border-gray-200 shadow-lg">
-      {/* Header */}
-      <div className="px-6 py-4 border-b bg-white rounded-t-xl">
-        <h1 className="text-header text-gray-900">Import League</h1>
-        <p className="text-paragraph-md text-gray-600 mt-1">Connect your fantasy league to get started with Playbook</p>
-      </div>
-
+    <div className="h-full flex flex-col">
       {/* Main Form - Two Column Layout */}
-      <div className="flex-1 overflow-y-auto p-6 bg-white">
+      <div className="flex-1 overflow-y-auto p-6 bg-white rounded-t-xl">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
@@ -541,8 +517,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 1: Platform */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiGlobalLine className="hw-icon text-gray-600" />
-                  <label className="text-label text-strong-950">Platform *</label>
+                  <Globe className="hw-icon text-gray-600" />
+                  <label className="text-label text-strong-950">Platform</label>
                 </div>
                 <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
                   <SegmentedControl.List
@@ -576,8 +552,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 2: League ID */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiHashtag className="size-5 text-gray-600" />
-                  <label className="text-label text-strong-950">League ID *</label>
+                  <Hash className="size-5 text-gray-600" />
+                  <label className="text-label text-strong-950">League ID</label>
                 </div>
                 <Input.Root>
                   <Input.Wrapper>
@@ -607,8 +583,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 3: Sport */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiFootballLine className={`hw-icon ${isFieldDisabled.sport(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.sport(formData) ? leagueImportColors.label.disabled : 'text-strong'}`}>Sport *</label>
+                  <Gamepad2 className={`hw-icon ${isFieldDisabled.sport(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label ${isFieldDisabled.sport(formData) ? leagueImportColors.label.disabled : 'text-strong'}`}>Sport</label>
                 </div>
                 <SegmentedControl.Root value={formData.sport} onValueChange={(value) => setFormData(prev => ({ ...prev, sport: value }))}>
                   <SegmentedControl.List
@@ -648,8 +624,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 4: League Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiTrophyLine className={`size-5 ${isFieldDisabled.leagueType(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.leagueType(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>League Type *</label>
+                  <Trophy className={`size-5 ${isFieldDisabled.leagueType(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label ${isFieldDisabled.leagueType(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>League Type</label>
                 </div>
                 <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
                   <SegmentedControl.List
@@ -684,8 +660,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 5: Scoring Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiBarChartLine className={`size-5 ${isFieldDisabled.scoring(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.scoring(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Scoring Type *</label>
+                  <BarChart2 className={`size-5 ${isFieldDisabled.scoring(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label ${isFieldDisabled.scoring(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Scoring Type</label>
                 </div>
                 <SegmentedControl.Root value={formData.scoring} onValueChange={(value) => setFormData(prev => ({ ...prev, scoring: value }))}>
                   <SegmentedControl.List
@@ -720,8 +696,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 6: Matchup Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <RiGameLine className={`size-5 ${isFieldDisabled.matchup(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.matchup(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Matchup Type *</label>
+                  <Swords className={`size-5 ${isFieldDisabled.matchup(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
+                  <label className={`text-label ${isFieldDisabled.matchup(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>Matchup Type</label>
                 </div>
                 <SegmentedControl.Root value={formData.matchup} onValueChange={(value) => setFormData(prev => ({ ...prev, matchup: value }))}>
                   <SegmentedControl.List
@@ -738,17 +714,21 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     >
                       <ScanLine className={`hw-icon-2xs ${formData.matchup === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
-                    {MATCHUP_TYPES.map(type => (
-                      <SegmentedControl.Trigger 
-                        key={type} 
-                        value={type} 
-                        className="w-32" 
-                        disabled={isFieldDisabled.matchup(formData)}
-                        isControlDisabled={isFieldDisabled.matchup(formData)}
-                      >
+                    {MATCHUP_TYPES.map(type => {
+                      const isDisabledType = type === 'Roto' || type === 'Total Points';
+                      return (
+                        <SegmentedControl.Trigger 
+                          key={type} 
+                          value={type} 
+                          className="w-32" 
+                          disabled={isFieldDisabled.matchup(formData) || isDisabledType}
+                          isControlDisabled={isFieldDisabled.matchup(formData)}
+                          title={isDisabledType ? `${type} support coming soon!` : ''}
+                        >
                           <span className="text-label">{type}</span>
-                      </SegmentedControl.Trigger>
-                    ))}
+                        </SegmentedControl.Trigger>
+                      );
+                    })}
                   </SegmentedControl.List>
                 </SegmentedControl.Root>
               </div>
@@ -761,175 +741,200 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
               {/* Settings Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                {/* Trade Deadline */}
-                <SettingCard icon={RiExchangeLine} label="Trade Deadline">
-                  <Datepicker 
-                    value={formData.tradeDeadline}
-                    onChange={(date: Date | undefined) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
-                  />
-                </SettingCard>
+                {/* Trade Deadline (only show if sport is selected) */}
+                {formData.sport && formData.sport !== 'none' && (
+                  <SettingCard icon={ArrowRightLeft} label="Trade Deadline">
+                    <Datepicker 
+                      value={formData.tradeDeadline}
+                      onChange={(date: Date | undefined) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
+                    />
+                  </SettingCard>
+                )}
 
                 {/* Salary League */}
-                <SettingCard icon={RiCoinLine} label="Salary League">
+                <SettingCard icon={CircleDollarSign} label="Salary League">
                   <input
                     type="checkbox"
                     checked={formData.salary}
                     onChange={(e) => setFormData(prev => ({ ...prev, salary: e.target.checked }))}
-                    className="h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                 </SettingCard>
 
                 {/* FAAB Waivers */}
-                <SettingCard icon={RiCoinLine} label="FAAB Waivers">
+                <SettingCard icon={CircleDollarSign} label="FAAB Waivers">
                   <input
                     type="checkbox"
                     checked={formData.faab}
                     onChange={(e) => setFormData(prev => ({ ...prev, faab: e.target.checked }))}
-                    className="h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                 </SettingCard>
 
                 {/* Categories Scoring (conditional) */}
                 {formData.scoring === 'Categories' && (
-                  <SettingCard icon={RiBarChartLine} label="Categories Scoring">
-                    <select
-                      value={formData.scoringMethod}
-                      onChange={(e) => setFormData(prev => ({ ...prev, scoringMethod: e.target.value }))}
-                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stroke-100"
-                    >
-                      {SCORING_METHODS.map(method => (
-                        <option key={method} value={method}>{method}</option>
-                      ))}
-                    </select>
+                  <SettingCard icon={BarChart2} label="Categories Scoring">
+                    <Select.Root value={formData.scoringMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, scoringMethod: value }))} size="xsmall">
+                      <Select.Trigger className="w-full">
+                        <Select.Value />
+                      </Select.Trigger>
+                      <Select.Content>
+                        {SCORING_METHODS.map(method => (
+                          <Select.Item key={method} value={method}>{method}</Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select.Root>
                   </SettingCard>
                 )}
 
                 {/* Playoff Schedule (conditional) */}
                 {formData.matchup === 'H2H' && (
-                  <SettingCard icon={RiCalendarLine} label="Playoff Schedule">
-                    <select
-                      value={formData.playoffSchedule}
-                      onChange={(e) => setFormData(prev => ({ ...prev, playoffSchedule: e.target.value }))}
-                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stroke-100"
-                    >
-                      {availablePlayoffSchedules.map(schedule => (
-                        <option key={schedule} value={schedule}>{schedule}</option>
-                      ))}
-                    </select>
+                  <SettingCard icon={Calendar} label="Playoff Schedule">
+                    <Select.Root value={formData.playoffSchedule} onValueChange={(value) => setFormData(prev => ({ ...prev, playoffSchedule: value }))} size="xsmall">
+                      <Select.Trigger className="w-full">
+                        <Select.Value />
+                      </Select.Trigger>
+                      <Select.Content>
+                        {availablePlayoffSchedules.map(schedule => (
+                          <Select.Item key={schedule} value={schedule}>{schedule}</Select.Item>
+                        ))}
+                      </Select.Content>
+                    </Select.Root>
                   </SettingCard>
                 )}
 
-                {/* Games Limit (conditional) */}
-                {formData.scoring === 'Categories' && (
-                  <SettingCard icon={RiGameLine} label="Games Limit">
+                {/* Games Limit (conditional - show for NBA and MLB, hide for NFL) */}
+                {formData.scoring === 'Categories' && (formData.sport === 'NBA' || formData.sport === 'MLB') && (
+                  <SettingCard icon={Gamepad2} label="Games Limit">
                     <div className="w-full space-y-2">
-                      <div className="flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          checked={formData.hasGamesLimit}
-                          onChange={(e) => setFormData(prev => ({ ...prev, hasGamesLimit: e.target.checked }))}
-                          className="h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                      </div>
-                      {formData.hasGamesLimit && (
-                        <input
-                          type="number"
-                          value={formData.gamesLimit || 40}
-                          onChange={(e) => setFormData(prev => ({ ...prev, gamesLimit: e.target.value ? parseInt(e.target.value) : 40 }))}
-                          placeholder="40"
-                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+                      <Select.Root 
+                        value={formData.gamesLimitType} 
+                        onValueChange={(value) => {
+                          let defaultLimit = 40;
+                          if (formData.sport === 'NBA' && value === 'weekly-starts') {
+                            defaultLimit = 40;
+                          } else if (formData.sport === 'MLB' && value === 'weekly-pitching-starts') {
+                            defaultLimit = 7;
+                          }
+                          setFormData(prev => ({ 
+                            ...prev, 
+                            gamesLimitType: value,
+                            gamesLimit: value !== 'none' ? defaultLimit : prev.gamesLimit
+                          }))
+                        }} 
+                        size="xsmall"
+                      >
+                        <Select.Trigger className="w-full">
+                          <Select.Value />
+                        </Select.Trigger>
+                        <Select.Content>
+                          <Select.Item value="none">None</Select.Item>
+                          {formData.sport === 'NBA' && (
+                            <Select.Item value="weekly-starts">Weekly Starts</Select.Item>
+                          )}
+                          {formData.sport === 'MLB' && (
+                            <Select.Item value="weekly-pitching-starts">Weekly Pitching Starts</Select.Item>
+                          )}
+                        </Select.Content>
+                      </Select.Root>
+                      
+                      {formData.gamesLimitType !== 'none' && (
+                        <CounterInput 
+                          value={formData.gamesLimit || (formData.sport === 'NBA' ? 40 : 7)}
+                          onChange={(value) => setFormData(prev => ({ ...prev, gamesLimit: value }))}
+                          disabled={formData.gamesLimitType === 'none'}
+                          minValue={0}
+                          maxValue={200}
                         />
                       )}
                     </div>
                   </SettingCard>
                 )}
-              </div>
 
-              {/* Dynasty/Keeper Conditional Fields */}
-              {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                <div className="space-y-4">
-                  {/* Team Status */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <RiAtLine className="size-5 text-gray-600" />
-                      <label className="text-label text-strong-950">Team Status</label>
-                    </div>
-                    <SegmentedControl.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))}>
-                      <SegmentedControl.List
-                        className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-gray-200"
-                        activeValue={formData.teamStatus}
-                        floatingBgClassName="!bg-blue !text-white"
-                        colorConfig={leagueImportColors}
-                      >
+                {/* Dynasty Strategy (Dynasty/Keeper only) */}
+                {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
+                  <SettingCard icon={Trophy} label="Dynasty Strategy">
+                    <Select.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))} size="xsmall">
+                      <Select.Trigger className="w-full">
+                        <Select.Value />
+                      </Select.Trigger>
+                      <Select.Content>
                         {TEAM_STATUSES.map(status => (
-                          <SegmentedControl.Trigger key={status} value={status} className="w-32">
-                            <span className="text-label">{status}</span>
-                          </SegmentedControl.Trigger>
+                          <Select.Item key={status} value={status}>{status}</Select.Item>
                         ))}
-                      </SegmentedControl.List>
-                    </SegmentedControl.Root>
-                  </div>
-
-                  {/* Dynasty/Keeper Settings Cards */}
-                  <div className="space-y-3">
-                    <h3 className="text-label text-strong-950">Dynasty/Keeper Options</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      <CheckboxCard 
-                        icon={RiTimeLine}
-                        label="Decay"
-                        checked={formData.decay}
-                        onChange={(checked) => setFormData(prev => ({ ...prev, decay: checked }))}
-                      />
-                      <CheckboxCard 
-                        icon={RiSettings3Line}
-                        label="Contracts"
-                        checked={formData.contracts}
-                        onChange={(checked) => setFormData(prev => ({ ...prev, contracts: checked }))}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Team Strategy Section */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  {/* <h3 className="text-label text-strong-950">Team Strategy</h3> */}
-                  
-                  {/* Team Status Selector */}
-                  <SettingCard icon={RiTrophyLine} label="Team Status">
-                    <select
-                      value={formData.teamStatus}
-                      onChange={(e) => setFormData(prev => ({ ...prev, teamStatus: e.target.value }))}
-                      className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-stroke-100"
-                    >
-                      {TEAM_STATUSES.map(status => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
+                      </Select.Content>
+                    </Select.Root>
                   </SettingCard>
-                </div>
+                )}
+
+                {/* Decay (Dynasty/Keeper only) */}
+                {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
+                  <SettingCard icon={Clock} label="Decay">
+                    <input
+                      type="checkbox"
+                      checked={formData.decay}
+                      onChange={(e) => setFormData(prev => ({ ...prev, decay: e.target.checked }))}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </SettingCard>
+                )}
+
+                {/* Contracts (Dynasty/Keeper only) */}
+                {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
+                  <SettingCard icon={Settings} label="Contracts">
+                    <input
+                      type="checkbox"
+                      checked={formData.contracts}
+                      onChange={(e) => setFormData(prev => ({ ...prev, contracts: e.target.checked }))}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                  </SettingCard>
+                )}
               </div>
+
+
 
               {/* Categories Conditional Fields */}
               {formData.scoring === 'Categories' && (
                 <div className="space-y-4">
                   {/* Punt Categories Section */}
-                  <div className="space-y-2">
-                      <h3 className="text-label text-strong-950">Category Strategy</h3>
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <PuntCategoriesSelector
-                        sport={formData.sport}
-                        leagueCategories={leaguePreview?.categories}
-                        puntedCategories={formData.puntedCategories}
-                        onPuntedCategoriesChange={(categories) => 
-                          setFormData(prev => ({ 
-                            ...prev, 
-                            puntedCategories: categories,
-                            puntCategories: categories.length > 0 
-                          }))
-                        }
-                      />
+                  <div className="rounded-lg ring-1 ring-inset ring-stroke-soft-100 bg-white hover:bg-gray-5 p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <ListChecks className="hw-icon text-gray-600" />
+                        <h4 className="text-label text-strong">Punt Strategy</h4>
+                      </div>
+                      <div className="flex gap-1 overflow-x-auto">
+                        {(leaguePreview?.categories && leaguePreview.categories.length > 0 
+                          ? leaguePreview.categories 
+                          : DEFAULT_CATEGORIES[formData.sport as keyof typeof DEFAULT_CATEGORIES] || []
+                        ).map((category) => {
+                          const isPunted = formData.puntedCategories.includes(category);
+                          return (
+                            <button
+                              key={category}
+                              type="button"
+                              onClick={() => {
+                                const newPuntedCategories = isPunted
+                                  ? formData.puntedCategories.filter(cat => cat !== category)
+                                  : [...formData.puntedCategories, category];
+                                setFormData(prev => ({ 
+                                  ...prev, 
+                                  puntedCategories: newPuntedCategories,
+                                  puntCategories: newPuntedCategories.length > 0 
+                                }));
+                              }}
+                              className={`w-16 px-2 py-1 text-paragraph font-medium rounded border transition-colors ${
+                                isPunted 
+                                  ? 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100' 
+                                  : 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100'
+                              }`}
+                            >
+                              {category}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -943,7 +948,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
       </div>
 
       {/* Footer */}
-      <div className="p-6 border-t bg-gray-50 rounded-b-xl">
+      <div className="p-6 bg-gray-50 rounded-b-xl ring-1 ring-inset ring-stroke-soft-100">
         <div className="max-w-6xl mx-auto flex justify-between">
           <Button.Root variant="neutral" mode="stroke" onClick={onCancel}>
             Cancel

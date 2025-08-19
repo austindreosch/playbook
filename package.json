@@ -86,6 +86,7 @@
     "papaparse": "^5.5.3",
     "react": "18.2.0",
     "react-apexcharts": "^1.7.0",
+    "react-aria-components": "^1.11.0",
     "react-chartjs-2": "^5.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "18.2.0",

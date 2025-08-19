@@ -19,6 +19,11 @@ function Datepicker({ value, defaultValue, onChange }: SingleDatepickerProps) {
     value ?? defaultValue ?? undefined,
   );
 
+  // Sync internal state with external value prop
+  React.useEffect(() => {
+    setDate(value ?? defaultValue ?? undefined);
+  }, [value, defaultValue]);
+
   const handleChange = (value: Date | undefined) => {
     setDate(value);
     onChange?.(value);

@@ -85,19 +85,19 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
           <div className="flex items-center justify-start gap-2">
             <TriggerIcon className="hidden xl:flex">
               {isAllLeaguesView ? (
-                <Notebook className="hw-icon text-sub-600" />
+                <Notebook className="hw-icon text-sub" />
               ) : (
-                currentLeague ? getSportIcon(currentLeague.leagueDetails?.sport, "hw-icon text-sub-600") : <Basketball className="hw-icon text-sub-600" />
+                currentLeague ? getSportIcon(currentLeague.leagueDetails?.sport, "hw-icon text-sub") : <Basketball className="hw-icon text-sub" />
               )}
             </TriggerIcon>
-            <span className="hidden mdlg:inline text-label-md font-semibold truncate text-left max-w-[7rem] xl:max-w-[8rem] 2xl:max-w-[13rem] 2xl:w-52">
+            <span className="hidden mdlg:inline text-label font-semibold truncate text-left max-w-[7rem] xl:max-w-[8rem] 2xl:max-w-[13rem] 2xl:w-52">
               {isAllLeaguesView ? 'All Leagues' : (currentLeague?.leagueDetails?.leagueName || 'Select League')}
             </span>
           </div>
-          <BookCopy className="hw-icon text-sub-600" />
+          <BookCopy className="hw-icon text-sub" />
         </SelectTrigger>
         
-        <SelectContent className="w-72 max-h-[32rem]">
+        <SelectContent className="w-80 max-h-[32rem]">
           {/* All Leagues Option */}
           <SelectItem 
             value="all-leagues" 
@@ -105,11 +105,11 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
           >
             <div className="flex items-center gap-3 w-full">
               <div className="flex items-center justify-center size-8 rounded-full bg-bg-weak-10 border border-stroke-soft-200">
-                <Notebook className="hw-icon text-sub-600" />
+                <Notebook className="hw-icon text-sub" />
               </div>
               <div className="flex flex-col flex-1">
-                <span className="text-label-lg text-strong-950">All Leagues View</span>
-                <span className="text-paragraph-md text-sub-600">Integrated overview of all leagues</span>
+                <span className="text-label text-strong-950">All Leagues View</span>
+                <span className="text-paragraph text-sub-600">Integrated overview of all leagues</span>
               </div>
             </div>
           </SelectItem>
@@ -132,11 +132,11 @@ export default function LeagueSelector({ className = "" }: LeagueSelectorProps) 
                 >
                   <div className="flex items-center gap-3 w-full">
                     <div className="flex items-center justify-center size-8 rounded-full bg-bg-weak-10 border border-stroke-soft-200">
-                      {getSportIcon(sport, "hw-icon text-sub-600")}
+                      {getSportIcon(sport, "hw-icon text-sub")}
                     </div>
                     <div className="flex flex-col flex-1">
-                      <span className="text-label-lg text-strong-950">{leagueName}</span>
-                      <span className="text-paragraph-md text-sub-600">
+                      <span className="text-label text-strong-950">{leagueName}</span>
+                      <span className="text-paragraph text-sub">
                         {format} • {platform}{teamSize ? ` • ${teamSize} Team` : ''}
                       </span>
                     </div>

@@ -16,8 +16,8 @@ export const selectVariants = tv({
   slots: {
     triggerRoot: [
       // base
-      'group/trigger min-w-0 shrink-0 bg-bg-white-0 shadow-regular-xs outline-none ring-1 ring-inset ring-stroke-soft-200',
-      'text-paragraph-sm text-strong-950',
+      'group/trigger min-w-0 shrink-0 bg-bg-white-0 shadow-regular-xs outline-none ring-1 ring-inset ring-stroke-soft-100',
+      'text-badge text-strong-950',
       'flex items-center text-left',
       'transition duration-200 ease-out',
       // hover
@@ -135,21 +135,21 @@ export const selectVariants = tv({
       size: 'medium',
       variant: 'default',
       class: {
-        triggerRoot: 'h-10 min-h-10 gap-2 rounded-10 pl-3 pr-2.5',
+        triggerRoot: 'h-10 min-h-10 gap-2 rounded-10 pl-4 pr-3',
       },
     },
     {
       size: 'small',
       variant: 'default',
       class: {
-        triggerRoot: 'h-9 min-h-9 gap-2 rounded-lg pl-2.5 pr-2',
+        triggerRoot: 'h-9 min-h-9 gap-2 rounded-lg pl-3.5 pr-2.5',
       },
     },
     {
       size: 'xsmall',
       variant: 'default',
       class: {
-        triggerRoot: 'h-8 min-h-8 gap-1.5 rounded-lg pl-2 pr-1.5',
+        triggerRoot: 'h-8 min-h-8 gap-1.5 rounded-lg pl-3 pr-2',
       },
     },
     //#endregion
@@ -190,7 +190,7 @@ export const selectVariants = tv({
       size: 'medium',
       variant: 'compactForInput',
       class: {
-        triggerRoot: 'pl-2.5 pr-2',
+        triggerRoot: 'pl-3.5 pr-3',
         triggerIcon: 'mr-2',
         triggerArrow: 'ml-0.5',
       },
@@ -199,7 +199,7 @@ export const selectVariants = tv({
       size: 'small',
       variant: 'compactForInput',
       class: {
-        triggerRoot: 'px-2',
+        triggerRoot: 'px-3',
         triggerIcon: 'mr-2',
         triggerArrow: 'ml-0.5',
       },
@@ -208,7 +208,7 @@ export const selectVariants = tv({
       size: 'xsmall',
       variant: 'compactForInput',
       class: {
-        triggerRoot: 'pl-2 pr-1.5',
+        triggerRoot: 'pl-3 pr-2.5',
         triggerIcon: 'mr-1.5 size-4',
         triggerArrow: 'ml-0.5',
         selectItemIcon: 'size-4 bg-[length:1rem]',
@@ -373,7 +373,7 @@ const SelectItem = React.forwardRef<
       ref={forwardedRef}
       className={cnExt(
         // base
-        'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-paragraph-sm text-strong-950',
+        'group relative cursor-pointer select-none rounded-lg p-2 pr-9 text-badge text-strong-950',
         'flex items-center gap-2 transition duration-200 ease-out',
         // disabled
         'data-[disabled]:pointer-events-none data-[disabled]:text-disabled-300',

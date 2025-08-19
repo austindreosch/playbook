@@ -2,7 +2,12 @@ import type { Config } from 'tailwindcss';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
-export const customTextSizes = {
+// Helper function to satisfy Tailwind's type constraints
+function defineTextStyles<T extends Record<string, [string, Record<string, string>]>>(styles: T): T {
+  return styles;
+}
+
+export const customTextSizes = defineTextStyles({
 
   // Custom text size aliases for easier migration
   // 'title': ['1.32rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em', fontWeight: '700', color: 'var(--black)' }],
@@ -84,7 +89,7 @@ export const customTextSizes = {
     fontWeight: '400',
   }],
 
-};
+});
 
 // Color-only definitions for text utilities
 export const customTextColors = {
@@ -97,7 +102,7 @@ export const customTextColors = {
 
 
 
-export const texts = {
+export const texts = defineTextStyles({
 
 
 
@@ -549,7 +554,7 @@ export const texts = {
   //   },
   // ],
 
-} as unknown as Record<string, string>;
+});
 
 export const shadows = {
   'regular-xs': '0 1px 2px 0 #0a0d1408',
