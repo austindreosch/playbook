@@ -96,11 +96,11 @@ export default function SyncLeagueButton({ className = '' }: SyncLeagueButtonPro
       </div>
       <div className="flex items-center mx-auto w-19 justify-center">
         {isSuccess ? (
-          <span className="whitespace-nowrap text-2xs text-white animate-fade-in">Synced!</span>
+          <span className="whitespace-nowrap text-paragraph text-white animate-fade-in">Synced!</span>
         ) : (
           <>
             <Clock className={`hw-icon-xs mr-1 ${isLoading ? 'text-white' : 'text-pb_midgray'}`} />
-            <span className={`whitespace-nowrap text-2xs ${isLoading ? 'text-white' : 'text-pb_midgray'}`}>
+            <span className={`whitespace-nowrap text-paragraph ${isLoading ? 'text-white' : 'text-pb_midgray'}`}>
               {formatLastSync(lastSyncDate)}
             </span>
           </>

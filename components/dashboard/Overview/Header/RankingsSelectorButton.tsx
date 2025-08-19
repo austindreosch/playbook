@@ -146,8 +146,8 @@ export default function RankingsSelectorButton({ className = '' }: RankingsSelec
                         )}
                       </div>
                       <div className="flex flex-col flex-1">
-                        <span className="text-label-md font-semibold text-strong-950">{display}</span>
-                        <span className="text-subheading-sm text-gray-300">{detailsText}</span>
+                        <span className="text-label text-strong">{display}</span>
+                        <span className="text-paragraph text-soft">{detailsText}</span>
                       </div>
                     </div>
                   </SelectItem>

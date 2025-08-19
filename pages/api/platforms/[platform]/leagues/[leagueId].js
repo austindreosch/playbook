@@ -1,4 +1,5 @@
 import { fetchLeagueDetails, createPlatformIntegration } from '@/lib/leagueImport/platformIntegrations';
+import axios from 'axios';
 
 /**
  * API endpoint to fetch specific league details from various platforms
@@ -10,22 +11,43 @@ export default async function handler(req, res) {
   }
 
   const { platform, leagueId } = req.query;
-  const { accessToken, seasonId, sport, cookies } = req.query;
+  const { accessToken, seasonId, sport, cookies, mapToForm } = req.query;
   
   try {
     let leagueDetails = {};
+    let formMappedData = null;
 
     switch (platform) {
       case 'fantrax':
         // Use real Fantrax API integration
         const fantraxIntegration = createPlatformIntegration('fantrax');
-        leagueDetails = await fantraxIntegration.getLeagueDetails(leagueId);
+        
+        // First get the raw league details
+        const fantraxRawData = await fantraxIntegration.getLeagueDetails(leagueId);
+        leagueDetails = fantraxRawData;
+        
+        // If form mapping requested, also get the form-ready data
+        if (mapToForm === 'true') {
+          // Get the raw API response for mapping - need to make direct call to get unprocessed data
+          const fantraxApiResponse = await axios.get(`https://www.fantrax.com/fxea/general/getLeagueInfo?leagueId=${leagueId}`);
+          formMappedData = fantraxIntegration.mapToFormFields(fantraxApiResponse.data);
+        }
         break;
 
       case 'sleeper':
         // Use real Sleeper API integration
         const sleeperIntegration = createPlatformIntegration('sleeper');
-        leagueDetails = await sleeperIntegration.getLeagueDetails(leagueId);
+        
+        // First get the raw league details
+        const sleeperRawData = await sleeperIntegration.getLeagueDetails(leagueId);
+        leagueDetails = sleeperRawData;
+        
+        // If form mapping requested, also get the form-ready data
+        if (mapToForm === 'true') {
+          // Get the raw API response for mapping - need to make direct call to get unprocessed data
+          const sleeperApiResponse = await axios.get(`https://api.sleeper.app/v1/league/${leagueId}`);
+          formMappedData = sleeperIntegration.mapToFormFields(sleeperApiResponse.data);
+        }
         break;
 
       case 'yahoo':
@@ -54,7 +76,13 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Unsupported platform' });
     }
 
-    res.status(200).json(leagueDetails);
+    // Return both raw league details and form-mapped data (if requested)
+    const response = {
+      leagueDetails,
+      ...(formMappedData && { formMapping: formMappedData })
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.error(`Error fetching ${platform} league ${leagueId}:`, error);
     res.status(500).json({ error: error.message });
