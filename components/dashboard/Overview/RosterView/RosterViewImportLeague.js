@@ -8,13 +8,13 @@ import Link from 'next/link';
  */
 export default function RosterViewImportLeague() {
   return (
-    <div className="w-full h-full bg-pb_backgroundgray border border-pb_lightgray rounded-lg shadow-inner flex flex-col items-center justify-center p-4 text-center select-none">
-      <BookUp className="w-7 h-7 text-pb_darkgray mb-3" />
-      <p className="text-xs text-pb_darkgray mb-4 max-w-[12rem]">
+    <div className="w-full h-full bg-bg-weak-50 border border-stroke-soft-200 rounded-lg shadow-inner flex flex-col items-center justify-center p-4 text-center select-none">
+      <BookUp className="w-7 h-7 text-bg-surface-800 mb-3" />
+      <p className="text-xs text-bg-surface-800 mb-4 max-w-[12rem]">
         Import your first league <br /> and build your Playbook.
       </p>
       <Link href="/dashboard" passHref legacyBehavior>
-        <Button asChild size="sm" className="px-4 bg-pb_blue text-pb_paperwhite">
+        <Button asChild size="sm" className="px-4 bg-primary-base text-bg-white-0">
           <span className="text-button">Import League</span>
         </Button>
       </Link>

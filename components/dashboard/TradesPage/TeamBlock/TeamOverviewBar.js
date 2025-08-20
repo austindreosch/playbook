@@ -17,20 +17,20 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
   // ? opponent
   // : user
   const containerClasses = isOpponent
-    ? "bg-pb_darkgray text-white"
-    : "bg-white text-pb_darkgray";
+    ? "bg-bg-surface-800 text-white"
+    : "bg-white text-bg-surface-800";
 
   const borderClasses = isOpponent 
     ? "" 
-    : "border border-r-0 border-t-0 border-pb_lightgray";
+    : "border border-r-0 border-t-0 border-stroke-soft-200";
 
   const textClasses = isOpponent
     ? "text-white"
-    : "text-pb_darkgray";
+    : "text-bg-surface-800";
 
   const badgeClasses = isOpponent
-    ? "border-pb_textlightergray bg-white text-pb_darkgray"
-    : "border-pb_lightgray bg-white text-pb_darkgray";
+    ? "border-text-soft-400 bg-white text-bg-surface-800"
+    : "border-stroke-soft-200 bg-white text-bg-surface-800";
 
   const chevronClasses = isOpponent
     ? "[&>svg]:text-white"
@@ -48,8 +48,8 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
           <div className="h-20 flex items-center justify-center space-x-8">
             {/* Value */}
             <div className="flex items-center space-x-2">
-              <ChartCandlestick className={`w-icon h-icon text-pb_darkgray`} />
-              <span className={`text-button text-pb_darkgray`}>Value</span>
+              <ChartCandlestick className={`w-icon h-icon text-bg-surface-800`} />
+              <span className={`text-button text-bg-surface-800`}>Value</span>
               <span className={`text-button px-2 h-6 border rounded-md font-bold justify-center leading-relaxed-plus ${badgeClasses}`}>
                 {valueRank}{valueRankSuffix}
               </span>
@@ -57,8 +57,8 @@ export default function TeamOverviewBar({ team, isOpponent = false }) {
 
             {/* Victory */}
             <div className="flex items-center space-x-2">
-              <Trophy className={`w-icon h-icon text-pb_darkgray`} />
-              <span className={`text-button text-pb_darkgray`}>Victory</span>
+              <Trophy className={`w-icon h-icon text-bg-surface-800`} />
+              <span className={`text-button text-bg-surface-800`}>Victory</span>
               <span className={`text-button px-2 h-6 border rounded-md font-bold justify-center leading-relaxed-plus ${badgeClasses}`}>
                 {victoryRank}{victoryRankSuffix}
               </span>

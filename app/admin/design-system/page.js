@@ -32,10 +32,10 @@ const colorCategories = {
   stable: ['dark', 'base', 'light', 'lighter'],
   social: ['apple', 'twitter', 'github', 'notion', 'tidal', 'amazon', 'zendesk'],
   illustration: ['white-0', 'weak-100', 'soft-200', 'sub-300', 'strong-400'],
-  pb_blue: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT'],
-  pb_orange: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT'],
-  pb_green: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT'],
-  pb_red: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT']
+  primary-base: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT'],
+  warning-base: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT'],
+  success-base: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT'],
+  error-base: ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', 'DEFAULT']
 };
 
 const textCategories = {

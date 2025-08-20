@@ -86,8 +86,8 @@ export default function RosterFullBlock() {
 
   if (!currentLeague || !currentLeague.leagueDetails?.sport) {
     return (
-      <div className="w-full h-full bg-pb_backgroundgray rounded-lg border-1.5 border-pb_lightgray shadow-inner flex items-center justify-center">
-        <div className="text-center text-pb_textgray">
+      <div className="w-full h-full bg-bg-weak-50 rounded-lg border-1.5 border-stroke-soft-200 shadow-inner flex items-center justify-center">
+        <div className="text-center text-text-sub-600">
           <p className="text-lg font-semibold mb-2">No Roster Available</p>
           <p className="text-sm">Please select a league to view your roster</p>
         </div>

@@ -385,7 +385,7 @@ export default function TradeImpactBar() {
             <div
               key={stat.abbreviation}
               className={`flex h-full items-center px-2.5 text-xs font-semibold min-w-0 justify-center
-                ${stat.improvement ? 'bg-pb_green-400 text-pb_greendisabled' : 'bg-pb_red-400 text-pb_reddisabled'}`}
+                ${stat.improvement ? 'bg-success-base-400 text-success-basedisabled' : 'bg-error-base-400 text-error-basedisabled'}`}
               style={{ width: `${stat.width}%` }}
               title={stat.label}
             >

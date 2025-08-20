@@ -90,7 +90,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
                             alt="User"
                         />
                     ) : (
-                        <div className="flex items-center justify-center size-full rounded-full bg-pb_blue text-white font-bold text-sm">
+                        <div className="flex items-center justify-center size-full rounded-full bg-primary-base text-white font-bold text-sm">
                             {getInitials(user.name || '')}
                         </div>
                     )}
@@ -109,7 +109,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ user, classNa
                                 alt="User"
                             />
                         ) : (
-                            <div className="flex items-center justify-center size-full rounded-full bg-pb_blue text-white font-bold text-sm">
+                            <div className="flex items-center justify-center size-full rounded-full bg-primary-base text-white font-bold text-sm">
                                 {getInitials(user.name || '')}
                             </div>
                         )}

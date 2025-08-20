@@ -40,7 +40,7 @@
 //                         title={title}
 //                         style={{ backgroundColor: bgColor }}
 //                     >
-//                         <span className="text-sm text-pb_darkgray">
+//                         <span className="text-sm text-bg-surface-800">
 //                             {displayValue}
 //                         </span>
 //                     </div>
@@ -133,7 +133,7 @@
 //                         <img
 //                             src="/avatar-default.png" // Always default avatar
 //                             alt="Default Avatar"
-//                             className="w-7 h-7 object-cover bg-pb_lightergray border border-pb_lightgray rounded-sm"
+//                             className="w-7 h-7 object-cover bg-stroke-soft-100 border border-stroke-soft-200 rounded-sm"
 //                             width="28"
 //                             height="28"
 //                         />

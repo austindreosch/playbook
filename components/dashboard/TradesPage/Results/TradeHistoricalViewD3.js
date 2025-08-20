@@ -280,7 +280,7 @@ export default function TradeHistoricalView() {
   }
 
   return (
-    <div className="w-full h-full bg-white border border-pb_lightgray rounded-lg p-3">
+    <div className="w-full h-full bg-white border border-stroke-soft-200 rounded-lg p-3">
       {/* D3 Chart Container */}
       <div className="relative w-full h-full overflow-hidden">
         <svg 

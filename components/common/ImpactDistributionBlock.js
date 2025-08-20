@@ -66,13 +66,13 @@ export default function ImpactDistributionBlock({
     
     // All available Tailwind color shades (from lightest to darkest)
     const greenShades = [
-      'bg-pb_green-50', 'bg-pb_green-100', 'bg-pb_green-200', 'bg-pb_green-300', 
-      'bg-pb_green-400', 'bg-pb_green-500', 'bg-pb_green-600', 'bg-pb_green-700', 'bg-pb_green-800', 'bg-pb_green-900'
+      'bg-success-base-50', 'bg-success-base-100', 'bg-success-base-200', 'bg-success-base-300', 
+      'bg-success-base-400', 'bg-success-base-500', 'bg-success-base-600', 'bg-success-base-700', 'bg-success-base-800', 'bg-success-base-900'
     ];
     
     const redShades = [
-      'bg-pb_red-50', 'bg-pb_red-100', 'bg-pb_red-200', 'bg-pb_red-300', 
-      'bg-pb_red-400', 'bg-pb_red-500', 'bg-pb_red-600', 'bg-pb_red-700', 'bg-pb_red-800', 'bg-pb_red-900'
+      'bg-error-base-50', 'bg-error-base-100', 'bg-error-base-200', 'bg-error-base-300', 
+      'bg-error-base-400', 'bg-error-base-500', 'bg-error-base-600', 'bg-error-base-700', 'bg-error-base-800', 'bg-error-base-900'
     ];
     
     // Determine if positive or negative
@@ -80,30 +80,30 @@ export default function ImpactDistributionBlock({
       // Positive z-score -> green colors
       if (zScore >= colorRange.max) {
         // At or above max -> darkest green (900)
-        return `${greenShades[9]} text-pb_darkgray/80`;
+        return `${greenShades[9]} text-bg-surface-800/80`;
       } else if (zScore <= 0.05) {
         // Very close to zero -> lightest green (50)
-        return `${greenShades[0]} text-pb_darkgray/80`;
+        return `${greenShades[0]} text-bg-surface-800/80`;
       } else {
         // Map z-score from 0.05 to colorRange.max across green shades 0-9
         const ratio = Math.min(zScore / colorRange.max, 1);
         const shadeIndex = Math.floor(ratio * 9);
-        const textColor = shadeIndex >= 7 ? 'text-pb_darkgray/80' : 'text-pb_darkgray/80';
+        const textColor = shadeIndex >= 7 ? 'text-bg-surface-800/80' : 'text-bg-surface-800/80';
         return `${greenShades[shadeIndex]} ${textColor}`;
       }
     } else {
       // Negative z-score -> red colors
       if (zScore <= colorRange.min) {
         // At or below min -> darkest red (900)
-        return `${redShades[9]} text-pb_darkgray/80`;
+        return `${redShades[9]} text-bg-surface-800/80`;
       } else if (zScore >= -0.05) {
         // Very close to zero -> lightest red (50)
-        return `${redShades[0]} text-pb_darkgray/80`;
+        return `${redShades[0]} text-bg-surface-800/80`;
       } else {
         // Map z-score from -0.05 to colorRange.min across red shades 0-9
         const ratio = Math.min(Math.abs(zScore) / Math.abs(colorRange.min), 1);
         const shadeIndex = Math.floor(ratio * 9);
-        const textColor = shadeIndex >= 7 ? 'text-pb_darkgray/80' : 'text-pb_darkgray/80';
+        const textColor = shadeIndex >= 7 ? 'text-bg-surface-800/80' : 'text-bg-surface-800/80';
         return `${redShades[shadeIndex]} ${textColor}`;
       }
     }
@@ -172,7 +172,7 @@ export default function ImpactDistributionBlock({
   const { row1, row2 } = distributeStatsAcrossRows(stats);
 
   return (
-    <div className="border border-pb_lightgray rounded-md overflow-hidden">
+    <div className="border border-stroke-soft-200 rounded-md overflow-hidden">
       {/* First Row */}
       <div className="flex">
         {row1.map((item, index) => {

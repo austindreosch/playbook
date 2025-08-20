@@ -61,24 +61,24 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
   
   // Dark theme styling for opponent (RECEIVE), light for user (SEND)
   const containerClasses = isOpponent
-    ? "bg-pb_textlighterestgray border-pb_textlightergray"
-    : "bg-pb_backgroundgray border-pb_lightgray";
+    ? "bg-text-soft-200 border-text-soft-400"
+    : "bg-bg-weak-50 border-stroke-soft-200";
     
   const headerClasses = isOpponent
-    ? "bg-pb_darkgray text-white "
-    : "bg-white text-pb_darkgray border-b border-pb_lightgray";
+    ? "bg-bg-surface-800 text-white "
+    : "bg-white text-bg-surface-800 border-b border-stroke-soft-200";
     
   const titleClasses = isOpponent
-    ? "text-pb_lightestgray"
-    : "text-pb_textgray";
+    ? "text-stroke-soft-50"
+    : "text-text-sub-600";
     
   const totalClasses = isOpponent
     ? "text-white"
-    : "text-pb_textgray";
+    : "text-text-sub-600";
     
   const adjustmentClasses = isOpponent
-    ? "text-pb_bluehover"
-    : "text-pb_bluehover";
+    ? "text-primary-basehover"
+    : "text-primary-basehover";
 
   return (
     <Card className={`rounded-t-lg flex-1 rounded-b-none border-1.5 shadow-inner flex flex-col h-full min-w-0 ${containerClasses}`}>
@@ -96,7 +96,7 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
             )
           ))}
           {valueAdjustment > 0 && (
-            <div className={`bg-pb_bluedisabled/20 rounded-md border border-pb_blue/30`}>
+            <div className={`bg-primary-basedisabled/20 rounded-md border border-primary-base/30`}>
               <div 
                 className="flex items-center justify-between px-1.5 pr-2 h-9 cursor-pointer"
                 onClick={() => setIsAdjustmentExpanded(!isAdjustmentExpanded)}
@@ -114,21 +114,21 @@ const TradePanel = ({ type, players, total, valueAdjustment }) => {
               </div>
               
               {isAdjustmentExpanded && (
-                <div className="p-3 border-t border-pb_mddarkgray bg-pb_textgray">
+                <div className="p-3 border-t border-text-strong-950 bg-text-sub-600">
                   <div className="text-white space-y-2">
-                    <div className="text-2xs font-semibold text-pb_lightestgray">ADJUSTMENT DETAILS</div>
+                    <div className="text-2xs font-semibold text-stroke-soft-50">ADJUSTMENT DETAILS</div>
                     <div className="text-button">
                       <div className="flex justify-between">
                         <span>Reason:</span>
-                        <span className="text-pb_lightestgray">Player count difference</span>
+                        <span className="text-stroke-soft-50">Player count difference</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Formula:</span>
-                        <span className="text-pb_lightestgray">+{valueAdjustment} per extra slot</span>
+                        <span className="text-stroke-soft-50">+{valueAdjustment} per extra slot</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Applied to:</span>
-                        <span className="text-pb_lightestgray">{type.split(' ')[1]} side</span>
+                        <span className="text-stroke-soft-50">{type.split(' ')[1]} side</span>
                       </div>
                     </div>
                   </div>

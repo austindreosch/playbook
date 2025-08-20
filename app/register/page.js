@@ -178,11 +178,11 @@ export default function RegisterPage() {
     return (
       <fieldset disabled={disabled}>
         <div>
-          <h3 className="text-md font-semibold text-pb_darkgray mb-1.5 flex items-center">
-            {Icon && <Icon className="w-5 h-5 mr-2 text-pb_blue" />}
+          <h3 className="text-md font-semibold text-bg-surface-800 mb-1.5 flex items-center">
+            {Icon && <Icon className="w-5 h-5 mr-2 text-primary-base" />}
             {title}
           </h3>
-          <div className="rounded-lg border border-pb_lightgray bg-card text-card-foreground shadow-sm p-4 pl-5">
+          <div className="rounded-lg border border-stroke-soft-200 bg-card text-card-foreground shadow-sm p-4 pl-5">
               <div className={containerClasses}>
               {options.map((option) => (
                   <Fragment key={option.value}>
@@ -191,17 +191,17 @@ export default function RegisterPage() {
                         id={`${title}-${option.value}`}
                         checked={selected.includes(option.value)}
                         onCheckedChange={() => handleCheckboxChange(setter, option.value)}
-                        className="border-pb_textlightergray"
+                        className="border-text-soft-400"
                     />
                     <label
                         htmlFor={`${title}-${option.value}`}
-                        className={`text-sm leading-none flex items-center gap-2 cursor-pointer pl-2 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`}
+                        className={`text-sm leading-none flex items-center gap-2 cursor-pointer pl-2 ${option.supported ? 'text-bg-surface-800' : 'text-bg-surface-800'}`}
                     >
-                        {option.icon && <option.icon className={`w-4 h-4 ${option.supported ? 'text-pb_darkgray' : 'text-pb_darkgray'}`} />}
+                        {option.icon && <option.icon className={`w-4 h-4 ${option.supported ? 'text-bg-surface-800' : 'text-bg-surface-800'}`} />}
                         <span className="pl-0.5">{option.label}</span>
                     </label>
                   </div>
-                  {option.separator && <Separator className={`my-2 mx-2 w-62 bg-pb_lightergray ${isGrid ? 'col-span-full' : ''}`} />}
+                  {option.separator && <Separator className={`my-2 mx-2 w-62 bg-stroke-soft-100 ${isGrid ? 'col-span-full' : ''}`} />}
                   </Fragment>
               ))}
               </div>
@@ -214,8 +214,8 @@ export default function RegisterPage() {
   return (
             <div className="max-w-7xl mx-auto py-8 pb-12">
       <div className="text-left mb-6 px-4 2xl:px-0">
-        <h1 className="text-4xl font-bold tracking-tight text-pb_darkgray">Let&rsquo;s build your Playbook together.</h1>
-        <p className="text-md text-pb_textgray mt-2">A few quick questions so we can build the features you need most - totally optional, but every response helps.</p>
+        <h1 className="text-4xl font-bold tracking-tight text-bg-surface-800">Let&rsquo;s build your Playbook together.</h1>
+        <p className="text-md text-text-sub-600 mt-2">A few quick questions so we can build the features you need most - totally optional, but every response helps.</p>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -225,7 +225,7 @@ export default function RegisterPage() {
             
             <fieldset disabled={isLoading || submitting}>
               <div>
-                  <Label htmlFor="firstName" className="text-md font-semibold text-pb_darkgray mb-1.5 flex items-center">
+                  <Label htmlFor="firstName" className="text-md font-semibold text-bg-surface-800 mb-1.5 flex items-center">
                     <User className={`w-5 h-5 mr-2 ${firstName.trim() ? 'text-green-500' : 'text-red-500'}`} />
                     First Name {!firstName.trim() && <span className="text-red-500 ml-1">*</span>}
                   </Label>
@@ -238,7 +238,7 @@ export default function RegisterPage() {
                       if (firstNameError) setFirstNameError('');
                     }}
                     placeholder="Enter your first name"
-                    className={`w-full border-pb_lightgray rounded-lg ${firstNameError ? 'border-red-500 focus:ring-red-500' : ''}`}
+                    className={`w-full border-stroke-soft-200 rounded-lg ${firstNameError ? 'border-red-500 focus:ring-red-500' : ''}`}
                   />
                   {firstNameError && <p className="text-red-500 text-xs mt-1.5">{firstNameError}</p>}
               </div>
@@ -266,25 +266,25 @@ export default function RegisterPage() {
                   id="notifications"
                   checked={notificationsOkay.email}
                   onCheckedChange={(checked) => setNotificationsOkay({ email: checked, sms: checked })}
-                  className="border-pb_lightgray mt-0.5"
+                  className="border-stroke-soft-200 mt-0.5"
                 />
                 <div>
                   <label htmlFor="notifications" className="text-sm leading-none cursor-pointer flex items-center gap-2">
-                    {/* <MessagesSquare className="w-5 h-5 text-pb_midgray right-0" /> */}
+                    {/* <MessagesSquare className="w-5 h-5 text-text-sub-600 right-0" /> */}
                     <span>I don&rsquo;t want to miss critical alerts and useful status reports. </span>
                   </label>
-                  <p className="text-xs pt-1 text-pb_textlightgray">Get priority access to game-changing insights when we launch.</p>
+                  <p className="text-xs pt-1 text-text-mid-500">Get priority access to game-changing insights when we launch.</p>
                 </div>
               </div>
             </fieldset>
 
             <div className="flex items-center justify-end pt-4 md:pt-0 pl-4">
               <div className="flex items-center gap-4">
-                <p className="text-xs text-pb_textlightgray hidden md:block">You can change these preferences later.</p>
+                <p className="text-xs text-text-mid-500 hidden md:block">You can change these preferences later.</p>
                 <button
                   type="submit"
                   disabled={isLoading || submitting || !user || !firstName.trim()}
-                  className="bg-pb_orange text-pb_darkgray px-4 py-2 rounded-md hover:bg-pb_orangehover disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                  className="bg-warning-base text-bg-surface-800 px-4 py-2 rounded-md hover:bg-warning-basehover disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
                 >
                   {submitting ? 'Saving...' : 'Complete Registration'}
                 </button>

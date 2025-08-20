@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react';
 import * as React from 'react';
 import * as Button from '@/components/alignui/button';
-import * as Input from '@/components/alignui/input';
 import * as Select from '@/components/alignui/select';
 import * as SegmentedControl from '@/components/alignui/ui/segmented-control';
 import { Datepicker } from '@/components/ui/PBDatePicker';
@@ -211,19 +210,54 @@ const detectPlatformFromUrl = (input: string): string | null => {
   return null;
 };
 
+// Helper function to detect platform from league ID pattern
+const detectPlatformFromLeagueId = (input: string): string | null => {
+  // Clean input - remove whitespace
+  const cleanInput = input.trim();
+  
+  // Skip if it looks like a URL
+  if (cleanInput.includes('http') || cleanInput.includes('.com')) {
+    return null;
+  }
+
+  // Fantrax: 16-character alphanumeric (lowercase letters and numbers)
+  if (/^[a-z0-9]{16}$/.test(cleanInput)) {
+    return 'fantrax';
+  }
+
+  // Sleeper: 18-19 digit numbers (Snowflake IDs)
+  if (/^\d{18,19}$/.test(cleanInput)) {
+    return 'sleeper';
+  }
+
+  // Yahoo: game.l.league format (e.g., 423.l.12345)
+  if (/^\d+\.l\.\d+$/.test(cleanInput)) {
+    return 'yahoo';
+  }
+
+  // ESPN: 6-9 digit numbers
+  if (/^\d{6,9}$/.test(cleanInput)) {
+    return 'espn';
+  }
+
+  return null;
+};
+
 // Helper function to get platform-specific helper text
 const getPlatformHelperText = (platform: string): string => {
   switch (platform) {
     case 'fantrax':
-      return 'Paste your league URL or ID (e.g., f1zwi0wum3y5041b).';
+      return 'Paste your league URL or 16-character ID (e.g., f1zwi0wum3y5041b). Platform auto-detected from ID format.';
     case 'sleeper':
-      return 'Paste your league URL or numeric ID (long number string).';
+      return 'Paste your league URL or 18-19 digit numeric ID. Platform auto-detected from ID format.';
     case 'yahoo':
-      return 'Paste your league URL or key (e.g., 123.l.456789). Yahoo requires OAuth sign-in.';
+      return 'Paste your league URL or key format ID (e.g., 423.l.12345). Yahoo requires OAuth sign-in.';
     case 'espn':
-      return 'Paste your league URL or ID. If season/year is in the URL, we\'ll capture it.';
+      return 'Paste your league URL or 6-9 digit ID. Platform auto-detected from ID format.';
+    case 'none':
+      return 'Enter any league URL or ID - we\'ll auto-detect the platform!';
     default:
-      return 'Enter your league ID or paste the full league URL.';
+      return 'Enter your league ID or paste the full league URL. Platform will be auto-detected.';
   }
 };
 
@@ -236,7 +270,7 @@ function HighlightedLeagueInput({
   disabled = false
 }: {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, inputRef?: React.RefObject<HTMLInputElement | null>) => void;
   placeholder?: string;
   platform: string;
   disabled?: boolean;
@@ -282,12 +316,12 @@ function HighlightedLeagueInput({
         ref={inputRef}
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value, inputRef)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+        className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-type ${
           !isFocused && value && isUrl(value) && platform !== 'none' ? 'text-transparent' : 'text-gray-900'
         } bg-white disabled:bg-gray-50 disabled:text-gray-500`}
       />
@@ -380,10 +414,43 @@ function SettingCard({
 
 // Helper functions to determine disabled states
 const isFieldDisabled = {
-  sport: (formData: FormData) => formData.platform === 'none' || !formData.leagueId,
-  leagueType: (formData: FormData) => false, // League type is now first, so never disabled
-  scoring: (formData: FormData) => formData.platform === 'none' || !formData.leagueId,
-  matchup: (formData: FormData) => formData.platform === 'none' || !formData.leagueId
+  platform: (formData: FormData, hasApiSync: boolean) => !formData.leagueId || !hasApiSync,
+  sport: (formData: FormData, hasApiSync: boolean) => !formData.leagueId || !hasApiSync || formData.platform === 'none',
+  leagueType: (formData: FormData, hasApiSync: boolean) => !formData.leagueId || !hasApiSync || formData.platform === 'none',
+  scoring: (formData: FormData, hasApiSync: boolean) => !formData.leagueId || !hasApiSync || formData.platform === 'none',
+  matchup: (formData: FormData, hasApiSync: boolean) => !formData.leagueId || !hasApiSync || formData.platform === 'none'
+};
+
+// Helper functions to determine synced states
+const isFieldSynced = {
+  platform: (apiSyncedFields: string[]) => apiSyncedFields.includes('platform'),
+  sport: (apiSyncedFields: string[]) => apiSyncedFields.includes('sport'),
+  leagueType: (apiSyncedFields: string[]) => apiSyncedFields.includes('leagueType'),
+  scoring: (apiSyncedFields: string[]) => apiSyncedFields.includes('scoring'),
+  matchup: (apiSyncedFields: string[]) => apiSyncedFields.includes('matchup')
+};
+
+// Helper function to get appropriate styling based on field state
+const getFieldStyling = (field: keyof typeof isFieldDisabled, currentFormData: FormData, apiSyncedFields: string[], hasApiSync: boolean) => {
+  const disabled = isFieldDisabled[field](currentFormData, hasApiSync);
+  const synced = isFieldSynced[field](apiSyncedFields);
+  
+  if (disabled) {
+    return {
+      iconClass: leagueImportColors.icon.disabled,
+      labelClass: leagueImportColors.label.disabled
+    };
+  } else if (synced) {
+    return {
+      iconClass: leagueImportColors.icon.synced,
+      labelClass: leagueImportColors.label.synced
+    };
+  } else {
+    return {
+      iconClass: leagueImportColors.icon.normal,
+      labelClass: leagueImportColors.label.normal
+    };
+  }
 };
 
 
@@ -393,28 +460,42 @@ const leagueImportColors = {
     inactive: 'text-black',                     // Inactive tab text color
     active: 'text-white',                       // Active tab text color
     disabled: 'text-gray-200',                  // Disabled tab text color
-    disabledActive: 'text-white'                // Disabled but active tab text color
+    disabledActive: 'text-white',               // Disabled but active tab text color
+    syncedInactive: 'text-gray-500',            // Synced inactive tab text color
+    syncedActive: 'text-gray-700'               // Synced active tab text color
   },
   background: {
     hover: 'hover:bg-gray-25',                  // Tab hover background
     active: 'bg-blue',                          // Active tab background (floating background)
     activeHover: 'data-[state=active]:hover:bg-blue-600', // Active tab hover background
     disabledHover: 'disabled:hover:bg-gray-25', // Disabled tab hover background
-    disabledActive: 'bg-blue-200'               // Disabled but active tab background (floating background)
+    disabledActive: 'bg-blue-200',              // Disabled but active tab background (floating background)
+    syncedHover: 'hover:bg-gray-15',            // Synced tab hover background
+    syncedActive: 'bg-gray-200',                // Synced active tab background (floating background)
+    syncedActiveHover: 'data-[state=active]:hover:bg-gray-250' // Synced active tab hover background
+  },
+  container: {
+    background: 'bg-bg-weak-25',                // Default container background
+    floatingBg: 'bg-bg-white-0',               // Default floating background
+    syncedBackground: 'bg-gray-25',             // Synced container background
+    syncedFloatingBg: 'bg-gray-200'            // Synced floating background
   },
   // Custom colors for form labels and icons
   label: {
     normal: 'text-strong',                      // Form field labels when enabled
-    disabled: 'text-disabled'                   // Form field labels when disabled
+    disabled: 'text-disabled',                  // Form field labels when disabled
+    synced: 'text-gray-600'                     // Form field labels when synced
   },
   icon: {
     normal: 'text-strong',                      // Form field icons when enabled
-    disabled: 'text-disabled'                   // Form field icons when disabled
+    disabled: 'text-disabled',                  // Form field icons when disabled
+    synced: 'text-gray-600'                     // Form field icons when synced
   },
   separator: {
     from: 'after:from-transparent',
     via: 'after:via-gray-150', 
     viaDisabled: 'after:via-gray-100',
+    viaSynced: 'after:via-gray-100',            // Synced separator color
     to: 'after:to-transparent'
   }
 } as const;
@@ -429,6 +510,9 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
   const [apiSyncedFields, setApiSyncedFields] = useState<string[]>([]);
   const [apiFetching, setApiFetching] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  // Helper to check if we have successful API sync
+  const hasApiSync = apiSyncedData && apiSyncedFields.length > 0;
 
   const [formData, setFormData] = useState<FormData>({
     platform: 'none',
@@ -518,14 +602,33 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
 
   // Handle league ID input with auto-detection
-  const handleLeagueIdChange = (value: string) => {
-    const detected = detectPlatformFromUrl(value);
+  const handleLeagueIdChange = (value: string, inputRef?: React.RefObject<HTMLInputElement | null>) => {
+    let detected = detectPlatformFromUrl(value);
+    let detectionMethod = 'URL';
+    
+    // If no URL detection, try league ID pattern detection
+    if (!detected) {
+      detected = detectPlatformFromLeagueId(value);
+      detectionMethod = 'ID pattern';
+    }
     
     if (detected && detected !== formData.platform) {
       setDetectedPlatform(detected);
-      // Auto-select the detected platform
-      handlePlatformChange(detected);
-    } else {
+      
+      // DON'T auto-select the platform immediately - wait for API sync
+      // Just store the detected platform for later use
+      
+      // Show detection feedback to user
+      const platformName = PLATFORMS.find(p => p.id === detected)?.name;
+      toast.info(`Detected ${platformName} league from ${detectionMethod}! Syncing league data...`);
+      
+      // Unfocus the input to show the blue bubble highlight immediately
+      if (inputRef?.current && (value.includes('http') || value.includes('.com'))) {
+        setTimeout(() => {
+          inputRef.current?.blur();
+        }, 100);
+      }
+    } else if (!detected) {
       setDetectedPlatform(null);
     }
 
@@ -533,12 +636,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
     setFormData(prev => ({ ...prev, leagueId: value }));
   };
 
-  // Auto-fetch API data when platform and leagueId are available
+  // Auto-fetch API data when detectedPlatform and leagueId are available
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
     const fetchApiData = async () => {
-      if (!formData.platform || formData.platform === 'none' || !formData.leagueId) {
+      // Use detectedPlatform instead of formData.platform for API calls
+      const platformToUse = detectedPlatform || formData.platform;
+      
+      if (!platformToUse || platformToUse === 'none' || !formData.leagueId) {
         // Clear existing API data if missing requirements
         setApiSyncedData(null);
         setApiSyncedFields([]);
@@ -547,12 +653,12 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
       }
 
       // Only fetch for supported platforms
-      if (!['fantrax', 'sleeper'].includes(formData.platform)) {
+      if (!['fantrax', 'sleeper'].includes(platformToUse)) {
         return;
       }
 
       // Extract the actual league ID for the API call
-      const actualLeagueId = extractLeagueId(formData.leagueId, formData.platform);
+      const actualLeagueId = extractLeagueId(formData.leagueId, platformToUse);
       if (!actualLeagueId) {
         return;
       }
@@ -561,7 +667,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
       setApiError(null);
 
       try {
-        const response = await fetch(`/api/platforms/${formData.platform}/leagues/${actualLeagueId}?mapToForm=true`);
+        const response = await fetch(`/api/platforms/${platformToUse}/leagues/${actualLeagueId}?mapToForm=true`);
         
         if (!response.ok) {
           throw new Error(`Failed to fetch league data: ${response.status}`);
@@ -572,14 +678,21 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
         if (data.formMapping && data.formMapping.apiSuccess) {
           const { formData: mappedData, syncedFields } = data.formMapping;
           
+          // Add platform to synced fields since we auto-detected it
+          const extendedSyncedFields = [...syncedFields];
+          if (!extendedSyncedFields.includes('platform')) {
+            extendedSyncedFields.push('platform');
+          }
+          
           // Store the API synced data
           setApiSyncedData(data.formMapping);
-          setApiSyncedFields(syncedFields);
+          setApiSyncedFields(extendedSyncedFields);
 
-          // Auto-populate form fields that haven't been manually changed by user
-          // Only override if the field is still at its default/initial value
+          // NOW set the platform in the form data after successful API sync
           setFormData(prev => {
-            const updates: Partial<typeof prev> = {};
+            const updates: Partial<typeof prev> = {
+              platform: platformToUse // Set the platform from the detected/successful API call
+            };
             
             // Map API data to form fields that exist in FormData interface, but respect user overrides
             if (syncedFields.includes('sport') && mappedData.sport && (prev.sport === 'none' || !prev.sport)) {
@@ -598,8 +711,11 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
             return { ...prev, ...updates };
           });
 
+          // Clear detected platform since we've now set it in formData
+          setDetectedPlatform(null);
+
           // Show success toast
-          toast.success(`League data synced from ${formData.platform.charAt(0).toUpperCase() + formData.platform.slice(1)}!`);
+          toast.success(`League data synced from ${platformToUse.charAt(0).toUpperCase() + platformToUse.slice(1)}!`);
         } else {
           throw new Error('Failed to map league data to form fields');
         }
@@ -624,7 +740,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
         clearTimeout(timeoutId);
       }
     };
-  }, [formData.platform, formData.leagueId]);
+  }, [detectedPlatform, formData.platform, formData.leagueId]);
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -696,49 +812,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
             <div className="space-y-4">
               {/* <h2 className="text-header font-semibold text-gray-900">League Information</h2> */}
 
-              {/* Step 1: League Type */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Trophy className={`hw-icon ${isFieldDisabled.leagueType(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.leagueType(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>
-                    League Type
-                    <SyncIndicatorInline 
-                      synced={apiSyncedFields.includes('leagueType')} 
-                      platform={formData.platform !== 'none' ? formData.platform : undefined} 
-                    />
-                  </label>
-                </div>
-                <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
-                  <SegmentedControl.List
-                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
-                    activeValue={formData.leagueType}
-                    isDisabled={isFieldDisabled.leagueType(formData)}
-                    colorConfig={leagueImportColors}
-                  >
-                    <SegmentedControl.Trigger
-                      value="none"
-                      className="w-8"
-                      disabled={isFieldDisabled.leagueType(formData)}
-                      isControlDisabled={isFieldDisabled.leagueType(formData) || formData.leagueType === 'none'}
-                    >
-                      <ScanLine className={`hw-icon-2xs ${formData.leagueType === 'none' ? 'text-white' : 'text-current'}`} />
-                    </SegmentedControl.Trigger>
-                    {LEAGUE_TYPES.map(type => (
-                      <SegmentedControl.Trigger 
-                        key={type} 
-                        value={type} 
-                        className="w-32" 
-                        disabled={isFieldDisabled.leagueType(formData)}
-                        isControlDisabled={isFieldDisabled.leagueType(formData)}
-                      >
-                          <span className="text-label">{type}</span>
-                      </SegmentedControl.Trigger>
-                    ))}
-                  </SegmentedControl.List>
-                </SegmentedControl.Root>
-              </div>
-
-              {/* Step 2: League ID */}
+              {/* Step 1: League ID */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                 <Hash className="hw-icon-xs text-gray-600" />
@@ -763,41 +837,6 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 )}
               </div>
 
-              {/* Step 3: Platform */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Globe className="hw-icon-xs text-gray-600" />
-                  <label className="text-label text-strong-950">Platform</label>
-                </div>
-                <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
-                  <SegmentedControl.List
-                    className="inline-flex w-128 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
-                    activeValue={formData.platform}
-                    floatingBgClassName="!bg-blue !text-white"
-                    colorConfig={leagueImportColors}
-                    isDisabled={formData.platform === 'none'}
-                  >
-                    <SegmentedControl.Trigger
-                      value="none"
-                      className="w-8"
-                      isControlDisabled={formData.platform === 'none'}
-                    >
-                      <Minus className={`hw-icon-2xs ${formData.platform === 'none' ? 'text-white' : 'text-current'}`} />
-                    </SegmentedControl.Trigger>
-                    {PLATFORMS.map(platform => (
-                      <SegmentedControl.Trigger
-                        key={platform.id}
-                        value={platform.id}
-                        disabled={!platform.available}
-                        className="w-32"
-                      >
-                        <span className="text-label">{platform.name}</span>
-                      </SegmentedControl.Trigger>
-                    ))}
-                  </SegmentedControl.List>
-                </SegmentedControl.Root>
-              </div>
-
               {/* League Preview Card (shows when API data is available) */}
               <LeaguePreviewCard 
                 apiData={apiSyncedData} 
@@ -806,11 +845,97 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 platform={formData.platform !== 'none' ? formData.platform : undefined}
               />
 
+              {/* Step 2: Platform */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Globe className={`hw-icon-xs ${getFieldStyling('platform', formData, apiSyncedFields, hasApiSync).iconClass}`} />
+                  <label className={`text-label ${getFieldStyling('platform', formData, apiSyncedFields, hasApiSync).labelClass}`}>
+                    Platform
+                    <SyncIndicatorInline 
+                      synced={apiSyncedFields.includes('platform')} 
+                      platform={formData.platform !== 'none' ? formData.platform : undefined} 
+                    />
+                  </label>
+                </div>
+                <SegmentedControl.Root value={formData.platform} onValueChange={handlePlatformChange}>
+                  <SegmentedControl.List
+                    className="inline-flex w-128 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
+                    activeValue={formData.platform}
+                    isDisabled={isFieldDisabled.platform(formData, hasApiSync)}
+                    isSynced={isFieldSynced.platform(apiSyncedFields)}
+                    colorConfig={leagueImportColors}
+                  >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                      disabled={isFieldDisabled.platform(formData, hasApiSync)}
+                      isControlDisabled={isFieldDisabled.platform(formData, hasApiSync) || formData.platform === 'none'}
+                    >
+                      <Minus className={`hw-icon-2xs ${formData.platform === 'none' ? 'text-white' : 'text-current'}`} />
+                    </SegmentedControl.Trigger>
+                    {PLATFORMS.map(platform => (
+                      <SegmentedControl.Trigger
+                        key={platform.id}
+                        value={platform.id}
+                        disabled={!platform.available || isFieldDisabled.platform(formData, hasApiSync)}
+                        className="w-32"
+                        isControlDisabled={isFieldDisabled.platform(formData, hasApiSync)}
+                      >
+                        <span className="text-label">{platform.name}</span>
+                      </SegmentedControl.Trigger>
+                    ))}
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              </div>
+
+              {/* Step 3: League Type */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Trophy className={`hw-icon ${getFieldStyling('leagueType', formData, apiSyncedFields, hasApiSync).iconClass}`} />
+                  <label className={`text-label ${getFieldStyling('leagueType', formData, apiSyncedFields, hasApiSync).labelClass}`}>
+                    League Type
+                    <SyncIndicatorInline 
+                      synced={apiSyncedFields.includes('leagueType')} 
+                      platform={formData.platform !== 'none' ? formData.platform : undefined} 
+                    />
+                  </label>
+                </div>
+                <SegmentedControl.Root value={formData.leagueType} onValueChange={(value) => setFormData(prev => ({ ...prev, leagueType: value }))}>
+                  <SegmentedControl.List
+                    className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
+                    activeValue={formData.leagueType}
+                    isDisabled={isFieldDisabled.leagueType(formData, hasApiSync)}
+                    isSynced={isFieldSynced.leagueType(apiSyncedFields)}
+                    colorConfig={leagueImportColors}
+                  >
+                    <SegmentedControl.Trigger
+                      value="none"
+                      className="w-8"
+                      disabled={isFieldDisabled.leagueType(formData, hasApiSync)}
+                      isControlDisabled={isFieldDisabled.leagueType(formData, hasApiSync) || formData.leagueType === 'none'}
+                    >
+                      <ScanLine className={`hw-icon-2xs ${formData.leagueType === 'none' ? 'text-white' : 'text-current'}`} />
+                    </SegmentedControl.Trigger>
+                    {LEAGUE_TYPES.map(type => (
+                      <SegmentedControl.Trigger 
+                        key={type} 
+                        value={type} 
+                        className="w-32" 
+                        disabled={isFieldDisabled.leagueType(formData, hasApiSync)}
+                        isControlDisabled={isFieldDisabled.leagueType(formData, hasApiSync)}
+                      >
+                          <span className="text-label">{type}</span>
+                      </SegmentedControl.Trigger>
+                    ))}
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              </div>
+
               {/* Step 4: Sport */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Gamepad2 className={`hw-icon-sm ${isFieldDisabled.sport(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.sport(formData) ? leagueImportColors.label.disabled : 'text-strong'}`}>
+                  <Gamepad2 className={`hw-icon-sm ${getFieldStyling('sport', formData, apiSyncedFields, hasApiSync).iconClass}`} />
+                  <label className={`text-label ${getFieldStyling('sport', formData, apiSyncedFields, hasApiSync).labelClass}`}>
                     Sport
                     <SyncIndicatorInline 
                       synced={apiSyncedFields.includes('sport')} 
@@ -822,14 +947,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <SegmentedControl.List
                     className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.sport}
-                    isDisabled={isFieldDisabled.sport(formData)}
+                    isDisabled={isFieldDisabled.sport(formData, hasApiSync)}
+                    isSynced={isFieldSynced.sport(apiSyncedFields)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
-                      disabled={isFieldDisabled.sport(formData)}
-                      isControlDisabled={isFieldDisabled.sport(formData) || formData.sport === 'none'}
+                      disabled={isFieldDisabled.sport(formData, hasApiSync)}
+                      isControlDisabled={isFieldDisabled.sport(formData, hasApiSync) || formData.sport === 'none'}
                     >
                       <ScanLine className={`hw-icon-2xs ${formData.sport === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
@@ -839,10 +965,10 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         <SegmentedControl.Trigger
                           key={sport}
                           value={sport}
-                          disabled={!isAvailable || isFieldDisabled.sport(formData)}
+                          disabled={!isAvailable || isFieldDisabled.sport(formData, hasApiSync)}
                           className="w-32 relative group"
                           title={!isAvailable ? `${sport} support coming soon!` : ''}
-                          isControlDisabled={isFieldDisabled.sport(formData)}
+                          isControlDisabled={isFieldDisabled.sport(formData, hasApiSync)}
                         >
                     
                           <span className="text-label">{sport}</span>
@@ -856,8 +982,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 5: Scoring Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <BarChart2 className={`hw-icon ${isFieldDisabled.scoring(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.scoring(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>
+                  <BarChart2 className={`hw-icon ${getFieldStyling('scoring', formData, apiSyncedFields, hasApiSync).iconClass}`} />
+                  <label className={`text-label ${getFieldStyling('scoring', formData, apiSyncedFields, hasApiSync).labelClass}`}>
                     Scoring Type
                     <SyncIndicatorInline 
                       synced={apiSyncedFields.includes('scoring')} 
@@ -869,14 +995,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <SegmentedControl.List
                     className="inline-flex w-64 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.scoring}
-                    isDisabled={isFieldDisabled.scoring(formData)}
+                    isDisabled={isFieldDisabled.scoring(formData, hasApiSync)}
+                    isSynced={isFieldSynced.scoring(apiSyncedFields)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
-                      disabled={isFieldDisabled.scoring(formData)}
-                      isControlDisabled={isFieldDisabled.scoring(formData) || formData.scoring === 'none'}
+                      disabled={isFieldDisabled.scoring(formData, hasApiSync)}
+                      isControlDisabled={isFieldDisabled.scoring(formData, hasApiSync) || formData.scoring === 'none'}
                     >
                       <ScanLine className={`hw-icon-2xs ${formData.scoring === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
@@ -885,8 +1012,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         key={type} 
                         value={type} 
                         className="w-32" 
-                        disabled={isFieldDisabled.scoring(formData)}
-                        isControlDisabled={isFieldDisabled.scoring(formData)}
+                        disabled={isFieldDisabled.scoring(formData, hasApiSync)}
+                        isControlDisabled={isFieldDisabled.scoring(formData, hasApiSync)}
                       >
                         <span className="text-label">{type}</span>
                       </SegmentedControl.Trigger>
@@ -898,8 +1025,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               {/* Step 6: Matchup Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Swords className={`hw-icon ${isFieldDisabled.matchup(formData) ? leagueImportColors.icon.disabled : leagueImportColors.icon.normal}`} />
-                  <label className={`text-label ${isFieldDisabled.matchup(formData) ? leagueImportColors.label.disabled : leagueImportColors.label.normal}`}>
+                  <Swords className={`hw-icon ${getFieldStyling('matchup', formData, apiSyncedFields, hasApiSync).iconClass}`} />
+                  <label className={`text-label ${getFieldStyling('matchup', formData, apiSyncedFields, hasApiSync).labelClass}`}>
                     Matchup Type
                     <SyncIndicatorInline 
                       synced={apiSyncedFields.includes('matchup')} 
@@ -911,14 +1038,15 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                   <SegmentedControl.List
                     className="inline-flex w-96 gap-0.5 p-1 rounded-lg bg-gray-10 ring-1 ring-inset ring-stroke-soft-100"
                     activeValue={formData.matchup}
-                    isDisabled={isFieldDisabled.matchup(formData)}
+                    isDisabled={isFieldDisabled.matchup(formData, hasApiSync)}
+                    isSynced={isFieldSynced.matchup(apiSyncedFields)}
                     colorConfig={leagueImportColors}
                   >
                     <SegmentedControl.Trigger
                       value="none"
                       className="w-8"
-                      disabled={isFieldDisabled.matchup(formData)}
-                      isControlDisabled={isFieldDisabled.matchup(formData) || formData.matchup === 'none'}
+                      disabled={isFieldDisabled.matchup(formData, hasApiSync)}
+                      isControlDisabled={isFieldDisabled.matchup(formData, hasApiSync) || formData.matchup === 'none'}
                     >
                       <ScanLine className={`hw-icon-2xs ${formData.matchup === 'none' ? 'text-white' : 'text-current'}`} />
                     </SegmentedControl.Trigger>
@@ -929,8 +1057,8 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                           key={type} 
                           value={type} 
                           className="w-32" 
-                          disabled={isFieldDisabled.matchup(formData) || isDisabledType}
-                          isControlDisabled={isFieldDisabled.matchup(formData)}
+                          disabled={isFieldDisabled.matchup(formData, hasApiSync) || isDisabledType}
+                          isControlDisabled={isFieldDisabled.matchup(formData, hasApiSync)}
                           title={isDisabledType ? `${type} support coming soon!` : ''}
                         >
                           <span className="text-label">{type}</span>
@@ -952,7 +1080,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 <AnimatePresence mode="popLayout">
                 {/* Trade Deadline (only show if sport is selected) */}
                 {formData.sport && formData.sport !== 'none' && (
-                  <SettingCard icon={ArrowRightLeft} label="Trade Deadline" pulseKey={formData.sport}>
+                  <SettingCard icon={ArrowRightLeft} label="Trade Deadline" pulseKey={`trade-deadline-${formData.sport}`}>
                     <Datepicker 
                       value={formData.tradeDeadline}
                       onChange={(date: Date | undefined) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
@@ -961,7 +1089,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 )}
 
                 {/* Salary League */}
-                <SettingCard icon={CircleDollarSign} label="Salary League">
+                <SettingCard icon={CircleDollarSign} label="Salary League" pulseKey="salary-league">
                   <input
                     type="checkbox"
                     checked={formData.salary}
@@ -971,7 +1099,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                 </SettingCard>
 
                 {/* FAAB Waivers */}
-                <SettingCard icon={CircleDollarSign} label="FAAB Waivers">
+                <SettingCard icon={CircleDollarSign} label="FAAB Waivers" pulseKey="faab-waivers">
                   <input
                     type="checkbox"
                     checked={formData.faab}
@@ -982,7 +1110,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Categories Scoring (conditional) */}
                 {formData.scoring === 'Categories' && (
-                  <SettingCard icon={BarChart2} label="Categories Scoring" pulseKey={formData.scoring}>
+                  <SettingCard icon={BarChart2} label="Categories Scoring" pulseKey={`categories-scoring-${formData.scoring}`}>
                     <Select.Root value={formData.scoringMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, scoringMethod: value }))} size="xsmall">
                       <Select.Trigger className="w-full">
                         <Select.Value />
@@ -998,7 +1126,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Playoff Schedule (conditional) */}
                 {formData.matchup === 'H2H' && (
-                  <SettingCard icon={Calendar} label="Playoff Schedule" pulseKey={formData.matchup}>
+                  <SettingCard icon={Calendar} label="Playoff Schedule" pulseKey={`playoff-schedule-${formData.matchup}`}>
                     <Select.Root value={formData.playoffSchedule} onValueChange={(value) => setFormData(prev => ({ ...prev, playoffSchedule: value }))} size="xsmall">
                       <Select.Trigger className="w-full">
                         <Select.Value />
@@ -1014,7 +1142,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Games Limit (conditional - show for NBA and MLB, hide for NFL) */}
                 {formData.scoring === 'Categories' && (formData.sport === 'NBA' || formData.sport === 'MLB') && (
-                  <SettingCard icon={Gamepad2} label="Games Limit" pulseKey={`${formData.scoring}-${formData.sport}`}>
+                  <SettingCard icon={Gamepad2} label="Games Limit" pulseKey={`games-limit-${formData.scoring}-${formData.sport}`}>
                     <div className="w-full space-y-2">
                       <Select.Root 
                         value={formData.gamesLimitType} 
@@ -1062,7 +1190,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Dynasty Strategy (Dynasty/Keeper only) */}
                 {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <SettingCard icon={Trophy} label="Dynasty Strategy" pulseKey={formData.leagueType}>
+                  <SettingCard icon={Trophy} label="Dynasty Strategy" pulseKey={`dynasty-strategy-${formData.leagueType}`}>
                     <Select.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))} size="xsmall">
                       <Select.Trigger className="w-full">
                         <Select.Value />
@@ -1078,7 +1206,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Decay (Dynasty/Keeper only) */}
                 {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <SettingCard icon={Clock} label="Decay" pulseKey={formData.leagueType}>
+                  <SettingCard icon={Clock} label="Decay" pulseKey={`decay-${formData.leagueType}`}>
                     <input
                       type="checkbox"
                       checked={formData.decay}
@@ -1090,7 +1218,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Contracts (Dynasty/Keeper only) */}
                 {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <SettingCard icon={Settings} label="Contracts" pulseKey={formData.leagueType}>
+                  <SettingCard icon={Settings} label="Contracts" pulseKey={`contracts-${formData.leagueType}`}>
                     <input
                       type="checkbox"
                       checked={formData.contracts}
@@ -1118,11 +1246,14 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                         {(leaguePreview?.categories && leaguePreview.categories.length > 0 
                           ? leaguePreview.categories 
                           : DEFAULT_CATEGORIES[formData.sport as keyof typeof DEFAULT_CATEGORIES] || []
+                        ).filter((category, index, array) => 
+                          // Filter out empty/null categories and ensure uniqueness
+                          category && category.trim() && array.indexOf(category) === index
                         ).map((category) => {
                           const isPunted = formData.puntedCategories.includes(category);
                           return (
                             <button
-                              key={category}
+                              key={`category-${category}`}
                               type="button"
                               onClick={() => {
                                 const newPuntedCategories = isPunted

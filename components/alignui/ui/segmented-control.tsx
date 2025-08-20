@@ -17,7 +17,9 @@ const DEFAULT_SEGMENTED_CONTROL_COLORS = {
     inactive: 'text-sub',
     active: 'text-strong',
     disabled: 'text-disabled',
-    disabledActive: 'text-strong'
+    disabledActive: 'text-strong',
+    syncedInactive: 'text-gray-400',
+    syncedActive: 'text-gray-600'
   },
   // Background colors
   background: {
@@ -25,26 +27,38 @@ const DEFAULT_SEGMENTED_CONTROL_COLORS = {
     active: 'bg-white',
     activeHover: 'data-[state=active]:hover:bg-gray-25',
     disabledHover: 'disabled:hover:bg-transparent',
-    disabledActive: 'bg-gray-100'
+    disabledActive: 'bg-gray-100',
+    syncedHover: 'hover:bg-gray-15',
+    syncedActive: 'bg-gray-50',
+    syncedActiveHover: 'data-[state=active]:hover:bg-gray-75'
   },
   // Container colors
   container: {
     background: 'bg-bg-weak-25',
-    floatingBg: 'bg-bg-white-0'
+    floatingBg: 'bg-bg-white-0',
+    syncedBackground: 'bg-gray-5',
+    syncedFloatingBg: 'bg-gray-25'
   },
   // Separator colors
   separator: {
     from: 'after:from-transparent',
     via: 'after:via-gray-300',
     viaDisabled: 'after:via-gray-100',
+    viaSynced: 'after:via-gray-200',
     to: 'after:to-transparent'
   }
 };
 
 export type SegmentedControlColorConfig = typeof DEFAULT_SEGMENTED_CONTROL_COLORS;
 
-// Context to pass color configuration to child components
-const SegmentedControlContext = React.createContext<SegmentedControlColorConfig>(DEFAULT_SEGMENTED_CONTROL_COLORS);
+// Context to pass color configuration and synced state to child components
+const SegmentedControlContext = React.createContext<{
+  colors: SegmentedControlColorConfig;
+  isSynced: boolean;
+}>({
+  colors: DEFAULT_SEGMENTED_CONTROL_COLORS,
+  isSynced: false
+});
 
 const SegmentedControlRoot = TabsPrimitive.Root;
 SegmentedControlRoot.displayName = 'SegmentedControlRoot';
@@ -56,8 +70,9 @@ const SegmentedControlList = React.forwardRef<
     activeValue?: string;
     colorConfig?: Partial<SegmentedControlColorConfig>;
     isDisabled?: boolean;
+    isSynced?: boolean;
   }
->(({ children, className, floatingBgClassName, activeValue, colorConfig, isDisabled = false, ...rest }, forwardedRef) => {
+>(({ children, className, floatingBgClassName, activeValue, colorConfig, isDisabled = false, isSynced = false, ...rest }, forwardedRef) => {
   // Deep merge the color configuration to ensure all nested properties are merged
   const colors = {
     ...DEFAULT_SEGMENTED_CONTROL_COLORS,
@@ -93,12 +108,16 @@ const SegmentedControlList = React.forwardRef<
     updateActiveTab();
   }, [activeValue, updateActiveTab]);
 
+  // Determine background classes based on state
+  const containerBg = isSynced ? colors.container.syncedBackground : colors.container.background;
+  const floatingBg = isSynced ? colors.container.syncedFloatingBg : (isDisabled ? colors.background.disabledActive : colors.background.active);
+
   return (
-    <SegmentedControlContext.Provider value={colors}>
+    <SegmentedControlContext.Provider value={{ colors, isSynced }}>
       <TabsPrimitive.List
         ref={mergeRefs(forwardedRef, listRef)}
         className={cnExt(
-          `relative isolate grid auto-cols-auto grid-flow-col gap-1 rounded-lg ${colors.container.background} p-1`,
+          `relative isolate grid auto-cols-auto grid-flow-col gap-1 rounded-lg ${containerBg} p-1`,
           className,
         )}
         {...rest}
@@ -109,7 +128,7 @@ const SegmentedControlList = React.forwardRef<
       <div
         className={cnExt(
           `absolute inset-y-1 left-0 -z-10 rounded-md shadow-toggle-switch transition-transform duration-300`,
-          isDisabled ? colors.background.disabledActive : colors.background.active,
+          floatingBg,
           {
             hidden: !mounted,
           },
@@ -134,15 +153,57 @@ const SegmentedControlTrigger = React.forwardRef<
     isControlDisabled?: boolean;
   }
 >(({ className, isControlDisabled = false, ...rest }, forwardedRef) => {
-  const colors = React.useContext(SegmentedControlContext);
+  const { colors, isSynced } = React.useContext(SegmentedControlContext);
   
+  // Determine text and background classes based on state
+  const getTextColor = () => {
+    if (isSynced) {
+      return colors.text.syncedInactive || colors.text.inactive;
+    }
+    return colors.text.inactive;
+  };
+
+  const getActiveTextColor = () => {
+    if (isControlDisabled) {
+      return colors.text.disabledActive;
+    }
+    if (isSynced) {
+      return colors.text.syncedActive || colors.text.active;
+    }
+    return colors.text.active;
+  };
+
+  const getHoverColor = () => {
+    if (isSynced) {
+      return colors.background.syncedHover || colors.background.hover;
+    }
+    return colors.background.hover;
+  };
+
+  const getActiveHoverColor = () => {
+    if (isSynced) {
+      return colors.background.syncedActiveHover || colors.background.activeHover;
+    }
+    return colors.background.activeHover;
+  };
+
+  const getSeparatorColor = () => {
+    if (isControlDisabled) {
+      return colors.separator.viaDisabled;
+    }
+    if (isSynced) {
+      return colors.separator.viaSynced || colors.separator.via;
+    }
+    return colors.separator.via;
+  };
+
   return (
     <TabsPrimitive.Trigger
       ref={forwardedRef}
       className={cnExt(
         // base
         'peer',
-        `relative z-10 h-7 whitespace-nowrap rounded-md px-2 text-label-sm ${colors.text.inactive} outline-none`,
+        `relative z-10 h-7 whitespace-nowrap rounded-md px-2 text-label-sm ${getTextColor()} outline-none`,
         'flex items-center justify-center gap-1.5',
         // Gradient separator - only show if there's another trigger after this one
         '[&:not(:last-of-type)]:after:content-[\'\']',
@@ -154,20 +215,18 @@ const SegmentedControlTrigger = React.forwardRef<
         // gradient style - using configurable colors
         '[&:not(:last-of-type)]:after:bg-gradient-to-b',
         colors.separator.from,
-        isControlDisabled ? colors.separator.viaDisabled : colors.separator.via,
+        getSeparatorColor(),
         colors.separator.to,
         // hide around active
         'data-[state=active]:after:hidden', // no separator AFTER active
         '[&:has(+[data-state=active])]:after:hidden', // no separator BEFORE active (next is active)
         'transition duration-300 ease-out',
         // global hover for all segmented controls
-        colors.background.hover,
+        getHoverColor(),
         // focus
         'focus:outline-none',
-        // active - use disabledActive text if control is disabled
-        isControlDisabled 
-          ? `data-[state=active]:${colors.text.disabledActive} ${colors.background.activeHover}`
-          : `data-[state=active]:${colors.text.active} ${colors.background.activeHover}`,
+        // active - use appropriate text color based on state
+        `data-[state=active]:${getActiveTextColor()} ${getActiveHoverColor()}`,
         className,
         // disabled styles using colorConfig - applied after className for highest priority
         `disabled:cursor-not-allowed disabled:opacity-100 ${colors.background.disabledHover}`,

@@ -28,7 +28,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
             >
                 <span className={cn(
                     isMobile ? "text-3xs" : "text-sm lg:text-smd",
-                    "text-pb_textgray font-medium"
+                    "text-text-sub-600 font-medium"
                 )}>
                     {typeof zScoreSumValue === 'number' ? zScoreSumValue.toFixed(2) : '-'}
                 </span>
@@ -164,7 +164,7 @@ const StatsSection = memo(({ categories, stats, zScoreSumValue, sport, rowIndex,
                         {formattedValue !== '' ? (
                             <span className={cn(
                                 isMobile ? "text-3xs" : "text-sm lg:text-smd",
-                                "text-pb_darkgray/80 font-medium",
+                                "text-bg-surface-800/80 font-medium",
                                 (
                                     (sport?.toLowerCase() === 'nfl' && categoryAbbrev.startsWith('PPG')) ||
                                     (sport?.toLowerCase() !== 'nfl' && categoryAbbrev === 'PPG')
@@ -250,10 +250,10 @@ const StatsSectionSecondary = memo(({ categories, secondaryStatsData, sport }) =
                 return (
                     <div
                         key={path}
-                        className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-white rounded-sm relative shadow-sm border border-pb_lightergray"
+                        className="flex-1 text-center h-full flex flex-col items-center justify-center select-none bg-white rounded-sm relative shadow-sm border border-stroke-soft-100"
                         title={title}
                     >
-                        <div className="text-xs text-pb_midgray z-10">
+                        <div className="text-xs text-text-sub-600 z-10">
                             <div className="flex items-center justify-center w-full pb-2.5">
                                 {displayNode}
                             </div>
@@ -407,7 +407,7 @@ const RankingsPlayerRow = memo(({
                     `player-row-mobile border rounded-md overflow-hidden mb-1 shadow-sm flex flex-col w-full select-none`,
                     isDragging ? 'z-10 opacity-50' : '',
                     isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging
-                        ? "border-pb_lightgray bg-pb_lightergray"
+                        ? "border-stroke-soft-200 bg-stroke-soft-100"
                         : "bg-white hover:bg-gray-50",
                     // `h-auto` is fine, or a fixed height if preferred for mobile rows
                 )}
@@ -421,7 +421,7 @@ const RankingsPlayerRow = memo(({
                     const dragHandleElement = (
                         <div
                             className={cn(
-                                "text-pb_textgray h-full flex items-center justify-center", // Ensure full height and centered for grid cell
+                                "text-text-sub-600 h-full flex items-center justify-center", // Ensure full height and centered for grid cell
                                 (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
                             )}
                             style={{ pointerEvents: 'auto' }}
@@ -447,14 +447,14 @@ const RankingsPlayerRow = memo(({
                             {isDraftMode && (
                                 <div className={cn(
                                     "mr-1.5 h-4 w-4 rounded-sm flex items-center justify-center border",
-                                    !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray"
+                                    !(player.draftModeAvailable ?? true) ? "border-stroke-soft-200 bg-white" : "border-bg-weak-50"
                                 )}>
                                     <Button
                                         variant="ghost" size="icon"
                                         className={`h-full w-full rounded-sm flex items-center justify-center ${
                                             (player.draftModeAvailable ?? true)
-                                                ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover'
-                                                : 'text-pb_orange-600 hover:bg-pb_orange hover:text-white'
+                                                ? 'text-white bg-primary-base hover:text-white hover:bg-primary-basehover'
+                                                : 'text-warning-base-600 hover:bg-warning-base hover:text-white'
                                             }`}
                                         onClick={(e) => { e.stopPropagation(); onToggleDraftStatus(!(player.draftModeAvailable ?? true)); }}
                                         title={(player.draftModeAvailable ?? true) ? "Mark as Drafted" : "Mark as Available"}
@@ -466,14 +466,14 @@ const RankingsPlayerRow = memo(({
 
                             <div className={cn(
                                 "w-6 h-4 text-2xs flex-shrink-0 text-center select-none rounded-sm border flex items-center justify-center font-bold mr-2",
-                                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray",
+                                isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-stroke-soft-200" : "border-stroke-soft-100",
                                 !isRankSorted ? 'bg-blue-50' : ''
                             )}>{rank}</div>
 
                             <img
                                 src={playerImage || defaultImageSrc}
                                 alt={playerName}
-                                className="w-4 h-4 flex-shrink-0 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm mr-2"
+                                className="w-4 h-4 flex-shrink-0 object-cover bg-bg-weak-50 border border-stroke-soft-200 rounded-sm mr-2"
                                 loading="lazy" width="24" height="24"
                                 onError={handleImageError}
                             />
@@ -482,7 +482,7 @@ const RankingsPlayerRow = memo(({
                                 <div className="font-bold text-2xs truncate">{playerName}</div>
                             </div>
 
-                            <div className="grid grid-cols-3 items-center text-3xs text-pb_textlightgray flex-shrink-0 w-24 pr-2">
+                            <div className="grid grid-cols-3 items-center text-3xs text-text-mid-500 flex-shrink-0 w-24 pr-2">
                                 <span className="text-center tracking-wider">{playerPosition}</span>
                                 <span className="text-center tracking-wider">{age}</span>
                                 <span className="text-center tracking-wider">{teamAbbreviation}</span>
@@ -517,7 +517,7 @@ const RankingsPlayerRow = memo(({
                 {/* End of Top section: Player Info */}
 
                 {/* Bottom section: Stats */}
-                <div className="flex w-full h-5.5 items-center bg-white gap-0 border-t border-pb_lightergray">
+                <div className="flex w-full h-5.5 items-center bg-white gap-0 border-t border-stroke-soft-100">
                     {/* Use StatsSection directly for mobile, ensuring it fills the width */}
                     <StatsSection 
                         categories={categories}
@@ -537,7 +537,7 @@ const RankingsPlayerRow = memo(({
                     const totalStatColumns = numCategories + 1; // For Z-Score slot + Category slots
 
                     return (
-                        <div className="border-t border-pb_lightgray bg-gray-50 text-xs">
+                        <div className="border-t border-stroke-soft-200 bg-gray-50 text-xs">
                             {/* Row 1: Secondary Stats Display */}
                             <div 
                                 className="grid items-stretch h-auto mb-1.5 gap-px mt-1"
@@ -545,9 +545,9 @@ const RankingsPlayerRow = memo(({
                             >
                                 {/* Cell 1: "LAST 30" text & trend */} 
                                 <div className="flex flex-col items-center justify-center text-6xs px-0.5 py-0.5">
-                                    <span className="text-pb_textgray leading-tight font-medium">{secondaryStatsLabel}</span>
+                                    <span className="text-text-sub-600 leading-tight font-medium">{secondaryStatsLabel}</span>
                                     {typeof secondaryStatsTrend === 'number' && (
-                                        <span className={`font-semibold flex items-center leading-tight ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}>
+                                        <span className={`font-semibold flex items-center leading-tight ${secondaryStatsTrend > 0 ? 'text-success-base' : secondaryStatsTrend < 0 ? 'text-error-base' : 'text-text-sub-600'}`}>
                                             {secondaryStatsTrend !== 0 && (secondaryStatsTrend < 0 ? '▼' : '▲')}
                                             <span className="ml-0.5">{Math.abs(secondaryStatsTrend)}%</span>
                                         </span>
@@ -602,10 +602,10 @@ const RankingsPlayerRow = memo(({
                                     return (
                                         <div 
                                             key={categoryAbbrev} 
-                                            className="flex flex-col items-center justify-end select-none relative text-3xs rounded-t-sm h-full bg-white rounded-b-sm border-t border-x border-pb_lightergray "
+                                            className="flex flex-col items-center justify-end select-none relative text-3xs rounded-t-sm h-full bg-white rounded-b-sm border-t border-x border-stroke-soft-100 "
                                         >
-                                            <span className="text-pb_midgray pb-0.5 pt-1 leading-none ">{displayNode}</span>
-                                            <div style={{ backgroundColor: stripBgColor }} className="w-full h-2 self-end rounded-b-sm border-b border-pb_lightergray"></div>
+                                            <span className="text-text-sub-600 pb-0.5 pt-1 leading-none ">{displayNode}</span>
+                                            <div style={{ backgroundColor: stripBgColor }} className="w-full h-2 self-end rounded-b-sm border-b border-stroke-soft-100"></div>
                                         </div>
                                     );
                                 })}
@@ -619,44 +619,44 @@ const RankingsPlayerRow = memo(({
                                     <div className="flex flex-row space-x-2 items-start"> {/* ECRs in a row, items-start for labels */} 
                                         {/* Standard ECR */}
                                         <div className="flex flex-col items-center">
-                                            <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-pb_lightergray w-7 h-4'> 
+                                            <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-stroke-soft-100 w-7 h-4'> 
                                                 <span className="font-bold text-3xs">{standardEcrRank ?? '--'}</span> 
                                             </div>
-                                            <div className='text-7xs tracking-wider text-pb_textgray uppercase'>Default</div> 
+                                            <div className='text-7xs tracking-wider text-text-sub-600 uppercase'>Default</div> 
                                         </div>
 
                                         {/* Redraft ECR (Conditional) */}
                                         {activeRanking?.format?.toLowerCase() === 'dynasty' && (
                                             <div className="flex flex-col items-center">
-                                                <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-pb_lightergray w-7 h-4'> 
+                                                <div className='flex items-center justify-center bg-white rounded-sm shadow-xs border border-stroke-soft-100 w-7 h-4'> 
                                                     <span className="font-bold text-3xs">{redraftEcrRank ?? '--'}</span> 
                                                 </div>
-                                                <div className='text-7xs tracking-wider text-pb_textgray uppercase'>Redraft</div> 
+                                                <div className='text-7xs tracking-wider text-text-sub-600 uppercase'>Redraft</div> 
                                             </div>
                                         )}
                                     </div>
                                     
                                     {/* Flag Button - below ECRs, centered if ECRs don't take full width or using w-auto for flag button */}
                                     <div>
-                                        <div className="bg-pb_green hover:bg-pb_green_darker text-white font-medium rounded-sm shadow-sm w-7 h-4 flex items-center justify-center">
+                                        <div className="bg-success-base hover:bg-success-base_darker text-white font-medium rounded-sm shadow-sm w-7 h-4 flex items-center justify-center">
                                             <Flag className={`w-3 h-3 text-white`} /> 
                                         </div>
-                                        <div className='text-7xs tracking-wider text-pb_textgray uppercase items-center justify-center' >STATUS</div> 
+                                        <div className='text-7xs tracking-wider text-text-sub-600 uppercase items-center justify-center' >STATUS</div> 
                                     </div>
                                 </div>
 
                                 {/* Right White Box Area (Buttons & Empty Space) */}
-                                <div className="flex-grow bg-white shadow-xs border-t border-l border-pb_lightergray h-full">
+                                <div className="flex-grow bg-white shadow-xs border-t border-l border-stroke-soft-100 h-full">
                                     <div className="flex flex-row items-start"> {/* Inner flex for buttons and empty space */}
                                         {/* Column 1 of White Box: Action Buttons (NEWS, TIPS, TRENDS) */}
                                         <div className="flex flex-col mr-1.5 shrink-0">
                                             <button className="text-6xs tracking-wide bg-gray-700 text-white hover:bg-gray-600 px-1.5 py-1 rounded-tl-sm w-full text-center disabled">
                                                 NEWS
                                             </button>
-                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1  border-r border-y border-pb_lightergray w-full text-center disabled">
+                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1  border-r border-y border-stroke-soft-100 w-full text-center disabled">
                                                 TIPS
                                             </button>
-                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1 border-r border-pb_lightergray w-full text-center disabled">
+                                            <button className="text-6xs tracking-wide bg-white text-gray-600 hover:bg-gray-100 px-1.5 py-1 border-r border-stroke-soft-100 w-full text-center disabled">
                                                 TRENDS
                                             </button>
                                         </div>
@@ -690,7 +690,7 @@ const RankingsPlayerRow = memo(({
                 // Removed overall row striping based on isSparseRowForStriping
                 // Draft mode styling will apply to the whole row if active
                 isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging 
-                    ? "border-pb_lightgray bg-pb_lightergray" // Drafted styling
+                    ? "border-stroke-soft-200 bg-stroke-soft-100" // Drafted styling
                     : "bg-white hover:bg-gray-50",    // Default row styling
                 isExpanded ? `h-[${EXPANDED_ROW_HEIGHT}px]` : `h-[${DEFAULT_ROW_HEIGHT}px]`,
             )}
@@ -700,7 +700,7 @@ const RankingsPlayerRow = memo(({
                     "flex h-9 items-center",
                     // Inner div styling should also not rely on the removed sparse row striping
                     isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging 
-                        ? "bg-pb_lightergray border-pb_midgray" 
+                        ? "bg-stroke-soft-100 border-text-sub-600" 
                         : "bg-white hover:bg-gray-50"
                 )}
                 onClick={onToggleExpand}
@@ -710,7 +710,7 @@ const RankingsPlayerRow = memo(({
                     {/* Drag handle */}
                     <div
                         className={cn(
-                            "text-pb_textgray",
+                            "text-text-sub-600",
                             (isRankSorted && !isDraftMode) ? 'cursor-grab active:cursor-grabbing' : 'cursor-not-allowed opacity-50'
                         )}
                         style={{ pointerEvents: 'auto' }}
@@ -746,15 +746,15 @@ const RankingsPlayerRow = memo(({
                     {isDraftMode && (
                         <div className={cn(
                             "ml-0.5 mr-1.5 h-6 w-6 rounded-sm flex items-center justify-center border", // Base classes + border
-                            !(player.draftModeAvailable ?? true) ? "border-pb_lightgray bg-white" : "border-pb_backgroundgray" // Conditional border color
+                            !(player.draftModeAvailable ?? true) ? "border-stroke-soft-200 bg-white" : "border-bg-weak-50" // Conditional border color
                         )}> {/* Added flex centering */}
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 className={`h-full w-full rounded-sm flex items-center justify-center ${ // Make smaller and round
                                     (player.draftModeAvailable ?? true)
-                                        ? 'text-white bg-pb_blue hover:text-white hover:bg-pb_bluehover' // Use blue shades
-                                        : 'text-pb_orange-600  hover:bg-pb_orange hover:text-white' // Use orange shades
+                                        ? 'text-white bg-primary-base hover:text-white hover:bg-primary-basehover' // Use blue shades
+                                        : 'text-warning-base-600  hover:bg-warning-base hover:text-white' // Use orange shades
                                     }`}
                                 onClick={(e) => {
                                     e.stopPropagation(); // Prevent row expand/collapse
@@ -776,7 +776,7 @@ const RankingsPlayerRow = memo(({
                     {/* Rank number */}
                     <div className={cn(
                         "w-9 h-7 text-center select-none rounded-sm border flex items-center justify-center font-bold", // Base classes
-                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-pb_lightgray" : "border-pb_lightergray", // Conditional border
+                        isDraftMode && !(player.draftModeAvailable ?? true) && !isDragging ? "border-stroke-soft-200" : "border-stroke-soft-100", // Conditional border
                         !isRankSorted ? 'bg-blue-50' : '' // Conditional background
                     )}>{rank}</div>
 
@@ -789,7 +789,7 @@ const RankingsPlayerRow = memo(({
                             // Key helps React differentiate rows, use player.id for stability
                             key={player.id} 
                             alt={playerName}
-                            className="w-7 h-7 object-cover bg-pb_backgroundgray border border-pb_lightgray rounded-sm lg:block"
+                            className="w-7 h-7 object-cover bg-bg-weak-50 border border-stroke-soft-200 rounded-sm lg:block"
                             loading="lazy"
                             width="28"
                             height="28"
@@ -800,16 +800,16 @@ const RankingsPlayerRow = memo(({
 
                     {/* Player name and position */}
                     <div className="flex items-baseline gap-2 select-none min-w-0 pl-3">
-                        <div className="font-semibold text-smd truncate text-pb_darkgray">
+                        <div className="font-semibold text-smd truncate text-bg-surface-800">
                             {playerName}
                         </div>
-                         <div className="text-pb_textgray text-2xs flex-shrink-0">
+                         <div className="text-text-sub-600 text-2xs flex-shrink-0">
                             {playerPosition}
                          </div>
                     </div>
 
                     {/* Display Z-Score Sum centered within a div pushed right */}
-                    {/* <div className=" w-16 text-right text-2xs tracking-wider text-pb_midgray select-none">
+                    {/* <div className=" w-16 text-right text-2xs tracking-wider text-text-sub-600 select-none">
                         {zScoreSum}
                     </div> */}
                 </div>
@@ -822,17 +822,17 @@ const RankingsPlayerRow = memo(({
 
             {/* Only render expanded content when needed */}
             {isExpanded && (
-                <div className="flex flex-col w-full h-[180px] border-t border-pb_lightgray shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
+                <div className="flex flex-col w-full h-[180px] border-t border-stroke-soft-200 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]">
 
                     {/* inner */}
-                    <div className="flex h-24 h-full bg-pb_backgroundgray">
+                    <div className="flex h-24 h-full bg-bg-weak-50">
                         {/* Left panel */}
                         <div className=" w-[9%] items-center justify-center ml-auto flex flex-col gap-4 ">
                             <div className='flex flex-col items-center'>
                                 <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
                                     <span className="font-bold text-lg">{standardEcrRank ?? '--'}</span>
                                 </div>
-                                <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>DEFAULT</span>
+                                <span className='text-2xs tracking-wider mt-1 text-text-sub-600'>DEFAULT</span>
                             </div>
                             {/* <<< Conditionally render Redraft ECR Box >>> */}
                             {activeRanking?.format?.toLowerCase() === 'dynasty' && (
@@ -840,7 +840,7 @@ const RankingsPlayerRow = memo(({
                                     <div className='bg-white h-11 w-16 border border-gray-300 rounded-sm flex items-center justify-center'>
                                         <span className="font-bold text-lg">{redraftEcrRank ?? '--'}</span>
                                     </div>
-                                    <span className='text-2xs tracking-wider mt-1 text-pb_textgray'>REDRAFT</span>
+                                    <span className='text-2xs tracking-wider mt-1 text-text-sub-600'>REDRAFT</span>
                                 </div>
                             )}
                         </div>
@@ -850,15 +850,15 @@ const RankingsPlayerRow = memo(({
                             {/* Insights panel */}
                             {/* <div className="flex flex-col justify-center items-center pt-2.5 h-[50%] px-3">
                                 <div className="w-full h-11 flex relative overflow-hidden rounded-sm mx-2">
-                                    <div className="bg-pb_orange h-full w-[65%]"></div>
-                                    <div className="bg-pb_blue h-full flex-1"></div>
+                                    <div className="bg-warning-base h-full w-[65%]"></div>
+                                    <div className="bg-primary-base h-full flex-1"></div>
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="bg-pb_darkgray text-white font-bold py-1 px-3 rounded">
+                                        <div className="bg-bg-surface-800 text-white font-bold py-1 px-3 rounded">
                                             95
                                         </div>
                                     </div>
                                 </div>
-                                <span className="text-2xs tracking-wider mt-1 text-pb_textgray">PLAYBOOK SCORE</span>
+                                <span className="text-2xs tracking-wider mt-1 text-text-sub-600">PLAYBOOK SCORE</span>
                             </div> */}
 
                             <div className="flex flex-col justify-center items-center h-[50%] px-2">
@@ -871,22 +871,22 @@ const RankingsPlayerRow = memo(({
                                     <div className={`h-4 w-8 mb-3 rounded-xs ${currentInjury?.playingProbability === 'OUT' ? 'bg-red-500' :
                                         currentInjury?.playingProbability === 'QUESTIONABLE' ? 'bg-yellow-500' :
                                             currentInjury?.playingProbability === 'PROBABLE' ? 'bg-green-500' :
-                                                'bg-pb_green'
+                                                'bg-success-base'
                                         }`}>
 
                                     </div>
                                     <Flag className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{teamAbbreviation}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-text-sub-600">{teamAbbreviation}</span>
                                     <Users className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{age}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-text-sub-600">{age}</span>
                                     <Calendar className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1 flex flex-col items-center justify-center">
-                                    <span className="text-xs tracking-wider mb-3 text-pb_textgray">{playerPosition}</span>
+                                    <span className="text-xs tracking-wider mb-3 text-text-sub-600">{playerPosition}</span>
                                     <Target className="w-5 h-5" />
                                 </div>
                             </div>
@@ -896,17 +896,17 @@ const RankingsPlayerRow = memo(({
                         <div className="flex w-[70%]">
                             {/* Right panel 0 (Trend/Buttons) - Dynamic Width */}
                             <div 
-                                className="items-center justify-center border-l border-pb_lightgray flex flex-col" // Added flex flex-col for internal layout, removed w-[7%]
+                                className="items-center justify-center border-l border-stroke-soft-200 flex flex-col" // Added flex flex-col for internal layout, removed w-[7%]
                                 style={{ flexBasis: `${100 / (categories.length > 0 ? categories.length + 1 : 1)}%` }}
                             >
                                 {/* Ensure content within this panel fills its new dynamic width and maintains layout */} 
                                 <div className="p-2 flex flex-col h-[30%] items-center justify-center mt-0.5">
-                                    <span className="text-2xs tracking-wider text-pb_textgray">
+                                    <span className="text-2xs tracking-wider text-text-sub-600">
                                         {secondaryStatsLabel} {/* Display label (will have default) */}
                                     </span>
                                     {/* Numerical Trend Indicator with Triangle */}
                                     {typeof secondaryStatsTrend === 'number' && (
-                                        <span className={`text-xs font-medium flex items-center ${secondaryStatsTrend > 0 ? 'text-pb_green' : secondaryStatsTrend < 0 ? 'text-pb_red' : 'text-pb_midgray'}`}> 
+                                        <span className={`text-xs font-medium flex items-center ${secondaryStatsTrend > 0 ? 'text-success-base' : secondaryStatsTrend < 0 ? 'text-error-base' : 'text-text-sub-600'}`}> 
                                             {secondaryStatsTrend < 0 ? '▼' : '▲'} 
                                             <span className="ml-1">{secondaryStatsTrend > 0 ? `+${secondaryStatsTrend}%` : `${secondaryStatsTrend}%`}</span>
                                         </span>
@@ -916,13 +916,13 @@ const RankingsPlayerRow = memo(({
                                 <div className="flex h-[70%] items-center justify-center ">
                                     <div className="flex items-center justify-center">
                                         <div className="flex flex-col gap-1">
-                                            <button className="disabled text-2xs tracking-wider bg-pb_darkgrayhover text-white hover:bg-pb_midgray px-3 py-2 rounded shadow-sm transition-colors">
+                                            <button className="disabled text-2xs tracking-wider bg-bg-surface-800hover text-white hover:bg-text-sub-600 px-3 py-2 rounded shadow-sm transition-colors">
                                                 TIPS
                                             </button>
-                                            <button className="disabled text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
+                                            <button className="disabled text-2xs tracking-wider bg-stroke-soft-200 text-text-sub-600 hover:bg-stroke-soft-100 px-3 py-2 rounded shadow-sm transition-colors border border-stroke-soft-200">
                                                 MATCH
                                             </button>
-                                            <button className="disabled text-2xs tracking-wider bg-pb_lightgray text-pb_textgray hover:bg-pb_lightergray px-3 py-2 rounded shadow-sm transition-colors border border-pb_lightgray">
+                                            <button className="disabled text-2xs tracking-wider bg-stroke-soft-200 text-text-sub-600 hover:bg-stroke-soft-100 px-3 py-2 rounded shadow-sm transition-colors border border-stroke-soft-200">
                                                 OTHER
                                             </button>
                                         </div>
@@ -944,7 +944,7 @@ const RankingsPlayerRow = memo(({
                                 </div>
 
                                 <div className="flex h-[70%] items-center justify-center">
-                                    <span className="bg-white font-bold h-full w-full border-t border-l border-pb_lightgray rounded-tl-md"></span>
+                                    <span className="bg-white font-bold h-full w-full border-t border-l border-stroke-soft-200 rounded-tl-md"></span>
 
                                 </div>
                             </div>

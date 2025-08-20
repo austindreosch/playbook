@@ -120,7 +120,7 @@ const CreateAllRankingsButton = () => {
     return (
         <Button
             variant="outline"
-            className="flex items-center gap-2 bg-pb_red text-white hover:bg-pb_redhover hover:text-white"
+            className="flex items-center gap-2 bg-error-base text-white hover:bg-error-basehover hover:text-white"
             onClick={handleAdminCreateAll}
             disabled={isBulkCreating}
         >

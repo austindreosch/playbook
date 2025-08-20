@@ -276,10 +276,10 @@ export default function PlayerPerformanceBlock() {
 
   
   return (
-    <div className="w-full h-full rounded-lg border border-pb_lightgray shadow-sm p-3 flex flex-col overflow-hidden">
+    <div className="w-full h-full rounded-lg border border-stroke-soft-200 shadow-sm p-3 flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 flex-shrink-0">
-        <SigmaSquare className="hw-icon-sm mdh:hw-icon text-pb_darkgray" />
-        <h3 className="text-xs mdh:text-sm font-semibold text-pb_darkgray">Performance</h3>
+        <SigmaSquare className="hw-icon-sm mdh:hw-icon text-bg-surface-800" />
+        <h3 className="text-xs mdh:text-sm font-semibold text-bg-surface-800">Performance</h3>
       </div>
       
       {/* Top Row */}
@@ -291,7 +291,7 @@ export default function PlayerPerformanceBlock() {
           <div className="w-full space-y-3.5">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <Compass className="hw-icon-xs text-pb_darkgray" />
+                <Compass className="hw-icon-xs text-bg-surface-800" />
                 <span className="text-label-lg font-medium text-black">Playbook</span>
               </div>
               <span className="text-paragraph-md font-medium font-mono text-black">13.87</span>
@@ -310,7 +310,7 @@ export default function PlayerPerformanceBlock() {
           {/* Recent Performance Context */}
           {/* <div className=' w-full flex justify-center'>
             <div className='flex flex-col text-center w-1/2 gap-1.5'>
-              <div className='text-title-h6 text-pb_red font-medium'>
+              <div className='text-title-h6 text-error-base font-medium'>
                 ▼21%
               </div>
               <div className='text-paragraph-xs text-gray-300 leading-tighter'>
@@ -334,14 +334,14 @@ export default function PlayerPerformanceBlock() {
 
         {/* Impact Distribution */}
         <div className='relative mt-2'>
-          <h4 className="absolute -top-5 left-[1px] text-paragraph-md font-medium text-pb_darkgray">Impact Distribution</h4>
+          <h4 className="absolute -top-5 left-[1px] text-paragraph-md font-medium text-bg-surface-800">Impact Distribution</h4>
           <ImpactDistributionBlock stats={impactStatsWithScores} />
         </div>
       </div>
 
       {/* Recent Games Table */}
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-        <h4 className="text-xs font-semibold text-pb_darkgray mb-1 flex-shrink-0">Recent Games</h4>
+        <h4 className="text-xs font-semibold text-bg-surface-800 mb-1 flex-shrink-0">Recent Games</h4>
         <div className="flex-1 overflow-auto" style={{paddingTop: '25px', marginTop: '-25px'}}>
           <table className="w-full text-2xs table-fixed">
             <thead className="sticky top-0">
@@ -374,8 +374,8 @@ export default function PlayerPerformanceBlock() {
                   }
                   
                   let headerClass = isContextColumn 
-                    ? "py-1 px-1 font-normal text-pb_textlightergray w-8 relative"
-                    : "py-1 px-1 font-medium text-pb_darkgray w-8 relative";
+                    ? "py-1 px-1 font-normal text-text-soft-400 w-8 relative"
+                    : "py-1 px-1 font-medium text-bg-surface-800 w-8 relative";
                   
                   return (
                     <th key={index} className={headerClass}>
@@ -383,7 +383,7 @@ export default function PlayerPerformanceBlock() {
                       {hoveredNormalizedColumn === columnKey && shouldNormalizeStat(columnKey, sportConfig.normalization) && !showPercentages && (
                         <div className="absolute left-1/2 transform -translate-x-1/2 z-50 pointer-events-none" 
                         style={{top: '-20px'}}>
-                          <div className="bg-pb_lightergray text-pb_textgray shadow-sm text-3xs px-1 py-[1px] rounded text-center leading-none min-w-max">
+                          <div className="bg-stroke-soft-100 text-text-sub-600 shadow-sm text-3xs px-1 py-[1px] rounded text-center leading-none min-w-max">
                              Per {sportConfig.normalization.targetLabel}<br/>Min
                           </div>
                         </div>
@@ -391,7 +391,7 @@ export default function PlayerPerformanceBlock() {
                       {shouldShowPercentageHeader && (
                         <div className="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center z-20 pointer-events-none" 
                              style={{width: 'calc(200% + 2px)', left: '0'}}>
-                          <span className="px-1 font-medium text-pb_darkgray">
+                          <span className="px-1 font-medium text-bg-surface-800">
                             {percentageLabel}
                           </span>
                         </div>
@@ -408,7 +408,7 @@ export default function PlayerPerformanceBlock() {
             </thead>
             <tbody>
               {performanceData.recentGames.map((game, gameIndex) => (
-                <tr key={gameIndex} className="border-t border-pb_lightergray">
+                <tr key={gameIndex} className="border-t border-stroke-soft-100">
                   {gameStatsColumns.map((column, columnIndex) => {
                     // Handle both icon objects and string columns
                     const columnKey = typeof column === 'object' ? column.key : column;
@@ -435,17 +435,17 @@ export default function PlayerPerformanceBlock() {
                     const isMergedPercentage = showPercentages && pair && columnKey === pair.attempt;
                     
                     let cellClass = isContextColumn 
-                      ? "py-0.5 px-1 text-pb_textlightergray text-center w-8"
-                      : "py-0.5 px-1 font-mono text-pb_textgray font-medium text-center w-8";
+                      ? "py-0.5 px-1 text-text-soft-400 text-center w-8"
+                      : "py-0.5 px-1 font-mono text-text-sub-600 font-medium text-center w-8";
                     
                     // Add light gray text when hovering over shooting columns
                     if (showPercentages && pair) {
-                      cellClass = cellClass.replace("text-pb_textgray", "text-pb_textlightestgray");
+                      cellClass = cellClass.replace("text-text-sub-600", "text-text-soft-300");
                     }
                     
                     // Add light gray text when hovering over this specific normalizable stat column
                     if (hoveredNormalizedColumn === columnKey && shouldNormalizeStat(columnKey, sportConfig.normalization)) {
-                      cellClass = cellClass.replace("text-pb_textgray", "text-pb_textlightestgray tracking-tighter");
+                      cellClass = cellClass.replace("text-text-sub-600", "text-text-soft-300 tracking-tighter");
                     }
                     
                     // Add relative positioning for merged percentage cells (no background)

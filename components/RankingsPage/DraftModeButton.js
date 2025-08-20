@@ -39,7 +39,7 @@ const DraftModeButton = ({
                     className={cn(
                         "flex items-center gap-2 duration-400 ease-in-out",
                         isDraftMode &&
-                        `bg-gradient-to-r from-pb_orange-400 via-pb_orange-300 to-pb_orange-500 
+                        `bg-gradient-to-r from-warning-base-400 via-warning-base-300 to-warning-base-500 
                         text-white border-transparent 
                        shadow-md`,
                        iconOnly && "p-2.5",
@@ -65,7 +65,7 @@ const DraftModeButton = ({
                     className="flex items-center gap-2 pl-3 pr-2 py-1 cursor-pointer select-none"
                     onSelect={(e) => e.preventDefault()}
                 >
-                    <Label htmlFor={enableSwitchId} className="text-sm cursor-pointer grow text-pb_darkgray hover:text-pb_orange">
+                    <Label htmlFor={enableSwitchId} className="text-sm cursor-pointer grow text-bg-surface-800 hover:text-warning-base">
                         Enable Draft Mode
                     </Label>
                     <Switch
@@ -73,12 +73,12 @@ const DraftModeButton = ({
                         checked={isDraftMode}
                         onCheckedChange={onDraftModeChange}
                         aria-label="Enable Draft Mode"
-                        className="data-[state=checked]:bg-pb_blue"
+                        className="data-[state=checked]:bg-primary-base"
                     />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {/* Container for details */}
-                <div className={`px-3 py-1.5 text-2xs text-muted-foreground select-none tracking-wider text-pb_textgray ${!isDraftMode ? 'opacity-50' : ''}`}>
+                <div className={`px-3 py-1.5 text-2xs text-muted-foreground select-none tracking-wider text-text-sub-600 ${!isDraftMode ? 'opacity-50' : ''}`}>
                     {/* Conditionally display details based on sport */}
                     {activeRanking?.sport === 'NFL' ? (
                         // NFL: Show Sport • Format • Flex • PPR
@@ -99,7 +99,7 @@ const DraftModeButton = ({
                 </div>
                 {/* Conditionally render Drafted Count only if isDraftMode is true */}
                 {isDraftMode && (
-                    <div className="px-3 pb-1.5 text-2xs text-muted-foreground select-none text-pb_textgray">
+                    <div className="px-3 pb-1.5 text-2xs text-muted-foreground select-none text-text-sub-600">
                         Drafted Players: {draftedCount ?? '0'} / {activeRanking?.rankings?.length ?? '0'}
                     </div>
                 )}
@@ -110,12 +110,12 @@ const DraftModeButton = ({
                     onSelect={(e) => e.preventDefault()}
                 >
                     <Eye className="h-4 w-4" />
-                    <span className="text-sm grow text-pb_darkgray">Show Drafted</span>
+                    <span className="text-sm grow text-bg-surface-800">Show Drafted</span>
                     <Switch
                         checked={showDrafted}
                         onCheckedChange={onShowDraftedChange}
                         aria-label="Toggle Show Drafted Players"
-                        className="data-[state=checked]:bg-pb_blue"
+                        className="data-[state=checked]:bg-primary-base"
                     />
                 </DropdownMenuItem>
 

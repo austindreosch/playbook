@@ -22,8 +22,8 @@ const ValueSwapButton = ({ className }) => {
           aria-label="Toggle compass" 
           className={cn(
             "px-3 shadow-inner h-full flex items-center justify-center rounded-l-md rounded-r-none border-t border-b border-l data-[state=on]:border-r transition-colors",
-            "data-[state=on]:bg-pb_blue data-[state=on]:text-white data-[state=on]:border-pb_bluehover hover:data-[state=on]:bg-pb_bluehover hover:data-[state=on]:text-white",
-            "data-[state=off]:bg-white data-[state=off]:text-pb_lightgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
+            "data-[state=on]:bg-primary-base data-[state=on]:text-white data-[state=on]:border-primary-basehover hover:data-[state=on]:bg-primary-basehover hover:data-[state=on]:text-white",
+            "data-[state=off]:bg-white data-[state=off]:text-stroke-soft-200 data-[state=off]:border-stroke-soft-200 hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-bg-surface-800"
           )}
         >
           <Compass className="w-icon h-icon" />
@@ -33,8 +33,8 @@ const ValueSwapButton = ({ className }) => {
           aria-label="Toggle clipboard" 
           className={cn(
             "px-3 shadow-inner h-full flex items-center justify-center rounded-r-md rounded-l-none border-t border-b border-r data-[state=on]:border-l transition-colors",
-            "data-[state=on]:bg-pb_darkgray data-[state=on]:text-white data-[state=on]:border-pb_darkergray hover:data-[state=on]:bg-pb_darkgrayhover hover:data-[state=on]:text-white",
-            "data-[state=off]:bg-white data-[state=off]:text-pb_lightgray data-[state=off]:border-pb_lightgray hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-pb_darkgray"
+            "data-[state=on]:bg-bg-surface-800 data-[state=on]:text-white data-[state=on]:border-bg-strong-950 hover:data-[state=on]:bg-bg-surface-800hover hover:data-[state=on]:text-white",
+            "data-[state=off]:bg-white data-[state=off]:text-stroke-soft-200 data-[state=off]:border-stroke-soft-200 hover:data-[state=off]:bg-backgroundgray hover:data-[state=off]:text-bg-surface-800"
           )}
         >
           <ClipboardMinus className="h-5 w-5" />

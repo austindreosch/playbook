@@ -61,19 +61,19 @@ export default function Features() {
     <section id="features" className="relative">
 
       {/* Section background (needs .relative class on parent and next sibling elements) */}
-      <div className="absolute inset-0 bg-pb_backgroundgray pointer-events-none" aria-hidden="true"></div>
-      <div className="absolute left-0 right-0 m-auto w-px p-px h-20 bg-pb_lightergray transform -translate-y-1/2"></div>
+      <div className="absolute inset-0 bg-bg-weak-50 pointer-events-none" aria-hidden="true"></div>
+      <div className="absolute left-0 right-0 m-auto w-px p-px h-20 bg-stroke-soft-100 transform -translate-y-1/2"></div>
 
       <div className="relative max-w-6xl mx-auto px-4 pb-10 sm:px-6">
         <div className="pt-12 md:pt-20">
 
           {/* Section header */}
           <div className="max-w-4xl mx-auto text-center pb-12">
-            <h1 className="h2 font-bold mb-6 text-title-h2 text-pb_darkgray">The Ultimate Command Center for Fantasy</h1>
-            <p className="text-paragraph-xl text-pb_midgray w-4/5 mx-auto">Get rid of the scattered spreadsheets, trade calculators, and talking heads. Playbook gives you everything you need to analyze, strategize, and dominate in one place.</p>
+            <h1 className="h2 font-bold mb-6 text-title-h2 text-bg-surface-800">The Ultimate Command Center for Fantasy</h1>
+            <p className="text-paragraph-xl text-text-sub-600 w-4/5 mx-auto">Get rid of the scattered spreadsheets, trade calculators, and talking heads. Playbook gives you everything you need to analyze, strategize, and dominate in one place.</p>
           </div>
 
-          <Separator className='bg-pb_lightgray  h-[1px] mb-7'/>
+          <Separator className='bg-stroke-soft-200  h-[1px] mb-7'/>
 
           {/* Section content */}
           <div className="md:grid md:grid-cols-12 md:gap-6">
@@ -81,48 +81,48 @@ export default function Features() {
             {/* Content */}
             <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6 md:mt-6">
               <div className="text-center px-4 md:text-left md:pr-4 lg:pr-12 xl:pr-16 mb-8">
-                <h3 className="h3 mb-3 text-title-h4 text-pb_darkgray">A new standard for fantasy tools.</h3>
-                <p className="text-paragraph-lg text-pb_midgray">Playbook is a first-of-its-kind platform leveraging artificial intelligence to provide unprecedented insights and smart suggestions based on personalized data.</p>
+                <h3 className="h3 mb-3 text-title-h4 text-bg-surface-800">A new standard for fantasy tools.</h3>
+                <p className="text-paragraph-lg text-text-sub-600">Playbook is a first-of-its-kind platform leveraging artificial intelligence to provide unprecedented insights and smart suggestions based on personalized data.</p>
               </div>
               {/* Tabs buttons */}
               <div className="mb-8 md:mb-0">
                 <a
-                  className={`flex items-center text-label-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-pb_paperwhite shadow-md border-pb_lightergray hover:shadow-lg' : 'bg-pb_blue text-pb_paperwhite shadow-lg border-transparent'}`}
+                  className={`flex items-center text-label-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 1 ? 'bg-bg-white-0 shadow-md border-stroke-soft-100 hover:shadow-lg' : 'bg-primary-base text-bg-white-0 shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(1); }}
                 >
                   <div>
                     <div className="text-label-xl font-bold leading-snug tracking-tight mb-1">One Dashboard. Every Answer.</div>
-                    <div className={`text-paragraph-lg ${tab === 1 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Everything you need to know about all your leagues, centralized in one clear view. See trends, expert consensus, and hidden opportunities to make league winning moves fast. </div>
+                    <div className={`text-paragraph-lg ${tab === 1 ? 'text-primary-base-50' : 'text-text-strong-950'}`}>Everything you need to know about all your leagues, centralized in one clear view. See trends, expert consensus, and hidden opportunities to make league winning moves fast. </div>
                   </div>
-                  <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
-                    <Compass className={`w-6 h-6 ${tab === 1 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
+                  <div className="flex justify-center items-center w-9 h-9 bg-bg-white-0 rounded-full border border-stroke-soft-200 flex-shrink-0 ml-3">
+                    <Compass className={`w-6 h-6 ${tab === 1 ? 'text-bg-surface-800' : 'text-text-strong-950'}`} />
                   </div>
                 </a>
                 <a
-                  className={`flex items-center text-label-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-pb_paperwhite shadow-md border-pb_lightergray hover:shadow-lg' : 'bg-pb_blue text-pb_paperwhite shadow-lg border-transparent'}`}
+                  className={`flex items-center text-label-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 2 ? 'bg-bg-white-0 shadow-md border-stroke-soft-100 hover:shadow-lg' : 'bg-primary-base text-bg-white-0 shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(2); }}
                 >
                   <div>
                     <div className="text-label-xl font-bold leading-snug tracking-tight mb-1">Instant insights with personalized intelligence.</div>
-                    <div className={`text-paragraph-lg ${tab === 2 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Turn hours of scattered research into seconds. Get key analytics and intelligent suggestions for trades, waivers, and matchups all tailored to your individual league and strategy.</div>
+                    <div className={`text-paragraph-lg ${tab === 2 ? 'text-primary-base-50' : 'text-text-strong-950'}`}>Turn hours of scattered research into seconds. Get key analytics and intelligent suggestions for trades, waivers, and matchups all tailored to your individual league and strategy.</div>
                   </div>
-                  <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
-                    <BrainCog className={`w-6 h-6 ${tab === 2 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
+                  <div className="flex justify-center items-center w-9 h-9 bg-bg-white-0 rounded-full border border-stroke-soft-200 flex-shrink-0 ml-3">
+                    <BrainCog className={`w-6 h-6 ${tab === 2 ? 'text-bg-surface-800' : 'text-text-strong-950'}`} />
                   </div>
                 </a>
                 <a
-                  className={`flex items-center text-label-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-pb_paperwhite shadow-md border-pb_lightergray hover:shadow-lg' : 'bg-pb_blue text-pb_paperwhite shadow-lg border-transparent'}`}
+                  className={`flex items-center text-label-lg p-3 md:p-5 rounded border transition duration-300 ease-in-out mb-3 ${tab !== 3 ? 'bg-bg-white-0 shadow-md border-stroke-soft-100 hover:shadow-lg' : 'bg-primary-base text-bg-white-0 shadow-lg border-transparent'}`}
                   href="#0"
                   onClick={(e) => { e.preventDefault(); setTab(3); }}
                 >
                   <div>
                     <div className="text-label-xl font-bold leading-snug tracking-tight mb-1">Find opportunities to exploit hidden value.</div>
-                    <div className={`text-paragraph-lg ${tab === 3 ? 'text-pb_blue-50' : 'text-pb_mddarkgray'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness&rsquo; and undervalued players using AI and your personalized data. </div>
+                    <div className={`text-paragraph-lg ${tab === 3 ? 'text-primary-base-50' : 'text-text-strong-950'}`}>Playbook learns how you think, and instantly spots league winning moves by tracking opponent weakness&rsquo; and undervalued players using AI and your personalized data. </div>
                   </div>
-                  <div className="flex justify-center items-center w-9 h-9 bg-pb_paperwhite rounded-full border border-pb_lightgray flex-shrink-0 ml-3">
-                    <CandlestickChart className={`w-6 h-6 ${tab === 3 ? 'text-pb_darkgray' : 'text-pb_mddarkgray'}`} />
+                  <div className="flex justify-center items-center w-9 h-9 bg-bg-white-0 rounded-full border border-stroke-soft-200 flex-shrink-0 ml-3">
+                    <CandlestickChart className={`w-6 h-6 ${tab === 3 ? 'text-bg-surface-800' : 'text-text-strong-950'}`} />
                   </div>
                 </a>
               </div>
@@ -133,7 +133,7 @@ export default function Features() {
               <div className="relative flex flex-col text-center lg:text-right">
                 {/* Item 1 */}
                 <div className={`w-full transition-all duration-300 ${tab === 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}>
-                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-pb_lightergray rounded-xs " style={{
+                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-stroke-soft-100 rounded-xs " style={{
                     background: 'linear-gradient(to bottom, rgba(235, 235, 235, 0.2) 0%, rgba(235, 235, 235, 0.1) 50%, rgba(235, 235, 235, 0) 100%)',
                     borderImage: 'linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(235, 235, 235) 50%, transparent 100%) 1'
                   }}>
@@ -144,7 +144,7 @@ export default function Features() {
                 </div>
                 {/* Item 2 */}
                 <div className={`w-full transition-all duration-300 ${tab === 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}>
-                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-pb_lightergray rounded-xs " style={{
+                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-stroke-soft-100 rounded-xs " style={{
                     background: 'linear-gradient(to bottom, rgba(235, 235, 235, 0.2) 0%, rgba(235, 235, 235, 0.1) 50%, rgba(235, 235, 235, 0) 100%)',
                     borderImage: 'linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(235, 235, 235) 50%, transparent 100%) 1'
                   }}>
@@ -154,7 +154,7 @@ export default function Features() {
                 </div>
                 {/* Item 3 */}
                 <div className={`w-full transition-all duration-300 ${tab === 3 ? 'opacity-100 scale-100' : 'opacity-0 scale-95 absolute'}`}>
-                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-pb_lightergray rounded-xs " style={{
+                  <div className="relative inline-flex flex-col border-t-2 border-l-2 border-r-2 border-stroke-soft-100 rounded-xs " style={{
                     background: 'linear-gradient(to bottom, rgba(235, 235, 235, 0.2) 0%, rgba(235, 235, 235, 0.1) 50%, rgba(235, 235, 235, 0) 100%)',
                     borderImage: 'linear-gradient(to bottom, rgb(235, 235, 235) 0%, rgb(235, 235, 235) 50%, transparent 100%) 1'
                   }}>

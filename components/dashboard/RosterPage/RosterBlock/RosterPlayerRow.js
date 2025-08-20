@@ -30,7 +30,7 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
         {/* Left section with fixed widths - exactly matching RankingsPlayerRow */}
         <div className={`${ROSTER_COLUMN_CLASSES.playerInfoSectionRow}  `}>
           {/* Playbook Score instead of rank number */}
-          <div className={`${ROSTER_COLUMN_CLASSES.playbookScoreBox} font-mono text-label-md font-semibold text-black select-none rounded-sm border border-pb_lightergray`}>
+          <div className={`${ROSTER_COLUMN_CLASSES.playbookScoreBox} font-mono text-label-md font-semibold text-black select-none rounded-sm border border-stroke-soft-100`}>
             {playbookScore}
           </div>
 
@@ -40,7 +40,7 @@ const RosterPlayerRow = memo(({ player, rank, categories, isExpanded, onToggleEx
               src={player.imageUrl || defaultImageSrc}
               key={player.name}
               alt={playerName}
-              className="w-6 h-6 object-cover bg-gray-25 border border-pb_lightgray rounded-sm lg:block"
+              className="w-6 h-6 object-cover bg-gray-25 border border-stroke-soft-200 rounded-sm lg:block"
               loading="lazy"
               width="28"
               height="28"

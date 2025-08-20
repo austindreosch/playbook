@@ -90,30 +90,30 @@ export default function Hero() {
             
             {/* Left side - Text content */}
             <div className="text-center px-4 md:px-0 pt-10 lg:text-left lg:pr-24 relative z-50">
-              <h1 className="text-title-h1 md:text-title-h0 font-extrabold leading-tighter tracking-tighter mb-10 text-pb_darkgray">
-                Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-pb_blue to-pb_green">faster.</span>
+              <h1 className="text-title-h1 md:text-title-h0 font-extrabold leading-tighter tracking-tighter mb-10 text-bg-surface-800">
+                Make league winning decisions <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-base to-success-base">faster.</span>
               </h1>
-              <p className="text-paragraph-xl text-pb_midgray mb-8 leading-relaxed">
+              <p className="text-paragraph-xl text-text-sub-600 mb-8 leading-relaxed">
 The all-in-one command center for fantasy sports strategy with <br/> AI integrated expert insights that learn your leagues and gameplan. Get ahead instantly & outclass your competition with a fraction of the effort.
               </p>
-              {/* <p className="text-xl text-pb_midgray mb-8" data-aos="zoom-y-out" data-aos-delay="150">
+              {/* <p className="text-xl text-text-sub-600 mb-8" data-aos="zoom-y-out" data-aos-delay="150">
                 Fantasy sports strategy made simple with AI-powered expert insights that learn your leagues and strategy. Outclass the competition with a fraction of the effort — all in one dashboard.
               </p> */}
               <div className="flex flex-col sm:flex-row gap-4  pt-4 items-center lg:items-start">
                 <Button
-                  className="p-5 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover border border-pb_blue w-48 sm:w-auto text-label-lg"
+                  className="p-5 shadow-md font-bold bg-primary-base text-white hover:bg-primary-basehover border border-primary-base w-48 sm:w-auto text-label-lg"
                   onClick={handleGetStarted}
                 >
                   Join the Waitlist
                 </Button>
                 <a href="#features">
-                  <Button variant="secondary" className="w-48 sm:w-auto p-5 shadow-md font-bold bg-pb_lightgray border border-pb_textlightergray text-pb_darkgray hover:bg-gray-300 text-label-lg">
+                  <Button variant="secondary" className="w-48 sm:w-auto p-5 shadow-md font-bold bg-stroke-soft-200 border border-text-soft-400 text-bg-surface-800 hover:bg-gray-300 text-label-lg">
                     Learn More
                   </Button>
                 </a>
               </div>
               
-              <p className="text-paragraph-md text-pb_textgray mt-10 md:mt-6 text-center lg:text-left">
+              <p className="text-paragraph-md text-text-sub-600 mt-10 md:mt-6 text-center lg:text-left">
                 Playbook is in development. Sign up to get early access soon.
               </p>
             </div>
@@ -158,7 +158,7 @@ The all-in-one command center for fantasy sports strategy with <br/> AI integrat
                   
                   {/* Middle cable - mobile */}
                   {/* <div 
-                    className="absolute w-3.5 bg-pb_darkgray z-10"
+                    className="absolute w-3.5 bg-bg-surface-800 z-10"
                     style={{ 
                       left: 'calc(50% - 2px)', 
                       top: '-100vh', 

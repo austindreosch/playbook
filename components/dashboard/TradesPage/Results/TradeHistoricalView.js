@@ -51,9 +51,9 @@ export default function TradeHistoricalView() {
   const offsetPct = ((domainMax - threshold) / (domainMax - domainMin)) * 100;
 
   return (
-        <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 pt-1 relative max-h-full overflow-hidden">
-      {/* <div className="text-3xs text-pb_textlightestgray pl-0.5 leading-none">Historical View</div> */}
-       <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
+        <div className="w-full bg-white border border-stroke-soft-200 rounded-lg px-2 pt-1 relative max-h-full overflow-hidden">
+      {/* <div className="text-3xs text-text-soft-300 pl-0.5 leading-none">Historical View</div> */}
+       <div className="absolute top-1.5 left-2.5 text-3xs text-text-soft-300 leading-none z-10">Historical View</div>
 
         <ChartContainer config={chartConfig} className="h-[calc(100%)] w-full max-h-full">
          <LineChart data={data} margin={{ top: 8, right: 10, bottom: -2, left: 10 }}>

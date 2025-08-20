@@ -430,7 +430,7 @@ function PlayerPerformanceWidget({
                     
                     // Add light gray text when hovering over shooting columns
                     if (showPercentages && pair) {
-                      cellClass = cellClass.replace("text-black", "text-pb_textlightestgray");
+                      cellClass = cellClass.replace("text-black", "text-text-soft-300");
                     }
                     
                     // Add light gray text when hovering over this specific normalizable stat column

@@ -21,10 +21,10 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
   };
 
   // Dark theme styling for opponent
-  const containerClasses = "bg-pb_darkgray border border-pb_textgray";
+  const containerClasses = "bg-bg-surface-800 border border-text-sub-600";
   const textClasses = "text-white";
-  const expandedBgClasses = "bg-pb_mddarkgray";
-  const borderClasses = "border-pb_textgray";
+  const expandedBgClasses = "bg-text-strong-950";
+  const borderClasses = "border-text-sub-600";
 
   return (
     <div className={`${containerClasses} rounded-md`}>
@@ -62,7 +62,7 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                     <div className={cn(
                         "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'favorite' 
-                          ? 'bg-pb_mddarkgray'
+                          ? 'bg-text-strong-950'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Heart className={cn(
@@ -88,7 +88,7 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                     <div className={cn(
                         "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'target' 
-                          ? 'bg-pb_mddarkgray'
+                          ? 'bg-text-strong-950'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Crosshair className={cn(
@@ -114,7 +114,7 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                     <div className={cn(
                         "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'tradeBlock' 
-                          ? 'bg-pb_mddarkgray'
+                          ? 'bg-text-strong-950'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <HandHelping className={cn(
@@ -140,7 +140,7 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                     <div className={cn(
                         "flex items-center justify-center w-7 h-7 rounded-full transition-colors",
                         status === 'notInterested' 
-                          ? 'bg-pb_red'
+                          ? 'bg-error-base'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Ban className={cn(
@@ -151,7 +151,7 @@ export default function OpponentPlayerRow({ player, isExpandable = true }) {
                     <span className={cn(
                         "mt-0.5 text-3xs font-medium",
                         status === 'notInterested' 
-                          ? 'text-pb_red'
+                          ? 'text-error-base'
                           : 'text-gray-300'
                     )}>
                         Blocked

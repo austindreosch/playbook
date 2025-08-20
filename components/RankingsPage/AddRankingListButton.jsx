@@ -449,7 +449,7 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
                                                 <div className="flex flex-wrap gap-x-4 gap-y-3">
                                                     {mlbHittingCategories.filter(([,catData]) => catData.group === 'hitting').map(([key]) => (
                                                         <div key={`${key}-h-dialog`} className="flex items-center space-x-2 p-1 border rounded-md">
-                                                            <Switch id={`cat-switch-${key}-h-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-pb_blue" />
+                                                            <Switch id={`cat-switch-${key}-h-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-primary-base" />
                                                             <label htmlFor={`cat-switch-${key}-h-dialog`} className="text-sm font-medium leading-none select-none">{key}</label>
                                                         </div>
                                                     ))}
@@ -460,7 +460,7 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
                                                 <div className="flex flex-wrap gap-x-4 gap-y-3">
                                                     {mlbPitchingCategories.filter(([,catData]) => catData.group === 'pitching').map(([key]) => (
                                                         <div key={`${key}-p-dialog`} className="flex items-center space-x-2 p-1 border rounded-md">
-                                                            <Switch id={`cat-switch-${key}-p-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-pb_blue" />
+                                                            <Switch id={`cat-switch-${key}-p-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-primary-base" />
                                                             <label htmlFor={`cat-switch-${key}-p-dialog`} className="text-sm font-medium leading-none select-none">{key}</label>
                                                         </div>
                                                     ))}
@@ -471,7 +471,7 @@ const AddRankingListButton = ({ dataset, iconOnly = false, className = "" }) => 
                                         <div className="flex flex-wrap gap-x-4 gap-y-3">
                                             {categoryEntries.map(([key]) => (
                                                 <div key={`${key}-dialog`} className="flex items-center space-x-2 p-1 border rounded-md">
-                                                    <Switch id={`cat-switch-${key}-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-pb_blue" />
+                                                    <Switch id={`cat-switch-${key}-dialog`} checked={formData.customCategories.includes(key)} onCheckedChange={(checked) => handleCategoryChange(key, checked)} className="data-[state=checked]:bg-primary-base" />
                                                     <label htmlFor={`cat-switch-${key}-dialog`} className="text-sm font-medium leading-none select-none">{key}</label>
                                                 </div>
                                             ))}

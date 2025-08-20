@@ -140,7 +140,7 @@ function UserPlayerPreferencesPanel({ scoreData, className = "" }) {
                                 value={option}
                                 className="text-2xs font-medium flex-1 flex items-center justify-center"
                             >
-                                {option || <GitCommitHorizontal className="hw-icon-xs text-pb_textlightestgray" />}
+                                {option || <GitCommitHorizontal className="hw-icon-xs text-text-soft-300" />}
                             </SegmentedControlTrigger>
                         ))}
                         </SegmentedControlList>

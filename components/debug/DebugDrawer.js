@@ -527,14 +527,14 @@ export default function DebugDrawer({ isOpen, onToggle }) {
             }}
             className="bg-white border rounded-lg shadow-2xl flex flex-col"
           >
-            <div className="drag-handle cursor-move bg-pb_greenhover p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
+            <div className="drag-handle cursor-move bg-success-basehover p-2 rounded-t-lg flex items-center border-b flex-shrink-0">
               <GripVertical className="h-5 w-5 text-white" />
               <h2 className="text-lg font-semibold ml-2 text-white">Debug Information</h2>
               <div className="ml-auto flex items-center gap-3">
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="p-1 rounded-md border bg-white hover:bg-pb_lightestgray shadow-sm"
+                  className="p-1 rounded-md border bg-white hover:bg-stroke-soft-50 shadow-sm"
                   aria-label="Reset Drawer"
                 >
                   <AlignCenter className="h-4 w-6" />
@@ -542,7 +542,7 @@ export default function DebugDrawer({ isOpen, onToggle }) {
                 <button
                   type="button"
                   onClick={onToggle}
-                  className="p-1 rounded-md border bg-white hover:bg-pb_lightestgray shadow-sm"
+                  className="p-1 rounded-md border bg-white hover:bg-stroke-soft-50 shadow-sm"
                   aria-label="Close Debug Drawer"
                 >
                   <X className="h-4 w-6" />

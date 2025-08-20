@@ -25,7 +25,7 @@ export default function Newsletter() {
         <div className="pb-6 pt-8 md:pb-8">
 
           {/* CTA box */}
-          <div className="relative bg-pb_orange p-12 shadow-lg overflow-hidden rounded-2xl" data-aos="zoom-y-out">
+          <div className="relative bg-warning-base p-12 shadow-lg overflow-hidden rounded-2xl" data-aos="zoom-y-out">
 
             <div className="relative flex flex-col lg:flex-row justify-between items-center">
 
@@ -38,20 +38,20 @@ export default function Newsletter() {
 
               {/* CTA content */}
               <div className=" w-full lg:w-2/3 lg:pl-12 space-y-3 text-center">
-                <h3 className="text-3xl font-bold text-pb_darkgray">Ready to see what Playbook can do?</h3>
+                <h3 className="text-3xl font-bold text-bg-surface-800">Ready to see what Playbook can do?</h3>
                 <div className="py-2">
-                  <p className="text-base font-medium text-pb_mddarkgray md:text-lg md:w-[80%] mx-auto">Start using Playbook early and see how it changes the way you manage your fantasy teams today.</p>
+                  <p className="text-base font-medium text-text-strong-950 md:text-lg md:w-[80%] mx-auto">Start using Playbook early and see how it changes the way you manage your fantasy teams today.</p>
                 </div>
                 <div className="flex justify-center">
                   <Button
-                    className="w-full p-5 px-7 shadow-md font-bold bg-pb_blue text-white hover:bg-pb_bluehover mb-4 sm:w-auto sm:mb-0 rounded-lg"
+                    className="w-full p-5 px-7 shadow-md font-bold bg-primary-base text-white hover:bg-primary-basehover mb-4 sm:w-auto sm:mb-0 rounded-lg"
                     onClick={handleSignUp}
                     disabled={isLoading}
                   >
                     {isLoading ? 'Loading...' : 'Sign Up Now'}
                   </Button>
                 </div>
-                  <p className="text-sm text-pb_mddarkgray">Use it free of charge for right now.</p>
+                  <p className="text-sm text-text-strong-950">Use it free of charge for right now.</p>
               </div>
 
             </div>

@@ -69,7 +69,7 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="w-full py-6 mb-2 mt-8 border-t bg-white text-pb_midgray text-sm">
+    <footer className="w-full py-6 mb-2 mt-8 border-t bg-white text-text-sub-600 text-sm">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between px-4 gap-6">
         {/* Left: Copyright */}
         <div className="flex-1 flex items-center justify-start">
@@ -77,10 +77,10 @@ export default function Footer() {
         </div>
         {/* Center: Navigation */}
         <div className="flex-1 flex justify-center gap-6">
-          {/* <Link href="/about" className="hover:text-pb_blue transition">About</Link>
-          <Link href="/privacy" className="hover:text-pb_blue transition">Privacy</Link>
-          <Link href="/terms" className="hover:text-pb_blue transition">Terms</Link> */}
-          {/* <Link href="/rankings" className="hover:text-pb_blue transition">Rankings</Link> */}
+          {/* <Link href="/about" className="hover:text-primary-base transition">About</Link>
+          <Link href="/privacy" className="hover:text-primary-base transition">Privacy</Link>
+          <Link href="/terms" className="hover:text-primary-base transition">Terms</Link> */}
+          {/* <Link href="/rankings" className="hover:text-primary-base transition">Rankings</Link> */}
           <a href="mailto:austin@playbookfantasy.com" className="text-sm pl-6">
             For all inquiries: <span className="ml-0.5">austin@playbookfantasy.com</span>
           </a>
@@ -91,8 +91,8 @@ export default function Footer() {
 
             <div className="flex items-center gap-2 mt-[.7rem]">
               {socials.map(s => (
-                <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.name} className="text-pb_blue hover:text-pb_bluehover transition">
-                  <span className="inline-flex items-center justify-center w-5 h-5 text-pb_darkgray">{s.icon}</span>
+                <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.name} className="text-primary-base hover:text-primary-basehover transition">
+                  <span className="inline-flex items-center justify-center w-5 h-5 text-bg-surface-800">{s.icon}</span>
                 </a>
               ))}
             </div>

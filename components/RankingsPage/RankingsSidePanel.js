@@ -59,8 +59,8 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
                         className={`
                             group w-full grid grid-cols-[18px_1fr] rounded-md overflow-hidden cursor-pointer shadow-sm 
                             ${activeRankingId === ranking._id
-                                ? 'bg-pb_blue text-white'
-                                : 'bg-pb_backgroundgray hover:bg-pb_lightergray text-gray-900 border border-pb_gray'
+                                ? 'bg-primary-base text-white'
+                                : 'bg-bg-weak-50 hover:bg-stroke-soft-100 text-gray-900 border border-pb_gray'
                             }
                         `}
                         onClick={() => onSelectRanking(ranking._id)}
@@ -68,8 +68,8 @@ const RankingsSidePanel = React.memo(({ onSelectRanking }) => {
                         <div
                             className={`h-full transition-colors duration-150 ease-in-out 
                                 ${activeRankingId === ranking._id 
-                                    ? 'bg-pb_orange' 
-                                    : 'bg-gray-300 group-hover:bg-pb_orange'
+                                    ? 'bg-warning-base' 
+                                    : 'bg-gray-300 group-hover:bg-warning-base'
                                 }
                             `}
                         />

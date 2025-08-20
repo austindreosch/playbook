@@ -52,29 +52,29 @@ export default function CommissionerRecruitPage() {
     
     if (positions.length === 2) {
       // Dual position - create split background using inline styles
-      return 'relative px-2 py-1 rounded-sm text-xs font-medium text-center shrink-0 text-pb_darkgray overflow-hidden w-11 h-6';
+      return 'relative px-2 py-1 rounded-sm text-xs font-medium text-center shrink-0 text-bg-surface-800 overflow-hidden w-11 h-6';
     } else {
       // Single position
       const colorMap = {
         // NBA positions
-        'PG': 'bg-pb_pastelblue text-pb_darkgray',
-        'SG': 'bg-pb_pastelgreen text-pb_darkgray', 
-        'SF': 'bg-pb_pastelorange text-pb_darkgray',
-        'PF': 'bg-pb_pastelpurple text-pb_darkgray',
-        'C': 'bg-pb_pastelred text-pb_darkgray',
-        'G': 'bg-pb_pastelblue text-pb_darkgray',
-        'F': 'bg-pb_pastelpurple text-pb_darkgray',
+        'PG': 'bg-pastelblue text-bg-surface-800',
+        'SG': 'bg-pastelgreen text-bg-surface-800', 
+        'SF': 'bg-pb_pastelorange text-bg-surface-800',
+        'PF': 'bg-pastelpurple text-bg-surface-800',
+        'C': 'bg-pastelred text-bg-surface-800',
+        'G': 'bg-pastelblue text-bg-surface-800',
+        'F': 'bg-pastelpurple text-bg-surface-800',
         // NFL positions
-        'QB': 'bg-pb_pastelblue text-pb_darkgray',
-        'RB': 'bg-pb_pastelgreen text-pb_darkgray',
-        'WR': 'bg-pb_pastelorange text-pb_darkgray',
-        'TE': 'bg-pb_pastelpurple text-pb_darkgray',
-        'DEF': 'bg-pb_pastelred text-pb_darkgray',
-        'K': 'bg-pb_pastelstone text-pb_darkgray',
-        'FLEX': 'bg-pb_pastelstone text-pb_darkgray'
+        'QB': 'bg-pastelblue text-bg-surface-800',
+        'RB': 'bg-pastelgreen text-bg-surface-800',
+        'WR': 'bg-pb_pastelorange text-bg-surface-800',
+        'TE': 'bg-pastelpurple text-bg-surface-800',
+        'DEF': 'bg-pastelred text-bg-surface-800',
+        'K': 'bg-pastelstone text-bg-surface-800',
+        'FLEX': 'bg-pastelstone text-bg-surface-800'
       };
       
-      const colorClass = colorMap[positions[0]] || 'bg-pb_pastelstone text-pb_darkgray';
+      const colorClass = colorMap[positions[0]] || 'bg-pastelstone text-bg-surface-800';
       return `${colorClass} px-2 py-1 rounded-sm text-xs font-medium text-center shrink-0 w-11`;
     }
   };
@@ -85,21 +85,21 @@ export default function CommissionerRecruitPage() {
     if (positions.length === 2) {
       const colorMap = {
         // NBA positions
-        'PG': '#79addc',  // pb_pastelblue
-        'SG': '#b8dca7',  // pb_pastelgreen
+        'PG': '#79addc',  // pastelblue
+        'SG': '#b8dca7',  // pastelgreen
         'SF': '#f5d491',  // pb_pastelorange
-        'PF': '#ababef',  // pb_pastelpurple
-        'C': '#f17e92',   // pb_pastelred
-        'G': '#79addc',   // pb_pastelblue
-        'F': '#ababef',   // pb_pastelpurple
+        'PF': '#ababef',  // pastelpurple
+        'C': '#f17e92',   // pastelred
+        'G': '#79addc',   // pastelblue
+        'F': '#ababef',   // pastelpurple
         // NFL positions
-        'QB': '#79addc',  // pb_pastelblue
-        'RB': '#b8dca7',  // pb_pastelgreen
+        'QB': '#79addc',  // pastelblue
+        'RB': '#b8dca7',  // pastelgreen
         'WR': '#f5d491',  // pb_pastelorange
-        'TE': '#ababef',  // pb_pastelpurple
-        'DEF': '#f17e92', // pb_pastelred
-        'K': '#d6d3c2',   // pb_pastelstone
-        'FLEX': '#d6d3c2' // pb_pastelstone
+        'TE': '#ababef',  // pastelpurple
+        'DEF': '#f17e92', // pastelred
+        'K': '#d6d3c2',   // pastelstone
+        'FLEX': '#d6d3c2' // pastelstone
       };
       
       const color1 = colorMap[positions[0]] || '#d6d3c2';
@@ -122,14 +122,14 @@ export default function CommissionerRecruitPage() {
   const getDraftPickColor = (pick) => {
     // Extract year from draft pick (e.g., "2025 1st" -> "2025")
     const year = pick.match(/(\d{4})/)?.[1];
-    if (!year) return 'bg-pb_green/10 text-pb_greendisabled border-pb_green/30';
+    if (!year) return 'bg-success-base/10 text-success-basedisabled border-success-base/30';
     
     // Dynamic color assignment based on year - completely year agnostic
     const colors = [
-      'bg-pb_green/10 text-pb_greendisabled border-pb_green/30',
-      'bg-pb_blue/10 text-pb_blue border-pb_blue/30',
-      'bg-pb_orangedisabled/10 text-pb_orangedisabled border-pb_orangedisabled/30',
-      'bg-pb_red/10 text-pb_red border-pb_red/30',
+      'bg-success-base/10 text-success-basedisabled border-success-base/30',
+      'bg-primary-base/10 text-primary-base border-primary-base/30',
+      'bg-warning-basedisabled/10 text-warning-basedisabled border-warning-basedisabled/30',
+      'bg-error-base/10 text-error-base border-error-base/30',
       'bg-pb_purple/10 text-pb_purple border-pb_purple/30',
     ];
     
@@ -174,10 +174,10 @@ export default function CommissionerRecruitPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-pb_backgroundgray flex items-center justify-center">
+      <div className="min-h-screen bg-bg-weak-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pb_blue mx-auto"></div>
-          <p className="mt-4 text-pb_textgray">Loading league information...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-base mx-auto"></div>
+          <p className="mt-4 text-text-sub-600">Loading league information...</p>
         </div>
       </div>
     );
@@ -185,16 +185,16 @@ export default function CommissionerRecruitPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-pb_backgroundgray flex items-center justify-center">
+      <div className="min-h-screen bg-bg-weak-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-pb_red flex items-center gap-2">
+            <CardTitle className="text-error-base flex items-center gap-2">
               <AlertCircle className="h-5 w-5" />
               League Not Found
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-pb_textgray mb-4">
+            <p className="text-text-sub-600 mb-4">
               The league with ID &quot;{leagueID}&quot; could not be found or is not available for recruitment.
             </p>
             <Button onClick={() => window.history.back()} variant="outline" className="w-full">
@@ -218,7 +218,7 @@ export default function CommissionerRecruitPage() {
           <div className="flex flex-col gap-2 lg:hidden">
             {/* Row 1: Recruitment Hub + Available Spots */}
             <div className="flex items-center gap-2">
-              <Card className="px-3 h-8 sm:h-10 flex items-center bg-pb_darkgray border border-pb_darkergray shadow-sm rounded-lg flex-1">
+              <Card className="px-3 h-8 sm:h-10 flex items-center bg-bg-surface-800 border border-bg-strong-950 shadow-sm rounded-lg flex-1">
                 <div className="flex items-center gap-2">
                   <Megaphone className="w-4 h-4 text-white" />
                   <span className="text-sm font-bold text-white">
@@ -226,7 +226,7 @@ export default function CommissionerRecruitPage() {
                   </span>
                 </div>
               </Card>
-              <Card className="px-2 sm:px-3 h-8 sm:h-10 flex items-center bg-pb_green border border-pb_green-900 hover:bg-pb_greenhover shadow-sm rounded-lg flex-1">
+              <Card className="px-2 sm:px-3 h-8 sm:h-10 flex items-center bg-success-base border border-success-base-900 hover:bg-success-basehover shadow-sm rounded-lg flex-1">
                 <div className="flex items-center gap-2">
                   <UserCheck className="w-4 h-4 text-white" />
                   <span className="text-white font-medium text-xs sm:text-sm">{leagueData?.availableTeams.length} Spots Available</span>
@@ -241,19 +241,19 @@ export default function CommissionerRecruitPage() {
                   {(() => {
                     const platform = leagueData?.settings?.platform?.toLowerCase();
                     if (platform === 'fantrax') {
-                      return <FantraxIcon className="w-4 h-4 text-pb_darkgray" />;
+                      return <FantraxIcon className="w-4 h-4 text-bg-surface-800" />;
                     } else {
-                      return <Settings className="w-4 h-4 text-pb_darkgray" />;
+                      return <Settings className="w-4 h-4 text-bg-surface-800" />;
                     }
                   })()}
-                  <span className="text-pb_darkgray font-medium text-xs sm:text-sm">{leagueData?.settings?.platform}</span>
+                  <span className="text-bg-surface-800 font-medium text-xs sm:text-sm">{leagueData?.settings?.platform}</span>
                 </div>
-                <div className="h-4 w-px bg-pb_lightgray"></div>
+                <div className="h-4 w-px bg-stroke-soft-200"></div>
                 <div className="flex items-center gap-3 flex-1">
-                  <h1 className="text-sm sm:text-base font-semibold text-pb_darkgray">
+                  <h1 className="text-sm sm:text-base font-semibold text-bg-surface-800">
                     {leagueData?.leagueName}
                   </h1>
-                  <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
+                  <span className="text-xs text-text-sub-600 bg-bg-weak-50 px-2 py-0.5 rounded">
                     ID: {leagueData?.platformLeagueId || leagueID}
                   </span>
                 </div>
@@ -263,40 +263,40 @@ export default function CommissionerRecruitPage() {
             {/* Row 3: Discord + LeagueSafe */}
             <div className="flex gap-2">
               <Card 
-                className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors flex-1"
+                className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-bg-weak-50 transition-colors flex-1"
                 onClick={() => window.open(leagueData?.settings?.discordLink, '_blank')}
               >
                 <div className="flex items-center gap-2">
-                  <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
-                  <span className="text-pb_darkgray font-medium text-xs">Discord</span>
-                  <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                  <DiscordIcon className="w-4 h-4 text-bg-surface-800" />
+                  <span className="text-bg-surface-800 font-medium text-xs">Discord</span>
+                  <SquareArrowOutUpRight className="w-3 h-3 text-bg-surface-800" />
                 </div>
               </Card>
               
               <Dialog>
                 <DialogTrigger asChild>
-                  <Card className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors flex-1">
+                  <Card className="px-2 h-8 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-bg-weak-50 transition-colors flex-1">
                     <div className="flex items-center gap-2">
-                      <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
-                      <span className="text-pb_darkgray font-medium text-xs">LeagueSafe</span>
-                      <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                      <LeagueSafeIcon className="w-4 h-4 text-bg-surface-800" />
+                      <span className="text-bg-surface-800 font-medium text-xs">LeagueSafe</span>
+                      <SquareArrowOutUpRight className="w-3 h-3 text-bg-surface-800" />
                     </div>
                   </Card>
                 </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-pb_darkgray">
-                      <AlertTriangle className="h-5 w-5 text-pb_orange" />
+                    <DialogTitle className="flex items-center gap-2 text-bg-surface-800">
+                      <AlertTriangle className="h-5 w-5 text-warning-base" />
                       Verify With Commissioner
                     </DialogTitle>
-                    <DialogDescription className="text-pb_textgray">
+                    <DialogDescription className="text-text-sub-600">
                       Please reach out to the league commissioner and confirm arrangements before making any payments.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex justify-center mt-4">
                     <Button 
                       onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
-                      className="bg-pb_blue hover:bg-pb_bluehover text-white"
+                      className="bg-primary-base hover:bg-primary-basehover text-white"
                     >
                       Continue to LeagueSafe
                     </Button>
@@ -308,7 +308,7 @@ export default function CommissionerRecruitPage() {
 
           {/* Desktop Layout */}
           <div className="hidden lg:flex lg:items-center gap-2">
-            <Card className="px-3 h-10 flex items-center bg-pb_darkgray border border-pb_darkergray shadow-sm rounded-lg">
+            <Card className="px-3 h-10 flex items-center bg-bg-surface-800 border border-bg-strong-950 shadow-sm rounded-lg">
               <div className="flex items-center gap-2">
                 <Megaphone className="w-5 h-5 mr-1 text-white" />
                 <span className="text-md font-bold text-white">
@@ -322,19 +322,19 @@ export default function CommissionerRecruitPage() {
                   {(() => {
                     const platform = leagueData?.settings?.platform?.toLowerCase();
                     if (platform === 'fantrax') {
-                      return <FantraxIcon className="w-4 h-4 mr-1 text-pb_darkgray" />;
+                      return <FantraxIcon className="w-4 h-4 mr-1 text-bg-surface-800" />;
                     } else {
-                      return <Settings className="w-4 h-4 mr-1 text-pb_darkgray" />;
+                      return <Settings className="w-4 h-4 mr-1 text-bg-surface-800" />;
                     }
                   })()}
-                  <span className="text-pb_darkgray font-medium text-sm">{leagueData?.settings?.platform}</span>
+                  <span className="text-bg-surface-800 font-medium text-sm">{leagueData?.settings?.platform}</span>
                 </div>
-                <div className="h-4 w-px bg-pb_lightgray"></div>
+                <div className="h-4 w-px bg-stroke-soft-200"></div>
                 <div className="flex items-center gap-3">
-                  <h1 className="text-sm font-bold text-pb_darkgray">
+                  <h1 className="text-sm font-bold text-bg-surface-800">
                     {leagueData?.leagueName}
                   </h1>
-                  <span className="text-xs text-pb_textgray bg-pb_backgroundgray px-2 py-0.5 rounded">
+                  <span className="text-xs text-text-sub-600 bg-bg-weak-50 px-2 py-0.5 rounded">
                     ID: {leagueData?.platformLeagueId || leagueID}
                   </span>
                 </div>
@@ -345,40 +345,40 @@ export default function CommissionerRecruitPage() {
           {/* Desktop Right Side */}
           <div className="hidden lg:flex gap-2">
             <Card 
-              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors"
+              className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-bg-weak-50 transition-colors"
               onClick={() => window.open(leagueData?.settings?.discordLink, '_blank')}
             >
               <div className="flex items-center gap-2">
-                <DiscordIcon className="w-4 h-4 text-pb_darkgray" />
-                <span className="text-pb_darkgray font-medium text-sm">Discord</span>
-                <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                <DiscordIcon className="w-4 h-4 text-bg-surface-800" />
+                <span className="text-bg-surface-800 font-medium text-sm">Discord</span>
+                <SquareArrowOutUpRight className="w-3 h-3 text-bg-surface-800" />
               </div>
             </Card>
             
             <Dialog>
               <DialogTrigger asChild>
-                <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-pb_backgroundgray transition-colors">
+                <Card className="px-3 h-10 flex items-center bg-white border border-lightergray shadow-sm rounded-lg cursor-pointer hover:bg-bg-weak-50 transition-colors">
                   <div className="flex items-center gap-2">
-                    <LeagueSafeIcon className="w-4 h-4 text-pb_darkgray" />
-                    <span className="text-pb_darkgray font-medium text-sm">LeagueSafe</span>
-                    <SquareArrowOutUpRight className="w-3 h-3 text-pb_darkgray" />
+                    <LeagueSafeIcon className="w-4 h-4 text-bg-surface-800" />
+                    <span className="text-bg-surface-800 font-medium text-sm">LeagueSafe</span>
+                    <SquareArrowOutUpRight className="w-3 h-3 text-bg-surface-800" />
                   </div>
                 </Card>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-pb_darkgray">
-                    <AlertTriangle className="h-5 w-5 text-pb_orange" />
+                  <DialogTitle className="flex items-center gap-2 text-bg-surface-800">
+                    <AlertTriangle className="h-5 w-5 text-warning-base" />
                     Verify With Commissioner
                   </DialogTitle>
-                  <DialogDescription className="text-pb_textgray">
+                  <DialogDescription className="text-text-sub-600">
                     Please reach out to the league commissioner and confirm arrangements before making any payments.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex justify-center mt-4">
                   <Button 
                     onClick={() => window.open(leagueData?.settings?.leagueSafeLink, '_blank')}
-                    className="bg-pb_blue hover:bg-pb_bluehover text-white"
+                    className="bg-primary-base hover:bg-primary-basehover text-white"
                   >
                     Continue to LeagueSafe
                   </Button>
@@ -386,7 +386,7 @@ export default function CommissionerRecruitPage() {
               </DialogContent>
             </Dialog>
             
-            <Card className="px-3 h-10 flex items-center bg-pb_green border border-pb_green-900 hover:bg-pb_greenhover shadow-sm rounded-lg">
+            <Card className="px-3 h-10 flex items-center bg-success-base border border-success-base-900 hover:bg-success-basehover shadow-sm rounded-lg">
               <div className="flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-white" />
                 <span className="text-white font-medium text-sm">{leagueData?.availableTeams.length} Spots Available</span>
@@ -401,7 +401,7 @@ export default function CommissionerRecruitPage() {
                          {/* League Information */}
              <Card className="shadow-md border border-lightergray bg-white rounded-lg">
                <CardHeader className="p-4">
-                 <CardTitle className="flex items-center gap-2 text-base font-bold text-pb_darkgray">
+                 <CardTitle className="flex items-center gap-2 text-base font-bold text-bg-surface-800">
                    <Settings2 className="h-5 w-5 mr-1" />
                    League Details
                  </CardTitle>
@@ -415,40 +415,40 @@ export default function CommissionerRecruitPage() {
                      {(() => {
                        const sport = leagueData?.sport?.toLowerCase();
                        if (sport === 'nfl') {
-                         return <Football className="w-4 h-4 text-pb_darkgray" />;
+                         return <Football className="w-4 h-4 text-bg-surface-800" />;
                        } else if (sport === 'mlb') {
-                         return <Baseball className="w-4 h-4 text-pb_darkgray" />;
+                         return <Baseball className="w-4 h-4 text-bg-surface-800" />;
                        } else {
-                         return <Basketball className="w-4 h-4 text-pb_darkgray" />;
+                         return <Basketball className="w-4 h-4 text-bg-surface-800" />;
                        }
                      })()}
                      <div className="flex flex-col">
-                       <span className="text-pb_textlightestgray text-xs">Sport</span>
-                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.sport}</span>
+                       <span className="text-text-soft-300 text-xs">Sport</span>
+                       <span className="font-bold text-bg-surface-800 text-xs">{leagueData?.sport}</span>
                      </div>
                    </div>
                    
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                     <Binoculars className="w-4 h-4 text-pb_darkgray" />
+                     <Binoculars className="w-4 h-4 text-bg-surface-800" />
                      <div className="flex flex-col">
-                       <span className="text-pb_textlightestgray text-xs">Format</span>
-                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.format}</span>
+                       <span className="text-text-soft-300 text-xs">Format</span>
+                       <span className="font-bold text-bg-surface-800 text-xs">{leagueData?.format}</span>
                      </div>
                    </div>
                    
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <Boxes className="w-4 h-4 text-pb_darkgray" />
+                    <Boxes className="w-4 h-4 text-bg-surface-800" />
                      <div className="flex flex-col">
-                       <span className="text-pb_textlightestgray text-xs">Scoring</span>
-                       <span className="font-bold text-pb_darkgray text-xs">{leagueData?.scoring}</span>
+                       <span className="text-text-soft-300 text-xs">Scoring</span>
+                       <span className="font-bold text-bg-surface-800 text-xs">{leagueData?.scoring}</span>
                      </div>
                    </div>
                    
                    <div className="flex items-center gap-3 py-1 px-2 bg-white border border-gray-200 rounded-lg shadow-sm">
-                     <Swords className="w-4 h-4 text-pb_darkgray" />
+                     <Swords className="w-4 h-4 text-bg-surface-800" />
                      <div className="flex flex-col">
-                       <span className="text-pb_textlightestgray text-xs">Matchup</span>
-                       <span className="font-bold text-pb_darkgray text-xs">H2H</span>
+                       <span className="text-text-soft-300 text-xs">Matchup</span>
+                       <span className="font-bold text-bg-surface-800 text-xs">H2H</span>
                      </div>
                    </div>
                  </div>
@@ -456,27 +456,27 @@ export default function CommissionerRecruitPage() {
                  {/* Key Numbers */}
                  <div className="grid grid-cols-2 gap-2">
                    <div className="text-center py-1 rounded-lg border">
-                     <div className="text-lg font-bold text-pb_darkgray">{leagueData?.totalTeams}</div>
-                     <div className="text-xs text-pb_textlightgray font-medium">Teams</div>
+                     <div className="text-lg font-bold text-bg-surface-800">{leagueData?.totalTeams}</div>
+                     <div className="text-xs text-text-mid-500 font-medium">Teams</div>
                    </div>
                    <div className="text-center py-1 rounded-lg border">
-                     <div className="text-lg font-bold text-pb_darkgray">{leagueData?.settings?.playoffs?.teams}</div>
-                     <div className="text-xs text-pb_textlightgray font-medium">Playoff Spots</div>
+                     <div className="text-lg font-bold text-bg-surface-800">{leagueData?.settings?.playoffs?.teams}</div>
+                     <div className="text-xs text-text-mid-500 font-medium">Playoff Spots</div>
                    </div>
                  </div>
                  
                  {/* Financial & Rules */}
                  <div className="space-y-2">
                    <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg">
-                     <span className="text-pb_textlightgray text-xs font-medium">League Fee</span>
-                     <span className="font-bold text-pb_darkgray text-xs">{leagueData?.settings?.entryFee}</span>
+                     <span className="text-text-mid-500 text-xs font-medium">League Fee</span>
+                     <span className="font-bold text-bg-surface-800 text-xs">{leagueData?.settings?.entryFee}</span>
                    </div>
                    <TooltipProvider>
                       <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                           <div className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg cursor-help">
-                            <span className="text-pb_textlightgray text-xs font-medium">Advanced Payments</span>
-                            <span className="font-bold text-pb_darkgray text-xs">{leagueData?.settings?.advancedPayments} YR</span>
+                            <span className="text-text-mid-500 text-xs font-medium">Advanced Payments</span>
+                            <span className="font-bold text-bg-surface-800 text-xs">{leagueData?.settings?.advancedPayments} YR</span>
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -490,8 +490,8 @@ export default function CommissionerRecruitPage() {
                  
                  {/* Roster Structure */}
                  <div className="pt-2">
-                   <h4 className="text-sm font-bold text-pb_darkgray mb-3 flex items-center gap-2">
-                     <Users className="h-4 w-4 text-pb_darkgray" />
+                   <h4 className="text-sm font-bold text-bg-surface-800 mb-3 flex items-center gap-2">
+                     <Users className="h-4 w-4 text-bg-surface-800" />
                      Roster Structure ({(() => {
                        const rosterStructure = leagueData?.settings?.roster?.structure;
                        if (!rosterStructure) return 0;
@@ -506,35 +506,35 @@ export default function CommissionerRecruitPage() {
                          
                          switch (position?.toUpperCase()) {
                            case 'BENCH':
-                             return `${baseClasses} text-2xs text-pb_textlightestgray border border-lightergray`;
+                             return `${baseClasses} text-2xs text-text-soft-300 border border-lightergray`;
                            case 'IR':
-                             return `${baseClasses} text-2xs text-pb_textlightestgray border border-lightergray`;
+                             return `${baseClasses} text-2xs text-text-soft-300 border border-lightergray`;
                            case 'MINOR':
-                             return `${baseClasses} text-2xs text-pb_textlightestgray border border-lightergray`;
+                             return `${baseClasses} text-2xs text-text-soft-300 border border-lightergray`;
                            default:
                              // Active roster positions (G, F, C, FLX, etc.) - use position-specific colors
                              const colorMap = {
                                // NBA positions
-                               'PG': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
-                               'SG': 'bg-pb_pastelgreen text-pb_darkgray border-pb_pastelgreen/30', 
-                               'SF': 'bg-pb_pastelorange text-pb_darkgray border-pb_pastelorange/30',
-                               'PF': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
-                               'C': 'bg-pb_pastelred text-pb_darkgray border-pb_pastelred/30',
-                               'G': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
-                               'F': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
-                               'FLX': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30',
+                               'PG': 'bg-pastelblue text-bg-surface-800 border-pastelblue/30',
+                               'SG': 'bg-pastelgreen text-bg-surface-800 border-pastelgreen/30', 
+                               'SF': 'bg-pb_pastelorange text-bg-surface-800 border-pb_pastelorange/30',
+                               'PF': 'bg-pastelpurple text-bg-surface-800 border-pastelpurple/30',
+                               'C': 'bg-pastelred text-bg-surface-800 border-pastelred/30',
+                               'G': 'bg-pastelblue text-bg-surface-800 border-pastelblue/30',
+                               'F': 'bg-pastelpurple text-bg-surface-800 border-pastelpurple/30',
+                               'FLX': 'bg-pastelstone text-bg-surface-800 border-pastelstone/30',
                                // NFL positions
-                               'QB': 'bg-pb_pastelblue text-pb_darkgray border-pb_pastelblue/30',
-                               'RB': 'bg-pb_pastelgreen text-pb_darkgray border-pb_pastelgreen/30',
-                               'WR': 'bg-pb_pastelorange text-pb_darkgray border-pb_pastelorange/30',
-                               'TE': 'bg-pb_pastelpurple text-pb_darkgray border-pb_pastelpurple/30',
-                               'DEF': 'bg-pb_pastelred text-pb_darkgray border-pb_pastelred/30',
-                               'K': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30',
-                               'FLEX': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30',
-                               'TAXI': 'bg-pb_pastelstone text-pb_darkgray border-pb_pastelstone/30'
+                               'QB': 'bg-pastelblue text-bg-surface-800 border-pastelblue/30',
+                               'RB': 'bg-pastelgreen text-bg-surface-800 border-pastelgreen/30',
+                               'WR': 'bg-pb_pastelorange text-bg-surface-800 border-pb_pastelorange/30',
+                               'TE': 'bg-pastelpurple text-bg-surface-800 border-pastelpurple/30',
+                               'DEF': 'bg-pastelred text-bg-surface-800 border-pastelred/30',
+                               'K': 'bg-pastelstone text-bg-surface-800 border-pastelstone/30',
+                               'FLEX': 'bg-pastelstone text-bg-surface-800 border-pastelstone/30',
+                               'TAXI': 'bg-pastelstone text-bg-surface-800 border-pastelstone/30'
                              };
                              
-                             const colorClass = colorMap[position?.toUpperCase()] || 'bg-white border-lightergray text-pb_midgray';
+                             const colorClass = colorMap[position?.toUpperCase()] || 'bg-white border-lightergray text-text-sub-600';
                              return `${baseClasses} ${colorClass} text-xs`;
                          }
                        };
@@ -542,7 +542,7 @@ export default function CommissionerRecruitPage() {
                         const rosterStructure = leagueData?.settings?.roster?.structure;
                         
                         if (!rosterStructure) {
-                          return <div className="text-xs text-pb_textgray">Loading roster structure...</div>;
+                          return <div className="text-xs text-text-sub-600">Loading roster structure...</div>;
                         }
                         
                         const positions = rosterStructure.split(',').map(pos => pos.trim());
@@ -564,7 +564,7 @@ export default function CommissionerRecruitPage() {
              <Card className="shadow-md rounded-lg">
                <CardHeader className="p-4 pb-0">
                  <CardTitle className="flex items-center pb-2 text-sm">
-                   <MessageSquare className="h-4 w-4 mr-2 text-pb_darkgray" />
+                   <MessageSquare className="h-4 w-4 mr-2 text-bg-surface-800" />
                    Commissioner
                  </CardTitle>
                </CardHeader>
@@ -573,16 +573,16 @@ export default function CommissionerRecruitPage() {
                  {/* Contact Methods */}
                  <div className="space-y-2">
                    <div className="flex items-center gap-3 py-2 px-3 bg-gray-50 border border-gray-200 rounded-lg">
-                     <Mail className="w-4 h-4 text-pb_darkgray" />
+                     <Mail className="w-4 h-4 text-bg-surface-800" />
                      <div className="flex flex-col flex-1">
-                       <span className="text-pb_darkgray text-xs font-medium">Email</span>
-                       <span className="text-pb_textgray text-xs">{leagueData?.commissioner?.email}</span>
+                       <span className="text-bg-surface-800 text-xs font-medium">Email</span>
+                       <span className="text-text-sub-600 text-xs">{leagueData?.commissioner?.email}</span>
                      </div>
                      <button 
                        onClick={() => window.open(`mailto:${leagueData?.commissioner?.email}`, '_blank')}
-                       className="p-1 hover:bg-pb_backgroundgray rounded transition-colors"
+                       className="p-1 hover:bg-bg-weak-50 rounded transition-colors"
                      >
-                       <ArrowRight className="w-3 h-3 text-pb_darkgray" />
+                       <ArrowRight className="w-3 h-3 text-bg-surface-800" />
                      </button>
                    </div>
                    <div className="flex items-center gap-3 py-2 px-3 bg-indigo-50 border border-indigo-200 rounded-lg">
@@ -623,7 +623,7 @@ export default function CommissionerRecruitPage() {
              <Card className="shadow-md rounded-lg" style={{ '--card-height': '70vh' }}>
                <CardHeader className="p-4">
                  <div className="flex items-center justify-between">
-                   <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
+                   <CardTitle className="flex items-center gap-1 text-base text-bg-surface-800">
                      <UserCheck className="h-6 w-6 pr-1 " />
                      Available Teams
                    </CardTitle>
@@ -634,7 +634,7 @@ export default function CommissionerRecruitPage() {
                        <Button 
                          variant="outline" 
                          size="sm" 
-                         className="text-xs h-7 px-2 text-pb_blue border-pb_blue hover:bg-pb_blue hover:text-white"
+                         className="text-xs h-7 px-2 text-primary-base border-primary-base hover:bg-primary-base hover:text-white"
                        >
                          <Eye className="h-4 w-4 mr-1" />
                          View Opponents
@@ -643,7 +643,7 @@ export default function CommissionerRecruitPage() {
                      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
                        <DialogHeader>
                          <DialogTitle className="flex items-center gap-2">
-                           <Users className="h-5 w-5 text-pb_blue" />
+                           <Users className="h-5 w-5 text-primary-base" />
                            All League Teams
                          </DialogTitle>
                                                 <DialogDescription>
@@ -657,14 +657,14 @@ export default function CommissionerRecruitPage() {
                            {leagueData?.allTeams?.map((team) => {
                              const isAvailable = leagueData?.availableTeams?.some(availableTeam => availableTeam.teamId === team.teamId);
                              return (
-                               <Card key={team.teamId} className={`break-inside-avoid mb-4 w-full ${isAvailable ? 'border-pb_blue bg-pb_blue/5' : 'border-gray-200'}`}>
+                               <Card key={team.teamId} className={`break-inside-avoid mb-4 w-full ${isAvailable ? 'border-primary-base bg-primary-base/5' : 'border-gray-200'}`}>
                                  <CardHeader className="pb-4">
                                    <div className="flex items-center justify-between">
-                                     <CardTitle className="text-sm font-semibold text-pb_darkgray truncate">
+                                     <CardTitle className="text-sm font-semibold text-bg-surface-800 truncate">
                                        {team.teamName}
                                      </CardTitle>
                                      {isAvailable && (
-                                       <Badge className="bg-pb_blue text-white text-xs px-2 py-1 font-medium">
+                                       <Badge className="bg-primary-base text-white text-xs px-2 py-1 font-medium">
                                          AVAILABLE
                                        </Badge>
                                      )}
@@ -675,10 +675,10 @@ export default function CommissionerRecruitPage() {
                                    <div>
                                      <div className="space-y-1">
                                        {team.currentRoster?.map((player, i) => (
-                                         <div key={i} className={`flex items-center justify-between py-1 px-2 rounded text-xs border ${isAvailable ? 'bg-white border-pb_blue/20' : 'bg-pb_backgroundgray border-pb_lightergray'}`}>
-                                           <span className="font-medium text-pb_darkgray truncate">{player.name}</span>
+                                         <div key={i} className={`flex items-center justify-between py-1 px-2 rounded text-xs border ${isAvailable ? 'bg-white border-primary-base/20' : 'bg-bg-weak-50 border-stroke-soft-100'}`}>
+                                           <span className="font-medium text-bg-surface-800 truncate">{player.name}</span>
                                            <div className="flex items-center gap-2 shrink-0">
-                                             <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                             <span className="text-text-sub-600 w-8 text-center">{player.team}</span>
                                              {(() => {
                                                const positions = player.position.split(',').filter(pos => pos.trim() !== 'Flx');
                                                if (positions.length === 2) {
@@ -701,7 +701,7 @@ export default function CommissionerRecruitPage() {
                                    {/* Draft Picks */}
                                    {team.draftPicks && team.draftPicks.length > 0 && (
                                      <div className="">
-                                       <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
+                                       <h5 className="text-xs font-semibold text-bg-surface-800 mb-2">Draft Picks</h5>
                                             <div className="flex flex-wrap gap-1 justify-start overflow-y-auto" style={{ height: '50px' }}>
                                            {team.draftPicks.map((pick, index) => (
                                              <span key={index} className={`${getDraftPickColor(pick)} border px-2 py-1 rounded text-xs ${isFirstRoundPick(pick) ? 'font-bold' : 'font-medium'} flex items-center`}>
@@ -728,7 +728,7 @@ export default function CommissionerRecruitPage() {
                    <div className="lg:h-full lg:overflow-hidden">
                      <Tabs defaultValue="team-0" className="w-full lg:h-full">
                        {/* Horizontal Tab List */}
-                       <TabsList className={`grid w-full mb-4 border border-lightestgray bg-pb_backgroundgray ${
+                       <TabsList className={`grid w-full mb-4 border border-lightestgray bg-bg-weak-50 ${
                          leagueData?.availableTeams?.length === 1 ? 'grid-cols-1' :
                          leagueData?.availableTeams?.length === 2 ? 'grid-cols-2' :
                          leagueData?.availableTeams?.length === 3 ? 'grid-cols-3' :
@@ -739,7 +739,7 @@ export default function CommissionerRecruitPage() {
                            <TabsTrigger 
                              key={team.teamId} 
                              value={`team-${index}`}
-                             className="data-[state=active]:bg-pb_green data-[state=active]:text-white text-xs h-full"
+                             className="data-[state=active]:bg-success-base data-[state=active]:text-white text-xs h-full"
                            >
                              {team.teamName}
                            </TabsTrigger>
@@ -752,32 +752,32 @@ export default function CommissionerRecruitPage() {
                            <TabsContent key={team.teamId} value={`team-${index}`} className="mt-0 flex flex-col lg:h-full space-y-4">
                              {/* Team Header */}
                              <div className="flex items-center justify-between px-0">
-                               {/* <h3 className="font-semibold text-lg text-pb_darkgray">{team.teamName}</h3> */}
+                               {/* <h3 className="font-semibold text-lg text-bg-surface-800">{team.teamName}</h3> */}
                                <div className="flex gap-2">
                                  {team.teamStrengths?.slice(0, 3).map((strength, i) => {
                                    const getStrengthIcon = (strengthName) => {
                                      switch (strengthName?.toLowerCase()) {
                                        case 'young core':
-                                         return <Binoculars className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <Binoculars className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        case 'veteran core':
-                                         return <ShieldHalf className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <ShieldHalf className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        case 'balanced':
-                                         return <Scale className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <Scale className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        case 'previous champion x3':
-                                         return <Trophy className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <Trophy className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        case 'flexible':
-                                         return <AlignHorizontalDistributeCenter className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <AlignHorizontalDistributeCenter className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        case 'rebuilding':
-                                         return <Wrench className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <Wrench className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        case 'depth':
-                                         return <Boxes className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <Boxes className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                        default:
-                                         return <Star className="h-3.5 w-3.5 mr-1 text-pb_blue" />;
+                                         return <Star className="h-3.5 w-3.5 mr-1 text-primary-base" />;
                                      }
                                    };
                                    
                                    return (
-                                     <Badge key={i} className="bg-white text-pb_darkgray border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md hover:bg-pb_backgroundgray transition-colors">
+                                     <Badge key={i} className="bg-white text-bg-surface-800 border border-lightergray text-xs px-2 py-1 font-medium flex items-center gap-1 rounded-md hover:bg-bg-weak-50 transition-colors">
                                        {getStrengthIcon(strength)}
                                        {strength}
                                      </Badge>
@@ -787,7 +787,7 @@ export default function CommissionerRecruitPage() {
                              </div>
 
                              {/* Current Roster - Enhanced with Scrolling */}
-                             <div className="bg-pb_backgroundgray border border-lightergray rounded-lg p-3 shadow-inner" style={{ height: 'calc(100% - 160px)' }}>
+                             <div className="bg-bg-weak-50 border border-lightergray rounded-lg p-3 shadow-inner" style={{ height: 'calc(100% - 160px)' }}>
                                <div 
                                  className="h-full overflow-y-auto"
                                  style={{
@@ -814,12 +814,12 @@ export default function CommissionerRecruitPage() {
                                  `}</style>
                                  <div className="space-y-1">
                                    {team.currentRoster?.map((player, i) => (
-                                     <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-pb_backgroundgray transition-colors">
+                                     <div key={i} className="flex items-center justify-between py-1 px-3 bg-white border border-gray-200 rounded hover:bg-bg-weak-50 transition-colors">
                                        <div className="flex-1 min-w-0">
-                                         <div className="font-medium text-sm text-pb_darkgray truncate">{player.name}</div>
+                                         <div className="font-medium text-sm text-bg-surface-800 truncate">{player.name}</div>
                                        </div>
                                        <div className="flex items-center gap-2 shrink-0 text-xs">
-                                         <span className="text-pb_textgray w-8 text-center">{player.team}</span>
+                                         <span className="text-text-sub-600 w-8 text-center">{player.team}</span>
                                          {(() => {
                                            const positions = player.position.split(',').filter(pos => pos.trim() !== 'Flx');
                                            if (positions.length === 2) {
@@ -842,7 +842,7 @@ export default function CommissionerRecruitPage() {
 
                              {/* Draft Picks - Always Visible */}
                              <div className="flex-shrink-0 mt-4" style={{ height: '120px' }}>
-                                 <h5 className="text-xs font-semibold text-pb_darkgray mb-2">Draft Picks</h5>
+                                 <h5 className="text-xs font-semibold text-bg-surface-800 mb-2">Draft Picks</h5>
                                 <div className="flex flex-wrap gap-1 justify-start overflow-y-auto" style={{ height: '90px' }}>
                                  {team.draftPicks && team.draftPicks.length > 0 ? (
                                    team.draftPicks.map((pick, index) => (
@@ -851,7 +851,7 @@ export default function CommissionerRecruitPage() {
                                      </span>
                                    ))
                                  ) : (
-                                   <span className="text-xs text-pb_textgray italic">No draft picks</span>
+                                   <span className="text-xs text-text-sub-600 italic">No draft picks</span>
                                  )}
                                </div>
                              </div>
@@ -863,7 +863,7 @@ export default function CommissionerRecruitPage() {
                    </div>
                  ) : (
                    <div className="flex items-center justify-center py-8">
-                     <p className="text-pb_textgray">No available teams information loaded.</p>
+                     <p className="text-text-sub-600">No available teams information loaded.</p>
                    </div>
                  )}
                               </CardContent>
@@ -876,7 +876,7 @@ export default function CommissionerRecruitPage() {
              <Card className="shadow-md rounded-lg" style={{ '--card-height': '70vh' }}>
                <CardHeader className="p-4">
                  <div className="flex items-center justify-between">
-                   <CardTitle className="flex items-center gap-1 text-base text-pb_darkgray">
+                   <CardTitle className="flex items-center gap-1 text-base text-bg-surface-800">
                      <FileText className="h-6 w-6 pr-1" />
                      Rulebook
                    </CardTitle>
@@ -922,7 +922,7 @@ export default function CommissionerRecruitPage() {
                                  <TabsTrigger
                                    key={index}
                                    value={`rule-${index}`}
-                                   className="w-full justify-start text-left px-2 py-2 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium text-pb_textgray hover:text-pb_blue data-[state=active]:hover:bg-pb_bluehover data-[state=active]:hover:text-white hover:bg-pb_blue/10 data-[state=active]:bg-pb_blue data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
+                                   className="w-full justify-start text-left px-2 py-2 lg:px-3 lg:py-2 text-xs lg:text-sm font-medium text-text-sub-600 hover:text-primary-base data-[state=active]:hover:bg-primary-basehover data-[state=active]:hover:text-white hover:bg-primary-base/10 data-[state=active]:bg-primary-base data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 self-start"
                                  >
                                    <div className="flex flex-col lg:flex-row items-center lg:gap-2 w-full justify-start">
                                      {getIcon(section.title)}
@@ -944,14 +944,14 @@ export default function CommissionerRecruitPage() {
                                  className="mt-0 px-2 lg:px-4 focus-visible:outline-none lg:h-full"
                                >
                                  <div className="space-y-3 lg:space-y-4">
-                                   <h2 className="text-sm lg:text-md font-semibold text-pb_darkgray border-b border-gray-200 pb-2">
+                                   <h2 className="text-sm lg:text-md font-semibold text-bg-surface-800 border-b border-gray-200 pb-2">
                                      {section.title}
                                    </h2>
                                    <div className="prose prose-sm max-w-none">
                                      <div 
-                                       className="whitespace-pre-wrap text-xs lg:text-sm text-pb_darkgray leading-relaxed"
+                                       className="whitespace-pre-wrap text-xs lg:text-sm text-bg-surface-800 leading-relaxed"
                                        dangerouslySetInnerHTML={{
-                                         __html: section.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-pb_blue">$1</strong>')
+                                         __html: section.content.replace(/\*\*(.*?)\*\*/g, '<strong class="text-primary-base">$1</strong>')
                                        }}
                                      />
                                    </div>
@@ -965,8 +965,8 @@ export default function CommissionerRecruitPage() {
                    </div>
                  ) : (
                    <div className="p-4 text-center">
-                     <FileText className="h-6 w-6 text-pb_lightgray mx-auto mb-2" />
-                     <p className="text-pb_textgray text-xs">League rulebook is being prepared...</p>
+                     <FileText className="h-6 w-6 text-stroke-soft-200 mx-auto mb-2" />
+                     <p className="text-text-sub-600 text-xs">League rulebook is being prepared...</p>
                    </div>
                  )}
                </CardContent>
@@ -975,29 +975,29 @@ export default function CommissionerRecruitPage() {
         </div>
       
         {/* Footer - App Advertisement */}
-        <footer className="lg:fixed lg:bottom-0 lg:left-0 lg:right-0 border-t border-pb_lightgray py-2 lg:z-10 bg-white">
+        <footer className="lg:fixed lg:bottom-0 lg:left-0 lg:right-0 border-t border-stroke-soft-200 py-2 lg:z-10 bg-white">
           <div className="px-4 lg:px-0">
             <div className="flex flex-col items-center lg:flex-row lg:items-center lg:justify-between text-xs gap-3 lg:gap-0">
               <div className="flex flex-col items-center lg:flex-row lg:items-center gap-3 lg:gap-0">
                 <div className="flex flex-col items-center lg:flex-row lg:items-center mt-4 lg:mt-0">
                   <div className="flex items-center mb-1 lg:mb-0">
                     <Image src="/logo-tpfull.png" alt="Playbook Fantasy Sports" width={18} height={18} className="mr-2" />
-                    <p className="text-pb_textgray text-sm font-bold">
+                    <p className="text-text-sub-600 text-sm font-bold">
                       Playbook
                     </p>
                   </div>
-                  <p className="text-pb_textgray text-center lg:text-left lg:ml-2">
+                  <p className="text-text-sub-600 text-center lg:text-left lg:ml-2">
                     The AI-powered fantasy sports command center that learns your leagues and strategy.
                   </p>
                 </div>
 
-                <div className="h-4.5 w-px bg-pb_lightgray mx-3 ml-5 hidden lg:block"></div>
+                <div className="h-4.5 w-px bg-stroke-soft-200 mx-3 ml-5 hidden lg:block"></div>
 
                 <div className="flex items-center gap-1">
                   <Button 
                     size="sm"
                     variant="ghost"
-                    className="text-pb_blue hover:bg-pb_blue hover:text-white px-2 py-1 h-6 text-xs"
+                    className="text-primary-base hover:bg-primary-base hover:text-white px-2 py-1 h-6 text-xs"
                     onClick={() => window.open('/api/auth/login', '_blank')}
                   >
                     <LucideClipboardSignature className="w-4 h-4" />
@@ -1006,7 +1006,7 @@ export default function CommissionerRecruitPage() {
                   <Button 
                     size="sm" 
                     variant="ghost"
-                    className="text-pb_textgray hover:bg-pb_lightergray  px-2 py-1 h-6 text-xs"
+                    className="text-text-sub-600 hover:bg-stroke-soft-100  px-2 py-1 h-6 text-xs"
                     onClick={() => window.open('/landing', '_blank')}
                   >
                     <BookOpenText className="w-4 h-4" />
@@ -1016,11 +1016,11 @@ export default function CommissionerRecruitPage() {
               </div>
 
               <div className="flex items-center">
-                <Lunchbox className="h-4 w-4 text-pb_textgray mb-[2px] mr-1" />
-                <p className="text-pb_textgray font-bold">
+                <Lunchbox className="h-4 w-4 text-text-sub-600 mb-[2px] mr-1" />
+                <p className="text-text-sub-600 font-bold">
                   Commissioner Tools              
                 </p>
-                <p className="text-pb_textgray ml-[3px]">
+                <p className="text-text-sub-600 ml-[3px]">
                   are in early development.              
                 </p>
               </div>

@@ -22,10 +22,10 @@ export default function TradePlayerRow({ player, isExpandable = true }) {
   };
 
   // Light theme styling for your team
-  const containerClasses = "bg-white border border-pb_lightergray";
-  const textClasses = "text-pb_darkgray";
-  const expandedBgClasses = "bg-pb_backgroundgray/60";
-  const borderClasses = "border-pb_lightergray";
+  const containerClasses = "bg-white border border-stroke-soft-100";
+  const textClasses = "text-bg-surface-800";
+  const expandedBgClasses = "bg-bg-weak-50/60";
+  const borderClasses = "border-stroke-soft-100";
 
   return (
     <div className={`${containerClasses} rounded-md`}>
@@ -62,7 +62,7 @@ export default function TradePlayerRow({ player, isExpandable = true }) {
                     <div className={cn(
                         "flex items-center justify-center w-10 h-10 rounded-full transition-colors",
                         status === 'protected' 
-                          ? 'bg-pb_darkgray'
+                          ? 'bg-bg-surface-800'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Lock className={cn(
@@ -73,7 +73,7 @@ export default function TradePlayerRow({ player, isExpandable = true }) {
                     <span className={cn(
                         "mt-1 text-xs font-semibold",
                         status === 'protected' 
-                          ? 'text-pb_darkgray'
+                          ? 'text-bg-surface-800'
                           : 'text-gray-500'
                     )}>
                         Protected
@@ -88,7 +88,7 @@ export default function TradePlayerRow({ player, isExpandable = true }) {
                     <div className={cn(
                         "flex items-center justify-center w-10 h-10 rounded-full transition-colors",
                         status === 'target' 
-                          ? 'bg-pb_darkgray'
+                          ? 'bg-bg-surface-800'
                           : 'bg-gray-200 group-hover:bg-gray-300'
                     )}>
                         <Package className={cn(
@@ -99,7 +99,7 @@ export default function TradePlayerRow({ player, isExpandable = true }) {
                     <span className={cn(
                         "mt-1 text-xs font-semibold",
                         status === 'target' 
-                          ? 'text-pb_darkgray'
+                          ? 'text-bg-surface-800'
                           : 'text-gray-500'
                     )}>
                         Target

@@ -7,7 +7,7 @@ import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 // Header Component exactly matching RankingsPlayerListHeader
 const RosterHeader = ({ categories, onSort, sortConfig }) => {
   return (
-    <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
+    <div className="player-list-header bg-bg-surface-800 text-white rounded-sm overflow-hidden">
       <div className="flex h-8 items-center">
         {/* Left section - Player Info Area */}
         <div className={ROSTER_COLUMN_CLASSES.playerInfoSectionHeader}>

@@ -472,22 +472,22 @@ export default function RankingsPage() {
                   <h3 className="font-semibold text-gray-800 mb-3">Getting Started:</h3>
                   <ol className="text-left text-gray-600 space-y-4">
                     <li className="flex items-start">
-                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">1</span>
+                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-base text-white text-sm mr-3 flex-shrink-0 font-bold">1</span>
                       <span>Sign up for a free account to access all features</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">2</span>
+                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-base text-white text-sm mr-3 flex-shrink-0 font-bold">2</span>
                       <span>Create your first ranking list for your preferred sport</span>
                     </li>
                     <li className="flex items-start">
-                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">3</span>
+                      <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-base text-white text-sm mr-3 flex-shrink-0 font-bold">3</span>
                       <span>Customize categories and weights to match your strategy</span>
                     </li>
                   </ol>
                 </div>
 
                 <div className="flex justify-center">
-                  <Link href="/api/auth/login" className="inline-flex items-center gap-1.5 rounded-lg border border-pb_blue bg-pb_bluehover px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:border-pb_bluehover hover:bg-pb_bluehover focus:ring focus:ring-blue-200 disabled:cursor-not-allowed disabled:border-blue-300 disabled:bg-blue-300">
+                  <Link href="/api/auth/login" className="inline-flex items-center gap-1.5 rounded-lg border border-primary-base bg-primary-basehover px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:border-primary-basehover hover:bg-primary-basehover focus:ring focus:ring-blue-200 disabled:cursor-not-allowed disabled:border-blue-300 disabled:bg-blue-300">
                     Sign Up Now
                   </Link>
                 </div>
@@ -650,21 +650,21 @@ export default function RankingsPage() {
          // ... Get Started UI ...
          <div className="text-center py-12 px-4 bg-white border-t border-gray-100">
            <div className="max-w-md mx-auto">
-             <h2 className="text-2xl font-bold text-pb_blue mb-4">Welcome to the Rankings Hub!</h2>
+             <h2 className="text-2xl font-bold text-primary-base mb-4">Welcome to the Rankings Hub!</h2>
              <p className="text-gray-600 mb-6">Build your own fantasy sports rankings. Start from expert opinions then tailor them to your own values and strategy.</p>
              <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
                <h3 className="font-semibold text-gray-800 mb-3">Getting Started:</h3>
                <ol className="text-left text-gray-600 space-y-2 mb-4">
                  <li className="flex items-start">
-                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">1</span>
+                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-base text-white text-sm mr-3 flex-shrink-0 font-bold">1</span>
                    <span>Click the &quot;Create New Rankings&quot; button above.</span>
                  </li>
                  <li className="flex items-start">
-                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">2</span>
+                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-base text-white text-sm mr-3 flex-shrink-0 font-bold">2</span>
                    <span>Choose your desired Sport, Format, and Scoring settings.</span>
                  </li>
                  <li className="flex items-start">
-                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-pb_blue text-white text-sm mr-3 flex-shrink-0 font-bold">3</span>
+                   <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-base text-white text-sm mr-3 flex-shrink-0 font-bold">3</span>
                    <span>Generate your customized rankings sheet to start tailoring.</span>
                  </li>
                </ol>

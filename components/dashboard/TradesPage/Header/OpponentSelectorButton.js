@@ -76,7 +76,7 @@ export default function OpponentSelectorButton({ className = '' }) {
     <div className="relative" ref={buttonRef}>
       <button
         onClick={handleButtonClick}
-        className={`flex items-center justify-between gap-2 rounded-md  bg-pb_darkgray text-white shadow-sm select-none px-3 py-1 hover:bg-pb_mddarkgray transition-colors ${className}`.trim()}
+        className={`flex items-center justify-between gap-2 rounded-md  bg-bg-surface-800 text-white shadow-sm select-none px-3 py-1 hover:bg-text-strong-950 transition-colors ${className}`.trim()}
       >
         <div className="flex items-center min-w-0">
           <Users className="w-icon h-icon mr-2 text-white" />
@@ -92,7 +92,7 @@ export default function OpponentSelectorButton({ className = '' }) {
 
       {isOpen && (
         <div 
-          className="absolute top-full right-0 w-full mt-1 bg-pb_darkgray border border-pb_mddarkgray rounded-md shadow-md z-[10001] max-h-80 overflow-y-auto text-white animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 scrollbar-thin scrollbar-thumb-pb_mddarkgray scrollbar-track-pb_darkgray"
+          className="absolute top-full right-0 w-full mt-1 bg-bg-surface-800 border border-text-strong-950 rounded-md shadow-md z-[10001] max-h-80 overflow-y-auto text-white animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 scrollbar-thin scrollbar-thumb-text-strong-950 scrollbar-track-bg-surface-800"
         >
           {opponentTeams.length === 0 ? (
             <div className="relative flex cursor-default select-none items-center rounded-sm px-3 py-2 text-sm outline-none">
@@ -110,8 +110,8 @@ export default function OpponentSelectorButton({ className = '' }) {
                   onClick={() => handleOpponentSelect(team)}
                   className={`group relative flex cursor-default select-none items-center gap-3 rounded-sm px-3 py-3 m-1 text-button outline-none transition-colors ${
                     isSelected 
-                      ? 'bg-pb_mddarkgray' 
-                      : 'hover:bg-pb_mddarkgray'
+                      ? 'bg-text-strong-950' 
+                      : 'hover:bg-text-strong-950'
                   }`}
                 >
                   <Users className={`w-5 h-5 text-white`} />

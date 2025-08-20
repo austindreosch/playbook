@@ -62,23 +62,23 @@ export default function TradeOutcomeBlock() {
   const composition = getTeamComposition();
 
   return (
-    <div className="w-full h-full border border-pb_lightgray rounded-lg overflow-hidden flex flex-col min-h-0 max-h-full">
+    <div className="w-full h-full border border-stroke-soft-200 rounded-lg overflow-hidden flex flex-col min-h-0 max-h-full">
       
       {/* Card Header */}
-      <div className="bg-pb_backgroundgray px-3 flex items-center justify-between border-b border-pb_lightgray flex-shrink-0">
+      <div className="bg-bg-weak-50 px-3 flex items-center justify-between border-b border-stroke-soft-200 flex-shrink-0">
         <div className="flex items-center h-8 min-w-0">
-          <OutcomeIcon className="w-icon h-icon mr-3 text-pb_darkgray flex-shrink-0" />
-          <h3 className="text-sm font-bold text-pb_darkgray truncate">{outcome.title}</h3>
+          <OutcomeIcon className="w-icon h-icon mr-3 text-bg-surface-800 flex-shrink-0" />
+          <h3 className="text-sm font-bold text-bg-surface-800 truncate">{outcome.title}</h3>
         </div>
         {/* Team Composition */}
         {composition.from > 0 && composition.to > 0 && (
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Users className="w-icon-sm h-icon-sm text-pb_textgray" />
-            <span className="text-xs font-medium text-pb_textgray hidden sm:inline">Team Composition</span>
+            <Users className="w-icon-sm h-icon-sm text-text-sub-600" />
+            <span className="text-xs font-medium text-text-sub-600 hidden sm:inline">Team Composition</span>
             <div className="flex items-center gap-1">
-              <span className="text-sm font-bold text-pb_darkgray">{composition.from}</span>
-              <ArrowRight className="w-3 h-3 text-pb_textgray" />
-              <span className="text-sm font-bold text-pb_darkgray">{composition.to}</span>
+              <span className="text-sm font-bold text-bg-surface-800">{composition.from}</span>
+              <ArrowRight className="w-3 h-3 text-text-sub-600" />
+              <span className="text-sm font-bold text-bg-surface-800">{composition.to}</span>
             </div>
           </div>
         )}
@@ -89,7 +89,7 @@ export default function TradeOutcomeBlock() {
         <div className="space-y-1 h-full flex flex-col pt-1">
 
           <div className="flex-1 flex items-start">
-              <p className="text-xs text-pb_textgray">
+              <p className="text-xs text-text-sub-600">
                 {outcome.description}
               </p>
             </div>
@@ -104,17 +104,17 @@ export default function TradeOutcomeBlock() {
                       ${index === 0 ? 'justify-start' : index === sortedSpecialCategories.length - 1 ? 'justify-end' : 'justify-center'}`}
                   >
                     {cat.icon && <div className="h-icon-sm w-icon-sm flex items-center justify-center mr-1 flex-shrink-0">{cat.icon}</div>}
-                    <div className="bg-white border border-pb_lightgray rounded ml-0.5 h-6 flex-1 min-w-0">
+                    <div className="bg-white border border-stroke-soft-200 rounded ml-0.5 h-6 flex-1 min-w-0">
                       <div className="flex items-center h-full">
                         <div className="flex-1 flex items-center justify-center min-w-0">
                           {cat.change !== 0 && (
-                            <span className={`flex items-center text-xs gap-1 font-semibold ${cat.isImprovement ? 'text-pb_greenhover' : 'text-pb_redhover'}`}>
+                            <span className={`flex items-center text-xs gap-1 font-semibold ${cat.isImprovement ? 'text-success-basehover' : 'text-error-basehover'}`}>
                               {cat.isImprovement ? <ArrowUp className="w-3 h-3 flex-shrink-0" /> : <ArrowDown className="w-3 h-3 flex-shrink-0" />}
                               <span className="truncate">{Math.abs(cat.change)}</span>
                             </span>
                           )}
                         </div>
-                        <div className={`flex-1 flex items-center justify-center border-l border-pb_lightgray min-w-0 ${cat.isImprovement ? 'text-pb_greenhover' : 'text-pb_redhover'}`}>
+                        <div className={`flex-1 flex items-center justify-center border-l border-stroke-soft-200 min-w-0 ${cat.isImprovement ? 'text-success-basehover' : 'text-error-basehover'}`}>
                           <span className="text-xs font-bold truncate">
                             {cat.newRank}{cat.rankSuffix}
                           </span>

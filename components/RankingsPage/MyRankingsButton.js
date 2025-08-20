@@ -41,7 +41,7 @@ const MyRankingsButton = ({ onRankingSelect, text, useIconOnlyStyles = false, cl
       className={cn(
         "flex items-center gap-1.5",
         useIconOnlyStyles ? "p-2.5" : "px-3 py-1.5 text-sm font-medium",
-        "bg-pb_blue hover:bg-pb_bluehover text-white",
+        "bg-primary-base hover:bg-primary-basehover text-white",
         className
       )}
       aria-label={text || "Select ranking"}

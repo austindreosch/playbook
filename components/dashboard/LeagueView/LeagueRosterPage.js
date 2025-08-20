@@ -41,7 +41,7 @@ export default function LeagueRosterPage() {
 
       {/* Divider */}
       <div className="w-full py-1.5">
-        <div className="h-[1px] w-full bg-pb_lightestgray"></div>
+        <div className="h-[1px] w-full bg-stroke-soft-50"></div>
       </div>
 
       {/* Main Content */}
@@ -58,10 +58,10 @@ export default function LeagueRosterPage() {
         {/* TEST DUMMY DIVIDER */}
         {/* <div className="col-span-1 flex flex-col gap-1.5 flex-1 items-center justify-center">
           <div className="flex-[3] flex flex-col w-[3px]">
-            <div className="h-full bg-pb_blue w-full"></div>
+            <div className="h-full bg-primary-base w-full"></div>
           </div>
           <div className="flex-[2] flex flex-col w-[3px]">
-            <div className="h-full bg-pb_red w-full"></div>
+            <div className="h-full bg-error-base w-full"></div>
           </div>
         </div> */}
 

@@ -16,32 +16,32 @@ import { ROSTER_COLUMN_CLASSES } from './rosterColumnConfig';
 
 // Sport-agnostic color coding function
 const getStatColors = (value, category, sport, zScore = null) => {
-  if (value === null || value === undefined) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
+  if (value === null || value === undefined) return { bgColor: 'bg-gray-50', textColor: 'text-bg-surface-800/80' };
   
   // Use Z-Score if available for more accurate coloring
   if (zScore !== null && zScore !== undefined) {
     if (zScore >= 1.5) return { bgColor: 'bg-green-200', textColor: 'text-green-800' };
     if (zScore >= 0.5) return { bgColor: 'bg-green-100', textColor: 'text-green-700' };
-    if (zScore >= -0.5) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
+    if (zScore >= -0.5) return { bgColor: 'bg-gray-50', textColor: 'text-bg-surface-800/80' };
     if (zScore >= -1.5) return { bgColor: 'bg-red-100', textColor: 'text-red-700' };
     return { bgColor: 'bg-red-200', textColor: 'text-red-800' };
   }
   
   // Fallback to sport-specific threshold-based coloring
   const thresholds = getSportColorThresholds(sport)[category];
-  if (!thresholds) return { bgColor: 'bg-gray-50', textColor: 'text-pb_darkgray/80' };
+  if (!thresholds) return { bgColor: 'bg-gray-50', textColor: 'text-bg-surface-800/80' };
 
   let bgColor;
-  const textColor = 'text-pb_darkgray/90';
+  const textColor = 'text-bg-surface-800/90';
   
   const greenShades = [
-    'bg-pb_green-800', 'bg-pb_green-700', 'bg-pb_green-600', 'bg-pb_green-500', 'bg-pb_green-400',
-    'bg-pb_green-300', 'bg-pb_green-200', 'bg-pb_green-100', 'bg-pb_green-50', 'bg-gray-100'
+    'bg-success-base-800', 'bg-success-base-700', 'bg-success-base-600', 'bg-success-base-500', 'bg-success-base-400',
+    'bg-success-base-300', 'bg-success-base-200', 'bg-success-base-100', 'bg-success-base-50', 'bg-gray-100'
   ];
   
   const redShades = [
-    'bg-gray-100', 'bg-pb_red-50', 'bg-pb_red-100', 'bg-pb_red-200', 'bg-pb_red-300',
-    'bg-pb_red-400', 'bg-pb_red-500', 'bg-pb_red-600', 'bg-pb_red-700', 'bg-pb_red-800'
+    'bg-gray-100', 'bg-error-base-50', 'bg-error-base-100', 'bg-error-base-200', 'bg-error-base-300',
+    'bg-error-base-400', 'bg-error-base-500', 'bg-error-base-600', 'bg-error-base-700', 'bg-error-base-800'
   ];
   
   if (thresholds.inverse) {

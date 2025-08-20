@@ -102,11 +102,11 @@ const RoadmapItem = ({ feature, index, isWip }) => {
     const isEven = index % 2 === 0;
 
     const colorVariants = {
-        'border-pb_orange': { border: 'border-pb_orange' },
-        'border-pb_blue':   { border: 'border-pb_blue' },
-        'border-pb_green':  { border: 'border-pb_green' },
-        'border-pb_red':    { border: 'border-pb_red' },
-        'border-pb_darkgray': { border: 'border-pb_darkgray' },
+        'border-warning-base': { border: 'border-warning-base' },
+        'border-primary-base':   { border: 'border-primary-base' },
+        'border-success-base':  { border: 'border-success-base' },
+        'border-error-base':    { border: 'border-error-base' },
+        'border-bg-surface-800': { border: 'border-bg-surface-800' },
     };
     
     const borderColorKey = Object.keys(colorVariants)[index % 5];
@@ -115,13 +115,13 @@ const RoadmapItem = ({ feature, index, isWip }) => {
     return (
         <div className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group ${isActive ? 'is-active' : ''}`}>
             {/* Dot */}
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full  shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isActive ? 'bg-pb_green' : 'bg-pb_lightgray'}`}>
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full  shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isActive ? 'bg-success-base' : 'bg-stroke-soft-200'}`}>
                 {isActive ? (
                     <Check className="w-5 h-5 text-white" />
                 ) : isWip ? (
-                    <Hammer className="w-6 h-6 text-pb_mddarkgray" />
+                    <Hammer className="w-6 h-6 text-text-strong-950" />
                 ) : (
-                    <div className="w-3 h-3 bg-pb_midgray rounded-full" />
+                    <div className="w-3 h-3 bg-text-sub-600 rounded-full" />
                 )}
             </div>
             
@@ -141,21 +141,21 @@ const RoadmapItem = ({ feature, index, isWip }) => {
                         relative w-full h-full p-4 rounded-2xl bg-white
                         border-4 border-dashed ${colors.border} 
                         text-center flex flex-col items-center justify-center
-                        before:absolute before:inset-[4px] before:rounded-xl before:rounded-t-xl before:border before:border-pb_lightergray
+                        before:absolute before:inset-[4px] before:rounded-xl before:rounded-t-xl before:border before:border-stroke-soft-100
                         group-hover/card:before:hidden
                     `}>
                         {/* Default visible content */}
                         <div className="flex flex-col items-center justify-center transition-opacity duration-300 group-hover/card:opacity-0">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-pb_lightestgray border-2 border-pb_lightgray`}>
-                                <Icon className={`w-6 h-6 text-pb_darkgray`} />
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 bg-stroke-soft-50 border-2 border-stroke-soft-200`}>
+                                <Icon className={`w-6 h-6 text-bg-surface-800`} />
                             </div>
-                            <div className="font-bold text-lg leading-tight text-pb_darkgray tracking-wide ">{feature.label.toUpperCase()}</div>
-                            <div className="font-semibold text-sm leading-tight text-pb_textgray tracking-wide pt-0.5">{feature.subLabel}</div>
+                            <div className="font-bold text-lg leading-tight text-bg-surface-800 tracking-wide ">{feature.label.toUpperCase()}</div>
+                            <div className="font-semibold text-sm leading-tight text-text-sub-600 tracking-wide pt-0.5">{feature.subLabel}</div>
                         </div>
 
                         {/* Hover content */}
                         <div className="absolute inset-0 p-4 rounded-2xl flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
-                            <p className="text-sm text-center text-pb_textgray">{feature.tooltip}</p>
+                            <p className="text-sm text-center text-text-sub-600">{feature.tooltip}</p>
                         </div>
                     </div>
                 </div>
@@ -203,19 +203,19 @@ export default function FeatureRoadmap() {
   return (
     <div className="w-full max-w-4xl mx-auto p-4">
       <div className="text-center py-16">
-        <h2 className="text-3xl font-extrabold tracking-tight text-pb_darkgray mb-4 ">
+        <h2 className="text-3xl font-extrabold tracking-tight text-bg-surface-800 mb-4 ">
           Feature Roadmap
         </h2>
-        <p className="max-w-xl mx-auto text-pb_midgray">
+        <p className="max-w-xl mx-auto text-text-sub-600">
         Want a peek ahead? Follow the rollout path below where you can see how each upcoming update adds more leverage and amplifies your advantage.        </p>
       </div>
 
       <div className="pl-4 md:pl-0 relative">
         {/* Gray line */}
-        <div className="absolute top-0 bottom-0 ml-5 -translate-x-px md:left-1/2 md:ml-0 md:-translate-x-1/2 h-full w-0.5 bg-pb_lightgray" aria-hidden="true"></div>
+        <div className="absolute top-0 bottom-0 ml-5 -translate-x-px md:left-1/2 md:ml-0 md:-translate-x-1/2 h-full w-0.5 bg-stroke-soft-200" aria-hidden="true"></div>
         {/* Green line */}
         <div
-            className="absolute top-0 bottom-0 ml-5 -translate-x-px md:left-1/2 md:ml-0 md:-translate-x-1/2 w-0.5 bg-gradient-to-b from-white to-pb_green"
+            className="absolute top-0 bottom-0 ml-5 -translate-x-px md:left-1/2 md:ml-0 md:-translate-x-1/2 w-0.5 bg-gradient-to-b from-white to-success-base"
             style={{ height: `${greenLinePercentage}%` }}
             aria-hidden="true"
         ></div>

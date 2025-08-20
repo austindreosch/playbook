@@ -126,15 +126,15 @@ const RankingsPlayerListHeader = ({
     const getMultiplierButtonStyles = (multiplier) => {
         switch (multiplier) {
             case 2:
-                return "bg-[#a3e6c2] hover:bg-[#8ce0b8] text-slate-700 border-[#8ce0b8]"; // Light pb_green
+                return "bg-[#a3e6c2] hover:bg-[#8ce0b8] text-slate-700 border-[#8ce0b8]"; // Light success-base
             case 1.5:
-                return "bg-[#c8f0d8] hover:bg-[#a3e6c2] text-slate-700 border-[#a3e6c2]"; // Very light pb_green
+                return "bg-[#c8f0d8] hover:bg-[#a3e6c2] text-slate-700 border-[#a3e6c2]"; // Very light success-base
             case 1.25:
-                return "bg-[#e6f7f0] hover:bg-[#c8f0d8] text-slate-700 border-[#c8f0d8]"; // Super light pb_green
+                return "bg-[#e6f7f0] hover:bg-[#c8f0d8] text-slate-700 border-[#c8f0d8]"; // Super light success-base
             case 0.75:
-                return "bg-[#fdd7d3] hover:bg-[#fbc2be] text-slate-700 border-[#fbc2be]"; // Very light pb_red
+                return "bg-[#fdd7d3] hover:bg-[#fbc2be] text-slate-700 border-[#fbc2be]"; // Very light error-base
             case 0.5:
-                return "bg-[#fbc2be] hover:bg-[#f9a8a0] text-slate-700 border-[#f9a8a0]"; // Light pb_red
+                return "bg-[#fbc2be] hover:bg-[#f9a8a0] text-slate-700 border-[#f9a8a0]"; // Light error-base
             case 0:
                 return "bg-[#f7a199] hover:bg-[#f58b80] text-slate-700 border-[#f58b80]"; // Slightly darker red for x0
             case 1:
@@ -144,7 +144,7 @@ const RankingsPlayerListHeader = ({
     };
 
     return (
-        <div className="player-list-header bg-pb_darkgray text-white rounded-sm overflow-hidden">
+        <div className="player-list-header bg-bg-surface-800 text-white rounded-sm overflow-hidden">
             {/* Header Row */}
             <div className="flex h-8 md:h-10 items-center md:px-0"> {/* Removed px-1 for mobile, stats will go edge-to-edge */}
                 {/* Left section: Collapse button & Desktop expand trigger - HIDDEN ON MOBILE */}
@@ -224,7 +224,7 @@ const RankingsPlayerListHeader = ({
                                             )}
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent className="max-w-[300px] bg-pb_darkgray text-white border-pb_lightgray">
+                                    <TooltipContent className="max-w-[300px] bg-bg-surface-800 text-white border-stroke-soft-200">
                                         <div className="space-y-1 p-2">
                                             <p className="font-semibold">{categoryLabel}</p>
                                             <p className="text-xs text-gray-300">{tooltipText}</p>
@@ -242,7 +242,7 @@ const RankingsPlayerListHeader = ({
             {isHeaderOptionsExpanded && (
                 <div className="expanded-content border-t p-1 bg-gray-50 border rounded-b-sm grid grid-cols-9 gap-2">
                     {/* Details */}
-                    <div className="text-pb_darkgray h-full col-span-2 pl-3 pt-2 pb-2 space-y-1 flex flex-col justify-between">
+                    <div className="text-bg-surface-800 h-full col-span-2 pl-3 pt-2 pb-2 space-y-1 flex flex-col justify-between">
                         <div>
                             <div className='flex items-center gap-1.5 ml-0.5'>
                                 <div className='text-lg font-bold'>{activeRanking?.name || 'Rankings'}</div>
@@ -292,7 +292,7 @@ const RankingsPlayerListHeader = ({
                                                             setNamePopoverOpen(false);
                                                         }
                                                     }}
-                                                    className="h-7 px-2 bg-pb_blue hover:bg-pb_darkblue"
+                                                    className="h-7 px-2 bg-primary-base hover:bg-pb_darkblue"
                                                 >
                                                     Save
                                                 </Button>
@@ -302,14 +302,14 @@ const RankingsPlayerListHeader = ({
                                 </Popover>
                             </div>
 
-                            <div className='text-pb_midgray text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>
+                            <div className='text-text-sub-600 text-2xs mt-1 ml-0.5 flex justify-between items-center tracking-wider pb-3'>
                                 {activeRanking?.sport.toUpperCase()} • {activeRanking?.format.toUpperCase()} • {activeRanking?.scoring.toUpperCase()}
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             {/* Last Updated Text - MOVED HERE, ABOVE BUTTONS */}
-                            <div className='text-2xs text-pb_midgray pl-1'> {/* Added pl-1 for slight indent, pb-1 for space below */}
+                            <div className='text-2xs text-text-sub-600 pl-1'> {/* Added pl-1 for slight indent, pb-1 for space below */}
                                 Last Updated: {activeRanking?.details?.dateUpdated && !isNaN(new Date(activeRanking.details.dateUpdated).getTime()) 
                                     ? new Date(activeRanking.details.dateUpdated).toLocaleDateString()
                                     : 'N/A'}
@@ -322,7 +322,7 @@ const RankingsPlayerListHeader = ({
                                 {isSaving ? (
                                     <ButtonLoading />
                                 ) : (
-                                    <Button onClick={handleSave} className='bg-pb_blue text-white shadow-md px-5 hover:bg-pb_bluehover'>Save Changes</Button>
+                                    <Button onClick={handleSave} className='bg-primary-base text-white shadow-md px-5 hover:bg-primary-basehover'>Save Changes</Button>
                                 )}
 
                                 {/* Delete Button Area */}
@@ -331,7 +331,7 @@ const RankingsPlayerListHeader = ({
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="text-pb_midgray border border-gray-300 hover:bg-pb_red hover:text-white h-7 w-7 p-1"
+                                            className="text-text-sub-600 border border-gray-300 hover:bg-error-base hover:text-white h-7 w-7 p-1"
                                             aria-label="Delete ranking list"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -353,7 +353,7 @@ const RankingsPlayerListHeader = ({
                                             <AlertDialogAction
                                                 onClick={handleDeleteConfirm}
                                                 disabled={isDeleting}
-                                                className="bg-pb_red hover:bg-pb_redhover"
+                                                className="bg-error-base hover:bg-error-basehover"
                                             >
                                                 {isDeleting ? 'Deleting...' : 'Confirm Delete'}
                                             </AlertDialogAction>
@@ -365,7 +365,7 @@ const RankingsPlayerListHeader = ({
                     </div>
 
                     {/* Source Boxes */}
-                    <div className="text-pb_darkgray h-full col-span-2 space-y-2 p-2 flex flex-col justify-start">
+                    <div className="text-bg-surface-800 h-full col-span-2 space-y-2 p-2 flex flex-col justify-start">
                         {/* <div className="space-y-1"> // Original structure with label above
                             <h3 className='text-sm font-bold text-center'>Position</h3>
                             <PositionSelector
@@ -411,7 +411,7 @@ const RankingsPlayerListHeader = ({
                     </div>
 
                     {/* Categories */}
-                    <div className="text-pb_darkgray h-full col-span-5">
+                    <div className="text-bg-surface-800 h-full col-span-5">
                         {/* Use activeRanking.categories to render toggles/multipliers */}
                         <div className="grid grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-1.5 p-2">
                             {(activeRanking?.categories ? (() => {
@@ -468,9 +468,9 @@ const RankingsPlayerListHeader = ({
                                                 <Switch
                                                     checked={categoryDetails.enabled}
                                                     onCheckedChange={(checked) => handleCategoryToggle(abbrev, checked)}
-                                                    className="flex-shrink-0 data-[state=checked]:bg-pb_blue"
+                                                    className="flex-shrink-0 data-[state=checked]:bg-primary-base"
                                                 />
-                                                <span className={`text-xs text-center flex-1 font-bold ${categoryDetails.enabled ? 'text-pb_darkgray' : 'text-pb_midgray'}`}>{displayToggleAbbrev}</span>
+                                                <span className={`text-xs text-center flex-1 font-bold ${categoryDetails.enabled ? 'text-bg-surface-800' : 'text-text-sub-600'}`}>{displayToggleAbbrev}</span>
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
@@ -494,7 +494,7 @@ const RankingsPlayerListHeader = ({
                                         </div>
                                         {/* Add divider after 'TB' category specifically for MLB Categories leagues */}
                                         {(sport?.toLowerCase() === 'mlb' && activeRanking?.scoring?.toLowerCase() === 'categories' && abbrev === 'TB') && (
-                                            <div className="col-span-full h-px bg-pb_lightergray my-1"></div>
+                                            <div className="col-span-full h-px bg-stroke-soft-100 my-1"></div>
                                         )}
                                     </React.Fragment>
                                 );

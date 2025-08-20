@@ -28,7 +28,7 @@ export default function LeagueTradesPage() {
   return (
     <div className="flex flex-col h-full">
       {/* League View Header Bar */}
-      <div className="grid grid-cols-22 gap-1.5 w-full items-center pt-1.5  pb-1.5 border-b border-pb_lightgray">
+      <div className="grid grid-cols-22 gap-1.5 w-full items-center pt-1.5  pb-1.5 border-b border-stroke-soft-200">
         {/* Left part */}
         <div className="col-span-5 flex gap-1.5">
           <CurrentLeagueTeamDisplay className="h-button flex-1" />
@@ -57,7 +57,7 @@ export default function LeagueTradesPage() {
       {/* Main Content */}
       <div className="grid grid-cols-22 gap-2 flex-grow min-h-0">
         {/* Left Column */}
-        <div className="col-span-5 border-r border-pb_lightgray bg-pb_backgroundgray">
+        <div className="col-span-5 border-r border-stroke-soft-200 bg-bg-weak-50">
           <UserTeamBlock className="" />
         </div>
 
@@ -70,7 +70,7 @@ export default function LeagueTradesPage() {
                 <TradeOutcome />
                 <TradeHistoricalView />
             </div>
-            <Separator className="bg-pb_lightergray"/>
+            <Separator className="bg-stroke-soft-100"/>
           </div>
           <div className="flex-1 min-h-0">
             <TradeCalculatorBlock /> 
@@ -78,7 +78,7 @@ export default function LeagueTradesPage() {
         </div>
 
         {/* Right Column */}
-        <div className="col-span-5 border-l border-pb_textlightergray">
+        <div className="col-span-5 border-l border-text-soft-400">
           <OpponentTeamBlock className="" />
         </div>
       </div>

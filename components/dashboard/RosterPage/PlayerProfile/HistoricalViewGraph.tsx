@@ -72,14 +72,14 @@ export default function HistoricalViewGraph({ historicalData }: HistoricalViewGr
   };
 
   return (
-    <div className="w-full bg-white border border-pb_lightgray rounded-lg px-2 relative overflow-hidden flex-shrink-0 min-h-20 max-h-24 h-24 flex flex-col">
-      <div className="absolute top-1.5 left-2.5 text-3xs text-pb_textlightestgray leading-none z-10">Historical View</div>
+    <div className="w-full bg-white border border-stroke-soft-200 rounded-lg px-2 relative overflow-hidden flex-shrink-0 min-h-20 max-h-24 h-24 flex flex-col">
+      <div className="absolute top-1.5 left-2.5 text-3xs text-text-soft-300 leading-none z-10">Historical View</div>
       <div className="absolute top-1.5 right-2.5 z-10">
-        <div className="flex rounded border border-pb_lightgray">
-          <button className="px-1.5 py-0.5 text-3xs font-medium bg-pb_lightergray text-pb_darkgray rounded-l">
+        <div className="flex rounded border border-stroke-soft-200">
+          <button className="px-1.5 py-0.5 text-3xs font-medium bg-stroke-soft-100 text-bg-surface-800 rounded-l">
             Stats
           </button>
-          <button className="px-1.5 py-0.5 text-3xs font-medium text-pb_textgray rounded-r">
+          <button className="px-1.5 py-0.5 text-3xs font-medium text-text-sub-600 rounded-r">
             Value
           </button>
         </div>
@@ -93,7 +93,7 @@ export default function HistoricalViewGraph({ historicalData }: HistoricalViewGr
         {/* Month Labels */}
         <div className="flex justify-between px-5 pt-1">
           {monthLabels.map((month, index) => (
-            <span key={index} className="text-3xs text-pb_textlightestgray">
+            <span key={index} className="text-3xs text-text-soft-300">
               {month}
             </span>
           ))}

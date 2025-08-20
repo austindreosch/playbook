@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function EmptyIcon({ className = "w-icon-xs h-icon-xs text-pb_textlightestgray", ...props }) {
+export default function EmptyIcon({ className = "w-icon-xs h-icon-xs text-text-soft-300", ...props }) {
   return (
     <svg 
       xmlns="http://www.w3.org/2000/svg" 
