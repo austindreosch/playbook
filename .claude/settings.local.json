@@ -18,7 +18,12 @@
       "Bash(mkdir:*)",
       "Bash(touch:*)",
       "WebSearch",
-      "WebFetch(domain:www.radix-ui.com)"
+      "WebFetch(domain:www.radix-ui.com)",
+      "Bash(sed:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git stash:*)",
+      "Bash(awk:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

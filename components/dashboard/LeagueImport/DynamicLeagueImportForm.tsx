@@ -35,6 +35,7 @@ import {
 import { compactButtonVariants } from '@/components/alignui/compact-button';
 import { inputVariants } from '@/components/alignui/input';
 import { toast } from 'sonner';
+import { AnimatePresence, motion } from 'framer-motion';
 import { SyncIndicatorInline } from './SyncIndicator';
 import LeaguePreviewCard from './LeaguePreviewCard';
 
@@ -342,15 +343,24 @@ function SettingCard({
   icon: Icon, 
   label, 
   children,
-  disabled = false 
+  disabled = false,
+  pulseKey
 }: { 
   icon: React.ElementType; 
   label: string; 
   children: React.ReactNode;
   disabled?: boolean;
+  pulseKey?: string;
 }) {
   return (
-    <div className={`h-24 rounded-lg ring-1 ring-inset ring-stroke-soft-100 bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-5'} flex flex-col`}>
+    <motion.div 
+      key={pulseKey}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className={`h-24 rounded-lg ring-1 ring-inset ring-stroke-soft-100 bg-white ${disabled ? 'opacity-50' : 'hover:bg-gray-5'} flex flex-col`}
+    >
       <div className="flex flex-col items-center text-center flex-1">
         <div className="w-full flex items-center gap-2 border-b border-gray-100 py-2 justify-center">
           <Icon className="hw-icon-xs " />
@@ -361,7 +371,7 @@ function SettingCard({
           {children}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -939,9 +949,10 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
               {/* Settings Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                <AnimatePresence mode="popLayout">
                 {/* Trade Deadline (only show if sport is selected) */}
                 {formData.sport && formData.sport !== 'none' && (
-                  <SettingCard icon={ArrowRightLeft} label="Trade Deadline">
+                  <SettingCard icon={ArrowRightLeft} label="Trade Deadline" pulseKey={formData.sport}>
                     <Datepicker 
                       value={formData.tradeDeadline}
                       onChange={(date: Date | undefined) => setFormData(prev => ({ ...prev, tradeDeadline: date }))}
@@ -971,7 +982,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Categories Scoring (conditional) */}
                 {formData.scoring === 'Categories' && (
-                  <SettingCard icon={BarChart2} label="Categories Scoring">
+                  <SettingCard icon={BarChart2} label="Categories Scoring" pulseKey={formData.scoring}>
                     <Select.Root value={formData.scoringMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, scoringMethod: value }))} size="xsmall">
                       <Select.Trigger className="w-full">
                         <Select.Value />
@@ -987,7 +998,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Playoff Schedule (conditional) */}
                 {formData.matchup === 'H2H' && (
-                  <SettingCard icon={Calendar} label="Playoff Schedule">
+                  <SettingCard icon={Calendar} label="Playoff Schedule" pulseKey={formData.matchup}>
                     <Select.Root value={formData.playoffSchedule} onValueChange={(value) => setFormData(prev => ({ ...prev, playoffSchedule: value }))} size="xsmall">
                       <Select.Trigger className="w-full">
                         <Select.Value />
@@ -1003,7 +1014,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Games Limit (conditional - show for NBA and MLB, hide for NFL) */}
                 {formData.scoring === 'Categories' && (formData.sport === 'NBA' || formData.sport === 'MLB') && (
-                  <SettingCard icon={Gamepad2} label="Games Limit">
+                  <SettingCard icon={Gamepad2} label="Games Limit" pulseKey={`${formData.scoring}-${formData.sport}`}>
                     <div className="w-full space-y-2">
                       <Select.Root 
                         value={formData.gamesLimitType} 
@@ -1051,7 +1062,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Dynasty Strategy (Dynasty/Keeper only) */}
                 {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <SettingCard icon={Trophy} label="Dynasty Strategy">
+                  <SettingCard icon={Trophy} label="Dynasty Strategy" pulseKey={formData.leagueType}>
                     <Select.Root value={formData.teamStatus} onValueChange={(value) => setFormData(prev => ({ ...prev, teamStatus: value }))} size="xsmall">
                       <Select.Trigger className="w-full">
                         <Select.Value />
@@ -1067,7 +1078,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Decay (Dynasty/Keeper only) */}
                 {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <SettingCard icon={Clock} label="Decay">
+                  <SettingCard icon={Clock} label="Decay" pulseKey={formData.leagueType}>
                     <input
                       type="checkbox"
                       checked={formData.decay}
@@ -1079,7 +1090,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
 
                 {/* Contracts (Dynasty/Keeper only) */}
                 {(formData.leagueType === 'Dynasty' || formData.leagueType === 'Keeper') && (
-                  <SettingCard icon={Settings} label="Contracts">
+                  <SettingCard icon={Settings} label="Contracts" pulseKey={formData.leagueType}>
                     <input
                       type="checkbox"
                       checked={formData.contracts}
@@ -1088,6 +1099,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
                     />
                   </SettingCard>
                 )}
+                </AnimatePresence>
               </div>
 
 
@@ -1139,7 +1151,6 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
               )}
 
 
-              {/*  */}
             </div>
           </div>
         </div>
