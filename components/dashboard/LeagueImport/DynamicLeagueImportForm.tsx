@@ -740,7 +740,7 @@ export default function DynamicLeagueImportForm({ onComplete, onCancel }: Dynami
         clearTimeout(timeoutId);
       }
     };
-  }, [detectedPlatform, formData.platform, formData.leagueId]);
+  }, [detectedPlatform, formData.leagueId]); // Note: formData.platform intentionally omitted to prevent double sync
 
   // Handle form submission
   const handleSubmit = async () => {
